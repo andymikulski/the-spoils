@@ -10,7 +10,6 @@
     "**/.hg": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-    "js/**": true,
     "node_modules": true,
     "**/*-lock.json": true,
     "**/*.lock": true,

@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
     "target": "es2019",
-    "module": "esnext",
     "lib": ["ES2019", "DOM"],
     "declaration": true,
-    "outDir": "./js",
+    "outDir": "./build",
     "rootDir": "./",
     "strict": true,
-    "moduleResolution": "bundler",
     "esModuleInterop": true,
+    "allowJs": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true
   },
   "include": [

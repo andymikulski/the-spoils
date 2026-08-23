@@ -14,44 +14,609 @@
  * This is intentionally UI-free. A UI can inspect GameState and submit GameAction objects.
  */
 
-import {
-  GameState,
-  CardInstance,
-  PlayerState,
-  RuntimeModifier,
-  BattleState,
-} from "./runtime_state.js";
-import {
-  CardDefinitionId,
-  CardInstanceId,
-  PlayerId,
-  Zone,
-  Stat,
-  Trade,
-} from "./ids_primitives.js";
-import {
-  Threshold,
-  CardDefinition,
-  ActivatedAbility,
-} from "./static_card_data.js";
-import {
-  PlayerRef,
-  TargetRef,
-  NumberExpression,
-  CardSelector,
-  TargetDeclaration,
-} from "./references_expressions_selectors.js";
-import { Condition } from "./Condition.js";
-import { Cost } from "./Cost.js";
-import { Effect } from "./Effect.js";
-import { GameEvent } from "./events.js";
-import {
-  StackItem,
-  TriggerResolution,
-  ResolutionContext,
-} from "./resolution_context.js";
-import { GameAction } from "./GameAction.js";
-import { assert, nextId, compare, structuredClone } from "./utils.js";
+import cardsJson from "./data/cards.js";
+
+// -----------------------------------------------------------------------------
+// IDs / primitive types
+// -----------------------------------------------------------------------------
+
+export type PlayerId = string;
+export type CardDefinitionId = string;
+export type CardInstanceId = string;
+export type AbilityId = string;
+export type ModifierId = string;
+export type BattleId = string;
+
+export type Trade =
+  | "rage"
+  | "greed"
+  | "deception"
+  | "elitism"
+  | "obsession";
+
+export type CardType =
+  | "character"
+  | "item"
+  | "location"
+  | "tactic"
+  | "resource"
+  | "faction";
+
+export type Zone =
+  | "deck"
+  | "hand"
+  | "deploying"
+  | "play"
+  | "discard"
+  | "void";
+
+export type Stat =
+  | "strength"
+  | "life"
+  | "speed"
+  | "influence";
+
+export type ComparisonOperator = ">" | ">=" | "=" | "<=" | "<";
+
+export type Duration =
+  | { type: "permanent" }
+  | { type: "untilEndOfTurn" }
+  | { type: "whileSourceInPlay" };
+
+export type ModifierOperation = "add" | "set" | "multiply";
+
+// -----------------------------------------------------------------------------
+// Static card data
+// -----------------------------------------------------------------------------
+
+export interface Threshold {
+  rage?: number;
+  greed?: number;
+  deception?: number;
+  elitism?: number;
+  obsession?: number;
+}
+
+export interface CardStats {
+  strength?: number;
+  life?: number;
+  speed?: number;
+  influence?: number;
+}
+
+export interface CardDefinition {
+  id: CardDefinitionId;
+  name: string;
+  set: string;
+  type: CardType;
+  trade: Trade;
+  rarity: string;
+  cost: number;
+  threshold: string | number;
+
+  strength?: number;
+  life?: number;
+  speed?: number;
+  influence?: number;
+
+  subtype: string[];
+  text: string;
+
+  behavior?: {
+    abilities?: AbilityDefinition[];
+  };
+}
+
+export type AbilityDefinition =
+  | ActivatedAbility
+  | TriggeredAbility
+  | ContinuousAbility;
+
+export interface AbilityBase {
+  id: AbilityId;
+  name?: string;
+}
+
+export interface ActivatedAbility extends AbilityBase {
+  type: "activated";
+  condition?: Condition;
+  costs?: Cost[];
+  targets?: TargetDeclaration[];
+  effects: Effect[];
+}
+
+export interface TriggeredAbility extends AbilityBase {
+  type: "triggered";
+  event: GameEventType;
+  condition?: Condition;
+  targets?: TargetDeclaration[];
+  effects: Effect[];
+}
+
+export interface ContinuousAbility extends AbilityBase {
+  type: "continuous";
+  condition?: Condition;
+  modifiers: ModifierDefinition[];
+}
+
+// -----------------------------------------------------------------------------
+// Runtime state
+// -----------------------------------------------------------------------------
+
+export interface CardInstance {
+  id: CardInstanceId;
+  definitionId: CardDefinitionId;
+
+  ownerId: PlayerId;
+  controllerId: PlayerId;
+
+  zone: Zone;
+
+  depleted: boolean;
+  damage: number;
+
+  counters: Record<string, number>;
+}
+
+export interface PlayerState {
+  id: PlayerId;
+  name: string;
+
+  influence: number;
+  resources: number;
+
+  thresholds: Threshold;
+
+  deck: CardInstanceId[];
+  hand: CardInstanceId[];
+  play: CardInstanceId[];
+  discard: CardInstanceId[];
+  void: CardInstanceId[];
+}
+
+export interface RuntimeModifier {
+  id: ModifierId;
+
+  sourceId?: CardInstanceId;
+  sourceAbilityId?: AbilityId;
+
+  targetId: CardInstanceId;
+  stat: Stat;
+  operation: ModifierOperation;
+  value: number;
+
+  duration: Duration;
+  createdTurn: number;
+}
+
+export interface BattleParty {
+  attackerId: CardInstanceId;
+  blockerIds: CardInstanceId[];
+}
+
+export interface BattleState {
+  id: BattleId;
+  attackerPlayerId: PlayerId;
+  defenderPlayerId: PlayerId;
+
+  target:
+    | { type: "faction"; playerId: PlayerId }
+    | { type: "card"; cardId: CardInstanceId };
+
+  parties: BattleParty[];
+
+  phase:
+    | "declared"
+    | "blocking"
+    | "speed"
+    | "finished";
+}
+
+export interface GameState {
+  turn: number;
+  activePlayerId: PlayerId;
+  priorityPlayerId: PlayerId;
+
+  players: Record<PlayerId, PlayerState>;
+  cards: Record<CardInstanceId, CardInstance>;
+
+  modifiers: RuntimeModifier[];
+
+  battle?: BattleState;
+}
+
+// -----------------------------------------------------------------------------
+// References / expressions / selectors
+// -----------------------------------------------------------------------------
+
+export type PlayerRef =
+  | "controller"
+  | "owner"
+  | "activePlayer"
+  | "opponent"
+  | { type: "player"; id: PlayerId };
+
+export type TargetRef =
+  | "source"
+  | { type: "selected"; id: string }
+  | { type: "card"; id: CardInstanceId };
+
+export type NumberExpression =
+  | number
+  | {
+      type: "stat";
+      target: TargetRef;
+      stat: Stat;
+    }
+  | {
+      type: "counter";
+      target: TargetRef;
+      counter: string;
+    }
+  | {
+      type: "count";
+      selector: CardSelector;
+    }
+  | {
+      type: "add";
+      values: NumberExpression[];
+    }
+  | {
+      type: "multiply";
+      values: NumberExpression[];
+    };
+
+export interface CardSelector {
+  controller?: "self" | "opponent" | "any";
+  owner?: "self" | "opponent" | "any";
+
+  zone?: Zone | Zone[];
+  type?: CardType;
+  subtype?: string;
+
+  depleted?: boolean;
+
+  conditions?: Condition[];
+}
+
+export interface TargetDeclaration {
+  id: string;
+  selector: CardSelector;
+  count: number;
+}
+
+// -----------------------------------------------------------------------------
+// Conditions
+// -----------------------------------------------------------------------------
+
+export type Condition =
+  | { type: "and"; conditions: Condition[] }
+  | { type: "or"; conditions: Condition[] }
+  | { type: "not"; condition: Condition }
+  | { type: "sourceInZone"; zone: Zone }
+  | { type: "sourceIsEventCard" }
+  | { type: "eventCardControlledBy"; player: PlayerRef }
+  | { type: "targetExists"; target: TargetRef }
+  | {
+      type: "cardTypeIs";
+      target: TargetRef;
+      cardType: CardType;
+    }
+  | {
+      type: "statCompare";
+      target: TargetRef;
+      stat: Stat;
+      operator: ComparisonOperator;
+      value: NumberExpression;
+    }
+  | {
+      type: "counterCompare";
+      target: TargetRef;
+      counter: string;
+      operator: ComparisonOperator;
+      value: NumberExpression;
+    };
+
+// -----------------------------------------------------------------------------
+// Costs
+// -----------------------------------------------------------------------------
+
+export type Cost =
+  | {
+      type: "payResources";
+      amount: NumberExpression;
+    }
+  | {
+      type: "deplete";
+      target: TargetRef;
+    }
+  | {
+      type: "discard";
+      player: PlayerRef;
+      selector: CardSelector;
+      count: number;
+    }
+  | {
+      type: "destroy";
+      target: TargetRef;
+    };
+
+// -----------------------------------------------------------------------------
+// Effects
+// -----------------------------------------------------------------------------
+
+export type Effect =
+  | {
+      type: "draw";
+      player: PlayerRef;
+      amount: NumberExpression;
+    }
+  | {
+      type: "dealDamage";
+      target: TargetRef;
+      amount: NumberExpression;
+    }
+  | {
+      type: "modifyInfluence";
+      player: PlayerRef;
+      amount: NumberExpression;
+    }
+  | {
+      type: "moveCard";
+      target: TargetRef;
+      to: Zone;
+    }
+  | {
+      type: "destroy";
+      target: TargetRef;
+    }
+  | {
+      type: "deplete";
+      target: TargetRef;
+    }
+  | {
+      type: "restore";
+      target: TargetRef;
+    }
+  | {
+      type: "addCounter";
+      target: TargetRef;
+      counter: string;
+      amount: NumberExpression;
+    }
+  | {
+      type: "removeCounter";
+      target: TargetRef;
+      counter: string;
+      amount: NumberExpression;
+    }
+  | {
+      type: "createModifier";
+      target: TargetRef;
+      stat: Stat;
+      operation: ModifierOperation;
+      value: NumberExpression;
+      duration: Duration;
+    };
+
+export interface ModifierDefinition {
+  target: TargetRef;
+  stat: Stat;
+  operation: ModifierOperation;
+  value: NumberExpression;
+}
+
+// -----------------------------------------------------------------------------
+// Events
+// -----------------------------------------------------------------------------
+
+export interface GameEventMap {
+  turnStarted: {
+    playerId: PlayerId;
+  };
+
+  turnEnding: {
+    playerId: PlayerId;
+  };
+
+  cardPlayed: {
+    cardId: CardInstanceId;
+    playerId: PlayerId;
+  };
+
+  cardEnteredPlay: {
+    cardId: CardInstanceId;
+    playerId: PlayerId;
+  };
+
+  cardMoved: {
+    cardId: CardInstanceId;
+    from: Zone;
+    to: Zone;
+  };
+
+  cardDestroyed: {
+    cardId: CardInstanceId;
+    controllerId: PlayerId;
+  };
+
+  cardDepleted: {
+    cardId: CardInstanceId;
+  };
+
+  cardRestored: {
+    cardId: CardInstanceId;
+  };
+
+  damageDealt: {
+    sourceId?: CardInstanceId;
+    targetId: CardInstanceId;
+    amount: number;
+  };
+
+  abilityActivated: {
+    cardId: CardInstanceId;
+    abilityId: AbilityId;
+    playerId: PlayerId;
+  };
+
+  battleStarted: {
+    battleId: BattleId;
+  };
+
+  battleEnded: {
+    battleId: BattleId;
+  };
+}
+
+export type GameEventType = keyof GameEventMap;
+
+export type GameEvent = {
+  [K in GameEventType]: { type: K } & GameEventMap[K];
+}[GameEventType];
+
+// -----------------------------------------------------------------------------
+// Resolution context
+// -----------------------------------------------------------------------------
+
+export interface ResolutionContext {
+  sourceId: CardInstanceId;
+  controllerId: PlayerId;
+  abilityId?: AbilityId;
+
+  event?: GameEvent;
+
+  selected: Record<string, CardInstanceId[]>;
+}
+
+export interface TriggerResolution {
+  sourceId: CardInstanceId;
+  ability: TriggeredAbility;
+  context: ResolutionContext;
+}
+
+export interface StackItem {
+  id: string;
+
+  sourceId: CardInstanceId;
+  controllerId: PlayerId;
+
+  kind: "card" | "ability";
+
+  abilityId?: AbilityId;
+  effects: Effect[];
+
+  context: ResolutionContext;
+}
+
+// -----------------------------------------------------------------------------
+// Player actions
+// -----------------------------------------------------------------------------
+
+export type GameAction =
+  | {
+      type: "playCard";
+      playerId: PlayerId;
+      cardId: CardInstanceId;
+      selected?: Record<string, CardInstanceId[]>;
+    }
+  | {
+      type: "activateAbility";
+      playerId: PlayerId;
+      cardId: CardInstanceId;
+      abilityId: AbilityId;
+      selected?: Record<string, CardInstanceId[]>;
+    }
+  | {
+      type: "passPriority";
+      playerId: PlayerId;
+    }
+  | {
+      type: "endTurn";
+      playerId: PlayerId;
+    }
+  | {
+      type: "declareAttack";
+      playerId: PlayerId;
+      attackerIds: CardInstanceId[];
+      target:
+        | { type: "faction"; playerId: PlayerId }
+        | { type: "card"; cardId: CardInstanceId };
+    }
+  | {
+      type: "declareBlockers";
+      playerId: PlayerId;
+      blocks: Record<CardInstanceId, CardInstanceId[]>;
+    };
+
+// -----------------------------------------------------------------------------
+// Utilities
+// -----------------------------------------------------------------------------
+
+let nextIdCounter = 1;
+
+function nextId(prefix: string): string {
+  return `${prefix}_${nextIdCounter++}`;
+}
+
+function assert(condition: unknown, message: string): asserts condition {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
+
+function compare(
+  left: number,
+  op: ComparisonOperator,
+  right: number
+): boolean {
+  switch (op) {
+    case ">":
+      return left > right;
+    case ">=":
+      return left >= right;
+    case "=":
+      return left === right;
+    case "<=":
+      return left <= right;
+    case "<":
+      return left < right;
+  }
+}
+
+export function parseThreshold(
+  threshold: string | number
+): Threshold {
+  if (!threshold || threshold === 0) {
+    return {};
+  }
+
+  const result: Threshold = {};
+
+  for (const icon of String(threshold).toLowerCase()) {
+    switch (icon) {
+      case "r":
+        result.rage = (result.rage ?? 0) + 1;
+        break;
+      case "g":
+        result.greed = (result.greed ?? 0) + 1;
+        break;
+      case "d":
+        result.deception = (result.deception ?? 0) + 1;
+        break;
+      case "e":
+        result.elitism = (result.elitism ?? 0) + 1;
+        break;
+      case "o":
+        result.obsession = (result.obsession ?? 0) + 1;
+        break;
+      default:
+        throw new Error(`Unknown threshold icon '${icon}'.`);
+    }
+  }
+
+  return result;
+}
 
 // -----------------------------------------------------------------------------
 // Engine
@@ -66,9 +631,12 @@ export class SpoilsEngine {
 
   private consecutivePasses = 0;
 
-  constructor(definitions: CardDefinition[], initialState: GameState) {
+  constructor(
+    definitions: CardDefinition[],
+    initialState: GameState
+  ) {
     this.definitions = Object.fromEntries(
-      definitions.map((def) => [def.id, def]),
+      definitions.map(def => [def.id, def])
     );
 
     this.state = initialState;
@@ -112,7 +680,7 @@ export class SpoilsEngine {
 
     assert(
       definition,
-      `Missing definition '${card.definitionId}' for card '${cardId}'`,
+      `Missing definition '${card.definitionId}' for card '${cardId}'`
     );
 
     return definition;
@@ -124,14 +692,12 @@ export class SpoilsEngine {
 
     let value =
       stat === "influence"
-        ? (definition.stats?.influence ?? 0)
-        : (definition.stats?.[stat] ?? 0);
+        ? definition.influence ?? 0
+        : definition[stat] ?? 0;
 
     const modifiers = [
       ...this.getContinuousModifiers(cardId),
-      ...this.state.modifiers.filter(
-        (modifier) => modifier.targetId === cardId,
-      ),
+      ...this.state.modifiers.filter(modifier => modifier.targetId === cardId)
     ];
 
     for (const modifier of modifiers) {
@@ -154,7 +720,7 @@ export class SpoilsEngine {
   }
 
   getAvailableActivatedAbilities(
-    playerId: PlayerId,
+    playerId: PlayerId
   ): Array<{ cardId: CardInstanceId; ability: ActivatedAbility }> {
     const result: Array<{
       cardId: CardInstanceId;
@@ -168,7 +734,7 @@ export class SpoilsEngine {
 
       const definition = this.getDefinition(card.id);
 
-      for (const ability of definition.abilities ?? []) {
+      for (const ability of definition.behavior?.abilities ?? []) {
         if (ability.type !== "activated") {
           continue;
         }
@@ -177,7 +743,7 @@ export class SpoilsEngine {
           sourceId: card.id,
           controllerId: playerId,
           abilityId: ability.id,
-          selected: {},
+          selected: {}
         };
 
         if (
@@ -187,7 +753,7 @@ export class SpoilsEngine {
         ) {
           result.push({
             cardId: card.id,
-            ability,
+            ability
           });
         }
       }
@@ -198,10 +764,10 @@ export class SpoilsEngine {
 
   queryCards(
     selector: CardSelector,
-    context: ResolutionContext,
+    context: ResolutionContext
   ): CardInstance[] {
-    return Object.values(this.state.cards).filter((card) =>
-      this.matchesSelector(card, selector, context),
+    return Object.values(this.state.cards).filter(card =>
+      this.matchesSelector(card, selector, context)
     );
   }
 
@@ -209,38 +775,40 @@ export class SpoilsEngine {
   // Card play / response stack
   // ---------------------------------------------------------------------------
 
-  private playCard(action: Extract<GameAction, { type: "playCard" }>): void {
+  private playCard(
+    action: Extract<GameAction, { type: "playCard" }>
+  ): void {
     const card = this.requireCard(action.cardId);
     const definition = this.getDefinition(card.id);
 
     assert(
       card.controllerId === action.playerId,
-      "You do not control that card.",
+      "You do not control that card."
     );
 
     assert(card.zone === "hand", "Card must be in your hand.");
 
     assert(
       this.meetsThreshold(action.playerId, definition.threshold),
-      "Threshold requirements are not met.",
+      "Threshold requirements are not met."
     );
 
     const context: ResolutionContext = {
       sourceId: card.id,
       controllerId: action.playerId,
-      selected: action.selected ?? {},
+      selected: action.selected ?? {}
     };
 
     this.validateTargetDeclarations(
       this.getPlayTargetDeclarations(definition),
-      context,
+      context
     );
 
     const resourceCost = definition.cost ?? 0;
 
     assert(
       this.state.players[action.playerId].resources >= resourceCost,
-      "Not enough resources.",
+      "Not enough resources."
     );
 
     this.state.players[action.playerId].resources -= resourceCost;
@@ -250,13 +818,15 @@ export class SpoilsEngine {
     this.emit({
       type: "cardPlayed",
       cardId: card.id,
-      playerId: action.playerId,
+      playerId: action.playerId
     });
 
     // Tactics resolve their abilities and then go to discard.
     // Permanents enter play when their stack item resolves.
     const effects =
-      definition.type === "tactic" ? this.getTacticEffects(definition) : [];
+      definition.type === "tactic"
+        ? this.getTacticEffects(definition)
+        : [];
 
     this.responseStack.push({
       id: nextId("stack"),
@@ -264,14 +834,14 @@ export class SpoilsEngine {
       controllerId: action.playerId,
       kind: "card",
       effects,
-      context,
+      context
     });
 
     this.resetPriorityAfterAction(action.playerId);
   }
 
   private getPlayTargetDeclarations(
-    definition: CardDefinition,
+    definition: CardDefinition
   ): TargetDeclaration[] {
     if (definition.type !== "tactic") {
       return [];
@@ -279,16 +849,16 @@ export class SpoilsEngine {
 
     // Barebones convention:
     // tactic cards use the first activated ability-shaped entry as their spell body.
-    const tacticAbility = definition.abilities?.find(
-      (ability) => ability.type === "activated",
+    const tacticAbility = definition.behavior?.abilities?.find(
+      ability => ability.type === "activated"
     ) as ActivatedAbility | undefined;
 
     return tacticAbility?.targets ?? [];
   }
 
   private getTacticEffects(definition: CardDefinition): Effect[] {
-    const tacticAbility = definition.abilities?.find(
-      (ability) => ability.type === "activated",
+    const tacticAbility = definition.behavior?.abilities?.find(
+      ability => ability.type === "activated"
     ) as ActivatedAbility | undefined;
 
     return tacticAbility?.effects ?? [];
@@ -299,19 +869,20 @@ export class SpoilsEngine {
   // ---------------------------------------------------------------------------
 
   private activateAbility(
-    action: Extract<GameAction, { type: "activateAbility" }>,
+    action: Extract<GameAction, { type: "activateAbility" }>
   ): void {
     const card = this.requireCard(action.cardId);
 
     assert(card.zone === "play", "Source must be in play.");
     assert(
       card.controllerId === action.playerId,
-      "You do not control that card.",
+      "You do not control that card."
     );
 
-    const ability = this.getDefinition(card.id).abilities?.find(
-      (ability) =>
-        ability.id === action.abilityId && ability.type === "activated",
+    const ability = this.getDefinition(card.id).behavior?.abilities?.find(
+      ability =>
+        ability.id === action.abilityId &&
+        ability.type === "activated"
     ) as ActivatedAbility | undefined;
 
     assert(ability, "Activated ability not found.");
@@ -320,13 +891,13 @@ export class SpoilsEngine {
       sourceId: card.id,
       controllerId: action.playerId,
       abilityId: ability.id,
-      selected: action.selected ?? {},
+      selected: action.selected ?? {}
     };
 
     if (ability.condition) {
       assert(
         this.evaluateCondition(ability.condition, context),
-        "Ability condition is not satisfied.",
+        "Ability condition is not satisfied."
       );
     }
 
@@ -334,7 +905,7 @@ export class SpoilsEngine {
 
     assert(
       this.canPayCosts(ability.costs ?? [], context),
-      "Ability costs cannot be paid.",
+      "Ability costs cannot be paid."
     );
 
     this.payCosts(ability.costs ?? [], context);
@@ -350,14 +921,14 @@ export class SpoilsEngine {
       kind: "ability",
       abilityId: ability.id,
       effects: ability.effects,
-      context,
+      context
     });
 
     this.emit({
       type: "abilityActivated",
       cardId: card.id,
       abilityId: ability.id,
-      playerId: action.playerId,
+      playerId: action.playerId
     });
 
     this.resetPriorityAfterAction(action.playerId);
@@ -366,7 +937,7 @@ export class SpoilsEngine {
   private passPriority(playerId: PlayerId): void {
     assert(
       this.state.priorityPlayerId === playerId,
-      "It is not your priority.",
+      "It is not your priority."
     );
 
     this.consecutivePasses++;
@@ -383,7 +954,8 @@ export class SpoilsEngine {
     if (this.responseStack.length > 0) {
       this.resolveTopOfStack();
 
-      this.state.priorityPlayerId = this.state.activePlayerId;
+      this.state.priorityPlayerId =
+        this.state.activePlayerId;
 
       return;
     }
@@ -414,7 +986,7 @@ export class SpoilsEngine {
         this.emit({
           type: "cardEnteredPlay",
           cardId: card.id,
-          playerId: card.controllerId,
+          playerId: card.controllerId
         });
       }
     }
@@ -447,8 +1019,11 @@ export class SpoilsEngine {
 
       const definition = this.getDefinition(card.id);
 
-      for (const ability of definition.abilities ?? []) {
-        if (ability.type !== "triggered" || ability.event !== event.type) {
+      for (const ability of definition.behavior?.abilities ?? []) {
+        if (
+          ability.type !== "triggered" ||
+          ability.event !== event.type
+        ) {
           continue;
         }
 
@@ -457,7 +1032,7 @@ export class SpoilsEngine {
           controllerId: card.controllerId,
           abilityId: ability.id,
           event,
-          selected: {},
+          selected: {}
         };
 
         if (
@@ -467,7 +1042,7 @@ export class SpoilsEngine {
           results.push({
             sourceId: card.id,
             ability,
-            context,
+            context
           });
         }
       }
@@ -491,7 +1066,10 @@ export class SpoilsEngine {
         // A real client should request choices here.
         // For engine-only deterministic operation, auto-select only when
         // each target declaration has exactly enough legal candidates.
-        this.autoSelectTargets(trigger.ability.targets, trigger.context);
+        this.autoSelectTargets(
+          trigger.ability.targets,
+          trigger.context
+        );
       }
 
       for (const effect of trigger.ability.effects) {
@@ -505,26 +1083,38 @@ export class SpoilsEngine {
   // Conditions / expressions
   // ---------------------------------------------------------------------------
 
-  evaluateCondition(condition: Condition, context: ResolutionContext): boolean {
+  evaluateCondition(
+    condition: Condition,
+    context: ResolutionContext
+  ): boolean {
     switch (condition.type) {
       case "and":
-        return condition.conditions.every((condition) =>
-          this.evaluateCondition(condition, context),
+        return condition.conditions.every(condition =>
+          this.evaluateCondition(condition, context)
         );
 
       case "or":
-        return condition.conditions.some((condition) =>
-          this.evaluateCondition(condition, context),
+        return condition.conditions.some(condition =>
+          this.evaluateCondition(condition, context)
         );
 
       case "not":
-        return !this.evaluateCondition(condition.condition, context);
+        return !this.evaluateCondition(
+          condition.condition,
+          context
+        );
 
       case "sourceInZone":
-        return this.state.cards[context.sourceId]?.zone === condition.zone;
+        return (
+          this.state.cards[context.sourceId]?.zone ===
+          condition.zone
+        );
 
       case "sourceIsEventCard":
-        return this.getEventCardId(context.event) === context.sourceId;
+        return (
+          this.getEventCardId(context.event) ===
+          context.sourceId
+        );
 
       case "eventCardControlledBy": {
         const eventCardId = this.getEventCardId(context.event);
@@ -546,18 +1136,29 @@ export class SpoilsEngine {
       }
 
       case "targetExists":
-        return this.resolveTargetRef(condition.target, context) !== undefined;
+        return this.resolveTargetRef(
+          condition.target,
+          context
+        ) !== undefined;
 
       case "cardTypeIs": {
-        const cardId = this.resolveTargetRef(condition.target, context);
+        const cardId = this.resolveTargetRef(
+          condition.target,
+          context
+        );
 
         return (
-          !!cardId && this.getDefinition(cardId).type === condition.cardType
+          !!cardId &&
+          this.getDefinition(cardId).type ===
+            condition.cardType
         );
       }
 
       case "statCompare": {
-        const cardId = this.resolveTargetRef(condition.target, context);
+        const cardId = this.resolveTargetRef(
+          condition.target,
+          context
+        );
 
         if (!cardId) {
           return false;
@@ -566,23 +1167,29 @@ export class SpoilsEngine {
         return compare(
           this.getStat(cardId, condition.stat),
           condition.operator,
-          this.evaluateNumber(condition.value, context),
+          this.evaluateNumber(condition.value, context)
         );
       }
 
       case "counterCompare": {
-        const cardId = this.resolveTargetRef(condition.target, context);
+        const cardId = this.resolveTargetRef(
+          condition.target,
+          context
+        );
 
         if (!cardId) {
           return false;
         }
 
-        const count = this.requireCard(cardId).counters[condition.counter] ?? 0;
+        const count =
+          this.requireCard(cardId).counters[
+            condition.counter
+          ] ?? 0;
 
         return compare(
           count,
           condition.operator,
-          this.evaluateNumber(condition.value, context),
+          this.evaluateNumber(condition.value, context)
         );
       }
     }
@@ -590,7 +1197,7 @@ export class SpoilsEngine {
 
   evaluateNumber(
     expression: NumberExpression,
-    context: ResolutionContext,
+    context: ResolutionContext
   ): number {
     if (typeof expression === "number") {
       return expression;
@@ -598,7 +1205,10 @@ export class SpoilsEngine {
 
     switch (expression.type) {
       case "stat": {
-        const cardId = this.resolveTargetRef(expression.target, context);
+        const cardId = this.resolveTargetRef(
+          expression.target,
+          context
+        );
 
         assert(cardId, "Unable to resolve stat target.");
 
@@ -606,27 +1216,38 @@ export class SpoilsEngine {
       }
 
       case "counter": {
-        const cardId = this.resolveTargetRef(expression.target, context);
+        const cardId = this.resolveTargetRef(
+          expression.target,
+          context
+        );
 
         assert(cardId, "Unable to resolve counter target.");
 
-        return this.requireCard(cardId).counters[expression.counter] ?? 0;
+        return (
+          this.requireCard(cardId).counters[
+            expression.counter
+          ] ?? 0
+        );
       }
 
       case "count":
-        return this.queryCards(expression.selector, context).length;
+        return this.queryCards(
+          expression.selector,
+          context
+        ).length;
 
       case "add":
         return expression.values.reduce(
-          (sum, value) => (sum as number) + this.evaluateNumber(value, context),
-          0,
+          (sum, value) =>
+            (sum as number) + this.evaluateNumber(value, context),
+          0
         ) as number;
 
       case "multiply":
         return expression.values.reduce(
           (product, value) =>
             (product as number) * this.evaluateNumber(value, context),
-          1,
+          1
         ) as number;
     }
   }
@@ -637,24 +1258,28 @@ export class SpoilsEngine {
 
   private validateTargetDeclarations(
     declarations: TargetDeclaration[],
-    context: ResolutionContext,
+    context: ResolutionContext
   ): void {
     for (const declaration of declarations) {
-      const selected = context.selected[declaration.id] ?? [];
+      const selected =
+        context.selected[declaration.id] ?? [];
 
       assert(
         selected.length === declaration.count,
-        `Target '${declaration.id}' requires ${declaration.count} selection(s).`,
+        `Target '${declaration.id}' requires ${declaration.count} selection(s).`
       );
 
       const legal = new Set(
-        this.queryCards(declaration.selector, context).map((card) => card.id),
+        this.queryCards(
+          declaration.selector,
+          context
+        ).map(card => card.id)
       );
 
       for (const selectedId of selected) {
         assert(
           legal.has(selectedId),
-          `Illegal target '${selectedId}' for '${declaration.id}'.`,
+          `Illegal target '${selectedId}' for '${declaration.id}'.`
         );
       }
     }
@@ -662,34 +1287,41 @@ export class SpoilsEngine {
 
   private autoSelectTargets(
     declarations: TargetDeclaration[],
-    context: ResolutionContext,
+    context: ResolutionContext
   ): void {
     for (const declaration of declarations) {
       if (context.selected[declaration.id]) {
         continue;
       }
 
-      const candidates = this.queryCards(declaration.selector, context);
+      const candidates = this.queryCards(
+        declaration.selector,
+        context
+      );
 
       assert(
         candidates.length === declaration.count,
-        `Triggered ability '${context.abilityId}' requires a choice for target '${declaration.id}'.`,
+        `Triggered ability '${context.abilityId}' requires a choice for target '${declaration.id}'.`
       );
 
-      context.selected[declaration.id] = candidates.map((card) => card.id);
+      context.selected[declaration.id] =
+        candidates.map(card => card.id);
     }
   }
 
   private matchesSelector(
     card: CardInstance,
     selector: CardSelector,
-    context: ResolutionContext,
+    context: ResolutionContext
   ): boolean {
     if (selector.controller) {
       const self = context.controllerId;
       const opponent = this.getOpponent(self).id;
 
-      if (selector.controller === "self" && card.controllerId !== self) {
+      if (
+        selector.controller === "self" &&
+        card.controllerId !== self
+      ) {
         return false;
       }
 
@@ -705,11 +1337,17 @@ export class SpoilsEngine {
       const self = context.controllerId;
       const opponent = this.getOpponent(self).id;
 
-      if (selector.owner === "self" && card.ownerId !== self) {
+      if (
+        selector.owner === "self" &&
+        card.ownerId !== self
+      ) {
         return false;
       }
 
-      if (selector.owner === "opponent" && card.ownerId !== opponent) {
+      if (
+        selector.owner === "opponent" &&
+        card.ownerId !== opponent
+      ) {
         return false;
       }
     }
@@ -726,11 +1364,17 @@ export class SpoilsEngine {
 
     const definition = this.getDefinition(card.id);
 
-    if (selector.type && definition.type !== selector.type) {
+    if (
+      selector.type &&
+      definition.type !== selector.type
+    ) {
       return false;
     }
 
-    if (selector.subtype && !definition.subtypes?.includes(selector.subtype)) {
+    if (
+      selector.subtype &&
+      !definition.subtype.includes(selector.subtype)
+    ) {
       return false;
     }
 
@@ -743,14 +1387,14 @@ export class SpoilsEngine {
 
     if (
       selector.conditions &&
-      !selector.conditions.every((condition) =>
+      !selector.conditions.every(condition =>
         this.evaluateCondition(condition, {
           ...context,
           selected: {
             ...context.selected,
-            __candidate: [card.id],
-          },
-        }),
+            __candidate: [card.id]
+          }
+        })
       )
     ) {
       return false;
@@ -761,7 +1405,7 @@ export class SpoilsEngine {
 
   private resolveTargetRef(
     ref: TargetRef,
-    context: ResolutionContext,
+    context: ResolutionContext
   ): CardInstanceId | undefined {
     if (ref === "source") {
       return context.sourceId;
@@ -776,18 +1420,22 @@ export class SpoilsEngine {
 
   private resolvePlayerRef(
     ref: PlayerRef,
-    context: ResolutionContext,
+    context: ResolutionContext
   ): PlayerState {
     if (ref === "controller") {
       return this.requirePlayer(context.controllerId);
     }
 
     if (ref === "owner") {
-      return this.requirePlayer(this.requireCard(context.sourceId).ownerId);
+      return this.requirePlayer(
+        this.requireCard(context.sourceId).ownerId
+      );
     }
 
     if (ref === "activePlayer") {
-      return this.requirePlayer(this.state.activePlayerId);
+      return this.requirePlayer(
+        this.state.activePlayerId
+      );
     }
 
     if (ref === "opponent") {
@@ -801,13 +1449,19 @@ export class SpoilsEngine {
   // Costs
   // ---------------------------------------------------------------------------
 
-  private canPayCosts(costs: Cost[], context: ResolutionContext): boolean {
+  private canPayCosts(
+    costs: Cost[],
+    context: ResolutionContext
+  ): boolean {
     // Simulate the costs against a cheap clone so multi-cost abilities
     // are checked transactionally.
     const clone = structuredClone(this.state);
 
     try {
-      const engine = new SpoilsEngine(Object.values(this.definitions), clone);
+      const engine = new SpoilsEngine(
+        Object.values(this.definitions),
+        clone
+      );
 
       for (const cost of costs) {
         engine.payCost(cost, context, false);
@@ -819,7 +1473,10 @@ export class SpoilsEngine {
     }
   }
 
-  private payCosts(costs: Cost[], context: ResolutionContext): void {
+  private payCosts(
+    costs: Cost[],
+    context: ResolutionContext
+  ): void {
     for (const cost of costs) {
       this.payCost(cost, context, true);
     }
@@ -828,17 +1485,23 @@ export class SpoilsEngine {
   private payCost(
     cost: Cost,
     context: ResolutionContext,
-    emitEvents: boolean,
+    emitEvents: boolean
   ): void {
     switch (cost.type) {
       case "payResources": {
-        const player = this.requirePlayer(context.controllerId);
+        const player = this.requirePlayer(
+          context.controllerId
+        );
 
-        const amount = this.evaluateNumber(cost.amount, context);
+        const amount = this.evaluateNumber(
+          cost.amount,
+          context
+        );
 
         assert(
-          amount >= 0 && player.resources >= amount,
-          "Not enough resources.",
+          amount >= 0 &&
+            player.resources >= amount,
+          "Not enough resources."
         );
 
         player.resources -= amount;
@@ -846,7 +1509,10 @@ export class SpoilsEngine {
       }
 
       case "deplete": {
-        const targetId = this.resolveTargetRef(cost.target, context);
+        const targetId = this.resolveTargetRef(
+          cost.target,
+          context
+        );
 
         assert(targetId, "Missing depletion target.");
 
@@ -859,7 +1525,7 @@ export class SpoilsEngine {
         if (emitEvents) {
           this.emit({
             type: "cardDepleted",
-            cardId: card.id,
+            cardId: card.id
           });
         }
 
@@ -867,20 +1533,24 @@ export class SpoilsEngine {
       }
 
       case "discard": {
-        const player = this.resolvePlayerRef(cost.player, context);
+        const player = this.resolvePlayerRef(
+          cost.player,
+          context
+        );
 
         const legal = this.queryCards(
           {
             ...cost.selector,
-            controller: cost.selector.controller ?? "self",
-            zone: cost.selector.zone ?? "hand",
+            controller:
+              cost.selector.controller ?? "self",
+            zone: cost.selector.zone ?? "hand"
           },
-          context,
-        ).filter((card) => card.controllerId === player.id);
+          context
+        ).filter(card => card.controllerId === player.id);
 
         assert(
           legal.length >= cost.count,
-          "Not enough cards available to discard.",
+          "Not enough cards available to discard."
         );
 
         // Barebones deterministic payment. A UI should normally supply
@@ -893,7 +1563,10 @@ export class SpoilsEngine {
       }
 
       case "destroy": {
-        const targetId = this.resolveTargetRef(cost.target, context);
+        const targetId = this.resolveTargetRef(
+          cost.target,
+          context
+        );
 
         assert(targetId, "Missing destroy-cost target.");
 
@@ -907,12 +1580,21 @@ export class SpoilsEngine {
   // Effects
   // ---------------------------------------------------------------------------
 
-  resolveEffect(effect: Effect, context: ResolutionContext): void {
+  resolveEffect(
+    effect: Effect,
+    context: ResolutionContext
+  ): void {
     switch (effect.type) {
       case "draw": {
-        const player = this.resolvePlayerRef(effect.player, context);
+        const player = this.resolvePlayerRef(
+          effect.player,
+          context
+        );
 
-        const amount = this.evaluateNumber(effect.amount, context);
+        const amount = this.evaluateNumber(
+          effect.amount,
+          context
+        );
 
         for (let i = 0; i < amount; i++) {
           const cardId = player.deck.shift();
@@ -928,12 +1610,18 @@ export class SpoilsEngine {
       }
 
       case "dealDamage": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing damage target.");
 
         const target = this.requireCard(targetId);
-        const amount = this.evaluateNumber(effect.amount, context);
+        const amount = this.evaluateNumber(
+          effect.amount,
+          context
+        );
 
         target.damage += amount;
 
@@ -941,22 +1629,31 @@ export class SpoilsEngine {
           type: "damageDealt",
           sourceId: context.sourceId,
           targetId,
-          amount,
+          amount
         });
 
         return;
       }
 
       case "modifyInfluence": {
-        const player = this.resolvePlayerRef(effect.player, context);
+        const player = this.resolvePlayerRef(
+          effect.player,
+          context
+        );
 
-        player.influence += this.evaluateNumber(effect.amount, context);
+        player.influence += this.evaluateNumber(
+          effect.amount,
+          context
+        );
 
         return;
       }
 
       case "moveCard": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing move target.");
 
@@ -965,7 +1662,10 @@ export class SpoilsEngine {
       }
 
       case "destroy": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing destroy target.");
 
@@ -974,7 +1674,10 @@ export class SpoilsEngine {
       }
 
       case "deplete": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing deplete target.");
 
@@ -985,7 +1688,7 @@ export class SpoilsEngine {
 
           this.emit({
             type: "cardDepleted",
-            cardId: card.id,
+            cardId: card.id
           });
         }
 
@@ -993,7 +1696,10 @@ export class SpoilsEngine {
       }
 
       case "restore": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing restore target.");
 
@@ -1004,7 +1710,7 @@ export class SpoilsEngine {
 
           this.emit({
             type: "cardRestored",
-            cardId: card.id,
+            cardId: card.id
           });
         }
 
@@ -1012,7 +1718,10 @@ export class SpoilsEngine {
       }
 
       case "addCounter": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing counter target.");
 
@@ -1026,7 +1735,10 @@ export class SpoilsEngine {
       }
 
       case "removeCounter": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing counter target.");
 
@@ -1035,14 +1747,17 @@ export class SpoilsEngine {
         card.counters[effect.counter] = Math.max(
           0,
           (card.counters[effect.counter] ?? 0) -
-            this.evaluateNumber(effect.amount, context),
+            this.evaluateNumber(effect.amount, context)
         );
 
         return;
       }
 
       case "createModifier": {
-        const targetId = this.resolveTargetRef(effect.target, context);
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
 
         assert(targetId, "Missing modifier target.");
 
@@ -1053,9 +1768,12 @@ export class SpoilsEngine {
           targetId,
           stat: effect.stat,
           operation: effect.operation,
-          value: this.evaluateNumber(effect.value, context),
+          value: this.evaluateNumber(
+            effect.value,
+            context
+          ),
           duration: effect.duration,
-          createdTurn: this.state.turn,
+          createdTurn: this.state.turn
         });
 
         return;
@@ -1067,17 +1785,23 @@ export class SpoilsEngine {
   // Continuous modifiers
   // ---------------------------------------------------------------------------
 
-  private getContinuousModifiers(targetId: CardInstanceId): RuntimeModifier[] {
+  private getContinuousModifiers(
+    targetId: CardInstanceId
+  ): RuntimeModifier[] {
     const results: RuntimeModifier[] = [];
 
-    for (const source of Object.values(this.state.cards)) {
+    for (const source of Object.values(
+      this.state.cards
+    )) {
       if (source.zone !== "play") {
         continue;
       }
 
-      const definition = this.getDefinition(source.id);
+      const definition = this.getDefinition(
+        source.id
+      );
 
-      for (const ability of definition.abilities ?? []) {
+      for (const ability of definition.behavior?.abilities ?? []) {
         if (ability.type !== "continuous") {
           continue;
         }
@@ -1087,13 +1811,16 @@ export class SpoilsEngine {
           controllerId: source.controllerId,
           abilityId: ability.id,
           selected: {
-            target: [targetId],
-          },
+            target: [targetId]
+          }
         };
 
         if (
           ability.condition &&
-          !this.evaluateCondition(ability.condition, context)
+          !this.evaluateCondition(
+            ability.condition,
+            context
+          )
         ) {
           continue;
         }
@@ -1101,7 +1828,7 @@ export class SpoilsEngine {
         for (const modifier of ability.modifiers) {
           const resolvedTarget = this.resolveTargetRef(
             modifier.target,
-            context,
+            context
           );
 
           if (resolvedTarget !== targetId) {
@@ -1115,11 +1842,14 @@ export class SpoilsEngine {
             targetId,
             stat: modifier.stat,
             operation: modifier.operation,
-            value: this.evaluateNumber(modifier.value, context),
+            value: this.evaluateNumber(
+              modifier.value,
+              context
+            ),
             duration: {
-              type: "whileSourceInPlay",
+              type: "whileSourceInPlay"
             },
-            createdTurn: this.state.turn,
+            createdTurn: this.state.turn
           });
         }
       }
@@ -1138,10 +1868,13 @@ export class SpoilsEngine {
     while (changed) {
       changed = false;
 
-      for (const card of Object.values(this.state.cards)) {
+      for (const card of Object.values(
+        this.state.cards
+      )) {
         if (
           card.zone !== "play" ||
-          this.getDefinition(card.id).type !== "character"
+          this.getDefinition(card.id).type !==
+            "character"
         ) {
           continue;
         }
@@ -1161,7 +1894,11 @@ export class SpoilsEngine {
   // Zones / destruction
   // ---------------------------------------------------------------------------
 
-  private moveCard(cardId: CardInstanceId, to: Zone, emitEvents = true): void {
+  private moveCard(
+    cardId: CardInstanceId,
+    to: Zone,
+    emitEvents = true
+  ): void {
     const card = this.requireCard(cardId);
     const from = card.zone;
 
@@ -1174,10 +1911,15 @@ export class SpoilsEngine {
     card.zone = to;
 
     const owner = this.requirePlayer(card.ownerId);
-    const controller = this.requirePlayer(card.controllerId);
+    const controller = this.requirePlayer(
+      card.controllerId
+    );
 
     const zoneOwner =
-      to === "deck" || to === "hand" || to === "discard" || to === "void"
+      to === "deck" ||
+      to === "hand" ||
+      to === "discard" ||
+      to === "void"
         ? owner
         : controller;
 
@@ -1192,19 +1934,25 @@ export class SpoilsEngine {
         type: "cardMoved",
         cardId,
         from,
-        to,
+        to
       });
     }
   }
 
-  private destroyCard(cardId: CardInstanceId, emitEvents = true): void {
+  private destroyCard(
+    cardId: CardInstanceId,
+    emitEvents = true
+  ): void {
     const card = this.requireCard(cardId);
 
     if (card.zone !== "play") {
-      throw new Error(`Cannot destroy '${cardId}' from zone '${card.zone}'.`);
+      throw new Error(
+        `Cannot destroy '${cardId}' from zone '${card.zone}'.`
+      );
     }
 
-    const previousController = card.controllerId;
+    const previousController =
+      card.controllerId;
 
     card.damage = 0;
     card.depleted = false;
@@ -1215,24 +1963,38 @@ export class SpoilsEngine {
       this.emit({
         type: "cardDestroyed",
         cardId,
-        controllerId: previousController,
+        controllerId: previousController
       });
     }
   }
 
-  private removeFromAllPlayerZones(cardId: CardInstanceId): void {
-    for (const player of Object.values(this.state.players)) {
-      player.deck = player.deck.filter((id) => id !== cardId);
-      player.hand = player.hand.filter((id) => id !== cardId);
-      player.play = player.play.filter((id) => id !== cardId);
-      player.discard = player.discard.filter((id) => id !== cardId);
-      player.void = player.void.filter((id) => id !== cardId);
+  private removeFromAllPlayerZones(
+    cardId: CardInstanceId
+  ): void {
+    for (const player of Object.values(
+      this.state.players
+    )) {
+      player.deck = player.deck.filter(
+        id => id !== cardId
+      );
+      player.hand = player.hand.filter(
+        id => id !== cardId
+      );
+      player.play = player.play.filter(
+        id => id !== cardId
+      );
+      player.discard = player.discard.filter(
+        id => id !== cardId
+      );
+      player.void = player.void.filter(
+        id => id !== cardId
+      );
     }
   }
 
   private getZoneArray(
     player: PlayerState,
-    zone: Zone,
+    zone: Zone
   ): CardInstanceId[] | undefined {
     switch (zone) {
       case "deck":
@@ -1257,36 +2019,42 @@ export class SpoilsEngine {
   private endTurn(playerId: PlayerId): void {
     assert(
       playerId === this.state.activePlayerId,
-      "Only the active player can end the turn.",
+      "Only the active player can end the turn."
     );
 
     assert(
       this.responseStack.length === 0,
-      "Cannot end turn with unresolved responses.",
+      "Cannot end turn with unresolved responses."
     );
 
     this.emit({
       type: "turnEnding",
-      playerId,
+      playerId
     });
 
-    this.state.modifiers = this.state.modifiers.filter((modifier) => {
-      if (
-        modifier.duration.type === "untilEndOfTurn" &&
-        modifier.createdTurn <= this.state.turn
-      ) {
-        return false;
-      }
+    this.state.modifiers =
+      this.state.modifiers.filter(modifier => {
+        if (
+          modifier.duration.type ===
+            "untilEndOfTurn" &&
+          modifier.createdTurn <= this.state.turn
+        ) {
+          return false;
+        }
 
-      if (modifier.duration.type === "whileSourceInPlay") {
-        return (
-          !!modifier.sourceId &&
-          this.state.cards[modifier.sourceId]?.zone === "play"
-        );
-      }
+        if (
+          modifier.duration.type ===
+          "whileSourceInPlay"
+        ) {
+          return (
+            !!modifier.sourceId &&
+            this.state.cards[modifier.sourceId]
+              ?.zone === "play"
+          );
+        }
 
-      return true;
-    });
+        return true;
+      });
 
     const next = this.getOpponent(playerId);
 
@@ -1302,7 +2070,7 @@ export class SpoilsEngine {
 
     this.emit({
       type: "turnStarted",
-      playerId: next.id,
+      playerId: next.id
     });
   }
 
@@ -1313,12 +2081,12 @@ export class SpoilsEngine {
   private declareAttack(
     playerId: PlayerId,
     attackerIds: CardInstanceId[],
-    target: BattleState["target"],
+    target: BattleState["target"]
   ): void {
     assert(!this.state.battle, "Battle already in progress.");
     assert(
       playerId === this.state.activePlayerId,
-      "Only the active player may attack.",
+      "Only the active player may attack."
     );
     assert(attackerIds.length > 0, "No attackers selected.");
 
@@ -1327,14 +2095,21 @@ export class SpoilsEngine {
 
       assert(
         attacker.controllerId === playerId,
-        "You do not control an attacker.",
+        "You do not control an attacker."
       );
-      assert(attacker.zone === "play", "Attacker must be in play.");
       assert(
-        this.getDefinition(attackerId).type === "character",
-        "Only characters can attack.",
+        attacker.zone === "play",
+        "Attacker must be in play."
       );
-      assert(!attacker.depleted, "Depleted characters cannot attack.");
+      assert(
+        this.getDefinition(attackerId).type ===
+          "character",
+        "Only characters can attack."
+      );
+      assert(
+        !attacker.depleted,
+        "Depleted characters cannot attack."
+      );
 
       attacker.depleted = true;
     }
@@ -1342,60 +2117,78 @@ export class SpoilsEngine {
     const defenderId =
       target.type === "faction"
         ? target.playerId
-        : this.requireCard(target.cardId).controllerId;
+        : this.requireCard(target.cardId)
+            .controllerId;
 
     const battle: BattleState = {
       id: nextId("battle"),
       attackerPlayerId: playerId,
       defenderPlayerId: defenderId,
       target,
-      parties: attackerIds.map((attackerId) => ({
+      parties: attackerIds.map(attackerId => ({
         attackerId,
-        blockerIds: [],
+        blockerIds: []
       })),
-      phase: "blocking",
+      phase: "blocking"
     };
 
     this.state.battle = battle;
 
     this.emit({
       type: "battleStarted",
-      battleId: battle.id,
+      battleId: battle.id
     });
   }
 
   private declareBlockers(
     playerId: PlayerId,
-    blocks: Record<CardInstanceId, CardInstanceId[]>,
+    blocks: Record<
+      CardInstanceId,
+      CardInstanceId[]
+    >
   ): void {
     const battle = this.state.battle;
 
     assert(battle, "No battle in progress.");
     assert(
       battle.defenderPlayerId === playerId,
-      "Only the defending player can block.",
+      "Only the defending player can block."
     );
-    assert(battle.phase === "blocking", "Battle is not accepting blockers.");
+    assert(
+      battle.phase === "blocking",
+      "Battle is not accepting blockers."
+    );
 
     const usedBlockers = new Set<CardInstanceId>();
 
     for (const party of battle.parties) {
-      const blockerIds = blocks[party.attackerId] ?? [];
+      const blockerIds =
+        blocks[party.attackerId] ?? [];
 
       for (const blockerId of blockerIds) {
         const blocker = this.requireCard(blockerId);
 
         assert(
           blocker.controllerId === playerId,
-          "You do not control that blocker.",
+          "You do not control that blocker."
         );
-        assert(blocker.zone === "play", "Blocker must be in play.");
         assert(
-          this.getDefinition(blockerId).type === "character",
-          "Only characters can block.",
+          blocker.zone === "play",
+          "Blocker must be in play."
         );
-        assert(!blocker.depleted, "Depleted characters cannot block.");
-        assert(!usedBlockers.has(blockerId), "A character cannot block twice.");
+        assert(
+          this.getDefinition(blockerId).type ===
+            "character",
+          "Only characters can block."
+        );
+        assert(
+          !blocker.depleted,
+          "Depleted characters cannot block."
+        );
+        assert(
+          !usedBlockers.has(blockerId),
+          "A character cannot block twice."
+        );
 
         usedBlockers.add(blockerId);
       }
@@ -1422,7 +2215,10 @@ export class SpoilsEngine {
     const battle = this.state.battle;
 
     assert(battle, "No battle in progress.");
-    assert(battle.phase === "speed", "Battle is not ready to resolve.");
+    assert(
+      battle.phase === "speed",
+      "Battle is not ready to resolve."
+    );
 
     const participants = new Set<CardInstanceId>();
 
@@ -1436,8 +2232,10 @@ export class SpoilsEngine {
 
     const speeds = [
       ...new Set(
-        [...participants].map((cardId) => this.getStat(cardId, "speed")),
-      ),
+        [...participants].map(cardId =>
+          this.getStat(cardId, "speed")
+        )
+      )
     ].sort((a, b) => b - a);
 
     for (const speed of speeds) {
@@ -1450,49 +2248,66 @@ export class SpoilsEngine {
       }> = [];
 
       for (const party of battle.parties) {
-        const attacker = this.state.cards[party.attackerId];
+        const attacker =
+          this.state.cards[party.attackerId];
 
         if (
           attacker?.zone === "play" &&
-          this.getStat(attacker.id, "speed") === speed
+          this.getStat(attacker.id, "speed") ===
+            speed
         ) {
-          const livingBlockers = party.blockerIds.filter(
-            (blockerId) => this.state.cards[blockerId]?.zone === "play",
-          );
+          const livingBlockers =
+            party.blockerIds.filter(
+              blockerId =>
+                this.state.cards[blockerId]?.zone ===
+                "play"
+            );
 
           if (livingBlockers.length > 0) {
             pendingDamage.push({
               sourceId: attacker.id,
               target: {
                 type: "card",
-                cardId: livingBlockers[0],
+                cardId: livingBlockers[0]
               },
-              amount: this.getStat(attacker.id, "strength"),
+              amount: this.getStat(
+                attacker.id,
+                "strength"
+              )
             });
           } else {
             pendingDamage.push({
               sourceId: attacker.id,
               target: battle.target,
-              amount: this.getStat(attacker.id, "strength"),
+              amount: this.getStat(
+                attacker.id,
+                "strength"
+              )
             });
           }
         }
 
         for (const blockerId of party.blockerIds) {
-          const blocker = this.state.cards[blockerId];
+          const blocker =
+            this.state.cards[blockerId];
 
           if (
             blocker?.zone === "play" &&
-            this.getStat(blocker.id, "speed") === speed &&
-            this.state.cards[party.attackerId]?.zone === "play"
+            this.getStat(blocker.id, "speed") ===
+              speed &&
+            this.state.cards[party.attackerId]
+              ?.zone === "play"
           ) {
             pendingDamage.push({
               sourceId: blocker.id,
               target: {
                 type: "card",
-                cardId: party.attackerId,
+                cardId: party.attackerId
               },
-              amount: this.getStat(blocker.id, "strength"),
+              amount: this.getStat(
+                blocker.id,
+                "strength"
+              )
             });
           }
         }
@@ -1500,7 +2315,10 @@ export class SpoilsEngine {
 
       for (const damage of pendingDamage) {
         if (damage.target.type === "card") {
-          const target = this.state.cards[damage.target.cardId];
+          const target =
+            this.state.cards[
+              damage.target.cardId
+            ];
 
           if (!target || target.zone !== "play") {
             continue;
@@ -1512,10 +2330,12 @@ export class SpoilsEngine {
             type: "damageDealt",
             sourceId: damage.sourceId,
             targetId: target.id,
-            amount: damage.amount,
+            amount: damage.amount
           });
         } else {
-          this.requirePlayer(damage.target.playerId).influence -= damage.amount;
+          this.requirePlayer(
+            damage.target.playerId
+          ).influence -= damage.amount;
         }
       }
 
@@ -1528,7 +2348,7 @@ export class SpoilsEngine {
 
     this.emit({
       type: "battleEnded",
-      battleId,
+      battleId
     });
   }
 
@@ -1536,11 +2356,15 @@ export class SpoilsEngine {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  private meetsThreshold(playerId: PlayerId, threshold?: Threshold): boolean {
-    if (!threshold) {
+  private meetsThreshold(
+    playerId: PlayerId,
+    threshold: string | number
+  ): boolean {
+    if (!threshold || threshold === 0 || threshold === "") {
       return true;
     }
 
+    const required = parseThreshold(threshold);
     const player = this.requirePlayer(playerId);
 
     for (const trade of [
@@ -1548,9 +2372,12 @@ export class SpoilsEngine {
       "greed",
       "deception",
       "elitism",
-      "obsession",
-    ] as Trade[]) {
-      if ((player.thresholds[trade] ?? 0) < (threshold[trade] ?? 0)) {
+      "obsession"
+    ] as const) {
+      if (
+        (player.thresholds[trade] ?? 0) <
+        (required[trade] ?? 0)
+      ) {
         return false;
       }
     }
@@ -1558,7 +2385,9 @@ export class SpoilsEngine {
     return true;
   }
 
-  private getEventCardId(event?: GameEvent): CardInstanceId | undefined {
+  private getEventCardId(
+    event?: GameEvent
+  ): CardInstanceId | undefined {
     if (!event) {
       return undefined;
     }
@@ -1581,12 +2410,17 @@ export class SpoilsEngine {
     }
   }
 
-  private resetPriorityAfterAction(actingPlayerId: PlayerId): void {
+  private resetPriorityAfterAction(
+    actingPlayerId: PlayerId
+  ): void {
     this.consecutivePasses = 0;
-    this.state.priorityPlayerId = this.getOpponent(actingPlayerId).id;
+    this.state.priorityPlayerId =
+      this.getOpponent(actingPlayerId).id;
   }
 
-  private requireCard(id: CardInstanceId): CardInstance {
+  private requireCard(
+    id: CardInstanceId
+  ): CardInstance {
     const card = this.state.cards[id];
 
     assert(card, `Card '${id}' not found.`);
@@ -1594,7 +2428,9 @@ export class SpoilsEngine {
     return card;
   }
 
-  private requirePlayer(id: PlayerId): PlayerState {
+  private requirePlayer(
+    id: PlayerId
+  ): PlayerState {
     const player = this.state.players[id];
 
     assert(player, `Player '${id}' not found.`);
@@ -1602,16 +2438,192 @@ export class SpoilsEngine {
     return player;
   }
 
-  private getOpponent(playerId: PlayerId): PlayerState {
-    const opponent = Object.values(this.state.players).find(
-      (player) => player.id !== playerId,
-    );
+  private getOpponent(
+    playerId: PlayerId
+  ): PlayerState {
+    const opponent = Object.values(
+      this.state.players
+    ).find(player => player.id !== playerId);
 
     assert(
       opponent,
-      "This barebones engine currently expects exactly two players.",
+      "This barebones engine currently expects exactly two players."
     );
 
     return opponent;
   }
 }
+
+// -----------------------------------------------------------------------------
+// Setup helpers
+// -----------------------------------------------------------------------------
+
+export function createCardInstance(
+  definitionId: CardDefinitionId,
+  ownerId: PlayerId,
+  zone: Zone = "deck"
+): CardInstance {
+  return {
+    id: nextId("card"),
+    definitionId,
+    ownerId,
+    controllerId: ownerId,
+    zone,
+    depleted: false,
+    damage: 0,
+    counters: {}
+  };
+}
+
+export function createTwoPlayerGame(
+  playerA: {
+    id: PlayerId;
+    name: string;
+    influence?: number;
+  },
+  playerB: {
+    id: PlayerId;
+    name: string;
+    influence?: number;
+  },
+  cards: CardInstance[]
+): GameState {
+  const players: Record<PlayerId, PlayerState> = {};
+
+  for (const player of [playerA, playerB]) {
+    players[player.id] = {
+      id: player.id,
+      name: player.name,
+      influence: player.influence ?? 25,
+      resources: 0,
+      thresholds: {},
+      deck: [],
+      hand: [],
+      play: [],
+      discard: [],
+      void: []
+    };
+  }
+
+  const cardMap: Record<
+    CardInstanceId,
+    CardInstance
+  > = {};
+
+  for (const card of cards) {
+    cardMap[card.id] = card;
+
+    const player =
+      players[
+        card.zone === "play"
+          ? card.controllerId
+          : card.ownerId
+      ];
+
+    assert(
+      player,
+      `Unknown player for card '${card.id}'.`
+    );
+
+    switch (card.zone) {
+      case "deck":
+        player.deck.push(card.id);
+        break;
+      case "hand":
+        player.hand.push(card.id);
+        break;
+      case "play":
+        player.play.push(card.id);
+        break;
+      case "discard":
+        player.discard.push(card.id);
+        break;
+      case "void":
+        player.void.push(card.id);
+        break;
+      case "deploying":
+        break;
+    }
+  }
+
+  return {
+    turn: 1,
+    activePlayerId: playerA.id,
+    priorityPlayerId: playerA.id,
+    players,
+    cards: cardMap,
+    modifiers: []
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Real card catalog from cards.json
+// -----------------------------------------------------------------------------
+
+export const CARD_CATALOG = cardsJson as CardDefinition[];
+
+export function getCatalogCard(
+  id: CardDefinitionId
+): CardDefinition {
+  const card = CARD_CATALOG.find(card => card.id === id);
+
+  assert(
+    card,
+    `Card definition '${id}' was not found in cards.json.`
+  );
+
+  return card;
+}
+
+export function findCatalogCard(
+  name: string,
+  set?: string
+): CardDefinition {
+  const matches = CARD_CATALOG.filter(
+    card =>
+      card.name === name &&
+      (set === undefined || card.set === set)
+  );
+
+  assert(
+    matches.length > 0,
+    `Card '${name}'${set ? ` from '${set}'` : ""} was not found in cards.json.`
+  );
+
+  assert(
+    matches.length === 1,
+    `Card '${name}' matched ${matches.length} entries. Specify a set or use its id.`
+  );
+
+  return matches[0];
+}
+
+
+/*
+Project layout:
+
+  spoils-engine-catalog.ts
+  cards.json
+
+tsconfig.json needs:
+
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  }
+}
+
+Behavior can be attached later without changing the scraped fields:
+
+const creeper = findCatalogCard(
+  "Compulsive Creeper",
+  "1st Edition"
+);
+
+creeper.behavior = {
+  abilities: [
+    // declarative abilities
+  ]
+};
+*/
