@@ -4,7 +4,8 @@ export type CardInstanceId = string;
 export type AbilityId = string;
 export type ModifierId = string;
 export type BattleId = string;
-export type Trade = "rage" | "greed" | "deception" | "elitism" | "obsession";
+export type Trade = "arcanist" | "banker" | "gearsmith" | "rogue" | "warlord" | "universal" | "Universal";
+export type Keyword = "tactical" | "aggro" | "covert";
 export type CardType = "character" | "item" | "location" | "tactic" | "resource" | "faction";
 export type Zone = "deck" | "hand" | "deploying" | "play" | "discard" | "void";
 export type Stat = "strength" | "life" | "speed" | "influence";
@@ -23,6 +24,50 @@ export interface Threshold {
     deception?: number;
     elitism?: number;
     obsession?: number;
+    volition?: number;
+}
+export type ResourceIcon = keyof Threshold;
+export type DevelopChoice = {
+    type: "draw";
+    count: number;
+} | {
+    type: "playResource";
+    count: number;
+};
+export interface FactionDefinition {
+    startingInfluence: number;
+    setup: {
+        startingResources: {
+            count: number;
+            /** Optional exact resource names for factions that require specific cards. */
+            names?: string[];
+            /** Tournament Faction uses staple resources. */
+            stapleOnly?: boolean;
+        };
+        openingHand: {
+            goingFirst: number;
+            goingSecond: number;
+        };
+        mulligan?: {
+            count: number;
+            mode: "replaceAny";
+        };
+    };
+    turn: {
+        restore: {
+            clearCharacterDamage: boolean;
+            detachResources: boolean;
+            restoreNonResources: boolean;
+        };
+        develop: {
+            choices: DevelopChoice[];
+        };
+    };
+}
+export interface ResourceDefinition {
+    /** Explicit icon data overrides staple-name inference. */
+    provides?: ResourceIcon[];
+    staple?: boolean;
 }
 export interface CardStats {
     strength?: number;
@@ -45,8 +90,13 @@ export interface CardDefinition {
     influence?: number;
     subtype: string[];
     text: string;
+    /** Present only on faction cards. */
+    faction?: FactionDefinition;
+    /** Optional structured resource metadata. */
+    resource?: ResourceDefinition;
     behavior?: {
         abilities?: AbilityDefinition[];
+        keywords?: Keyword[];
     };
 }
 export type AbilityDefinition = ActivatedAbility | TriggeredAbility | ContinuousAbility;
@@ -81,14 +131,24 @@ export interface CardInstance {
     zone: Zone;
     depleted: boolean;
     damage: number;
+    /** Face-down cards in play are resources and provide Volition. */
+    faceDown: boolean;
+    /** Numeric costs attach resources to the player's faction. */
+    attachedTo?: CardInstanceId;
+    /**
+     * The turn number on which this card started the turn in play under its
+     * current controller. AGGRO ignores this restriction.
+     */
+    attackEligibleTurn?: number;
     counters: Record<string, number>;
 }
 export interface PlayerState {
     id: PlayerId;
     name: string;
+    /** Runtime instance of this player's faction card. */
+    factionId?: CardInstanceId;
+    /** Current score. Initial value comes from faction.startingInfluence. */
     influence: number;
-    resources: number;
-    thresholds: Threshold;
     deck: CardInstanceId[];
     hand: CardInstanceId[];
     play: CardInstanceId[];
@@ -106,10 +166,18 @@ export interface RuntimeModifier {
     duration: Duration;
     createdTurn: number;
 }
-export interface BattleParty {
-    attackerId: CardInstanceId;
-    blockerIds: CardInstanceId[];
+export interface BattleDamageAssignment {
+    sourceId: CardInstanceId;
+    target: {
+        type: "card";
+        cardId: CardInstanceId;
+    } | {
+        type: "faction";
+        playerId: PlayerId;
+    };
+    amount: number;
 }
+export type BattlePhase = "afterAttackersResponse" | "blocking" | "beforeDamageResponse" | "attackerDamageAssignment" | "defenderDamageAssignment" | "afterDamageResponse" | "finished";
 export interface BattleState {
     id: BattleId;
     attackerPlayerId: PlayerId;
@@ -121,16 +189,103 @@ export interface BattleState {
         type: "card";
         cardId: CardInstanceId;
     };
-    parties: BattleParty[];
-    phase: "declared" | "blocking" | "speed" | "finished";
+    attackingParty: CardInstanceId[];
+    blockingParty: CardInstanceId[];
+    phase: BattlePhase;
+    /** Current speed group. Undefined between groups. */
+    speed?: number;
+    /** Characters that have already assigned battle damage this battle. */
+    assignedDamageBy: CardInstanceId[];
+    /** Locked assignments for the current speed group. */
+    attackerAssignments: BattleDamageAssignment[];
+    defenderAssignments: BattleDamageAssignment[];
+}
+export interface BattleView {
+    battleId: BattleId;
+    phase: BattlePhase;
+    speed?: number;
+    attackerPlayerId: PlayerId;
+    defenderPlayerId: PlayerId;
+    attackingParty: CardInstanceId[];
+    blockingParty: CardInstanceId[];
+    actingPlayerId?: PlayerId;
+    damageSources: Array<{
+        cardId: CardInstanceId;
+        strength: number;
+        legalTargets: Array<{
+            type: "card";
+            cardId: CardInstanceId;
+        } | {
+            type: "faction";
+            playerId: PlayerId;
+        }>;
+    }>;
+    lockedAssignments: BattleDamageAssignment[];
+}
+export type ResponseWindowKind = "action" | "endTurn" | "battleAfterAttackers" | "battleBeforeDamage" | "battleAfterDamage";
+export type ResponseContinuation = {
+    type: "main";
+} | {
+    type: "endTurn";
+    playerId: PlayerId;
+} | {
+    type: "battleBlocking";
+    battleId: BattleId;
+} | {
+    type: "battleAssignDamage";
+    battleId: BattleId;
+} | {
+    type: "battleInflictDamage";
+    battleId: BattleId;
+};
+export interface ResponseWindowState {
+    id: string;
+    kind: ResponseWindowKind;
+    /**
+     * acceptingResponses:
+     *   players may deploy tactics / TACTICAL cards and use abilities.
+     *
+     * resolving:
+     *   no new responses may be added. advanceFlow() resolves one stack item
+     *   per call until the stack is empty, then resumes the interrupted flow.
+     */
+    phase: "acceptingResponses" | "resolving";
+    firstPlayerId: PlayerId;
+    priorityPlayerId: PlayerId;
+    consecutivePasses: number;
+    continuation: ResponseContinuation;
+}
+export type TurnPhase = "develop" | "main";
+export type GameSetupState = {
+    phase: "mulligan";
+    order: PlayerId[];
+    currentIndex: number;
+} | {
+    phase: "complete";
+};
+export interface GameFlowView {
+    activePlayerId: PlayerId;
+    priorityPlayerId: PlayerId;
+    mode: "setup" | "develop" | "main" | "response" | "resolvingResponses" | "battleChoice" | "battleFinished";
+    turnPhase: TurnPhase;
+    setup: GameSetupState;
+    responseWindow?: ResponseWindowState;
+    responseStack: StackItem[];
+    battle?: BattleView;
 }
 export interface GameState {
     turn: number;
     activePlayerId: PlayerId;
     priorityPlayerId: PlayerId;
+    turnPhase: TurnPhase;
+    setup: GameSetupState;
+    started: boolean;
     players: Record<PlayerId, PlayerState>;
     cards: Record<CardInstanceId, CardInstance>;
     modifiers: RuntimeModifier[];
+    /** Fully serializable response/stack state for UI, replay, or networking. */
+    responseStack: StackItem[];
+    responseWindow?: ResponseWindowState;
     battle?: BattleState;
 }
 export type PlayerRef = "controller" | "owner" | "activePlayer" | "opponent" | {
@@ -233,6 +388,14 @@ export type Effect = {
     player: PlayerRef;
     amount: NumberExpression;
 } | {
+    /**
+     * Play a selected card as a resource. "auto" plays actual resource
+     * cards face-up and all other cards face-down.
+     */
+    type: "playResource";
+    target: TargetRef;
+    faceDown: boolean | "auto";
+} | {
     type: "dealDamage";
     target: TargetRef;
     amount: NumberExpression;
@@ -307,6 +470,11 @@ export interface GameEventMap {
     cardRestored: {
         cardId: CardInstanceId;
     };
+    resourcePlayed: {
+        cardId: CardInstanceId;
+        playerId: PlayerId;
+        faceDown: boolean;
+    };
     damageDealt: {
         sourceId?: CardInstanceId;
         targetId: CardInstanceId;
@@ -366,6 +534,22 @@ export type GameAction = {
     type: "passPriority";
     playerId: PlayerId;
 } | {
+    type: "mulligan";
+    playerId: PlayerId;
+    cardIds: CardInstanceId[];
+} | {
+    type: "chooseDevelop";
+    playerId: PlayerId;
+    choice: {
+        type: "draw";
+    } | {
+        type: "playResource";
+        cards: Array<{
+            cardId: CardInstanceId;
+            faceDown: boolean;
+        }>;
+    };
+} | {
     type: "endTurn";
     playerId: PlayerId;
 } | {
@@ -382,18 +566,55 @@ export type GameAction = {
 } | {
     type: "declareBlockers";
     playerId: PlayerId;
-    blocks: Record<CardInstanceId, CardInstanceId[]>;
+    blockerIds: CardInstanceId[];
+} | {
+    /** Resolve one automatic game-flow step. */
+    type: "advanceFlow";
+} | {
+    /** Backward-compatible alias for advanceFlow while a battle exists. */
+    type: "advanceBattle";
+    playerId: PlayerId;
+} | {
+    type: "assignBattleDamage";
+    playerId: PlayerId;
+    assignments: BattleDamageAssignment[];
 };
 export declare function parseThreshold(threshold: string | number): Threshold;
+export declare const TOURNAMENT_FACTION_DEFAULTS: FactionDefinition;
+export declare const TOURNAMENT_FACTION_BEHAVIOR: NonNullable<CardDefinition["behavior"]>;
 export declare class SpoilsEngine {
     readonly definitions: Record<CardDefinitionId, CardDefinition>;
     readonly state: GameState;
-    readonly responseStack: StackItem[];
     readonly immediateQueue: TriggerResolution[];
-    private consecutivePasses;
+    /**
+     * Event batches delay triggered-ability execution until a simultaneous group
+     * of mutations is complete. Battle damage uses this so one damage event
+     * cannot interrupt another member of the same speed group.
+     */
+    private eventBatchDepth;
     constructor(definitions: CardDefinition[], initialState: GameState);
+    get responseStack(): StackItem[];
     perform(action: GameAction): void;
+    /**
+     * Single query surface intended for a UI / renderer.
+     */
+    getFlowView(): GameFlowView;
     getDefinition(cardId: CardInstanceId): CardDefinition;
+    getFactionCard(playerId: PlayerId): CardInstance | undefined;
+    getFactionDefinition(playerId: PlayerId): FactionDefinition | undefined;
+    isResource(cardId: CardInstanceId): boolean;
+    getAvailableResourceIds(playerId: PlayerId): CardInstanceId[];
+    getAvailableResourceCount(playerId: PlayerId): number;
+    getThresholds(playerId: PlayerId): Threshold;
+    getDevelopChoices(playerId: PlayerId): DevelopChoice[];
+    private getResourceIcons;
+    private payNumericCost;
+    private drawCards;
+    private playResourceCard;
+    startGameAfterSetup(): void;
+    private mulligan;
+    private chooseDevelop;
+    private applyFactionStartOfTurn;
     getStat(cardId: CardInstanceId, stat: Stat): number;
     getAvailableActivatedAbilities(playerId: PlayerId): Array<{
         cardId: CardInstanceId;
@@ -404,9 +625,31 @@ export declare class SpoilsEngine {
     private getPlayTargetDeclarations;
     private getTacticEffects;
     private activateAbility;
+    /**
+     * Passing never resolves hidden work immediately. Two consecutive passes
+     * switch the response window to "resolving". The renderer can animate that
+     * transition and call advanceFlow() when it is ready for the next item.
+     */
     private passPriority;
+    /**
+     * Advances exactly one automatic step:
+     *
+     * 1. Resolve one response-stack item, OR
+     * 2. Resume the interrupted turn/battle flow once the stack is empty, OR
+     * 3. Clear a finished battle after the UI has had a chance to render it.
+     */
+    private advanceFlow;
     private resolveTopOfStack;
+    private afterStackAction;
+    private openResponseWindow;
+    private resumeContinuation;
+    private assertCanDeployAtCurrentTiming;
+    private assertCanUseAbilityAtCurrentTiming;
+    private canUseAbilityAtCurrentTiming;
+    private requireResponseWindow;
     emit(event: GameEvent): void;
+    private beginEventBatch;
+    private endEventBatch;
     private findTriggers;
     private processImmediateQueue;
     evaluateCondition(condition: Condition, context: ResolutionContext): boolean;
@@ -426,25 +669,40 @@ export declare class SpoilsEngine {
     private destroyCard;
     private removeFromAllPlayerZones;
     private getZoneArray;
+    /**
+     * "End turn" is an announcement. The opponent gets a normal response window
+     * before the turn actually changes.
+     */
     private endTurn;
+    private finishTurn;
+    getBattleView(): BattleView | undefined;
     private declareAttack;
     private declareBlockers;
+    private prepareNextSpeedGroupOrFinish;
+    private enterDamageAssignment;
+    private assignBattleDamage;
+    private openPostAssignmentResponse;
+    private getBattleDamageSources;
+    private canAssignBattleDamage;
+    private getLegalBattleDamageTargets;
+    private getNextBattleSpeed;
+    private inflictLockedBattleDamage;
+    private pruneBattleParties;
+    private isCardStillInBattle;
+    private sameBattleTarget;
+    private assertCovertBlockingLegality;
+    private isBattleResponseWindow;
+    private requireBattle;
+    private requireBattleId;
     /**
-     * Resolves the current battle using a deliberately small model:
-     *
-     * - Highest remaining speed resolves first.
-     * - All characters in that speed group deal damage simultaneously.
-     * - Blocked attackers damage blockers in declaration order.
-     * - Blockers damage their paired attacker.
-     * - Unblocked attackers damage the battle target.
-     *
-     * This is enough to wire UI and card triggers around combat now.
-     * More exact Spoils assignment rules can replace only this method later.
+     * The finished battle remains in GameState until advanceFlow() is called,
+     * allowing a renderer to show/animate the final state.
      */
-    resolveBattle(): void;
+    private finishBattle;
     private meetsThreshold;
     private getEventCardId;
-    private resetPriorityAfterAction;
+    private definitionHasKeyword;
+    private hasKeyword;
     private requireCard;
     private requirePlayer;
     private getOpponent;
@@ -462,3 +720,29 @@ export declare function createTwoPlayerGame(playerA: {
 export declare const CARD_CATALOG: CardDefinition[];
 export declare function getCatalogCard(id: CardDefinitionId): CardDefinition;
 export declare function findCatalogCard(name: string, set?: string): CardDefinition;
+export interface FactionPlayerSetup {
+    id: PlayerId;
+    name: string;
+    /**
+     * May be omitted when deckDefinitionIds contains exactly one faction card.
+     * The faction is removed from the draw deck automatically.
+     */
+    factionDefinitionId?: CardDefinitionId;
+    deckDefinitionIds: CardDefinitionId[];
+}
+export interface FactionGameSetupOptions {
+    firstPlayerId?: PlayerId;
+    random?: () => number;
+}
+/**
+ * Creates a complete two-player game using faction-defined setup rules.
+ *
+ * Resulting flow for The Tournament Faction:
+ *   faction enters play
+ *   -> find 2 staple resources and put them in play
+ *   -> shuffle
+ *   -> first player draws 8, second draws 9
+ *   -> mulligan decisions in turn order
+ *   -> start turn 1 in the develop phase
+ */
+export declare function createTwoPlayerFactionGame(definitionsInput: CardDefinition[], playerA: FactionPlayerSetup, playerB: FactionPlayerSetup, options?: FactionGameSetupOptions): SpoilsEngine;

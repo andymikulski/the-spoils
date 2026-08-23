@@ -2980,6 +2980,86 @@
     "name": "The Tournament Faction",
     "set": "1st Edition",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11328,6 +11408,86 @@
     "name": "The Tournament Faction",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11340,6 +11500,86 @@
     "name": "Unlikely Heroes",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11352,6 +11592,86 @@
     "name": "Lugubrian Council Expedition Division",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11364,6 +11684,86 @@
     "name": "The Primitive Tribes of Thabbash",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -14342,6 +14742,86 @@
     "name": "The Tournament Faction",
     "set": "Open Beta",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17426,6 +17906,86 @@
     "name": "The Tournament Faction",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17438,6 +17998,86 @@
     "name": "Moist Cave of the Darkpump",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17450,6 +18090,86 @@
     "name": "Order of the Golden String",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17462,6 +18182,86 @@
     "name": "Alliance of Handy Weirdos",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17474,6 +18274,86 @@
     "name": "Drowned Catacombs",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17486,6 +18366,86 @@
     "name": "Hall of Great Justice",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19489,6 +20449,86 @@
     "name": "The Evil Alliance",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19501,6 +20541,86 @@
     "name": "The Society of Magical Propriety",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19513,6 +20633,86 @@
     "name": "The Knitting Coalition",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19525,6 +20725,86 @@
     "name": "The Open R&D Faction",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19537,6 +20817,86 @@
     "name": "The Union of Unextraordinary Miners",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19549,6 +20909,86 @@
     "name": "Imperial Army",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19561,6 +21001,86 @@
     "name": "Counter-Imperial Army",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19573,6 +21093,86 @@
     "name": "Slightly Less Evil Alliance",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24354,6 +25954,86 @@
     "name": "The Tournament Faction",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24366,6 +26046,86 @@
     "name": "Moist Cave of the Darkpump",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24378,6 +26138,86 @@
     "name": "Order of the Golden String",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24390,6 +26230,86 @@
     "name": "Alliance of Handy Weirdos",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24402,6 +26322,86 @@
     "name": "Drowned Catacombs",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24414,6 +26414,86 @@
     "name": "Hall of Great Justice",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24426,6 +26506,86 @@
     "name": "Defenders of Marduun",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24438,6 +26598,86 @@
     "name": "Legions of Chaos",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,

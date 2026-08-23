@@ -2,6 +2,8 @@
 import cardsJson from "./data/cards.js";
 import { SpoilsEngine, createTwoPlayerGame, createCardInstance, getCatalogCard } from "./engine.js";
 export const CARD_CATALOG = cardsJson;
+const CARD_DATABASE_URL = "/data/cards.json";
+const CARD_IMAGE_ROOT = "/data/assets";
 // -----------------------------------------------------------------------------
 // Example game bootstrap
 // -----------------------------------------------------------------------------
