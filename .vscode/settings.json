@@ -3,5 +3,16 @@
     "activityBar.background": "#282D39",
     "titleBar.activeBackground": "#38404F",
     "titleBar.activeForeground": "#FAFAFB"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "js/**": true,
+    "node_modules": true,
+    "**/*-lock.json": true,
+    "**/*.lock": true,
   }
 }
