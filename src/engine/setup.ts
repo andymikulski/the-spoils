@@ -117,7 +117,11 @@ export function createTwoPlayerGame(
     players,
     cards: cardMap,
     modifiers: [],
-    responseStack: []
+    keywordGrants: [],
+    restrictions: [],
+    costReductions: [],
+    responseStack: [],
+    pendingEffectFrames: []
   };
 
   // Anything already in play before turn 1 began counts as having started

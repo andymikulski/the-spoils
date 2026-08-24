@@ -151,6 +151,8 @@ export interface BuildGameOptions {
   turnPhase?: TurnPhase;
   priorityPlayerId?: PlayerId;
   responseWindow?: ResponseWindowState;
+  /** Overrides the engine's RNG (shuffling, coin flips, random targets) for deterministic tests. Defaults to Math.random. */
+  random?: () => number;
 }
 
 export interface BuiltGame {
@@ -228,7 +230,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   state.started = true;
   state.responseWindow = options.responseWindow;
 
-  const engine = new SpoilsEngine(definitions, state);
+  const engine = new SpoilsEngine(definitions, state, options.random);
 
   // createTwoPlayerGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for

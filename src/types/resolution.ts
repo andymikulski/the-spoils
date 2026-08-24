@@ -15,6 +15,9 @@ export interface ResolutionContext {
   event?: GameEvent;
 
   selected: Record<string, CardInstanceId[]>;
+
+  /** Player-chosen numeric variables ("choose a number for X"), keyed by id. Unassigned reads as 0. */
+  variables?: Record<string, number>;
 }
 
 export interface TriggerResolution {

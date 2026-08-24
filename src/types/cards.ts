@@ -5,8 +5,8 @@
 import type { AbilityId, CardDefinitionId, CardType, Keyword, Trade } from "./ids.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
-import type { TargetDeclaration } from "./expressions.js";
-import type { Effect, ModifierDefinition } from "./effects.js";
+import type { NumberExpression, TargetDeclaration } from "./expressions.js";
+import type { Effect, KeywordGrantDefinition, ModifierDefinition, RestrictionGrantDefinition } from "./effects.js";
 import type { GameEventType } from "./events.js";
 
 export interface Threshold {
@@ -134,6 +134,15 @@ export interface ActivatedAbility extends AbilityBase {
   costs?: Cost[];
   targets?: TargetDeclaration[];
   effects: Effect[];
+  /**
+   * Evaluated once, before `condition`/`targets`/`costs`, and merged into
+   * the resolution context's `variables` — for a value that has to be
+   * settled before targeting can even be validated, e.g. "flip a coin; X
+   * is 1 or 2. Pick X or fewer items" (`{ x: { type: "random", min: 1,
+   * max: 2 } } }`). An explicit `variables[id]` on the action itself still
+   * takes precedence over the same id here.
+   */
+  variables?: Record<string, NumberExpression>;
 }
 
 export interface TriggeredAbility extends AbilityBase {
@@ -148,4 +157,8 @@ export interface ContinuousAbility extends AbilityBase {
   type: "continuous";
   condition?: Condition;
   modifiers: ModifierDefinition[];
+  /** Keywords granted to `target` while `condition` holds (e.g. "the attached character gains COVERT"). */
+  keywords?: KeywordGrantDefinition[];
+  /** Restrictions granted to `target` while `condition` holds (e.g. "the attached character cannot attack or block"). */
+  restrictions?: RestrictionGrantDefinition[];
 }

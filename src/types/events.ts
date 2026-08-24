@@ -67,6 +67,18 @@ export interface GameEventMap {
   battleEnded: {
     battleId: BattleId;
   };
+
+  /** "When this card attacks" — once per attacker, at declareAttack. */
+  characterAttacked: {
+    cardId: CardInstanceId;
+    battleId: BattleId;
+  };
+
+  /** "When this card blocks" — once per blocker, at declareBlockers. */
+  characterBlocked: {
+    cardId: CardInstanceId;
+    battleId: BattleId;
+  };
 }
 
 export type GameEventType = keyof GameEventMap;

@@ -8,14 +8,17 @@ import type {
   CardDefinitionId,
   CardInstanceId,
   Duration,
+  Keyword,
   ModifierId,
   ModifierOperation,
   PlayerId,
+  Restriction,
   Stat,
   Zone
 } from "./ids.js";
-import type { StackItem } from "./resolution.js";
+import type { ResolutionContext, StackItem } from "./resolution.js";
 import type { PendingChoice } from "./choices.js";
+import type { Effect } from "./effects.js";
 
 export interface CardInstance {
   id: CardInstanceId;
@@ -76,6 +79,59 @@ export interface RuntimeModifier {
 
   duration: Duration;
   createdTurn: number;
+}
+
+/** A temporary keyword grant from a `grantKeyword` effect (e.g. "this turn, the character gains COVERT"). */
+export interface RuntimeKeywordGrant {
+  id: ModifierId;
+
+  sourceId?: CardInstanceId;
+
+  targetId: CardInstanceId;
+  keyword: Keyword;
+
+  duration: Duration;
+  createdTurn: number;
+}
+
+/** A temporary restriction grant from a `grantRestriction` effect (e.g. "this turn, the character cannot attack"). */
+export interface RuntimeRestriction {
+  id: ModifierId;
+
+  sourceId?: CardInstanceId;
+
+  targetId: CardInstanceId;
+  restriction: Restriction;
+
+  duration: Duration;
+  createdTurn: number;
+}
+
+/** A pending "reduce the next numeric cost you pay this turn" from a `reduceNextCost` effect, consumed by one `playCard`. */
+export interface RuntimeCostReduction {
+  id: ModifierId;
+
+  playerId: PlayerId;
+  amount: number;
+
+  createdTurn: number;
+}
+
+/**
+ * A suspended point in an effects list — pushed when a "chooser" effect
+ * (`chooserSelectsTarget`, `chooserSelectsOption`, `lookAndReorder`,
+ * `deployForFree`) needs a specific player's input mid-resolution.
+ * `SpoilsEngine.runEffectFrame` resumes from `index` once that choice is
+ * answered. `finishStackItem`, if set, is the response-stack item whose
+ * post-effects bookkeeping (moving a tactic to discard, a permanent into
+ * play) runs once every effect in `effects` — including anything a paused
+ * chooser effect goes on to add — has finished.
+ */
+export interface PendingEffectFrame {
+  effects: Effect[];
+  index: number;
+  context: ResolutionContext;
+  finishStackItem?: StackItem;
 }
 
 export interface BattleDamageAssignment {
@@ -229,10 +285,16 @@ export interface GameState {
   cards: Record<CardInstanceId, CardInstance>;
 
   modifiers: RuntimeModifier[];
+  keywordGrants: RuntimeKeywordGrant[];
+  restrictions: RuntimeRestriction[];
+  costReductions: RuntimeCostReduction[];
 
   /** Fully serializable response/stack state for UI, replay, or networking. */
   responseStack: StackItem[];
   responseWindow?: ResponseWindowState;
+
+  /** Suspended effect-list resumption points — see PendingEffectFrame. Only the top of the stack is "live." */
+  pendingEffectFrames: PendingEffectFrame[];
 
   battle?: BattleState;
 

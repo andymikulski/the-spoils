@@ -12,6 +12,8 @@ export type GameAction =
       playerId: PlayerId;
       cardId: CardInstanceId;
       selected?: Record<string, CardInstanceId[]>;
+      /** Player-chosen numeric variables ("choose a number for X"), see NumberExpression's "variable" case. */
+      variables?: Record<string, number>;
     }
   | {
       type: "activateAbility";
@@ -19,6 +21,7 @@ export type GameAction =
       cardId: CardInstanceId;
       abilityId: AbilityId;
       selected?: Record<string, CardInstanceId[]>;
+      variables?: Record<string, number>;
     }
   | {
       type: "passPriority";
@@ -77,5 +80,21 @@ export type GameAction =
       choice:
         | { kind: "uniqueSurvivor"; keep: CardInstanceId }
         | { kind: "selectTargets"; selected: Record<string, CardInstanceId[]> }
-        | { kind: "orderTriggers"; order: TriggerRef[] };
+        | { kind: "orderTriggers"; order: TriggerRef[] }
+        | { kind: "chooserSelectsTarget"; selected: CardInstanceId[] }
+        | { kind: "chooserSelectsOption"; index: number }
+        | { kind: "reorderDeck"; order: CardInstanceId[] }
+        | {
+            kind: "deployForFree";
+            /** Omit to decline. */
+            cardId?: CardInstanceId;
+            /** The chosen card's own extra-cost target declarations, same shape as playCard's `selected`. */
+            selected?: Record<string, CardInstanceId[]>;
+            variables?: Record<string, number>;
+          }
+        | {
+            kind: "distributeAmong";
+            /** Per-card shares; omitted/zero cards receive nothing. Must sum to the pending amount. */
+            shares: Record<CardInstanceId, number>;
+          };
     };

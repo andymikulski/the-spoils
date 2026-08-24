@@ -13,6 +13,8 @@
 
 import type { AbilityId, CardInstanceId, PlayerId } from "./ids.js";
 import type { TargetDeclaration } from "./expressions.js";
+import type { Effect } from "./effects.js";
+import type { ResolutionContext } from "./resolution.js";
 
 export interface PendingUniqueSurvivorChoice {
   kind: "uniqueSurvivor";
@@ -48,7 +50,62 @@ export interface PendingTriggerOrderChoice {
   triggers: TriggerRef[];
 }
 
+/** "An opponent discards a card" — `chooser` picks a target from `declaration`, then `effects` runs (see the `chooserSelectsTarget` effect). */
+export interface PendingChooserTargetChoice {
+  kind: "chooserSelectsTarget";
+  id: string;
+  playerId: PlayerId;
+  declaration: TargetDeclaration;
+  effects: Effect[];
+  context: ResolutionContext;
+}
+
+/** "An opponent chooses one of the following effects" — `chooser` picks one of `options` to resolve in full (see the `chooserSelectsOption` effect). */
+export interface PendingChooserOptionChoice {
+  kind: "chooserSelectsOption";
+  id: string;
+  playerId: PlayerId;
+  optionCount: number;
+  options: Effect[][];
+  context: ResolutionContext;
+}
+
+/** "Look at the top N cards... put them back in any order" (see the `lookAndReorder` effect). */
+export interface PendingReorderDeckChoice {
+  kind: "reorderDeck";
+  id: string;
+  playerId: PlayerId;
+  /** The cards being looked at, in their current top-to-bottom order. */
+  cardIds: CardInstanceId[];
+}
+
+/** "You may deploy a card with cost X or less for free" (see the `deployForFree` effect). */
+export interface PendingDeployForFreeChoice {
+  kind: "deployForFree";
+  id: string;
+  playerId: PlayerId;
+  /** Legal hand cards (matching maxCost/selector) at the moment this paused. */
+  candidates: CardInstanceId[];
+  context: ResolutionContext;
+}
+
+/** "Divide N however you want among the selected cards" (see the `distributeAmong` effect). */
+export interface PendingDistributeChoice {
+  kind: "distributeAmong";
+  id: string;
+  playerId: PlayerId;
+  targets: CardInstanceId[];
+  amount: number;
+  effects: Effect[];
+  context: ResolutionContext;
+}
+
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
-  | PendingTriggerOrderChoice;
+  | PendingTriggerOrderChoice
+  | PendingChooserTargetChoice
+  | PendingChooserOptionChoice
+  | PendingReorderDeckChoice
+  | PendingDeployForFreeChoice
+  | PendingDistributeChoice;

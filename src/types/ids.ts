@@ -21,7 +21,20 @@ export type Trade =
 export type Keyword =
   | "tactical"
   | "aggro"
-  | "covert";
+  | "covert"
+  /**
+   * While attacking and blocked, this character's controller may assign
+   * its battle damage to the attack's original target instead of the
+   * blocking party (e.g. Raging Bask) — `getLegalBattleDamageTargets`
+   * appends that target as an extra option rather than replacing the
+   * blockers, since it's "may... instead of," not a forced redirect.
+   */
+  | "redirectDamage";
+
+/** A boolean combat restriction, granted like a Keyword but never printed statically — always via a `grantRestriction` effect or `ContinuousAbility.restrictions`. */
+export type Restriction =
+  | "cannotAttack"
+  | "cannotBlock";
 
 export type CardType =
   | "character"
