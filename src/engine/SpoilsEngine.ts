@@ -43,6 +43,8 @@ import type {
 } from "../types/index.js";
 import { assert, compare, nextId, parseThreshold, withBuiltInFactionDefaults } from "./utilities.js";
 
+/** Reserved target-declaration id for an "Attach to X" card's play-time target. */
+const ATTACH_TARGET_ID = "attachTo";
 
 export class SpoilsEngine {
   readonly definitions: Record<CardDefinitionId, CardDefinition>;
@@ -90,6 +92,16 @@ export class SpoilsEngine {
   // ---------------------------------------------------------------------------
 
   perform(action: GameAction): void {
+    // Once the game has ended, only let already-in-flight resolution (a
+    // battle finishing, a response window closing) drain to a clean stop —
+    // block anything that would start something new.
+    const isDraining =
+      !!this.state.responseWindow ||
+      !!this.state.battle ||
+      this.responseStack.length > 0;
+
+    assert(!this.state.winner || isDraining, "The game has already ended.");
+
     if (this.state.setup.phase === "mulligan" && action.type !== "mulligan") {
       throw new Error("Opening mulligans must be completed before play begins.");
     }
@@ -154,7 +166,9 @@ export class SpoilsEngine {
     let mode: GameFlowView["mode"] =
       this.state.turnPhase === "develop" ? "develop" : "main";
 
-    if (this.state.setup.phase === "mulligan") {
+    if (this.state.winner) {
+      mode = "gameOver";
+    } else if (this.state.setup.phase === "mulligan") {
       mode = "setup";
     } else if (this.state.responseWindow?.phase === "acceptingResponses") {
       mode = "response";
@@ -176,7 +190,8 @@ export class SpoilsEngine {
         ? structuredClone(this.state.responseWindow)
         : undefined,
       responseStack: structuredClone(this.state.responseStack),
-      battle: this.getBattleView()
+      battle: this.getBattleView(),
+      winner: this.state.winner
     };
   }
 
@@ -654,18 +669,28 @@ export class SpoilsEngine {
   private getPlayTargetDeclarations(
     definition: CardDefinition
   ): TargetDeclaration[] {
-    if (definition.type !== "tactic") {
-      return [];
+    const declarations: TargetDeclaration[] = [];
+
+    if (definition.type === "tactic") {
+      // Barebones convention:
+      // tactic cards use the first activated-ability-shaped behavior as the
+      // instructions that resolve when the tactic finishes being deployed.
+      const tacticAbility = definition.behavior?.abilities?.find(
+        ability => ability.type === "activated"
+      ) as ActivatedAbility | undefined;
+
+      declarations.push(...(tacticAbility?.targets ?? []));
     }
 
-    // Barebones convention:
-    // tactic cards use the first activated-ability-shaped behavior as the
-    // instructions that resolve when the tactic finishes being deployed.
-    const tacticAbility = definition.behavior?.abilities?.find(
-      ability => ability.type === "activated"
-    ) as ActivatedAbility | undefined;
+    if (definition.attachTo) {
+      declarations.push({
+        id: ATTACH_TARGET_ID,
+        selector: { type: definition.attachTo },
+        count: 1
+      });
+    }
 
-    return tacticAbility?.targets ?? [];
+    return declarations;
   }
 
   private getTacticEffects(definition: CardDefinition): Effect[] {
@@ -835,6 +860,10 @@ export class SpoilsEngine {
         }
       } else if (card.zone === "deploying") {
         this.moveCard(card.id, "play");
+
+        if (definition.attachTo) {
+          card.attachedTo = item.context.selected[ATTACH_TARGET_ID]?.[0];
+        }
 
         // A card entering during the active turn did not start that turn in
         // play, so it is not attack-eligible unless it has AGGRO.
@@ -1903,24 +1932,83 @@ export class SpoilsEngine {
     while (changed) {
       changed = false;
 
-      for (const card of Object.values(
-        this.state.cards
-      )) {
-        if (
-          card.zone !== "play" ||
-          card.faceDown ||
-          this.getDefinition(card.id).type !==
-            "character"
-        ) {
+      for (const card of Object.values(this.state.cards)) {
+        if (card.zone !== "play" || card.faceDown) {
           continue;
         }
 
-        const life = this.getStat(card.id, "life");
+        const definition = this.getDefinition(card.id);
 
-        if (life > 0 && card.damage >= life) {
+        // Lethal damage: characters clear it every turn, locations carry it
+        // across turns (see RULES.md §3), but both die the same way — their
+        // "structure" is just the `life` stat either way.
+        if (definition.type === "character" || definition.type === "location") {
+          const life = this.getStat(card.id, "life");
+
+          if (life > 0 && card.damage >= life) {
+            this.destroyCard(card.id);
+            changed = true;
+            break;
+          }
+        }
+
+        // Attach to X: destroyed once its target is no longer a legal,
+        // in-play card of the required type (RULES.md §9).
+        if (definition.attachTo) {
+          const target = card.attachedTo
+            ? this.state.cards[card.attachedTo]
+            : undefined;
+
+          const validTarget =
+            !!target &&
+            target.zone === "play" &&
+            this.getDefinition(target.id).type === definition.attachTo;
+
+          if (!validTarget) {
+            this.destroyCard(card.id);
+            changed = true;
+            break;
+          }
+        }
+      }
+
+      if (changed) continue;
+
+      // Unique: a player may control at most one in-play card per Unique
+      // designation (RULES.md §9). A real client would let the player pick
+      // which to keep; the engine deterministically keeps whichever was
+      // already in play longest.
+      const seenUnique = new Map<string, CardInstanceId>();
+
+      for (const card of Object.values(this.state.cards)) {
+        if (card.zone !== "play" || card.faceDown) continue;
+
+        const definition = this.getDefinition(card.id);
+        if (!definition.unique) continue;
+
+        const key = `${card.controllerId}:${definition.unique}`;
+
+        if (seenUnique.has(key)) {
           this.destroyCard(card.id);
           changed = true;
           break;
+        }
+
+        seenUnique.set(key, card.id);
+      }
+
+      if (changed) continue;
+
+      // Victory: a faction at 0 influence ends the game (RULES.md §1).
+      if (!this.state.winner) {
+        const losers = Object.values(this.state.players).filter(
+          player => player.influence <= 0
+        );
+
+        if (losers.length >= 2) {
+          this.state.winner = "draw";
+        } else if (losers.length === 1) {
+          this.state.winner = this.getOpponent(losers[0].id).id;
         }
       }
     }

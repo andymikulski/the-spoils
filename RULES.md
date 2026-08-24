@@ -31,9 +31,13 @@ factions hit 0 influence from the same event, the game is a draw. Influence
 loss is tracked separately from character/location damage — effects that
 key off "damage" do not fire from influence loss, and vice versa.
 
-> **Known engine gap:** as of this writing, nothing in `SpoilsEngine` checks
-> for 0 influence and ends the game. This is a priority target for tests —
-> they should fail until a win/loss/draw check exists.
+**(engine-derived)** This is surfaced as `GameState.winner` /
+`GameFlowView.winner` (`PlayerId | "draw"`), set by the same state-based
+check as everything else in §11, and `GameFlowView.mode` becomes
+`"gameOver"`. Once set, `perform()` rejects anything that would start a new
+action; it still allows whatever was already in flight (an open response
+window, an in-progress battle) to drain to a clean stop, since a lethal blow
+is often struck mid-battle-resolution.
 
 ## 2. Zones
 
@@ -67,14 +71,15 @@ is different from `void`, where cards remain referenceable.
   damage ≥ structure. Only playable on the controller's own turn (unless
   **Tactical**).
 
-  > **Known data/engine gap:** `data/cards.json` does not currently carry a
+  **(engine-derived)** A location's structure is just its `life` stat —
+  there's no separate field. `checkStateBasedActions` destroys characters
+  and locations the same way (damage ≥ life).
+
+  > **Known data gap:** `data/cards.json` does not currently carry a
   > structure value for location cards (life/strength/speed all come back
-  > empty), and `checkStateBasedActions` only ever destroys cards of type
-  > `"character"` — a location can accumulate lethal damage and never be
-  > destroyed. Rule stands regardless of data completeness; tests should
-  > use synthetic location fixtures with an explicit structure value (engine
-  > stores this as the `life` stat — see below) and are expected to fail
-  > until state-based actions cover locations too.
+  > empty) — that's a data-extraction gap, not an engine one. Tests use
+  > synthetic location fixtures with an explicit `life` until the real data
+  > is filled in.
 - **Tactic** — one-shot effect; resolves then goes to `discard`. Can always
   be played as a response (that's the entire point of the type), during
   battle response windows, or as a normal turn action.
@@ -257,12 +262,30 @@ before defender within a round:
   given Unique designation; if they somehow do, they immediately choose one
   to keep and destroy the rest. The opponent controlling a copy of the same
   Unique card at the same time is fine — the restriction is per-player.
+
+  **(engine-derived)** The designation is `CardDefinition.unique?: string`
+  (e.g. `"eldridge"`); real card text has no structured field for this today
+  so it must be assigned when authoring/importing card data. "Choose one to
+  keep" isn't a real player decision yet — the engine deterministically
+  keeps whichever copy has been in play longest and destroys the rest, which
+  a real client can override later by actually asking the player.
 - **Attach to X** — the card must have a legal target of type X chosen as
   part of playing it, and enters play attached to that target. If the
   target is missing, or later leaves play / stops qualifying as type X, the
   attached card is destroyed (items/tactics attached this way go to
   discard). If the target itself leaves play for any reason, everything
   attached to it leaves the same way.
+
+  **(engine-derived)** Declared via `CardDefinition.attachTo?: CardType`.
+  Playing such a card adds a synthetic target declaration (reserved id
+  `"attachTo"`) requiring a card of that type, same as any other target —
+  `selected: { attachTo: [cardId] }`. `CardInstance.attachedTo` is reused
+  from the numeric-cost resource-attachment mechanic (a resource attached to
+  its controller's faction to pay a cost uses the same field) — the two
+  never conflict since a resource being attached-for-cost is never itself an
+  Attach-to-X card. The generic "detach on target destruction" behavior
+  (§2/zones) still fires first; the Attach-to-X state-based check is what
+  turns that detachment into an actual destruction when `attachTo` is set.
 
 ## 10. Abilities
 
@@ -287,12 +310,15 @@ Checked continuously (after every effect/stack resolution, not just once
 per turn):
 
 - Any character with accumulated damage this turn ≥ life is destroyed.
-- Any location with accumulated damage ≥ structure is destroyed. *(not yet
-  implemented — see §3)*
-- Any faction at 0 influence ends the game for that player, immediately.
-  *(not yet implemented — see §1)*
+- Any location with accumulated damage ≥ structure (its `life` stat) is
+  destroyed.
 - Any player controlling more than one card sharing a Unique designation
-  must reduce to one immediately.
+  reduces to one immediately.
+- A card requiring "Attach to X" whose attachment target isn't a legal,
+  in-play card of the right type is destroyed.
+- Any faction at 0 influence ends the game for that player, immediately (a
+  draw if both hit 0 from the same event). Checked last, after every
+  destruction above has settled.
 
 ## 12. Miscellaneous rulings
 

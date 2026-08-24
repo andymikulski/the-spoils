@@ -66,7 +66,6 @@ describe("RULES.md §11 — state-based actions", () => {
 
   test(
     "a location destroyed by damage moves to discard",
-    { todo: "engine gap: checkStateBasedActions only destroys type 'character' — see RULES.md §3" },
     () => {
       const { engine, id } = buildGame({
         cards: [

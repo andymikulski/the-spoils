@@ -187,6 +187,9 @@ export type GameSetupState =
     }
   | { phase: "complete" };
 
+/** The player who won, or "draw" if both factions hit 0 influence together. */
+export type GameWinner = PlayerId | "draw";
+
 export interface GameFlowView {
   activePlayerId: PlayerId;
   priorityPlayerId: PlayerId;
@@ -197,7 +200,8 @@ export interface GameFlowView {
     | "response"
     | "resolvingResponses"
     | "battleChoice"
-    | "battleFinished";
+    | "battleFinished"
+    | "gameOver";
 
   turnPhase: TurnPhase;
   setup: GameSetupState;
@@ -205,6 +209,7 @@ export interface GameFlowView {
   responseWindow?: ResponseWindowState;
   responseStack: StackItem[];
   battle?: BattleView;
+  winner?: GameWinner;
 }
 
 export interface GameState {
@@ -225,4 +230,7 @@ export interface GameState {
   responseWindow?: ResponseWindowState;
 
   battle?: BattleState;
+
+  /** Set once a player's faction reaches 0 influence (or both do, for a draw). */
+  winner?: GameWinner;
 }

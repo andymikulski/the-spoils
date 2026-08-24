@@ -97,6 +97,19 @@ export interface CardDefinition {
   /** Optional structured resource metadata. */
   resource?: ResourceDefinition;
 
+  /**
+   * Unique designation (e.g. "eldridge" for "Unique Eldridge"). A player may
+   * not control more than one in-play card sharing the same designation.
+   */
+  unique?: string;
+
+  /**
+   * "Attach to X" — this card must be given a legal target of this type when
+   * played, and is destroyed if that target ever stops being a legal
+   * in-play target of this type.
+   */
+  attachTo?: CardType;
+
   behavior?: {
     abilities?: AbilityDefinition[];
     keywords?: Keyword[];
