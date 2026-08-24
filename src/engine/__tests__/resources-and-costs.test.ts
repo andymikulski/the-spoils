@@ -108,6 +108,32 @@ describe("RULES.md §4 — Volition", () => {
     assert.equal(thresholds.volition ?? 0, 0);
     assert.equal(thresholds.rage, 1);
   });
+
+  test("a face-down card's own activated abilities cannot be activated — it's an anonymous resource", () => {
+    // Same principle findTriggers/getContinuousModifiers already apply to
+    // triggered and continuous abilities on a face-down source: a card
+    // played face-down as a resource exposes nothing but Volition.
+    const gadget: ActivatedAbility = {
+      id: "gadget-zap",
+      type: "activated",
+      effects: []
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "hiddenGadget",
+          def: item({ name: "Zapper", behavior: { abilities: [gadget] } }),
+          owner: P1,
+          faceDown: true
+        }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("hiddenGadget"), abilityId: "gadget-zap" })
+    );
+  });
 });
 
 describe("RULES.md §4/§10 — discard costs require an explicit choice", () => {

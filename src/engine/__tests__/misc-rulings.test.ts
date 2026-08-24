@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildGame, character, P1, P2, resolvePendingResponses } from "./support/fixtures.js";
+import { buildGame, character, P1, P2, resolvePendingResponses, tactic } from "./support/fixtures.js";
 import type { ActivatedAbility } from "../../engine.js";
 
 describe("RULES.md §12 — impossible instructions don't invalidate the rest", () => {
@@ -99,5 +99,126 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
         selected: { sac: [id("fodder")] }
       })
     );
+  });
+
+  test("a random target whose selector matches nothing no-ops instead of crashing the whole activation", () => {
+    // e.g. "discard a card at random from your opponent's hand" when their
+    // hand is empty — a very ordinary board state, not a bug.
+    const discardRandom: ActivatedAbility = {
+      id: "discardRandom",
+      type: "activated",
+      effects: [
+        {
+          type: "moveCard",
+          target: { type: "random", selector: { controller: "opponent", zone: "hand" } },
+          to: "discard"
+        }
+      ]
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [discardRandom] } }), owner: P1 }
+      ]
+    });
+
+    assert.equal(engine.state.players[P2].hand.length, 0);
+
+    assert.doesNotThrow(() => {
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("caster"), abilityId: "discardRandom" });
+      resolvePendingResponses(engine);
+    });
+
+    assert.equal(engine.state.players[P2].discard.length, 0);
+  });
+
+  test("an effect referencing a declined (empty) optional selection no-ops instead of crashing", () => {
+    // A card author forgetting to gate a follow-up effect behind
+    // `targetExists` shouldn't be able to crash the whole ability just
+    // because the optional target was declined.
+    const maybeDamage: ActivatedAbility = {
+      id: "maybeDamage",
+      type: "activated",
+      targets: [{ id: "target", selector: { controller: "opponent" }, count: 1, optional: true }],
+      effects: [{ type: "dealDamage", target: { type: "selected", id: "target" }, amount: 5 }]
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [maybeDamage] } }), owner: P1 },
+        { key: "bystander", def: character({ name: "Bystander", life: 3 }), owner: P2 }
+      ]
+    });
+
+    assert.doesNotThrow(() => {
+      engine.perform({
+        type: "activateAbility",
+        playerId: P1,
+        cardId: id("caster"),
+        abilityId: "maybeDamage",
+        selected: { target: [] }
+      });
+      resolvePendingResponses(engine);
+    });
+
+    assert.equal(engine.state.cards[id("bystander")].damage, 0);
+  });
+
+  test("a playResource effect whose target left hand before it resolved (LIFO stack) no-ops instead of crashing", () => {
+    // The ability locks in `selected.resource` when activated, but (RULES.md
+    // §7) it sits at the *bottom* of the response stack until both players
+    // pass — plenty of room for a second response to move that exact card
+    // out of hand first.
+    const stashAbility: ActivatedAbility = {
+      id: "stash",
+      type: "activated",
+      targets: [{ id: "resource", selector: { controller: "self", zone: "hand" }, count: 1 }],
+      effects: [
+        { type: "playResource", target: { type: "selected", id: "resource" }, faceDown: true }
+      ]
+    };
+
+    const discarder = tactic({
+      name: "Discarder",
+      behavior: {
+        abilities: [
+          {
+            id: "discard-it",
+            type: "activated",
+            targets: [{ id: "target", selector: { controller: "self", zone: "hand" }, count: 1 }],
+            effects: [{ type: "moveCard", target: { type: "selected", id: "target" }, to: "discard" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [stashAbility] } }), owner: P1 },
+        { key: "handCard", def: character({ name: "Hand Card" }), owner: P1, zone: "hand" },
+        { key: "discarder", def: discarder, owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("caster"),
+      abilityId: "stash",
+      selected: { resource: [id("handCard")] }
+    });
+
+    engine.perform({ type: "passPriority", playerId: P2 });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("discarder"),
+      selected: { target: [id("handCard")] }
+    });
+
+    assert.doesNotThrow(() => resolvePendingResponses(engine));
+
+    assert.equal(engine.state.cards[id("handCard")].zone, "discard");
   });
 });

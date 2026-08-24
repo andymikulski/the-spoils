@@ -900,6 +900,11 @@ export class SpoilsEngine {
       card.controllerId === action.playerId,
       "You do not control that card."
     );
+    // A face-down card is an anonymous resource (RULES.md §4) — its own
+    // printed abilities are inert while face-down, same as triggered
+    // abilities (findTriggers) and continuous ones (getContinuousModifiers
+    // et al.) already treat it.
+    assert(!card.faceDown, "A face-down card's abilities cannot be activated.");
 
     this.assertCanUseAbilityAtCurrentTiming(action.playerId);
 
@@ -2221,7 +2226,14 @@ export class SpoilsEngine {
 
       case "playResource": {
         const targetId = this.resolveTargetRef(effect.target, context);
-        assert(targetId, "Missing resource target.");
+        // RULES.md §12: an effect whose target can't be resolved (e.g. a
+        // `{type:"random"}` selector matching nothing) is carried out as far
+        // as possible — here, not at all — rather than aborting resolution.
+        // The zone check (mirroring `destroy`) additionally covers a target
+        // that resolved fine at activation time but left hand before this
+        // effect actually reached the front of the response stack (RULES.md
+        // §7's LIFO resolution can leave a lot of daylight between the two).
+        if (!targetId || this.state.cards[targetId]?.zone !== "hand") return;
 
         const definition = this.getDefinition(targetId);
         const faceDown = effect.faceDown === "auto"
@@ -2238,7 +2250,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing damage target.");
+        if (!targetId) return;
 
         const target = this.requireCard(targetId);
         const amount = this.evaluateNumber(
@@ -2278,7 +2290,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing move target.");
+        if (!targetId) return;
 
         this.moveCard(targetId, effect.to);
         return;
@@ -2290,7 +2302,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing destroy target.");
+        if (!targetId) return;
 
         // RULES.md §12: destroying a card no longer in play is carried out
         // "as far as possible" — i.e. it's simply already done. An earlier
@@ -2309,7 +2321,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing deplete target.");
+        if (!targetId) return;
 
         const card = this.requireCard(targetId);
 
@@ -2331,7 +2343,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing restore target.");
+        if (!targetId) return;
 
         const card = this.requireCard(targetId);
 
@@ -2353,7 +2365,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing counter target.");
+        if (!targetId) return;
 
         const card = this.requireCard(targetId);
 
@@ -2370,7 +2382,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing counter target.");
+        if (!targetId) return;
 
         const card = this.requireCard(targetId);
 
@@ -2389,7 +2401,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing modifier target.");
+        if (!targetId) return;
 
         this.state.modifiers.push({
           id: nextId("modifier"),
@@ -2415,7 +2427,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing takeControl target.");
+        if (!targetId) return;
 
         const card = this.requireCard(targetId);
         const newController = this.resolvePlayerRef(effect.controller, context);
@@ -2444,7 +2456,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(targetId, "Missing removeFromGame target.");
+        if (!targetId) return;
 
         // RULES.md §12: impossible to fully carry out if it's already gone
         // — as far as "removed from the game" is concerned, that's already
@@ -2489,10 +2501,8 @@ export class SpoilsEngine {
 
       case "attachTo": {
         const targetId = this.resolveTargetRef(effect.target, context);
-        assert(targetId, "Missing attachTo target.");
-
         const toId = this.resolveTargetRef(effect.to, context);
-        assert(toId, "Missing attachTo destination.");
+        if (!targetId || !toId) return;
 
         this.requireCard(targetId).attachedTo = toId;
         return;
@@ -2500,7 +2510,7 @@ export class SpoilsEngine {
 
       case "grantKeyword": {
         const targetId = this.resolveTargetRef(effect.target, context);
-        assert(targetId, "Missing grantKeyword target.");
+        if (!targetId) return;
 
         this.state.keywordGrants.push({
           id: nextId("keywordGrant"),
@@ -2516,7 +2526,7 @@ export class SpoilsEngine {
 
       case "grantRestriction": {
         const targetId = this.resolveTargetRef(effect.target, context);
-        assert(targetId, "Missing grantRestriction target.");
+        if (!targetId) return;
 
         this.state.restrictions.push({
           id: nextId("restriction"),

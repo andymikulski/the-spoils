@@ -330,7 +330,7 @@ export function autoResolveBattle(
       for (const source of view.damageSources) {
         const split = chooseSplit
           ? chooseSplit(source)
-          : source.legalTargets.length > 0
+          : source.legalTargets.length > 0 && source.strength > 0
             ? [{ sourceId: source.cardId, target: source.legalTargets[0], amount: source.strength }]
             : [];
 

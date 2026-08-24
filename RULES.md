@@ -392,16 +392,19 @@ per turn):
   as possible and the rest is ignored — it does not invalidate the whole
   effect.
 
-  **(engine-derived)** The `destroy` and `removeFromGame` *effects*
-  (post-cost, already-committed resolution) silently no-op instead of
-  throwing when their target has already left play / already been removed
-  — a second effect in the same ability, or a batched trigger, can easily
-  target something an earlier effect already took care of. This is
-  deliberately *not* extended to cost payment: a `destroy` **cost** still
-  throws if its target isn't a legal in-play card, since an unpayable cost
-  should block the whole activation (§4/§10), and `validateTargetDeclarations`
-  guarantees the target was legal at the moment of activation anyway — this
-  can only be reached if something external mutated the state between
+  **(engine-derived)** Every *effect* (post-cost, already-committed
+  resolution) that resolves a `TargetRef`/destination silently no-ops
+  instead of throwing when that reference doesn't resolve to a card — most
+  commonly a `{type:"random", selector}` ref whose selector matches nothing
+  (e.g. "discard a card at random from your opponent's hand" when their
+  hand is empty), but also e.g. `destroy`/`removeFromGame` targeting
+  something a second effect in the same ability, or a batched trigger,
+  already took care of. This is deliberately *not* extended to cost
+  payment: a `destroy` **cost** still throws if its target isn't a legal
+  in-play card, since an unpayable cost should block the whole activation
+  (§4/§10), and `validateTargetDeclarations` guarantees the target was
+  legal at the moment of activation anyway — reaching an unresolved cost
+  target can only happen if something external mutated the state between
   target validation and cost payment, which is a real bug to surface, not
   something to paper over.
 - A cost variable (`X`, etc.) that's never assigned because the card was
