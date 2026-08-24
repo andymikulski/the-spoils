@@ -46,6 +46,7 @@ import type {
   Zone
 } from "../types/index.js";
 import { assert, compare, nextId, parseThreshold, withBuiltInFactionDefaults } from "./utilities.js";
+import { drawRandom, randomSeed } from "./rng.js";
 
 /** Reserved target-declaration id for an "Attach to X" card's play-time target. */
 const ATTACH_TARGET_ID = "attachTo";
@@ -63,15 +64,26 @@ export class SpoilsEngine {
    */
   private eventBatchDepth = 0;
 
-  /** Backs `shuffleDeck` and any random-valued expression/target. Overridable for deterministic tests. */
+  /**
+   * Explicit override for `random`, as passed to the constructor. Threaded
+   * through to `canPayCosts`'s simulate-on-a-clone probe so a test's
+   * scripted sequence applies there too — `undefined` (the production
+   * default) instead lets that probe derive its own stream from the clone's
+   * own `rngState`, so a dry-run affordability check can never advance the
+   * real game's RNG.
+   */
+  private readonly randomOverride?: () => number;
+
+  /** Backs `shuffleDeck` and any random-valued expression/target. Defaults to the seeded, serializable stream on `state.rngState`. */
   private readonly random: () => number;
 
   constructor(
     definitions: CardDefinition[],
     initialState: GameState,
-    random: () => number = Math.random
+    random?: () => number
   ) {
-    this.random = random;
+    this.randomOverride = random;
+    this.random = random ?? (() => drawRandom(this.state));
 
     this.definitions = Object.fromEntries(
       definitions.map(def => {
@@ -87,6 +99,7 @@ export class SpoilsEngine {
     this.state.turnPhase ??= "main";
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
+    this.state.rngState ??= randomSeed();
 
     for (const card of Object.values(this.state.cards)) {
       card.faceDown ??= false;
@@ -2026,14 +2039,16 @@ export class SpoilsEngine {
     context: ResolutionContext
   ): boolean {
     // Simulate the costs against a cheap clone so multi-cost abilities
-    // are checked transactionally.
+    // are checked transactionally. Pass randomOverride (not `this.random`,
+    // which is bound to *this* engine's state) so a dry-run probe draws
+    // from the clone's own rngState and can never advance the real game's.
     const clone = structuredClone(this.state);
 
     try {
       const engine = new SpoilsEngine(
         Object.values(this.definitions),
         clone,
-        this.random
+        this.randomOverride
       );
 
       for (const cost of costs) {

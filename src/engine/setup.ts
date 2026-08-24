@@ -12,6 +12,7 @@ import type {
   Zone
 } from "../types/index.js";
 import { assert, nextId } from "./utilities.js";
+import { randomSeed } from "./rng.js";
 
 export function createCardInstance(
   definitionId: CardDefinitionId,
@@ -114,6 +115,7 @@ export function createTwoPlayerGame(
     turnPhase: "main",
     setup: { phase: "complete" },
     started: true,
+    rngState: randomSeed(),
     players,
     cards: cardMap,
     modifiers: [],

@@ -151,7 +151,7 @@ export interface BuildGameOptions {
   turnPhase?: TurnPhase;
   priorityPlayerId?: PlayerId;
   responseWindow?: ResponseWindowState;
-  /** Overrides the engine's RNG (shuffling, coin flips, random targets) for deterministic tests. Defaults to Math.random. */
+  /** Overrides the engine's RNG (shuffling, coin flips, random targets) for deterministic tests. Defaults to the seeded stream on `GameState.rngState`. */
   random?: () => number;
 }
 

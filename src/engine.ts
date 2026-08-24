@@ -20,6 +20,7 @@
 export * from "./types/index.js";
 
 export { parseThreshold, TOURNAMENT_FACTION_DEFAULTS, TOURNAMENT_FACTION_BEHAVIOR } from "./engine/utilities.js";
+export { randomSeed } from "./engine/rng.js";
 export { SpoilsEngine } from "./engine/SpoilsEngine.js";
 export { createCardInstance, createTwoPlayerGame } from "./engine/setup.js";
 export {

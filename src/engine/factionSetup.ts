@@ -13,6 +13,7 @@ import type {
 import { assert, withBuiltInFactionDefaults } from "./utilities.js";
 import { createCardInstance, createTwoPlayerGame } from "./setup.js";
 import { SpoilsEngine } from "./SpoilsEngine.js";
+import { drawRandom, shuffleInPlace } from "./rng.js";
 
 export interface FactionPlayerSetup {
   id: PlayerId;
@@ -28,7 +29,12 @@ export interface FactionPlayerSetup {
 
 export interface FactionGameSetupOptions {
   firstPlayerId?: PlayerId;
-  random?: () => number;
+  /**
+   * Seeds the game's RNG stream (deck shuffles, coin flips, `{type:"random"}`
+   * expressions/targets for the rest of the game). Omit for an unpredictable
+   * seed; pass one to reproduce a game exactly (replay, save/share, tests).
+   */
+  seed?: number;
 }
 
 const STAPLE_RESOURCE_NAMES = new Set([
@@ -45,13 +51,6 @@ function isStapleResourceDefinition(definition: CardDefinition): boolean {
     (definition.resource?.staple === true ||
       STAPLE_RESOURCE_NAMES.has(definition.name.toLowerCase()))
   );
-}
-
-function shuffleInPlace<T>(items: T[], random: () => number): void {
-  for (let i = items.length - 1; i > 0; i--) {
-    const j = Math.floor(random() * (i + 1));
-    [items[i], items[j]] = [items[j], items[i]];
-  }
 }
 
 function resolveFactionAndDeck(
@@ -204,6 +203,9 @@ export function createTwoPlayerFactionGame(
   state.priorityPlayerId = firstPlayerId;
   state.turnPhase = "develop";
   state.started = false;
+  if (options.seed !== undefined) {
+    state.rngState = options.seed >>> 0;
+  }
 
   state.players[playerA.id].factionId = factionA.id;
   state.players[playerB.id].factionId = factionB.id;
@@ -227,7 +229,7 @@ export function createTwoPlayerFactionGame(
     }
   }
 
-  const random = options.random ?? Math.random;
+  const random = () => drawRandom(state);
   shuffleInPlace(state.players[playerA.id].deck, random);
   shuffleInPlace(state.players[playerB.id].deck, random);
 

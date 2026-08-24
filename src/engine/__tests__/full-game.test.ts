@@ -17,9 +17,9 @@
 // That's what makes this a test of the *engine*, not of a hand-scripted
 // sequence of moves that happens to match today's card data.
 //
-// Every random element is seeded (see support/prng.ts) — deck shuffles, the
-// engine's own dice-roll effects, and the bot's own decisions — so a run is
-// exactly reproducible.
+// Every random element is seeded — deck shuffles and the engine's own
+// dice-roll effects via `GameState.rngState` (see engine/rng.ts), the bot's
+// own decisions via support/prng.ts — so a run is exactly reproducible.
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -60,7 +60,7 @@ function playGame(seed: number, firstPlayerId: PlayerId): AutoplayReport {
     definitions,
     { id: "arcanist", name: "Arcanist Player", deckDefinitionIds: arcanistDeckIds },
     { id: "warlord", name: "Warlord Player", deckDefinitionIds: warlordDeckIds },
-    { firstPlayerId, random: mulberry32(seed) }
+    { firstPlayerId, seed }
   );
 
   return playGameToCompletion(engine, { botRandom: mulberry32(seed ^ 0x5eed) });

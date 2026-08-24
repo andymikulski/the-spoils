@@ -281,6 +281,16 @@ export interface GameState {
   setup: GameSetupState;
   started: boolean;
 
+  /**
+   * Current position in the game's single deterministic RNG stream (deck
+   * shuffles, coin flips, `{type:"random"}` expressions/targets). Part of
+   * `GameState` — not engine-internal — so it travels with everything else
+   * through save/replay/structuredClone/JSON: resuming a saved game
+   * continues its random sequence exactly where it left off, and replaying
+   * a fresh game from the same starting seed reproduces it bit-for-bit.
+   */
+  rngState: number;
+
   players: Record<PlayerId, PlayerState>;
   cards: Record<CardInstanceId, CardInstance>;
 
