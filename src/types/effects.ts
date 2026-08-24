@@ -66,6 +66,17 @@ export type Effect =
       operation: ModifierOperation;
       value: NumberExpression;
       duration: Duration;
+    }
+  | {
+      /** Changes who controls an in-play card (e.g. "take control of the location"). */
+      type: "takeControl";
+      target: TargetRef;
+      controller: PlayerRef;
+    }
+  | {
+      /** "Remove from the game" (RULES.md §2) — permanent, unlike moveCard to any tracked zone. */
+      type: "removeFromGame";
+      target: TargetRef;
     };
 
 export interface ModifierDefinition {

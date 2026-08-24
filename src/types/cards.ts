@@ -87,6 +87,8 @@ export interface CardDefinition {
   life?: number;
   speed?: number;
   influence?: number;
+  /** Location damage capacity (RULES.md §3). Locations use this, not `life`. */
+  structure?: number;
 
   subtype: string[];
   text: string;

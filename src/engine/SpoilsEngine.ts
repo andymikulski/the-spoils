@@ -24,6 +24,7 @@ import type {
   GameState,
   Keyword,
   NumberExpression,
+  PendingChoice,
   PlayerId,
   PlayerRef,
   PlayerState,
@@ -102,6 +103,11 @@ export class SpoilsEngine {
 
     assert(!this.state.winner || isDraining, "The game has already ended.");
 
+    assert(
+      !this.state.pendingChoice || action.type === "resolvePendingChoice",
+      "A pending choice must be resolved before any other action."
+    );
+
     if (this.state.setup.phase === "mulligan" && action.type !== "mulligan") {
       throw new Error("Opening mulligans must be completed before play begins.");
     }
@@ -156,6 +162,10 @@ export class SpoilsEngine {
       case "assignBattleDamage":
         this.assignBattleDamage(action.playerId, action.assignments);
         return;
+
+      case "resolvePendingChoice":
+        this.resolvePendingChoice(action.playerId, action.choice);
+        return;
     }
   }
 
@@ -168,6 +178,8 @@ export class SpoilsEngine {
 
     if (this.state.winner) {
       mode = "gameOver";
+    } else if (this.state.pendingChoice) {
+      mode = "pendingChoice";
     } else if (this.state.setup.phase === "mulligan") {
       mode = "setup";
     } else if (this.state.responseWindow?.phase === "acceptingResponses") {
@@ -191,7 +203,10 @@ export class SpoilsEngine {
         : undefined,
       responseStack: structuredClone(this.state.responseStack),
       battle: this.getBattleView(),
-      winner: this.state.winner
+      winner: this.state.winner,
+      pendingChoice: this.state.pendingChoice
+        ? structuredClone(this.state.pendingChoice)
+        : undefined
     };
   }
 
@@ -1041,7 +1056,8 @@ export class SpoilsEngine {
   // ---------------------------------------------------------------------------
 
   emit(event: GameEvent): void {
-    const triggers = this.findTriggers(event);
+    const batchId = nextId("batch");
+    const triggers = this.findTriggers(event, batchId);
 
     for (const trigger of triggers) {
       this.immediateQueue.push(trigger);
@@ -1066,7 +1082,7 @@ export class SpoilsEngine {
     }
   }
 
-  private findTriggers(event: GameEvent): TriggerResolution[] {
+  private findTriggers(event: GameEvent, batchId: string): TriggerResolution[] {
     const results: TriggerResolution[] = [];
 
     const eventCardId = this.getEventCardId(event);
@@ -1105,7 +1121,8 @@ export class SpoilsEngine {
           results.push({
             sourceId: card.id,
             ability,
-            context
+            context,
+            batchId
           });
         }
       }
@@ -1116,30 +1133,121 @@ export class SpoilsEngine {
 
   private processImmediateQueue(): void {
     while (this.immediateQueue.length > 0) {
-      const trigger = this.immediateQueue.shift()!;
+      // Peeked, not shifted: if this trigger turns out to need a player
+      // choice, it must stay at the head of the queue so resolvePendingChoice
+      // can resume exactly here afterward.
+      const trigger = this.immediateQueue[0];
 
       if (
         !this.state.cards[trigger.sourceId] &&
         trigger.context.event?.type !== "cardDestroyed"
       ) {
+        this.immediateQueue.shift();
         continue;
       }
 
-      if (trigger.ability.targets?.length) {
-        // A real client should request choices here.
-        // For engine-only deterministic operation, auto-select only when
-        // each target declaration has exactly enough legal candidates.
-        this.autoSelectTargets(
-          trigger.ability.targets,
-          trigger.context
+      // RULES.md §7: triggers firing "at once" (from the same event) are
+      // ordered by their common controller, or by the active player if
+      // they belong to different players — never by iteration order.
+      const batch = this.getUnorderedTriggerBatch(trigger.batchId);
+
+      if (batch.length > 1) {
+        const controllerIds = new Set(
+          batch.map(queued => queued.context.controllerId)
         );
+
+        this.state.pendingChoice = {
+          kind: "orderTriggers",
+          id: nextId("choice"),
+          playerId:
+            controllerIds.size === 1
+              ? [...controllerIds][0]
+              : this.state.activePlayerId,
+          triggers: batch.map(queued => ({
+            sourceId: queued.sourceId,
+            abilityId: queued.ability.id
+          }))
+        };
+
+        return;
       }
+
+      const declarations = trigger.ability.targets ?? [];
+      const unresolved = this.findUnresolvedTargetDeclarations(
+        declarations,
+        trigger.context
+      );
+
+      if (unresolved.length > 0) {
+        this.state.pendingChoice = {
+          kind: "selectTargets",
+          id: nextId("choice"),
+          playerId: trigger.context.controllerId,
+          sourceId: trigger.sourceId,
+          abilityId: trigger.ability.id,
+          declarations: unresolved
+        };
+
+        return;
+      }
+
+      if (declarations.length) {
+        // Only unambiguous declarations reach here — exactly enough legal
+        // candidates to fill every slot, nothing left to decide.
+        this.autoSelectTargets(declarations, trigger.context);
+      }
+
+      // Committed: remove before resolving effects. An effect can itself
+      // emit an event (e.g. dealDamage → damageDealt), reentrantly calling
+      // processImmediateQueue — this trigger must not still be at the head
+      // when that happens, or it gets resolved again and recurses forever.
+      this.immediateQueue.shift();
 
       for (const effect of trigger.ability.effects) {
         this.resolveEffect(effect, trigger.context);
         this.checkStateBasedActions();
       }
     }
+  }
+
+  /** The leading run of immediateQueue entries sharing one batchId (same emitted event). */
+  private getUnorderedTriggerBatch(batchId: string): TriggerResolution[] {
+    const batch: TriggerResolution[] = [];
+
+    for (const trigger of this.immediateQueue) {
+      if (trigger.batchId !== batchId) break;
+      batch.push(trigger);
+    }
+
+    return batch;
+  }
+
+  /**
+   * Target declarations a triggered ability can't fill on its own — more
+   * legal candidates than slots, so a real decision is needed (RULES.md §7's
+   * "a real client should request choices here"). A declaration with too
+   * few candidates is left for autoSelectTargets to reject as before; that's
+   * a genuinely unplayable trigger, not a choice.
+   */
+  private findUnresolvedTargetDeclarations(
+    declarations: TargetDeclaration[],
+    context: ResolutionContext
+  ): TargetDeclaration[] {
+    const unresolved: TargetDeclaration[] = [];
+
+    for (const declaration of declarations) {
+      if (context.selected[declaration.id]) {
+        continue;
+      }
+
+      const candidates = this.queryCards(declaration.selector, context);
+
+      if (candidates.length > declaration.count) {
+        unresolved.push(declaration);
+      }
+    }
+
+    return unresolved;
   }
 
   // ---------------------------------------------------------------------------
@@ -1598,25 +1706,40 @@ export class SpoilsEngine {
           context
         );
 
-        const legal = this.queryCards(
-          {
-            ...cost.selector,
-            controller:
-              cost.selector.controller ?? "self",
-            zone: cost.selector.zone ?? "hand"
-          },
-          context
-        ).filter(card => card.controllerId === player.id);
-
-        assert(
-          legal.length >= cost.count,
-          "Not enough cards available to discard."
+        const legal = new Set(
+          this.queryCards(
+            {
+              ...cost.selector,
+              controller:
+                cost.selector.controller ?? "self",
+              zone: cost.selector.zone ?? "hand"
+            },
+            context
+          )
+            .filter(card => card.controllerId === player.id)
+            .map(card => card.id)
         );
 
-        // Barebones deterministic payment. A UI should normally supply
-        // explicit selected cost cards.
-        for (const card of legal.slice(0, cost.count)) {
-          this.moveCard(card.id, "discard", emitEvents);
+        const selected = context.selected[cost.id] ?? [];
+
+        assert(
+          selected.length === cost.count,
+          `Discard cost '${cost.id}' requires selecting exactly ${cost.count} card(s).`
+        );
+        assert(
+          new Set(selected).size === selected.length,
+          `Discard cost '${cost.id}' selected the same card more than once.`
+        );
+
+        for (const cardId of selected) {
+          assert(
+            legal.has(cardId),
+            `Illegal discard-cost selection '${cardId}' for '${cost.id}'.`
+          );
+        }
+
+        for (const cardId of selected) {
+          this.moveCard(cardId, "discard", emitEvents);
         }
 
         return;
@@ -1733,7 +1856,14 @@ export class SpoilsEngine {
 
         assert(targetId, "Missing destroy target.");
 
-        this.destroyCard(targetId);
+        // RULES.md §12: destroying a card no longer in play is carried out
+        // "as far as possible" — i.e. it's simply already done. An earlier
+        // effect in the same ability (or a batched trigger) may well have
+        // already destroyed this exact target.
+        if (this.state.cards[targetId]?.zone === "play") {
+          this.destroyCard(targetId);
+        }
+
         return;
       }
 
@@ -1842,6 +1972,53 @@ export class SpoilsEngine {
 
         return;
       }
+
+      case "takeControl": {
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
+
+        assert(targetId, "Missing takeControl target.");
+
+        const card = this.requireCard(targetId);
+        const newController = this.resolvePlayerRef(effect.controller, context);
+
+        if (card.controllerId === newController.id) {
+          return;
+        }
+
+        // A card in play is filed under its controller's `play` array
+        // (see moveCard) — that bookkeeping has to move with it, or
+        // getAvailableResourceIds/getThresholds/attack-eligibility loops
+        // (all of which iterate a specific player's `play`) go stale.
+        if (card.zone === "play") {
+          const oldController = this.requirePlayer(card.controllerId);
+          oldController.play = oldController.play.filter(cardId => cardId !== targetId);
+          newController.play.push(targetId);
+        }
+
+        card.controllerId = newController.id;
+        return;
+      }
+
+      case "removeFromGame": {
+        const targetId = this.resolveTargetRef(
+          effect.target,
+          context
+        );
+
+        assert(targetId, "Missing removeFromGame target.");
+
+        // RULES.md §12: impossible to fully carry out if it's already gone
+        // — as far as "removed from the game" is concerned, that's already
+        // true, so this is a no-op rather than an error.
+        if (this.state.cards[targetId]) {
+          this.moveCard(targetId, "removed");
+        }
+
+        return;
+      }
     }
   }
 
@@ -1940,12 +2117,16 @@ export class SpoilsEngine {
         const definition = this.getDefinition(card.id);
 
         // Lethal damage: characters clear it every turn, locations carry it
-        // across turns (see RULES.md §3), but both die the same way — their
-        // "structure" is just the `life` stat either way.
+        // across turns (see RULES.md §3), but both die the same way once
+        // accumulated damage reaches their capacity — `life` for a
+        // character, `structure` for a location (distinct stats/fields).
         if (definition.type === "character" || definition.type === "location") {
-          const life = this.getStat(card.id, "life");
+          const capacity = this.getStat(
+            card.id,
+            definition.type === "location" ? "structure" : "life"
+          );
 
-          if (life > 0 && card.damage >= life) {
+          if (capacity > 0 && card.damage >= capacity) {
             this.destroyCard(card.id);
             changed = true;
             break;
@@ -1974,30 +2155,49 @@ export class SpoilsEngine {
 
       if (changed) continue;
 
-      // Unique: a player may control at most one in-play card per Unique
-      // designation (RULES.md §9). A real client would let the player pick
-      // which to keep; the engine deterministically keeps whichever was
-      // already in play longest.
-      const seenUnique = new Map<string, CardInstanceId>();
+      // Unique: a player may not control more than one in-play card per
+      // Unique designation (RULES.md §9). Which copy survives is the
+      // player's decision, so this pauses the engine on a pendingChoice
+      // rather than guessing — see resolvePendingChoice.
+      if (!this.state.pendingChoice) {
+        const groups = new Map<
+          string,
+          { controllerId: PlayerId; unique: string; cardIds: CardInstanceId[] }
+        >();
 
-      for (const card of Object.values(this.state.cards)) {
-        if (card.zone !== "play" || card.faceDown) continue;
+        for (const card of Object.values(this.state.cards)) {
+          if (card.zone !== "play" || card.faceDown) continue;
 
-        const definition = this.getDefinition(card.id);
-        if (!definition.unique) continue;
+          const definition = this.getDefinition(card.id);
+          if (!definition.unique) continue;
 
-        const key = `${card.controllerId}:${definition.unique}`;
+          const key = `${card.controllerId} ${definition.unique}`;
+          const group = groups.get(key) ?? {
+            controllerId: card.controllerId,
+            unique: definition.unique,
+            cardIds: []
+          };
 
-        if (seenUnique.has(key)) {
-          this.destroyCard(card.id);
-          changed = true;
-          break;
+          group.cardIds.push(card.id);
+          groups.set(key, group);
         }
 
-        seenUnique.set(key, card.id);
-      }
+        const conflict = [...groups.values()].find(
+          group => group.cardIds.length > 1
+        );
 
-      if (changed) continue;
+        if (conflict) {
+          this.state.pendingChoice = {
+            kind: "uniqueSurvivor",
+            id: nextId("choice"),
+            playerId: conflict.controllerId,
+            unique: conflict.unique,
+            candidates: conflict.cardIds
+          };
+
+          return;
+        }
+      }
 
       // Victory: a faction at 0 influence ends the game (RULES.md §1).
       if (!this.state.winner) {
@@ -2010,6 +2210,122 @@ export class SpoilsEngine {
         } else if (losers.length === 1) {
           this.state.winner = this.getOpponent(losers[0].id).id;
         }
+      }
+    }
+  }
+
+  private resolvePendingChoice(
+    playerId: PlayerId,
+    choice: Extract<GameAction, { type: "resolvePendingChoice" }>["choice"]
+  ): void {
+    const pending = this.state.pendingChoice;
+
+    assert(pending, "There is no pending choice.");
+    assert(
+      pending.kind === choice.kind,
+      "This choice does not match the pending decision."
+    );
+    assert(pending.playerId === playerId, "It is not your decision to make.");
+
+    switch (choice.kind) {
+      case "uniqueSurvivor": {
+        assert(pending.kind === "uniqueSurvivor", "This choice does not match the pending decision.");
+        assert(
+          pending.candidates.includes(choice.keep),
+          "That card is not one of the Unique candidates."
+        );
+
+        this.state.pendingChoice = undefined;
+
+        for (const cardId of pending.candidates) {
+          if (cardId !== choice.keep) {
+            this.destroyCard(cardId);
+          }
+        }
+
+        this.checkStateBasedActions();
+        return;
+      }
+
+      case "selectTargets": {
+        assert(pending.kind === "selectTargets", "This choice does not match the pending decision.");
+
+        const trigger = this.immediateQueue[0];
+
+        assert(
+          trigger &&
+            trigger.sourceId === pending.sourceId &&
+            trigger.ability.id === pending.abilityId,
+          "The pending trigger is no longer waiting to resolve."
+        );
+
+        for (const declaration of pending.declarations) {
+          const selection = choice.selected[declaration.id];
+
+          assert(selection, `Missing selection for target '${declaration.id}'.`);
+          assert(
+            selection.length === declaration.count,
+            `Target '${declaration.id}' requires ${declaration.count} selection(s).`
+          );
+
+          const legal = new Set(
+            this.queryCards(declaration.selector, trigger.context).map(card => card.id)
+          );
+
+          for (const cardId of selection) {
+            assert(legal.has(cardId), `Illegal target '${cardId}' for '${declaration.id}'.`);
+          }
+        }
+
+        trigger.context.selected = {
+          ...trigger.context.selected,
+          ...choice.selected
+        };
+
+        this.state.pendingChoice = undefined;
+        this.processImmediateQueue();
+        return;
+      }
+
+      case "orderTriggers": {
+        assert(pending.kind === "orderTriggers", "This choice does not match the pending decision.");
+
+        const batchId = this.immediateQueue[0]?.batchId;
+        const batch = batchId ? this.getUnorderedTriggerBatch(batchId) : [];
+
+        assert(
+          choice.order.length === batch.length,
+          "Order must include every triggered ability in the batch, exactly once."
+        );
+
+        const remaining = [...batch];
+        const reordered: TriggerResolution[] = [];
+
+        for (const ref of choice.order) {
+          const index = remaining.findIndex(
+            queued => queued.sourceId === ref.sourceId && queued.ability.id === ref.abilityId
+          );
+
+          assert(
+            index !== -1,
+            `'${ref.sourceId}:${ref.abilityId}' is not part of this batch, or was already placed.`
+          );
+
+          reordered.push(remaining[index]);
+          remaining.splice(index, 1);
+        }
+
+        // Fresh, unshared batch ids so this same group isn't re-detected as
+        // needing another ordering decision once we resume.
+        for (const queued of reordered) {
+          queued.batchId = nextId("batch");
+        }
+
+        this.immediateQueue.splice(0, batch.length, ...reordered);
+
+        this.state.pendingChoice = undefined;
+        this.processImmediateQueue();
+        return;
       }
     }
   }
@@ -2057,7 +2373,8 @@ export class SpoilsEngine {
       to === "deck" ||
       to === "hand" ||
       to === "discard" ||
-      to === "void"
+      to === "void" ||
+      to === "removed"
         ? owner
         : controller;
 
@@ -2127,6 +2444,9 @@ export class SpoilsEngine {
       player.void = player.void.filter(
         id => id !== cardId
       );
+      player.removed = player.removed.filter(
+        id => id !== cardId
+      );
     }
   }
 
@@ -2145,6 +2465,8 @@ export class SpoilsEngine {
         return player.discard;
       case "void":
         return player.void;
+      case "removed":
+        return player.removed;
       case "deploying":
         return undefined;
     }

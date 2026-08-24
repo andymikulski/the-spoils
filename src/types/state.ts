@@ -15,6 +15,7 @@ import type {
   Zone
 } from "./ids.js";
 import type { StackItem } from "./resolution.js";
+import type { PendingChoice } from "./choices.js";
 
 export interface CardInstance {
   id: CardInstanceId;
@@ -58,6 +59,8 @@ export interface PlayerState {
   play: CardInstanceId[];
   discard: CardInstanceId[];
   void: CardInstanceId[];
+  /** "Removed from the game" (RULES.md §2). Owner-tracked, like discard/void. */
+  removed: CardInstanceId[];
 }
 
 export interface RuntimeModifier {
@@ -201,6 +204,7 @@ export interface GameFlowView {
     | "resolvingResponses"
     | "battleChoice"
     | "battleFinished"
+    | "pendingChoice"
     | "gameOver";
 
   turnPhase: TurnPhase;
@@ -210,6 +214,7 @@ export interface GameFlowView {
   responseStack: StackItem[];
   battle?: BattleView;
   winner?: GameWinner;
+  pendingChoice?: PendingChoice;
 }
 
 export interface GameState {
@@ -233,4 +238,7 @@ export interface GameState {
 
   /** Set once a player's faction reaches 0 influence (or both do, for a draw). */
   winner?: GameWinner;
+
+  /** Blocks perform() except resolvePendingChoice until a player answers it. */
+  pendingChoice?: PendingChoice;
 }

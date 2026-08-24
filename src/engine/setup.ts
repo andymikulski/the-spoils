@@ -58,7 +58,8 @@ export function createTwoPlayerGame(
       hand: [],
       play: [],
       discard: [],
-      void: []
+      void: [],
+      removed: []
     };
   }
 
@@ -97,6 +98,9 @@ export function createTwoPlayerGame(
         break;
       case "void":
         player.void.push(card.id);
+        break;
+      case "removed":
+        player.removed.push(card.id);
         break;
       case "deploying":
         break;

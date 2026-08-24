@@ -37,13 +37,17 @@ export type Zone =
   | "deploying"
   | "play"
   | "discard"
-  | "void";
+  | "void"
+  /** "Removed from the game" (RULES.md §2) — gone; nothing can retrieve it. */
+  | "removed";
 
 export type Stat =
   | "strength"
   | "life"
   | "speed"
-  | "influence";
+  | "influence"
+  /** A location's damage capacity (RULES.md §3) — distinct from `life`, which locations don't have. */
+  | "structure";
 
 export type ComparisonOperator = ">" | ">=" | "=" | "<=" | "<";
 

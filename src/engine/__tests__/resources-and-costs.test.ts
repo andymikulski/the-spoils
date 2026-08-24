@@ -9,6 +9,7 @@ import {
   resourceCard,
   tactic
 } from "./support/fixtures.js";
+import type { ActivatedAbility } from "../../engine.js";
 
 describe("RULES.md §4 — thresholds", () => {
   test("a card cannot be played without meeting its threshold", () => {
@@ -106,5 +107,95 @@ describe("RULES.md §4 — Volition", () => {
     const thresholds = engine.getThresholds(P1);
     assert.equal(thresholds.volition ?? 0, 0);
     assert.equal(thresholds.rage, 1);
+  });
+});
+
+describe("RULES.md §4/§10 — discard costs require an explicit choice", () => {
+  function discardTwoAbility(): ActivatedAbility {
+    return {
+      id: "discardTwo",
+      type: "activated",
+      costs: [{ type: "discard", id: "toDiscard", player: "controller", selector: {}, count: 2 }],
+      effects: []
+    };
+  }
+
+  test("activation is rejected without an explicit discard selection", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [discardTwoAbility()] } }), owner: P1 },
+        { key: "handA", def: character({ name: "Hand A" }), owner: P1, zone: "hand" },
+        { key: "handB", def: character({ name: "Hand B" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("caster"), abilityId: "discardTwo" })
+    );
+  });
+
+  test("the player's explicit selection decides exactly which cards are discarded", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [discardTwoAbility()] } }), owner: P1 },
+        { key: "handA", def: character({ name: "Hand A" }), owner: P1, zone: "hand" },
+        { key: "handB", def: character({ name: "Hand B" }), owner: P1, zone: "hand" },
+        { key: "handC", def: character({ name: "Hand C" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("caster"),
+      abilityId: "discardTwo",
+      selected: { toDiscard: [id("handA"), id("handC")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("handA")].zone, "discard");
+    assert.equal(engine.state.cards[id("handC")].zone, "discard");
+    assert.equal(engine.state.cards[id("handB")].zone, "hand");
+  });
+
+  test("a selection naming a card the player doesn't control is rejected", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [discardTwoAbility()] } }), owner: P1 },
+        { key: "handA", def: character({ name: "Hand A" }), owner: P1, zone: "hand" },
+        { key: "handB", def: character({ name: "Hand B" }), owner: P1, zone: "hand" },
+        { key: "notMine", def: character({ name: "Not Mine" }), owner: "p2", zone: "hand" }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "activateAbility",
+        playerId: P1,
+        cardId: id("caster"),
+        abilityId: "discardTwo",
+        selected: { toDiscard: [id("handA"), id("notMine")] }
+      })
+    );
+  });
+
+  test("selecting the same card twice is rejected", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "caster", def: character({ name: "Caster", behavior: { abilities: [discardTwoAbility()] } }), owner: P1 },
+        { key: "handA", def: character({ name: "Hand A" }), owner: P1, zone: "hand" },
+        { key: "handB", def: character({ name: "Hand B" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "activateAbility",
+        playerId: P1,
+        cardId: id("caster"),
+        abilityId: "discardTwo",
+        selected: { toDiscard: [id("handA"), id("handA")] }
+      })
+    );
   });
 });

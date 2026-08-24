@@ -21,6 +21,13 @@ export interface TriggerResolution {
   sourceId: CardInstanceId;
   ability: TriggeredAbility;
   context: ResolutionContext;
+  /**
+   * Shared by every trigger found for the same emitted event (RULES.md §7:
+   * "triggers occurring at once"). Reassigned to a fresh, unshared value
+   * once an orderTriggers pending choice has settled that batch's order, so
+   * it isn't re-detected as needing another ordering decision.
+   */
+  batchId: string;
 }
 
 export interface StackItem {

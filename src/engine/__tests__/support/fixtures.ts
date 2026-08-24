@@ -66,10 +66,9 @@ export function item(overrides: Partial<CardDefinition> = {}): CardDefinition {
   return baseDef("item", overrides);
 }
 
-/** Locations use the `life` stat as their damage capacity ("structure") — see RULES.md §3. */
 export function location(overrides: Partial<CardDefinition> = {}): CardDefinition {
   return baseDef("location", {
-    life: 3,
+    structure: 3,
     ...overrides
   });
 }
@@ -266,11 +265,16 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
  * resolves and the game returns to normal turn flow. Assumes neither side
  * wants to add further responses — call `engine.perform` directly first for
  * tests that need a response actually played into the window.
+ *
+ * Stops early (without throwing) if a pendingChoice appears mid-drain — a
+ * real decision is needed before the engine can continue. Resolve it with
+ * `engine.perform({ type: "resolvePendingChoice", ... })` and call this
+ * again to keep draining.
  */
 export function resolvePendingResponses(engine: SpoilsEngine): void {
   let guard = 0;
 
-  while (engine.state.responseWindow) {
+  while (engine.state.responseWindow && !engine.state.pendingChoice) {
     if (++guard > 1000) {
       throw new Error("resolvePendingResponses did not converge — possible infinite loop.");
     }
@@ -301,7 +305,7 @@ export function autoResolveBattle(
 ): void {
   let guard = 0;
 
-  while (engine.state.battle) {
+  while (engine.state.battle && !engine.state.pendingChoice) {
     if (++guard > 2000) {
       throw new Error("autoResolveBattle did not converge — possible infinite loop.");
     }

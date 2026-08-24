@@ -96,7 +96,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "While you have an even number of cards in your hand, this card gains 1 strength, 1 life, and 1 speed."
   },
   {
@@ -159,7 +161,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card attacks, you may pick a character. If you do, put it into its owner's hand."
   },
   {
@@ -174,7 +178,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "COVERT -- At the start of your turn, you may pick a non-resource card you control. If you do, put a token on it."
   },
   {
@@ -201,7 +207,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- This card gains 1 strength and 1 life for each face-down resource each opponent controls."
   },
   {
@@ -216,7 +224,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller discards 2 cards."
   },
   {
@@ -228,7 +238,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character cannot attack or block."
   },
   {
@@ -243,7 +255,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "QUOTIDIAN INSTRUCTION -- COST: Deplete this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand."
   },
   {
@@ -258,7 +272,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "FLASH-BANG -- COST: Destroy this card. Pick a character you control. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -270,7 +286,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- This card enters play with 1 token on it. -- At the start of your turn, you may put a token on this card. -- The attached character loses 1 strength, 1 life, and 1 speed for each token on this card."
   },
   {
@@ -285,7 +303,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, look at up to the top 5 cards of any one deck. Put them back in any order."
   },
   {
@@ -300,7 +320,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -327,7 +349,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "This card enters play with 2 tokens on it. -- EJECT -- COST: Remove 2 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand."
   },
   {
@@ -390,7 +414,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters play, you may search your deck for a tactic and reveal it. If you do, put it into your hand."
   },
   {
@@ -405,7 +431,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "ENERGIZE -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Put a token on the card."
   },
   {
@@ -420,7 +448,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -435,7 +465,9 @@ export default [
     "strength": 12,
     "life": 12,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -450,7 +482,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters play, each player puts a resource they control into its owner's hand."
   },
   {
@@ -489,7 +523,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters or leaves play, an opponent discards a card."
   },
   {
@@ -501,7 +537,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains COVERT. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -602,7 +640,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["straw man"],
+    "subtype": [
+      "straw man"
+    ],
     "text": "This card enters play with 3 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INSTALLMENT PLAN -- COST: Pay 3. -- EFFECT: Remove a token from this card."
   },
   {
@@ -630,7 +670,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE BEATRIX -- When you draw any number of cards, increase the amount by 1. -- While you have at least 10 cards in your hand, you cannot draw cards."
   },
   {
@@ -645,7 +687,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mercenary", "assassin"],
+    "subtype": [
+      "mercenary",
+      "assassin"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. -- When this card blocks, it gains 4 strength and 4 life this turn."
   },
   {
@@ -657,7 +702,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, deplete the attached character. -- The attached character cannot be restored by its controller's faction's Restore Rule."
   },
   {
@@ -684,7 +731,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary"],
+    "subtype": [
+      "mercenary"
+    ],
     "text": "COVERT -- When this card enters play, your faction loses 5 influence."
   },
   {
@@ -699,7 +748,9 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -714,7 +765,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "When you are attacked, this card must block if it can."
   },
   {
@@ -741,7 +794,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "assassin"],
+    "subtype": [
+      "mercenary",
+      "assassin"
+    ],
     "text": "This card cannot be restored by your faction's Restore Rule. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 2. -- EFFECT: Restore this card."
   },
   {
@@ -780,7 +836,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lackey", "ghost"],
+    "subtype": [
+      "lackey",
+      "ghost"
+    ],
     "text": "While you control only 1 character, this card gains COVERT. -- When this card inflicts damage to a faction, draw 2 cards."
   },
   {
@@ -820,7 +879,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "While you have at least 6 cards in your hand, this card gains 1 strength and COVERT."
   },
   {
@@ -859,7 +921,11 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "lawyer", "mau"],
+    "subtype": [
+      "mercenary",
+      "lawyer",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- When this card is destroyed during a battle, your faction gains X influence, where X is the total strength of the opposing party."
   },
   {
@@ -886,7 +952,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, draw a card. Your faction loses 2 influence."
   },
   {
@@ -901,7 +970,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 4 influence."
   },
   {
@@ -916,7 +988,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, your faction gains 4 influence."
   },
   {
@@ -931,7 +1005,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lackey", "necromorph"],
+    "subtype": [
+      "lackey",
+      "necromorph"
+    ],
     "text": "SUBJUGATE -- COST: Deplete this card. Pick 2 or fewer characters. -- EFFECT: Deplete the characters."
   },
   {
@@ -946,7 +1023,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "All your other lawyer characters gain 1 strength and 1 life."
   },
   {
@@ -961,7 +1041,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "PROTECT -- COST: Pay 1. Pick a character in a party with this card. -- EFFECT: This turn, the character gains 1 life."
   },
   {
@@ -976,7 +1059,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "When this card blocks, destroy it and all members of the attacking party."
   },
   {
@@ -1027,7 +1112,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["ghost"],
+    "subtype": [
+      "ghost"
+    ],
     "text": "When this card is put into your discard pile from play, you may pay 1. If you do, put it into play under your control. Deplete it."
   },
   {
@@ -1054,7 +1141,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "When this card enters play, you may pick a location. If you do, destroy it."
   },
   {
@@ -1082,7 +1172,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, you may pick a character in your discard pile. If you do, put it into your hand."
   },
   {
@@ -1097,7 +1189,10 @@ export default [
     "strength": 0,
     "life": 3,
     "speed": 1,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "UNIQUE SAMUEL -- Reduce all damage inflicted to your faction to 0."
   },
   {
@@ -1148,7 +1243,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "HAGGLE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 2 strength."
   },
   {
@@ -1175,7 +1272,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When your faction loses influence, reduce the amount by 1."
   },
   {
@@ -1203,7 +1303,9 @@ export default [
     "strength": 5,
     "life": 8,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -1230,7 +1332,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may deploy a non-tactic card for free. If you do, each opponent may do the same. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -1245,7 +1349,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "EXTRA COST: Deploy this only if you have deployed at least 2 other non-resource cards this turn."
   },
   {
@@ -1260,7 +1366,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may search your deck for a gear card with numeric cost 5 or less and reveal it. If you do, put it into play attached to this card."
   },
   {
@@ -1275,7 +1383,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "UNIQUE SERIES OF TUBES -- REDIRECT -- COST: Pick a node character. -- EFFECT: This turn, the next 1 damage that would be inflicted to the character is inflicted to this card instead. -- All other node characters gain 1 strength and 1 life. -- When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards."
   },
   {
@@ -1302,7 +1412,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards."
   },
   {
@@ -1329,7 +1441,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "DEVELOPMENT -- COST: Deplete this card. -- EFFECT: Search your deck for an item and reveal it. Put it into your hand. -- DEPLOYMENT -- COST: Deplete this card. -- EFFECT: You may deploy an item for free. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -1344,7 +1458,9 @@ export default [
     "strength": 10,
     "life": 10,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -1356,7 +1472,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "TACTICAL -- ATTACH TO CHARACTER -- If the attached character would be destroyed, destroy this card instead. Reduce the amount of damage already inflicted to the character this turn to 0."
   },
   {
@@ -1371,7 +1489,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards. -- This card gains 1 strength and 1 life for each other node card in play."
   },
   {
@@ -1435,7 +1555,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "UNIQUE JO -- RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 3."
   },
   {
@@ -1450,7 +1572,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 1,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": ""
   },
   {
@@ -1462,7 +1586,9 @@ export default [
     "rarity": "rare",
     "cost": 4,
     "threshold": "eee",
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "This card cannot be destroyed by the effects of node cards. -- RECONSTRUCT -- COST: Pay 1. Deplete this card. Pick a node card in your discard pile. -- EFFECT: Shuffle the card into its owner's deck."
   },
   {
@@ -1474,7 +1600,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -1486,7 +1614,9 @@ export default [
     "rarity": "rare",
     "cost": 8,
     "threshold": "eeee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 11 strength and 11 life. -- HANDOFF -- COST: Pay 6. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -1498,7 +1628,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- When the attached character leaves play, you may search your deck for a card. If you do, put it into your hand."
   },
   {
@@ -1525,7 +1657,9 @@ export default [
     "strength": 8,
     "life": 6,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -1577,7 +1711,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may put a Micromajig token into play. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -1592,7 +1728,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["manager"],
+    "subtype": [
+      "manager"
+    ],
     "text": "When this card enters play, you may put 2 Micromajig tokens into play. -- TINY SACRIFICES -- COST: Destroy 3 Micromajig tokens you control. -- EFFECT: Search your deck for a card. Put it into your hand. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -1631,7 +1769,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1."
   },
   {
@@ -1694,7 +1834,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "When this card enters or leaves play, you may pick an item in your discard pile. If you do, put it into your hand."
   },
   {
@@ -1709,7 +1851,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "This card can block COVERT parties. -- When this card blocks a COVERT party, it gains 3 strength this turn."
   },
   {
@@ -1733,7 +1877,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength. -- When an attacking party is formed including the attached character, it must have only 1 member. -- When the attached character is blocked, destroy all members of the blocking party. If you do, reduce the attached character's battle damage during this battle to 0."
   },
   {
@@ -1745,7 +1891,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- Treat the attached character as though it has no rules text. (This includes abilities.) -- MOVE -- COST: Pay 2. Pick a character. -- EFFECT: Attach this card to the character."
   },
   {
@@ -1760,7 +1908,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "TIGER ROAR -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 strength."
   },
   {
@@ -1775,7 +1925,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 1,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "While this card is in a battle, all characters in the opposing party lose 1 speed."
   },
   {
@@ -1790,7 +1942,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "At the start of your turn, you may put a token on this card. -- RESEARCH -- COST: Remove a token from this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1."
   },
   {
@@ -1802,7 +1956,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- GRAPPLE -- COST: Pick a gear card in your discard pile. Destroy this card. -- EFFECT: Put the gear card into play under your control attached to the character."
   },
   {
@@ -1817,7 +1973,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "While an opponent has at least 10 cards in their discard pile, this card gains 3 strength and 3 life."
   },
   {
@@ -1844,7 +2002,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "PANHANDLE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character either gains or loses 1 speed."
   },
   {
@@ -1859,7 +2019,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card enters play, flip a coin. If you win, put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -1874,7 +2036,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, flip a coin. If you win, X is 3. Otherwise, X is 2. Put the top X cards of an opponent's deck into their discard pile."
   },
   {
@@ -1889,7 +2053,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "CONGA LINE -- COST: Pay 3. Deplete this card. Pick a character not in a battle. -- EFFECT: This turn, all characters able to block the character must do so. When an attacking party is formed including the character, it must have only 1 member."
   },
   {
@@ -1916,7 +2082,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": ""
   },
   {
@@ -1943,7 +2111,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 4,
-    "subtype": ["guard"],
+    "subtype": [
+      "guard"
+    ],
     "text": ""
   },
   {
@@ -1970,7 +2140,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 5,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "When this card attacks, all other members of its party gain 1 speed this turn."
   },
   {
@@ -1985,7 +2157,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "While an opponent controls at least 4 characters, this card cannot be blocked."
   },
   {
@@ -2000,7 +2174,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "Anything that can pick this card must pick it. (This effect is only active while this card is in play.) -- When this card is picked, put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -2052,7 +2228,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": ""
   },
   {
@@ -2067,7 +2245,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, you may search an opponent's deck for up to 3 cards with different names and reveal them. If you do, put them into that player's discard pile."
   },
   {
@@ -2082,7 +2262,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card inflicts damage to a faction, you may put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -2097,7 +2279,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "KIDNAP -- COST: Destroy this card. Pick an attacking or blocking character. -- EFFECT: Destroy the character."
   },
   {
@@ -2136,7 +2320,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- SCREAM -- COST: This card loses COVERT this turn. -- EFFECT: This turn, while this card is in a battle, all characters in the opposing party lose 2 speed."
   },
   {
@@ -2151,7 +2337,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "RECLAIM -- COST: Remove 3 cards in an opponent's discard pile from the game. -- EFFECT: This card gains 1 strength and 1 life this turn."
   },
   {
@@ -2166,7 +2354,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, put the top 2 cards of an opponent's deck into their discard pile."
   },
   {
@@ -2181,7 +2371,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- GRIFT -- COST: Use this only during your turn. Pay 5. Deplete this card. Pick a non-tactic card in an opponent's discard pile. -- EFFECT: Put the card into play under your control."
   },
   {
@@ -2208,7 +2401,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, destroy a card named Deception you control or destroy this card."
   },
   {
@@ -2223,7 +2418,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["hunter"],
+    "subtype": [
+      "hunter"
+    ],
     "text": "COVERT -- When this card attacks, it loses COVERT this turn."
   },
   {
@@ -2238,7 +2435,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "When a coin is flipped, you may put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -2250,7 +2449,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 speed. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -2301,7 +2502,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, it gains 1 strength and 1 life this turn."
   },
   {
@@ -2316,7 +2519,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, you may remove 4 cards in an opponent's discard pile from the game. If you don't, destroy this card."
   },
   {
@@ -2331,7 +2536,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- You may use abilities on your opponent's cards, but you must pay any numeric cost with your own resources. Any additional costs must be satisfied as though your opponent is using the ability. The ability's effect happens as if your opponent used it. -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control."
   },
   {
@@ -2346,7 +2554,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "EXTRA COST: Discard a character or item. X is its numeric cost. -- This card enters play with X tokens on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -2373,7 +2583,9 @@ export default [
     "strength": 5,
     "life": 7,
     "speed": 6,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "UNIQUE EVONDAN -- All your other sarcophyle characters gain 1 speed. -- If a character would be destroyed during a turn when this card damaged it, take control of that character instead. Reduce the amount of damage already inflicted to it this turn to 0. It gains the sarcophyle subtype. -- When this card is destroyed, destroy all other sarcophyle characters."
   },
   {
@@ -2412,7 +2624,9 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": ""
   },
   {
@@ -2451,7 +2665,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "This card gains 1 strength for each token on it. -- At the start of your turn, you may pick a character you control. If you do, destroy it. Put X tokens on this card, where X is the destroyed character's strength when it was destroyed. Otherwise, destroy this card."
   },
   {
@@ -2466,7 +2682,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE BLADEFIST -- FIREBREATHING -- COST: Choose a number for X. Pay X+X. Deplete this card. Pick a character. -- EFFECT: Inflict X damage to the character."
   },
   {
@@ -2481,7 +2699,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card attacks, you may pick a character. If you do, deplete it."
   },
   {
@@ -2496,7 +2716,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FIRE! -- COST: Deplete this card. Pick 2 or fewer characters. -- EFFECT: Inflict up to 2 damage divided however you want to the characters."
   },
   {
@@ -2511,7 +2733,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card is blocked, it gains 2 strength and 2 life this turn."
   },
   {
@@ -2526,7 +2750,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2565,7 +2791,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["rider"],
+    "subtype": [
+      "rider"
+    ],
     "text": "This card gains 1 strength and 1 life for each dragon card you control."
   },
   {
@@ -2580,7 +2808,9 @@ export default [
     "strength": 10,
     "life": 10,
     "speed": 4,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "At the start of your turn, you may pick a character an opponent controls. If you do, destroy it. Otherwise, destroy this card."
   },
   {
@@ -2644,7 +2874,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 2 damage divided however you want to those characters."
   },
   {
@@ -2683,7 +2915,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card inflicts damage to a faction, you may pick an item. If you do, destroy it."
   },
   {
@@ -2698,7 +2932,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "SHARPSHOOT -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: Inflict 1 damage to the character."
   },
   {
@@ -2722,7 +2958,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -2737,7 +2975,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card is blocked, inflict 1 damage to each member of the blocking party."
   },
   {
@@ -2752,7 +2992,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2767,7 +3009,9 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2782,7 +3026,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, inflict 1 damage to all your opponent's characters."
   },
   {
@@ -2797,7 +3043,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "While this card is attacking, you may assign its battle damage to the target of the attack instead of the blocking party."
   },
   {
@@ -2812,7 +3060,9 @@ export default [
     "strength": 7,
     "life": 1,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "At the end of your turn, if this card started the turn under your control and did not attack this turn, destroy it."
   },
   {
@@ -2840,7 +3090,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "UNIQUE RUDOLPHUS -- PUNCH -- COST: Pay 2. Deplete this card. Pick a character. X is its strength. Y is this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
   },
   {
@@ -2855,7 +3107,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2906,7 +3160,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "While an opponent controls a character, this card gains 1 strength and 1 life."
   },
   {
@@ -2921,7 +3177,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2972,7 +3230,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -2980,6 +3240,81 @@ export default [
     "name": "The Tournament Faction",
     "set": "1st Edition",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -3083,7 +3418,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "At the start of your turn, pick a character an opponent controls. It gains COVERT until the start of your next turn."
   },
   {
@@ -3098,7 +3435,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- While this card is a member of an attacking party, the party is COVERT."
   },
   {
@@ -3113,7 +3452,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller puts a card from their hand on the top of their deck if they can."
   },
   {
@@ -3150,7 +3491,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "oo",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, put a token on the attached character. -- The attached character gains 1 strength and 1 life for each token on it. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -3165,7 +3508,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "UNIQUE ELDRIDGE -- At the start of your turn, you may pick 2 or fewer non-resource cards you control. If you do, put up to 2 tokens divided however you want on those cards. -- EJECT -- COST: Remove 3 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand. -- DISRUPT -- COST: Remove 3 tokens from this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card."
   },
   {
@@ -3180,7 +3525,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "EXTRA COST: You may pick a character you control. -- When this card enters play, if you picked a character as part of its cost, put 2 tokens on that character."
   },
   {
@@ -3207,7 +3554,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card leaves play, an opponent discards a card."
   },
   {
@@ -3222,7 +3571,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card leaves play, you may look at the top 2 cards of any one deck. If you do, put 1 card on the bottom of that deck and 1 card on the top. Draw a card."
   },
   {
@@ -3237,7 +3588,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["obsessor"],
+    "subtype": [
+      "obsessor"
+    ],
     "text": "When an attacking or blocking party is formed including this card, it must have an even number of members."
   },
   {
@@ -3252,7 +3605,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -3291,7 +3646,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["diva"],
+    "subtype": [
+      "diva"
+    ],
     "text": "Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card."
   },
   {
@@ -3306,7 +3663,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -3333,7 +3692,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "DISRUPT -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card."
   },
   {
@@ -3385,7 +3746,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, you may pick a tactic in your discard pile. If you do, put it into your hand."
   },
   {
@@ -3412,7 +3775,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["cultivator"],
+    "subtype": [
+      "cultivator"
+    ],
     "text": "While you control an even number of characters, reduce the numeric cost of tactics you deploy by 1, to a minimum of 1."
   },
   {
@@ -3439,7 +3804,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card is destroyed by battle damage, an opponent discards their hand."
   },
   {
@@ -3454,7 +3821,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["muddler", "lurker"],
+    "subtype": [
+      "muddler",
+      "lurker"
+    ],
     "text": "When this card enters play, look at an opponent's hand and choose a card in it. That player discards that card. -- When this card leaves play, you may pick a non-resource card. If you do, put it into its owner's hand. Draw a card."
   },
   {
@@ -3506,7 +3876,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When any amount of damage greater than 4 is inflicted to this card, reduce it to 0. -- When you are attacked, you may pay 2. If you do, restore this card."
   },
   {
@@ -3521,7 +3894,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When a character inflicts damage to this card, inflict 1 damage to that character."
   },
   {
@@ -3536,7 +3912,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "INSPECT -- COST: Deplete this card. Pick a location. -- EFFECT: Inflict 2 damage to the location."
   },
   {
@@ -3551,7 +3929,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee", "mau"],
+    "subtype": [
+      "employee",
+      "mau"
+    ],
     "text": "When this card enters play, an opponent draws a card."
   },
   {
@@ -3566,7 +3947,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee"],
+    "subtype": [
+      "employee"
+    ],
     "text": "This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INVEST -- COST: Pay 2. -- EFFECT: Remove a token from this card."
   },
   {
@@ -3603,7 +3986,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 2 life. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -3631,7 +4016,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["investor", "mau"],
+    "subtype": [
+      "investor",
+      "mau"
+    ],
     "text": "COVERT -- This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- At the start of your turn, you may pick a non-resource card you control. If you do, remove a token from that card."
   },
   {
@@ -3646,7 +4034,10 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "COVERT -- At the start of your turn, you may pay 2. If you don't, an opponent takes control of this card."
   },
   {
@@ -3685,7 +4076,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["executive", "mau"],
+    "subtype": [
+      "executive",
+      "mau"
+    ],
     "text": "When this card leaves play, draw a card."
   },
   {
@@ -3700,7 +4094,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["investor", "mau"],
+    "subtype": [
+      "investor",
+      "mau"
+    ],
     "text": "INVEST -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Remove a token from the card."
   },
   {
@@ -3727,7 +4124,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["investor"],
+    "subtype": [
+      "investor"
+    ],
     "text": "This card loses 1 strength and 1 life for each token on it. -- EXCHANGE -- COST: Deplete this card. Put a token on this card. -- EFFECT: Draw a card."
   },
   {
@@ -3742,7 +4141,9 @@ export default [
     "strength": 0,
     "life": 3,
     "speed": 3,
-    "subtype": ["salesman"],
+    "subtype": [
+      "salesman"
+    ],
     "text": "When this card blocks, all members of the blocking party gain 2 strength and 2 life this turn. (This includes this character.)"
   },
   {
@@ -3769,7 +4170,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["bureaucrat"],
+    "subtype": [
+      "bureaucrat"
+    ],
     "text": "STUBBORNNESS -- COST: Pay 1. -- EFFECT: This turn, this card gains 1 life."
   },
   {
@@ -3784,7 +4187,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["executive"],
+    "subtype": [
+      "executive"
+    ],
     "text": "When this card leaves play, draw 2 cards."
   },
   {
@@ -3799,7 +4204,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary", "investor"],
+    "subtype": [
+      "mercenary",
+      "investor"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. -- This card loses 1 strength and 1 life for each token on it. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 1. Put a token on this card. -- EFFECT: Restore this card."
   },
   {
@@ -3814,7 +4222,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["publicist"],
+    "subtype": [
+      "publicist"
+    ],
     "text": "When this card enters play, all your characters gain 1 life this turn."
   },
   {
@@ -3829,7 +4239,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE RANDOLPH -- When this card enters play, draw a card. -- PAYDAY LOAN -- COST: Pay 1. Discard a resource or destroy a resource you control. -- EFFECT: Draw a card."
   },
   {
@@ -3844,7 +4256,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["auctioneer"],
+    "subtype": [
+      "auctioneer"
+    ],
     "text": "LIQUIDATE -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -3859,7 +4273,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee"],
+    "subtype": [
+      "employee"
+    ],
     "text": "This card enters play with 3 tokens on it. -- This card loses 1 strength for each token on it. -- INVEST -- COST: Pay X, where X is the number of tokens on this card. -- EFFECT: Remove a token from this card."
   },
   {
@@ -3895,7 +4311,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When the attached character inflicts damage, inflict the same amount of damage to the character's controller's faction."
   },
   {
@@ -3910,7 +4328,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "DENIED! -- COST: Use this only in response to a character being deployed. Destroy this card. -- EFFECT: Terminate the character."
   },
   {
@@ -3937,7 +4357,10 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "UNDERHANDED DEAL -- COST: Discard a card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -3952,7 +4375,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "This card can attack only once each turn. -- SIFT -- COST: Deplete this card. -- EFFECT: Draw a card. Discard a card. -- RUMMAGE -- COST: Pay 2. Remove 3 cards in your discard pile from the game. -- EFFECT: Restore this card."
   },
   {
@@ -3991,7 +4417,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When you deploy a gear card attached to this card, you may detach a resource from your faction. -- While a gear card is attached to this card, it gains 1 strength and 1 life."
   },
   {
@@ -4006,7 +4434,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "GRAND DESIGN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 6."
   },
   {
@@ -4021,7 +4451,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may search your deck for a card named Elitism and reveal it. If you do, put it into play. Attach it to your faction."
   },
   {
@@ -4084,7 +4516,10 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["guardforce", "31f"],
+    "subtype": [
+      "guardforce",
+      "31f"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn."
   },
   {
@@ -4099,7 +4534,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["guardforce", "31f"],
+    "subtype": [
+      "guardforce",
+      "31f"
+    ],
     "text": "UNIQUE GUARDFORCE ALPHA PRIME H4X0R -- This card can attack even if it has not been in play under your control since the start of the turn. -- When this card inflicts damage to a faction, you may play a resource."
   },
   {
@@ -4114,7 +4552,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["guardforce", "majig"],
+    "subtype": [
+      "guardforce",
+      "majig"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- When you deploy a card, put a token on this card. (Playing a resource doesn't count.) -- When an opponent deploys a card, remove a token from this card. (Playing a resource doesn't count.) -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -4126,7 +4567,9 @@ export default [
     "rarity": "common",
     "cost": 6,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, you may detach up to 2 resources from your faction. -- The attached character gains 4 strength, 4 life, and loses 1 speed. -- HANDOFF -- COST: Pay 5. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -4141,7 +4584,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 strength, 1 life, and 1 speed."
   },
   {
@@ -4156,7 +4601,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 speed."
   },
   {
@@ -4171,7 +4618,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 life."
   },
   {
@@ -4186,7 +4635,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 strength."
   },
   {
@@ -4198,7 +4649,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "ee",
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "EXTRA COST: Pick a character. -- This turn, the character gains 1 strength and 1 life. It gains an additional 1 strength and 1 life for each kaiser card in play. It gains an additional 1 strength and 1 life if it is a kaiser character."
   },
   {
@@ -4213,7 +4666,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "GO MEGA-NEKO-KAISER! -- COST: Deplete a card named PantherKaiser you control. Deplete a card named TigerKaiser you control. -- EFFECT: This turn, this card gains 8 strength, 8 life, and 2 speed and while it is the only member of an attacking party, only parties with at least 3 members can block it."
   },
   {
@@ -4228,7 +4683,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["machine"],
+    "subtype": [
+      "machine"
+    ],
     "text": "When this card is destroyed, put 5 Micromajig tokens into play under your control. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -4243,7 +4700,9 @@ export default [
     "strength": 3,
     "life": 6,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "When you are attacked, you may restore this card."
   },
   {
@@ -4258,7 +4717,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 2,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "PANTHER SHIELD -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 life."
   },
   {
@@ -4285,7 +4746,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 1,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "INSULT -- COST: Deplete this card. Pick a character with COVERT. -- EFFECT: Deplete the character. This turn, reduce all damage inflicted by it to 0."
   },
   {
@@ -4312,7 +4775,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 1,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When an attacking party is formed including this card and at least 2 other characters, you may search your deck for a card. If you do, put it into your hand."
   },
   {
@@ -4327,7 +4792,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "PUMP-UP -- COST: Deplete another character you control. -- EFFECT: This turn, this card gains 2 strength and 2 life. -- SCHPROING! -- COST: Destroy a character you control. -- EFFECT: This turn, this card cannot be blocked."
   },
   {
@@ -4354,7 +4821,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2."
   },
   {
@@ -4381,7 +4850,10 @@ export default [
     "strength": 8,
     "life": 5,
     "speed": 2,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -4396,7 +4868,10 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -4411,7 +4886,10 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 4,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -4476,7 +4954,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- The top card of your deck is revealed at all times. -- BOTTOM DEAL -- COST: Pay 1. -- EFFECT: Put the top card of your deck on the bottom. -- CHEAT -- COST: Deplete this card. -- EFFECT: Reveal the top card of your deck. You may deploy it. (You can't play resources with this ability.) -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control."
   },
   {
@@ -4491,7 +4972,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, that faction's controller picks an item they control if they can. If they do, take control of it and destroy this card."
   },
   {
@@ -4518,7 +5001,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, pick an item that faction's controller controls if you can. If you do, destroy it."
   },
   {
@@ -4569,7 +5054,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "PLUNDER -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Put the top 3 cards of an opponent's deck into their discard pile."
   },
   {
@@ -4596,7 +5083,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, all your characters gain 1 speed this turn."
   },
   {
@@ -4611,7 +5100,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 5,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": ""
   },
   {
@@ -4638,7 +5129,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 4,
-    "subtype": ["outcast", "vigilante"],
+    "subtype": [
+      "outcast",
+      "vigilante"
+    ],
     "text": "When you control any other characters you own, destroy this card."
   },
   {
@@ -4677,7 +5171,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 4,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "Your opponents cannot pick this card."
   },
   {
@@ -4692,7 +5188,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 6,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "While this card is in a battle and there is at least one character in the opposing party, it gains X strength, where X is this card's speed minus the highest speed among characters in the opposing party."
   },
   {
@@ -4707,7 +5205,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "Your opponents cannot pick this card."
   },
   {
@@ -4722,7 +5222,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card is destroyed, you may pick a non-tactic card in an opponent's discard pile. If you do, put it into play under your control."
   },
   {
@@ -4737,7 +5239,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 2,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card is blocked, you may pick a blocking character and a character that character's controller controls that is not in a battle. If you do, remove the blocking character from the battle and add the other character to the blocking party."
   },
   {
@@ -4749,7 +5253,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- BRIBE -- COST: Any player may use this ability. Pay 3. -- EFFECT: Take control of the attached character. -- BLACKMAIL -- COST: Use this only if you own this card. Pay 2. -- EFFECT: Take control of the attached character."
   },
   {
@@ -4785,7 +5291,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When the attached character inflicts damage to a character, destroy the damaged character. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -4800,7 +5308,9 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "SNEAK -- COST: Use this only if an opponent has at least 10 cards in their discard pile. Pay 1. Remove 2 cards in that player's discard pile from the game. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -4815,7 +5325,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, flip a coin. If you lose, deplete this card."
   },
   {
@@ -4842,7 +5354,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, discard a card or destroy this card."
   },
   {
@@ -4857,7 +5371,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "While this card is the only member of an attacking party, only characters with at least X speed can block it, where X is this card's speed."
   },
   {
@@ -4872,7 +5388,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When an attacking or blocking party is formed including this card, it must have at least 2 members."
   },
   {
@@ -4900,7 +5418,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card enters play, inflict 1 damage to an opponent's faction."
   },
   {
@@ -4939,7 +5459,9 @@ export default [
     "strength": 6,
     "life": 2,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": ""
   },
   {
@@ -4954,7 +5476,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card attacks in a party with more than 1 member, it gains 1 strength and 1 life this turn."
   },
   {
@@ -4969,7 +5493,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card is destroyed, an opponent's faction loses 4 influence."
   },
   {
@@ -4981,7 +5507,9 @@ export default [
     "rarity": "rare",
     "cost": 5,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "UNIQUE DETHMÜRDERBLÜDGEON -- ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- When the attached character is blocked, an opponent's faction loses 2 influence. -- When the attached character inflicts damage to a faction, you may pick a character. If you do, inflict 2 damage to it. -- If this card would be put into a discard pile from play, put it into its owner's hand instead."
   },
   {
@@ -5008,7 +5536,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "OFF THE TOP ROPE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character cannot block."
   },
   {
@@ -5035,7 +5565,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "When this card is blocked, this turn it gains 4 strength for each member in the opposing party."
   },
   {
@@ -5050,7 +5582,9 @@ export default [
     "strength": 5,
     "life": 10,
     "speed": 3,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "When a character is destroyed during a turn when this card damaged it, put X tokens on this card, where X is the strength of that character. -- This card gains 1 strength for each token on it. -- IMPALE -- COST: Pay 2 or remove 2 tokens from this card. Pick a character. -- EFFECT: This turn, the character must block this card if it can."
   },
   {
@@ -5065,7 +5599,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card enters play, all your characters gain 1 strength this turn."
   },
   {
@@ -5080,7 +5616,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When an attacking party is formed including this character, all other soldier characters in that party gain 1 life this turn."
   },
   {
@@ -5095,7 +5633,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CONVINCE -- COST: Deplete this card. -- EFFECT: This turn, all your soldier characters gain 1 strength."
   },
   {
@@ -5110,7 +5650,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CUNNING PLAN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Inflict 2 damage to an opponent's faction."
   },
   {
@@ -5161,7 +5703,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 5 damage divided however you want to those characters."
   },
   {
@@ -5176,7 +5720,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CANNIBALIZE -- COST: Destroy a character you control. -- EFFECT: This turn, this card gains 2 strength."
   },
   {
@@ -5191,7 +5737,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When an opponent deploys a tactic, inflict 2 damage to their faction."
   },
   {
@@ -5230,7 +5778,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "ULTIMATE SACRIFICE -- COST: X is this card's strength. Destroy this card. Pick a character. -- EFFECT: Inflict X damage to the character."
   },
   {
@@ -5242,7 +5792,9 @@ export default [
     "rarity": "uncommon",
     "cost": 4,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 4 strength. -- When damage is inflicted to the attached character, increase the amount by 2. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -5257,7 +5809,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "While this card is attacking a location, it gains 1 strength and cannot be blocked."
   },
   {
@@ -5272,7 +5826,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "At the start of your turn, inflict 1 damage to all characters."
   },
   {
@@ -5299,7 +5855,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "EXTRA COST: Deploy this only if an opponent's faction has 10 influence or less."
   },
   {
@@ -5314,7 +5872,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE WYRMFANG -- When you attack, the controller of the faction or location you are attacking picks any number of characters they control. Those characters must block during this battle if they can, and only those characters can block."
   },
   {
@@ -5414,7 +5974,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "At the start of your turn, pick a character an opponent controls. It gains COVERT until the start of your next turn."
   },
   {
@@ -5441,7 +6003,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- While this card is a member of an attacking party, the party is COVERT."
   },
   {
@@ -5456,7 +6020,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller puts a card from their hand on the top of their deck if they can."
   },
   {
@@ -5504,7 +6070,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "oo",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, put a token on the attached character. -- The attached character gains 1 strength and 1 life for each token on it. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -5531,7 +6099,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "UNIQUE ELDRIDGE -- At the start of your turn, you may pick 2 or fewer non-resource cards you control. If you do, put up to 2 tokens divided however you want on those cards. -- EJECT -- COST: Remove 3 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand. -- DISRUPT -- COST: Remove 3 tokens from this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card."
   },
   {
@@ -5546,7 +6116,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "EXTRA COST: You may pick a character you control. -- When this card enters play, if you picked a character as part of its cost, put 2 tokens on that character."
   },
   {
@@ -5585,7 +6157,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card attacks, you may pick a character. If you do, put it into its owner's hand."
   },
   {
@@ -5600,7 +6174,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card leaves play, an opponent discards a card."
   },
   {
@@ -5615,7 +6191,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "COVERT -- At the start of your turn, you may pick a non-resource card you control. If you do, put a token on it."
   },
   {
@@ -5630,7 +6208,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -5645,7 +6225,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- This card gains 1 strength and 1 life for each face-down resource each opponent controls."
   },
   {
@@ -5660,7 +6242,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller discards 2 cards."
   },
   {
@@ -5672,7 +6256,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character cannot attack or block."
   },
   {
@@ -5699,7 +6285,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, look at up to the top 5 cards of any one deck. Put them back in any order."
   },
   {
@@ -5726,7 +6314,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["diva"],
+    "subtype": [
+      "diva"
+    ],
     "text": "Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card."
   },
   {
@@ -5741,7 +6331,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -5768,7 +6360,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "This card enters play with 2 tokens on it. -- EJECT -- COST: Remove 2 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand."
   },
   {
@@ -5795,7 +6389,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "DISRUPT -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card."
   },
   {
@@ -5871,7 +6467,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, you may pick a tactic in your discard pile. If you do, put it into your hand."
   },
   {
@@ -5886,7 +6484,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters play, you may search your deck for a tactic and reveal it. If you do, put it into your hand."
   },
   {
@@ -5901,7 +6501,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "ENERGIZE -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Put a token on the card."
   },
   {
@@ -5916,7 +6518,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -5931,7 +6535,9 @@ export default [
     "strength": 12,
     "life": 12,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -5970,7 +6576,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters or leaves play, an opponent discards a card."
   },
   {
@@ -5997,7 +6605,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["cultivator"],
+    "subtype": [
+      "cultivator"
+    ],
     "text": "While you control an even number of characters, reduce the numeric cost of tactics you deploy by 1, to a minimum of 1."
   },
   {
@@ -6024,7 +6634,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card is destroyed by battle damage, an opponent discards their hand."
   },
   {
@@ -6039,7 +6651,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["muddler", "lurker"],
+    "subtype": [
+      "muddler",
+      "lurker"
+    ],
     "text": "When this card enters play, look at an opponent's hand and choose a card in it. That player discards that card. -- When this card leaves play, you may pick a non-resource card. If you do, put it into its owner's hand. Draw a card."
   },
   {
@@ -6153,7 +6768,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE BEATRIX -- When you draw any number of cards, increase the amount by 1. -- While you have at least 10 cards in your hand, you cannot draw cards."
   },
   {
@@ -6165,7 +6782,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, deplete the attached character. -- The attached character cannot be restored by its controller's faction's Restore Rule."
   },
   {
@@ -6205,7 +6824,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When any amount of damage greater than 4 is inflicted to this card, reduce it to 0. -- When you are attacked, you may pay 2. If you do, restore this card."
   },
   {
@@ -6220,7 +6842,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary"],
+    "subtype": [
+      "mercenary"
+    ],
     "text": "COVERT -- When this card enters play, your faction loses 5 influence."
   },
   {
@@ -6235,7 +6859,9 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -6262,7 +6888,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee", "mau"],
+    "subtype": [
+      "employee",
+      "mau"
+    ],
     "text": "When this card enters play, an opponent draws a card."
   },
   {
@@ -6277,7 +6906,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee"],
+    "subtype": [
+      "employee"
+    ],
     "text": "This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INVEST -- COST: Pay 2. -- EFFECT: Remove a token from this card."
   },
   {
@@ -6292,7 +6923,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "assassin"],
+    "subtype": [
+      "mercenary",
+      "assassin"
+    ],
     "text": "This card cannot be restored by your faction's Restore Rule. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 2. -- EFFECT: Restore this card."
   },
   {
@@ -6369,7 +7003,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["investor", "mau"],
+    "subtype": [
+      "investor",
+      "mau"
+    ],
     "text": "COVERT -- This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- At the start of your turn, you may pick a non-resource card you control. If you do, remove a token from that card."
   },
   {
@@ -6384,7 +7021,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lackey", "ghost"],
+    "subtype": [
+      "lackey",
+      "ghost"
+    ],
     "text": "While you control only 1 character, this card gains COVERT. -- When this card inflicts damage to a faction, draw 2 cards."
   },
   {
@@ -6412,7 +7052,10 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "COVERT -- At the start of your turn, you may pay 2. If you don't, an opponent takes control of this card."
   },
   {
@@ -6451,7 +7094,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["executive", "mau"],
+    "subtype": [
+      "executive",
+      "mau"
+    ],
     "text": "When this card leaves play, draw a card."
   },
   {
@@ -6478,7 +7124,11 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "lawyer", "mau"],
+    "subtype": [
+      "mercenary",
+      "lawyer",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- When this card is destroyed during a battle, your faction gains X influence, where X is the total strength of the opposing party."
   },
   {
@@ -6493,7 +7143,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["investor", "mau"],
+    "subtype": [
+      "investor",
+      "mau"
+    ],
     "text": "INVEST -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Remove a token from the card."
   },
   {
@@ -6520,7 +7173,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 4 influence."
   },
   {
@@ -6535,7 +7191,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["investor"],
+    "subtype": [
+      "investor"
+    ],
     "text": "This card loses 1 strength and 1 life for each token on it. -- EXCHANGE -- COST: Deplete this card. Put a token on this card. -- EFFECT: Draw a card."
   },
   {
@@ -6562,7 +7220,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, your faction gains 4 influence."
   },
   {
@@ -6577,7 +7237,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["executive"],
+    "subtype": [
+      "executive"
+    ],
     "text": "When this card leaves play, draw 2 cards."
   },
   {
@@ -6592,7 +7254,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "All your other lawyer characters gain 1 strength and 1 life."
   },
   {
@@ -6607,7 +7272,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "PROTECT -- COST: Pay 1. Pick a character in a party with this card. -- EFFECT: This turn, the character gains 1 life."
   },
   {
@@ -6622,7 +7290,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "When this card blocks, destroy it and all members of the attacking party."
   },
   {
@@ -6649,7 +7319,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary", "investor"],
+    "subtype": [
+      "mercenary",
+      "investor"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. -- This card loses 1 strength and 1 life for each token on it. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 1. Put a token on this card. -- EFFECT: Restore this card."
   },
   {
@@ -6664,7 +7337,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE RANDOLPH -- When this card enters play, draw a card. -- PAYDAY LOAN -- COST: Pay 1. Discard a resource or destroy a resource you control. -- EFFECT: Draw a card."
   },
   {
@@ -6679,7 +7354,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["auctioneer"],
+    "subtype": [
+      "auctioneer"
+    ],
     "text": "LIQUIDATE -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -6694,7 +7371,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["ghost"],
+    "subtype": [
+      "ghost"
+    ],
     "text": "When this card is put into your discard pile from play, you may pay 1. If you do, put it into play under your control. Deplete it."
   },
   {
@@ -6721,7 +7400,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee"],
+    "subtype": [
+      "employee"
+    ],
     "text": "This card enters play with 3 tokens on it. -- This card loses 1 strength for each token on it. -- INVEST -- COST: Pay X, where X is the number of tokens on this card. -- EFFECT: Remove a token from this card."
   },
   {
@@ -6736,7 +7417,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "When this card enters play, you may pick a location. If you do, destroy it."
   },
   {
@@ -6751,7 +7435,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, you may pick a character in your discard pile. If you do, put it into your hand."
   },
   {
@@ -6778,7 +7464,10 @@ export default [
     "strength": 0,
     "life": 3,
     "speed": 1,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "UNIQUE SAMUEL -- Reduce all damage inflicted to your faction to 0."
   },
   {
@@ -6814,7 +7503,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When the attached character inflicts damage, inflict the same amount of damage to the character's controller's faction."
   },
   {
@@ -6829,7 +7520,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "DENIED! -- COST: Use this only in response to a character being deployed. Destroy this card. -- EFFECT: Terminate the character."
   },
   {
@@ -6868,7 +7561,10 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "UNDERHANDED DEAL -- COST: Discard a card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -6883,7 +7579,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When your faction loses influence, reduce the amount by 1."
   },
   {
@@ -6898,7 +7597,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "This card can attack only once each turn. -- SIFT -- COST: Deplete this card. -- EFFECT: Draw a card. Discard a card. -- RUMMAGE -- COST: Pay 2. Remove 3 cards in your discard pile from the game. -- EFFECT: Restore this card."
   },
   {
@@ -6926,7 +7628,9 @@ export default [
     "strength": 5,
     "life": 8,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -6977,7 +7681,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may deploy a non-tactic card for free. If you do, each opponent may do the same. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -6992,7 +7698,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When you deploy a gear card attached to this card, you may detach a resource from your faction. -- While a gear card is attached to this card, it gains 1 strength and 1 life."
   },
   {
@@ -7007,7 +7715,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "EXTRA COST: Deploy this only if you have deployed at least 2 other non-resource cards this turn."
   },
   {
@@ -7022,7 +7732,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may search your deck for a gear card with numeric cost 5 or less and reveal it. If you do, put it into play attached to this card."
   },
   {
@@ -7037,7 +7749,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "UNIQUE SERIES OF TUBES -- REDIRECT -- COST: Pick a node character. -- EFFECT: This turn, the next 1 damage that would be inflicted to the character is inflicted to this card instead. -- All other node characters gain 1 strength and 1 life. -- When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards."
   },
   {
@@ -7052,7 +7766,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "GRAND DESIGN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 6."
   },
   {
@@ -7079,7 +7795,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards."
   },
   {
@@ -7094,7 +7812,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may search your deck for a card named Elitism and reveal it. If you do, put it into play. Attach it to your faction."
   },
   {
@@ -7157,7 +7877,9 @@ export default [
     "strength": 10,
     "life": 10,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -7172,7 +7894,10 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["guardforce", "31f"],
+    "subtype": [
+      "guardforce",
+      "31f"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn."
   },
   {
@@ -7187,7 +7912,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["guardforce", "31f"],
+    "subtype": [
+      "guardforce",
+      "31f"
+    ],
     "text": "UNIQUE GUARDFORCE ALPHA PRIME H4X0R -- This card can attack even if it has not been in play under your control since the start of the turn. -- When this card inflicts damage to a faction, you may play a resource."
   },
   {
@@ -7202,7 +7930,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["guardforce", "majig"],
+    "subtype": [
+      "guardforce",
+      "majig"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- When you deploy a card, put a token on this card. (Playing a resource doesn't count.) -- When an opponent deploys a card, remove a token from this card. (Playing a resource doesn't count.) -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -7214,7 +7945,9 @@ export default [
     "rarity": "common",
     "cost": 6,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, you may detach up to 2 resources from your faction. -- The attached character gains 4 strength, 4 life, and loses 1 speed. -- HANDOFF -- COST: Pay 5. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -7226,7 +7959,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "TACTICAL -- ATTACH TO CHARACTER -- If the attached character would be destroyed, destroy this card instead. Reduce the amount of damage already inflicted to the character this turn to 0."
   },
   {
@@ -7241,7 +7976,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 strength, 1 life, and 1 speed."
   },
   {
@@ -7256,7 +7993,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 speed."
   },
   {
@@ -7271,7 +8010,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 life."
   },
   {
@@ -7286,7 +8027,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "All other horsemajig characters gain 1 strength."
   },
   {
@@ -7301,7 +8044,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards. -- This card gains 1 strength and 1 life for each other node card in play."
   },
   {
@@ -7340,7 +8085,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "UNIQUE JO -- RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 3."
   },
   {
@@ -7352,7 +8099,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "ee",
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "EXTRA COST: Pick a character. -- This turn, the character gains 1 strength and 1 life. It gains an additional 1 strength and 1 life for each kaiser card in play. It gains an additional 1 strength and 1 life if it is a kaiser character."
   },
   {
@@ -7367,7 +8116,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "GO MEGA-NEKO-KAISER! -- COST: Deplete a card named PantherKaiser you control. Deplete a card named TigerKaiser you control. -- EFFECT: This turn, this card gains 8 strength, 8 life, and 2 speed and while it is the only member of an attacking party, only parties with at least 3 members can block it."
   },
   {
@@ -7379,7 +8130,9 @@ export default [
     "rarity": "rare",
     "cost": 8,
     "threshold": "eeee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 11 strength and 11 life. -- HANDOFF -- COST: Pay 6. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -7391,7 +8144,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- When the attached character leaves play, you may search your deck for a card. If you do, put it into your hand."
   },
   {
@@ -7406,7 +8161,9 @@ export default [
     "strength": 8,
     "life": 6,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -7433,7 +8190,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may put a Micromajig token into play. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -7448,7 +8207,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["manager"],
+    "subtype": [
+      "manager"
+    ],
     "text": "When this card enters play, you may put 2 Micromajig tokens into play. -- TINY SACRIFICES -- COST: Destroy 3 Micromajig tokens you control. -- EFFECT: Search your deck for a card. Put it into your hand. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -7463,7 +8224,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["machine"],
+    "subtype": [
+      "machine"
+    ],
     "text": "When this card is destroyed, put 5 Micromajig tokens into play under your control. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -7478,7 +8241,9 @@ export default [
     "strength": 3,
     "life": 6,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "When you are attacked, you may restore this card."
   },
   {
@@ -7505,7 +8270,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 2,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "PANTHER SHIELD -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 life."
   },
   {
@@ -7592,7 +8359,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "When this card enters or leaves play, you may pick an item in your discard pile. If you do, put it into your hand."
   },
   {
@@ -7607,7 +8376,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "This card can block COVERT parties. -- When this card blocks a COVERT party, it gains 3 strength this turn."
   },
   {
@@ -7622,7 +8393,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2."
   },
   {
@@ -7646,7 +8419,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- Treat the attached character as though it has no rules text. (This includes abilities.) -- MOVE -- COST: Pay 2. Pick a character. -- EFFECT: Attach this card to the character."
   },
   {
@@ -7661,7 +8436,10 @@ export default [
     "strength": 8,
     "life": 5,
     "speed": 2,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -7676,7 +8454,10 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -7691,7 +8472,10 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 4,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 2 resources from your faction."
   },
   {
@@ -7718,7 +8502,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "TIGER ROAR -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 strength."
   },
   {
@@ -7733,7 +8519,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 1,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "While this card is in a battle, all characters in the opposing party lose 1 speed."
   },
   {
@@ -7745,7 +8533,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- GRAPPLE -- COST: Pick a gear card in your discard pile. Destroy this card. -- EFFECT: Put the gear card into play under your control attached to the character."
   },
   {
@@ -7772,7 +8562,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "While an opponent has at least 10 cards in their discard pile, this card gains 3 strength and 3 life."
   },
   {
@@ -7812,7 +8604,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "PANHANDLE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character either gains or loses 1 speed."
   },
   {
@@ -7827,7 +8621,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card enters play, flip a coin. If you win, put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -7842,7 +8638,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, flip a coin. If you win, X is 3. Otherwise, X is 2. Put the top X cards of an opponent's deck into their discard pile."
   },
   {
@@ -7857,7 +8655,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "CONGA LINE -- COST: Pay 3. Deplete this card. Pick a character not in a battle. -- EFFECT: This turn, all characters able to block the character must do so. When an attacking party is formed including the character, it must have only 1 member."
   },
   {
@@ -7884,7 +8684,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- The top card of your deck is revealed at all times. -- BOTTOM DEAL -- COST: Pay 1. -- EFFECT: Put the top card of your deck on the bottom. -- CHEAT -- COST: Deplete this card. -- EFFECT: Reveal the top card of your deck. You may deploy it. (You can't play resources with this ability.) -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control."
   },
   {
@@ -7899,7 +8702,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, that faction's controller picks an item they control if they can. If they do, take control of it and destroy this card."
   },
   {
@@ -7926,7 +8731,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, pick an item that faction's controller controls if you can. If you do, destroy it."
   },
   {
@@ -7941,7 +8748,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 4,
-    "subtype": ["guard"],
+    "subtype": [
+      "guard"
+    ],
     "text": ""
   },
   {
@@ -7968,7 +8777,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 5,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "When this card attacks, all other members of its party gain 1 speed this turn."
   },
   {
@@ -7995,7 +8806,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "While an opponent controls at least 4 characters, this card cannot be blocked."
   },
   {
@@ -8010,7 +8823,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "Anything that can pick this card must pick it. (This effect is only active while this card is in play.) -- When this card is picked, put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -8049,7 +8864,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "PLUNDER -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Put the top 3 cards of an opponent's deck into their discard pile."
   },
   {
@@ -8101,7 +8918,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 5,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": ""
   },
   {
@@ -8116,7 +8935,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": ""
   },
   {
@@ -8131,7 +8952,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, you may search an opponent's deck for up to 3 cards with different names and reveal them. If you do, put them into that player's discard pile."
   },
   {
@@ -8158,7 +8981,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 4,
-    "subtype": ["outcast", "vigilante"],
+    "subtype": [
+      "outcast",
+      "vigilante"
+    ],
     "text": "When you control any other characters you own, destroy this card."
   },
   {
@@ -8173,7 +8999,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card inflicts damage to a faction, you may put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -8200,7 +9028,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "KIDNAP -- COST: Destroy this card. Pick an attacking or blocking character. -- EFFECT: Destroy the character."
   },
   {
@@ -8251,7 +9081,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 4,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "Your opponents cannot pick this card."
   },
   {
@@ -8266,7 +9098,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 6,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "While this card is in a battle and there is at least one character in the opposing party, it gains X strength, where X is this card's speed minus the highest speed among characters in the opposing party."
   },
   {
@@ -8281,7 +9115,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "Your opponents cannot pick this card."
   },
   {
@@ -8296,7 +9132,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "RECLAIM -- COST: Remove 3 cards in an opponent's discard pile from the game. -- EFFECT: This card gains 1 strength and 1 life this turn."
   },
   {
@@ -8311,7 +9149,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card is destroyed, you may pick a non-tactic card in an opponent's discard pile. If you do, put it into play under your control."
   },
   {
@@ -8323,7 +9163,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- BRIBE -- COST: Any player may use this ability. Pay 3. -- EFFECT: Take control of the attached character. -- BLACKMAIL -- COST: Use this only if you own this card. Pay 2. -- EFFECT: Take control of the attached character."
   },
   {
@@ -8362,7 +9204,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, put the top 2 cards of an opponent's deck into their discard pile."
   },
   {
@@ -8377,7 +9221,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- GRIFT -- COST: Use this only during your turn. Pay 5. Deplete this card. Pick a non-tactic card in an opponent's discard pile. -- EFFECT: Put the card into play under your control."
   },
   {
@@ -8389,7 +9236,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When the attached character inflicts damage to a character, destroy the damaged character. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -8416,7 +9265,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "When a coin is flipped, you may put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -8455,7 +9306,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, it gains 1 strength and 1 life this turn."
   },
   {
@@ -8470,7 +9323,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, you may remove 4 cards in an opponent's discard pile from the game. If you don't, destroy this card."
   },
   {
@@ -8485,7 +9340,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- You may use abilities on your opponent's cards, but you must pay any numeric cost with your own resources. Any additional costs must be satisfied as though your opponent is using the ability. The ability's effect happens as if your opponent used it. -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control."
   },
   {
@@ -8500,7 +9358,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "EXTRA COST: Discard a character or item. X is its numeric cost. -- This card enters play with X tokens on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -8539,7 +9399,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, discard a card or destroy this card."
   },
   {
@@ -8554,7 +9416,9 @@ export default [
     "strength": 5,
     "life": 7,
     "speed": 6,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "UNIQUE EVONDAN -- All your other sarcophyle characters gain 1 speed. -- If a character would be destroyed during a turn when this card damaged it, take control of that character instead. Reduce the amount of damage already inflicted to it this turn to 0. It gains the sarcophyle subtype. -- When this card is destroyed, destroy all other sarcophyle characters."
   },
   {
@@ -8569,7 +9433,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "While this card is the only member of an attacking party, only characters with at least X speed can block it, where X is this card's speed."
   },
   {
@@ -8596,7 +9462,9 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": ""
   },
   {
@@ -8624,7 +9492,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card enters play, inflict 1 damage to an opponent's faction."
   },
   {
@@ -8651,7 +9521,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "This card gains 1 strength for each token on it. -- At the start of your turn, you may pick a character you control. If you do, destroy it. Put X tokens on this card, where X is the destroyed character's strength when it was destroyed. Otherwise, destroy this card."
   },
   {
@@ -8666,7 +9538,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE BLADEFIST -- FIREBREATHING -- COST: Choose a number for X. Pay X+X. Deplete this card. Pick a character. -- EFFECT: Inflict X damage to the character."
   },
   {
@@ -8681,7 +9555,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card attacks, you may pick a character. If you do, deplete it."
   },
   {
@@ -8708,7 +9584,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card attacks in a party with more than 1 member, it gains 1 strength and 1 life this turn."
   },
   {
@@ -8723,7 +9601,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card is blocked, it gains 2 strength and 2 life this turn."
   },
   {
@@ -8738,7 +9618,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -8753,7 +9635,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card is destroyed, an opponent's faction loses 4 influence."
   },
   {
@@ -8765,7 +9649,9 @@ export default [
     "rarity": "rare",
     "cost": 5,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "UNIQUE DETHMÜRDERBLÜDGEON -- ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- When the attached character is blocked, an opponent's faction loses 2 influence. -- When the attached character inflicts damage to a faction, you may pick a character. If you do, inflict 2 damage to it. -- If this card would be put into a discard pile from play, put it into its owner's hand instead."
   },
   {
@@ -8804,7 +9690,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["rider"],
+    "subtype": [
+      "rider"
+    ],
     "text": "This card gains 1 strength and 1 life for each dragon card you control."
   },
   {
@@ -8819,7 +9707,9 @@ export default [
     "strength": 10,
     "life": 10,
     "speed": 4,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "At the start of your turn, you may pick a character an opponent controls. If you do, destroy it. Otherwise, destroy this card."
   },
   {
@@ -8847,7 +9737,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "OFF THE TOP ROPE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character cannot block."
   },
   {
@@ -8886,7 +9778,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 2 damage divided however you want to those characters."
   },
   {
@@ -8901,7 +9795,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "When this card is blocked, this turn it gains 4 strength for each member in the opposing party."
   },
   {
@@ -8916,7 +9812,9 @@ export default [
     "strength": 5,
     "life": 10,
     "speed": 3,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "When a character is destroyed during a turn when this card damaged it, put X tokens on this card, where X is the strength of that character. -- This card gains 1 strength for each token on it. -- IMPALE -- COST: Pay 2 or remove 2 tokens from this card. Pick a character. -- EFFECT: This turn, the character must block this card if it can."
   },
   {
@@ -8943,7 +9841,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card inflicts damage to a faction, you may pick an item. If you do, destroy it."
   },
   {
@@ -8958,7 +9858,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "SHARPSHOOT -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: Inflict 1 damage to the character."
   },
   {
@@ -8985,7 +9887,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card is blocked, inflict 1 damage to each member of the blocking party."
   },
   {
@@ -9000,7 +9904,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CONVINCE -- COST: Deplete this card. -- EFFECT: This turn, all your soldier characters gain 1 strength."
   },
   {
@@ -9015,7 +9921,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CUNNING PLAN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Inflict 2 damage to an opponent's faction."
   },
   {
@@ -9042,7 +9950,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -9081,7 +9991,9 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -9096,7 +10008,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, inflict 1 damage to all your opponent's characters."
   },
   {
@@ -9111,7 +10025,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "While this card is attacking, you may assign its battle damage to the target of the attack instead of the blocking party."
   },
   {
@@ -9126,7 +10042,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 5 damage divided however you want to those characters."
   },
   {
@@ -9141,7 +10059,9 @@ export default [
     "strength": 7,
     "life": 1,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "At the end of your turn, if this card started the turn under your control and did not attack this turn, destroy it."
   },
   {
@@ -9169,7 +10089,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "UNIQUE RUDOLPHUS -- PUNCH -- COST: Pay 2. Deplete this card. Pick a character. X is its strength. Y is this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
   },
   {
@@ -9184,7 +10106,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CANNIBALIZE -- COST: Destroy a character you control. -- EFFECT: This turn, this card gains 2 strength."
   },
   {
@@ -9199,7 +10123,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When an opponent deploys a tactic, inflict 2 damage to their faction."
   },
   {
@@ -9214,7 +10140,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -9289,7 +10217,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -9304,7 +10234,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "ULTIMATE SACRIFICE -- COST: X is this card's strength. Destroy this card. Pick a character. -- EFFECT: Inflict X damage to the character."
   },
   {
@@ -9343,7 +10275,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "While this card is attacking a location, it gains 1 strength and cannot be blocked."
   },
   {
@@ -9358,7 +10292,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "At the start of your turn, inflict 1 damage to all characters."
   },
   {
@@ -9385,7 +10321,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "EXTRA COST: Deploy this only if an opponent's faction has 10 influence or less."
   },
   {
@@ -9400,7 +10338,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -9415,7 +10355,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE WYRMFANG -- When you attack, the controller of the faction or location you are attacking picks any number of characters they control. Those characters must block during this battle if they can, and only those characters can block."
   },
   {
@@ -9442,7 +10384,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["beast", "monstrosity"],
+    "subtype": [
+      "beast",
+      "monstrosity"
+    ],
     "text": "When an opponent discards any number of cards, this card gains X strength and X life this turn, where X is the number of cards discarded."
   },
   {
@@ -9481,7 +10426,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["ritualist", "eldridge"],
+    "subtype": [
+      "ritualist",
+      "eldridge"
+    ],
     "text": "UNIQUE ELDRIDGE -- When this card enters play or is destroyed, you may pick 3 or fewer non-resource cards you control. If you do, put up to 3 tokens divided however you want on those cards. -- READY THE RITE -- COST: Remove 2 tokens from this card. Pick a tactic you own in the void or in your discard pile. -- EFFECT: Put the tactic into your hand. -- TRIBUTE -- COST: Pay 1. Destroy this card. Pick a player. -- EFFECT: That player discards 2 cards. Draw a card."
   },
   {
@@ -9509,7 +10457,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- EXTRA COST: Pick a face-down resource you control and put it into its owner's hand."
   },
   {
@@ -9524,7 +10474,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["warbeast"],
+    "subtype": [
+      "warbeast"
+    ],
     "text": "[O][O][O][O]: COVERT -- [V][V][V][V]: This character can block COVERT parties and non-COVERT parties."
   },
   {
@@ -9539,7 +10491,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 1,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "This character loses 1 life and all non-Arcanist characters lose 1 strength for each token on this card. -- SPREAD THE HATE -- COST: Pay 2. Deplete this card. -- EFFECT: Put a token on this card."
   },
   {
@@ -9554,7 +10508,10 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 3,
-    "subtype": ["ignatius", "blade of questionable morality"],
+    "subtype": [
+      "ignatius",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE IGNATIOUS -- When this card attacks, look at the top 2 cards of your deck. You may put any number of those cards on the bottom of your deck in any order. Put the remaining cards on the top of your deck in any order. -- When this card inflicts damage to a faction, look at the top 2 cards of the faction's controller's deck. Put any number of those cards on the bottom of their deck in any order. Put the remaining cards on the top of their deck in any order. Draw a card."
   },
   {
@@ -9569,7 +10526,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 1,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "FLIP UP: 7 [O]"
   },
   {
@@ -9584,7 +10543,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- EXTRA COST: If you control [O][O][O][O][O][O], reduce the numeric cost of this card by 4."
   },
   {
@@ -9623,7 +10584,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, you may pick a character with COVERT. If you do, that character loses COVERT while this card is in play."
   },
   {
@@ -9650,7 +10613,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "When this card enters play you may pick a non-resource card. If you do, put a token on the card."
   },
   {
@@ -9686,7 +10651,9 @@ export default [
     "rarity": "uncommon",
     "cost": 1,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- SOUL DRAIN -- COST: Pay 1. -- EFFECT: Deplete the attached character. -- SOUL CHARGE -- COST: Use this ability only once each turn. Pay 1. -- EFFECT: Restore the attached character. It cannot attack this turn."
   },
   {
@@ -9713,7 +10680,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, you may look at the top card of your deck. If you do, you may put it on the bottom."
   },
   {
@@ -9741,7 +10710,11 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["uhluhtc", "seraphim", "dragon"],
+    "subtype": [
+      "uhluhtc",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE UHLUHTC -- PREVAIL UPON -- COST: Put a resource you control into its owner's hand. Pick a player. Pay 1. -- EFFECT: That player puts a face-down resource they control into its owner's hand. -- AVAIL ANEW -- COST: Reveal a resource from your hand and shuffle it into your deck. Pay 1. -- EFFECT: If the revealed card was named \"Obsession\", this card gains COVERT this turn. Draw a card."
   },
   {
@@ -9756,7 +10729,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "If this character would inflict battle damage to a character, put that character into its owner's hand instead. -- If a character would inflict battle damage to this character, put this character into its owner's hand instead."
   },
   {
@@ -9780,7 +10755,9 @@ export default [
     "rarity": "uncommon",
     "cost": 5,
     "threshold": "oo",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "ATTACH TO CHARACTER -- (put this card into play attached to that character instead of into its owner's discard pile) -- This card enters play with 3 tokens on it. -- The attached character gains 1 strength and 1 life for each token on this card. -- At the start of your turn, remove a token from this card. If you cannot, destroy the attached character."
   },
   {
@@ -9795,7 +10772,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["investor"],
+    "subtype": [
+      "investor"
+    ],
     "text": "EXTRA COST: You may pick a card. -- When this card enters play, if you picked a card as part of its cost, remove a token from the card."
   },
   {
@@ -9810,7 +10789,10 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["lawyer", "necromorph"],
+    "subtype": [
+      "lawyer",
+      "necromorph"
+    ],
     "text": ""
   },
   {
@@ -9849,7 +10831,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["attendant", "lackey"],
+    "subtype": [
+      "attendant",
+      "lackey"
+    ],
     "text": "While an opponent is deploying a tactic, its numeric cost is increased to a minimum of 3."
   },
   {
@@ -9889,7 +10874,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "This card enters play with 3 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- EXTRA INTEREST -- COST: Pay 1. Remove a token from this card. Pick a location. -- EFFECT: Put a damage marker on the card. -- FLIP UP: 4 [G][G][G]"
   },
   {
@@ -9904,7 +10892,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["employee", "mau"],
+    "subtype": [
+      "employee",
+      "mau"
+    ],
     "text": "When this card restores, you may draw a card."
   },
   {
@@ -9928,7 +10919,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains COVERT. If the attached card inflicts damage to a faction, inflict that much damage to your faction. -- [G][G][G][G][G]: The attached character gains COVERT and this card loses all other rules text."
   },
   {
@@ -9943,7 +10936,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["advisor"],
+    "subtype": [
+      "advisor"
+    ],
     "text": "When this card enters play, you may draw 2 cards then discard 2 cards. -- RECUR: [G][G][G] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. -- EFFECT: Draw 2 cards then discard 2 cards."
   },
   {
@@ -9982,7 +10977,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 0,
-    "subtype": ["dragon", "mau", "gargoyle"],
+    "subtype": [
+      "dragon",
+      "mau",
+      "gargoyle"
+    ],
     "text": "EXTRA COST: Your faction loses 3 influence. Draw 3 cards. -- While this card is in your hand and a location you control is being attacked, this card gains tactical. -- NO. -- COST: Discard 2 cards. -- EFFECT: Your faction gains 2 influence. Put this card into its owner's hand."
   },
   {
@@ -10006,7 +11005,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "g",
-    "subtype": ["upgrade"],
+    "subtype": [
+      "upgrade"
+    ],
     "text": "ATTACH TO ITEM -- The attached card has no rules text. -- RESET -- COST: Only an opponent may use this ability. Pay 3. -- EFFECT: This turn, this card loses all rules text. -- FLIP UP: 2 [G]"
   },
   {
@@ -10033,7 +11034,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["dancer", "mau"],
+    "subtype": [
+      "dancer",
+      "mau"
+    ],
     "text": "At the end of your turn, you may pay 1. If you do, pick a character and deplete it. That character cannot be restored by its controller's faction's next Restore Rule. -- PRIVATE DANCE -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: Deplete the card. -- PAY UP -- COST: Pay 1. Inflict 1 damage to your faction. Deplete this card. Pick a depleted character. -- EFFECT: Inflict 1 damage to the character."
   },
   {
@@ -10061,7 +11065,9 @@ export default [
     "strength": 8,
     "life": 8,
     "speed": 3,
-    "subtype": ["executive"],
+    "subtype": [
+      "executive"
+    ],
     "text": "This card enters play with 9-X tokens on it, where X is the number of [G] you control. -- This card loses 1 strength and 1 life for each token on it."
   },
   {
@@ -10076,7 +11082,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lackey", "lawyer"],
+    "subtype": [
+      "lackey",
+      "lawyer"
+    ],
     "text": "When this card enters play, draw a card."
   },
   {
@@ -10103,7 +11112,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["mau", "necromorph"],
+    "subtype": [
+      "mau",
+      "necromorph"
+    ],
     "text": "When another character is put into your discard pile from play, if this card is in your discard pile, you may pay 1. If you do, put this card into play under your control. Deplete it."
   },
   {
@@ -10118,7 +11130,9 @@ export default [
     "strength": 0,
     "life": 2,
     "speed": 2,
-    "subtype": ["advisor"],
+    "subtype": [
+      "advisor"
+    ],
     "text": "TACTICAL -- When this card blocks, you may pick a character in your discard pile. If you do, add that character to the blocking party. If that card or this card would leave play this turn, remove both cards from the game instead. -- At the end of a battle, if this card blocked, remove it from the game. -- FLIP UP: 1 [G][G][G]"
   },
   {
@@ -10133,7 +11147,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, you may pick a faction. If you do, it gains 1 influence."
   },
   {
@@ -10148,7 +11164,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["necromorph", "mercenary"],
+    "subtype": [
+      "necromorph",
+      "mercenary"
+    ],
     "text": "If this card would be destroyed, any opponent may pay 2. If they do, that player takes control of this card instead and all damage already inflicted to this card this turn is reduced to 0."
   },
   {
@@ -10163,7 +11182,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "Abilities on locations cannot be used. -- [E][E][E][E][E][E]: Locations opponents control lose 1 structure. -- FLIP UP: 2 [E][E]"
   },
   {
@@ -10190,7 +11211,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, put a Micromajig token into play under your control."
   },
   {
@@ -10205,7 +11228,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mechanic", "31f"],
+    "subtype": [
+      "mechanic",
+      "31f"
+    ],
     "text": "When this card enters play, you may pick a character. This turn, the picked character gains 3 strength and 3 life."
   },
   {
@@ -10220,7 +11246,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "WARDROBE CHANGE -- COST: Deplete this card. Pick a character. Pick a \"gear\" card you control. -- EFFECT: Attach the \"gear\" card to the character."
   },
   {
@@ -10235,7 +11263,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When damage is inflicted to this card, put that many Micromajig tokens into play under your control."
   },
   {
@@ -10286,7 +11316,10 @@ export default [
     "strength": 0,
     "life": 3,
     "speed": 3,
-    "subtype": ["guardforce", "majig"],
+    "subtype": [
+      "guardforce",
+      "majig"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- While this card is depleted it gains 2 strength."
   },
   {
@@ -10310,7 +11343,9 @@ export default [
     "rarity": "common",
     "cost": 5,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 3 strength and 3 life. -- Treat the attached character as though it has no rules text. (This includes abilities.) -- HAND OFF -- COST: Pay 2. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -10337,7 +11372,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "This card gains 1 strength and 1 life for each token on it. -- ASSEMBLE -- COST: Pay 2. Destroy a Micromajig token you control. -- EFFECT: Put a token on this card. -- DETACH -- COST: Pay 2. Remove a token from this card. -- EFFECT: Put a Micromajig token into play under your control."
   },
   {
@@ -10352,7 +11389,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["machine"],
+    "subtype": [
+      "machine"
+    ],
     "text": "At the start of each opponent's turn, restore this card."
   },
   {
@@ -10380,7 +11419,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 1,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a \"node\" card and reveal it. If you do, put it into your hand. -- If this card would be destroyed, you may pay 1 to flip it face-down under its owner's control instead. -- When this card is destroyed, destroy all other \"node\" cards."
   },
   {
@@ -10395,7 +11436,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "UNIQUE PT -- This card gains 1 strength and 1 life for each token on it. -- MICROMAJIG LOAD -- COST: Pay 1. Destroy a Micromajig token you control. -- EFFECT: Put a token on this card. -- MICROMAJIG UNLOAD: [E][E][E][E][E] -- COST: Deplete this card. Remove X tokens from this card. Pay X. Pick a location, character or faction. -- EFFECT: Inflict X damage to that card."
   },
   {
@@ -10410,7 +11453,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["machine"],
+    "subtype": [
+      "machine"
+    ],
     "text": "This card cannot be blocked. -- This card can block COVERT parties."
   },
   {
@@ -10437,7 +11482,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "EXTRA COST: You may destroy a Micromajig token you control. -- When this card enters play, if you destroyed a Micromajig token as part of its cost, you may pick an item in your discard pile and put it into your hand."
   },
   {
@@ -10476,7 +11523,10 @@ export default [
     "strength": 8,
     "life": 6,
     "speed": 3,
-    "subtype": ["t force 5", "majig"],
+    "subtype": [
+      "t force 5",
+      "majig"
+    ],
     "text": "When this card enters play, you may detach up to 3 resources from your faction."
   },
   {
@@ -10491,7 +11541,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, reduce the numeric cost of the next card you play this turn by 1."
   },
   {
@@ -10503,7 +11555,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "ATTACH TO CHARACTER (put this card into play attached to that character instead of into its owner's discard pile) -- At the start of your turn, choose one of the following as this card's rules text until the start of your next turn: -- OPTION 1 -- The attached character gains 1 strength. -- OPTION 2 -- The attached character gains 1 life. -- OPTION 3 -- The attached character can block COVERT parties."
   },
   {
@@ -10542,7 +11596,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 4,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- EXTRA COST: Pick an opponent. -- When this card enters play, if you picked an opponent as part of its cost, search that player's deck for 4 non-resource cards with different names, reveal them and put them into the void. If you do, randomly put 2 of those cards into their discard pile. For the rest of the game, you may deploy the voided cards as though they were in your hand even if you cannot meet their threshold."
   },
   {
@@ -10557,7 +11614,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "TACTICAL, UNIQUE CHUM -- EXTRA COST: Pick a card in a discard pile. X is its numeric cost. -- When this card enters play, if you picked a card as part of its cost, remove that card from the game. Search an opponent's deck for a card with numeric cost X or less and put it into their discard pile. -- SERAPHIM FUSION -- COST: Pay 4. Pick a UNIQUE PLUCK you control. Destroy this card. -- EFFECT: Search your deck for a card named \"Omahkapi'si Pi'kssii\" and put it into play."
   },
   {
@@ -10572,7 +11631,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, you may pick an opponent. If you do, put the top card of their deck into their discard pile. -- This card gains 1 strength and 1 life for each character card in each opponent's discard pile."
   },
   {
@@ -10611,7 +11672,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["clown"],
+    "subtype": [
+      "clown"
+    ],
     "text": "This card gains 1 strength and 1 life for each token on it. -- BULGE: [V][V][V] -- COST: Pay 3 or shuffle your deck. Deplete this card. -- EFFECT: Reveal the top card of your deck. Put that card into your discard pile. Put tokens on this card equal to the threshold of the revealed card."
   },
   {
@@ -10623,7 +11686,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- Anything that can pick the attached character must pick it. -- FLIP UP: 1 [D][D]"
   },
   {
@@ -10650,7 +11715,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, the character gains 1 speed this turn. Flip a coin. If you win, the character also gains 1 strength this turn."
   },
   {
@@ -10665,7 +11732,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "REND -- COST: Use this ability only once each turn. Destroy a face-down resource you control. -- EFFECT: This turn, this card gains 3 strength, 3 life and 1 speed."
   },
   {
@@ -10680,7 +11749,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["assassin"],
+    "subtype": [
+      "assassin"
+    ],
     "text": "This card enters play depleted. -- ASSASSINATE -- COST: Deplete this card. Pick a depleted character. -- EFFECT: If the character has 4 life or less, destroy it. -- RELOAD -- COST: Pay 3. -- EFFECT: Restore this card. This turn, it cannot attack."
   },
   {
@@ -10719,7 +11790,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["outcast", "mau"],
+    "subtype": [
+      "outcast",
+      "mau"
+    ],
     "text": "TACTICAL -- HELPING PAW: [D] -- COST: Discard this card from your hand. Pick a character that is blocking or being blocked. Pay 4. -- EFFECT: This turn, that character gains 3 strength and 3 life. -- NINE LIVES: [D] -- COST: Use this only if this card is in your discard pile. Pay 5. -- EFFECT: Put this card into play under your control."
   },
   {
@@ -10731,7 +11805,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "d",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "ATTACH TO CHARACTER -- (put this card into play attached to that character instead of into its owner's discard pile) -- If the attached character would assign battle damage, it assigns damage equal to its numeric cost instead of its strength. -- If this card would be destroyed, flip it face-down under its owner's control instead."
   },
   {
@@ -10746,7 +11822,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["hedonist", "sarcophyle"],
+    "subtype": [
+      "hedonist",
+      "sarcophyle"
+    ],
     "text": "When this card enters play, flip a coin. If you win, put a token on this card. -- While there is a token on this card, it gains COVERT. -- FEED -- COST: Pay 1. Remove a token from this card. -- EFFECT: This turn, this card gains 1 strength and 1 life."
   },
   {
@@ -10773,7 +11852,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["hunter"],
+    "subtype": [
+      "hunter"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, you may pick a character. If you do, that character loses 1 life this turn."
   },
   {
@@ -10788,7 +11869,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": "[V][V][V]: While an opponent controls an item, this card cannot be blocked."
   },
   {
@@ -10841,7 +11924,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "While a player controls a character with COVERT, this character gains COVERT."
   },
   {
@@ -10856,7 +11941,11 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["dancer", "outcast", "performer"],
+    "subtype": [
+      "dancer",
+      "outcast",
+      "performer"
+    ],
     "text": "TACTICAL"
   },
   {
@@ -10871,7 +11960,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "This card gains X strength, where X is the number of characters in play that your opponents own."
   },
   {
@@ -10898,7 +11989,10 @@ export default [
     "strength": 6,
     "life": 5,
     "speed": 4,
-    "subtype": ["guard", "tough guy"],
+    "subtype": [
+      "guard",
+      "tough guy"
+    ],
     "text": "RECUR: [D][D][D] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. Pick a character. -- EFFECT: If the character is depleted, destroy it."
   },
   {
@@ -10950,7 +12044,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 1,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "When this card enters play, you may put a token on up to X non-resource cards, where X is the number of [V] you control. -- When this card is destroyed, destroy all non-resource cards with tokens on them. -- TURN TO MUSH -- COST: Pay 2. Pick a card with a token on it. -- EFFECT: Flip the card face-down under its owner's control."
   },
   {
@@ -10977,7 +12073,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "[R][R]: This card gains 1 strength and loses 1 life. -- [R][R][R]: Destroy this card. -- When this card is destroyed, you may pick up to 2 characters and/or factions. If you do, inflict 2 damage divided however you want to those cards."
   },
   {
@@ -11004,7 +12102,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card enters play you may pick a character. If you do, inflict 1 damage to that character."
   },
   {
@@ -11019,7 +12119,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "While a \"gear\" card is attached to this card, it gains 2 strength."
   },
   {
@@ -11043,7 +12145,9 @@ export default [
     "rarity": "rare",
     "cost": 5,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "UNIQUE BLADE OF LIGHT -- The attached character gains 3 strength and 3 life. -- This card does not leave play if the attached card leaves play. -- EQUIP -- COST: Pick a character. If it is a UNIQUE RUDOLPHUS then X is 0, otherwise X is 2. Pay X. -- EFFECT: Attach this card to the character if you can. -- SERAPHIM FUSION -- COST: Use this ability only if this card is attached to a UNIQUE RUDOLPHUS. Pay 1. Destroy this card. -- EFFECT: Search your deck for a card named \"Vexillarius Dacian-Draco\" and put it into play."
   },
   {
@@ -11058,7 +12162,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, you may pick a character. If you do, inflict 3 damage to it. -- When this card is destroyed, you may pick a faction or location. If you do, inflict 3 damage to that card."
   },
   {
@@ -11082,7 +12188,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength, 1 life and cannot block. -- [V][V][V]: The attached character gains 3 strength."
   },
   {
@@ -11094,7 +12202,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "rr",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "ATTACH TO CHARACTER (put this card into play attached to that character instead of into its owner's discard pile) -- EXTRA COST: Deploy this only not during a battle. -- When the attached character is blocked, inflict 1 damage to each member of the blocking party."
   },
   {
@@ -11121,7 +12231,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "TACTICAL -- EXTRA COST: Deploy this only not during a battle. -- When this card enters play, inflict 1 damage to all characters. -- [R][R][R][R][R][R]: When this card enters play, inflict 1 damage to all your opponent's characters."
   },
   {
@@ -11136,7 +12248,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When battle damage is inflicted to this card while it's attacking, reduce the amount to 0."
   },
   {
@@ -11151,7 +12265,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FOR MY BROTHERS! -- COST: Pay 1. Destroy this card. -- EFFECT: Search your deck for a \"soldier\" card and reveal it. If you do, put it into your hand."
   },
   {
@@ -11191,7 +12307,9 @@ export default [
     "strength": 4,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "This character cannot block."
   },
   {
@@ -11206,7 +12324,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["rudo", "blade of questionable morality"],
+    "subtype": [
+      "rudo",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE RUDOLPHUS -- While this card is restored, all characters you control gain 1 strength and 1 life. -- At the start of each turn, if this card has a 'gear' card attached to it, restore this card."
   },
   {
@@ -11221,7 +12342,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "PROVIDES: [R]"
   },
   {
@@ -11236,7 +12359,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 4,
-    "subtype": ["fighter", "tough guy"],
+    "subtype": [
+      "fighter",
+      "tough guy"
+    ],
     "text": ""
   },
   {
@@ -11251,7 +12377,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "UNDERCOVERT OPERATIONS -- COST: Pay 3. -- EFFECT: This turn, this character gains COVERT and loses 1 life."
   },
   {
@@ -11290,7 +12418,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["rider"],
+    "subtype": [
+      "rider"
+    ],
     "text": "When a card that provides at least [V] enters play under your control, you may pick a character. If you do, that character gains 2 strength this turn."
   },
   {
@@ -11305,7 +12435,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "FIRE! -- COST: Use this only not during a battle. Pick a faction. Destroy a character you control. Pay 1. -- EFFECT: Inflict 1 damage to the faction."
   },
   {
@@ -11320,7 +12452,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "[R][R][R][R][R][R]: This card gains 2 strength and 4 life."
   },
   {
@@ -11328,6 +12462,81 @@ export default [
     "name": "The Tournament Faction",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11340,6 +12549,81 @@ export default [
     "name": "Unlikely Heroes",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11352,6 +12636,81 @@ export default [
     "name": "Lugubrian Council Expedition Division",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11364,6 +12723,81 @@ export default [
     "name": "The Primitive Tribes of Thabbash",
     "set": "Holy Heist",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -11563,7 +12997,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11578,7 +13014,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11593,7 +13031,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11608,7 +13048,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11623,7 +13065,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11638,7 +13082,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -11726,7 +13172,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "While you have an even number of cards in your hand, this card gains 1 strength, 1 life, and 1 speed."
   },
   {
@@ -11777,7 +13225,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "COVERT -- At the start of your turn, you may pick a non-resource card you control. If you do, put a token on it."
   },
   {
@@ -11804,7 +13254,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller discards 2 cards."
   },
   {
@@ -11816,7 +13268,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character cannot attack or block."
   },
   {
@@ -11831,7 +13285,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "QUOTIDIAN INSTRUCTION -- COST: Deplete this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand."
   },
   {
@@ -11846,7 +13302,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "FLASH-BANG -- COST: Destroy this card. Pick a character you control. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -11858,7 +13316,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- This card enters play with 1 token on it. -- At the start of your turn, you may put a token on this card. -- The attached character loses 1 strength, 1 life, and 1 speed for each token on this card."
   },
   {
@@ -11873,7 +13333,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 1,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT -- When this card enters play, look at up to the top 5 cards of any one deck. Put them back in any order."
   },
   {
@@ -11888,7 +13350,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -11915,7 +13379,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "This card enters play with 2 tokens on it. -- EJECT -- COST: Remove 2 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand."
   },
   {
@@ -11978,7 +13444,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters play, you may search your deck for a tactic and reveal it. If you do, put it into your hand."
   },
   {
@@ -11993,7 +13461,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ecto-manipulator"],
+    "subtype": [
+      "ecto-manipulator"
+    ],
     "text": "ENERGIZE -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Put a token on the card."
   },
   {
@@ -12008,7 +13478,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "COVERT"
   },
   {
@@ -12023,7 +13495,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters play, each player puts a resource they control into its owner's hand."
   },
   {
@@ -12062,7 +13536,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card enters or leaves play, an opponent discards a card."
   },
   {
@@ -12074,7 +13550,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains COVERT. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -12175,7 +13653,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["straw man"],
+    "subtype": [
+      "straw man"
+    ],
     "text": "This card enters play with 3 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INSTALLMENT PLAN -- COST: Pay 3. -- EFFECT: Remove a token from this card."
   },
   {
@@ -12203,7 +13683,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE BEATRIX -- When you draw any number of cards, increase the amount by 1. -- While you have at least 10 cards in your hand, you cannot draw cards."
   },
   {
@@ -12218,7 +13700,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mercenary", "assassin"],
+    "subtype": [
+      "mercenary",
+      "assassin"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. -- When this card blocks, it gains 4 strength and 4 life this turn."
   },
   {
@@ -12230,7 +13715,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When this card enters play, deplete the attached character. -- The attached character cannot be restored by its controller's faction's Restore Rule."
   },
   {
@@ -12257,7 +13744,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary"],
+    "subtype": [
+      "mercenary"
+    ],
     "text": "COVERT -- When this card enters play, your faction loses 5 influence."
   },
   {
@@ -12272,7 +13761,9 @@ export default [
     "strength": 1,
     "life": 6,
     "speed": 4,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -12287,7 +13778,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "When you are attacked, this card must block if it can."
   },
   {
@@ -12314,7 +13807,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "assassin"],
+    "subtype": [
+      "mercenary",
+      "assassin"
+    ],
     "text": "This card cannot be restored by your faction's Restore Rule. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 2. -- EFFECT: Restore this card."
   },
   {
@@ -12353,7 +13849,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["lackey", "ghost"],
+    "subtype": [
+      "lackey",
+      "ghost"
+    ],
     "text": "While you control only 1 character, this card gains COVERT. -- When this card inflicts damage to a faction, draw 2 cards."
   },
   {
@@ -12393,7 +13892,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "While you have at least 6 cards in your hand, this card gains 1 strength and COVERT."
   },
   {
@@ -12432,7 +13934,11 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mercenary", "lawyer", "mau"],
+    "subtype": [
+      "mercenary",
+      "lawyer",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- When this card is destroyed during a battle, your faction gains X influence, where X is the total strength of the opposing party."
   },
   {
@@ -12459,7 +13965,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, draw a card. Your faction loses 2 influence."
   },
   {
@@ -12474,7 +13983,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 4 influence."
   },
   {
@@ -12489,7 +14001,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, your faction gains 4 influence."
   },
   {
@@ -12504,7 +14018,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lackey", "necromorph"],
+    "subtype": [
+      "lackey",
+      "necromorph"
+    ],
     "text": "SUBJUGATE -- COST: Deplete this card. Pick 2 or fewer characters. -- EFFECT: Deplete the characters."
   },
   {
@@ -12519,7 +14036,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "All your other lawyer characters gain 1 strength and 1 life."
   },
   {
@@ -12534,7 +14054,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When this card blocks, destroy it and all members of the attacking party."
   },
   {
@@ -12597,7 +14120,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["lackey", "mau"],
+    "subtype": [
+      "lackey",
+      "mau"
+    ],
     "text": "When this card enters play, you may pick a location. If you do, destroy it."
   },
   {
@@ -12612,7 +14138,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["lackey"],
+    "subtype": [
+      "lackey"
+    ],
     "text": "When this card enters play, you may pick a character in your discard pile. If you do, put it into your hand."
   },
   {
@@ -12663,7 +14191,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "HAGGLE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 2 strength."
   },
   {
@@ -12690,7 +14220,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["lawyer", "mau"],
+    "subtype": [
+      "lawyer",
+      "mau"
+    ],
     "text": "When your faction loses influence, reduce the amount by 1."
   },
   {
@@ -12718,7 +14251,9 @@ export default [
     "strength": 5,
     "life": 9,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -12745,7 +14280,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may deploy a non-tactic card for free. If you do, each opponent may do the same. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -12760,7 +14297,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "EXTRA COST: Deploy this only if you have deployed at least 2 other non-resource cards this turn."
   },
   {
@@ -12775,7 +14314,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may search your deck for a gear card with numeric cost 5 or less and reveal it. If you do, put it into play attached to this card."
   },
   {
@@ -12802,7 +14343,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards."
   },
   {
@@ -12829,7 +14372,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "DEVELOPMENT -- COST: Deplete this card. -- EFFECT: Search your deck for an item and reveal it. Put it into your hand. -- DEPLOYMENT -- COST: Deplete this card. -- EFFECT: You may deploy an item for free. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -12841,7 +14386,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "TACTICAL -- ATTACH TO CHARACTER -- If the attached character would be destroyed, destroy this card instead. Reduce the amount of damage already inflicted to the character this turn to 0."
   },
   {
@@ -12856,7 +14403,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card is destroyed, destroy all other node cards. -- This card gains 1 strength and 1 life for each other node card in play."
   },
   {
@@ -12920,7 +14469,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "UNIQUE JO -- RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 3."
   },
   {
@@ -12935,7 +14486,9 @@ export default [
     "strength": 2,
     "life": 5,
     "speed": 1,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": ""
   },
   {
@@ -12947,7 +14500,9 @@ export default [
     "rarity": "rare",
     "cost": 4,
     "threshold": "eee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "This card cannot be destroyed by the effects of node cards. -- RECONSTRUCT -- COST: Pay 1. Deplete this card. Pick a node card in your discard pile. -- EFFECT: Shuffle the card into its owner's deck."
   },
   {
@@ -12959,7 +14514,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -12971,7 +14528,9 @@ export default [
     "rarity": "rare",
     "cost": 8,
     "threshold": "eeee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 11 strength and 11 life. -- HANDOFF -- COST: Pay 6. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -12983,7 +14542,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- When the attached character leaves play, you may search your deck for a card. If you do, put it into your hand."
   },
   {
@@ -12998,7 +14559,9 @@ export default [
     "strength": 8,
     "life": 6,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -13050,7 +14613,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may put a Micromajig token into play. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -13065,7 +14630,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["manager"],
+    "subtype": [
+      "manager"
+    ],
     "text": "When this card enters play, you may put 2 Micromajig tokens into play. -- TINY SACRIFICES -- COST: Destroy 3 Micromajig tokens you control. -- EFFECT: Search your deck for a card. Put it into your hand. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)"
   },
   {
@@ -13104,7 +14671,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1."
   },
   {
@@ -13167,7 +14736,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "When this card enters or leaves play, you may pick an item in your discard pile. If you do, put it into your hand."
   },
   {
@@ -13182,7 +14753,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "This card can block COVERT parties. -- When this card blocks a COVERT party, it gains 3 strength this turn."
   },
   {
@@ -13209,7 +14782,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["kaiser"],
+    "subtype": [
+      "kaiser"
+    ],
     "text": "TIGER ROAR -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 strength."
   },
   {
@@ -13224,7 +14799,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "At the start of your turn, you may put a token on this card. -- RESEARCH -- COST: Remove a token from this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1."
   },
   {
@@ -13251,7 +14828,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "While an opponent has at least 10 cards in their discard pile, this card gains 3 strength and 3 life."
   },
   {
@@ -13278,7 +14857,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "PANHANDLE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character either gains or loses 1 speed."
   },
   {
@@ -13293,7 +14874,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card enters play, flip a coin. If you win, put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -13308,7 +14891,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, flip a coin. If you win, X is 3. Otherwise, X is 2. Put the top X cards of an opponent's deck into their discard pile."
   },
   {
@@ -13335,7 +14920,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": ""
   },
   {
@@ -13362,7 +14949,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 4,
-    "subtype": ["guard"],
+    "subtype": [
+      "guard"
+    ],
     "text": ""
   },
   {
@@ -13389,7 +14978,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 5,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "When this card attacks, all other members of its party gain 1 speed this turn."
   },
   {
@@ -13404,7 +14995,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "Anything that can pick this card must pick it. (This effect is only active while this card is in play.) -- When this card is picked, put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -13456,7 +15049,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": ""
   },
   {
@@ -13471,7 +15066,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "When this card enters play, you may search an opponent's deck for up to 3 cards with different names and reveal them. If you do, put them into that player's discard pile."
   },
   {
@@ -13486,7 +15083,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "When this card inflicts damage to a faction, you may put a token on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -13501,7 +15100,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "KIDNAP -- COST: Destroy this card. Pick an attacking or blocking character. -- EFFECT: Destroy the character."
   },
   {
@@ -13540,7 +15141,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- SCREAM -- COST: This card loses COVERT this turn. -- EFFECT: This turn, while this card is in a battle, all characters in the opposing party lose 2 speed."
   },
   {
@@ -13555,7 +15158,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "RECLAIM -- COST: Remove 3 cards in an opponent's discard pile from the game. -- EFFECT: This card gains 1 strength and 1 life this turn."
   },
   {
@@ -13570,7 +15175,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, put the top 2 cards of an opponent's deck into their discard pile."
   },
   {
@@ -13585,7 +15192,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- GRIFT -- COST: Use this only during your turn. Pay 5. Deplete this card. Pick a non-tactic card in an opponent's discard pile. -- EFFECT: Put the card into play under your control."
   },
   {
@@ -13612,7 +15222,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "COVERT -- TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, destroy a card named Deception you control or destroy this card."
   },
   {
@@ -13627,7 +15239,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["hunter"],
+    "subtype": [
+      "hunter"
+    ],
     "text": "COVERT -- When this card attacks, it loses COVERT this turn."
   },
   {
@@ -13642,7 +15256,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "When a coin is flipped, you may put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -13654,7 +15270,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 speed. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -13705,7 +15323,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, it gains 1 strength and 1 life this turn."
   },
   {
@@ -13720,7 +15340,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "When this card enters play, you may remove 4 cards in an opponent's discard pile from the game. If you don't, destroy this card."
   },
   {
@@ -13735,7 +15357,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- You may use abilities on your opponent's cards, but you must pay any numeric cost with your own resources. Any additional costs must be satisfied as though your opponent is using the ability. The ability's effect happens as if your opponent used it. -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control."
   },
   {
@@ -13750,7 +15375,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "EXTRA COST: Discard a character or item. X is its numeric cost. -- This card enters play with X tokens on it. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -13777,7 +15404,9 @@ export default [
     "strength": 5,
     "life": 7,
     "speed": 6,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "UNIQUE EVONDAN -- All your other sarcophyle characters gain 1 speed. -- If a character would be destroyed during a turn when this card damaged it, take control of that character instead. Reduce the amount of damage already inflicted to it this turn to 0. It gains the sarcophyle subtype. -- When this card is destroyed, destroy all other sarcophyle characters."
   },
   {
@@ -13816,7 +15445,9 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": ""
   },
   {
@@ -13843,7 +15474,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "This card gains 1 strength for each token on it. -- At the start of your turn, you may pick a character you control. If you do, destroy it. Put X tokens on this card, where X is the destroyed character's strength when it was destroyed. Otherwise, destroy this card."
   },
   {
@@ -13858,7 +15491,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card attacks, you may pick a character. If you do, deplete it."
   },
   {
@@ -13873,7 +15508,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FIRE! -- COST: Deplete this card. Pick 2 or fewer characters. -- EFFECT: Inflict up to 2 damage divided however you want to the characters."
   },
   {
@@ -13888,7 +15525,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card is blocked, it gains 2 strength and 2 life this turn."
   },
   {
@@ -13903,7 +15542,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -13942,7 +15583,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["rider"],
+    "subtype": [
+      "rider"
+    ],
     "text": "This card gains 1 strength and 1 life for each dragon card you control."
   },
   {
@@ -13957,7 +15600,9 @@ export default [
     "strength": 10,
     "life": 10,
     "speed": 4,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "At the start of your turn, you may pick a character an opponent controls. If you do, destroy it. Otherwise, destroy this card."
   },
   {
@@ -14021,7 +15666,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 2 damage divided however you want to those characters."
   },
   {
@@ -14060,7 +15707,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "When this card inflicts damage to a faction, you may pick an item. If you do, destroy it."
   },
   {
@@ -14075,7 +15724,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "SHARPSHOOT -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: Inflict 1 damage to the character."
   },
   {
@@ -14099,7 +15750,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -14114,7 +15767,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -14129,7 +15784,9 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -14144,7 +15801,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, inflict 1 damage to all your opponent's characters."
   },
   {
@@ -14159,7 +15818,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "While this card is attacking, you may assign its battle damage to the target of the attack instead of the blocking party."
   },
   {
@@ -14174,7 +15835,9 @@ export default [
     "strength": 7,
     "life": 1,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "At the end of your turn, if this card started the turn under your control and did not attack this turn, destroy it."
   },
   {
@@ -14202,7 +15865,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "UNIQUE RUDOLPHUS -- PUNCH -- COST: Pay 2. Deplete this card. Pick a character. X is its strength. Y is this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
   },
   {
@@ -14217,7 +15882,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -14268,7 +15935,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "While an opponent controls a character, this card gains 1 strength and 1 life."
   },
   {
@@ -14283,7 +15952,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -14334,7 +16005,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -14342,6 +16015,81 @@ export default [
     "name": "The Tournament Faction",
     "set": "Open Beta",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -14457,7 +16205,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 2,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, put that character into its owner's hand."
   },
   {
@@ -14497,7 +16247,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "CORRUPT -- COST: Pay 2. Pick a character. -- EFFECT: This turn, the character gains COVERT. -- DEFILE -- COST: Deplete this card. -- EFFECT: Look at an opponent's hand and choose a character in it. That player discards that character."
   },
   {
@@ -14537,7 +16289,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["familiar"],
+    "subtype": [
+      "familiar"
+    ],
     "text": "When this card enters play, you may search your deck for a tactic and reveal it. If you do, put it into your hand. -- RECUR: [O][O][O] -- COST: Use this only if this card is in your discard pile. Pay 2. Remove this card from the game. Pick a tactic in your discard pile. -- EFFECT: Put the tactic into your hand."
   },
   {
@@ -14573,7 +16327,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 2 strength and cannot attack. -- MOVE -- COST: Use this only not during a battle. Pay 3. Pick a character. -- EFFECT: Attach this card to the character."
   },
   {
@@ -14588,7 +16344,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "COVERT -- DENOUNCE -- COST: Pay 2. Pick a character. Destroy this card. -- EFFECT: Put the character into its owner's hand. Look at an opponent's hand and choose a character in it. That player discards that character."
   },
   {
@@ -14615,7 +16373,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "EXTRA COST: Remove a tactic in your discard pile from the game."
   },
   {
@@ -14630,7 +16390,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["gloamspike", "priest"],
+    "subtype": [
+      "gloamspike",
+      "priest"
+    ],
     "text": "UNIQUE GLOAMSPIKE -- NEGATE -- COST: Pay 2. Deplete this card. Discard a card. Pick a card being deployed of the same type as the discarded card. -- EFFECT: Terminate the card being deployed."
   },
   {
@@ -14645,7 +16408,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "While this card is in a battle, characters in the opposing party lose 1 strength and 1 speed."
   },
   {
@@ -14660,7 +16425,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["monstrosity", "brain"],
+    "subtype": [
+      "monstrosity",
+      "brain"
+    ],
     "text": "SLOBBER -- COST: Pay 4. Destroy this card. Pick a character. -- EFFECT: Destroy the character if it has X strength or less, where X is the number of [O] you control."
   },
   {
@@ -14699,7 +16467,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "TORTURE -- COST: Pick a character you own. Destroy this card. -- EFFECT: Put the character into its owner's hand. -- RECUR: [O][O] -- COST: Use this only if this card is in your discard pile. Pay 2. Remove this card from the game. Pick a character you own. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -14714,7 +16484,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "When a character you control leaves play, an opponent discards a card. -- HIGHER CALLING -- COST: Pay 2. Pick a character you control. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -14729,7 +16501,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "EXTRA COST: You may pick 4 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, they cannot attack until the start of your next turn."
   },
   {
@@ -14757,7 +16531,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- While an opponent controls more characters than you, this card gains 2 strength, 2 life, and loses COVERT."
   },
   {
@@ -14808,7 +16584,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, an opponent puts a card from their hand on the top of their deck."
   },
   {
@@ -14847,7 +16625,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- FLIP UP: 7 [O][O]"
   },
   {
@@ -14862,7 +16642,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["demon"],
+    "subtype": [
+      "demon"
+    ],
     "text": "COVERT -- [O][O][O]: This card gains 2 life."
   },
   {
@@ -14877,7 +16659,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When this card enters play, pick a resource you control. Put it into its owner's hand. (You may pick face-down resources.)"
   },
   {
@@ -14904,7 +16688,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "When this card enters or leaves play, you may draw a card. If you do, put a card from your hand on the bottom of your deck."
   },
   {
@@ -14919,7 +16705,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, each player may draw up to 2 cards."
   },
   {
@@ -14934,7 +16722,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity", "hamster"],
+    "subtype": [
+      "monstrosity",
+      "hamster"
+    ],
     "text": "COVERT -- [O][O][O][O][O]: This card gains 2 strength."
   },
   {
@@ -14949,7 +16740,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "FLIP UP: 0 [O]"
   },
   {
@@ -14964,7 +16757,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "BERATE -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 2 strength or 1 speed."
   },
   {
@@ -14991,7 +16786,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, you may pick a tactic in your discard pile. If you do, put it into play as a face-down resource under your control."
   },
   {
@@ -15006,7 +16803,10 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["monstrosity", "rabbit"],
+    "subtype": [
+      "monstrosity",
+      "rabbit"
+    ],
     "text": "COVERT -- This card gains 1 strength and 1 life for each [O] you control."
   },
   {
@@ -15030,7 +16830,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character's controller must pay 3 to attack with it."
   },
   {
@@ -15045,7 +16847,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["merlion"],
+    "subtype": [
+      "merlion"
+    ],
     "text": "This card enters play with 2 tokens on it. -- When a character you control is put into your discard pile from play, you may pay 1 and remove a token from this card. If you do, put that character into play under your control. Deplete it."
   },
   {
@@ -15060,7 +16864,10 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 3,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "UNIQUE BALTHASSAR -- SCHMOOZE -- COST: Deplete this card. -- EFFECT: Draw a card."
   },
   {
@@ -15087,7 +16894,11 @@ export default [
     "strength": 4,
     "life": 7,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "ENCROACH: [G][G][G][G][G] -- COST: Pay 1. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -15102,7 +16913,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, destroy that character. That character's controller's faction gains X influence, where X is the strength of that character."
   },
   {
@@ -15117,7 +16930,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "REINSTATE -- COST: Pay 4. Destroy this card. Pick a character in your discard pile. -- EFFECT: Put the character into play under your control if it has numeric cost X or less, where X is the number of [G] you control."
   },
   {
@@ -15132,7 +16947,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "[G][G][G]: When this card enters play, draw a card. -- RETREAT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw a card."
   },
   {
@@ -15159,7 +16977,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence."
   },
   {
@@ -15235,7 +17057,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "PLEAD -- COST: Deplete this card. Pick a character. -- EFFECT: If damage is inflicted to the character this turn, reduce the amount by 1."
   },
   {
@@ -15250,7 +17074,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "TACTICAL -- When this card enters play, your faction gains 4 influence. -- FLIP UP: 4 [G][G]"
   },
   {
@@ -15265,7 +17091,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "COVERT -- When this card inflicts battle damage, your faction loses 2 influence."
   },
   {
@@ -15280,7 +17109,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "RECUR: [G] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. Pick a character. -- EFFECT: This turn, the character gains 3 life."
   },
   {
@@ -15295,7 +17126,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- When this card leaves play, your faction gains 4 influence."
   },
   {
@@ -15372,7 +17206,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE MONTGOMERY -- RESURRECT -- COST: Pay 1. Deplete this card. Pick a character in your discard pile with numeric cost 2 or less. -- EFFECT: Put the character into play under your control."
   },
   {
@@ -15399,7 +17235,9 @@ export default [
     "strength": 0,
     "life": 5,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "IMPEDE -- COST: Deplete this card. Pick a character. -- EFFECT: Deplete the character."
   },
   {
@@ -15414,7 +17252,10 @@ export default [
     "strength": 0,
     "life": 4,
     "speed": 3,
-    "subtype": ["merchant", "mau"],
+    "subtype": [
+      "merchant",
+      "mau"
+    ],
     "text": "When this card blocks, draw X cards, where X is the number of characters in the attacking party."
   },
   {
@@ -15429,7 +17270,10 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "EXTRA COST: Remove 4 cards in your discard pile from the game."
   },
   {
@@ -15444,7 +17288,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "When this card enters play, you may pick a location. If you do, destroy that location. -- FLIP UP: 2 [G][G]"
   },
   {
@@ -15459,7 +17306,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "FLIP UP: 0 [G]"
   },
   {
@@ -15474,7 +17324,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "BANISH -- COST: Pick a location. -- EFFECT: The next 1 damage that would be inflicted to your faction this turn is inflicted to the location instead."
   },
   {
@@ -15501,7 +17354,10 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 2,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "RECUR: [G][G] -- COST: Use this only if this card is in your discard pile. Remove this card from the game. -- EFFECT: Draw a card."
   },
   {
@@ -15528,7 +17384,10 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "DEFLECT -- COST: Pay 3. Deplete this card. Pick an attacking character. -- EFFECT: Remove the character from the battle."
   },
   {
@@ -15582,7 +17441,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["ghost", "mau"],
+    "subtype": [
+      "ghost",
+      "mau"
+    ],
     "text": "When this card is put into your discard pile from play, you may pay 3. If you do, put it into play under your control. Deplete it."
   },
   {
@@ -15597,7 +17459,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["attendant"],
+    "subtype": [
+      "attendant"
+    ],
     "text": "When a character you control blocks, it gains 1 life this turn."
   },
   {
@@ -15624,7 +17488,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "REPAIR -- COST: Choose a number for X that is less than or equal to the number of [E] you control. Pay X. Destroy this card. Pick an item in your discard pile with numeric cost X or less. -- EFFECT: Put the item into play under your control."
   },
   {
@@ -15652,7 +17518,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 2,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "FABRICATE -- COST: Deplete this card. -- EFFECT: Reduce the next item's or item's ability's numeric cost you pay this turn by 2."
   },
   {
@@ -15667,7 +17535,9 @@ export default [
     "strength": 0,
     "life": 2,
     "speed": 3,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "SNUB -- COST: Pay 1. Deplete this card. -- EFFECT: Search your deck for a card named Elitism and reveal it. Put it into your hand."
   },
   {
@@ -15694,7 +17564,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["mud whisperer", "31f"],
+    "subtype": [
+      "mud whisperer",
+      "31f"
+    ],
     "text": "At the start of each opponent's turn, you may pick a character. If you do, restore it."
   },
   {
@@ -15706,7 +17579,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- SPIT OUT -- COST: Destroy this card. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
@@ -15745,7 +17620,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "While this card is in a battle, it loses 1 strength and 1 life for each member of the opposing party."
   },
   {
@@ -15760,7 +17637,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "When this card leaves play, put X Micromajig tokens into play, where X is the number of characters an opponent controls minus the number of characters you control."
   },
   {
@@ -15787,7 +17666,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 2,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 5. If you do, put a token on it. -- While there is a token on this card, it cannot be blocked."
   },
   {
@@ -15799,7 +17680,9 @@ export default [
     "rarity": "uncommon",
     "cost": 4,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- SPIT OUT -- COST: Destroy this card. Pick 2 or fewer characters. -- EFFECT: Restore the characters."
   },
   {
@@ -15827,7 +17710,9 @@ export default [
     "strength": 0,
     "life": 4,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 1. If you do, put a token on it. -- While there is a token on this card, it can block COVERT parties."
   },
   {
@@ -15842,7 +17727,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, reduce the next numeric cost you pay this turn by 3."
   },
   {
@@ -15869,7 +17756,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": ""
   },
   {
@@ -15884,7 +17773,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["mud whisperer"],
+    "subtype": [
+      "mud whisperer"
+    ],
     "text": "At the start of each opponent's turn, you may restore all characters you control."
   },
   {
@@ -15899,7 +17790,10 @@ export default [
     "strength": 13,
     "life": 13,
     "speed": 1,
-    "subtype": ["mountain", "golem"],
+    "subtype": [
+      "mountain",
+      "golem"
+    ],
     "text": "Your opponents cannot take control of this card. -- When this card is put into your discard pile from anywhere, remove it from the game. -- FLIP UP: 13 [E][E]"
   },
   {
@@ -15914,7 +17808,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["mud whisperer", "31f"],
+    "subtype": [
+      "mud whisperer",
+      "31f"
+    ],
     "text": "When this card blocks, you may pick a character. If you do, restore that character."
   },
   {
@@ -15929,7 +17826,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mechanic"],
+    "subtype": [
+      "mechanic"
+    ],
     "text": "When this card is destroyed, you may search your deck for an item and reveal it. If you do, put it into your hand."
   },
   {
@@ -15944,7 +17843,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may pay 3. If you do, put a token on it. -- While there is a token on this card, it gains 1 strength and 1 life."
   },
   {
@@ -15971,7 +17872,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "This card enters play with 5 tokens on it. -- This card gains 1 strength and 1 life for each token on it. -- When this card becomes depleted, remove a token from it. -- GATHER -- COST: Pay 1. Remove an item or 2 cards in your discard pile from the game. -- EFFECT: Put a token on this card."
   },
   {
@@ -15983,7 +17886,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 3 strength and 3 life. -- At the start of each opponent's turn, restore the attached character. -- SPIT OUT -- COST: Destroy this card. Pick a character. -- EFFECT: This turn, the character gains 3 strength and 3 life. Restore it."
   },
   {
@@ -15998,7 +17903,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "CREATE -- COST: Pay 5. Deplete this card. -- EFFECT: You may deploy a character for free. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -16013,7 +17920,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "[E][E][E][E][E][E]: This card gains 3 strength, 3 life, and loses 1 speed."
   },
   {
@@ -16049,7 +17958,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 2 life. -- [E][E][E][E][E]: The attached character gains an additional 2 strength and 1 life."
   },
   {
@@ -16088,7 +17999,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "MARK -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
@@ -16103,7 +18016,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 3. If you do, put a token on it. -- While there is a token on this card, it gains 4 strength and 4 life."
   },
   {
@@ -16154,7 +18069,10 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 2,
-    "subtype": ["plant", "golem"],
+    "subtype": [
+      "plant",
+      "golem"
+    ],
     "text": ""
   },
   {
@@ -16179,7 +18097,9 @@ export default [
     "rarity": "uncommon",
     "cost": 5,
     "threshold": "eee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 2 strength and cannot be blocked. -- FLIP UP: 5 [E][E][E]"
   },
   {
@@ -16194,7 +18114,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "[E][E][E]: This card can attack even if it has not been in play under your control since the start of the turn."
   },
   {
@@ -16222,7 +18144,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "[D][D][D]: When this card inflicts damage to a character, destroy that character."
   },
   {
@@ -16237,7 +18161,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": ""
   },
   {
@@ -16252,7 +18178,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "CLAIM -- COST: Deplete this card. Pick an item. X is its numeric cost. Pay X. -- EFFECT: Take control of the item. -- FLIP UP: 2 [D][D][D]"
   },
   {
@@ -16279,7 +18207,9 @@ export default [
     "strength": 3,
     "life": 6,
     "speed": 4,
-    "subtype": ["crimelord"],
+    "subtype": [
+      "crimelord"
+    ],
     "text": ""
   },
   {
@@ -16294,7 +18224,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": "You may deploy gear cards whenever you could deploy a tactic."
   },
   {
@@ -16306,7 +18238,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 1 strength, 1 life, and gains COVERT. -- FLIP UP: 0 [D][D]"
   },
   {
@@ -16321,7 +18255,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "When this card enters play, you may choose a card type. If you do, reveal the top card of your deck. If that card is the chosen type, put a token on this card. Put the top card of your deck on the bottom. -- While there is a token on this card, it gains 1 strength and 1 life."
   },
   {
@@ -16336,7 +18272,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "INSPIRE -- COST: Put a card from your hand on the top of your deck. Pick a character. -- EFFECT: This turn, the character gains 1 speed."
   },
   {
@@ -16360,7 +18298,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- When this card is put into your discard pile from play, you may choose a card type. If you do, reveal the top card of your deck. If it is the chosen type, put this card into play attached to a character. Put the top card of your deck on the bottom."
   },
   {
@@ -16375,7 +18315,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["grifter"],
+    "subtype": [
+      "grifter"
+    ],
     "text": "When this card enters play, you may choose a card type. If you do, reveal the top card of your deck. If it is the chosen type, put it into your hand. Otherwise, put it on the bottom of your deck."
   },
   {
@@ -16403,7 +18345,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "TACTICAL -- FLIP UP: 0 [D][D]"
   },
   {
@@ -16418,7 +18362,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["teller"],
+    "subtype": [
+      "teller"
+    ],
     "text": "DEMOTIVATE -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 1 life."
   },
   {
@@ -16455,7 +18401,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- TACTICAL -- The attached character gains 1 strength. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character. -- FLIP UP: 1 [D]"
   },
   {
@@ -16482,7 +18430,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "HYPNOTIZE -- COST: Pay 5. Destroy this card. Pick a character. -- EFFECT: Take control of the character if it has numeric cost X or less, where X is the number of [D] you control."
   },
   {
@@ -16522,7 +18472,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["grifter"],
+    "subtype": [
+      "grifter"
+    ],
     "text": "UNIQUE MAXWELL -- STRUT -- COST: Pay 2. Pick a character. -- EFFECT: This turn, the character gains 1 speed or loses 1 life."
   },
   {
@@ -16562,7 +18514,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "[D][D][D][D][D]: This card gains 1 strength, 1 life, and 1 speed."
   },
   {
@@ -16577,7 +18531,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "GAMBLE -- COST: Pay 1. Choose a card type. -- EFFECT: Reveal the top card of your deck. If it is the chosen type, this card gains 2 strength and loses 1 life this turn. Put the top card of your deck on the bottom."
   },
   {
@@ -16628,7 +18584,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 0,
-    "subtype": ["crimelord"],
+    "subtype": [
+      "crimelord"
+    ],
     "text": "This card gains 1 speed for each [D] you control."
   },
   {
@@ -16679,7 +18637,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "COVERT -- When this card enters play, you may search an opponent's deck for a card. If you do, put it into their discard pile."
   },
   {
@@ -16694,7 +18654,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, put a token on this card. -- This card gains 1 strength for each token on it."
   },
   {
@@ -16709,7 +18671,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "SIZE UP -- COST: Pay 1. -- EFFECT: Look at the top card of either deck."
   },
   {
@@ -16748,7 +18712,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, it gains 1 strength and 1 life this turn. -- FLIP UP: 1 [D][D]"
   },
   {
@@ -16763,7 +18729,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "When this card attacks, you may pick a character. If you do, it must block this card if it can this turn."
   },
   {
@@ -16778,7 +18746,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["smuggler"],
+    "subtype": [
+      "smuggler"
+    ],
     "text": "SMUGGLE -- COST: Deplete this card. Pick a character with 2 strength or less. -- EFFECT: This turn, the character gains COVERT."
   },
   {
@@ -16805,7 +18775,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "OUTSMART -- COST: Use this only if an opponent controls more characters than you. Pay 3. -- EFFECT: This turn, this card cannot be blocked by those players."
   },
   {
@@ -16820,7 +18792,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["adriel", "sword of great justice"],
+    "subtype": [
+      "adriel",
+      "sword of great justice"
+    ],
     "text": "UNIQUE ADRIEL -- When battle damage is inflicted to this card while it's blocking, reduce the amount to 0."
   },
   {
@@ -16835,7 +18810,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "BORE -- COST: Pay 3. Deplete this card. Pick a blocking character. -- EFFECT: Remove the character from the battle. Deplete it."
   },
   {
@@ -16850,7 +18827,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card leaves play, inflict 1 damage to all characters and draw a card. -- CRUSH WAVE -- COST: Pay 2. Destroy this card. -- EFFECT: Inflict 1 damage to all characters."
   },
   {
@@ -16865,7 +18844,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "INFLAME -- COST: Pay 2. Destroy this card. Pick a character or location. -- EFFECT: Inflict X damage to the character or location, where X is the number of [R] you control."
   },
   {
@@ -16904,7 +18885,9 @@ export default [
     "strength": 6,
     "life": 3,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "While this card is attacking, you may assign its battle damage to the target of the attack instead of the blocking party."
   },
   {
@@ -16919,7 +18902,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "All battle damage that could be assigned to this card must be assigned to it."
   },
   {
@@ -16934,7 +18919,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, X is that character's strength and Y is this card's strength. Inflict X damage to this card. Inflict Y damage to that character."
   },
   {
@@ -16962,7 +18949,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ELZIBETH -- REANIMATE -- COST: Pay 2. Deplete this card. Pick a character in your discard pile. -- EFFECT: Put the character on the top of its owner's deck."
   },
   {
@@ -16977,7 +18966,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card leaves play, you may pick a character. If you do, inflict 1 damage to it."
   },
   {
@@ -17004,7 +18995,9 @@ export default [
     "strength": 5,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R][R][R]: This card gains 3 life."
   },
   {
@@ -17019,7 +19012,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card inflicts battle damage to a character, increase the amount by 2."
   },
   {
@@ -17034,7 +19029,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CHARGE! -- COST: Pay 2. Destroy this card. -- EFFECT: Inflict 3 damage to an opponent's faction."
   },
   {
@@ -17049,7 +19046,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["gideon", "sword of great justice"],
+    "subtype": [
+      "gideon",
+      "sword of great justice"
+    ],
     "text": "UNIQUE GIDEON -- When battle damage is inflicted to this card while it's attacking, reduce the amount to 0. -- When an opponent's faction loses influence, increase the amount by 1."
   },
   {
@@ -17064,7 +19064,11 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["godwing", "seraphim", "dragon"],
+    "subtype": [
+      "godwing",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE GODWING -- When this card attacks, you may pick a character. If you do, inflict X damage to it, where X is the number of [R] you control."
   },
   {
@@ -17076,7 +19080,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- [R][R][R][R]: The attached character gains an additional 2 strength. -- HANDOFF -- COST: Pay 4. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -17103,7 +19109,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["vandal"],
+    "subtype": [
+      "vandal"
+    ],
     "text": "EXTRA COST: You may pick an item. -- When this card enters play, if you picked an item as part of its cost, destroy that item."
   },
   {
@@ -17118,7 +19126,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, deplete that character."
   },
   {
@@ -17195,7 +19205,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -17246,7 +19258,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FLIP UP: 2 [R]"
   },
   {
@@ -17261,7 +19275,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R][R][R]: This card gains 1 strength and 1 life."
   },
   {
@@ -17276,7 +19292,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R]: At the start of your turn, you may inflict 1 damage to an opponent's faction."
   },
   {
@@ -17303,7 +19321,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, inflict 1 damage to all characters an opponent controls. -- FLIP UP: 3 [R]"
   },
   {
@@ -17318,7 +19338,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "FLIP UP: 0 [R]"
   },
   {
@@ -17333,7 +19355,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FIRE! -- COST: Pay 1. Pick a location. -- EFFECT: Inflict 1 damage to the location."
   },
   {
@@ -17348,7 +19372,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "SHOOT -- COST: Pay 1. Pick a character. -- EFFECT: Inflict 1 damage to the character. Inflict 1 damage to this card."
   },
   {
@@ -17363,7 +19389,9 @@ export default [
     "strength": 8,
     "life": 5,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -17378,7 +19406,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "ASSAIL -- COST: Pay 2. -- EFFECT: This turn, this card gains 1 strength."
   },
   {
@@ -17405,7 +19435,10 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier", "vandal"],
+    "subtype": [
+      "soldier",
+      "vandal"
+    ],
     "text": "When this card inflicts battle damage, you may pick a location. If you do, inflict the same amount of damage to that location."
   },
   {
@@ -17426,6 +19459,81 @@ export default [
     "name": "The Tournament Faction",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17438,6 +19546,81 @@ export default [
     "name": "Moist Cave of the Darkpump",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17450,6 +19633,81 @@ export default [
     "name": "Order of the Golden String",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17462,6 +19720,81 @@ export default [
     "name": "Alliance of Handy Weirdos",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17474,6 +19807,81 @@ export default [
     "name": "Drowned Catacombs",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17486,6 +19894,81 @@ export default [
     "name": "Hall of Great Justice",
     "set": "Seed",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -17589,7 +20072,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE HEXTILDA -- TOIL AND TROUBLE -- COST: Pay 4. Deplete this card. Pick a card you control with at least 1 token on it. -- EFFECT: Double the number of tokens on the card."
   },
   {
@@ -17604,7 +20089,10 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 6,
-    "subtype": ["insect", "monstrosity"],
+    "subtype": [
+      "insect",
+      "monstrosity"
+    ],
     "text": "HIDEOUSLY HORRENDOUS HEX OF HELLISHLY HORRIFYING HATRED -- COST: Pay 6. Destroy this card. Pick 6 characters. -- EFFECT: Inflict 6 damage to each of the characters. Inflict 6 damage to all factions. All players remove 6 cards in their hand from the game. All players remove 6 cards in their discard pile from the game. All players remove the top 6 cards of their deck from the game."
   },
   {
@@ -17619,7 +20107,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "TICKLE -- COST: Pay 1. Deplete this card. -- EFFECT: An opponent discards a card."
   },
   {
@@ -17670,7 +20160,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "COVERT -- PROVIDES: [O]"
   },
   {
@@ -17697,7 +20189,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- If you deployed this card using FLIP UP, it enters play with a token on it. -- While there is a token on this card, it loses COVERT and gains 1 strength and 1 life. -- If there are no tokens on this card and it would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 3 [O][O]"
   },
   {
@@ -17712,7 +20206,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "GAZE UPON THE STARS -- COST: Deplete this card. -- EFFECT: You may deploy a tactic with numeric cost X or less for free, where X is either 5 or the number of [O] you control, whichever is lower."
   },
   {
@@ -17775,7 +20271,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When a card that provides at least [O] enters play under your control, you may pick a character. If you do, it gains COVERT this turn."
   },
   {
@@ -17814,7 +20312,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "While this card is in your hand you may reveal this card as you are playing a resource. If you do, you may deploy this card for 1. -- When this card enters play, you may put a resource you control into its owner's hand. If you do, you may play a resource."
   },
   {
@@ -17829,7 +20329,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["prince", "advisor"],
+    "subtype": [
+      "prince",
+      "advisor"
+    ],
     "text": "UNIQUE GLOAMSPIKE -- All your face-down tactics gain FLIP UP with numeric cost and threshold equal to their regular numeric cost and threshold."
   },
   {
@@ -17856,7 +20359,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead."
   },
   {
@@ -17895,7 +20400,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. Put a random card from your discard pile into your hand. -- RETIRE: [G][G][G] -- COST: Use this only while this card is not in a battle. Pay 2. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 3 [G]"
   },
   {
@@ -17910,7 +20419,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "When this card enters or leaves play, you may search your deck for a staple resource, reveal it, and put it into your hand."
   },
   {
@@ -17925,7 +20437,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "[G][G]: When this card enters play, draw a card. -- [G][G][G][G][G]: When this card enters play, draw a card. -- [G][G][G][G][G][G][G][G][G]: When this card enters play, draw a card. -- FLIP UP: 2 [G]"
   },
   {
@@ -17940,7 +20454,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "When a card that provides at least [G] enters play under your control, you may put a token on this card. -- DELIVER -- COST: Pay 1. Remove a token from this card. Pick a character. -- EFFECT: This turn, the character gains 2 life. -- SHORTCUT -- COST: Pay 1. Remove a token from this card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -17955,7 +20471,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE FRAMPTLE -- Characters cannot attack or be restored. -- At the start of your turn, put a token on this card. -- When this card has at least 2 tokens on it, destroy it."
   },
   {
@@ -17983,7 +20501,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "RECUR: [G][G] -- COST: Use this only while this card is in your discard pile. Pay 5. Remove this card from the game. Pick up to 4 characters in your discard pile. -- EFFECT: Put the characters into your hand."
   },
   {
@@ -17998,7 +20518,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE GUS -- ALL YOUR BAYS ARE BELONG TO GUS -- COST: Pay 2. Deplete this card. Pick a location. -- EFFECT: Take control of the location. -- FLIP UP: 2 [G][G][G]"
   },
   {
@@ -18035,7 +20557,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 life and cannot attack. -- FLIP UP: 2 [G] and your faction gains 4 influence."
   },
   {
@@ -18074,7 +20598,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "At the end of your turn, you may reveal the top card of your deck. If you do and it is a staple resource, put it into your hand."
   },
   {
@@ -18089,7 +20615,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "When an opponent plays a resource, you may pay 1. If you do, attach that resource to that opponent's faction."
   },
   {
@@ -18141,7 +20670,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "This card can attack only once each turn. -- ASSIST -- COST: Deplete this card. Pick another character you control. -- EFFECT: Restore the character. This turn, it cannot attack. -- RESTORE: [E][E][E] -- COST: Pay 3. -- EFFECT: Restore this card."
   },
   {
@@ -18153,7 +20684,9 @@ export default [
     "rarity": "common",
     "cost": 4,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life for each [E] you control."
   },
   {
@@ -18168,7 +20701,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "This card loses 1 life for each token on it. -- FALL APART -- COST: Pay 1. Put a token on this card. -- EFFECT: Put a Micromajig token into play under your control."
   },
   {
@@ -18195,7 +20730,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "PROVIDES: [E] -- At the start of each opponent's turn, you may pick a resource attached to your faction. If you do, detach it from your faction."
   },
   {
@@ -18210,7 +20747,9 @@ export default [
     "strength": 6,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- When this card attacks, all your other characters gain 1 strength and 1 life this turn."
   },
   {
@@ -18225,7 +20764,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card leaves play, destroy all other node cards. -- DISSOLVE -- COST: Pay 2. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 1 [E][E][E]"
   },
   {
@@ -18264,7 +20805,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "EXTRA COST: Choose a number for X. Pay X. -- This card enters play with X tokens on it. -- At the start of your turn, remove a token from this card. -- While there is a token on this card, it gains 5 strength and 5 life."
   },
   {
@@ -18300,7 +20843,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 1 speed for each token on it. -- At the end of your turn, you may put a token on the attached character. If it has 0 speed, destroy it. -- If this card would be destroyed, you may flip it face-down under its owner's control instead. -- FLIP UP: 4 [E][E][E]"
   },
   {
@@ -18315,7 +20860,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "UNIQUE GOLOAM -- This card gains 1 strength and 1 life for each item in play."
   },
   {
@@ -18343,7 +20890,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "If you deployed this card using FLIP UP, it enters play with a token on it. -- While there is a token on this card, it loses 2 strength and 2 life and can block COVERT parties. -- If there are no tokens on this card and it would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 4 [E]"
   },
   {
@@ -18358,7 +20907,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1. -- RESEARCH HARDER: [E][E][E][E][E] -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2."
   },
   {
@@ -18434,7 +20985,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "TACTICAL -- GRACEFUL EXIT -- COST: Discard a card. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 4 [D][D] and play a resource."
   },
   {
@@ -18461,7 +21014,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "SLAP IT UP -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 strength and gains 1 life. -- FLIP IT -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 life and gains 1 strength. -- RUB IT DOWN -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 strength or 1 life and gains 1 speed."
   },
   {
@@ -18476,7 +21031,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead. -- PETTY VENGEANCE -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 1. Discard a card. Pick a character. -- EFFECT: This turn, the character loses 1 life."
   },
   {
@@ -18503,7 +21060,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "When this card enters play, draw a card. -- If this card would be destroyed, each player removes the top card of their deck from the game instead. If the numeric cost of your removed card is greater than or equal to the numeric cost of all opponent's, draw a card and reduce the amount of damage already inflicted to this card this turn to 0. Otherwise, remove this card from the game."
   },
   {
@@ -18530,7 +21089,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "When a card that provides at least [D] enters play under your control, this card gains 1 strength and COVERT this turn."
   },
   {
@@ -18545,7 +21106,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "MUSTACHE SHOWDOWN -- COST: Deplete this card. -- EFFECT: You and an opponent look at the top 3 cards of your decks and divide them into 2 face-down piles containing at least 1 card each. Each of you choose one of their opponent's piles. Reveal the chosen piles. If one pile has a higher total numeric cost than the other, the owner of that pile may put one of the cards from it into their hand. Shuffle the remaining cards into their owners's deck."
   },
   {
@@ -18560,7 +21123,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["clowns"],
+    "subtype": [
+      "clowns"
+    ],
     "text": "You may include as many copies of this card in your deck as you want. -- At the start of your turn, you may pay 1. If you do, search your deck for a card named Party Clowns and reveal it. Put it into play under your control."
   },
   {
@@ -18587,7 +21152,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "PROVIDES: [D] -- While you control a character you don't own, this card gains 2 strength, 2 life, and 1 speed."
   },
   {
@@ -18602,7 +21169,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "UNIQUE ROSY -- When this card is destroyed, reveal the top 5 cards of an opponent's deck. You may choose a revealed character. If you do, put it into play under your control. That player puts the remaining cards on the bottom of their deck in any order."
   },
   {
@@ -18626,7 +21195,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- If this card would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 1 [D]"
   },
   {
@@ -18665,7 +21236,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 1,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "At the start of your turn, you may put a token on this card. -- This card gains 1 speed for each token on it. -- While there are at least 5 tokens on this card, it's unblockable."
   },
   {
@@ -18690,7 +21263,9 @@ export default [
     "rarity": "rare",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["crest"],
+    "subtype": [
+      "crest"
+    ],
     "text": "UNIQUE CREST -- PROVIDES: [D][D] -- When a card that provides at least [D] enters play under your control, you may pick a character. If you do, that character loses 1 life this turn."
   },
   {
@@ -18702,7 +21277,9 @@ export default [
     "rarity": "rare",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["crest"],
+    "subtype": [
+      "crest"
+    ],
     "text": "UNIQUE CREST -- PROVIDES: [E][E] -- When a card that provides at least [E] enters play under your control, you may put a Micromajig token into play under your control."
   },
   {
@@ -18714,7 +21291,9 @@ export default [
     "rarity": "rare",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["crest"],
+    "subtype": [
+      "crest"
+    ],
     "text": "UNIQUE CREST -- PROVIDES: [G][G] -- When a card that provides at least [G] enters play under your control, you may pick a faction. If you do, it gains 2 influence."
   },
   {
@@ -18726,7 +21305,9 @@ export default [
     "rarity": "rare",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["crest"],
+    "subtype": [
+      "crest"
+    ],
     "text": "UNIQUE CREST -- PROVIDES: [O][O] -- When a card that provides at least [O] enters play under your control, you may search your deck for a tactic and reveal it. If you do, put it on top of your deck."
   },
   {
@@ -18738,7 +21319,9 @@ export default [
     "rarity": "rare",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["crest"],
+    "subtype": [
+      "crest"
+    ],
     "text": "UNIQUE CREST -- PROVIDES: [R][R] -- When a card that provides at least [R] enters play under your control, you may search your deck for a character and reveal it. If you do, put it on top of your deck."
   },
   {
@@ -18777,7 +21360,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: Pay X, where X is 7 minus the number of [R] you control."
   },
   {
@@ -18792,7 +21377,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When a card that provides at least [R] enters play under your control, put a token on this card. -- This card gains 1 strength for each token on it."
   },
   {
@@ -18807,7 +21394,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["athalamund", "sword of great justice"],
+    "subtype": [
+      "athalamund",
+      "sword of great justice"
+    ],
     "text": "UNIQUE ATHALAMUND -- PUNCH -- COST: Pay 1. Deplete this card. Pick a character. X is its strength. Y is twice this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
   },
   {
@@ -18834,7 +21424,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["pacifist"],
+    "subtype": [
+      "pacifist"
+    ],
     "text": "TACTICAL -- EXTRA COST: Pick a location you control. -- While the picked location is in play, this card cannot attack or block. -- FLIP UP: 2 [R][R]"
   },
   {
@@ -18861,7 +21453,9 @@ export default [
     "strength": 5,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "At the end of your turn, if this card is depleted, inflict 1 damage to it. -- [R][R][R][R][R][R][R][R][R]: This card gains 4 life."
   },
   {
@@ -18876,7 +21470,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "PROVIDES: [R]"
   },
   {
@@ -18927,7 +21523,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 1,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "When battle damage is inflicted to a character in a party with this card, reduce the amount by 1. (This includes this character.)"
   },
   {
@@ -18942,7 +21540,11 @@ export default [
     "strength": 1,
     "life": 10,
     "speed": 1,
-    "subtype": ["padamose", "emperor", "mau"],
+    "subtype": [
+      "padamose",
+      "emperor",
+      "mau"
+    ],
     "text": "UNIQUE PADAMOSE -- All your \"sword of great justice\" characters gain 1 strength and 1 life. -- All your opponent's \"mau\" characters and Arcanist characters lose 1 strength and 1 life."
   },
   {
@@ -18957,7 +21559,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, you may pick an item. If you do, destroy that item and your faction loses 2 influence. -- FLY AWAY -- COST: Remove an item in an opponent's discard pile from the game. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 3 [R][R]"
   },
   {
@@ -18984,7 +21588,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card attacks, inflict 1 damage to an opponent's faction. -- [R][R][R][R]: When this card attacks, you may pick a character. If you do, inflict 1 damage to it."
   },
   {
@@ -18999,7 +21605,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead."
   },
   {
@@ -19014,7 +21622,10 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 2,
-    "subtype": ["emperor barduse", "dragon"],
+    "subtype": [
+      "emperor barduse",
+      "dragon"
+    ],
     "text": "UNIQUE EMPEROR BARDUSE -- When this card enters play, you may pick any number of characters. If you do, inflict X damage divided however you want to the characters, where X is twice the number of dragon characters you control. -- All your other \"dragon\" characters gain 1 strength and 1 life."
   },
   {
@@ -19026,7 +21637,9 @@ export default [
     "rarity": "common",
     "cost": 4,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 1 life. -- If this card would be destroyed, flip it face-down under its owner's control instead. -- SNICKER SNACK -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 3. Discard a card. Pick a character. -- EFFECT: Inflict 2 damage to the character. Inflict 1 damage to your faction."
   },
   {
@@ -19053,7 +21666,11 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["thunderhoof", "seraphim", "dragon"],
+    "subtype": [
+      "thunderhoof",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE THUNDERHOOF -- When this card enters play, put X tokens on it, where X is the number of [O] you control. -- This card gains 1 strength for each token on it. -- DISRUPT -- COST: Pay 2. Remove a token from this card. Pick an opponent. -- EFFECT: That player discards a card."
   },
   {
@@ -19068,7 +21685,10 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["geiseric", "demon knight"],
+    "subtype": [
+      "geiseric",
+      "demon knight"
+    ],
     "text": "UNIQUE GEISERIC -- If a character would be put into an opponent's hand from play, you may pay 1. If you do, remove it from the game and put a token on this card instead. -- SOUL CONSUMPTION -- COST: Pay 2. Remove a token from this card. -- EFFECT: Look at the top 2 cards of your deck. Put 1 into your hand and 1 on the bottom of your deck."
   },
   {
@@ -19194,7 +21814,10 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 3,
-    "subtype": ["vilghame", "sword of great justice"],
+    "subtype": [
+      "vilghame",
+      "sword of great justice"
+    ],
     "text": "UNIQUE VILGHAME -- Your opponents must pay 1 to deploy a tactic. -- The first resource each opponent plays each turn enters play attached to that player's faction."
   },
   {
@@ -19245,7 +21868,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["merbegon", "demon knight"],
+    "subtype": [
+      "merbegon",
+      "demon knight"
+    ],
     "text": "UNIQUE MERBEGON -- This card can attack even if it has not been in play under your control since the start of the turn. -- When a character enters play under your control, you may destroy that character. If you do, X is that character's strength and Y is that character's life. You may pick a character. If you do, it gains X strength and Y life this turn."
   },
   {
@@ -19272,7 +21898,11 @@ export default [
     "strength": 0,
     "life": 4,
     "speed": 4,
-    "subtype": ["grandchest", "seraphim", "dragon"],
+    "subtype": [
+      "grandchest",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE GRANDCHEST -- The top card of your deck is revealed at all times. -- While the top card of your deck is revealed, this card gains X strength, where X is the numeric cost of that card. -- SHAKE UP -- COST: Pay 2. -- EFFECT: Shuffle your deck."
   },
   {
@@ -19324,7 +21954,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["iohane", "sword of great justice"],
+    "subtype": [
+      "iohane",
+      "sword of great justice"
+    ],
     "text": "TACTICAL, UNIQUE IOHANE -- At the start of your turn, flip a coin. If you win, draw a card. -- SNEAK -- COST: Pay 1. -- EFFECT: This card gains COVERT this turn."
   },
   {
@@ -19339,7 +21972,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["ipsighast", "demon knight"],
+    "subtype": [
+      "ipsighast",
+      "demon knight"
+    ],
     "text": "UNIQUE IPSIGHAST -- EXHUMATION -- COST: Pay 3. Pick a character in an opponent's discard pile. -- EFFECT: Remove that character from the game. This turn, this card gains COVERT. You may put the top 3 cards of that opponent's deck into their discard pile."
   },
   {
@@ -19366,7 +22002,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["giada", "sword of great justice"],
+    "subtype": [
+      "giada",
+      "sword of great justice"
+    ],
     "text": "UNIQUE GIADA -- This card loses 1 strength and 1 life for each token on it. -- If this card would be destroyed by an opposing card or effect, you may put a token on it instead. If you do, deplete it and remove it from battle. Reduce the amount of damage already inflicted to this character to 0."
   },
   {
@@ -19381,7 +22020,10 @@ export default [
     "strength": 3,
     "life": 6,
     "speed": 3,
-    "subtype": ["octo-ba-ba", "sword of great justice"],
+    "subtype": [
+      "octo-ba-ba",
+      "sword of great justice"
+    ],
     "text": "UNIQUE OCTO-BA-BA -- When a character an opponent controls is destroyed, put a token on this card. -- DEVOUR -- COST: Pay 3. Deplete this card. Remove a token from this card. Pick a character or location. -- EFFECT: Inflict 3 damage to the character or location."
   },
   {
@@ -19396,7 +22038,11 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["grandchest", "seraphim", "dragon"],
+    "subtype": [
+      "grandchest",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE GRANDCHEST -- When battle damage is inflicted to a character you control, reduce the amount by 2. -- When battle damage is inflicted to a character an opponent controls, increase the amount by 2."
   },
   {
@@ -19489,6 +22135,81 @@ export default [
     "name": "The Evil Alliance",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19501,6 +22222,81 @@ export default [
     "name": "The Society of Magical Propriety",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19513,6 +22309,81 @@ export default [
     "name": "The Knitting Coalition",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19525,6 +22396,81 @@ export default [
     "name": "The Open R&D Faction",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19537,6 +22483,81 @@ export default [
     "name": "The Union of Unextraordinary Miners",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19549,6 +22570,81 @@ export default [
     "name": "Imperial Army",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19561,6 +22657,81 @@ export default [
     "name": "Counter-Imperial Army",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19573,6 +22744,81 @@ export default [
     "name": "Slightly Less Evil Alliance",
     "set": "Seed 3",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -19640,7 +22886,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 2,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, put that character into its owner's hand."
   },
   {
@@ -19692,7 +22940,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "CORRUPT -- COST: Pay 2. Pick a character. -- EFFECT: This turn, the character gains COVERT. -- DEFILE -- COST: Deplete this card. -- EFFECT: Look at an opponent's hand and choose a character in it. That player discards that character."
   },
   {
@@ -19744,7 +22994,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["familiar"],
+    "subtype": [
+      "familiar"
+    ],
     "text": "When this card enters play, you may search your deck for a tactic and reveal it. If you do, put it into your hand. -- RECUR: [O][O][O] -- COST: Use this only if this card is in your discard pile. Pay 2. Remove this card from the game. Pick a tactic in your discard pile. -- EFFECT: Put the tactic into your hand."
   },
   {
@@ -19792,7 +23044,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 2 strength and cannot attack. -- MOVE -- COST: Use this only not during a battle. Pay 3. Pick a character. -- EFFECT: Attach this card to the character."
   },
   {
@@ -19807,7 +23061,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "COVERT -- DENOUNCE -- COST: Pay 2. Pick a character. Destroy this card. -- EFFECT: Put the character into its owner's hand. Look at an opponent's hand and choose a character in it. That player discards that character."
   },
   {
@@ -19834,7 +23090,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE GILDA -- At the start of your turn you may look at the top 2 cards of your deck. You may reveal a tactic among them. If you do, put it into the void. Put the remaining cards on the top of your deck in any order. -- SEDUCTIVE SUMMONS -- COST: Pay 1. Pick a tactic that was voided by this card. -- EFFECT: You may deploy that card."
   },
   {
@@ -19849,7 +23107,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE HEXTILDA -- TOIL AND TROUBLE -- COST: Pay 4. Deplete this card. Pick a card you control with at least 1 token on it. -- EFFECT: Double the number of tokens on the card."
   },
   {
@@ -19864,7 +23124,10 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 6,
-    "subtype": ["insect", "monstrosity"],
+    "subtype": [
+      "insect",
+      "monstrosity"
+    ],
     "text": "HIDEOUSLY HORRENDOUS HEX OF HELLISHLY HORRIFYING HATRED -- COST: Pay 6. Destroy this card. Pick 6 characters. -- EFFECT: Inflict 6 damage to each of the characters. Inflict 6 damage to all factions. All players remove 6 cards in their hand from the game. All players remove 6 cards in their discard pile from the game. All players remove the top 6 cards of their deck from the game."
   },
   {
@@ -19879,7 +23142,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["gloamspike", "priest"],
+    "subtype": [
+      "gloamspike",
+      "priest"
+    ],
     "text": "UNIQUE GLOAMSPIKE -- NEGATE -- COST: Pay 2. Deplete this card. Discard a card. Pick a card being deployed of the same type as the discarded card. -- EFFECT: Terminate the card being deployed."
   },
   {
@@ -19894,7 +23160,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "While this card is in a battle, characters in the opposing party lose 1 strength and 1 speed."
   },
   {
@@ -19909,7 +23177,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["monstrosity", "brain"],
+    "subtype": [
+      "monstrosity",
+      "brain"
+    ],
     "text": "SLOBBER -- COST: Pay 4. Destroy this card. Pick a character. -- EFFECT: Destroy the character if it has X strength or less, where X is the number of [O] you control."
   },
   {
@@ -19924,7 +23195,10 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["seraphim", "dragon"],
+    "subtype": [
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE HUNGERMAW -- This card enters play with 8 tokens on it. -- This card gains 1 strength and 1 life for each token on it. -- EJECT -- COST: Remove 2 tokens from this card. Pick another non-resource card. -- EFFECT: Put the card into its owner's hand."
   },
   {
@@ -19939,7 +23213,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "TICKLE -- COST: Pay 1. Deplete this card. -- EFFECT: An opponent discards a card."
   },
   {
@@ -19990,7 +23266,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "TORTURE -- COST: Pick a character you own. Destroy this card. -- EFFECT: Put the character into its owner's hand. -- RECUR: [O][O] -- COST: Use this only if this card is in your discard pile. Pay 2. Remove this card from the game. Pick a character you own. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -20005,7 +23283,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "When a character you control leaves play, an opponent discards a card. -- HIGHER CALLING -- COST: Pay 2. Pick a character you control. -- EFFECT: Put the character into its owner's hand."
   },
   {
@@ -20032,7 +23312,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "EXTRA COST: You may pick 4 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, they cannot attack until the start of your next turn."
   },
   {
@@ -20047,7 +23329,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "COVERT -- PROVIDES: [O]"
   },
   {
@@ -20075,7 +23359,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["advisor", "couch"],
+    "subtype": [
+      "advisor",
+      "couch"
+    ],
     "text": "EXTRA COST: Pick a tactic in a discard pile. -- While the picked card is in its owner's discard pile, this card gains COVERT."
   },
   {
@@ -20114,7 +23401,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- If you deployed this card using FLIP UP, it enters play with a token on it. -- While there is a token on this card, it loses COVERT and gains 1 strength and 1 life. -- If there are no tokens on this card and it would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 3 [O][O]"
   },
   {
@@ -20129,7 +23418,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- While an opponent controls more characters than you, this card gains 2 strength, 2 life, and loses COVERT."
   },
   {
@@ -20156,7 +23447,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "GAZE UPON THE STARS -- COST: Deplete this card. -- EFFECT: You may deploy a tactic with numeric cost X or less for free, where X is either 5 or the number of [O] you control, whichever is lower."
   },
   {
@@ -20219,7 +23512,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, an opponent puts a card from their hand on the top of their deck."
   },
   {
@@ -20270,7 +23565,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- FLIP UP: 7 [O][O]"
   },
   {
@@ -20285,7 +23582,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["demon"],
+    "subtype": [
+      "demon"
+    ],
     "text": "COVERT -- [O][O][O]: This card gains 2 life."
   },
   {
@@ -20300,7 +23599,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When this card enters play, pick a resource you control. Put it into its owner's hand. (You may pick face-down resources.)"
   },
   {
@@ -20327,7 +23628,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "When this card enters or leaves play, you may draw a card. If you do, put a card from your hand on the bottom of your deck."
   },
   {
@@ -20342,7 +23645,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, each player may draw up to 2 cards."
   },
   {
@@ -20357,7 +23662,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["monstrosity", "hamster"],
+    "subtype": [
+      "monstrosity",
+      "hamster"
+    ],
     "text": "COVERT -- [O][O][O][O][O]: This card gains 2 strength."
   },
   {
@@ -20372,7 +23680,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When a card that provides at least [O] enters play under your control, you may pick a character. If you do, it gains COVERT this turn."
   },
   {
@@ -20411,7 +23721,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "FLIP UP: 0 [O]"
   },
   {
@@ -20438,7 +23750,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "BERATE -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 2 strength or 1 speed."
   },
   {
@@ -20465,7 +23779,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["wizard"],
+    "subtype": [
+      "wizard"
+    ],
     "text": "When this card enters play, you may pick a tactic in your discard pile. If you do, put it into play as a face-down resource under your control."
   },
   {
@@ -20480,7 +23796,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "While this card is in your hand you may reveal this card as you are playing a resource. If you do, you may deploy this card for 1. -- When this card enters play, you may put a resource you control into its owner's hand. If you do, you may play a resource."
   },
   {
@@ -20495,7 +23813,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["prince", "advisor"],
+    "subtype": [
+      "prince",
+      "advisor"
+    ],
     "text": "UNIQUE GLOAMSPIKE -- All your face-down tactics gain FLIP UP with numeric cost and threshold equal to their regular numeric cost and threshold."
   },
   {
@@ -20510,7 +23831,10 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["monstrosity", "rabbit"],
+    "subtype": [
+      "monstrosity",
+      "rabbit"
+    ],
     "text": "COVERT -- This card gains 1 strength and 1 life for each [O] you control."
   },
   {
@@ -20546,7 +23870,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character's controller must pay 3 to attack with it."
   },
   {
@@ -20561,7 +23887,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["merlion"],
+    "subtype": [
+      "merlion"
+    ],
     "text": "This card enters play with 2 tokens on it. -- When a character you control is put into your discard pile from play, you may pay 1 and remove a token from this card. If you do, put that character into play under your control. Deplete it."
   },
   {
@@ -20576,7 +23904,10 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 3,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "UNIQUE BALTHASSAR -- SCHMOOZE -- COST: Deplete this card. -- EFFECT: Draw a card."
   },
   {
@@ -20603,7 +23934,11 @@ export default [
     "strength": 4,
     "life": 7,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "ENCROACH: [G][G][G][G][G] -- COST: Pay 1. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -20618,7 +23953,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, destroy that character. That character's controller's faction gains X influence, where X is the strength of that character."
   },
   {
@@ -20633,7 +23970,10 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["seraphim", "dragon"],
+    "subtype": [
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE CARACAL -- When this card enters play, put 5 tokens on it. -- This card gains 1 strength and 1 life for each token on it. -- When you draw any number of cards, put X tokens on this card, where X is the number of cards drawn. -- $$$ MORPH -- COST: Remove 3 tokens from this card. -- EFFECT: Draw a card."
   },
   {
@@ -20648,7 +23988,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead."
   },
   {
@@ -20663,7 +24005,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "REINSTATE -- COST: Pay 4. Destroy this card. Pick a character in your discard pile. -- EFFECT: Put the character into play under your control if it has numeric cost X or less, where X is the number of [G] you control."
   },
   {
@@ -20678,7 +24022,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "[G][G][G]: When this card enters play, draw a card. -- RETREAT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw a card."
   },
   {
@@ -20717,7 +24064,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence."
   },
   {
@@ -20757,7 +24108,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["pirate", "mercenary", "mau"],
+    "subtype": [
+      "pirate",
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 3 influence. Put a random card from your discard pile into your hand. -- RETIRE: [G][G][G] -- COST: Use this only while this card is not in a battle. Pay 2. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 3 [G]"
   },
   {
@@ -20784,7 +24139,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "When this card enters or leaves play, you may search your deck for a staple resource, reveal it, and put it into your hand."
   },
   {
@@ -20799,7 +24157,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "[G][G]: When this card enters play, draw a card. -- [G][G][G][G][G]: When this card enters play, draw a card. -- [G][G][G][G][G][G][G][G][G]: When this card enters play, draw a card. -- FLIP UP: 2 [G]"
   },
   {
@@ -20814,7 +24174,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "When a card that provides at least [G] enters play under your control, you may put a token on this card. -- DELIVER -- COST: Pay 1. Remove a token from this card. Pick a character. -- EFFECT: This turn, the character gains 2 life. -- SHORTCUT -- COST: Pay 1. Remove a token from this card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -20877,7 +24239,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "PLEAD -- COST: Deplete this card. Pick a character. -- EFFECT: If damage is inflicted to the character this turn, reduce the amount by 1."
   },
   {
@@ -20892,7 +24256,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "TACTICAL -- When this card enters play, your faction gains 4 influence. -- FLIP UP: 4 [G][G]"
   },
   {
@@ -20907,7 +24273,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "COVERT -- When this card inflicts battle damage, your faction loses 2 influence."
   },
   {
@@ -20922,7 +24291,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "RECUR: [G] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. Pick a character. -- EFFECT: This turn, the character gains 3 life."
   },
   {
@@ -20937,7 +24308,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE FRAMPTLE -- Characters cannot attack or be restored. -- At the start of your turn, put a token on this card. -- When this card has at least 2 tokens on it, destroy it."
   },
   {
@@ -20952,7 +24325,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- When this card leaves play, your faction gains 4 influence."
   },
   {
@@ -20979,7 +24355,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "RECUR: [G][G] -- COST: Use this only while this card is in your discard pile. Pay 5. Remove this card from the game. Pick up to 4 characters in your discard pile. -- EFFECT: Put the characters into your hand."
   },
   {
@@ -20994,7 +24372,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE GUS -- ALL YOUR BAYS ARE BELONG TO GUS -- COST: Pay 2. Deplete this card. Pick a location. -- EFFECT: Take control of the location. -- FLIP UP: 2 [G][G][G]"
   },
   {
@@ -21119,7 +24499,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 life and cannot attack. -- FLIP UP: 2 [G] and your faction gains 4 influence."
   },
   {
@@ -21146,7 +24528,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "UNIQUE MONTGOMERY -- RESURRECT -- COST: Pay 1. Deplete this card. Pick a character in your discard pile with numeric cost 2 or less. -- EFFECT: Put the character into play under your control."
   },
   {
@@ -21185,7 +24569,9 @@ export default [
     "strength": 0,
     "life": 5,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "IMPEDE -- COST: Deplete this card. Pick a character. -- EFFECT: Deplete the character."
   },
   {
@@ -21200,7 +24586,10 @@ export default [
     "strength": 0,
     "life": 4,
     "speed": 3,
-    "subtype": ["merchant", "mau"],
+    "subtype": [
+      "merchant",
+      "mau"
+    ],
     "text": "When this card blocks, draw X cards, where X is the number of characters in the attacking party."
   },
   {
@@ -21215,7 +24604,10 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "EXTRA COST: Remove 4 cards in your discard pile from the game."
   },
   {
@@ -21230,7 +24622,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "When this card enters play, you may pick a location. If you do, destroy that location. -- FLIP UP: 2 [G][G]"
   },
   {
@@ -21245,7 +24640,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "At the end of your turn, you may reveal the top card of your deck. If you do and it is a staple resource, put it into your hand."
   },
   {
@@ -21260,7 +24657,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "FLIP UP: 0 [G]"
   },
   {
@@ -21275,7 +24675,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "BANISH -- COST: Pick a location. -- EFFECT: The next 1 damage that would be inflicted to your faction this turn is inflicted to the location instead."
   },
   {
@@ -21290,7 +24693,10 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 2,
-    "subtype": ["politician", "mau"],
+    "subtype": [
+      "politician",
+      "mau"
+    ],
     "text": "RECUR: [G][G] -- COST: Use this only if this card is in your discard pile. Remove this card from the game. -- EFFECT: Draw a card."
   },
   {
@@ -21317,7 +24723,10 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["priest", "mau"],
+    "subtype": [
+      "priest",
+      "mau"
+    ],
     "text": "DEFLECT -- COST: Pay 3. Deplete this card. Pick an attacking character. -- EFFECT: Remove the character from the battle."
   },
   {
@@ -21332,7 +24741,11 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 1,
-    "subtype": ["advisor", "politician", "mau"],
+    "subtype": [
+      "advisor",
+      "politician",
+      "mau"
+    ],
     "text": "COVERT -- This card enters play with 7 tokens on it. -- While this card has a token on it, it cannot attack. -- At the start of each turn, you may pay X. If you do, remove X tokens from this card and pick another character. That character gains X life this turn."
   },
   {
@@ -21411,7 +24824,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["necromorph"],
+    "subtype": [
+      "necromorph"
+    ],
     "text": "UNIQUE GIADA -- This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- HIDE AMONG THE CORPSES -- COST: Remove a token from this card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -21426,7 +24841,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["ghost", "mau"],
+    "subtype": [
+      "ghost",
+      "mau"
+    ],
     "text": "When this card is put into your discard pile from play, you may pay 3. If you do, put it into play under your control. Deplete it."
   },
   {
@@ -21441,7 +24859,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 2,
-    "subtype": ["attendant"],
+    "subtype": [
+      "attendant"
+    ],
     "text": "When a character you control blocks, it gains 1 life this turn."
   },
   {
@@ -21468,7 +24888,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "REPAIR -- COST: Choose a number for X that is less than or equal to the number of [E] you control. Pay X. Destroy this card. Pick an item in your discard pile with numeric cost X or less. -- EFFECT: Put the item into play under your control."
   },
   {
@@ -21483,7 +24905,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "This card can attack only once each turn. -- ASSIST -- COST: Deplete this card. Pick another character you control. -- EFFECT: Restore the character. This turn, it cannot attack. -- RESTORE: [E][E][E] -- COST: Pay 3. -- EFFECT: Restore this card."
   },
   {
@@ -21495,7 +24919,9 @@ export default [
     "rarity": "uncommon",
     "cost": 4,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life for each [E] you control."
   },
   {
@@ -21510,7 +24936,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "This card loses 1 life for each token on it. -- FALL APART -- COST: Pay 1. Put a token on this card. -- EFFECT: Put a Micromajig token into play under your control."
   },
   {
@@ -21550,7 +24978,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 2,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "FABRICATE -- COST: Deplete this card. -- EFFECT: Reduce the next item's or item's ability's numeric cost you pay this turn by 2."
   },
   {
@@ -21565,7 +24995,9 @@ export default [
     "strength": 0,
     "life": 2,
     "speed": 3,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "SNUB -- COST: Pay 1. Deplete this card. -- EFFECT: Search your deck for a card named Elitism and reveal it. Put it into your hand."
   },
   {
@@ -21592,7 +25024,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 2,
-    "subtype": ["mud whisperer", "31f"],
+    "subtype": [
+      "mud whisperer",
+      "31f"
+    ],
     "text": "At the start of each opponent's turn, you may pick a character. If you do, restore it."
   },
   {
@@ -21604,7 +25039,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- SPIT OUT -- COST: Destroy this card. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
@@ -21619,7 +25056,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "PROVIDES: [E] -- At the start of each opponent's turn, you may pick a resource attached to your faction. If you do, detach it from your faction."
   },
   {
@@ -21646,7 +25085,9 @@ export default [
     "strength": 6,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- When this card attacks, all your other characters gain 1 strength and 1 life this turn."
   },
   {
@@ -21661,7 +25102,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["node"],
+    "subtype": [
+      "node"
+    ],
     "text": "When this card enters play, you may search your deck for a node card and reveal it. If you do, put it into your hand. -- When this card leaves play, destroy all other node cards. -- DISSOLVE -- COST: Pay 2. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 1 [E][E][E]"
   },
   {
@@ -21712,7 +25155,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "While this card is in a battle, it loses 1 strength and 1 life for each member of the opposing party."
   },
   {
@@ -21727,7 +25172,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["seraphim", "dragon"],
+    "subtype": [
+      "seraphim",
+      "dragon"
+    ],
     "text": "AGGRO, UNIQUE OCEANHIDE -- [E][E][E][E][E]: When this card inflicts damage to a faction, this turn, characters you control and deploy gain AGGRO."
   },
   {
@@ -21742,7 +25190,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "When this card leaves play, put X Micromajig tokens into play, where X is the number of characters an opponent controls minus the number of characters you control."
   },
   {
@@ -21757,7 +25207,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "EXTRA COST: Choose a number for X. Pay X. -- This card enters play with X tokens on it. -- At the start of your turn, remove a token from this card. -- While there is a token on this card, it gains 5 strength and 5 life."
   },
   {
@@ -21784,7 +25236,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 2,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 5. If you do, put a token on it. -- While there is a token on this card, it cannot be blocked."
   },
   {
@@ -21820,7 +25274,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 1 speed for each token on it. -- At the end of your turn, you may put a token on the attached character. If it has 0 speed, destroy it. -- If this card would be destroyed, you may flip it face-down under its owner's control instead. -- FLIP UP: 4 [E][E][E]"
   },
   {
@@ -21835,7 +25291,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "UNIQUE GOLOAM -- This card gains 1 strength and 1 life for each item in play."
   },
   {
@@ -21847,7 +25305,9 @@ export default [
     "rarity": "uncommon",
     "cost": 4,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- SPIT OUT -- COST: Destroy this card. Pick 2 or fewer characters. -- EFFECT: Restore the characters."
   },
   {
@@ -21875,7 +25335,9 @@ export default [
     "strength": 0,
     "life": 4,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 1. If you do, put a token on it. -- While there is a token on this card, it can block COVERT parties."
   },
   {
@@ -21890,7 +25352,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, reduce the next numeric cost you pay this turn by 3."
   },
   {
@@ -21917,7 +25381,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 1,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "EXTRA COST: You may pick up to 3 characters you control. -- When this card enters play, if you picked any characters as part of its cost, flip the characters face-down under their owner's control. -- TREK -- COST: Pay 2. Destroy a face-down resource you control. -- EFFECT: Search your deck for a card. Put it into your hand."
   },
   {
@@ -21945,7 +25411,9 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": ""
   },
   {
@@ -21960,7 +25428,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["mud whisperer"],
+    "subtype": [
+      "mud whisperer"
+    ],
     "text": "At the start of each opponent's turn, you may restore all characters you control."
   },
   {
@@ -21975,7 +25445,10 @@ export default [
     "strength": 13,
     "life": 13,
     "speed": 1,
-    "subtype": ["mountain", "golem"],
+    "subtype": [
+      "mountain",
+      "golem"
+    ],
     "text": "Your opponents cannot take control of this card. -- When this card is put into your discard pile from anywhere, remove it from the game. -- FLIP UP: 13 [E][E]"
   },
   {
@@ -22003,7 +25476,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["mud whisperer", "31f"],
+    "subtype": [
+      "mud whisperer",
+      "31f"
+    ],
     "text": "When this card blocks, you may pick a character. If you do, restore that character."
   },
   {
@@ -22018,7 +25494,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mechanic"],
+    "subtype": [
+      "mechanic"
+    ],
     "text": "When this card is destroyed, you may search your deck for an item and reveal it. If you do, put it into your hand."
   },
   {
@@ -22033,7 +25511,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card enters play, you may pay 3. If you do, put a token on it. -- While there is a token on this card, it gains 1 strength and 1 life."
   },
   {
@@ -22060,7 +25540,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "This card enters play with 5 tokens on it. -- This card gains 1 strength and 1 life for each token on it. -- When this card becomes depleted, remove a token from it. -- GATHER -- COST: Pay 1. Remove an item or 2 cards in your discard pile from the game. -- EFFECT: Put a token on this card."
   },
   {
@@ -22072,7 +25554,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 3 strength and 3 life. -- At the start of each opponent's turn, restore the attached character. -- SPIT OUT -- COST: Destroy this card. Pick a character. -- EFFECT: This turn, the character gains 3 strength and 3 life. Restore it."
   },
   {
@@ -22087,7 +25571,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "CREATE -- COST: Pay 5. Deplete this card. -- EFFECT: You may deploy a character for free. (You still need to meet its threshold and satisfy its extra costs.)"
   },
   {
@@ -22102,7 +25588,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "[E][E][E][E][E][E]: This card gains 3 strength, 3 life, and loses 1 speed."
   },
   {
@@ -22117,7 +25605,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "If you deployed this card using FLIP UP, it enters play with a token on it. -- While there is a token on this card, it loses 2 strength and 2 life and can block COVERT parties. -- If there are no tokens on this card and it would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 4 [E]"
   },
   {
@@ -22144,7 +25634,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1. -- RESEARCH HARDER: [E][E][E][E][E] -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2."
   },
   {
@@ -22180,7 +25672,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 2 life. -- [E][E][E][E][E]: The attached character gains an additional 2 strength and 1 life."
   },
   {
@@ -22231,7 +25725,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "MARK -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
@@ -22246,7 +25742,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "When this card enters play, you may pay 3. If you do, put a token on it. -- While there is a token on this card, it gains 4 strength and 4 life."
   },
   {
@@ -22297,7 +25795,10 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 2,
-    "subtype": ["plant", "golem"],
+    "subtype": [
+      "plant",
+      "golem"
+    ],
     "text": ""
   },
   {
@@ -22347,7 +25848,9 @@ export default [
     "rarity": "uncommon",
     "cost": 5,
     "threshold": "eee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 2 strength and cannot be blocked. -- FLIP UP: 5 [E][E][E]"
   },
   {
@@ -22362,7 +25865,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["golem"],
+    "subtype": [
+      "golem"
+    ],
     "text": "[E][E][E]: This card can attack even if it has not been in play under your control since the start of the turn."
   },
   {
@@ -22377,7 +25882,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["31f", "craftsman"],
+    "subtype": [
+      "31f",
+      "craftsman"
+    ],
     "text": "IN THE FIRE -- COST: Deplete this card. Pick an item you control. -- EFFECT: Destroy the item. Search your deck for an item and reveal it. Put it into your hand. -- LIFE'S WORK: [E][E][E][E][E][E] -- COST: Pick and item you control. Destroy this card. -- EFFECT: Destroy the item. Search your deck for an item with numeric cost 7 or less and reveal it. You may deploy that card for free. If you don't, put it into your hand."
   },
   {
@@ -22405,7 +25913,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "[D][D][D]: When this card inflicts damage to a character, destroy that character."
   },
   {
@@ -22420,7 +25930,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": ""
   },
   {
@@ -22435,7 +25947,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ASHARA -- EXTRA COST: You may pick a character in an opponent's discard pile with 3 life or less. -- When this card enters play, if you picked a character as part of its cost, put the character into play under your control."
   },
   {
@@ -22450,7 +25964,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "CLAIM -- COST: Deplete this card. Pick an item. X is its numeric cost. Pay X. -- EFFECT: Take control of the item. -- FLIP UP: 2 [D][D][D]"
   },
   {
@@ -22489,7 +26005,9 @@ export default [
     "strength": 3,
     "life": 6,
     "speed": 4,
-    "subtype": ["crimelord"],
+    "subtype": [
+      "crimelord"
+    ],
     "text": ""
   },
   {
@@ -22504,7 +26022,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": "You may deploy gear cards whenever you could deploy a tactic."
   },
   {
@@ -22516,7 +26036,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses 1 strength, 1 life, and gains COVERT. -- FLIP UP: 0 [D][D]"
   },
   {
@@ -22531,7 +26053,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "When this card enters play, you may choose a card type. If you do, reveal the top card of your deck. If that card is the chosen type, put a token on this card. Put the top card of your deck on the bottom. -- While there is a token on this card, it gains 1 strength and 1 life."
   },
   {
@@ -22546,7 +26070,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "INSPIRE -- COST: Put a card from your hand on the top of your deck. Pick a character. -- EFFECT: This turn, the character gains 1 speed."
   },
   {
@@ -22561,7 +26087,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "TACTICAL -- GRACEFUL EXIT -- COST: Discard a card. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 4 [D][D] and play a resource."
   },
   {
@@ -22588,7 +26116,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["seraphim", "dragon"],
+    "subtype": [
+      "seraphim",
+      "dragon"
+    ],
     "text": "TACTICAL, UNIQUE BUCKGRIFF -- SNEAK -- COST: Pay 1. -- EFFECT: This card gains COVERT this turn."
   },
   {
@@ -22603,7 +26134,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "SLAP IT UP -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 strength and gains 1 life. -- FLIP IT -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 life and gains 1 strength. -- RUB IT DOWN -- COST: Pay 1. -- EFFECT: This turn, this card loses 1 strength or 1 life and gains 1 speed."
   },
   {
@@ -22630,7 +26163,9 @@ export default [
     "strength": 5,
     "life": 4,
     "speed": 3,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead. -- PETTY VENGEANCE -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 1. Discard a card. Pick a character. -- EFFECT: This turn, the character loses 1 life."
   },
   {
@@ -22642,7 +26177,9 @@ export default [
     "rarity": "uncommon",
     "cost": 3,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- When this card is put into your discard pile from play, you may choose a card type. If you do, reveal the top card of your deck. If it is the chosen type, put this card into play attached to a character. Put the top card of your deck on the bottom."
   },
   {
@@ -22657,7 +26194,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["grifter"],
+    "subtype": [
+      "grifter"
+    ],
     "text": "When this card enters play, you may choose a card type. If you do, reveal the top card of your deck. If it is the chosen type, put it into your hand. Otherwise, put it on the bottom of your deck."
   },
   {
@@ -22685,7 +26224,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "TACTICAL -- FLIP UP: 0 [D][D]"
   },
   {
@@ -22700,7 +26241,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["teller"],
+    "subtype": [
+      "teller"
+    ],
     "text": "DEMOTIVATE -- COST: Pay 1. Deplete this card. Pick a character. -- EFFECT: This turn, the character loses 1 life."
   },
   {
@@ -22737,7 +26280,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- TACTICAL -- The attached character gains 1 strength. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character. -- FLIP UP: 1 [D]"
   },
   {
@@ -22764,7 +26309,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "HYPNOTIZE -- COST: Pay 5. Destroy this card. Pick a character. -- EFFECT: Take control of the character if it has numeric cost X or less, where X is the number of [D] you control."
   },
   {
@@ -22791,7 +26338,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["advisor"],
+    "subtype": [
+      "advisor"
+    ],
     "text": "COVERT, UNIQUE LECRAM -- At the start of your turn, you may look at the top card of your deck. -- At the end of your turn, flip a coin. If you win, look at the top card of an opponent's deck."
   },
   {
@@ -22806,7 +26355,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "When this card enters play, draw a card. -- If this card would be destroyed, each player removes the top card of their deck from the game instead. If the numeric cost of your removed card is greater than or equal to the numeric cost of all opponent's, draw a card and reduce the amount of damage already inflicted to this card this turn to 0. Otherwise, remove this card from the game."
   },
   {
@@ -22846,7 +26397,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["grifter"],
+    "subtype": [
+      "grifter"
+    ],
     "text": "UNIQUE MAXWELL -- STRUT -- COST: Pay 2. Pick a character. -- EFFECT: This turn, the character gains 1 speed or loses 1 life."
   },
   {
@@ -22885,7 +26438,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "When a card that provides at least [D] enters play under your control, this card gains 1 strength and COVERT this turn."
   },
   {
@@ -22900,7 +26455,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "MUSTACHE SHOWDOWN -- COST: Deplete this card. -- EFFECT: You and an opponent look at the top 3 cards of your decks and divide them into 2 face-down piles containing at least 1 card each. Each of you choose one of their opponent's piles. Reveal the chosen piles. If one pile has a higher total numeric cost than the other, the owner of that pile may put one of the cards from it into their hand. Shuffle the remaining cards into their owners's deck."
   },
   {
@@ -22928,7 +26485,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["hedonist"],
+    "subtype": [
+      "hedonist"
+    ],
     "text": "[D][D][D][D][D]: This card gains 1 strength, 1 life, and 1 speed."
   },
   {
@@ -22943,7 +26502,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "GAMBLE -- COST: Pay 1. Choose a card type. -- EFFECT: Reveal the top card of your deck. If it is the chosen type, this card gains 2 strength and loses 1 life this turn. Put the top card of your deck on the bottom."
   },
   {
@@ -22994,7 +26555,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["clowns"],
+    "subtype": [
+      "clowns"
+    ],
     "text": "You may include as many copies of this card in your deck as you want. -- At the start of your turn, you may pay 1. If you do, search your deck for a card named Party Clowns and reveal it. Put it into play under your control."
   },
   {
@@ -23021,7 +26584,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 0,
-    "subtype": ["crimelord"],
+    "subtype": [
+      "crimelord"
+    ],
     "text": "This card gains 1 speed for each [D] you control."
   },
   {
@@ -23036,7 +26601,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["miner"],
+    "subtype": [
+      "miner"
+    ],
     "text": "PROVIDES: [D] -- While you control a character you don't own, this card gains 2 strength, 2 life, and 1 speed."
   },
   {
@@ -23063,7 +26630,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["dancer"],
+    "subtype": [
+      "dancer"
+    ],
     "text": "UNIQUE ROSY -- When this card is destroyed, reveal the top 5 cards of an opponent's deck. You may choose a revealed character. If you do, put it into play under your control. That player puts the remaining cards on the bottom of their deck in any order."
   },
   {
@@ -23111,7 +26680,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength and 1 life. -- If this card would be destroyed, flip it face-down under its owner's control instead. -- FLIP UP: 1 [D]"
   },
   {
@@ -23126,7 +26697,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "COVERT -- When this card enters play, you may search an opponent's deck for a card. If you do, put it into their discard pile."
   },
   {
@@ -23141,7 +26714,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["outlaw"],
+    "subtype": [
+      "outlaw"
+    ],
     "text": "COVERT -- When this card inflicts damage to a faction, put a token on this card. -- This card gains 1 strength for each token on it."
   },
   {
@@ -23156,7 +26731,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "SIZE UP -- COST: Pay 1. -- EFFECT: Look at the top card of either deck."
   },
   {
@@ -23219,7 +26796,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL -- When this card enters play, you may pick a character. If you do, it gains 1 strength and 1 life this turn. -- FLIP UP: 1 [D][D]"
   },
   {
@@ -23234,7 +26813,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "When this card attacks, you may pick a character. If you do, it must block this card if it can this turn."
   },
   {
@@ -23249,7 +26830,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["smuggler"],
+    "subtype": [
+      "smuggler"
+    ],
     "text": "SMUGGLE -- COST: Deplete this card. Pick a character with 2 strength or less. -- EFFECT: This turn, the character gains COVERT."
   },
   {
@@ -23276,7 +26859,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 1,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "At the start of your turn, you may put a token on this card. -- This card gains 1 speed for each token on it. -- While there are at least 5 tokens on this card, it's unblockable."
   },
   {
@@ -23291,7 +26876,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "OUTSMART -- COST: Use this only if an opponent controls more characters than you. Pay 3. -- EFFECT: This turn, this card cannot be blocked by those players."
   },
   {
@@ -23316,7 +26903,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "ddd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "TACTICAL, UNIQUE WAYLAY BLADE -- At the start of your turn, flip a coin. If you win, draw a card. -- The attached character gains 1 strength and 1 life. -- EQUIP -- COST: Pick a character. If it is a UNIQUE IOHANE then X is 0, otherwise X is 3. Pay X. -- EFFECT: Attach this card to the character."
   },
   {
@@ -23340,7 +26929,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "PROVIDES: [G] -- When a card that provides at least [G] enters play under your control, you may pay 1. If you do, pick a card in a discard pile and remove it from the game. If you do, you may pick a character. That character gains 1 life this turn. -- BURN IT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -23352,7 +26943,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "PROVIDES: [D] -- When a card that provides at least [D] enters play under your control, you may pay 1. If you do, pick a character and that characters gains 1 speed this turn. -- BURN IT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -23364,7 +26957,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "PROVIDES: [O] -- When a card that provides at least [O] enters play under your control, you may pay 1. If you do, look at the top 3 cards of your deck. You may put any number of those cards on the bottom of your deck in any order. Put the remaining cards on the top of your deck in any order. -- BURN IT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -23376,7 +26971,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "PROVIDES: [E] -- When a card that provides at least [E] enters play under your control, you may pay 1. If you do, detach 2 resources from your faction. -- BURN IT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -23388,7 +26985,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "PROVIDES: [R] -- When a card that provides at least [R] enters play under your control, you may pay 1. If you do, pick a character and that character gains 1 strength this turn. -- BURN IT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw 2 cards."
   },
   {
@@ -23427,7 +27026,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["adriel", "sword of great justice"],
+    "subtype": [
+      "adriel",
+      "sword of great justice"
+    ],
     "text": "UNIQUE ADRIEL -- When battle damage is inflicted to this card while it's blocking, reduce the amount to 0."
   },
   {
@@ -23442,7 +27044,10 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["adriel", "general"],
+    "subtype": [
+      "adriel",
+      "general"
+    ],
     "text": "UNIQUE ADRIEL -- When this character blocks or is blocked, you may pick a character or faction. If you do, inflict 1 damage to that character or faction. -- If this card would be destroyed, its owner may put it on top of their deck instead."
   },
   {
@@ -23457,7 +27062,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: Pay X, where X is 7 minus the number of [R] you control."
   },
   {
@@ -23472,7 +27079,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When a card that provides at least [R] enters play under your control, put a token on this card. -- This card gains 1 strength for each token on it."
   },
   {
@@ -23487,7 +27096,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["athalamund", "sword of great justice"],
+    "subtype": [
+      "athalamund",
+      "sword of great justice"
+    ],
     "text": "UNIQUE ATHALAMUND -- PUNCH -- COST: Pay 1. Deplete this card. Pick a character. X is its strength. Y is twice this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
   },
   {
@@ -23502,7 +27114,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "BORE -- COST: Pay 3. Deplete this card. Pick a blocking character. -- EFFECT: Remove the character from the battle. Deplete it."
   },
   {
@@ -23517,7 +27131,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card leaves play, inflict 1 damage to all characters and draw a card. -- CRUSH WAVE -- COST: Pay 2. Destroy this card. -- EFFECT: Inflict 1 damage to all characters."
   },
   {
@@ -23544,7 +27160,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "INFLAME -- COST: Pay 2. Destroy this card. Pick a character or location. -- EFFECT: Inflict X damage to the character or location, where X is the number of [R] you control."
   },
   {
@@ -23583,7 +27201,9 @@ export default [
     "strength": 6,
     "life": 3,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "While this card is attacking, you may assign its battle damage to the target of the attack instead of the blocking party."
   },
   {
@@ -23598,7 +27218,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["pacifist"],
+    "subtype": [
+      "pacifist"
+    ],
     "text": "TACTICAL -- EXTRA COST: Pick a location you control. -- While the picked location is in play, this card cannot attack or block. -- FLIP UP: 2 [R][R]"
   },
   {
@@ -23613,7 +27235,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "All battle damage that could be assigned to this card must be assigned to it."
   },
   {
@@ -23628,7 +27252,10 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 3,
-    "subtype": ["seraphim", "dragon"],
+    "subtype": [
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE DRACONARIUS -- When this card is blocked, X is this card's strength. Inflict X damage divided however you want to the blocking party. -- When this card is destroyed, X is this card's strength. Inflict X damage divided however you want to your opponents' characters."
   },
   {
@@ -23643,7 +27270,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, X is that character's strength and Y is this card's strength. Inflict X damage to this card. Inflict Y damage to that character."
   },
   {
@@ -23671,7 +27300,9 @@ export default [
     "strength": 5,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "At the end of your turn, if this card is depleted, inflict 1 damage to it. -- [R][R][R][R][R][R][R][R][R]: This card gains 4 life."
   },
   {
@@ -23686,7 +27317,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["fighter", "soldier"],
+    "subtype": [
+      "fighter",
+      "soldier"
+    ],
     "text": "UNIQUE ECNERET -- When this card is destroyed by an opposing card, characters you control gain 2 strength and 2 life until the end of your next turn."
   },
   {
@@ -23701,7 +27335,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ELZIBETH -- KEEP EM COMING -- COST: Pay 3. Deplete this card. Pick a character. -- EFFECT: If that character would be destroyed this turn, put it on the top of its owner's deck instead."
   },
   {
@@ -23716,7 +27352,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ELZIBETH -- REANIMATE -- COST: Pay 2. Deplete this card. Pick a character in your discard pile. -- EFFECT: Put the character on the top of its owner's deck."
   },
   {
@@ -23731,7 +27369,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "PROVIDES: [R]"
   },
   {
@@ -23746,7 +27386,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card leaves play, you may pick a character. If you do, inflict 1 damage to it."
   },
   {
@@ -23785,7 +27427,9 @@ export default [
     "strength": 5,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R][R][R]: This card gains 3 life."
   },
   {
@@ -23800,7 +27444,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card inflicts battle damage to a character, increase the amount by 2."
   },
   {
@@ -23815,7 +27461,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "CHARGE! -- COST: Pay 2. Destroy this card. -- EFFECT: Inflict 3 damage to an opponent's faction."
   },
   {
@@ -23830,7 +27478,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["gideon", "sword of great justice"],
+    "subtype": [
+      "gideon",
+      "sword of great justice"
+    ],
     "text": "UNIQUE GIDEON -- When battle damage is inflicted to this card while it's attacking, reduce the amount to 0. -- When an opponent's faction loses influence, increase the amount by 1."
   },
   {
@@ -23845,7 +27496,11 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["godwing", "seraphim", "dragon"],
+    "subtype": [
+      "godwing",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE GODWING -- When this card attacks, you may pick a character. If you do, inflict X damage to it, where X is the number of [R] you control."
   },
   {
@@ -23860,7 +27515,9 @@ export default [
     "strength": 9,
     "life": 8,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE GOUTFLAME TALONCLAW -- When this card enters play, you may pick a location, item and/or character. If you do, destroy the picked cards. -- Opponents cannot take control of this card and it cannot be blocked by characters with 1 strength or less. -- If this card would be destroyed or removed from the game, flip it face-down under its owner's control instead. -- FLIP UP: 9 [R][R][R][R][R]"
   },
   {
@@ -23872,7 +27529,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength. -- [R][R][R][R]: The attached character gains an additional 2 strength. -- HANDOFF -- COST: Pay 4. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character."
   },
   {
@@ -23887,7 +27546,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["vandal"],
+    "subtype": [
+      "vandal"
+    ],
     "text": "EXTRA COST: You may pick an item. -- When this card enters play, if you picked an item as part of its cost, destroy that item."
   },
   {
@@ -23914,7 +27575,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "EXTRA COST: You may pick a character. -- When this card enters play, if you picked a character as part of its cost, deplete that character."
   },
   {
@@ -24015,7 +27678,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 1,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "When battle damage is inflicted to a character in a party with this card, reduce the amount by 1. (This includes this character.)"
   },
   {
@@ -24030,7 +27695,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": ""
   },
   {
@@ -24045,7 +27712,11 @@ export default [
     "strength": 1,
     "life": 10,
     "speed": 1,
-    "subtype": ["padamose", "emperor", "mau"],
+    "subtype": [
+      "padamose",
+      "emperor",
+      "mau"
+    ],
     "text": "UNIQUE PADAMOSE -- All your \"sword of great justice\" characters gain 1 strength and 1 life. -- All your opponent's \"mau\" characters and Arcanist characters lose 1 strength and 1 life."
   },
   {
@@ -24084,7 +27755,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, you may pick an item. If you do, destroy that item and your faction loses 2 influence. -- FLY AWAY -- COST: Remove an item in an opponent's discard pile from the game. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 3 [R][R]"
   },
   {
@@ -24099,7 +27772,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FLIP UP: 2 [R]"
   },
   {
@@ -24114,7 +27789,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R][R][R]: This card gains 1 strength and 1 life."
   },
   {
@@ -24129,7 +27806,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "[R][R][R]: At the start of your turn, you may inflict 1 damage to an opponent's faction."
   },
   {
@@ -24168,7 +27847,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card enters play, inflict 1 damage to all characters an opponent controls. -- FLIP UP: 3 [R]"
   },
   {
@@ -24195,7 +27876,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead."
   },
   {
@@ -24210,7 +27893,10 @@ export default [
     "strength": 7,
     "life": 7,
     "speed": 2,
-    "subtype": ["emperor barduse", "dragon"],
+    "subtype": [
+      "emperor barduse",
+      "dragon"
+    ],
     "text": "UNIQUE EMPEROR BARDUSE -- When this card enters play, you may pick any number of characters. If you do, inflict X damage divided however you want to the characters, where X is twice the number of dragon characters you control. -- All your other \"dragon\" characters gain 1 strength and 1 life."
   },
   {
@@ -24249,7 +27935,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "FLIP UP: 0 [R]"
   },
   {
@@ -24264,7 +27952,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FIRE! -- COST: Pay 1. Pick a location. -- EFFECT: Inflict 1 damage to the location."
   },
   {
@@ -24279,7 +27969,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "SHOOT -- COST: Pay 1. Pick a character. -- EFFECT: Inflict 1 damage to the character. Inflict 1 damage to this card."
   },
   {
@@ -24294,7 +27986,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "ASSAIL -- COST: Pay 2. -- EFFECT: This turn, this card gains 1 strength."
   },
   {
@@ -24321,7 +28015,10 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 3,
-    "subtype": ["soldier", "vandal"],
+    "subtype": [
+      "soldier",
+      "vandal"
+    ],
     "text": "When this card inflicts battle damage, you may pick a location. If you do, inflict the same amount of damage to that location."
   },
   {
@@ -24333,7 +28030,9 @@ export default [
     "rarity": "uncommon",
     "cost": 4,
     "threshold": "rr",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and 1 life. -- If this card would be destroyed, flip it face-down under its owner's control instead. -- SNICKER SNACK -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 3. Discard a card. Pick a character. -- EFFECT: Inflict 2 damage to the character. Inflict 1 damage to your faction."
   },
   {
@@ -24354,6 +28053,81 @@ export default [
     "name": "The Tournament Faction",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24366,6 +28140,81 @@ export default [
     "name": "Moist Cave of the Darkpump",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24378,6 +28227,81 @@ export default [
     "name": "Order of the Golden String",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24390,6 +28314,81 @@ export default [
     "name": "Alliance of Handy Weirdos",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24402,6 +28401,81 @@ export default [
     "name": "Drowned Catacombs",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24414,6 +28488,81 @@ export default [
     "name": "Hall of Great Justice",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24426,6 +28575,81 @@ export default [
     "name": "Defenders of Marduun",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24438,6 +28662,81 @@ export default [
     "name": "Legions of Chaos",
     "set": "Seed Saga",
     "type": "faction",
+    "faction": {
+      "startingInfluence": 25,
+      "setup": {
+        "startingResources": {
+          "count": 2,
+          "stapleOnly": true
+        },
+        "openingHand": {
+          "goingFirst": 8,
+          "goingSecond": 9
+        },
+        "mulligan": {
+          "count": 1,
+          "mode": "replaceAny"
+        }
+      },
+      "turn": {
+        "restore": {
+          "clearCharacterDamage": true,
+          "detachResources": true,
+          "restoreNonResources": true
+        },
+        "develop": {
+          "choices": [
+            {
+              "type": "draw",
+              "count": 1
+            },
+            {
+              "type": "playResource",
+              "count": 1
+            }
+          ]
+        }
+      }
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tournament-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "tournament-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "playResourceFromHand",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
@@ -24457,7 +28756,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["familiar"],
+    "subtype": [
+      "familiar"
+    ],
     "text": "OBSESS -- COST: Pay 2. -- EFFECT: This turn, this card gains PROVIDES: [O][O][O] . -- [O][O][O][O][O][O]: This card gains COVERT."
   },
   {
@@ -24496,7 +28797,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card is destroyed, put it into its owner's hand, then discard a card."
   },
   {
@@ -24548,7 +28851,9 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 2,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "When this card restores, it gains COVERT this turn."
   },
   {
@@ -24563,7 +28868,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["lurker"],
+    "subtype": [
+      "lurker"
+    ],
     "text": "This card gains 1 strength and 1 life for each face-down resource each opponent controls. -- FOLLOW SUIT -- COST: Pay 3. Pick an opponent. -- EFFECT: That player puts a card from their hand face-down as a resource under their control."
   },
   {
@@ -24575,7 +28882,9 @@ export default [
     "rarity": "common",
     "cost": 3,
     "threshold": "o",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character cannot attack and has no rules text. -- MOVE -- COST: Pick a character that is not in battle. Pay 3. -- EFFECT: Attach this card to the character."
   },
   {
@@ -24590,7 +28899,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When this card comes into play, on your next turn, skip your faction's RESTORE RULE. -- [V][V][V][V]: This card loses all other rules text."
   },
   {
@@ -24605,7 +28916,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "When this card attacks, pick an opponent. That player discards a card. -- [O][O][O][O][O][O]: When this card inflicts battle damage to an opponent's faction, that faction's owner discards a card."
   },
   {
@@ -24620,7 +28933,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "EXTRA COST: If you control at least [O][O][O], you may pick a character or a location. -- When this card enters play, if you picked a character or location as part of its cost and the character has strength 3 or less or the location has structure 3 or less, put that card into its owners's hand."
   },
   {
@@ -24635,7 +28950,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": ""
   },
   {
@@ -24650,7 +28967,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "This card enters play with a token on it. -- OBSCURE -- COST: Remove a token from this card. Pick a character. -- EFFECT: This turn, the character gains COVERT."
   },
   {
@@ -24701,7 +29020,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "DELINIATE: [V][V] -- COST: Pay 2. Deplete this card. Name a threshold icon. X is that icon. -- EFFECT: This turn, each face-down resource that doesn't have PROVIDES X, gains PROVIDES X."
   },
   {
@@ -24716,7 +29037,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["advisor"],
+    "subtype": [
+      "advisor"
+    ],
     "text": "UNIQUE COUNCIL -- CONVENE -- COST: Pay 2. Discard 2 cards. -- EFFECT: Put 2 tokens on this card. -- CAST VOTE -- COST: Pay 2. Remove 2 tokens from this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand. -- PASS -- COST: Pay 2. Discard a tactic from your hand. X is that tactic's numeric cost. Pick an opponent's character with strength X or less. -- EFFECT: Put the character into its owner's hand. That character's controller may detach up to X resources from their faction."
   },
   {
@@ -24755,7 +29078,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- When this card enters play, each opponent may detach up to 3 resources from their faction."
   },
   {
@@ -24855,7 +29180,10 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau", "pacifist"],
+    "subtype": [
+      "mau",
+      "pacifist"
+    ],
     "text": "All damage assigned to this card by characters with items attached to them is reduced to 0. -- TRANSCEND -- COST: Pay 5. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -24870,7 +29198,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["eustace", "blade of questionable morality"],
+    "subtype": [
+      "eustace",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE EUSTACE -- FUTURE IMPLICATIONS -- COST: Pay 2. Your faction loses 1 influence. -- EFFECT: Draw a card. -- PAST TREPIDATIONS -- COST: Discard a card. -- EFFECT: This turn, this card gains 1 life. If the discarded card was a resource, this card also gains 1 strength this turn."
   },
   {
@@ -24885,7 +29216,9 @@ export default [
     "strength": 7,
     "life": 5,
     "speed": 3,
-    "subtype": ["necromorph"],
+    "subtype": [
+      "necromorph"
+    ],
     "text": ""
   },
   {
@@ -24912,7 +29245,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["mau", "employee"],
+    "subtype": [
+      "mau",
+      "employee"
+    ],
     "text": "RAISE CAPITAL -- COST: Pay 1. Discard a card. -- EFFECT: This turn, this card gains PROVIDES: [G][G][G] . -- INVEST: [G][G][G][G][G][G] -- COST: Pay 2. -- EFFECT: Search your deck for a resource and reveal it. Put it into your hand."
   },
   {
@@ -24927,7 +29263,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["assassin"],
+    "subtype": [
+      "assassin"
+    ],
     "text": "When this card is destroyed, each opponent must destroy a character they control. -- HARASH: [V][V][V] -- COST: Use this only if this card is in your discard pile and only during your turn. Pay 1. Destroy a face-down resource you control. -- EFFECT: Put this card into play under your control."
   },
   {
@@ -24942,7 +29280,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau", "assassin"],
+    "subtype": [
+      "mau",
+      "assassin"
+    ],
     "text": "EXTRA COST: Inflict 2 damage to a location you own or pay 3. -- Locations you control gain 1 structure. -- PROSTRATE -- COST: Deplete a location you control. Pick a character. -- EFFECT: Deplete that card."
   },
   {
@@ -24954,7 +29295,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "gg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- Attached character gains 2 life. -- COUGH UP: [G][G][G] -- COST: Destroy this card. -- EFFECT: Draw a card."
   },
   {
@@ -24969,7 +29312,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mau", "bureaucrat"],
+    "subtype": [
+      "mau",
+      "bureaucrat"
+    ],
     "text": "When this card enters play, you may search your deck for a staple resource, reveal it, and put it into your hand. -- When this card is destroyed, you may draw a card."
   },
   {
@@ -24984,7 +29330,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- When this card enters play, you may remove a card in your discard pile from the game. If you do, draw a card. -- GOOD DEAL -- COST: Deplete this card. Pick 2 cards of the same type in your discard pile. Remove them from the game. -- EFFECT: Search your deck for a card with the same type as the picked cards and reveal it. If you do, put it into your hand."
   },
   {
@@ -24999,7 +29348,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau", "merchant"],
+    "subtype": [
+      "mau",
+      "merchant"
+    ],
     "text": "When this card enters play, you may pick a character. If you do, this turn, that character gains 2 life."
   },
   {
@@ -25026,7 +29378,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mercenary", "mau"],
+    "subtype": [
+      "mercenary",
+      "mau"
+    ],
     "text": "When this card attacks, restore it at the end of the battle. -- This card can only attack once each turn. -- PROTECT -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 2 life."
   },
   {
@@ -25041,7 +29396,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "This card gains 1 strength and 1 life for each token on it. -- PUSH OVERBOARD AND LOOT -- COST: Pay 1. Destroy a character you own. -- EFFECT: Put a token on this card."
   },
   {
@@ -25069,7 +29426,11 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["siluriformes", "seraphim", "dragon"],
+    "subtype": [
+      "siluriformes",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE SILURIFORMES -- All UNIQUE EUSTACE gain 3 strength and 3 life. -- NUMISMATIC EMISSION -- COST: Pay 5. -- EFFECT: Draw 2 cards. Gain 2 influence. -- AURIFEROUS AUGMENTAION -- COST: Discard 2 cards. -- EFFECT: This turn, this character gains 2 strength and 2 life."
   },
   {
@@ -25096,7 +29457,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 2,
-    "subtype": ["merchant"],
+    "subtype": [
+      "merchant"
+    ],
     "text": "BLOOD GOLD: [V][V] -- COST: Pay 2. Lose 1 influence. -- EFFECT: You may play a card as a face-down resource."
   },
   {
@@ -25111,7 +29474,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mau"],
+    "subtype": [
+      "mau"
+    ],
     "text": "When this card is blocked by an opposing party of 2 or more characters, it loses 1 speed this turn."
   },
   {
@@ -25151,7 +29516,9 @@ export default [
     "strength": 2,
     "life": 5,
     "speed": 2,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "When this card restores, put a Micromajig token into play under your control."
   },
   {
@@ -25179,7 +29546,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 4,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "At the start of your turn, you may pay 1 for each token on this card. If you don't, destroy this card. -- At the end of your turn put a token on this card. -- FEED -- COST: Pay 3. -- EFFECT: Remove a token from this card."
   },
   {
@@ -25194,7 +29563,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mechanic"],
+    "subtype": [
+      "mechanic"
+    ],
     "text": "When this card enters play, you may search your deck for an item and reveal it. If you do, put it into play as a face-down resource. -- TRASH: [E][E][E][E][E][E] -- COST: Pay 1. Pick an item. Destroy this card. -- EFFECT: Destroy that card."
   },
   {
@@ -25206,7 +29577,9 @@ export default [
     "rarity": "rare",
     "cost": 4,
     "threshold": "ee",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "UNIQUE DRACONIC LUTEDODERM SUIT -- The attached character gains 2 strength and 2 life. -- When any other \"gear\" card is deployed, you may draw a card. -- SERAPHIM FUSION -- COST: Use this only if this card is attached to a UNIQUE JO. Pay 3. Destroy this card. -- EFFECT: Search your deck for a card named \"Testudine Autoframe\" and put it into play. -- EQUIP -- COST: Pick a character. If it is a UNIQUE JO then X is 0, otherwise X is 2. Pay X. -- EFFECT: Attach this card to the character."
   },
   {
@@ -25221,7 +29594,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "CRUNCH -- COST: Destroy a Micromajig token you control. -- EFFECT: This turn, this card gains PROVIDES: [E][E][E] . -- [E][E][E][E][E][E]: This card gains 2 strength and 2 life."
   },
   {
@@ -25260,7 +29635,9 @@ export default [
     "strength": 9,
     "life": 9,
     "speed": 3,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "This card cannot be picked by non-item cards or non-item abilities. -- Opponents cannot take control of this card."
   },
   {
@@ -25299,7 +29676,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["jo", "blade of questionable morality"],
+    "subtype": [
+      "jo",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE JO -- Each character you control gains: -- \"RESEARCH -- COST: Use this only if this card has been in play since the start of the turn. Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1.\""
   },
   {
@@ -25314,7 +29694,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["mechanic", "31f"],
+    "subtype": [
+      "mechanic",
+      "31f"
+    ],
     "text": "When this card enters play, you may pay 2. If you do, you may put a token on up to 2 different non-resource cards. -- While there is a token on this card, it gains 2 strength and 2 life."
   },
   {
@@ -25351,7 +29734,9 @@ export default [
     "rarity": "common",
     "cost": 0,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "The attached character gains 1 strength and 1 life. -- When a Micromajig token or \"horsemajig\" character enters play under your control, you may attach this card to it. -- PWNED -- COST: Pick a Micromajig token or \"horsemajig\" character that this card is attached to. Pick a character. Destroy this card. -- EFFECT: Inflict 7 damage to the picked characters. -- MOVE -- COST: Pick a character you control. Pay 3. -- EFFECT: Attach this card to the character if you can."
   },
   {
@@ -25366,7 +29751,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["guardforce", "31f"],
+    "subtype": [
+      "guardforce",
+      "31f"
+    ],
     "text": "This card can attack even if it has not been in play under your control since the start of the turn. -- When this card enters play, you may pay 2. If you do, put a token on it. -- While there is a token on this card, it gains 1 strength and 1 life. -- P3PP3R 61457 -- COST: Remove a token from this card. Use this only once per turn. -- EFFECT: This turn, this character gains 1 strength and 1 life. Restore it."
   },
   {
@@ -25429,7 +29817,9 @@ export default [
     "strength": 8,
     "life": 6,
     "speed": 2,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "PAY OFF -- COST: Any player may use this ability. Pay 1. -- EFFECT: This turn, if damage is inflicted to a character or faction by this card, reduce the amount by 1."
   },
   {
@@ -25444,7 +29834,9 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "If this card would be destroyed, flip it face-down under its owner's control instead. -- When this card is flipped down, each opponent's faction gains 1 influence and you may put a Micromajig token into play under your control for each influence gained this way."
   },
   {
@@ -25459,7 +29851,11 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 4,
-    "subtype": ["testudine", "seraphim", "dragon"],
+    "subtype": [
+      "testudine",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE TESTUDINE -- When this card enters play, you may put a UNIQUE JO you control into the void. If you do, this turn, each other character you control gains 1 strength and 1 life. -- All characters you control can attack even if they have not been in play under your control since the start of the turn. -- When this card leaves play, put a UNIQUE JO that was voided by this card into play under your control."
   },
   {
@@ -25474,7 +29870,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["craftsman"],
+    "subtype": [
+      "craftsman"
+    ],
     "text": "FOR THABBASH: [V][V][V] -- COST: Pay 2. -- EFFECT: This turn, this card gains 1 strength and 1 life. -- TAMESHIGIRI: [V][V][V][V][V][V] -- COST: Pay 2. Your faction loses 2 influence. -- EFFECT: This turn, this card gains 2 strength and 2 life."
   },
   {
@@ -25489,7 +29887,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "EXIT STAGE RIGHT -- COST: Use this only if this card has not assigned damage this turn. Pay 1. -- EFFECT: Flip this card face-down under its owner's control. -- FLIP UP: 3 [D][D]"
   },
   {
@@ -25516,7 +29916,10 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 1,
-    "subtype": ["pluck", "drunk"],
+    "subtype": [
+      "pluck",
+      "drunk"
+    ],
     "text": "UNIQUE PLUCK -- The top card of each opponent's deck is revealed at all times. If any of those cards are a character, this card gains 3 speed. -- CHUG! -- COST: Pay 2. Pick an opponent. -- EFFECT: Put the top card of that player's deck on the bottom of their deck."
   },
   {
@@ -25543,7 +29946,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "TACTICAL -- When this card enters play you may add it to your attacking or blocking party. All characters in that party gain 1 speed. -- When this card enters play you may pick a character. If you do, put a token on that card."
   },
   {
@@ -25558,7 +29963,10 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["grifter", "cicibeo"],
+    "subtype": [
+      "grifter",
+      "cicibeo"
+    ],
     "text": "UNIQUE CICIBEO -- TACTICAL -- EXTRA COST: Discard a non-resource Rogue card. -- [D][D][D][D][D][D]: When another \"cicibeo\" card enters play, if it was deployed from your hand, you may pick a character and take control of it."
   },
   {
@@ -25597,7 +30005,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 4,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "HOWL -- COST: Destroy a card named \"Deception\" you own. -- EFFECT: Put a token on this card. -- PROWL -- COST: Remove a token from this card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -25612,7 +30022,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 4,
-    "subtype": ["gang member"],
+    "subtype": [
+      "gang member"
+    ],
     "text": "This card enters play with 2 tokens on it. -- This card gains 1 strength for each token on it. -- DELIVERY -- COST: Remove a token from this card. Deplete this card. Reveal a face-down \"gear\" card you control. -- EFFECT: You may deploy it even if you cannot meet its threshold. If its numeric cost is 4 or less, you may deploy it for free."
   },
   {
@@ -25627,7 +30039,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "TACTICAL"
   },
   {
@@ -25654,7 +30068,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "While you control more characters than any opponent, this card cannot be picked."
   },
   {
@@ -25669,7 +30085,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["vigilante"],
+    "subtype": [
+      "vigilante"
+    ],
     "text": "COVERT -- When this card is put into a discard pile from play, you may pick a character, item, or location. If you do, remove that card from the game. -- KLEPT: [D][D][D][D][D][D][D][D][D][D] -- COST: Pay 4. Pick a character or item. -- EFFECT: Take control of that card."
   },
   {
@@ -25684,7 +30102,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["grifter"],
+    "subtype": [
+      "grifter"
+    ],
     "text": "TACTICAL -- When this card inflicts damage to a character, that character does not restore during its controller's next RESTORE RULE. -- FLIP UP: 3 [D][D]"
   },
   {
@@ -25699,7 +30119,9 @@ export default [
     "strength": 4,
     "life": 1,
     "speed": 5,
-    "subtype": ["pirate"],
+    "subtype": [
+      "pirate"
+    ],
     "text": "TACTICAL -- EXTRA COST: You may remove up to 4 cards in an opponent's discard pile from the game. If you do, reduce this card's numeric cost by the number of cards removed."
   },
   {
@@ -25714,7 +30136,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["daredevil"],
+    "subtype": [
+      "daredevil"
+    ],
     "text": "While this card is in your hand and there is a location in play, this card gains tactical. -- This card ignores all rules text on locations. (this card cannot be picked by locations and any effects from locations do not affect this card.)"
   },
   {
@@ -25726,7 +30150,9 @@ export default [
     "rarity": "rare",
     "cost": 2,
     "threshold": "d",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER YOU CONTROL -- The attached character gains 2 strength. -- UNFOLD -- COST: Pay 2. Deplete the attached character. Reveal the top card of your deck. -- EFFECT: If the revealed card has a numeric cost of 5 or higher, all characters your opponents control lose 1 life. If the revealed card has a numeric cost of 0-4, destroy the attached character. If the revealed card is a resource, destroy the attached character and destroy all characters your opponents control."
   },
   {
@@ -25741,7 +30167,9 @@ export default [
     "strength": 3,
     "life": 1,
     "speed": 4,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": ""
   },
   {
@@ -25792,7 +30220,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["assassin"],
+    "subtype": [
+      "assassin"
+    ],
     "text": "[V]: This card gains 1 life. -- [V][V]: This card gains 1 strength. -- [V][V][V]: This card gains 1 speed. -- [V][V][V][V]: This card gains 1 life, 1 strength, and 1 speed."
   },
   {
@@ -25820,7 +30250,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "When this character inflicts battle damage to a faction, put the top X cards of that opponent's deck into their discard pile where X is the amount of damage inflicted by this character. You may pick an item with X or less numeric cost and destroy it."
   },
   {
@@ -25872,7 +30304,10 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 3,
-    "subtype": ["31f", "mercenary"],
+    "subtype": [
+      "31f",
+      "mercenary"
+    ],
     "text": "EXTRA COST: Pick a character you control. -- If the picked character would be dealt damage, deal damage to this card instead. If the picked character would leave play, this character leaves play in that way instead."
   },
   {
@@ -25912,7 +30347,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card enters play you may pick a character. If you do, deplete that character."
   },
   {
@@ -25927,7 +30364,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "[R][R][R][R][R][R]: This card gains 1 strength, 1 life and 1 speed."
   },
   {
@@ -25942,7 +30381,9 @@ export default [
     "strength": 8,
     "life": 4,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": ""
   },
   {
@@ -25969,7 +30410,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "AGITATE -- COST: Pay 1. Lose 2 influence. -- EFFECT: This turn, this card gains \" PROVIDES: [R][R][R] \". -- [R][R][R][R][R][R]: This card gains 2 strength."
   },
   {
@@ -25984,7 +30427,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "TACTICAL -- EXTRA COST: Deploy this only not during a battle. -- When this card enters play, pick another character. At the start of the next turn that character gains 3 strength for that turn."
   },
   {
@@ -25999,7 +30444,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "When a card that provides at least [R] enters play under your control, you may put a token on this card. -- This card gains 1 strength and 1 life for each token on it."
   },
   {
@@ -26014,7 +30461,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "TACTICAL -- EXTRA COST: Deploy this only not during a battle. You may pick an item. -- When this card enters play, if you picked an item as part of its cost, destroy that item. -- [R][R][R][R][R][R]: When this card enters play you may pick a location. If you do, inflict 2 damage to that card."
   },
   {
@@ -26077,7 +30526,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "EXTRA COST: Pick a character you control. -- When this card enters play, destroy the picked character. -- If this character would be put into your discard pile from anywhere, shuffle it into your deck instead."
   },
   {
@@ -26092,7 +30543,10 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["rudo", "fighter"],
+    "subtype": [
+      "rudo",
+      "fighter"
+    ],
     "text": "UNIQUE RUDOLPHUS -- When this card enters play, deplete all other characters you control. They cannot be restored by your faction's RESTORE RULE. -- This character gains 1 strength for each depleted warlord character you control."
   },
   {
@@ -26107,7 +30561,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 4,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "When this card inflicts damage to a faction, destroy this card and inflict 2 damage to your faction. -- This character cannot block. -- [R][R][R][R][R][R]: This card loses all other rules text and loses 1 speed."
   },
   {
@@ -26122,7 +30578,11 @@ export default [
     "strength": 0,
     "life": 1,
     "speed": 0,
-    "subtype": ["padamose", "emperor", "mau"],
+    "subtype": [
+      "padamose",
+      "emperor",
+      "mau"
+    ],
     "text": "UNIQUE PADAMOSE -- At the end of an opponent's turn, you may remove this card from the game, then choose a player and search their deck for a UNIQUE JO, UNIQUE EUSTACE, UNIQUE PLUCK, UNIQUE RUDOLPHUS, or UNIQUE IGNATIOUS and reveal it. If you do, put it into play under your control. -- FLIP UP: 2 [V][V][V][V]"
   },
   {
@@ -26149,7 +30609,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "This card cannot be restored by your faction's RESTORE RULE. -- This card can attack only once each turn. -- ASSIST -- COST: Pay 2. Deplete a character you control. -- EFFECT: Restore this card."
   },
   {
@@ -26161,7 +30623,9 @@ export default [
     "rarity": "uncommon",
     "cost": 2,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "When this card enters play, you may pick a character. If you do, inflict 2 damage to the character. -- If this card would be destroyed, you may pay 2. If you do, put it into play as a face-down resource under its owners's control instead. -- MOVE -- COST: Pay 2. Pick a character. -- EFFECT: Attach this card to the character if you can. (if you can't, this card remains in play) -- FLIP UP: 2 [R]"
   },
   {
@@ -26176,7 +30640,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["tyrant"],
+    "subtype": [
+      "tyrant"
+    ],
     "text": "[V]: When a character inflicts battle damage to a faction, X is the number of threshold icons of the character. Inflict X damage to that character's controller's faction."
   },
   {
@@ -26191,7 +30657,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["warbeast"],
+    "subtype": [
+      "warbeast"
+    ],
     "text": "TO BEAR ARMS -- COST: Pay 1. Pick a character. Destroy a restored character you control. -- EFFECT: Inflict 2 damage to the character. -- JUST UNBEARABLE: [R][R][R][R][R][R] -- COST: Pay 2. Pick a character. Destroy a restored character you control. -- EFFECT: Inflict 5 damage to the character."
   },
   {
@@ -26206,7 +30674,9 @@ export default [
     "strength": 0,
     "life": 0,
     "speed": 3,
-    "subtype": ["warbeast"],
+    "subtype": [
+      "warbeast"
+    ],
     "text": "This card gains 1 strength and 1 life for each [V] you control."
   },
   {
@@ -26245,7 +30715,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 1,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1. -- [E][E][E][E][E][E]: This card gains 2 strength, 2 life and 2 speed."
   },
   {
@@ -26260,7 +30732,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- RECUR: [O] -- COST: Use this only if this card is in your discard pile. Pay 2. Pick a player. Remove this card from the game. -- EFFECT: That player discards 3 cards. "
   },
   {
@@ -26287,7 +30761,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["insect"],
+    "subtype": [
+      "insect"
+    ],
     "text": "This card enters play with 2 tokens on it. -- SLITHER -- COST: Remove a token from this card. Pick an item or location. -- EFFECT: Put the card into its owner's hand."
   },
   {
@@ -26311,7 +30787,9 @@ export default [
     "rarity": "common",
     "cost": 0,
     "threshold": "oo",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER YOU CONTROL -- EXTRA COST: Pick an opponent. That player may detach up to 2 resources from their faction. -- The attached character gains COVERT."
   },
   {
@@ -26335,7 +30813,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "ooo",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "UNIQUE BLESSING -- ATTACH TO CHARACTER -- The attached character gains the following rules text: \"At the start of your turn, you may pick a character you control and put a token on it. -- All your characters lose 1 speed. Each character you control with a token on it gains 1 strength and COVERT.\""
   },
   {
@@ -26363,7 +30843,10 @@ export default [
     "strength": 1,
     "life": 5,
     "speed": 3,
-    "subtype": ["ignatious", "blade of questionable morality"],
+    "subtype": [
+      "ignatious",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE IGNATIOUS -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- All UNIQUE UHLUHTC gain 3 strength and 3 life. -- CIPHER -- COST: Pay 2. Deplete this card. Pick a tactic in your discard pile. -- EFFECT: You may deploy the card. If that card would go to its owner's discard pile, remove it from the game instead."
   },
   {
@@ -26390,7 +30873,9 @@ export default [
     "strength": 0,
     "life": 5,
     "speed": 3,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "At the end of your turn, if this card is depleted, you may pay 1. If you do, search your deck for a tactic, reveal it, and put it into your hand."
   },
   {
@@ -26429,7 +30914,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["muddler"],
+    "subtype": [
+      "muddler"
+    ],
     "text": "WISH -- COST: Pay 2. Destroy this card. -- EFFECT: Search your deck for a tactic and reveal it. If you do, put it into your hand."
   },
   {
@@ -26480,7 +30967,9 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 1,
-    "subtype": ["ritualist"],
+    "subtype": [
+      "ritualist"
+    ],
     "text": "VIOLATE -- COST: Deplete this card. Pick an opponent. X is the number of tokens on this card. Pay X. -- EFFECT: That player discards X cards. Put a token on this card. -- BLUR: [O][O][O] -- COST: Remove a token from this card. -- EFFECT: This turn, this card gains COVERT."
   },
   {
@@ -26495,7 +30984,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "COVERT -- While this card is in your hand, you may reveal this card when a card that provides [V] enters play under your control. If you do, you may pay 2 to deploy this card."
   },
   {
@@ -26510,7 +31001,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "COST: Pick an opponent. X is the number of different staple resources that player controls. Pay 6-X.  -- EFFECT: This turn, this card gains 1 life and COVERT"
   },
   {
@@ -26525,7 +31018,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 1,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "[O][O][V][V]: This card gains COVERT. When this card is destroyed, you may pick a non-resource card. If you do, put that card into its owner's hand. -- FLIP UP: 3 [V][V][V][V]"
   },
   {
@@ -26540,7 +31035,9 @@ export default [
     "strength": 8,
     "life": 8,
     "speed": 3,
-    "subtype": ["priest"],
+    "subtype": [
+      "priest"
+    ],
     "text": "This card loses strength and life equal to the number of cards in all hands."
   },
   {
@@ -26555,7 +31052,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["doll"],
+    "subtype": [
+      "doll"
+    ],
     "text": "When this card inflicts battle damage to a faction, you may pay 1. If you do, that faction's controller puts a character they control into its owner's hand."
   },
   {
@@ -26570,7 +31069,9 @@ export default [
     "strength": 4,
     "life": 3,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card leaves play, look at an opponent's hand and chose a card in it. That player discards that card."
   },
   {
@@ -26585,7 +31086,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["advisor"],
+    "subtype": [
+      "advisor"
+    ],
     "text": "When this card inflicts damage to a faction, you may pay 1. If you do, search that faction's deck for a tactic, reveal it and put it into the void. -- While this card is depleted, you may deploy tactics in the void as though they were in your hand without -- meeting their threshold."
   },
   {
@@ -26661,7 +31164,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["investor", "mau"],
+    "subtype": [
+      "investor",
+      "mau"
+    ],
     "text": "When this card enters play, you may put a character in your discard pile on top of its owner's deck. -- [G][G][G][G][G][G]: This card gains 3 strength and 3 life. -- RECUR: [G] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. Pick a character in your discard pile. -- EFFECT: Put the picked character into play under your control."
   },
   {
@@ -26688,7 +31194,9 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["lawyer"],
+    "subtype": [
+      "lawyer"
+    ],
     "text": "COVERT -- SHOW EVIDENCE -- COST: Use this ability only once each turn. Pick a character. -- EFFECT: Deplete that character."
   },
   {
@@ -26729,7 +31237,10 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["eustace", "blade of questionable morality"],
+    "subtype": [
+      "eustace",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE EUSTACE -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- When this card attacks, you may have your faction lose 3 influence. If you do, this card gains 3 strength and COVERT this turn. -- When this card inflicts battle damage to a faction, your faction gains 3 influence."
   },
   {
@@ -26744,7 +31255,9 @@ export default [
     "strength": 0,
     "life": 6,
     "speed": 3,
-    "subtype": ["politician"],
+    "subtype": [
+      "politician"
+    ],
     "text": "This card loses 1 life for each token on it. -- If battle damage would be inflicted to this card while it's blocking, add that many tokens to this card instead. -- RECUR: [G][G] -- COST: Use this only if this card is in your discard pile. Pay 1. Remove this card from the game. Pick a character. -- EFFECT: Remove a token from the card."
   },
   {
@@ -26759,7 +31272,10 @@ export default [
     "strength": 5,
     "life": 2,
     "speed": 2,
-    "subtype": ["ghost", "mau"],
+    "subtype": [
+      "ghost",
+      "mau"
+    ],
     "text": ""
   },
   {
@@ -26774,7 +31290,10 @@ export default [
     "strength": 2,
     "life": 4,
     "speed": 3,
-    "subtype": ["employee", "mau"],
+    "subtype": [
+      "employee",
+      "mau"
+    ],
     "text": "While this card is depleted, your opponents must pay 1 to deploy cards. -- FLIP UP: 4 [G][G] and you may add or remove a damage marker from a location."
   },
   {
@@ -26789,7 +31308,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["ghost"],
+    "subtype": [
+      "ghost"
+    ],
     "text": "UNIQUE GHOSTS -- When this card blocks, your faction loses 2 influence and this card gains 4 life this turn. -- When this card attacks, your faction gains 1 influence and this card gains 2 strength this turn. -- [V][V]: When this card enters play, draw a card. -- [V][V][V][V][V]: When this card is destroyed, draw 4 cards. -- FLIP UP: 3 [G]  "
   },
   {
@@ -26801,7 +31322,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "ggg",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "UNIQUE BLESSING -- ATTACH TO CHARACTER -- The attached character gains the following rules text: \"When a character you control restores, it loses 1 strength this turn and you draw a card. -- Characters you control cannot be restored by your faction's RESTORE RULE. -- At the start of your turn, you may inflict 1 damage to your faction and restore a character you control. Repeat this once for every character you control.\""
   },
   {
@@ -26829,7 +31352,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["mau", "soldier"],
+    "subtype": [
+      "mau",
+      "soldier"
+    ],
     "text": "When this card inflicts damage, if your faction has 10 influence or less, your faction gains 2 influence."
   },
   {
@@ -26853,7 +31379,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": "g",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When the attached character leaves play, you may search your deck for a resource, reveal it, and put it into your hand. -- UNLOCK POTENTIAL: [G] -- COST: Discard this card from your hand. Pay 2. -- EFFECT: Search your deck for a resource with a name you don't control, reveal it, and put it into your hand."
   },
   {
@@ -26865,7 +31393,9 @@ export default [
     "rarity": "common",
     "cost": 0,
     "threshold": "gggg",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- When damage is inflicted to the attached card, your faction gains influence equal to that damage."
   },
   {
@@ -26880,7 +31410,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["cultist"],
+    "subtype": [
+      "cultist"
+    ],
     "text": "When this card enters play, if you have deployed a non-character card this turn, draw 2 cards."
   },
   {
@@ -26895,7 +31427,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["mau", "politician"],
+    "subtype": [
+      "mau",
+      "politician"
+    ],
     "text": "PANDER -- COST: Deplete this card. Pick a character or item. -- EFFECT: Remove a token from the picked card."
   },
   {
@@ -26923,7 +31458,10 @@ export default [
     "strength": 4,
     "life": 2,
     "speed": 3,
-    "subtype": ["ghost", "vehicle"],
+    "subtype": [
+      "ghost",
+      "vehicle"
+    ],
     "text": "RESIST -- COST: Pay 1. Your faction loses 1 influence. -- EFFECT: Reduce the next damage inflicted to this card this turn by 1. -- DISAPPEAR -- COST: Pay 2. -- EFFECT: This turn, this card gains covert."
   },
   {
@@ -26950,7 +31488,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["ghost"],
+    "subtype": [
+      "ghost"
+    ],
     "text": "When this card enters play, your faction loses 2 influence. -- [V]V][V][V]: This card gains COVERT."
   },
   {
@@ -26977,7 +31517,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "[G][G][V][V]: When this card is destroyed, draw a card. When this card attacks, you may pick a card in a discard pile. If you do, remove it from the game. -- FLIP UP: 2 [V][V][V][V]"
   },
   {
@@ -27004,7 +31546,11 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["mau", "mercenary", "hunter"],
+    "subtype": [
+      "mau",
+      "mercenary",
+      "hunter"
+    ],
     "text": ""
   },
   {
@@ -27019,7 +31565,10 @@ export default [
     "strength": 5,
     "life": 8,
     "speed": 3,
-    "subtype": ["mau", "tough guy"],
+    "subtype": [
+      "mau",
+      "tough guy"
+    ],
     "text": "When this card enters play, draw a card for each character in play. -- UNDER THE TABLE -- COST: Discard 1 card. -- EFFECT: This turn, this character loses 1 life and gains 1 strength and COVERT."
   },
   {
@@ -27046,7 +31595,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "UNIQUE LLP -- This card gains 2 strength and 2 life for each item your opponents control. -- All items gain the rules text \"At the start of your turn, you may pay 1. If you don't, destroy this card.\" -- FLIP UP: 1 [G][G][G]"
   },
   {
@@ -27061,7 +31612,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["vehicle"],
+    "subtype": [
+      "vehicle"
+    ],
     "text": "UNIQUE LLP -- This card gains 2 strength and 2 life for each item your opponents control. -- All items gain the rules text \"At the start of your turn, you may pay 1. If you don't, destroy this card.\" -- FLIP UP: 1 [G][G][G]"
   },
   {
@@ -27089,7 +31642,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["golem", "majig"],
+    "subtype": [
+      "golem",
+      "majig"
+    ],
     "text": "EXTRA COST: Choose a number for X. Pay X. -- This card enters play with X tokens on it. -- This card gains 1 strength and 1 life for each token on it. -- EXPAND -- COST: Pay 3. -- EFFECT: Put a token on this card."
   },
   {
@@ -27104,7 +31660,9 @@ export default [
     "strength": 5,
     "life": 6,
     "speed": 3,
-    "subtype": ["monstrosity"],
+    "subtype": [
+      "monstrosity"
+    ],
     "text": "When this card enters play, you may destroy an item. -- FLIP UP: 6 [E]"
   },
   {
@@ -27119,7 +31677,9 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 1,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "While there is a location or item in play, this card gains 2 strength and 2 life."
   },
   {
@@ -27131,7 +31691,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character loses COVERT. If the attached character has a [V] icon in its rules text, treat the attached character as though it had no rules text. -- MOVE -- COST: Pick a character that is not in battle. Pay 2. -- EFFECT: Attach this card to the character. -- FLIP UP: 1 [E]"
   },
   {
@@ -27146,7 +31708,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["horsemajig"],
+    "subtype": [
+      "horsemajig"
+    ],
     "text": "PROVIDES: [E][E] -- FLIP UP: 5 [E] and you may pick an item. If you do, destroy it."
   },
   {
@@ -27161,7 +31725,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "This card gains 1 strength and 1 life for each different staple resource you control."
   },
   {
@@ -27176,7 +31742,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "UNIQUE EX MACHINA -- When this card enters play, all your characters gain 1 strength and 1 life this turn. -- When this card leaves play, you may put up to five Micromajigs into play."
   },
   {
@@ -27203,7 +31771,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "This card cannot be blocked. -- [E][E][E][E][E][E]: This card gains 2 strength and 2 life."
   },
   {
@@ -27227,7 +31797,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "eee",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "UNIQUE BLESSING -- ATTACH TO CHARACTER -- The attached character gains the following rules text: \"All your characters lose 1 strength and gain 1 life. -- At the start of each opponent's turn, you may restore all characters you control.\""
   },
   {
@@ -27255,7 +31827,10 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["jo", "blade of questionable morality"],
+    "subtype": [
+      "jo",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE JO -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- When this card enters or leaves play, you may search your deck for a gearsmith item and reveal it. If you do, put it into your hand."
   },
   {
@@ -27294,7 +31869,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["31f"],
+    "subtype": [
+      "31f"
+    ],
     "text": "BOLSTER -- COST: Deplete another character you control. -- EFFECT: This turn, this card gains 1 strength and 1 life. -- TEAMWORK -- COST: Use this only once per turn. Pick 3 cards, each named \"5n4p\", \"Cr4ck13\" and \"P0p\". Destroy a micromajig token you control. -- EFFECT: This turn, the characters gain 1 strength, 1 life and cannot be blocked."
   },
   {
@@ -27309,7 +31886,9 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "While this card in in an attacking party of 2 or more characters, it loses 1 speed. -- [E][E][E][E]: When this card is destroyed, put 2 Micromajig tokens into play under your control."
   },
   {
@@ -27324,7 +31903,9 @@ export default [
     "strength": 3,
     "life": 5,
     "speed": 2,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "EXTRA COST: You may pick a location and deplete it. -- While this card is in play, the location cannot be restored by its controller's RESTORE RULE. -- While the location is depleted, this card gains 3 strength and 1 life. -- FLIP UP: 4 [E][E][E]"
   },
   {
@@ -27339,7 +31920,9 @@ export default [
     "strength": 1,
     "life": 4,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": "If you deployed this card using FLIP UP, it enters play with 3 tokens on it. -- This card gains 1 strength for each token on it. -- This card can block COVERT parties. -- FLIP UP: 5 [E]"
   },
   {
@@ -27366,7 +31949,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 2,
-    "subtype": ["warmachine"],
+    "subtype": [
+      "warmachine"
+    ],
     "text": "All characters must attack if they can. -- [E][E][E]: This card gains AGGRO."
   },
   {
@@ -27378,7 +31963,9 @@ export default [
     "rarity": "common",
     "cost": 1,
     "threshold": "e",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- While this card is attached to a character you control, that character gains 1 strength and 1 life. -- While this card is attached to a character you don't control, that character loses 1 strength and 1 life."
   },
   {
@@ -27393,7 +31980,10 @@ export default [
     "strength": 4,
     "life": 4,
     "speed": 2,
-    "subtype": ["31f", "fighter"],
+    "subtype": [
+      "31f",
+      "fighter"
+    ],
     "text": "[E][E][V][V]: This card gains 1 strength and 1 life. When this card attacks, you may pick a face-up resource you control. If you do, flip it face-down under its owner's control. -- FLIP UP: 4 [V][V][V][V]"
   },
   {
@@ -27420,7 +32010,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ZENOBIA -- DISENCHANT -- COST: Deplete this card. Discard an item. X is its numeric cost. -- EFFECT: Put X tokens on this card. -- CLAIRVOYANCE -- COST: Deplete this card. Chose a number greater than 0 for X. Remove X tokens from this card. -- EFFECT: Search your deck for a card with numeric cost X or less, reveal it, and put it into your hand."
   },
   {
@@ -27435,7 +32027,9 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["sorceress"],
+    "subtype": [
+      "sorceress"
+    ],
     "text": "UNIQUE ZENOBIA -- DISENCHANT -- COST: Deplete this card. Discard an item. X is its numeric cost. -- EFFECT: Put X tokens on this card. -- CLAIRVOYANCE -- COST: Deplete this card. Chose a number greater than 0 for X. Remove X tokens from this card. -- EFFECT: Search your deck for a card with numeric cost X or less, reveal it, and put it into your hand."
   },
   {
@@ -27462,7 +32056,11 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["pluck", "performer", "blade of questionable morality"],
+    "subtype": [
+      "pluck",
+      "performer",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE PLUCK -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- MAKE VANISH -- COST: Deplete this card. Pick a character. Pay 5. -- EFFECT: Put that character into the void. -- MAKE REAPPEAR -- COST: Deplete this card. Pay 1. -- EFFECT: Put a character voided by this card into play under your control."
   },
   {
@@ -27477,7 +32075,11 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["pluck", "performer", "blade of questionable morality"],
+    "subtype": [
+      "pluck",
+      "performer",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE PLUCK -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- MAKE VANISH -- COST: Deplete this card. Pick a character. Pay 5. -- EFFECT: Put that character into the void. -- MAKE REAPPEAR -- COST: Deplete this card. Pay 1. -- EFFECT: Put a character voided by this card into play under your control."
   },
   {
@@ -27505,7 +32107,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 4,
-    "subtype": ["martial artist"],
+    "subtype": [
+      "martial artist"
+    ],
     "text": "While this card is depleted, your opponents cannot pick this card. -- FLIP UP:1 [D]"
   },
   {
@@ -27520,7 +32124,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["vigilante"],
+    "subtype": [
+      "vigilante"
+    ],
     "text": "Whenever an opponent forms an attacking party, you may pay 2. If you do, you may flip a coin. If you win the flip, all of your characters gain 1 speed this turn. -- [D][D][D][D][D][D]: When a coin is flipped, you may pay 1. If you do, draw a card."
   },
   {
@@ -27548,7 +32154,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 4,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "TACTICAL -- GRAND THEFT -- COST: Destroy this card. -- EFFECT: Take control of one character and one item an opponent controls. (You must take control of one of each type.)"
   },
   {
@@ -27563,7 +32171,9 @@ export default [
     "strength": 5,
     "life": 3,
     "speed": 3,
-    "subtype": ["outcast"],
+    "subtype": [
+      "outcast"
+    ],
     "text": "CONSUME FORCE -- COST: Pay 1. Deplete another character you control. -- EFFECT: This turn, this card gains 1 speed. -- FLIP UP: 4 [D]"
   },
   {
@@ -27578,7 +32188,11 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["grifter", "cicibeo", "sarcophyle"],
+    "subtype": [
+      "grifter",
+      "cicibeo",
+      "sarcophyle"
+    ],
     "text": "UNIQUE CICIBEO -- IMPLY -- COST: Deplete this card. Pick a character. -- EFFECT: That character's controller depletes that character or reveals the top card of their deck. If they reveal the top card of their deck and it's a character, take control of the picked character this turn. -- [D][D][D][D]: When another \"cicibeo\" character enters play, if it was deployed from your hand, you may pick a depleted character. If you do, destroy that character."
   },
   {
@@ -27593,7 +32207,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "BETRAY -- COST: Pick a non-tactic card in an opponent's discard pile. Destroy this card.  -- EFFECT: Put the card into play under your control."
   },
   {
@@ -27608,7 +32224,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "You may include as many copies of this card in your deck as you want."
   },
   {
@@ -27635,7 +32253,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["vigilante"],
+    "subtype": [
+      "vigilante"
+    ],
     "text": "When this card inflicts battle damage to a character, destroy that character."
   },
   {
@@ -27662,7 +32282,9 @@ export default [
     "strength": 3,
     "life": 3,
     "speed": 3,
-    "subtype": ["thief"],
+    "subtype": [
+      "thief"
+    ],
     "text": "UNIQUE EZEKIAL CUTPURSE -- Characters you control with numeric cost 2 or less gain 1 strength. -- Characters you control with numeric cost 4 or more gain 1 speed. -- YOINK! -- COST: Destroy this card. Pick a \"gear\" card. Pick a character. -- EFFECT: Take control of the \"gear\" card. Attach it to the character."
   },
   {
@@ -27677,7 +32299,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["performer"],
+    "subtype": [
+      "performer"
+    ],
     "text": "This character cannot be blocked by characters with a [V] icon in its rules text. -- This character gains 1 strength and 1 life for each token on it. -- [D][D][D]: When this card depletes, flip a coin. If you win, put a token on this card."
   },
   {
@@ -27689,7 +32313,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "ddd",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "UNIQUE BLESSING -- ATTACH TO CHARACTER -- The attached character gains the following rules text: \"All your characters gain 1 strength and lose 1 life. -- When a character you control inflicts battle damage to a faction, that faction's controller puts their top card of their deck into their discard pile.\""
   },
   {
@@ -27701,7 +32327,9 @@ export default [
     "rarity": "common",
     "cost": 2,
     "threshold": "dd",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 2 strength and loses 2 speed."
   },
   {
@@ -27753,7 +32381,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 4,
-    "subtype": ["gambler"],
+    "subtype": [
+      "gambler"
+    ],
     "text": "When this card is restored, you may look at the top card of your deck. If you do, you may put that card on the bottom of your deck."
   },
   {
@@ -27768,7 +32398,11 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 5,
-    "subtype": ["omahkapi'si", "seraphim", "dragon"],
+    "subtype": [
+      "omahkapi'si",
+      "seraphim",
+      "dragon"
+    ],
     "text": "TACTICAL, UNIQUE OMAHKAPI'SI -- While there are at least 10 cards in an opponent's discard pile, that player cannot pick this card. -- FLEX -- COST: Pay 2. Pick a card in an opponent's discard pile. -- EFFECT: Remove that card from the game. If you do, this card gains 2 strength this turn."
   },
   {
@@ -27807,7 +32441,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 4,
-    "subtype": ["teller"],
+    "subtype": [
+      "teller"
+    ],
     "text": "[D][D][V][V]: When this card enters play, leaves play, attacks, or blocks, you may look at the top card of any deck. -- FLIP UP: 1 [V][V][V][V]"
   },
   {
@@ -27834,7 +32470,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 4,
-    "subtype": ["sarcophyle"],
+    "subtype": [
+      "sarcophyle"
+    ],
     "text": "FLIP UP: 8 [D]"
   },
   {
@@ -27870,7 +32508,9 @@ export default [
     "rarity": "uncommon",
     "cost": 0,
     "threshold": 0,
-    "subtype": ["banner"],
+    "subtype": [
+      "banner"
+    ],
     "text": "UNIQUE QUILT -- When this card enters play and at the start of each of your turns, name a non-[V] resource icon. X is that icon. Until the start of your next turn, this card gains \"PROVIDES: X\". -- HAND IT DOWN -- COST: Pay 1. Shuffle this card into its owner's deck. -- EFFECT: Draw a card."
   },
   {
@@ -27885,7 +32525,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["changeling"],
+    "subtype": [
+      "changeling"
+    ],
     "text": "[O]: This card gains COVERT. -- [G]: This card gains 2 life. -- [E]: This card gains AGGRO. -- [D]: This card gains 1 speed. -- [R]: This card gains 2 strength."
   },
   {
@@ -27925,7 +32567,10 @@ export default [
     "strength": 3,
     "life": 4,
     "speed": 4,
-    "subtype": ["soldier", "tyrant"],
+    "subtype": [
+      "soldier",
+      "tyrant"
+    ],
     "text": "BLEED -- COST: Pick a character in battle. Destroy a resource you control. -- EFFECT: Inflict 2 damage to the character."
   },
   {
@@ -27952,7 +32597,9 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "UNIQUE MCLARGEHUGE -- EXTRA COST: Destroy 2 resources you control. -- When this card leaves play, you may play a resource or pick an opponent and that player destroys a face-down resource they control. -- FLIP UP: 4 [R]"
   },
   {
@@ -27967,7 +32614,9 @@ export default [
     "strength": 6,
     "life": 2,
     "speed": 3,
-    "subtype": ["berserker"],
+    "subtype": [
+      "berserker"
+    ],
     "text": "HEMORAGE -- COST: Destroy this card. Pick a faction or character. -- EFFECT: Inflict 4 damage to that card. -- FLIP UP: 4 [R]"
   },
   {
@@ -27994,7 +32643,9 @@ export default [
     "strength": 5,
     "life": 5,
     "speed": 2,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "[R][R][R][R][R][R]: When this card enters play, you may pick a character. If you do, inflict 5 damage to it. -- FLIP UP: 4 [R][R][R]"
   },
   {
@@ -28021,7 +32672,9 @@ export default [
     "strength": 5,
     "life": 1,
     "speed": 3,
-    "subtype": ["beast"],
+    "subtype": [
+      "beast"
+    ],
     "text": "This character cannot attack. -- [R][R][R][R][R][R]: This card gains 4 life and loses all other rules text."
   },
   {
@@ -28048,7 +32701,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "FLIP UP: 1 [R]"
   },
   {
@@ -28076,7 +32731,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 2,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "At the end of your turn, if this card is depleted, destroy it. -- [R][R][R][R][R][R]: This character gains 1 strength and 1 speed."
   },
   {
@@ -28101,7 +32758,9 @@ export default [
     "rarity": "rare",
     "cost": 6,
     "threshold": "rrr",
-    "subtype": ["mutation"],
+    "subtype": [
+      "mutation"
+    ],
     "text": "UNIQUE BLESSING -- ATTACH TO CHARACTER -- When this card enters play, inflict 1 damage to all characters. -- The attached character gains the following rules text: \"At the start of each turn, inflict 1 damage to all your characters. -- All your characters gain 1 strength.\""
   },
   {
@@ -28116,7 +32775,10 @@ export default [
     "strength": 4,
     "life": 5,
     "speed": 3,
-    "subtype": ["fighter", "tough guy"],
+    "subtype": [
+      "fighter",
+      "tough guy"
+    ],
     "text": "UNIQUE GOR-BLACH -- GET IN THERE: [V][V][V] -- COST: Deplete this card. Pick a blocked character you control. X is its strength. Pay X. -- EFFECT: Destroy the character. Inflict X damage to an opponent's faction. Inflict X damage to this card."
   },
   {
@@ -28168,7 +32830,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "PUSH -- COST: Pay 1. Deplete a character you control. -- EFFECT: This turn, this card gains 2 strength."
   },
   {
@@ -28183,7 +32847,9 @@ export default [
     "strength": 2,
     "life": 3,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card is restored, you may pick a faction. If you do, inflict 1 damage to it."
   },
   {
@@ -28198,7 +32864,10 @@ export default [
     "strength": 1,
     "life": 3,
     "speed": 3,
-    "subtype": ["rudo", "blade of questionable morality"],
+    "subtype": [
+      "rudo",
+      "blade of questionable morality"
+    ],
     "text": "UNIQUE RUDOLPHUS -- FEALTY: While this card is in your hand and you control at least 4 staple resources of different trades, reduce this card's threshold requirement by any 3 resource icons. -- When this card attacks, you may pay 2. If you do, each character you control gains 2 strength this turn. -- When this card is destroyed, you may search your deck for a warlord character and reveal it. If you do, put it on top of your deck."
   },
   {
@@ -28213,7 +32882,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 3,
-    "subtype": ["dragon"],
+    "subtype": [
+      "dragon"
+    ],
     "text": "When this card inflicts battle damage to a faction, you may put a resource you control into its owner's hand. If you do, inflict 1 damage to all characters."
   },
   {
@@ -28225,7 +32896,9 @@ export default [
     "rarity": "common",
     "cost": 0,
     "threshold": "r",
-    "subtype": ["gear"],
+    "subtype": [
+      "gear"
+    ],
     "text": "ATTACH TO CHARACTER -- The attached character gains 1 strength. -- BULK UP -- COST: Pay 1. Destroy a card named \"Rage\" you own. -- EFFECT: This turn, the attached character gains 1 strength."
   },
   {
@@ -28240,7 +32913,9 @@ export default [
     "strength": 3,
     "life": 2,
     "speed": 2,
-    "subtype": ["mercenary"],
+    "subtype": [
+      "mercenary"
+    ],
     "text": "Characters with a token on them cannot block this card. -- If a character enters play under your opponent's control, you may pay 1. If you do, put a token on it."
   },
   {
@@ -28279,7 +32954,9 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["soldier"],
+    "subtype": [
+      "soldier"
+    ],
     "text": "When this card inflicts battle damage to a faction, put this character into its owner's hand. -- FLIP UP: 0 [R]"
   },
   {
@@ -28294,7 +32971,9 @@ export default [
     "strength": 5,
     "life": 6,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "[R][R][V][V]: This card gains 4 strength. When this card leaves play, you may pick a character. If you do, that character gains 4 strength this turn. -- FLIP UP: 7 [V][V][V][V]"
   },
   {
@@ -28309,7 +32988,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["fighter"],
+    "subtype": [
+      "fighter"
+    ],
     "text": "At the start of your turn, X is this card's strength and you may destroy this character. If you do, inflict X damage to each opponent's faction or pick an item with numeric cost X or less and destroy it. -- [V][V][V][V][V]: This card gains 2 strength."
   },
   {
@@ -28336,7 +33017,11 @@ export default [
     "strength": 6,
     "life": 4,
     "speed": 4,
-    "subtype": ["vexillarius", "seraphim", "dragon"],
+    "subtype": [
+      "vexillarius",
+      "seraphim",
+      "dragon"
+    ],
     "text": "UNIQUE VEXILLARIUS -- All your other characters gain 2 strength and 2 life. -- When this card is destroyed, all character lose 2 strength and 2 life this turn."
   },
   {
@@ -28351,7 +33036,9 @@ export default [
     "strength": 6,
     "life": 6,
     "speed": 1,
-    "subtype": ["god"],
+    "subtype": [
+      "god"
+    ],
     "text": "When this card enters play, you may put a token on up to X non-resource cards, where X is the number of [V] you control. -- When this card is destroyed, destroy all non-resource cards with tokens on them. -- TURN TO MUSH -- COST: Pay 2. Pick a card with a token on it. -- EFFECT: Flip the card face-down under its owner's control."
   },
   {
@@ -28390,7 +33077,10 @@ export default [
     "strength": 2,
     "life": 2,
     "speed": 3,
-    "subtype": ["pirate", "mau"],
+    "subtype": [
+      "pirate",
+      "mau"
+    ],
     "text": "[G][G][G]: When this card enters play, draw a card. -- RETREAT -- COST: Pay 2. Destroy this card. -- EFFECT: Draw a card."
   },
   {
@@ -28417,7 +33107,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["inventor"],
+    "subtype": [
+      "inventor"
+    ],
     "text": "When this card enters play, you may search your deck for a card named Elitism and reveal it. If you do, put it into play. Attach it to your faction."
   },
   {
@@ -28432,7 +33124,9 @@ export default [
     "strength": 2,
     "life": 1,
     "speed": 3,
-    "subtype": ["mechanic"],
+    "subtype": [
+      "mechanic"
+    ],
     "text": "When this card is destroyed, you may search your deck for an item and reveal it. If you do, put it into your hand."
   },
   {
@@ -28459,7 +33153,10 @@ export default [
     "strength": 1,
     "life": 2,
     "speed": 3,
-    "subtype": ["pluck", "grifter"],
+    "subtype": [
+      "pluck",
+      "grifter"
+    ],
     "text": "UNIQUE PLUCK -- GRIFT -- COST: Use this only during your turn. Pay 5. Deplete this card. Pick a non-tactic card in an opponent's discard pile. -- EFFECT: Put the card into play under your control."
   },
   {
@@ -28474,7 +33171,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -28489,7 +33188,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   },
   {
@@ -28504,7 +33205,9 @@ export default [
     "strength": 1,
     "life": 1,
     "speed": 3,
-    "subtype": ["majig"],
+    "subtype": [
+      "majig"
+    ],
     "text": ""
   }
 ]

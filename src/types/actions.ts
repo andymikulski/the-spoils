@@ -4,6 +4,7 @@
 
 import type { AbilityId, CardInstanceId, PlayerId } from "./ids.js";
 import type { BattleDamageAssignment } from "./state.js";
+import type { TriggerRef } from "./choices.js";
 
 export type GameAction =
   | {
@@ -68,4 +69,13 @@ export type GameAction =
       type: "assignBattleDamage";
       playerId: PlayerId;
       assignments: BattleDamageAssignment[];
+    }
+  | {
+      /** Answers the currently open GameState.pendingChoice. */
+      type: "resolvePendingChoice";
+      playerId: PlayerId;
+      choice:
+        | { kind: "uniqueSurvivor"; keep: CardInstanceId }
+        | { kind: "selectTargets"; selected: Record<string, CardInstanceId[]> }
+        | { kind: "orderTriggers"; order: TriggerRef[] };
     };

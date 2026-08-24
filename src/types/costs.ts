@@ -15,6 +15,8 @@ export type Cost =
     }
   | {
       type: "discard";
+      /** Referenced via ResolutionContext.selected[id], same as a target declaration. */
+      id: string;
       player: PlayerRef;
       selector: CardSelector;
       count: number;

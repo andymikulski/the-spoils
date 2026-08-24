@@ -4,10 +4,76 @@ import {
   autoResolveBattle,
   buildGame,
   character,
+  location,
   P1,
   P2,
   resolvePendingResponses
 } from "./support/fixtures.js";
+
+describe("RULES.md §8 — battle: attacking a location", () => {
+  test("an unblocked attack on a location damages it directly, not the faction", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Attacker", strength: 3 }), owner: P1 },
+        { key: "fort", def: location({ name: "Fort", structure: 5 }), owner: P2 }
+      ]
+    });
+
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "card", cardId: id("fort") }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine);
+
+    assert.equal(engine.state.cards[id("fort")].damage, 3);
+    assert.equal(engine.state.players[P2].influence, before);
+  });
+
+  test("a location destroyed by accumulated battle damage moves to discard", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Attacker", strength: 5 }), owner: P1 },
+        { key: "fort", def: location({ name: "Fort", structure: 5 }), owner: P2 }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "card", cardId: id("fort") }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine);
+
+    assert.equal(engine.state.cards[id("fort")].zone, "discard");
+  });
+
+  test("a character (not a location) cannot be attacked directly", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Attacker" }), owner: P1 },
+        { key: "victim", def: character({ name: "Victim" }), owner: P2 }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "declareAttack",
+        playerId: P1,
+        attackerIds: [id("attacker")],
+        target: { type: "card", cardId: id("victim") }
+      })
+    );
+  });
+});
 
 describe("RULES.md §8 — battle: unblocked", () => {
   test("an unblocked attacker damages the defending faction's influence, not a character", () => {
@@ -251,5 +317,85 @@ describe("RULES.md §9 — Covert", () => {
     assert.doesNotThrow(() =>
       engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("guard")] })
     );
+  });
+});
+
+describe("RULES.md §8 — blocking eligibility", () => {
+  test("a face-down card (a resource) cannot block", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Attacker" }), owner: P1 },
+        { key: "hiddenResource", def: character({ name: "Hidden" }), owner: P2, faceDown: true }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+
+    assert.throws(() =>
+      engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("hiddenResource")] })
+    );
+  });
+});
+
+describe("RULES.md §8 — a character removed from the battle mid-resolution", () => {
+  test("a character whose control changes is immediately pulled from its party", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Attacker", strength: 5 }), owner: P1 },
+        {
+          key: "thief",
+          def: character({
+            name: "Thief",
+            behavior: {
+              abilities: [
+                {
+                  id: "steal",
+                  type: "activated",
+                  targets: [{ id: "t", selector: { controller: "opponent", type: "character" }, count: 1 }],
+                  effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }]
+                }
+              ]
+            }
+          }),
+          owner: P2
+        }
+      ]
+    });
+
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P2 }
+    });
+
+    // Attacker passes; defender responds by stealing the attacker mid-window.
+    engine.perform({ type: "passPriority", playerId: P1 });
+    engine.perform({
+      type: "activateAbility",
+      playerId: P2,
+      cardId: id("thief"),
+      abilityId: "steal",
+      selected: { t: [id("attacker")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("attacker")].controllerId, P2);
+
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine);
+
+    // The erstwhile attacker defected before ever assigning damage — P2
+    // takes none.
+    assert.equal(engine.state.players[P2].influence, before);
+    assert.equal(engine.state.battle, undefined);
   });
 });

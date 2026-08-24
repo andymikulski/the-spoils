@@ -9,7 +9,7 @@ const NOOP_ABILITY: ActivatedAbility = { id: "noop", type: "activated", effects:
 // Aggro (RULES.md §9) and Covert (RULES.md §9) are covered in battle.test.ts.
 
 describe("RULES.md §9 — Unique", () => {
-  test("controlling two cards with the same Unique designation destroys the newer one", () => {
+  test("controlling two cards with the same Unique designation pauses on a player decision", () => {
     const { engine, id } = buildGame({
       cards: [
         {
@@ -25,8 +25,78 @@ describe("RULES.md §9 — Unique", () => {
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("first"), abilityId: "noop" });
     resolvePendingResponses(engine);
 
+    // Both copies are still in play — nothing gets auto-destroyed.
     assert.equal(engine.state.cards[id("first")].zone, "play");
-    assert.equal(engine.state.cards[id("second")].zone, "discard");
+    assert.equal(engine.state.cards[id("second")].zone, "play");
+
+    const pending = engine.state.pendingChoice;
+    assert.equal(pending?.kind, "uniqueSurvivor");
+    assert.equal(pending?.playerId, P1);
+    if (pending?.kind === "uniqueSurvivor") {
+      assert.equal(pending.unique, "eldridge");
+      assert.deepEqual([...pending.candidates].sort(), [id("first"), id("second")].sort());
+    }
+
+    assert.equal(engine.getFlowView().mode, "pendingChoice");
+  });
+
+  test("the player's choice decides which copy survives — either one", () => {
+    for (const keep of ["first", "second"] as const) {
+      const { engine, id } = buildGame({
+        cards: [
+          {
+            key: "first",
+            def: character({ name: "Eldridge Gosche, Godstealer", unique: "eldridge", behavior: { abilities: [NOOP_ABILITY] } }),
+            owner: P1
+          },
+          { key: "second", def: character({ name: "Eldridge Gosche, Godstealer", unique: "eldridge" }), owner: P1 }
+        ]
+      });
+
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("first"), abilityId: "noop" });
+      resolvePendingResponses(engine);
+
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: P1,
+        choice: { kind: "uniqueSurvivor", keep: id(keep) }
+      });
+      resolvePendingResponses(engine);
+
+      const other = keep === "first" ? "second" : "first";
+      assert.equal(engine.state.cards[id(keep)].zone, "play");
+      assert.equal(engine.state.cards[id(other)].zone, "discard");
+      assert.equal(engine.state.pendingChoice, undefined);
+    }
+  });
+
+  test("only the affected player may answer, and only with one of the actual candidates", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "first",
+          def: character({ name: "Eldridge Gosche, Godstealer", unique: "eldridge", behavior: { abilities: [NOOP_ABILITY] } }),
+          owner: P1
+        },
+        { key: "second", def: character({ name: "Eldridge Gosche, Godstealer", unique: "eldridge" }), owner: P1 },
+        { key: "bystander", def: character({ name: "Bystander" }), owner: P1 }
+      ]
+    });
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("first"), abilityId: "noop" });
+    resolvePendingResponses(engine);
+
+    assert.throws(() =>
+      engine.perform({ type: "resolvePendingChoice", playerId: "p2", choice: { kind: "uniqueSurvivor", keep: id("first") } })
+    );
+    assert.throws(() =>
+      engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "uniqueSurvivor", keep: id("bystander") } })
+    );
+
+    // Nothing else can happen while the choice is outstanding, either.
+    assert.throws(() =>
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("bystander"), abilityId: "noop" })
+    );
   });
 
   test("the opponent may control a card with the same Unique designation at the same time", () => {
@@ -46,6 +116,7 @@ describe("RULES.md §9 — Unique", () => {
 
     assert.equal(engine.state.cards[id("mine")].zone, "play");
     assert.equal(engine.state.cards[id("theirs")].zone, "play");
+    assert.equal(engine.state.pendingChoice, undefined);
   });
 
   test("two cards with different Unique designations coexist fine", () => {
@@ -65,6 +136,7 @@ describe("RULES.md §9 — Unique", () => {
 
     assert.equal(engine.state.cards[id("a")].zone, "play");
     assert.equal(engine.state.cards[id("b")].zone, "play");
+    assert.equal(engine.state.pendingChoice, undefined);
   });
 });
 

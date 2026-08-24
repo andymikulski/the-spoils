@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node scripts/run-tests.js",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "sync-cards": "node scripts/sync-cards.js"
   },
   "author": "",
   "license": "ISC",

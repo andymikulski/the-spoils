@@ -49,11 +49,18 @@ is often struck mid-battle-resolution.
 | `play` | Characters, items, locations, and the faction card live here while active. Resources (face-up or face-down) also live here, attached to the controller's faction. |
 | `discard` | Destroyed permanents and resolved tactics land here. Recoverable by effects that say so. |
 | `void` **(card-verified)** | A zone for cards set aside by specific effects, distinct from both `discard` and being "removed from the game." Cards in the void can be returned to play/hand only by effects that explicitly reference the void (e.g. *Eldridge Gosche, Godstealer*'s "pick a tactic you own in the void", *Deity Delimitation Device*'s "release"). Default trajectory (destruction) does **not** send cards to the void — only effects that say "put into the void" do. |
+| `removed` **(card-verified)** | "Removed from the game" (seen on cards like *Master Scavenger*, *Swashbuckler*, *Resurrection Emporium*) — permanent and unretrievable, unlike `void`. Reached via the `removeFromGame` effect. Nothing in the effect vocabulary can move a card back out of `removed`, by design. |
 
-"Removed from the game" (seen on cards like *Master Scavenger*, *Swashbuckler*,
-*Resurrection Emporium*) is **not** a zone the engine needs to track as a
-place — a card removed from the game is gone; nothing can retrieve it. This
-is different from `void`, where cards remain referenceable.
+Conceptually a card removed from the game is just *gone* — it doesn't need
+to be a place a card can be found. It's still tracked as a real `Zone`
+value (`PlayerState.removed`) rather than deleted from `GameState.cards`
+outright, purely so ordinary bookkeeping (search-the-deck exclusions,
+"cards in your discard pile" counts, etc.) doesn't have to special-case a
+card that stopped existing. Nothing in the effect vocabulary can move a
+card back out of `removed`. A `CardSelector` with no explicit `zone` filter
+still matches every zone including `removed`, same as it would `deck` or
+`hand` — that's an existing, general property of selectors (scope them
+explicitly), not something specific to this zone.
 
 ## 3. Card types
 
@@ -108,6 +115,14 @@ is different from `void`, where cards remain referenceable.
   until detached (typically by the controlling faction's turn-start restore
   rule). Playing something "for free" skips the numeric cost but not the
   threshold or any other listed cost.
+- **Non-numeric ability costs** (deplete a card, destroy a card, discard N
+  cards) that name a specific card require the player to have already
+  chosen it — there's no auto-pick. A "discard N" cost carries its own `id`
+  (`Cost` with `type: "discard"`) and is satisfied the same way a target
+  declaration is: via `selected[cost.id]`, supplied up front in the
+  `activateAbility` action alongside any target selections, and checked for
+  legality (right zone/controller, no duplicates, exactly N) before the
+  ability can be paid for at all.
 - **Playing a resource**: either (a) put an actual resource card from hand
   into play face-up, providing its printed icon, or (b) put *any* card from
   hand into play face-down as a resource.
@@ -186,6 +201,41 @@ about the source changes afterward. Multiple triggers firing at once from
 one player's cards are ordered by that player; across both players (or
 game-rule triggers), the active player chooses the order.
 
+**(engine-derived)** Every trigger found for one emitted event shares a
+batch. Before resolving the first trigger in a batch of 2+, the engine
+pauses on `GameState.pendingChoice` (kind `"orderTriggers"`, listing each
+as `{sourceId, abilityId}`) rather than resolving in whatever order
+`Object.values(GameState.cards)` happened to iterate. `playerId` is that
+batch's sole controller if they're all the same player's cards, otherwise
+the active player, matching the rule above. Answered via
+`perform({ type: "resolvePendingChoice", choice: { kind: "orderTriggers", order: [...] } })`
+with a full permutation of the batch.
+
+**(engine-derived)** When a triggered ability's target declaration has more
+legal candidates than it needs, the engine can't guess which one the
+controller means — it pauses on `GameState.pendingChoice` (kind
+`"selectTargets"`, same mechanism as Unique below) instead of picking one
+for them or throwing. Answered via
+`perform({ type: "resolvePendingChoice", choice: { kind: "selectTargets", selected: {...} } })`.
+A declaration with *too few* candidates (a genuinely unplayable trigger,
+not a choice) is unaffected — that's still a hard failure.
+
+**A note on pending choices generally.** Response windows and battle phases
+already interrupt synchronous resolution and wait for a specific follow-up
+action (`passPriority`/`advanceFlow`, `declareBlockers`, ...) — that's the
+engine's normal idiom for "pause here until told to continue," and it's
+what makes the engine steppable by a UI instead of needing to run a whole
+turn in one call. `GameState.pendingChoice` extends the same idiom to
+moments that aren't tied to one specific player action: a state-based check
+or a batch of triggers can, on its own, decide a *real* decision is needed
+and pause there. While it's set, `perform()` rejects everything except a
+matching `resolvePendingChoice`, the same way an open response window
+rejects everything but a response. Three kinds exist today —
+`uniqueSurvivor` (§9), `selectTargets` (this section), `orderTriggers`
+(this section) — and `GameFlowView.mode` becomes `"pendingChoice"` so a
+renderer can detect one without inspecting `GameState.pendingChoice.kind`
+itself.
+
 ## 8. Battle
 
 **Declaring the attack**
@@ -244,6 +294,16 @@ before defender within a round:
 - A character removed from the battle (destroyed, or its control changes)
   is immediately pulled from the attacking/blocking party.
 
+  **(engine-derived)** "Control changes" is the `takeControl` effect
+  (`{ type: "takeControl", target, controller }`) — the only way
+  `CardInstance.controllerId` ever changes. It also moves the card between
+  the old and new controller's `play` array bookkeeping (see §2), since
+  in-play zone membership is filed by controller, not owner.
+  `isCardStillInBattle` already checks `controllerId` against the
+  attacker/defender for party membership, so this falls out for free the
+  next time the party gets pruned (battle damage assignment, or the next
+  `declareBlockers` call).
+
 ## 9. Keywords
 
 - **Covert** — see battle rules (§8) for the blocking restriction. A card
@@ -266,9 +326,11 @@ before defender within a round:
   **(engine-derived)** The designation is `CardDefinition.unique?: string`
   (e.g. `"eldridge"`); real card text has no structured field for this today
   so it must be assigned when authoring/importing card data. "Choose one to
-  keep" isn't a real player decision yet — the engine deterministically
-  keeps whichever copy has been in play longest and destroys the rest, which
-  a real client can override later by actually asking the player.
+  keep" *is* a real player decision: the state-based check pauses on
+  `GameState.pendingChoice` (kind `"uniqueSurvivor"`, listing every
+  candidate) rather than picking one, and everything else stays blocked
+  until the affected player answers with
+  `perform({ type: "resolvePendingChoice", choice: { kind: "uniqueSurvivor", keep: cardId } })`.
 - **Attach to X** — the card must have a legal target of type X chosen as
   part of playing it, and enters play attached to that target. If the
   target is missing, or later leaves play / stops qualifying as type X, the
@@ -313,7 +375,7 @@ per turn):
 - Any location with accumulated damage ≥ structure (its `life` stat) is
   destroyed.
 - Any player controlling more than one card sharing a Unique designation
-  reduces to one immediately.
+  reduces to one — via that player's choice (see §9), not automatically.
 - A card requiring "Attach to X" whose attachment target isn't a legal,
   in-play card of the right type is destroyed.
 - Any faction at 0 influence ends the game for that player, immediately (a
@@ -322,10 +384,27 @@ per turn):
 
 ## 12. Miscellaneous rulings
 
-- `"cannot"` always overrides `"can"`.
+- `"cannot"` always overrides `"can"`. (No engine mechanism needed — this is
+  guidance for whoever authors a card's structured `Condition`/`Effect`
+  data, not a runtime primitive.)
 - An instruction that's impossible to fully carry out (destroy a card no
   longer in play, discard from an empty hand, etc.) is carried out as far
   as possible and the rest is ignored — it does not invalidate the whole
   effect.
+
+  **(engine-derived)** The `destroy` and `removeFromGame` *effects*
+  (post-cost, already-committed resolution) silently no-op instead of
+  throwing when their target has already left play / already been removed
+  — a second effect in the same ability, or a batched trigger, can easily
+  target something an earlier effect already took care of. This is
+  deliberately *not* extended to cost payment: a `destroy` **cost** still
+  throws if its target isn't a legal in-play card, since an unpayable cost
+  should block the whole activation (§4/§10), and `validateTargetDeclarations`
+  guarantees the target was legal at the moment of activation anyway — this
+  can only be reached if something external mutated the state between
+  target validation and cost payment, which is a real bug to surface, not
+  something to paper over.
 - A cost variable (`X`, etc.) that's never assigned because the card was
-  played for free defaults to 0.
+  played for free defaults to 0. (Not yet applicable: `NumberExpression`
+  has no "unassigned variable" form today — every current card behavior
+  supplies a literal or a derived value.)

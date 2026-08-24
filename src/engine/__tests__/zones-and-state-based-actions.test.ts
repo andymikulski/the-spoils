@@ -74,7 +74,7 @@ describe("RULES.md §11 — state-based actions", () => {
             def: character({ name: "Zapper", behavior: { abilities: [zapAbility(5)] } }),
             owner: P1
           },
-          { key: "fort", def: location({ name: "Fort", life: 3 }), owner: P2 }
+          { key: "fort", def: location({ name: "Fort", structure: 3 }), owner: P2 }
         ]
       });
 
@@ -117,5 +117,75 @@ describe("RULES.md §2 — zones", () => {
     const victim = engine.state.cards[id("victim")];
     assert.equal(victim.zone, "discard");
     assert.notEqual(victim.zone, "void");
+  });
+
+  test("'removed from the game' is a distinct, permanent zone — not discard or void", () => {
+    const removeAbility: ActivatedAbility = {
+      id: "banish",
+      type: "activated",
+      targets: [{ id: "target", selector: { zone: "discard" }, count: 1 }],
+      effects: [{ type: "removeFromGame", target: { type: "selected", id: "target" } }]
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "banisher",
+          def: character({ name: "Banisher", behavior: { abilities: [removeAbility] } }),
+          owner: P1
+        },
+        { key: "corpse", def: character({ name: "Corpse" }), owner: P2, zone: "discard" }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("banisher"),
+      abilityId: "banish",
+      selected: { target: [id("corpse")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("corpse")].zone, "removed");
+    assert.ok(engine.state.players[P2].removed.includes(id("corpse")));
+    assert.ok(!engine.state.players[P2].discard.includes(id("corpse")));
+    assert.ok(!engine.state.players[P2].void.includes(id("corpse")));
+  });
+
+  test("removing an already-gone card from the game is a no-op, not an error", () => {
+    const removeTwice: ActivatedAbility = {
+      id: "banishTwice",
+      type: "activated",
+      targets: [{ id: "target", selector: { zone: "discard" }, count: 1 }],
+      effects: [
+        { type: "removeFromGame", target: { type: "selected", id: "target" } },
+        { type: "removeFromGame", target: { type: "selected", id: "target" } }
+      ]
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "banisher",
+          def: character({ name: "Banisher", behavior: { abilities: [removeTwice] } }),
+          owner: P1
+        },
+        { key: "corpse", def: character({ name: "Corpse" }), owner: P2, zone: "discard" }
+      ]
+    });
+
+    assert.doesNotThrow(() => {
+      engine.perform({
+        type: "activateAbility",
+        playerId: P1,
+        cardId: id("banisher"),
+        abilityId: "banishTwice",
+        selected: { target: [id("corpse")] }
+      });
+      resolvePendingResponses(engine);
+    });
+
+    assert.equal(engine.state.cards[id("corpse")].zone, "removed");
   });
 });
