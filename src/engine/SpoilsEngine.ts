@@ -12,6 +12,7 @@ import type {
   CardDefinitionId,
   CardInstance,
   CardInstanceId,
+  CardPlayability,
   CardSelector,
   Condition,
   Cost,
@@ -631,6 +632,56 @@ export class SpoilsEngine {
     }
 
     return result;
+  }
+
+  /**
+   * Whether `cardId` (which must be in `playerId`'s hand) could be deployed right now — the same
+   * timing/threshold/numeric-cost gates `playCard` itself enforces, exposed read-only so a UI can
+   * warn (or grey a card out) *before* walking the player through target selection for something
+   * that was never payable, instead of only finding out from `perform()` rejecting it at the end.
+   * Doesn't cover a card's targets or extra costs (deplete/discard/destroy/depleteSelected) —
+   * those depend on selections the player hasn't made yet, so `perform()` is still the last word
+   * on whether a specific play actually goes through.
+   */
+  getCardPlayability(playerId: PlayerId, cardId: CardInstanceId): CardPlayability {
+    const card = this.requireCard(cardId);
+    const definition = this.getDefinition(cardId);
+
+    let legalTiming = false;
+    if (card.controllerId === playerId && card.zone === "hand") {
+      try {
+        this.assertCanDeployAtCurrentTiming(playerId, definition);
+        legalTiming = true;
+      } catch {
+        legalTiming = false;
+      }
+    }
+
+    const thresholdMet = this.meetsThreshold(playerId, definition.threshold);
+
+    const pendingReduction = this.state.costReductions.find(
+      reduction => reduction.playerId === playerId
+    );
+    const numericCost = Math.max(
+      0,
+      (definition.cost ?? 0) - (pendingReduction?.amount ?? 0)
+    );
+    const availableResources = this.getAvailableResourceCount(playerId);
+
+    return {
+      playable: legalTiming && thresholdMet && availableResources >= numericCost,
+      legalTiming,
+      thresholdMet,
+      numericCost,
+      availableResources
+    };
+  }
+
+  /** Convenience filter over `getCardPlayability` — every card in `playerId`'s hand that's currently deployable. */
+  getPlayableHandCards(playerId: PlayerId): CardInstanceId[] {
+    return this.requirePlayer(playerId).hand.filter(
+      cardId => this.getCardPlayability(playerId, cardId).playable
+    );
   }
 
   queryCards(

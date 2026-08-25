@@ -249,6 +249,27 @@ export type GameSetupState =
 /** The player who won, or "draw" if both factions hit 0 influence together. */
 export type GameWinner = PlayerId | "draw";
 
+/**
+ * Whether a hand card could be deployed right now, broken down by which gate it's failing —
+ * deliberately public (see `SpoilsEngine.getCardPlayability`/`getPlayableHandCards`) so a UI
+ * doesn't have to reimplement the engine's own private timing/threshold/cost checks just to
+ * grey out or explain unplayable cards. Doesn't account for a card's *targets* or extra costs
+ * (deplete/discard/destroy/depleteSelected) — those depend on selections the player hasn't made
+ * yet, so they're still only validated for real once `perform()` runs.
+ */
+export interface CardPlayability {
+  /** True only when every other field here is true/satisfied. */
+  playable: boolean;
+  /** False if it's simply not a legal moment to deploy anything (wrong phase/priority), or — in a response window — this particular card isn't a tactic or TACTICAL. */
+  legalTiming: boolean;
+  /** False if the card's printed threshold isn't currently met. */
+  thresholdMet: boolean;
+  /** The card's printed numeric cost, after any pending "reduce next cost" effect. */
+  numericCost: number;
+  /** Currently unattached resources available to pay with. */
+  availableResources: number;
+}
+
 export interface GameFlowView {
   activePlayerId: PlayerId;
   priorityPlayerId: PlayerId;
