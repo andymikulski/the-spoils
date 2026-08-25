@@ -211,6 +211,17 @@ the active player, matching the rule above. Answered via
 `perform({ type: "resolvePendingChoice", choice: { kind: "orderTriggers", order: [...] } })`
 with a full permutation of the batch.
 
+**(engine-derived)** A batch is *everything found for one emitted event* —
+not everything that happened in one simultaneous game action. Two
+characters destroyed together by the same round of battle damage (§8 step
+5) each get their own separate "this card left play" event (one per card),
+so a "when this leaves play" trigger on each does **not** join an
+`orderTriggers` batch with the other — there's nothing to jointly order.
+Instead each event's trigger (including any chooser sub-decision it itself
+raises, e.g. `chooserSelectsTarget`) resolves fully, in turn, queued behind
+the others emitted in the same instant, before the next one begins; none of
+them are skipped or overwritten by one that pauses first.
+
 **(engine-derived)** When a triggered ability's target declaration has more
 legal candidates than it needs, the engine can't guess which one the
 controller means — it pauses on `GameState.pendingChoice` (kind

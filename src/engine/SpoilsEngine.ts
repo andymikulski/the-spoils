@@ -1377,6 +1377,18 @@ export class SpoilsEngine {
 
   private processImmediateQueue(): void {
     while (this.immediateQueue.length > 0) {
+      // A pendingChoice already outstanding (set by whatever called into
+      // this — directly, or several frames up a reentrant call chain) must
+      // be answered before anything else in the queue is touched. Without
+      // this guard, a reentrant call reached via a *different* path (e.g.
+      // finishBattle's own beginEventBatch/endEventBatch, entered from
+      // resumeContinuation right after this same queue produced the still-
+      // unanswered choice) can reach the next queued trigger and resolve it
+      // — and if that trigger's own effects set pendingChoice too, it
+      // silently overwrites the first one before anyone ever saw or
+      // answered it, permanently losing that trigger's effects.
+      if (this.state.pendingChoice) return;
+
       // Peeked, not shifted: if this trigger turns out to need a player
       // choice, it must stay at the head of the queue so resolvePendingChoice
       // can resume exactly here afterward.
