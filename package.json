@@ -1,15 +1,35 @@
 {
   "name": "spoils-db",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "node scripts/run-tests.js",
-    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
-    "sync-cards": "node scripts/sync-cards.js"
-  },
-  "author": "",
+  "description": "Data-driven, UI-free rules engine and card database for The Spoils CCG",
   "license": "ISC",
-  "description": "",
+  "author": "",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./build/src/engine.js",
+  "types": "./build/src/engine.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/src/engine.d.ts",
+      "default": "./build/src/engine.js"
+    },
+    "./data": {
+      "types": "./build/src/data.d.ts",
+      "default": "./build/src/data.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "build/src",
+    "data/cards.json"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "test": "node scripts/run-tests.cjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "sync-cards": "node scripts/sync-cards.cjs"
+  },
   "devDependencies": {
     "@types/node": "^26.2.0",
     "prettier": "^3.9.6",

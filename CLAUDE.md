@@ -11,6 +11,13 @@ it owns all state mutation, exposes `GameState` for inspection and accepts
 JSON-serializable data built from a fixed vocabulary of costs, conditions,
 selectors, expressions, and effects (see `src/types/{costs,conditions,effects,expressions}.ts`).
 
+This package is published/imported as a library (`npm run build` emits
+declarations to `build/`; see `package.json`'s `exports` map) — a separate
+project (e.g. a web game-runner UI) is expected to `import` from it rather
+than live in this repo. That's the reason for the `src/engine.ts` /
+`src/data.ts` split below: keep growing the pure-engine surface without ever
+letting UI concerns leak into it.
+
 `RULES.md` is the authoritative rules reference the engine is tested against.
 It cites its sources per claim (`(card-verified)` against real card text,
 `(engine-derived)` where the implementation resolves an ambiguity). **When a
@@ -40,6 +47,7 @@ Work interface-first, test-driven:
 npm test        # runs every src/**/*.test.ts via node:test + tsx
 npm run typecheck   # tsc --noEmit against tsconfig.json and tsconfig.test.json
 npm run sync-cards   # regenerate src/data/cards.js from data/cards.json
+npm run build        # tsc -p tsconfig.json; emits build/ (declarations + JS)
 ```
 
 Run a single test file directly (faster than the full suite):
@@ -50,8 +58,12 @@ node --import tsx --test src/engine/__tests__/battle.test.ts
 
 There is no lint script. There is no bundler/dev-server wired into
 `package.json` — `build/` is produced by running `tsc` (not `--noEmit`)
-against `tsconfig.json` (`outDir: ./build`); `index.html` loads
-`/build/src/index.js` as a module.
+against `tsconfig.json` (`outDir: ./build`, `rootDir: ./`, so output lands
+under `build/src/...`); `index.html` loads `/build/src/index.js` as a
+module. `build/` is gitignored and regenerated on install via the
+`prepare` script — never hand-edit anything under it. `tsconfig.json`
+excludes `**/__tests__/**` so test-only helpers never end up in `build/`
+(and therefore never ship in the package).
 
 ## Architecture
 
@@ -70,15 +82,25 @@ against `tsconfig.json` (`outDir: ./build`); `index.html` loads
   mulligans (or starts turn 1 directly if the faction has none).
 - `src/engine/utilities.ts` — small pure helpers (`assert`, `compare`,
   `nextId`, threshold parsing, built-in faction defaults).
-- `src/engine.ts` — the public re-export surface (`export * from "./types"`
+- `src/engine.ts` — the package's main entry point (`package.json`'s
+  `"."` export) and the public re-export surface (`export * from "./types"`
   plus the engine/setup exports). Import from here, not from files inside
-  `src/engine/` or `src/types/` directly.
-- `src/index.ts` — a runnable usage example, not application code.
+  `src/engine/` or `src/types/` directly. Pure: no data, no DOM/Node
+  globals — only `src/types/` and `src/engine/`.
+- `src/data.ts` — the package's `"./data"` export: the real card catalog
+  (`CARD_CATALOG`) and preconstructed decklists (`ARCANIST_DECK`,
+  `WARLORD_DECK`). Deliberately separate from `src/engine.ts` — a consumer
+  that only wants the rules engine (e.g. to run it against synthetic cards)
+  never pulls in the ~1.2MB card database.
+- `src/index.ts` — a runnable usage example, not application code, and not
+  part of the package's public exports.
 - `data/cards.json` — source of truth for the real card database (2101+
   cards). `src/data/cards.js` is a **generated** copy (`npm run sync-cards`);
-  never hand-edit it. `data/raw-database.json`, `scripts/process-db.js`,
-  `scripts/fix-ids.js` are the (mostly one-off) pipeline that produced
+  never hand-edit it. `data/raw-database.json`, `scripts/process-db.cjs`,
+  `scripts/fix-ids.cjs` are the (mostly one-off) pipeline that produced
   `data/cards.json` and `data/assets/*.jpg` from an external source dump.
+  `data/assets/` (card images, ~370MB) is not part of the published package —
+  it's a repo-local static asset, not something a library consumer imports.
 - `src/data/decks/*.json` / `*-ids.js` — preconstructed decklists (e.g.
   `arcanist`, `warlord`), each a list of `CardDefinitionId`s including one
   copy of the faction card.
@@ -134,7 +156,7 @@ synthetic card definitions and games (`character()`, `item()`, `location()`,
 `data/cards.json`, so engine-rules tests fail for engine reasons, not data
 gaps. Import engine types/exports via `../../../engine.js` (the public
 surface), matching how real consumers would. Test files are matched purely
-by the `*.test.ts` suffix anywhere under `src/` (`scripts/run-tests.js`
+by the `*.test.ts` suffix anywhere under `src/` (`scripts/run-tests.cjs`
 walks the tree itself, since npm-script glob expansion isn't reliable across
 shells).
 
