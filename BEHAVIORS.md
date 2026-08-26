@@ -262,11 +262,15 @@ to touch when just authoring card data.)
   declaration, and a `moveCard` to `"discard"`. RULES.md §12: a 0-candidate
   declaration is skipped as a no-op rather than left as an unanswerable
   choice.
-- **`chooserSelectsOption`** — `{ chooser, options: Effect[][] }` — pauses
-  for `chooser` to pick exactly one of `options` to resolve in full (the
-  rest are skipped). "An opponent chooses one of the following effects" —
-  or a "you may" trigger modeled as a two-branch choice with an empty first
-  branch (see recipes below).
+- **`chooserSelectsOption`** — `{ chooser, options: EffectOption[] }`, where
+  `EffectOption` is `{ label?, effects: Effect[] }` — pauses for `chooser`
+  to pick exactly one of `options` to resolve in full (the rest are
+  skipped). "An opponent chooses one of the following effects" — or a "you
+  may" trigger modeled as a two-branch choice with an empty first branch
+  (see recipes below). `label` is optional data-authoring sugar: a bare
+  `Effect[]` has no inherent human-readable meaning, so a renderer has
+  nothing else to show for each branch in a choice UI — set it whenever a
+  branch isn't self-evident (an empty "decline" branch usually is).
 - **`lookAndReorder`** — `{ player, count }` — pauses for `player` to
   reorder the top `count` cards of their own deck ("look at the top N
   cards... put them back in any order"). A no-op if the deck has fewer than
@@ -593,8 +597,9 @@ honored there. Not currently blocking any card; flag if one needs it.
   "effects": [{
     "type": "chooserSelectsOption", "chooser": "controller",
     "options": [
-      [],
-      [{ "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }]
+      { "label": "Decline", "effects": [] },
+      { "label": "Put a token on this card",
+        "effects": [{ "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }] }
     ]
   }] }
 ```

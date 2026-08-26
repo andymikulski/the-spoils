@@ -1825,8 +1825,8 @@ function ritual(): CardDefinition {
               type: "chooserSelectsOption",
               chooser: "opponent",
               options: [
-                [{ type: "modifyInfluence", player: "controller", amount: 1 }],
-                [{ type: "modifyInfluence", player: "controller", amount: 2 }]
+                { label: "Gain 1 influence", effects: [{ type: "modifyInfluence", player: "controller", amount: 1 }] },
+                { label: "Gain 2 influence", effects: [{ type: "modifyInfluence", player: "controller", amount: 2 }] }
               ]
             }
           ]
@@ -3016,7 +3016,10 @@ function voidalObservatory(): CardDefinition {
             {
               type: "chooserSelectsOption",
               chooser: "controller",
-              options: [[], [{ type: "addCounter", target: "source", counter: "token", amount: 1 }]]
+              options: [
+                { label: "Decline", effects: [] },
+                { label: "Put a token on this card", effects: [{ type: "addCounter", target: "source", counter: "token", amount: 1 }] }
+              ]
             }
           ]
         },
@@ -3124,7 +3127,10 @@ function napiformProtuberance(): CardDefinition {
             {
               type: "chooserSelectsOption",
               chooser: "controller",
-              options: [[], [{ type: "addCounter", target: "source", counter: "token", amount: 1 }]]
+              options: [
+                { label: "Decline", effects: [] },
+                { label: "Put a token on this card", effects: [{ type: "addCounter", target: "source", counter: "token", amount: 1 }] }
+              ]
             }
           ]
         },

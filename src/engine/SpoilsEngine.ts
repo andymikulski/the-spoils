@@ -3263,7 +3263,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = undefined;
         this.state.pendingEffectFrames.push({
-          effects: pending.options[choice.index],
+          effects: pending.options[choice.index].effects,
           index: 0,
           context: pending.context
         });

@@ -13,7 +13,7 @@
 
 import type { AbilityId, CardInstanceId, PlayerId } from "./ids.js";
 import type { TargetDeclaration } from "./expressions.js";
-import type { Effect } from "./effects.js";
+import type { Effect, EffectOption } from "./effects.js";
 import type { ResolutionContext } from "./resolution.js";
 
 export interface PendingUniqueSurvivorChoice {
@@ -60,13 +60,13 @@ export interface PendingChooserTargetChoice {
   context: ResolutionContext;
 }
 
-/** "An opponent chooses one of the following effects" — `chooser` picks one of `options` to resolve in full (see the `chooserSelectsOption` effect). */
+/** "An opponent chooses one of the following effects" — `chooser` picks one of `options` to resolve in full (see the `chooserSelectsOption` effect). Each option's optional `label` is the only game-agnostic hint a UI has for describing it — see `EffectOption`. */
 export interface PendingChooserOptionChoice {
   kind: "chooserSelectsOption";
   id: string;
   playerId: PlayerId;
   optionCount: number;
-  options: Effect[][];
+  options: EffectOption[];
   context: ResolutionContext;
 }
 

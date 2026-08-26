@@ -739,15 +739,21 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
-                [],
-                [
-                  {
-                    "type": "addCounter",
-                    "target": "source",
-                    "counter": "token",
-                    "amount": 1
-                  }
-                ]
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -1044,65 +1050,71 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "opponent",
               "options": [
-                [
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "opponent",
-                    "declaration": {
-                      "id": "discard1",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
-                      },
-                      "count": 1
-                    },
-                    "effects": [
-                      {
-                        "type": "moveCard",
-                        "target": {
-                          "type": "selected",
-                          "id": "discard1"
+                {
+                  "label": "Discard 2 cards",
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "discard1",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
                         },
-                        "to": "discard"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "opponent",
-                    "declaration": {
-                      "id": "discard2",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
+                        "count": 1
                       },
-                      "count": 1
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "discard1"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     },
-                    "effects": [
-                      {
-                        "type": "moveCard",
-                        "target": {
-                          "type": "selected",
-                          "id": "discard2"
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "discard2",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
                         },
-                        "to": "discard"
-                      }
-                    ]
-                  }
-                ],
-                [
-                  {
-                    "type": "moveCard",
-                    "target": {
-                      "type": "random",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
-                      }
-                    },
-                    "to": "discard"
-                  }
-                ]
+                        "count": 1
+                      },
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "discard2"
+                          },
+                          "to": "discard"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": "Discard a card at random",
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "random",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
+                        }
+                      },
+                      "to": "discard"
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -1639,15 +1651,21 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
-                [],
-                [
-                  {
-                    "type": "addCounter",
-                    "target": "source",
-                    "counter": "token",
-                    "amount": 1
-                  }
-                ]
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -9479,15 +9497,21 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
-                [],
-                [
-                  {
-                    "type": "addCounter",
-                    "target": "source",
-                    "counter": "token",
-                    "amount": 1
-                  }
-                ]
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -17169,15 +17193,21 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
-                [],
-                [
-                  {
-                    "type": "addCounter",
-                    "target": "source",
-                    "counter": "token",
-                    "amount": 1
-                  }
-                ]
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -17474,65 +17504,71 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "opponent",
               "options": [
-                [
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "opponent",
-                    "declaration": {
-                      "id": "discard1",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
-                      },
-                      "count": 1
-                    },
-                    "effects": [
-                      {
-                        "type": "moveCard",
-                        "target": {
-                          "type": "selected",
-                          "id": "discard1"
+                {
+                  "label": "Discard 2 cards",
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "discard1",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
                         },
-                        "to": "discard"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "opponent",
-                    "declaration": {
-                      "id": "discard2",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
+                        "count": 1
                       },
-                      "count": 1
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "discard1"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     },
-                    "effects": [
-                      {
-                        "type": "moveCard",
-                        "target": {
-                          "type": "selected",
-                          "id": "discard2"
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "discard2",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
                         },
-                        "to": "discard"
-                      }
-                    ]
-                  }
-                ],
-                [
-                  {
-                    "type": "moveCard",
-                    "target": {
-                      "type": "random",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "hand"
-                      }
-                    },
-                    "to": "discard"
-                  }
-                ]
+                        "count": 1
+                      },
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "discard2"
+                          },
+                          "to": "discard"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": "Discard a card at random",
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "random",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "hand"
+                        }
+                      },
+                      "to": "discard"
+                    }
+                  ]
+                }
               ]
             }
           ]
@@ -18052,15 +18088,21 @@ export default [
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
-                [],
-                [
-                  {
-                    "type": "addCounter",
-                    "target": "source",
-                    "counter": "token",
-                    "amount": 1
-                  }
-                ]
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
               ]
             }
           ]

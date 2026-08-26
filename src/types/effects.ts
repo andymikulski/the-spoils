@@ -168,7 +168,7 @@ export type Effect =
        */
       type: "chooserSelectsOption";
       chooser: PlayerRef;
-      options: Effect[][];
+      options: EffectOption[];
     }
   | {
       /**
@@ -225,6 +225,19 @@ export type Effect =
       amount: NumberExpression;
       effects: Effect[];
     };
+
+/**
+ * One branch of a `chooserSelectsOption` effect. `label` is an optional,
+ * game-agnostic human-readable description of what picking this branch
+ * does (e.g. "Put a token on this card") — a renderer has no other way to
+ * turn a bare `Effect[]` into UI copy, since effects are structured data,
+ * not text. Card-authored branches without a meaningful description (e.g.
+ * "decline" as an empty `effects: []`) may omit it.
+ */
+export interface EffectOption {
+  label?: string;
+  effects: Effect[];
+}
 
 export interface ModifierDefinition {
   target: TargetRef;
