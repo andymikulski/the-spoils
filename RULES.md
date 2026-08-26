@@ -255,7 +255,7 @@ rejects everything but a response. Three kinds exist today —
 renderer can detect one without inspecting `GameState.pendingChoice.kind`
 itself.
 
-## 8. Battle
+## 8. Battle Rules
 
 **Declaring the attack**
 1. Active player picks characters to attack with — each must be
