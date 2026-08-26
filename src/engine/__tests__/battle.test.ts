@@ -318,6 +318,28 @@ describe("RULES.md §9 — Covert", () => {
       engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("guard")] })
     );
   });
+
+  test("a party is only Covert if EVERY attacker has Covert — a mixed party can be blocked by any character", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sneak", def: character({ name: "Sneak", behavior: { keywords: ["covert"] } }), owner: P1 },
+        { key: "bruiser", def: character({ name: "Bruiser" }), owner: P1 },
+        { key: "guard", def: character({ name: "Guard" }), owner: P2 }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("sneak"), id("bruiser")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+
+    assert.doesNotThrow(() =>
+      engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("guard")] })
+    );
+  });
 });
 
 describe("RULES.md §8 — blocking eligibility", () => {

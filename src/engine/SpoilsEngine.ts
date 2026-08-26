@@ -4294,10 +4294,6 @@ export class SpoilsEngine {
       return;
     }
 
-    const attackersContainCovert = attackerIds.some(cardId =>
-      this.hasKeyword(cardId, "covert")
-    );
-
     const blockersContainCovert = blockerIds.some(cardId =>
       this.hasKeyword(cardId, "covert")
     );
@@ -4310,10 +4306,10 @@ export class SpoilsEngine {
       this.hasKeyword(cardId, "covert")
     );
 
-    if (attackersContainCovert) {
+    if (attackingPartyIsCovert) {
       assert(
         blockingPartyIsCovert,
-        "A party containing a COVERT character can only be blocked by a COVERT party."
+        "A COVERT attacking party can only be blocked by a COVERT party."
       );
     }
 
