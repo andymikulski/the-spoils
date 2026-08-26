@@ -116,6 +116,25 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
 
     assert.equal(engine.getCardPlayability(P1, id("gadget")).legalTiming, false);
   });
+
+  test("RULES.md §6 — a resource card in hand is never playable via a normal card play, even in the main phase", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "rage1", def: resourceCard({ name: "Rage 1" }), owner: P1 },
+        { key: "spareResource", def: resourceCard({ name: "Spare Resource", cost: 0 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    // Playing a resource is a develop-step choice, not a normal turn action —
+    // it must never show up as playable, or a UI built on this query would
+    // let a player play more than one resource in a turn.
+    assert.equal(engine.getCardPlayability(P1, id("spareResource")).legalTiming, false);
+    assert.deepEqual(engine.getPlayableHandCards(P1), []);
+
+    assert.throws(() =>
+      engine.perform({ type: "playCard", playerId: P1, cardId: id("spareResource") })
+    );
+  });
 });
 
 describe("getPlayableHandCards", () => {

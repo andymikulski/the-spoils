@@ -165,6 +165,14 @@ A turn has two steps:
 2. **Main** — the active player may, in any order and any number of times:
    play a card, use an ability, declare an attack, and finally end the
    turn. Ending the turn is the one action that can happen at most once.
+   "Play a card" here excludes resource cards: playing a resource only
+   happens through the develop step's choice (or a card effect that
+   explicitly plays a card as a resource, e.g. the `playResource` effect) —
+   never as a normal main-step card play. **(engine-derived)** — this is
+   enforced by the same timing check (`assertCanDeployAtCurrentTiming`) used
+   by both `playCard` and the `getCardPlayability`/`getPlayableHandCards`
+   query surface, so a card of type `resource` never reports as playable and
+   is rejected if attempted, regardless of turn phase.
 
 At the start of a player's turn, before develop:
 - Every character that both (a) is not face-down and (b) has been
@@ -376,6 +384,17 @@ before defender within a round:
   Resources are never depleted (they're attached instead).
 - **Restoring** ("untapping") — reverses depletion; normally happens via
   the controlling faction's turn-start restore rule, or an explicit effect.
+
+**(engine-derived)** Damage and depletion are play-zone concepts — a card
+has neither while sitting in hand, deck, discard, void, or removed. Any
+card leaving `play`, for any reason (bounced to hand, discarded, put in the
+void, removed from the game), clears both `damage` and `depleted`
+immediately, the same way it already sheds `faceDown`/`attachedTo` (RULES.md
+§2). This matters even for a location, whose damage otherwise persists
+turn to turn while it stays in play (§3): that persistence stops the
+instant it leaves play, so a bounced or returned location doesn't carry
+old damage back into a fresh stint in play (destroying it on re-entry, or
+returning to a hand as a "damaged"/"depleted" card in the first place).
 
 ## 11. State-based actions
 

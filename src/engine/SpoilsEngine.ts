@@ -1268,6 +1268,14 @@ export class SpoilsEngine {
     playerId: PlayerId,
     definition: CardDefinition
   ): void {
+    // RULES.md §6: playing a resource happens only via the develop step's
+    // "play resource" choice (or a card effect that explicitly does so) —
+    // never as a normal card play, which would bypass the once-per-turn limit.
+    assert(
+      definition.type !== "resource",
+      "Resource cards can only be played during the develop step."
+    );
+
     const window = this.state.responseWindow;
 
     if (window) {
@@ -3384,6 +3392,12 @@ export class SpoilsEngine {
     if (to !== "play") {
       card.faceDown = false;
       card.attachedTo = undefined;
+      // Depletion and damage are play-zone concepts (a "tapped" or damaged
+      // card in hand/deck/discard is meaningless) — leaving play clears
+      // both, the same way a location's turn-spanning damage still resets
+      // once it's no longer in play at all.
+      card.depleted = false;
+      card.damage = 0;
     }
 
     // If a target leaves play, its attachments become unattached. This is
@@ -3439,9 +3453,6 @@ export class SpoilsEngine {
 
     const previousController =
       card.controllerId;
-
-    card.damage = 0;
-    card.depleted = false;
 
     this.moveCard(cardId, "discard", emitEvents);
 

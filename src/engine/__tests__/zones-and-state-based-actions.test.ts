@@ -188,4 +188,44 @@ describe("RULES.md §2 — zones", () => {
 
     assert.equal(engine.state.cards[id("corpse")].zone, "removed");
   });
+
+  test("a card leaving play loses its damage and depletion — neither is meaningful outside the play zone", () => {
+    const bounceAbility: ActivatedAbility = {
+      id: "bounce",
+      type: "activated",
+      targets: [{ id: "target", selector: { controller: "opponent" }, count: 1 }],
+      effects: [{ type: "moveCard", target: { type: "selected", id: "target" }, to: "hand" }]
+    };
+
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "bouncer",
+          def: character({ name: "Bouncer", behavior: { abilities: [bounceAbility] } }),
+          owner: P1
+        },
+        {
+          key: "victim",
+          def: character({ name: "Victim", life: 3 }),
+          owner: P2,
+          damage: 2,
+          depleted: true
+        }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("bouncer"),
+      abilityId: "bounce",
+      selected: { target: [id("victim")] }
+    });
+    resolvePendingResponses(engine);
+
+    const victim = engine.state.cards[id("victim")];
+    assert.equal(victim.zone, "hand");
+    assert.equal(victim.damage, 0);
+    assert.equal(victim.depleted, false);
+  });
 });
