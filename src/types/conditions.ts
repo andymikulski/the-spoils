@@ -2,7 +2,7 @@
 // Conditions
 // -----------------------------------------------------------------------------
 
-import type { CardType, ComparisonOperator, Stat, Zone } from "./ids.js";
+import type { CardType, ComparisonOperator, Stat, Trade, Zone } from "./ids.js";
 import type { NumberExpression, PlayerRef, TargetRef } from "./expressions.js";
 
 export type Condition =
@@ -17,6 +17,39 @@ export type Condition =
       type: "cardTypeIs";
       target: TargetRef;
       cardType: CardType;
+    }
+  | {
+      /**
+       * True when `target`'s printed `trade` equals `trade`. `CardSelector`
+       * has no positive-trade filter and no exclusion list, so compose with
+       * `not` for "a non-Rogue character" (bind `target` to
+       * `{ type: "selected", id: "__candidate" }` inside a selector's
+       * `conditions`).
+       */
+      type: "cardTradeIs";
+      target: TargetRef;
+      trade: Trade;
+    }
+  | {
+      /**
+       * True when `target`'s definition carries a Unique designation
+       * (`CardDefinition.unique` is set) — "a character with the UNIQUE
+       * keyword in its rules text".
+       */
+      type: "hasUnique";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * True when `target`'s definition has at least one ability of
+       * `abilityType` (any ability if omitted) in `behavior.abilities` —
+       * "a card you control with an ability in its rules text" (Notion
+       * Sickness, which then uses one, so it wants `abilityType:
+       * "activated"`).
+       */
+      type: "hasAbility";
+      target: TargetRef;
+      abilityType?: "activated" | "triggered" | "continuous" | "replacement";
     }
   | {
       type: "statCompare";
@@ -106,4 +139,73 @@ export type Condition =
       type: "targetInSelection";
       target: TargetRef;
       selection: string;
+    }
+  | {
+      /**
+       * Compares *how many times the current triggering event has already
+       * occurred this turn* (`GameState.turnEventTally`, keyed by event type
+       * and — when the event has one — its `playerId`) against `value`. "The
+       * first resource each opponent plays each turn" is a `resourcePlayed`
+       * trigger with `and(eventPlayerIs opponent, { eventOrdinal, operator:
+       * "=", value: 1 })`. False when there is no triggering event.
+       */
+      type: "eventOrdinal";
+      operator: ComparisonOperator;
+      value: NumberExpression;
+    }
+  | {
+      /**
+       * Compares the largest number of same-named cards `player` has
+       * deployed *this turn* (`GameState.turnDeploys`) against `value` —
+       * "an opponent deployed at least 2 cards with the same name this
+       * turn" is `{ player: "opponent", operator: ">=", value: 2 }`.
+       */
+      type: "deploySameNameThisTurn";
+      player: PlayerRef;
+      operator: ComparisonOperator;
+      value: NumberExpression;
+    }
+  | {
+      /**
+       * True when the card is being played *into a response window* whose
+       * unresolved response stack contains a card of type `cardType` (any
+       * card if omitted) other than this one — "deploy this only in
+       * response to a character being deployed". Pair with the
+       * `respondedToCard` TargetRef to reach that card (its `cardCost`,
+       * `terminate` it, ...).
+       */
+      type: "respondingTo";
+      cardType?: CardType;
+    }
+  | {
+      /**
+       * True when the card currently resolving was played via its FLIP UP
+       * cost (`ResolutionContext.deployedViaFlipUp`). "If you deployed this
+       * card using FLIP UP, X is 4, otherwise X is 2" is an ability
+       * `variables: { x: {...} }` plus an `if` branching on this.
+       */
+      type: "deployedViaFlipUp";
+    }
+  | {
+      /**
+       * True when `target` and `other` both resolve to a card and those
+       * two cards share the same printed `name` — "search your deck for a
+       * card with the same name" (bind `target` to `{ type: "selected",
+       * id: "__candidate" }` in a selector's `conditions`, `other` to
+       * `"eventCard"`). False if either side is missing.
+       */
+      type: "cardNameEquals";
+      target: TargetRef;
+      other: TargetRef;
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) resolves to a card that its
+       * *owner* set aside to the bottom of their deck during the opening
+       * mulligan (`GameState.mulligan`). For "if you ... chose to put this
+       * card on the bottom of your deck as part of your mulligan"
+       * (Community Chest).
+       */
+      type: "bottomedInMulligan";
+      target?: TargetRef;
     };

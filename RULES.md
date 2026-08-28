@@ -78,15 +78,19 @@ explicitly), not something specific to this zone.
   damage ≥ structure. Only playable on the controller's own turn (unless
   **Tactical**).
 
-  **(engine-derived)** A location's structure is just its `life` stat —
-  there's no separate field. `checkStateBasedActions` destroys characters
-  and locations the same way (damage ≥ life).
+  **(engine-derived)** A location's capacity is its own
+  `CardDefinition.structure` field (not `life`). `checkStateBasedActions`
+  destroys characters and locations the same way — accumulated damage ≥
+  capacity — reading `life` for a character and `structure` for a location.
 
-  > **Known data gap:** `data/cards.json` does not currently carry a
-  > structure value for location cards (life/strength/speed all come back
-  > empty) — that's a data-extraction gap, not an engine one. Tests use
-  > synthetic location fixtures with an explicit `life` until the real data
-  > is filled in.
+  > **(resolved)** All 140 real location cards in `data/cards.json` now
+  > carry a numeric `structure`; `card-data-integrity.test.ts` enforces it
+  > (a location with no structure could never be destroyed by damage). The
+  > last gap, *Zenobia's Tower*, was filled from the card art after the
+  > source dump mislabelled its STRUCTURE shield as `speed` — see its
+  > coverage-manifest note. Engine-rules tests still use synthetic location
+  > fixtures with an explicit `structure`, on purpose (they must fail for
+  > engine reasons, not data ones).
 - **Tactic** — one-shot effect; resolves then goes to `discard`. Can always
   be played as a response (that's the entire point of the type), during
   battle response windows, or as a normal turn action.
@@ -151,7 +155,9 @@ explicitly), not something specific to this zone.
 5. If the faction offers a mulligan, each player in turn order may set aside
    any number of hand cards to the bottom of the deck (in an order of their
    choosing) and draw that many replacements. This can only happen once per
-   player — no rummaging through it again.
+   player — no rummaging through it again. **(engine-derived)** which cards
+   each player set aside is recorded on `GameState.mulligan` and read by
+   the `bottomedInMulligan` condition (*Community Chest*).
 6. Turn 1 begins in the develop step for the first player.
 
 ## 6. Turn structure
@@ -202,6 +208,14 @@ and any other card type that has the **Tactical** keyword. Activated
 abilities can also be used in a response window, following the same
 priority rules.
 
+**Terminate (card-verified).** Some effects remove a still-unresolved card
+or ability from the stack ("terminate", equivalent to "counter") — it never
+resolves, and a terminated card goes to its owner's discard. A card can be
+terminated in the same instant it is played, by a `cardPlayed`-triggered
+ability (e.g. *The Great Wall of Keeping Stuff Out*). **(engine-derived)**
+the `cardPlayed` event and the stack push happen as one batched step so
+such a trigger sees the card already on the stack.
+
 **Triggered abilities are not responses.** They fire automatically the
 instant their condition becomes true, cannot be responded to as a discrete
 action, and use the game state at the moment they fired even if something
@@ -249,9 +263,14 @@ moments that aren't tied to one specific player action: a state-based check
 or a batch of triggers can, on its own, decide a *real* decision is needed
 and pause there. While it's set, `perform()` rejects everything except a
 matching `resolvePendingChoice`, the same way an open response window
-rejects everything but a response. Three kinds exist today —
-`uniqueSurvivor` (§9), `selectTargets` (this section), `orderTriggers`
-(this section) — and `GameFlowView.mode` becomes `"pendingChoice"` so a
+rejects everything but a response. The kinds today are `uniqueSurvivor`
+(§9), `selectTargets` / `orderTriggers` (this section), the chooser-effect
+pauses (`chooserSelectsTarget`, `chooserSelectsOption`, `reorderDeck`,
+`deployForFree`, `distributeAmong`), and — added for the card-coverage
+effort — `replacementChoice` (an optional "you may ... instead", §10),
+`mayPay` ("you may pay N. If you do, ..."), `nameValue` ("name a card
+subtype"), and `useTargetAbility` ("use one of the card's abilities").
+`GameFlowView.mode` becomes `"pendingChoice"` so a
 renderer can detect one without inspecting `GameState.pendingChoice.kind`
 itself.
 
@@ -312,6 +331,17 @@ before defender within a round:
   "damage" for the purposes of damage-prevention/redirection effects.
 - A character removed from the battle (destroyed, or its control changes)
   is immediately pulled from the attacking/blocking party.
+- **(engine-derived)** A continuous ability can *tune* an amount of damage
+  as it is inflicted ("reduce battle damage to your characters by 2",
+  "increase ... by 2") via `ContinuousAbility.damageModifiers`. This is an
+  amount adjustment, floored at 0 — it can't cancel an instance the way a
+  replacement effect would. **Ruling:** each source's contribution is a
+  distinct instance of damage (the standard CCG reading), so the modifier
+  is applied *per damage assignment*, not once per summed speed-group
+  application: a two-attacker speed group each assigning 2 to one character
+  warded by "reduce battle damage by 2" deals 0, not 2. This matches the
+  engine's per-assignment `damageDealt` model and is locked by a
+  `card-behaviors.test.ts` case.
 
   **(engine-derived)** "Control changes" is the `takeControl` effect
   (`{ type: "takeControl", target, controller }`) — the only way
@@ -373,12 +403,54 @@ before defender within a round:
 - **Activated** — has a cost and effects; only its controller may use it;
   requires priority (see §7) the same as any other stack action. All listed
   costs must be payable simultaneously or the ability cannot be activated
-  at all (no partial payment).
+  at all (no partial payment). **(engine-derived)** an ability may also
+  carry its own icon `threshold` (`ActivatedAbility.threshold`, same
+  shorthand as a card's) — the "RECUR: [G][G]" / "EXHUMATION: [O][O]"
+  clause — checked as a gate before condition/targets/costs.
+- **EXTRA COST (card-verified)** — a printed "EXTRA COST: ..." on a card
+  being *played* is a real, hard cost on the deploy, not a "you may": if it
+  can't be paid the card can't be played (mirroring §4/§12). It may be
+  derived/conditional — *Anatidaephobia*'s "if you did not deploy this
+  using FLIP UP, pay X where X is the character's numeric cost" is one
+  `payResources` cost whose amount reads the responded-to card's cost and
+  collapses to 0 when `deployedViaFlipUp`. **(engine-derived)** carried by
+  the tactic-first-ability / `behavior.onPlay` cost convention, evaluated
+  with the same context (`respondedToCard`, `deployedViaFlipUp`) the play
+  itself resolves under.
 - **Triggered** — keyed to "if/when/at" wording; fires automatically per §7,
   cannot be responded to directly.
 - **Continuous** — always-on while the source is in play; a "while X"
   conditional continuous ability turns on/off immediately as the condition
   becomes true/false, with no lingering state.
+- **Replacement (card-verified)** — "if <X> would happen, instead <Y>"
+  (*The Stone of Shame*: "If a character would be put into a player's hand,
+  destroy it instead"; *Giada, the Elegant*: "If this card would be
+  destroyed by an opposing card or effect, you may put a token on it
+  instead"). Checked *before* the event it replaces actually happens; when
+  it applies, the original event does not occur and the replacement effects
+  run in its place. **(engine-derived)** `ReplacementAbility` — consulted
+  from inside `moveCard` (a card leaving `play` for a matched `zone`) and
+  `destroyCard`, recursion-guarded. Both forms are wired: the **mandatory**
+  form runs its `effects` inline, and the **optional** "you may pay/choose
+  ... instead" gate (`optional` / `optionalCost`) pauses the engine on a
+  `replacementChoice` pending choice for the source's controller. Scoping:
+  `replaces.controlledBy` filters on *whose card* is affected;
+  `replaces.by` (`"self" | "opponent" | "any"`) filters on *who initiated*
+  the event ("by an opposing card or effect") — the controller of the
+  effect currently resolving, or, for lethal battle damage, the player who
+  dealt it. An unknown initiator (a bare state-based check with no
+  preceding effect) satisfies neither `"self"` nor `"opponent"`.
+- **FLIP UP (card-verified)** — a card printed with a "FLIP UP: <cost>"
+  clause can be played face-down as a resource and later flipped up by
+  paying that cost (numeric + threshold, plus any "...and <rider>"), at
+  which point it resolves as its real card type. Its own text can branch on
+  "if you deployed this card using FLIP UP." **(engine-derived)** the
+  `flipUp` action + `deployedViaFlipUp` on the resolution context. Flipping
+  up opens no response window, but its effects (the "...and <rider>" first,
+  then the card's own) run through the same suspendable effect-frame path
+  as everything else: one that pauses on a chooser suspends on a
+  `pendingChoice`, and the wrap-up (a flipped tactic to discard, a flipped
+  permanent into play) waits until it resumes and finishes.
 - **Depleting** ("tapping") — a card used to pay a deplete cost, or that
   attacks, becomes depleted and can't be depleted again until restored.
   Resources are never depleted (they're attached instead).
@@ -411,6 +483,13 @@ per turn):
 - Any faction at 0 influence ends the game for that player, immediately (a
   draw if both hit 0 from the same event). Checked last, after every
   destruction above has settled.
+
+**(engine-derived)** The whole check is skipped while a `pendingChoice` is
+outstanding — the engine is frozen awaiting input, and in particular an
+*optional replacement* awaiting accept/decline leaves its would-be-destroyed
+card sitting with lethal damage; re-running the check would just re-offer
+the replacement forever. Every `resolvePendingChoice` branch re-runs the
+check once it has settled.
 
 ## 12. Miscellaneous rulings
 

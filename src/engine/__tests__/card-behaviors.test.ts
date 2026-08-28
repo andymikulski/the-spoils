@@ -3382,3 +3382,2176 @@ describe("card behavior: Arcana Experiment (depleteSelected -> selectionCount ->
     );
   });
 });
+
+// ===========================================================================
+// Seed 3 coverage — Wave A: primitive expression / condition vocabulary
+// (printedStat, resourceIcons, cardTradeIs, hasUnique). One card shape each.
+// ===========================================================================
+
+// "printed life minus 2" — Fornicaves-style: a continuous debuff whose amount
+// is derived from the target's PRINTED life, not its current (modified) life.
+describe("Seed 3 Wave A: printedStat expression", () => {
+  test("createModifier value = printedStat resolves against the definition, ignoring other modifiers", () => {
+    const debuffer = item({
+      name: "Printed-Life Debuffer",
+      behavior: {
+        abilities: [
+          {
+            id: "debuff",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [
+              {
+                type: "createModifier",
+                target: { type: "selected", id: "t" },
+                stat: "life",
+                operation: "add",
+                // lose (printed life - 2): printed 5 -> -3
+                value: {
+                  type: "multiply",
+                  values: [
+                    -1,
+                    { type: "add", values: [{ type: "printedStat", target: { type: "selected", id: "t" }, stat: "life" }, -2] }
+                  ]
+                },
+                duration: { type: "permanent" }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "src", def: debuffer, owner: P1 },
+        { key: "bear", def: character({ name: "Bear", life: 5 }), owner: P1 }
+      ]
+    });
+
+    // pre-existing +10 life modifier must NOT feed back into printedStat
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("src"),
+      abilityId: "debuff",
+      selected: { t: [id("bear")] }
+    });
+    resolvePendingResponses(engine);
+
+    // 5 printed - 3 = 2
+    assert.equal(engine.getStat(id("bear"), "life"), 2);
+  });
+});
+
+// "X is the number of [O] you control" — Devilfang Thunderhoof / Fecal Urgency.
+describe("Seed 3 Wave A: resourceIcons expression", () => {
+  test("counts a player's in-play resource icons of one type", () => {
+    const obsession = resourceCard({ name: "Obsession", resource: { provides: ["obsession"], staple: true } });
+    const drawPerIcon = tactic({
+      name: "Draw Per Obsession",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            effects: [
+              { type: "draw", player: "controller", amount: { type: "resourceIcons", player: "controller", icon: "obsession" } }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: drawPerIcon, owner: P1, zone: "hand" },
+        { key: "o1", def: obsession, owner: P1 },
+        { key: "o2", def: obsession, owner: P1 },
+        { key: "o3", def: obsession, owner: P1 },
+        { key: "fd", def: character({ name: "FaceDown" }), owner: P1, faceDown: true },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" },
+        { key: "d2", def: character({ name: "D2" }), owner: P1, zone: "deck" },
+        { key: "d3", def: character({ name: "D3" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t") });
+    resolvePendingResponses(engine);
+    // tactic left hand; 3 obsession resources -> drew d1/d2/d3 (the face-down
+    // resource provides volition, not obsession, so it doesn't count).
+    assert.deepEqual(
+      [...engine.state.players[P1].hand].map(cid => engine.getDefinition(cid).name).sort(),
+      ["D1", "D2", "D3"]
+    );
+  });
+});
+
+// "all non-Rogue characters" — Delicious Strawberry Flavored Death.
+describe("Seed 3 Wave A: cardTradeIs condition", () => {
+  test("selector `conditions` with not(cardTradeIs) excludes a trade", () => {
+    const depleteNonRogue = tactic({
+      name: "Deplete Non-Rogue",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            effects: [
+              {
+                type: "forEach",
+                selector: {
+                  zone: "play",
+                  type: "character",
+                  conditions: [
+                    { type: "not", condition: { type: "cardTradeIs", target: { type: "selected", id: "__candidate" }, trade: "rogue" } }
+                  ]
+                },
+                effects: [{ type: "deplete", target: { type: "selected", id: "__candidate" } }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: depleteNonRogue, owner: P1, zone: "hand" },
+        { key: "warlord", def: character({ name: "Warlord Guy", trade: "warlord" }), owner: P1 },
+        { key: "rogue", def: character({ name: "Rogue Guy", trade: "rogue" }), owner: P1 }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("warlord")].depleted, true);
+    assert.equal(engine.state.cards[id("rogue")].depleted, false);
+  });
+});
+
+// "pick a character with the UNIQUE keyword in its rules text" — Prestige Inversion.
+describe("Seed 3 Wave A: hasUnique condition", () => {
+  test("selector `conditions` restricts targeting to cards with a Unique designation", () => {
+    const removeUnique = tactic({
+      name: "Remove Unique",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            targets: [
+              {
+                id: "t",
+                selector: {
+                  zone: "play",
+                  type: "character",
+                  conditions: [{ type: "hasUnique", target: { type: "selected", id: "__candidate" } }]
+                },
+                count: 1
+              }
+            ],
+            effects: [{ type: "removeFromGame", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: removeUnique, owner: P1, zone: "hand" },
+        { key: "uniq", def: character({ name: "Unique One", unique: "one" }), owner: P2 },
+        { key: "plain", def: character({ name: "Plain" }), owner: P2 }
+      ]
+    });
+
+    // targeting the non-unique character is illegal
+    assert.throws(() =>
+      engine.perform({
+        type: "playCard",
+        playerId: P1,
+        cardId: id("t"),
+        selected: { t: [id("plain")] }
+      })
+    );
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("t"),
+      selected: { t: [id("uniq")] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("uniq")].zone, "removed");
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave B: mill effect, bind effect
+// ===========================================================================
+
+// "You may put the top 3 cards of that opponent's deck into their discard
+// pile." — Ipsighast, the Lustful.
+describe("Seed 3 Wave B: mill effect", () => {
+  test("moves the top N cards of a deck to its owner's discard", () => {
+    const millCard = tactic({
+      name: "Mill 3",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            effects: [{ type: "mill", player: "opponent", count: 3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: millCard, owner: P1, zone: "hand" },
+        { key: "d1", def: character({ name: "D1" }), owner: P2, zone: "deck" },
+        { key: "d2", def: character({ name: "D2" }), owner: P2, zone: "deck" },
+        { key: "d3", def: character({ name: "D3" }), owner: P2, zone: "deck" },
+        { key: "d4", def: character({ name: "D4" }), owner: P2, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t") });
+    resolvePendingResponses(engine);
+
+    assert.deepEqual(engine.state.players[P2].deck, [id("d4")]);
+    assert.deepEqual([...engine.state.players[P2].discard].sort(), [id("d1"), id("d2"), id("d3")].sort());
+  });
+
+  test("mills only what's there when the deck is shorter than count", () => {
+    const millCard = tactic({
+      name: "Mill 5",
+      behavior: { abilities: [{ id: "x", type: "activated", effects: [{ type: "mill", player: "controller", count: 5 }] }] }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: millCard, owner: P1, zone: "hand" },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].deck.length, 0);
+    assert.equal(engine.state.players[P1].discard.includes(id("d1")), true);
+  });
+});
+
+// "When a character enters play under your control, you may destroy that
+// character. If you do, X is that character's strength ... it gains X strength
+// this turn." — Merbegon: capture a stat before the source of it is gone.
+describe("Seed 3 Wave B: bind effect", () => {
+  test("captures a value before a later effect removes the card it came from", () => {
+    const grafter = character({
+      name: "Stat Grafter",
+      behavior: {
+        abilities: [
+          {
+            id: "graft",
+            type: "activated",
+            targets: [
+              { id: "victim", selector: { zone: "play", type: "character", conditions: [{ type: "not", condition: { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "faction" } }] }, count: 1 },
+              { id: "buffed", selector: { zone: "play", type: "character" }, count: 1 }
+            ],
+            effects: [
+              { type: "bind", id: "gx", value: { type: "stat", target: { type: "selected", id: "victim" }, stat: "strength" } },
+              { type: "destroy", target: { type: "selected", id: "victim" } },
+              {
+                type: "createModifier",
+                target: { type: "selected", id: "buffed" },
+                stat: "strength",
+                operation: "add",
+                value: { type: "variable", id: "gx" },
+                duration: { type: "untilEndOfTurn" }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "grafter", def: grafter, owner: P1 },
+        { key: "victim", def: character({ name: "Beefy", strength: 6 }), owner: P1 },
+        { key: "buffed", def: character({ name: "Recipient", strength: 2 }), owner: P1 }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("grafter"),
+      abilityId: "graft",
+      selected: { victim: [id("victim")], buffed: [id("buffed")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("victim")].zone, "discard");
+    // 2 base + 6 captured from the (now destroyed) victim
+    assert.equal(engine.getStat(id("buffed"), "strength"), 8);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave C: continuous auras (selector-based ContinuousAbility
+// modifiers / keyword grants), with per-target derived values.
+// ===========================================================================
+
+// "All characters lose X life, where X is their printed life minus 2." —
+// Fornicaves. A live, selector-scoped modifier whose amount is per-target.
+describe("Seed 3 Wave C: continuous aura modifier (selector form)", () => {
+  test("applies to every matching card with a per-target derived value", () => {
+    const fornicaves = location({
+      name: "Fornicaves",
+      structure: 1,
+      behavior: {
+        abilities: [
+          {
+            id: "aura",
+            type: "continuous",
+            modifiers: [
+              {
+                selector: { zone: "play", type: "character" },
+                stat: "life",
+                operation: "add",
+                // -(printedLife - 2)
+                value: {
+                  type: "multiply",
+                  values: [
+                    -1,
+                    { type: "add", values: [{ type: "printedStat", target: { type: "selected", id: "__candidate" }, stat: "life" }, -2] }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "cave", def: fornicaves, owner: P1 },
+        { key: "a", def: character({ name: "A", life: 5 }), owner: P1 },
+        { key: "b", def: character({ name: "B", life: 3 }), owner: P2 }
+      ]
+    });
+
+    // every character ends at printed life - (printed life - 2) = 2
+    assert.equal(engine.getStat(id("a"), "life"), 2);
+    assert.equal(engine.getStat(id("b"), "life"), 2);
+
+    // aura is live: it stops the instant the source leaves play
+    engine.state.cards[id("cave")].zone = "discard";
+    assert.equal(engine.getStat(id("a"), "life"), 5);
+  });
+
+  test("aura keyword grant reaches every matching card", () => {
+    const hideout = location({
+      name: "Covert Hideout",
+      behavior: {
+        abilities: [
+          {
+            id: "aura",
+            type: "continuous",
+            modifiers: [],
+            keywords: [{ selector: { controller: "self", zone: "play", type: "character" }, keyword: "covert" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "hideout", def: hideout, owner: P1 },
+        { key: "mine", def: character({ name: "Mine" }), owner: P1 },
+        { key: "theirs", def: character({ name: "Theirs" }), owner: P2 }
+      ]
+    });
+
+    assert.equal(engine.hasKeyword(id("mine"), "covert"), true);
+    assert.equal(engine.hasKeyword(id("theirs"), "covert"), false);
+  });
+});
+
+// "Your opponents must pay 1 to deploy a tactic." — Vilghame Manewaft.
+// "Reduce the numeric cost of characters you play by 2, to a minimum of 1." —
+// Ensmallment Ray.
+describe("Seed 3 Wave C: costModifiers (continuous deploy-cost adjustment)", () => {
+  test("taxes an opponent's matching deploys and discounts the controller's, with a floor", () => {
+    const tycoon = character({
+      name: "Cost Tycoon",
+      behavior: {
+        abilities: [
+          {
+            id: "econ",
+            type: "continuous",
+            modifiers: [],
+            costModifiers: [
+              { affects: "opponent", delta: 1, selector: { type: "tactic" } },
+              { affects: "controller", delta: -2, minCost: 1, selector: { type: "character" } }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "tycoon", def: tycoon, owner: P1 },
+        { key: "p1char", def: character({ name: "P1 Char", cost: 5 }), owner: P1, zone: "hand" },
+        { key: "p2tac", def: tactic({ name: "P2 Tactic", cost: 2 }), owner: P2, zone: "hand" },
+        { key: "p1tac", def: tactic({ name: "P1 Tactic", cost: 2 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    // controller's character: 5 - 2 = 3
+    assert.equal(engine.getCardPlayability(P1, id("p1char")).numericCost, 3);
+    // opponent's tactic: 2 + 1 = 3
+    assert.equal(engine.getCardPlayability(P2, id("p2tac")).numericCost, 3);
+    // controller's own tactic: unaffected (selector is character-only)
+    assert.equal(engine.getCardPlayability(P1, id("p1tac")).numericCost, 2);
+
+    // floor: a cheap character can't go below minCost 1
+    const cheap = character({ name: "Cheap", cost: 2 });
+    const g2 = buildGame({
+      cards: [
+        { key: "tycoon", def: tycoon, owner: P1 },
+        { key: "cheap", def: cheap, owner: P1, zone: "hand" }
+      ]
+    });
+    assert.equal(g2.engine.getCardPlayability(P1, g2.id("cheap")).numericCost, 1);
+  });
+});
+
+// "When battle damage is inflicted to a character you control, reduce the
+// amount by 2. ...to a character an opponent controls, increase the amount by
+// 2." — Shieldmane Grandchest.
+describe("Seed 3 Wave C: damageModifiers (continuous battle-damage adjustment)", () => {
+  test("reduces incoming battle damage to controlled characters, floored at 0", () => {
+    const shield = character({
+      name: "Shieldmane",
+      strength: 6,
+      life: 6,
+      behavior: {
+        abilities: [
+          {
+            id: "ward",
+            type: "continuous",
+            modifiers: [],
+            damageModifiers: [
+              { selector: { controller: "self", type: "character" }, battleOnly: true, delta: -2 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "shield", def: shield, owner: P1, attackEligible: false },
+        { key: "ally", def: character({ name: "Ally", life: 5, speed: 1 }), owner: P1, attackEligible: false },
+        { key: "attacker", def: character({ name: "Attacker", strength: 3, speed: 2 }), owner: P2 }
+      ],
+      activePlayerId: P2
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P2,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P1 }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [id("ally")] });
+    resolvePendingResponses(engine);
+    autoResolveBattle(engine);
+
+    // 3 strength - 2 ward = 1 damage taken
+    assert.equal(engine.state.cards[id("ally")].damage, 1);
+  });
+
+  // RULES.md §8: a damageModifiers entry tunes each damage *assignment* (one
+  // per source's contribution), not the summed speed-group application. Two
+  // attackers each assigning 2 to one warded blocker => (2-2) + (2-2) = 0,
+  // NOT (2+2) - 2 = 2.
+  test("applies per assignment, not once per summed speed-group application", () => {
+    const shield = character({
+      name: "Shieldmane",
+      strength: 1,
+      life: 6,
+      behavior: {
+        abilities: [
+          {
+            id: "ward",
+            type: "continuous",
+            modifiers: [],
+            damageModifiers: [
+              { selector: { controller: "self", type: "character" }, battleOnly: true, delta: -2 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "shield", def: shield, owner: P1, attackEligible: false },
+        { key: "blocker", def: character({ name: "Blocker", life: 8, speed: 1 }), owner: P1, attackEligible: false },
+        { key: "a1", def: character({ name: "A1", strength: 2, speed: 2 }), owner: P2 },
+        { key: "a2", def: character({ name: "A2", strength: 2, speed: 2 }), owner: P2 }
+      ],
+      activePlayerId: P2
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P2,
+      attackerIds: [id("a1"), id("a2")],
+      target: { type: "faction", playerId: P1 }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [id("blocker")] });
+    resolvePendingResponses(engine);
+    autoResolveBattle(engine, source => {
+      if (source.cardId !== id("a1") && source.cardId !== id("a2")) {
+        return source.legalTargets.length > 0 && source.strength > 0
+          ? [{ sourceId: source.cardId, target: source.legalTargets[0], amount: source.strength }]
+          : [];
+      }
+      return [
+        { sourceId: source.cardId, target: { type: "card", cardId: id("blocker") }, amount: source.strength }
+      ];
+    });
+
+    assert.equal(engine.state.cards[id("blocker")].damage, 0);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave D: deckPosition TargetRef + moveCard `position`
+// ===========================================================================
+
+// "While the top card of your deck is revealed, this card gains X strength,
+// where X is the numeric cost of that card." — Axeclaw Grandchest.
+// "...put it on top of your deck." — The Stone of Triumph.
+describe("Seed 3 Wave D: deckPosition ref + moveCard position", () => {
+  test("deckPosition resolves the top card; cardCost reads its printed cost", () => {
+    const grandchest = character({
+      name: "Axeclaw Grandchest",
+      strength: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "topcard-buff",
+            type: "continuous",
+            modifiers: [
+              {
+                target: "source",
+                stat: "strength",
+                operation: "add",
+                value: { type: "cardCost", target: { type: "deckPosition", player: "controller", from: "top" } }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "gc", def: grandchest, owner: P1 },
+        { key: "top", def: character({ name: "Top", cost: 6 }), owner: P1, zone: "deck" },
+        { key: "next", def: character({ name: "Next", cost: 2 }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    assert.equal(engine.getStat(id("gc"), "strength"), 6);
+  });
+
+  test("moveCard with position:'top' puts a card on top of the deck", () => {
+    const tutor = tactic({
+      name: "To The Top",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            targets: [{ id: "t", selector: { controller: "self", zone: "discard", type: "character" }, count: 1 }],
+            effects: [{ type: "moveCard", target: { type: "selected", id: "t" }, to: "deck", position: "top" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t", def: tutor, owner: P1, zone: "hand" },
+        { key: "grave", def: character({ name: "Grave" }), owner: P1, zone: "discard" },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t"), selected: { t: [id("grave")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].deck[0], id("grave"));
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave E: terminate (response-stack removal / "counter")
+// ===========================================================================
+
+// "When a player deploys a tactic, terminate it and inflict 1 damage to this
+// card." — The Great Wall of Keeping Stuff Out.
+describe("Seed 3 Wave E: terminate effect", () => {
+  test("a cardPlayed trigger terminates the just-played tactic before it resolves", () => {
+    const wall = location({
+      name: "Great Wall",
+      structure: 2,
+      behavior: {
+        abilities: [
+          {
+            id: "wall-trigger",
+            type: "triggered",
+            event: "cardPlayed",
+            condition: { type: "cardTypeIs", target: "eventCard", cardType: "tactic" },
+            effects: [
+              { type: "terminate", target: "eventCard" },
+              { type: "dealDamage", target: "source", amount: 1 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const bomb = tactic({
+      name: "Influence Bomb",
+      behavior: {
+        abilities: [
+          { id: "boom", type: "activated", effects: [{ type: "modifyInfluence", player: "opponent", amount: -5 }] }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "wall", def: wall, owner: P1 },
+        { key: "bomb", def: bomb, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+
+    const p1InfluenceBefore = engine.state.players[P1].influence;
+
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("bomb") });
+    resolvePendingResponses(engine);
+
+    // the tactic never resolved -> no influence loss; it's in its owner's discard
+    assert.equal(engine.state.players[P1].influence, p1InfluenceBefore);
+    assert.equal(engine.state.cards[id("bomb")].zone, "discard");
+    // and the wall took 1 damage
+    assert.equal(engine.state.cards[id("wall")].damage, 1);
+  });
+
+  test("scope 'othersOnStack' terminates every other unresolved card", () => {
+    const alarm = tactic({
+      name: "Alarm",
+      behavior: {
+        abilities: [{ id: "x", type: "activated", effects: [{ type: "terminate", scope: "othersOnStack" }] }]
+      }
+    });
+    const other = tactic({
+      name: "Other",
+      behavior: {
+        abilities: [{ id: "y", type: "activated", effects: [{ type: "modifyInfluence", player: "opponent", amount: -3 }] }]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "other", def: other, owner: P1, zone: "hand" },
+        { key: "alarm", def: alarm, owner: P2, zone: "hand" }
+      ]
+    });
+
+    const p2Before = engine.state.players[P2].influence;
+
+    // P1 plays Other (opens a response window); P2 responds with Alarm.
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("other") });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("alarm") });
+    resolvePendingResponses(engine);
+
+    // Alarm resolved (LIFO) and terminated Other before it could resolve.
+    assert.equal(engine.state.players[P2].influence, p2Before);
+    assert.equal(engine.state.cards[id("other")].zone, "discard");
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave F: activate-from-zone (RECUR) + removeFromGame /
+// sacrificeSelected costs
+// ===========================================================================
+
+// "RECUR: [G][G] — COST: Use this only while this card is in your discard
+// pile. Pay 1. Remove this card from the game. — EFFECT: Draw a card." —
+// Prestige Inversion.
+describe("Seed 3 Wave F: activationZone (RECUR from discard) + removeFromGame cost", () => {
+  test("an ability with activationZone 'discard' is usable from the discard pile and exiles itself", () => {
+    const recur = tactic({
+      name: "Prestige Inversion",
+      behavior: {
+        abilities: [
+          // the normal play-time effect (unused here)
+          { id: "main", type: "activated", effects: [{ type: "draw", player: "controller", amount: 0 }] },
+          {
+            id: "recur",
+            type: "activated",
+            activationZone: "discard",
+            costs: [
+              { type: "payResources", amount: 1 },
+              { type: "removeFromGame", target: "source" }
+            ],
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pi", def: recur, owner: P1, zone: "discard" },
+        { key: "res", def: resourceCard({ name: "Greed", resource: { provides: ["greed"], staple: true } }), owner: P1 },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    // can't use it while it'd need to be in play
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("pi"), abilityId: "recur" });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("pi")].zone, "removed");
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true);
+  });
+
+  test("activationZone defaults to 'play' — a discard card can't use a normal ability", () => {
+    const t = tactic({
+      name: "Normal",
+      behavior: { abilities: [{ id: "a", type: "activated", effects: [{ type: "draw", player: "controller", amount: 1 }] }] }
+    });
+    const { engine, id } = buildGame({ cards: [{ key: "t", def: t, owner: P1, zone: "discard" }] });
+    assert.throws(() =>
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("t"), abilityId: "a" })
+    );
+  });
+
+  // "RECUR: [G][G]" — an ability-level `threshold` gate (Prestige Inversion).
+  test("an ability's `threshold` gates activation, same shorthand as a card's", () => {
+    const recur = tactic({
+      name: "Prestige Inversion",
+      behavior: {
+        abilities: [
+          { id: "main", type: "activated", effects: [{ type: "draw", player: "controller", amount: 0 }] },
+          {
+            id: "recur",
+            type: "activated",
+            activationZone: "discard",
+            threshold: "gg",
+            costs: [{ type: "payResources", amount: 1 }],
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+    const greed = () => resourceCard({ name: "Greed", resource: { provides: ["greed"], staple: true } });
+
+    // one [G] — threshold "gg" unmet
+    const short = buildGame({
+      cards: [
+        { key: "pi", def: recur, owner: P1, zone: "discard" },
+        { key: "g1", def: greed(), owner: P1 }
+      ]
+    });
+    assert.throws(() =>
+      short.engine.perform({ type: "activateAbility", playerId: P1, cardId: short.id("pi"), abilityId: "recur" })
+    );
+
+    // two [G] — threshold met
+    const ok = buildGame({
+      cards: [
+        { key: "pi", def: recur, owner: P1, zone: "discard" },
+        { key: "g1", def: greed(), owner: P1 },
+        { key: "g2", def: greed(), owner: P1 },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+    ok.engine.perform({ type: "activateAbility", playerId: P1, cardId: ok.id("pi"), abilityId: "recur" });
+    resolvePendingResponses(ok.engine);
+    assert.equal(ok.engine.state.players[P1].hand.includes(ok.id("d1")), true);
+  });
+});
+
+// "EXTRA COST: Choose X > 0. Remove X tactics in your discard pile from the
+// game." — Cowslaw.
+describe("Seed 3 Wave F: sacrificeSelected cost", () => {
+  test("consumes every selected card by the given disposition", () => {
+    const cowslaw = tactic({
+      name: "Cowslaw",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            targets: [
+              { id: "fodder", selector: { controller: "self", zone: "discard", type: "tactic" }, count: 2 }
+            ],
+            costs: [{ type: "sacrificeSelected", declarationId: "fodder", disposition: "removeFromGame" }],
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "cs", def: cowslaw, owner: P1, zone: "hand" },
+        { key: "g1", def: tactic({ name: "G1" }), owner: P1, zone: "discard" },
+        { key: "g2", def: tactic({ name: "G2" }), owner: P1, zone: "discard" },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("cs"),
+      selected: { fodder: [id("g1"), id("g2")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("g1")].zone, "removed");
+    assert.equal(engine.state.cards[id("g2")].zone, "removed");
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave G: eventOrdinal condition ("first ... each turn")
+// ===========================================================================
+
+// "The first resource each opponent plays each turn enters play attached to
+// that player's faction." — Vilghame Manewaft (attach clause modelled here
+// as an influence ping to keep the test focused on the ordinal gate).
+describe("Seed 3 Wave G: eventOrdinal condition", () => {
+  test("fires only on the first matching event of the turn, and resets next turn", () => {
+    const vilghame = character({
+      name: "Vilghame",
+      behavior: {
+        abilities: [
+          {
+            id: "first-resource",
+            type: "triggered",
+            event: "resourcePlayed",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "eventPlayerIs", player: "opponent" },
+                { type: "eventOrdinal", operator: "=", value: 1 }
+              ]
+            },
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }]
+          }
+        ]
+      }
+    });
+
+    const resourceFaction = factionCard({
+      name: "Resource Faction",
+      faction: {
+        startingInfluence: 25,
+        setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
+        turn: {
+          restore: { clearCharacterDamage: true, detachResources: true, restoreNonResources: true },
+          develop: { choices: [{ type: "playResource", count: 1 }] }
+        }
+      }
+    });
+
+    const { engine, id } = buildGame({
+      playerB: { faction: resourceFaction },
+      cards: [
+        { key: "vil", def: vilghame, owner: P1 },
+        { key: "r1", def: resourceCard({ name: "R1" }), owner: P2, zone: "hand" },
+        { key: "r2", def: resourceCard({ name: "R2" }), owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2,
+      turnPhase: "develop"
+    });
+
+    const start = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "chooseDevelop",
+      playerId: P2,
+      choice: { type: "playResource", cards: [{ cardId: id("r1"), faceDown: false }] }
+    });
+    resolvePendingResponses(engine);
+    // first resource of P2's turn -> ordinal 1 -> triggered
+    assert.equal(engine.state.players[P2].influence, start - 1);
+
+    // full turn cycle back to P2: turnEventTally reset, so it fires again
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+
+    const p2Turn2 = engine.state.players[P2].influence;
+    engine.perform({
+      type: "chooseDevelop",
+      playerId: P2,
+      choice: { type: "playResource", cards: [{ cardId: id("r2"), faceDown: false }] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P2].influence, p2Turn2 - 1);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave H: mustAttack restriction, dealDamage cost,
+// setRestoreLock effect
+// ===========================================================================
+
+// "This turn, the characters must attack if they can." — 94r913 My 908570pp3r5.
+describe("Seed 3 Wave H: mustAttack restriction", () => {
+  test("declaring an attack that omits an eligible mustAttack character is rejected", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "forced", def: character({ name: "Forced", strength: 2 }), owner: P1 },
+        { key: "free", def: character({ name: "Free", strength: 2 }), owner: P1 }
+      ]
+    });
+
+    // grant mustAttack to "forced" this turn
+    engine.state.restrictions.push({
+      id: "r1",
+      targetId: id("forced"),
+      restriction: "mustAttack",
+      duration: { type: "untilEndOfTurn" },
+      createdTurn: engine.state.turn
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "declareAttack",
+        playerId: P1,
+        attackerIds: [id("free")],
+        target: { type: "faction", playerId: P2 }
+      })
+    );
+
+    // including it is fine
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("free"), id("forced")],
+      target: { type: "faction", playerId: P2 }
+    });
+    assert.ok(engine.state.battle);
+  });
+});
+
+// "PARTY ON! — COST: Inflict 1 damage to this location. ... — EFFECT: Deplete
+// the character." — Intriguing Mezzanine.
+describe("Seed 3 Wave H: dealDamage cost + setRestoreLock effect", () => {
+  test("a location spends its own structure as a cost and locks the target from faction restore", () => {
+    const mezzanine = location({
+      name: "Intriguing Mezzanine",
+      structure: 3,
+      behavior: {
+        abilities: [
+          {
+            id: "party-on",
+            type: "activated",
+            costs: [{ type: "dealDamage", target: "source", amount: 1 }],
+            targets: [{ id: "victim", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [
+              { type: "deplete", target: { type: "selected", id: "victim" } },
+              { type: "setRestoreLock", target: { type: "selected", id: "victim" } }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "mez", def: mezzanine, owner: P1 },
+        { key: "victim", def: character({ name: "Victim" }), owner: P1 }
+      ],
+      playerA: { faction: factionCard({ name: "restoring", faction: {
+        startingInfluence: 25,
+        setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
+        turn: {
+          restore: { clearCharacterDamage: true, detachResources: true, restoreNonResources: true },
+          develop: { choices: [{ type: "draw", count: 1 }] }
+        }
+      } }) }
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("mez"),
+      abilityId: "party-on",
+      selected: { victim: [id("victim")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("mez")].damage, 1);
+    assert.equal(engine.state.cards[id("victim")].depleted, true);
+    assert.equal(engine.state.cards[id("victim")].restoreLocked, true);
+
+    // P1's next turn start: the locked character is NOT restored
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "chooseDevelop", playerId: P2, choice: { type: "draw" } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("victim")].depleted, true);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave I: deploySameNameThisTurn + respondingTo /
+// respondedToCard
+// ===========================================================================
+
+// "If an opponent deployed at least 2 cards with the same name this turn,
+// ..." — Hilarious Refrigerator Alarm.
+describe("Seed 3 Wave I: deploySameNameThisTurn condition", () => {
+  test("true once a player has deployed 2+ identically-named cards this turn", () => {
+    const probe = tactic({
+      name: "Probe",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            effects: [
+              {
+                type: "if",
+                condition: { type: "deploySameNameThisTurn", player: "controller", operator: ">=", value: 2 },
+                effects: [{ type: "modifyInfluence", player: "controller", amount: 10 }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const twin = () => tactic({ name: "Twin", id: "twin-def", behavior: { abilities: [{ id: "n", type: "activated", effects: [{ type: "draw", player: "controller", amount: 0 }] }] } });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "t1", def: twin(), owner: P1, zone: "hand" },
+        { key: "t2", def: twin(), owner: P1, zone: "hand" },
+        { key: "probe", def: probe, owner: P1, zone: "hand" }
+      ]
+    });
+
+    const before = engine.state.players[P1].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t1") });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("t2") });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("probe") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].influence, before + 10);
+  });
+});
+
+// "Deploy this only in response to a character being deployed. ... Terminate
+// the character." — Anatidaephobia.
+describe("Seed 3 Wave I: respondingTo condition + respondedToCard ref", () => {
+  test("gates play timing and lets the effect reach the responded-to card", () => {
+    const anat = tactic({
+      name: "Anatidaephobia",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            condition: { type: "respondingTo", cardType: "character" },
+            effects: [{ type: "terminate", target: { type: "respondedToCard" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "anat", def: anat, owner: P2, zone: "hand" },
+        { key: "guy", def: character({ name: "Incoming Guy" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    // Not legal with nothing to respond to
+    assert.throws(() => engine.perform({ type: "playCard", playerId: P2, cardId: id("anat") }));
+
+    // P1 deploys a character -> opens a response window; P2 responds with Anat
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("anat") });
+    resolvePendingResponses(engine);
+
+    // the character was terminated before entering play
+    assert.equal(engine.state.cards[id("guy")].zone, "discard");
+  });
+});
+
+// "EXTRA COST: ... If you did not deploy this card using FLIP UP, pay X,
+// where X is the character's numeric cost." — Anatidaephobia. A hard
+// play-time cost (not a "you may"), waived when the card is FLIP-UP'd,
+// expressed as a `conditional` cost amount over `deployedViaFlipUp`.
+describe("Seed 3 Wave I: Anatidaephobia — play-time 'pay X' hard cost, waived on FLIP UP", () => {
+  function anat(): CardDefinition {
+    return tactic({
+      name: "AnatHardCost",
+      threshold: "g",
+      flipUp: { cost: 1, threshold: "g" },
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            condition: { type: "respondingTo", cardType: "character" },
+            costs: [
+              {
+                type: "payResources",
+                amount: {
+                  type: "conditional",
+                  if: { type: "deployedViaFlipUp" },
+                  then: 0,
+                  else: { type: "cardCost", target: { type: "respondedToCard" } }
+                }
+              }
+            ],
+            effects: [{ type: "terminate", target: { type: "respondedToCard" } }]
+          }
+        ]
+      }
+    });
+  }
+
+  const greed = (name: string) =>
+    resourceCard({ name, resource: { provides: ["greed"], staple: true } });
+  const plain = (name: string) => resourceCard({ name });
+  const plainMany = (prefix: string, n: number, owner: typeof P1) =>
+    Array.from({ length: n }, (_, i) => ({ key: `${prefix}${i}`, def: plain(`${prefix}${i}`), owner }));
+
+  test("normal play pays X = the responded-to character's numeric cost", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "anat", def: anat(), owner: P2, zone: "hand" },
+        { key: "g1", def: greed("G1"), owner: P2 },
+        { key: "g2", def: greed("G2"), owner: P2 },
+        { key: "g3", def: greed("G3"), owner: P2 },
+        ...plainMany("p1r", 3, P1),
+        { key: "guy", def: character({ name: "Guy", cost: 3 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("anat") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("guy")].zone, "discard");
+    // all 3 greed resources spent on X
+    assert.equal(engine.getAvailableResourceCount(P2), 0);
+  });
+
+  test("normal play is rejected outright when X is unaffordable", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "anat", def: anat(), owner: P2, zone: "hand" },
+        { key: "g1", def: greed("G1"), owner: P2 },
+        { key: "g2", def: greed("G2"), owner: P2 },
+        ...plainMany("p1r", 4, P1),
+        { key: "guy", def: character({ name: "Guy", cost: 4 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") });
+    assert.throws(() => engine.perform({ type: "playCard", playerId: P2, cardId: id("anat") }));
+
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("guy")].zone, "play");
+  });
+
+  test("FLIP UP waives X — only the flip-up cost is paid", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "anat", def: anat(), owner: P2, faceDown: true },
+        { key: "g1", def: greed("G1"), owner: P2 },
+        ...plainMany("p1r", 6, P1),
+        { key: "guy", def: character({ name: "Guy", cost: 6 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") });
+    engine.perform({ type: "flipUp", playerId: P2, cardId: id("anat"), selected: {} });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("guy")].zone, "discard");
+    // the single greed resource paid the flip-up cost of 1; X was not charged
+    assert.equal(engine.getAvailableResourceCount(P2), 0);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave J: FLIP UP (alternate deploy of a face-down card)
+// ===========================================================================
+
+// "EXTRA COST: If you deployed this card using FLIP UP X is 4, otherwise X is
+// 2. Pick X or fewer characters. This turn, the characters must attack if
+// they can. Draw a card.  FLIP UP: 2 [E]" — 94r913 My 908570pp3r5.
+describe("Seed 3 Wave J: flipUp action + deployedViaFlipUp condition", () => {
+  function poppers(): CardDefinition {
+    return tactic({
+      name: "908570pp3r5",
+      cost: 3,
+      threshold: "e",
+      flipUp: {
+        cost: 2,
+        threshold: "e",
+        effects: []
+      },
+      behavior: {
+        abilities: [
+          {
+            id: "main",
+            type: "activated",
+            variables: {
+              x: {
+                // deployedViaFlipUp ? 4 : 2 — modelled as 2 + 2*(flag)
+                type: "add",
+                values: [2, 2]
+              }
+            },
+            targets: [
+              { id: "picked", selector: { zone: "play", type: "character" }, count: { type: "variable", id: "x" }, optional: true }
+            ],
+            effects: [
+              {
+                type: "forEach",
+                selected: "picked",
+                effects: [
+                  { type: "grantRestriction", target: { type: "selected", id: "__candidate" }, restriction: "mustAttack", duration: { type: "untilEndOfTurn" } }
+                ]
+              },
+              { type: "draw", player: "controller", amount: 1 }
+            ]
+          }
+        ]
+      }
+    });
+  }
+
+  test("a face-down resource can be flipped up by paying its FLIP UP cost and resolves with deployedViaFlipUp", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pop", def: poppers(), owner: P1, faceDown: true },
+        { key: "e1", def: resourceCard({ name: "E1", resource: { provides: ["elitism"], staple: true } }), owner: P1 },
+        { key: "e2", def: resourceCard({ name: "E2", resource: { provides: ["elitism"], staple: true } }), owner: P1 },
+        { key: "e3", def: resourceCard({ name: "E3", resource: { provides: ["elitism"], staple: true } }), owner: P1 },
+        { key: "target", def: character({ name: "Target" }), owner: P1 },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({
+      type: "flipUp",
+      playerId: P1,
+      cardId: id("pop"),
+      selected: { picked: [id("target")] }
+    });
+    resolvePendingResponses(engine);
+
+    // resolved as a tactic -> discard; drew a card; target forced to attack
+    assert.equal(engine.state.cards[id("pop")].zone, "discard");
+    assert.equal(engine.state.cards[id("pop")].faceDown, false);
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true);
+    assert.equal(engine.hasRestriction(id("target"), "mustAttack"), true);
+  });
+
+  test("flipUp is rejected when the FLIP UP threshold isn't met", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pop", def: poppers(), owner: P1, faceDown: true },
+        // rage icons only — the FLIP UP threshold "e" is unmet
+        { key: "r1", def: resourceCard({ name: "R1" }), owner: P1 },
+        { key: "r2", def: resourceCard({ name: "R2" }), owner: P1 }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({ type: "flipUp", playerId: P1, cardId: id("pop"), selected: { picked: [] } })
+    );
+  });
+
+  // A FLIP UP whose own effect pauses on a chooser: resolution suspends on
+  // the pendingChoice, and the "move the flipped tactic to discard"
+  // bookkeeping waits until the paused effect has finished (finishFlipUp).
+  test("a FLIP UP whose effect pauses on a chooser suspends, then finishes on resume", () => {
+    const searcher = tactic({
+      name: "FlipSearcher",
+      flipUp: { cost: 1, threshold: "o" },
+      behavior: {
+        abilities: [
+          {
+            id: "main",
+            type: "activated",
+            effects: [
+              {
+                type: "chooserSelectsTarget",
+                chooser: "controller",
+                declaration: {
+                  id: "pick",
+                  selector: { controller: "self", zone: "hand" },
+                  count: 1,
+                  optional: true
+                },
+                effects: [
+                  {
+                    type: "if",
+                    condition: { type: "targetExists", target: { type: "selected", id: "pick" } },
+                    effects: [
+                      { type: "moveCard", target: { type: "selected", id: "pick" }, to: "discard" }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pop", def: searcher, owner: P1, faceDown: true },
+        { key: "o1", def: resourceCard({ name: "O1", resource: { provides: ["obsession"], staple: true } }), owner: P1 },
+        { key: "o2", def: resourceCard({ name: "O2", resource: { provides: ["obsession"], staple: true } }), owner: P1 },
+        { key: "h1", def: character({ name: "H1" }), owner: P1, zone: "hand" },
+        { key: "h2", def: character({ name: "H2" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "flipUp", playerId: P1, cardId: id("pop"), selected: {} });
+
+    // Suspended on the chooser; the flipped tactic has NOT gone to discard yet.
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    assert.equal(engine.state.cards[id("pop")].faceDown, false);
+    assert.equal(engine.state.cards[id("pop")].zone, "play");
+
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("h1")] }
+    });
+
+    assert.equal(engine.state.pendingChoice, undefined);
+    assert.equal(engine.state.cards[id("h1")].zone, "discard");
+    assert.equal(engine.state.cards[id("h2")].zone, "hand");
+    assert.equal(engine.state.cards[id("pop")].zone, "discard");
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave K: replacement abilities ("...instead")
+// ===========================================================================
+
+// "If a character would be put into a player's hand, destroy it instead." —
+// The Stone of Shame.
+describe("Seed 3 Wave K: replacement ability (moveToZone -> destroy instead)", () => {
+  test("a character bounced to hand is destroyed instead while the Stone is in play", () => {
+    const stone = item({
+      name: "The Stone of Shame",
+      behavior: {
+        abilities: [
+          {
+            id: "shame",
+            type: "replacement",
+            replaces: { event: "moveToZone", zone: "hand", cardType: "character" },
+            effects: [{ type: "destroy", target: { type: "selected", id: "__candidate" } }]
+          }
+        ]
+      }
+    });
+
+    const bounce = tactic({
+      name: "Bounce",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "moveCard", target: { type: "selected", id: "t" }, to: "hand" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "stone", def: stone, owner: P1 },
+        { key: "victim", def: character({ name: "Victim" }), owner: P2 },
+        { key: "bounce", def: bounce, owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bounce"), selected: { t: [id("victim")] } });
+    resolvePendingResponses(engine);
+
+    // replaced: it's in the discard pile, not its owner's hand
+    assert.equal(engine.state.cards[id("victim")].zone, "discard");
+    assert.equal(engine.state.players[P2].hand.includes(id("victim")), false);
+  });
+
+  test("with the Stone gone, the bounce works normally", () => {
+    const stone = item({
+      name: "The Stone of Shame",
+      behavior: {
+        abilities: [
+          {
+            id: "shame",
+            type: "replacement",
+            replaces: { event: "moveToZone", zone: "hand", cardType: "character" },
+            effects: [{ type: "destroy", target: { type: "selected", id: "__candidate" } }]
+          }
+        ]
+      }
+    });
+    const bounce = tactic({
+      name: "Bounce",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "moveCard", target: { type: "selected", id: "t" }, to: "hand" }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "stone", def: stone, owner: P1, zone: "discard" },
+        { key: "victim", def: character({ name: "Victim" }), owner: P2 },
+        { key: "bounce", def: bounce, owner: P1, zone: "hand" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bounce"), selected: { t: [id("victim")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P2].hand.includes(id("victim")), true);
+  });
+});
+
+// ===========================================================================
+// Seed 3 coverage — Wave L: optional replacement, nameValue, forEachPlayer,
+// createTokens, mayPay + cardNameEquals, setDamage / removeFromBattle,
+// useTargetAbility, uniqueGrant, non-tactic onPlay.
+// ===========================================================================
+
+// "If this card would be destroyed by an opposing card or effect, you may put
+// a token on it instead..." — Giada, the Elegant.
+describe("Seed 3 Wave L: optional replacement (pause + accept/decline)", () => {
+  function giada(): CardDefinition {
+    return character({
+      name: "Giada",
+      life: 3,
+      unique: "giada",
+      behavior: {
+        abilities: [
+          {
+            id: "guard",
+            name: "Elegant Guard",
+            type: "replacement",
+            replaces: { event: "destroy", controlledBy: "self", by: "opponent" },
+            optional: true,
+            effects: [
+              { type: "addCounter", target: { type: "selected", id: "__candidate" }, counter: "token", amount: 1 },
+              { type: "deplete", target: { type: "selected", id: "__candidate" } },
+              { type: "setDamage", target: { type: "selected", id: "__candidate" }, amount: 0 }
+            ]
+          }
+        ]
+      }
+    });
+  }
+
+  test("accepting the replacement stops the destruction", () => {
+    const kill = tactic({
+      name: "Kill",
+      behavior: {
+        abilities: [
+          {
+            id: "k",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "giada", def: giada(), owner: P1, damage: 0 },
+        { key: "kill", def: kill, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("kill"), selected: { t: [id("giada")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "replacementChoice");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "replacementChoice", apply: true } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("giada")].zone, "play");
+    assert.equal(engine.state.cards[id("giada")].counters.token, 1);
+    assert.equal(engine.state.cards[id("giada")].depleted, true);
+  });
+
+  test("declining lets the destruction happen", () => {
+    const kill = tactic({
+      name: "Kill",
+      behavior: {
+        abilities: [
+          {
+            id: "k",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "giada", def: giada(), owner: P1 },
+        { key: "kill", def: kill, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("kill"), selected: { t: [id("giada")] } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "replacementChoice", apply: false } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("giada")].zone, "discard");
+  });
+
+  // "...destroyed by an opposing card or effect..." — `replaces.by:
+  // "opponent"`. Giada's own controller destroying her (a sacrifice)
+  // doesn't offer the guard.
+  test("a friendly card/effect destroying it does NOT offer the guard", () => {
+    const sacrifice = tactic({
+      name: "Sacrifice",
+      behavior: {
+        abilities: [
+          {
+            id: "s",
+            type: "activated",
+            targets: [{ id: "t", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "giada", def: giada(), owner: P1 },
+        { key: "sacrifice", def: sacrifice, owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("sacrifice"), selected: { t: [id("giada")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice, undefined);
+    assert.equal(engine.state.cards[id("giada")].zone, "discard");
+  });
+
+  // Lethal battle damage from an opposing character counts as "an opposing
+  // card or effect" — the destruction is attributed to the attacker.
+  test("lethal battle damage from an opponent's character offers the guard", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "giada", def: giada(), owner: P1, attackEligible: false },
+        { key: "attacker", def: character({ name: "Attacker", strength: 5, speed: 2 }), owner: P2 }
+      ],
+      activePlayerId: P2
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P2,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P1 }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [id("giada")] });
+    resolvePendingResponses(engine);
+    autoResolveBattle(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "replacementChoice");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "replacementChoice", apply: true } });
+    resolvePendingResponses(engine);
+    autoResolveBattle(engine);
+
+    assert.equal(engine.state.cards[id("giada")].zone, "play");
+    assert.equal(engine.state.cards[id("giada")].counters.token, 1);
+  });
+});
+
+// "When this card enters play, name a card subtype. Players must pay 2 to
+// deploy cards with the named subtype." — Port Manteau.
+describe("Seed 3 Wave L: nameValue + subtypeVar cost modifier", () => {
+  test("naming a subtype taxes deploys of that subtype", () => {
+    const manteau = location({
+      name: "Port Manteau",
+      structure: 3,
+      behavior: {
+        abilities: [
+          {
+            id: "name",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            effects: [{ type: "nameValue", chooser: "controller", valueKind: "subtype", storeAs: "banned" }]
+          },
+          {
+            id: "tax",
+            type: "continuous",
+            modifiers: [],
+            costModifiers: [{ affects: "controller", delta: 2, selector: { subtypeVar: "banned" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "manteau", def: manteau, owner: P1, zone: "hand" },
+        { key: "lackey", def: character({ name: "A Lackey", subtype: ["lackey"], cost: 3 }), owner: P1, zone: "hand" },
+        { key: "brute", def: character({ name: "A Brute", subtype: ["brute"], cost: 3 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("manteau") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "nameValue");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "nameValue", value: "lackey" } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.getCardPlayability(P1, id("lackey")).numericCost, 5);
+    assert.equal(engine.getCardPlayability(P1, id("brute")).numericCost, 3);
+  });
+});
+
+// "Each player chooses a card of each non-resource type they control..." —
+// Spatchcocking (simplified: each player loses 1 influence).
+describe("Seed 3 Wave L: forEachPlayer", () => {
+  test("runs the effects once per player with controller rebound", () => {
+    const spatch = tactic({
+      name: "Spatch",
+      behavior: {
+        abilities: [
+          {
+            id: "s",
+            type: "activated",
+            effects: [
+              { type: "forEachPlayer", effects: [{ type: "modifyInfluence", player: "controller", amount: -1 }] }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [{ key: "s", def: spatch, owner: P1, zone: "hand" }]
+    });
+    const p1 = engine.state.players[P1].influence;
+    const p2 = engine.state.players[P2].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("s") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].influence, p1 - 1);
+    assert.equal(engine.state.players[P2].influence, p2 - 1);
+  });
+
+  // A nested chooser effect that pauses *for every player* inside one
+  // forEachPlayer: each player's frame must pause, resolve independently,
+  // and resume in turn order (active player first). This is the
+  // frame-reordering path in the forEachPlayer case of resolveEffect.
+  test("a nested chooser that pauses for each player resolves per player, in turn order", () => {
+    const each = tactic({
+      name: "EachDiscards",
+      behavior: {
+        abilities: [
+          {
+            id: "e",
+            type: "activated",
+            effects: [
+              {
+                type: "forEachPlayer",
+                effects: [
+                  {
+                    type: "chooserSelectsTarget",
+                    chooser: "controller",
+                    declaration: {
+                      id: "pick",
+                      selector: { controller: "self", zone: "hand" },
+                      count: 1,
+                      optional: true
+                    },
+                    effects: [
+                      {
+                        type: "if",
+                        condition: { type: "targetExists", target: { type: "selected", id: "pick" } },
+                        effects: [
+                          { type: "moveCard", target: { type: "selected", id: "pick" }, to: "discard" }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "e", def: each, owner: P1, zone: "hand" },
+        { key: "h1a", def: character({ name: "H1A" }), owner: P1, zone: "hand" },
+        { key: "h1b", def: character({ name: "H1B" }), owner: P1, zone: "hand" },
+        { key: "h2a", def: character({ name: "H2A" }), owner: P2, zone: "hand" },
+        { key: "h2b", def: character({ name: "H2B" }), owner: P2, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("e") });
+    resolvePendingResponses(engine);
+
+    // Active player (P1) is prompted first.
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    assert.equal(engine.state.pendingChoice?.playerId, P1);
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("h1a")] }
+    });
+    resolvePendingResponses(engine);
+
+    // Then the opponent (P2).
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    assert.equal(engine.state.pendingChoice?.playerId, P2);
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P2,
+      choice: { kind: "chooserSelectsTarget", selected: [id("h2b")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice, undefined);
+    assert.equal(engine.state.cards[id("h1a")].zone, "discard");
+    assert.equal(engine.state.cards[id("h2b")].zone, "discard");
+    assert.equal(engine.state.cards[id("h1b")].zone, "hand");
+    assert.equal(engine.state.cards[id("h2a")].zone, "hand");
+    assert.equal(engine.state.cards[id("e")].zone, "discard");
+  });
+});
+
+// "If you ... choose to put this card on the bottom of your deck as part of
+// your mulligan at the start of a game, ..." — Community Chest. The mulligan
+// history now lives on GameState; `bottomedInMulligan` reads it.
+describe("Seed 3 Wave L: bottomedInMulligan condition", () => {
+  function boon(): CardDefinition {
+    return tactic({
+      name: "MulliganBoon",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            effects: [
+              {
+                type: "if",
+                condition: { type: "bottomedInMulligan" },
+                effects: [{ type: "modifyInfluence", player: "controller", amount: 5 }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+  }
+
+  test("true for a card its owner bottomed in the opening mulligan", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "boon", def: boon(), owner: P1, zone: "hand" }]
+    });
+    engine.state.mulligan[P1] = [id("boon")];
+
+    const before = engine.state.players[P1].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("boon") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].influence, before + 5);
+  });
+
+  test("false for a card that wasn't bottomed", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "boon", def: boon(), owner: P1, zone: "hand" }]
+    });
+
+    const before = engine.state.players[P1].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("boon") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].influence, before);
+  });
+});
+
+// "...put 1 Micromajig token into play under your control." — Unscrupuls of
+// Victory.
+describe("Seed 3 Wave L: createTokens", () => {
+  test("puts token permanents into play that vanish on leaving play", () => {
+    const maker = tactic({
+      name: "Token Maker",
+      behavior: {
+        abilities: [
+          {
+            id: "m",
+            type: "activated",
+            effects: [
+              { type: "createTokens", controller: "controller", count: 2, token: { name: "Micromajig", cardType: "character", strength: 0, life: 1, speed: 1 } }
+            ]
+          }
+        ]
+      }
+    });
+    const sac = tactic({
+      name: "Sac Token",
+      behavior: {
+        abilities: [
+          {
+            id: "s",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "m", def: maker, owner: P1, zone: "hand" },
+        { key: "sac", def: sac, owner: P1, zone: "hand" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("m") });
+    resolvePendingResponses(engine);
+
+    const tokens = engine.state.players[P1].play
+      .map(cid => engine.state.cards[cid])
+      .filter(c => c.isToken);
+    assert.equal(tokens.length, 2);
+    const tid = tokens[0].id;
+
+    // destroying a token removes it from state entirely (no discard)
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("sac"), selected: { t: [tid] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[tid], undefined);
+    assert.equal(engine.state.players[P1].discard.includes(tid), false);
+  });
+});
+
+// "When a character you control is destroyed, you may pay 1. If you do,
+// search your deck for a card with the same name..." — The Stone of Triumph.
+describe("Seed 3 Wave L: mayPay + cardNameEquals", () => {
+  test("optional pay gates a same-name deck search", () => {
+    const stone = item({
+      name: "The Stone of Triumph",
+      behavior: {
+        abilities: [
+          {
+            id: "t",
+            type: "triggered",
+            event: "cardDestroyed",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "eventCardControlledBy", player: "controller" },
+                { type: "cardTypeIs", target: "eventCard", cardType: "character" }
+              ]
+            },
+            effects: [
+              {
+                type: "mayPay",
+                player: "controller",
+                costs: [{ type: "payResources", amount: 1 }],
+                effects: [
+                  {
+                    type: "chooserSelectsTarget",
+                    chooser: "controller",
+                    declaration: {
+                      id: "found",
+                      selector: {
+                        controller: "self",
+                        zone: "deck",
+                        conditions: [{ type: "cardNameEquals", target: { type: "selected", id: "__candidate" }, other: "eventCard" }]
+                      },
+                      count: 1
+                    },
+                    effects: [{ type: "moveCard", target: { type: "selected", id: "found" }, to: "deck", position: "top" }]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const sac = tactic({
+      name: "Sac Hero",
+      behavior: {
+        abilities: [
+          {
+            id: "s",
+            type: "activated",
+            targets: [{ id: "t", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "stone", def: stone, owner: P1 },
+        { key: "hero", def: character({ name: "Hero", id: "hero-def" }), owner: P1 },
+        { key: "heroCopy", def: character({ name: "Hero", id: "hero-def" }), owner: P1, zone: "deck" },
+        { key: "other", def: character({ name: "Other", id: "other-def" }), owner: P1, zone: "deck" },
+        { key: "sac", def: sac, owner: P1, zone: "hand" },
+        { key: "res", def: resourceCard({ name: "R" }), owner: P1 }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("sac"), selected: { t: [id("hero")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "mayPay");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "mayPay", pay: true } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: [id("heroCopy")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].deck[0], id("heroCopy"));
+  });
+});
+
+// "You may use one of the card's abilities. If you do, the effect happens
+// twice instead of once." — Notion Sickness.
+describe("Seed 3 Wave L: useTargetAbility", () => {
+  test("activates the target's ability, doubled", () => {
+    const engineRoom = character({
+      name: "Engine Room",
+      behavior: {
+        abilities: [
+          {
+            id: "pump",
+            type: "activated",
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 3 }]
+          }
+        ]
+      }
+    });
+    const notion = tactic({
+      name: "Notion Sickness",
+      behavior: {
+        abilities: [
+          {
+            id: "n",
+            type: "activated",
+            targets: [{ id: "pick", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }],
+            effects: [
+              { type: "useTargetAbility", chooser: "controller", target: { type: "selected", id: "pick" }, times: 2 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "room", def: engineRoom, owner: P1 },
+        { key: "notion", def: notion, owner: P1, zone: "hand" }
+      ]
+    });
+
+    const before = engine.state.players[P1].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("notion"), selected: { pick: [id("room")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "useTargetAbility");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "useTargetAbility", abilityId: "pump" } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].influence, before + 6);
+  });
+
+  // "Pick a card you control with an ability in its rules text" — the
+  // `hasAbility` selector condition (abilityType: "activated") rejects a
+  // vanilla card.
+  test("hasAbility target condition — a vanilla card is not a legal pick", () => {
+    const withAbility = character({
+      name: "Has Ability",
+      behavior: { abilities: [{ id: "pump", type: "activated", effects: [{ type: "modifyInfluence", player: "controller", amount: 1 }] }] }
+    });
+    const vanilla = character({ name: "Vanilla" });
+    const notion = tactic({
+      name: "Notion",
+      behavior: {
+        abilities: [
+          {
+            id: "n",
+            type: "activated",
+            targets: [
+              {
+                id: "pick",
+                selector: {
+                  controller: "self",
+                  zone: "play",
+                  conditions: [
+                    { type: "hasAbility", target: { type: "selected", id: "__candidate" }, abilityType: "activated" }
+                  ]
+                },
+                count: 1
+              }
+            ],
+            effects: [{ type: "useTargetAbility", chooser: "controller", target: { type: "selected", id: "pick" }, times: 2 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "withAbility", def: withAbility, owner: P1 },
+        { key: "vanilla", def: vanilla, owner: P1 },
+        { key: "notion", def: notion, owner: P1, zone: "hand" }
+      ]
+    });
+
+    // Picking the vanilla card is rejected...
+    assert.throws(() =>
+      engine.perform({ type: "playCard", playerId: P1, cardId: id("notion"), selected: { pick: [id("vanilla")] } })
+    );
+    // ...the one with an ability is fine.
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("notion"), selected: { pick: [id("withAbility")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "useTargetAbility");
+  });
+});
+
+// "All non-resource cards gain the rules text Unique X, where X is the card's
+// name." — God's Autograph.
+describe("Seed 3 Wave L: uniqueGrant (dynamic Unique by name)", () => {
+  test("controlling two same-named non-resource cards forces a Unique choice", () => {
+    const autograph = item({
+      name: "God's Autograph",
+      behavior: {
+        abilities: [
+          {
+            id: "sig",
+            type: "continuous",
+            modifiers: [],
+            uniqueGrant: {
+              selector: { conditions: [{ type: "not", condition: { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "resource" } }] },
+              designation: "cardName"
+            }
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "auto", def: autograph, owner: P1 },
+        { key: "twinA", def: character({ name: "Twin", id: "twin-def" }), owner: P1 },
+        { key: "twinB", def: character({ name: "Twin", id: "twin-def" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    // playing the second twin runs the state-based check
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("twinB") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "uniqueSurvivor");
+  });
+});
+
+// "EXTRA COST: Pick 2 characters. When this card enters play, deplete those
+// characters." — Intriguing Mezzanine (non-tactic onPlay).
+describe("Seed 3 Wave L: non-tactic behavior.onPlay", () => {
+  test("a location's EXTRA COST picks feed its inline ETB", () => {
+    const mezz = location({
+      name: "Mezzanine",
+      structure: 3,
+      behavior: {
+        onPlay: {
+          targets: [{ id: "picked", selector: { zone: "play", type: "character" }, count: 2 }],
+          effects: [
+            { type: "forEach", selected: "picked", effects: [{ type: "deplete", target: { type: "selected", id: "__candidate" } }] }
+          ]
+        }
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "mezz", def: mezz, owner: P1, zone: "hand" },
+        { key: "a", def: character({ name: "A" }), owner: P1 },
+        { key: "b", def: character({ name: "B" }), owner: P1 }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("mezz"), selected: { picked: [id("a"), id("b")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("mezz")].zone, "play");
+    assert.equal(engine.state.cards[id("a")].depleted, true);
+    assert.equal(engine.state.cards[id("b")].depleted, true);
+  });
+});

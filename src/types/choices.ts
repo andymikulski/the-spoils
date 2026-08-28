@@ -11,8 +11,9 @@
 // answered. This is the hook a future UI drives to render "it's your call"
 // moments instead of the engine silently guessing.
 
-import type { AbilityId, CardInstanceId, PlayerId } from "./ids.js";
+import type { AbilityId, CardInstanceId, PlayerId, Zone } from "./ids.js";
 import type { TargetDeclaration } from "./expressions.js";
+import type { Cost } from "./costs.js";
 import type { Effect, EffectOption } from "./effects.js";
 import type { ResolutionContext } from "./resolution.js";
 
@@ -100,6 +101,58 @@ export interface PendingDistributeChoice {
   context: ResolutionContext;
 }
 
+/** "If this card would be destroyed / bounced, you may ... instead" — an optional replacement. */
+export interface PendingReplacementChoice {
+  kind: "replacementChoice";
+  id: string;
+  playerId: PlayerId;
+  sourceId: CardInstanceId;
+  abilityId: AbilityId;
+  /** The card the replacement would affect. */
+  affectedCardId: CardInstanceId;
+  /** What the original (un-replaced) event would be. */
+  original: { event: "destroy" } | { event: "moveToZone"; zone: Zone };
+  /** Costs to apply the replacement (may be empty). */
+  cost: Cost[];
+  label?: string;
+}
+
+/** "Name a card subtype." / "Name a card." */
+export interface PendingNameValueChoice {
+  kind: "nameValue";
+  id: string;
+  playerId: PlayerId;
+  valueKind: "subtype" | "cardName";
+  /** The card instance the named value is stored on, keyed by `storeAs`. */
+  sourceId: CardInstanceId;
+  storeAs: string;
+}
+
+/** "You may pay <cost>. If you do, ..." */
+export interface PendingMayPayChoice {
+  kind: "mayPay";
+  id: string;
+  playerId: PlayerId;
+  cost: Cost[];
+  label?: string;
+  effects: Effect[];
+  elseEffects: Effect[];
+  context: ResolutionContext;
+}
+
+/** "You may use one of the card's abilities." */
+export interface PendingUseTargetAbilityChoice {
+  kind: "useTargetAbility";
+  id: string;
+  playerId: PlayerId;
+  /** The card whose abilities may be used. */
+  targetCardId: CardInstanceId;
+  /** The ids of that card's activated abilities. */
+  abilityIds: AbilityId[];
+  /** How many times the chosen ability's effects resolve. */
+  times: number;
+}
+
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
@@ -108,4 +161,8 @@ export type PendingChoice =
   | PendingChooserOptionChoice
   | PendingReorderDeckChoice
   | PendingDeployForFreeChoice
-  | PendingDistributeChoice;
+  | PendingDistributeChoice
+  | PendingReplacementChoice
+  | PendingNameValueChoice
+  | PendingMayPayChoice
+  | PendingUseTargetAbilityChoice;

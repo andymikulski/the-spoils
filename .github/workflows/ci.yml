@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      # `prepare` runs `npm run build` on install and emits build/.
+      - run: yarn install --frozen-lockfile
+
+      # src/data/cards.js is generated from data/cards.json — fail if a
+      # cards.json edit landed without `npm run sync-cards`.
+      - name: cards.js is in sync with cards.json
+        run: |
+          npm run sync-cards
+          git diff --exit-code -- src/data/cards.js
+
+      # card-coverage.json / COVERAGE.md must be regenerated after any
+      # catalog or classification change.
+      - name: coverage manifest is up to date
+        run: node scripts/build-coverage.cjs --check
+
+      - run: npm run typecheck
+
+      - run: npm test

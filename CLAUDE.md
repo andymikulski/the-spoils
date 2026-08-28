@@ -171,3 +171,5 @@ shells).
   specific Prettier ruleset applies.
 - Both `yarn.lock` and `package-lock.json` are present; `node_modules/.yarn-integrity`
   indicates yarn is the one actually used to install.
+- Only write comments that relate to the current state of code/etc. Do not mention historical context,
+  how code used to be, etc.

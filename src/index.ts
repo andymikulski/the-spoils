@@ -1,6 +1,11 @@
 // Tiny usage example
 import { SpoilsEngine, createTwoPlayerFactionGame } from "./engine.js";
-import { CARD_CATALOG, ARCANIST_DECK, WARLORD_DECK } from "./data.js";
+import {
+  CARD_CATALOG,
+  ARCANIST_DECK,
+  WARLORD_DECK,
+  SEED3_SAMPLER_DECK
+} from "./data.js";
 
 const CARD_DATABASE_URL = "/data/cards.json";
 const CARD_IMAGE_ROOT = "/data/assets";
@@ -14,6 +19,19 @@ export function exampleGame(): SpoilsEngine {
     CARD_CATALOG,
     { id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK },
     { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK }
+  );
+}
+
+/**
+ * Same bootstrap, but both players run the Seed 3 sampler (see
+ * `SEED3_SAMPLER_DECK`) — every Seed 3 mechanic on the table for
+ * UI / feature testing.
+ */
+export function seed3SamplerGame(): SpoilsEngine {
+  return createTwoPlayerFactionGame(
+    CARD_CATALOG,
+    { id: "p1", name: "Player 1", deckDefinitionIds: SEED3_SAMPLER_DECK },
+    { id: "p2", name: "Player 2", deckDefinitionIds: SEED3_SAMPLER_DECK }
   );
 }
 

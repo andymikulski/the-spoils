@@ -18,6 +18,9 @@ export interface ResolutionContext {
 
   /** Player-chosen numeric variables ("choose a number for X"), keyed by id. Unassigned reads as 0. */
   variables?: Record<string, number>;
+
+  /** True while resolving a card that was deployed via its FLIP UP cost (see the `deployedViaFlipUp` condition). */
+  deployedViaFlipUp?: boolean;
 }
 
 export interface TriggerResolution {

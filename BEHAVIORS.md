@@ -11,15 +11,40 @@ from scratch every time. Keep it in sync as the vocabulary grows.
 ```jsonc
 "behavior": {
   "keywords": ["covert"],       // optional, see Keywords below
-  "abilities": [ AbilityDefinition, ... ]  // optional
+  "abilities": [ AbilityDefinition, ... ],  // optional
+  "onPlay": { "condition"?, "costs"?, "targets"?, "effects"? }  // NON-tactic EXTRA COST / inline ETB
 }
 ```
 
+Sibling `CardDefinition` fields the coverage effort added:
+- **`flipUp: { cost, threshold, effects? }`** — the card can be played
+  face-down as a resource, then the `flipUp` action pays this and resolves
+  it as its real type with `deployedViaFlipUp` set.
+- **`unique: "<designation>"`** — a Unique designation (RULES.md §9).
+
 `AbilityDefinition` is one of `ActivatedAbility | TriggeredAbility |
-ContinuousAbility` (discriminated on `type`).
+ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 
 - **Character/item/location abilities** — listed under `behavior.abilities`
   as normal.
+- **Non-tactic "EXTRA COST" / ETB** — `behavior.onPlay` (any non-tactic
+  type): `targets`/`costs`/`condition` apply at play time, `effects` resolve
+  as the card enters play (with those `selected` picks available).
+- **`ActivatedAbility.activationZone`** — `"discard" | "hand" | "void"`
+  (default `"play"`) for RECUR / RETIRE abilities used from that zone.
+- **`ActivatedAbility.threshold`** — icon requirement to activate (same
+  shorthand as `CardDefinition.threshold`, e.g. `"gg"`), a gate not a cost.
+  For "RECUR: [G][G]" / "EXHUMATION: [O][O]"-style ability clauses.
+- **`ContinuousAbility.uniqueGrant`** — `{ selector, designation:
+  "cardName" | "<fixed>" }` grants a Unique designation to matching in-play
+  cards ("all non-resource cards gain Unique X where X is their name").
+- **`ReplacementAbility`** — `{ replaces: { event: "moveToZone" | "destroy",
+  zone?, cardType?, controlledBy?, by? }, condition?, optional?,
+  optionalCost?, effects }`. Runs *instead of* the matched mutation.
+  `optional: true` pauses the source's controller (`replacementChoice`
+  pending choice). `controlledBy` = whose card is affected (rel. to the
+  source controller); `by` (`"self" | "opponent" | "any"`, default
+  `"any"`) = who initiated it — "destroyed by an opposing card or effect."
 - **Tactic effects** — by convention (`SpoilsEngine.getTacticEffects` /
   `getPlayTargetDeclarations` / `getTacticCosts` / `getTacticCondition`), a
   tactic's *first* `activated`-shaped ability in `behavior.abilities`
@@ -37,10 +62,33 @@ ContinuousAbility` (discriminated on `type`).
 ## Ability types
 
 ```ts
-ActivatedAbility:  { id, name?, type: "activated", condition?, costs?, targets?, effects, variables? }
+ActivatedAbility:  { id, name?, type: "activated", activationZone?, threshold?, condition?, costs?, targets?, effects, variables? }
 TriggeredAbility:  { id, name?, type: "triggered", event, condition?, targets?, effects }
-ContinuousAbility: { id, name?, type: "continuous", condition?, modifiers, keywords?, restrictions? }
+ContinuousAbility: { id, name?, type: "continuous", condition?, modifiers, keywords?, restrictions?, costModifiers?, damageModifiers? }
+ReplacementAbility:{ id, name?, type: "replacement", replaces, condition?, optional?, optionalCost?, effects }
 ```
+
+**`ReplacementAbility`** — "if <X> would happen, instead <Y>". `replaces` is
+`{ event: "moveToZone", zone, cardType?, controlledBy?, by? }` or
+`{ event: "destroy", cardType?, controlledBy?, by? }`. `controlledBy`
+(relative to the source's controller) filters on whose card is affected;
+`by` (`"self" | "opponent" | "any"`, default `"any"`) filters on who
+*initiated* it — "destroyed by an opposing card or effect." When it fires,
+the original mutation is skipped and `effects` run with the affected card
+bound to `{ "type": "selected", "id": "__candidate" }`. `optional: true`
+(with optional `optionalCost`) makes it a "you may pay ... instead" gate:
+the engine pauses on a `replacementChoice` for the source's controller;
+declining (or an unaffordable `optionalCost`) lets the original event
+happen.
+
+**FLIP UP** — put `flipUp: { cost, threshold, effects? }` on the
+`CardDefinition`. The card can be played face-down as a resource, then the
+`flipUp` action pays that cost and resolves it as its real type with
+`deployedViaFlipUp` set (readable via the same-named condition, or ability
+`variables` + `if`). The rider `effects` then the card's own effects run
+through the suspendable effect-frame path — a chooser among them pauses on
+a `pendingChoice` and the flipped card only lands (tactic → discard,
+permanent → play) once it resumes.
 
 ### Ability-level `variables` — settled before targeting/costs
 
@@ -123,6 +171,15 @@ work on it like any other damage target.
 | `destroy` | `target: TargetRef` | typically `"source"` (sacrifice) |
 | `removeCounter` | `target, counter, amount` | "remove N tokens from this card" as a cost — throws if not enough are there (no partial payment), unlike the `removeCounter` *effect* which clamps to 0 |
 | `depleteSelected` | `declarationId` | depletes every card already selected under a (possibly variable/plural-count) `TargetDeclaration` — "deplete X characters you control" as a cost. All-or-nothing: throws if any of them is already depleted, rather than partially paying. A no-op if the declaration was optional and 0 were selected. |
+| `removeFromGame` | `target: TargetRef` | "remove `target` from the game" as a cost — typically `"source"` (a RECUR ability exiling itself from the discard pile). Throws if it doesn't resolve to a real card. |
+| `sacrificeSelected` | `declarationId`, `disposition` | consumes every card selected under `declarationId` via `"removeFromGame" \| "destroy" \| "discard"` — "remove X tactics in your discard pile from the game" as a cost. |
+| `dealDamage` | `target`, `amount` | "inflict N damage to `target`" as a cost — typically `"source"` for a location spending its own structure. Always payable; any resulting destruction is left to the normal state-based check. |
+
+**Activating from another zone** — an `ActivatedAbility` may set
+`activationZone: "discard" | "hand" | "void"` (default `"play"`) to be used
+while the source sits there (RECUR / RETIRE / EXHUME). `condition` still
+carries any finer gate; costs/targets/effects work as normal with
+`context.sourceId` pointing at the out-of-play card.
 
 All costs in an ability must be payable simultaneously (`canPayCosts`
 simulates on a cloned state) — no partial payment.
@@ -130,9 +187,21 @@ simulates on a cloned state) — no partial payment.
 ## Conditions (`src/types/conditions.ts`)
 
 `and`, `or`, `not`, `sourceInZone`, `sourceIsEventCard`,
-`eventCardControlledBy`, `targetExists`, `cardTypeIs`, `statCompare`,
-`counterCompare`, `numberCompare`, `inBattle`, `sourceIsDamageSource`,
-`cardMovedFromZone`, `battleRole`, `eventPlayerIs`, `targetInSelection`.
+`eventCardControlledBy`, `targetExists`, `cardTypeIs`, `cardTradeIs`,
+`hasUnique`, `hasAbility`, `statCompare`, `counterCompare`, `numberCompare`,
+`inBattle`, `sourceIsDamageSource`, `cardMovedFromZone`, `battleRole`,
+`eventPlayerIs`, `targetInSelection`.
+
+- **`cardTradeIs`** — `{ target, trade }`, true when `target`'s printed
+  `trade` equals `trade`. `CardSelector` has no trade filter — compose with
+  `not` inside a selector's `conditions` for "a non-Rogue character".
+- **`hasUnique`** — `{ target }`, true when `target`'s definition carries a
+  Unique designation (`CardDefinition.unique` set) — "a character with the
+  UNIQUE keyword in its rules text".
+- **`hasAbility`** — `{ target, abilityType? }`, true when `target`'s
+  `behavior.abilities` has an entry of `abilityType` (any if omitted) —
+  "a card you control with an ability in its rules text" (Notion Sickness,
+  `abilityType: "activated"`).
 
 - **`numberCompare`** — generic `left <op> right` between two
   `NumberExpression`s, for anything not anchored to one card (most commonly
@@ -171,15 +240,86 @@ simulates on a cloned state) — no partial payment.
   "type": "selected", "id": "__candidate" }` inside a `CardSelector.
   conditions` or a `forEach`/`chooserSelectsTarget` declaration's
   `conditions`.
+- **`eventOrdinal`** — `{ operator, value }`, compares how many times the
+  current triggering event has already fired **this turn**
+  (`GameState.turnEventTally`, keyed by event type + its `playerId` when it
+  has one) against `value`. "The first resource each opponent plays each
+  turn" = a `resourcePlayed` trigger with `and(eventPlayerIs opponent,
+  { eventOrdinal, operator: "=", value: 1 })`. The tally resets every turn.
+- **`deploySameNameThisTurn`** — `{ player, operator, value }`, compares the
+  largest count of same-named cards `player` deployed this turn against
+  `value` ("an opponent deployed at least 2 cards with the same name").
+- **`respondingTo`** — `{ cardType? }`, true while being played into a
+  response window whose stack holds a card of `cardType` (other than this
+  one). Pairs with the `respondedToCard` TargetRef — which resolves during
+  play-time cost evaluation too, so a play `cost` can reference it (e.g.
+  Anatidaephobia's "pay X, where X is the character's numeric cost" is a
+  `payResources` cost with `amount` a `cardCost` of `respondedToCard`,
+  wrapped in `conditional`/`deployedViaFlipUp` to waive it on FLIP UP).
+- **`deployedViaFlipUp`** — true while resolving a card played via its FLIP
+  UP cost. Combine with `conditional` (a NumberExpression) for "X is 4 if
+  FLIP UP else 2", or gate/scale a play-time `cost`.
+- **`cardNameEquals`** — `{ target, other }`, true when both resolve to
+  cards sharing a printed name ("a card with the same name" — `target`
+  bound to `__candidate`, `other` to `"eventCard"`).
+- **`bottomedInMulligan`** — `{ target? }` (default `"source"`), true when
+  the card was one its *owner* set aside to the bottom of their deck in the
+  opening mulligan (`GameState.mulligan`). "If you chose to put this card
+  on the bottom of your deck as part of your mulligan" (Community Chest).
 
 ## Effects (`src/types/effects.ts`)
 
 `draw`, `playResource`, `dealDamage`, `modifyInfluence`, `moveCard`,
 `destroy`, `deplete`, `restore`, `addCounter`, `removeCounter`,
 `createModifier`, `takeControl`, `removeFromGame`, `forEach`, `attachTo`,
-`grantKeyword`, `grantRestriction`, `if`, `shuffleDeck`,
+`grantKeyword`, `grantRestriction`, `if`, `shuffleDeck`, `mill`, `bind`,
+`terminate`, `setRestoreLock`, `setDamage`, `removeFromBattle`,
+`forEachPlayer`, `nameValue`, `mayPay`, `createTokens`, `useTargetAbility`,
 `chooserSelectsTarget`, `chooserSelectsOption`, `lookAndReorder`,
 `reduceNextCost`, `deployForFree`, `distributeAmong`.
+
+- **`setDamage`** — `{ target, amount }` — sets accumulated damage to
+  `amount` (>= 0), e.g. "reduce the damage already inflicted to this
+  character to 0".
+- **`removeFromBattle`** — `{ target }` — pulls `target` out of the current
+  battle's parties.
+- **`forEachPlayer`** — `{ effects }` — runs `effects` once per player
+  (turn order, active first) with `controller`/`owner` rebound; nested
+  choosers pause per player.
+- **`nameValue`** — `{ chooser, valueKind: "subtype" | "cardName", storeAs }`
+  — pauses for `chooser` to name a string, stored on the source card's
+  `namedValues[storeAs]` and read by `CardSelector.subtypeVar`.
+- **`mayPay`** — `{ player, costs, effects, elseEffects? }` — "you may pay
+  <costs>. If you do, <effects>; otherwise <elseEffects>." Auto-declines if
+  `costs` are unaffordable. Use `costs: []` for a bare "you may" yes/no.
+- **`createTokens`** — `{ controller, count, token: TokenSpec }` — puts
+  `count` token permanents into play (`{ name, cardType, subtype?,
+  strength?, life?, speed?, structure? }`); they vanish outright on leaving
+  play.
+- **`useTargetAbility`** — `{ chooser, target, times? }` — `chooser`
+  activates one of `target`'s own activated abilities as a sub-resolution,
+  its effects resolved `times` (default 1) times.
+
+- **`mill`** — `{ player, count }` — moves the top `count` cards of
+  `player`'s deck to their discard (fewer than `count` → whatever's there,
+  no reshuffle).
+- **`terminate`** — `{ scope?, target? }` — removes a still-unresolved item
+  from the response stack. `scope: "target"` (default) terminates the stack
+  item whose source is `target` (`"eventCard"` on a `cardPlayed` trigger =
+  "terminate the card just played"); `scope: "othersOnStack"` terminates
+  every other unresolved item. A terminated card → owner's discard, effects
+  never run. `deployCard` batches the `cardPlayed` emit with the stack push
+  so a `cardPlayed` trigger can already see the card on the stack.
+- **`setRestoreLock`** — `{ target, value? }` — sets (or clears with
+  `value: false`) `CardInstance.restoreLocked`, so the card's controller's
+  faction turn-start restore skips it ("characters depleted by this card
+  cannot be restored by their faction's restore rule"). Pair with a
+  `deplete` effect on the same target; cleared automatically on leaving play.
+- **`bind`** — `{ id, value }` — evaluates `value` **now** and stores it in
+  `ResolutionContext.variables[id]` for later effects in the same ability to
+  read via `{ type: "variable", id }`. Use it to capture a stat off a card
+  (`{ type: "stat", target: { type: "selected", id: "victim" }, ... }`)
+  *before* a subsequent `destroy`/`moveCard` in the same list removes it.
 
 **Every effect except `forEach`/`if` resolves against exactly one target.**
 `resolveTargetRef` returns only `selected[id]?.[0]` — the *first* selected
@@ -297,7 +437,16 @@ to touch when just authoring card data.)
 
 `number` (literal) | `stat` | `counter` | `count` (cardinality of a
 `CardSelector`) | `add` | `multiply` | `variable` | `random` | `cardCost` |
-`divide` | `modulo` | `selectionCount`.
+`printedStat` | `resourceIcons` | `divide` | `modulo` | `selectionCount`.
+
+- **`printedStat`** — `{ target, stat }`, a card's printed BASE stat from its
+  `CardDefinition` (before runtime modifiers) — parallel to `cardCost`, and
+  distinct from `stat` (the live value). 0 if the definition lacks that
+  stat. "Loses life equal to its printed life minus 2."
+- **`resourceIcons`** — `{ player, icon }`, how many of a given resource
+  `icon` (`rage`/`greed`/`deception`/`elitism`/`obsession`/`volition`)
+  `player` controls in play (`getThresholds`). Also the idiom for "while you
+  control at least [X][X]" — `numberCompare` it against a literal.
 
 - **`variable`** — `{ id }`, a player-chosen number ("choose a number for
   X"), read from `ResolutionContext.variables[id]`. The player supplies
@@ -367,6 +516,19 @@ TargetRef = "source" | "attachedTo" | "eventCard"
 - **`{ type: "random", selector }`** — a uniformly random card matching
   `selector` (e.g. "discard a card at random"), or `undefined` if nothing
   matches.
+- **`{ type: "deckPosition", player, from, index? }`** — the card at a fixed
+  slot in a deck (`from: "top" | "bottom"`, `index` default 0). `undefined`
+  if the deck is too short. "Numeric cost of the top card of your deck" is
+  `{ "type": "cardCost", "target": { "type": "deckPosition", "player":
+  "controller", "from": "top" } }`. To put a card *on top* of a deck use
+  the `moveCard` effect's `"position": "top"` (default is bottom).
+- **`{ type: "respondedToCard" }`** — the card on the stack this one is
+  being played in response to (pairs with the `respondingTo` condition).
+- **`{ type: "factionOf", player }`** — that player's faction card instance
+  ("attach it to that player's faction").
+
+`NumberExpression` also has **`{ type: "conditional", if, then, else }`** —
+`then` when the `Condition` holds, else `else`.
 
 ```ts
 CardSelector = { controller?, owner?, zone?, type?, subtype?, depleted?, conditions? }
@@ -415,8 +577,15 @@ non-optional `count` is still an exact requirement, even a variable one).
 
 ```ts
 Keyword = "tactical" | "aggro" | "covert" | "redirectDamage"
-Restriction = "cannotAttack" | "cannotBlock"
+Restriction = "cannotAttack" | "cannotBlock" | "mustAttack" | "mustBlock"
 ```
+
+`mustAttack` / `mustBlock` — "must attack/block if it can". Enforced at
+`declareAttack` / `declareBlockers`: if the controller declares a battle
+action at all, an eligible, un-depleted character with the restriction (and
+a legal target / a legal party to join) must be included. A turn with **no**
+declared attack isn't policed (no "end of turn" forcing yet — flag if a card
+needs it). Public accessors: `getKeywords(cardId)` / `getRestrictions(cardId)`.
 
 `redirectDamage` — while attacking and blocked, the attacker's controller
 may assign its battle damage to the attack's original target instead of
@@ -452,6 +621,25 @@ eligibility — already calls):
    ```
    `ContinuousAbility.modifiers` is still required even when empty (only
    granting a keyword/restriction, no stat change).
+
+### Continuous abilities: aura / cost / damage forms
+
+- **Aura** — a `modifiers`/`keywords`/`restrictions` entry may set
+  `selector` **instead of** `target` to apply to *every* in-play card the
+  selector matches, recomputed live ("all your characters lose 1 strength",
+  "every character loses life equal to its printed life minus 2"). With
+  `selector`, a modifier's `value` is evaluated per affected card with that
+  card bound to `{ "type": "selected", "id": "__candidate" }`, so
+  `printedStat`/`stat` of `__candidate` give per-target amounts.
+- **`costModifiers`** — `[{ affects, delta, minCost?, selector? }]` — adjusts
+  what it costs `affects` to deploy a matching card ("opponents pay 1 more
+  to deploy a tactic", "characters you play cost 2 less, min 1"). `selector`
+  matches the card being deployed (don't constrain `zone`). Feeds both
+  `getCardPlayability` and the real payment.
+- **`damageModifiers`** — `[{ selector, battleOnly?, delta }]` — tunes each
+  instance of damage inflicted to a matching card, floored at 0 ("reduce
+  battle damage to your characters by 2"). Not a replacement effect — it
+  can't cancel, only adjust. (engine-derived) applied per assignment.
 
 Caveat: `declareAttack`'s AGGRO check and `declareBlockers`'s COVERT check
 both use the full `hasKeyword` (dynamic grants included). The TACTICAL
@@ -633,3 +821,98 @@ Don't write a test per card. `src/engine/__tests__/card-behaviors.test.ts`
 covers each *ability shape* once via `support/fixtures.ts` builders — new
 tests belong there when a new mechanism (or vocabulary extension) needs
 proving, not for every additional card that reuses an existing shape.
+
+## Coverage workflow
+
+Working the ~1900 not-yet-implemented cards in `data/cards.json` is tracked
+in `data/card-coverage.json` (source of truth) + the generated `COVERAGE.md`
+(status roll-up — never hand-edit). `scripts/build-coverage.cjs` maintains
+the manifest: it adds a skeleton entry per new catalog id, prunes dead ids,
+and rebuilds `COVERAGE.md`. It **never** advances an entry's `status` or
+edits its classification — humans/agents do that by hand-editing
+`data/card-coverage.json`. `src/engine/__tests__/card-data-integrity.test.ts`
+enforces everything below.
+
+### Per-card entry
+
+```jsonc
+{
+  "id": "…", "name": "…", "set": "Seed 3", "type": "character",
+  "status": "unclassified" | "vanilla" | "classified" | "authored" | "verified" | "blocked" | "wontImplement",
+  "textHash": "<sha1 of normalized printed text>",   // stale => test fails => re-review
+  "rulesAudited": false,                 // true once `text` has been read against RULES.md + behavior confirmed
+  "behavior": {
+    "needed": true,                       // false once classification confirms no ability
+    "shapes": ["triggered:cardEnteredPlay", "continuous:modifier"],
+    "reusesProvenShape": true,            // false => a new card-behaviors.test.ts describe() naming this card is required
+    "newTestNeeded": false
+  },
+  "metadata": {                           // must match the CardDefinition once status is authored/verified
+    "unique": "thunderhoof" | null,
+    "attachTo": "character" | null,
+    "resourceProvides": ["obsession"] | null,
+    "keywords": ["covert"]
+  },
+  "engineCapability": ["flip-up"],        // capability ids required; [] = expressible with today's vocab
+  "display": { "notes": "…" },            // renderer hints (labels, captions) — no engine meaning
+  "confidence": "high" | "medium" | "low",
+  "notes": "rules question / RULES.md cite / ambiguity"
+}
+```
+
+Top-level `capabilities` is the deduplicated engine-gap backlog:
+
+```jsonc
+"capabilities": {
+  "flip-up": {
+    "status": "unimplemented" | "designed" | "implemented",
+    "kind": ["cost", "effect"],          // which src/types union(s) it extends
+    "spec": "one-paragraph description",
+    "cards": ["<id>", "…"],
+    "rulesRef": "RULES.md §…"
+  }
+}
+```
+
+### Status lifecycle
+
+`unclassified` → **classify** (fill `behavior.shapes`, `metadata`,
+`engineCapability` from the *existing* vocabulary in
+`src/types/{costs,conditions,effects,expressions}.ts`; cite `RULES.md`;
+record ambiguities as `notes` + `confidence: "low"` rather than guessing) →
+`classified` → **author** (`behavior` + metadata onto the card in
+`data/cards.json`, `npm run sync-cards`) → `authored` → **verify** (tests +
+a smoke game exercise it) → `verified`. `vanilla` = no `behavior` needed
+(text-free / keyword-only / plain resource). `blocked` = classified but
+cannot be authored until a capability lands. `wontImplement` = references a
+mechanic a 2-player, single-game engine can't model (alternate win
+conditions, "outside the game", multiplayer/politics, draft/format text) —
+carries a `notes` saying which, and counts as *resolved* (not blocked) in
+the roll-up.
+
+`rulesAudited` is orthogonal to `status`: it records that a card's printed
+`text` has actually been read against `RULES.md` and its `behavior` (if
+any) confirmed — as opposed to just carrying a `behavior` block from an
+earlier, unreviewed pass. Flip it to `true` during classification.
+
+### One-pass invariant (enforced)
+
+- An entry may only reach `authored`/`verified` when `engineCapability` is
+  `[]` **or** every listed capability is `status: "implemented"`.
+- A set's classification is "complete" only when every entry is
+  `classified`/`vanilla` **and** every capability it references has a
+  written `spec`. **Authoring a set does not begin until then** — that is
+  what makes the pass single.
+- New engine capability is always a new member of a closed `src/types/`
+  union (or a new `PendingChoice` variant + `resolvePendingChoice` case for
+  a new input moment, with a structured serializable payload and optional
+  `label` — never engine-side text/layout). Never per-card code, never a
+  branch keyed on card name/id. Update `RULES.md` in the same change.
+
+### Commands
+
+```
+node scripts/build-coverage.cjs                 # refresh manifest + COVERAGE.md
+node scripts/build-coverage.cjs --check          # CI: fail if stale
+node scripts/build-coverage.cjs --accept-text ID # after re-reviewing a text change
+```

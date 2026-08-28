@@ -24,6 +24,19 @@ export type GameAction =
       variables?: Record<string, number>;
     }
   | {
+      /**
+       * Flip up a face-down resource this player controls, paying its
+       * `CardDefinition.flipUp` cost, and resolve it as its real card type
+       * with `deployedViaFlipUp` set. `selected`/`variables` supply any
+       * EXTRA COST picks / chosen numbers the flipped card needs.
+       */
+      type: "flipUp";
+      playerId: PlayerId;
+      cardId: CardInstanceId;
+      selected?: Record<string, CardInstanceId[]>;
+      variables?: Record<string, number>;
+    }
+  | {
       type: "passPriority";
       playerId: PlayerId;
     }
@@ -96,5 +109,15 @@ export type GameAction =
             kind: "distributeAmong";
             /** Per-card shares; omitted/zero cards receive nothing. Must sum to the pending amount. */
             shares: Record<CardInstanceId, number>;
+          }
+        | { kind: "replacementChoice"; apply: boolean }
+        | { kind: "nameValue"; value: string }
+        | { kind: "mayPay"; pay: boolean }
+        | {
+            kind: "useTargetAbility";
+            /** Omit to decline. */
+            abilityId?: AbilityId;
+            selected?: Record<string, CardInstanceId[]>;
+            variables?: Record<string, number>;
           };
     };

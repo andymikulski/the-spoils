@@ -34,7 +34,11 @@ export type Keyword =
 /** A boolean combat restriction, granted like a Keyword but never printed statically — always via a `grantRestriction` effect or `ContinuousAbility.restrictions`. */
 export type Restriction =
   | "cannotAttack"
-  | "cannotBlock";
+  | "cannotBlock"
+  /** "must attack if it can" — if its controller declares any attack, an eligible, un-depleted `mustAttack` character with a legal target has to be among the attackers. */
+  | "mustAttack"
+  /** "must block if it can" — a non-depleted `mustBlock` character that can legally block the attacking party has to be among the declared blockers. */
+  | "mustBlock";
 
 export type CardType =
   | "character"

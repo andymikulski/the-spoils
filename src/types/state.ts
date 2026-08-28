@@ -18,6 +18,7 @@ import type {
 } from "./ids.js";
 import type { ResolutionContext, StackItem } from "./resolution.js";
 import type { PendingChoice } from "./choices.js";
+import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
 
 export interface CardInstance {
@@ -37,6 +38,22 @@ export interface CardInstance {
 
   /** Numeric costs attach resources to the player's faction. */
   attachedTo?: CardInstanceId;
+
+  /**
+   * When true, this card is skipped by its controller's faction turn-start
+   * restore rule ("...cannot be restored by their faction's restore rule").
+   * Cleared automatically when the card leaves play, like `depleted`.
+   */
+  restoreLocked?: boolean;
+
+  /**
+   * String values this card has named ("name a card subtype") — see the
+   * `nameValue` effect and `CardSelector.subtypeVar`. Cleared on leaving play.
+   */
+  namedValues?: Record<string, string>;
+
+  /** True for a token permanent (`createTokens`) — ceases to exist on leaving play. */
+  isToken?: boolean;
 
   /**
    * The turn number on which this card started the turn in play under its
@@ -125,13 +142,17 @@ export interface RuntimeCostReduction {
  * answered. `finishStackItem`, if set, is the response-stack item whose
  * post-effects bookkeeping (moving a tactic to discard, a permanent into
  * play) runs once every effect in `effects` — including anything a paused
- * chooser effect goes on to add — has finished.
+ * chooser effect goes on to add — has finished. `finishFlipUp` plays the
+ * same role for a FLIP UP resolution (which isn't a stack item): move a
+ * flipped tactic to discard / send a flipped permanent into play, after
+ * every effect — rider + own — has resolved.
  */
 export interface PendingEffectFrame {
   effects: Effect[];
   index: number;
   context: ResolutionContext;
   finishStackItem?: StackItem;
+  finishFlipUp?: { cardId: CardInstanceId; attachTargetId?: CardInstanceId };
 }
 
 export interface BattleDamageAssignment {
@@ -334,4 +355,44 @@ export interface GameState {
 
   /** Blocks perform() except resolvePendingChoice until a player answers it. */
   pendingChoice?: PendingChoice;
+
+  /**
+   * The continuation for an outstanding optional replacement (paired with a
+   * `pendingChoice` of kind `"replacementChoice"`) — what to do on accept
+   * (pay `cost`, run `effects`) vs decline (perform `original`).
+   */
+  pendingReplacement?: {
+    affectedCardId: CardInstanceId;
+    sourceId: CardInstanceId;
+    abilityId: AbilityId;
+    original: { event: "destroy" } | { event: "moveToZone"; zone: Zone };
+    cost: Cost[];
+    effects: Effect[];
+  };
+
+  /**
+   * Per-turn count of emitted events, keyed `"<eventType>"` or
+   * `"<eventType>:<playerId>"` when the event carries a `playerId`. Reset at
+   * the start of every turn. Read by the `eventOrdinal` condition for "the
+   * first resource each player plays each turn" style triggers.
+   */
+  turnEventTally: Record<string, number>;
+
+  /**
+   * Per-turn list of card *names* each player has deployed (via `playCard`),
+   * in order. Reset at the start of every turn. Read by the
+   * `deploySameNameThisTurn` condition ("an opponent deployed at least 2
+   * cards with the same name this turn").
+   */
+  turnDeploys: Record<PlayerId, string[]>;
+
+  /**
+   * Cards each player set aside to the bottom of their deck during the
+   * *opening* mulligan (absent / empty if they kept their hand or had no
+   * mulligan). Written once, in `mulligan()`; never mutated afterward. Read
+   * by the `bottomedInMulligan` condition — a card whose text keys off "if
+   * you ... chose to put this card on the bottom of your deck as part of
+   * your mulligan" (Community Chest).
+   */
+  mulligan: Record<PlayerId, CardInstanceId[]>;
 }

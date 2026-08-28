@@ -111,6 +111,35 @@ describe("RULES.md §5 — setup", () => {
       engine.perform({ type: "mulligan", playerId: P1, cardIds: [] })
     );
   });
+
+  test("the mulligan records which cards each player bottomed", () => {
+    const engine = newFactionGame();
+
+    const bottomed = engine.state.players[P1].hand[0];
+
+    engine.perform({ type: "mulligan", playerId: P1, cardIds: [bottomed] });
+    engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
+
+    // P1 set one card aside; P2 kept everything.
+    assert.deepEqual(engine.state.mulligan[P1], [bottomed]);
+    assert.equal(engine.state.mulligan[P2], undefined);
+
+    // `bottomedInMulligan` (default target "source") reads it.
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "bottomedInMulligan" },
+        { sourceId: bottomed, controllerId: P1, selected: {} }
+      ),
+      true
+    );
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "bottomedInMulligan" },
+        { sourceId: engine.state.players[P1].hand[0], controllerId: P1, selected: {} }
+      ),
+      false
+    );
+  });
 });
 
 describe("RULES.md §6 — the develop step", () => {

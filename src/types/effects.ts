@@ -5,6 +5,7 @@
 import type { Duration, Keyword, ModifierOperation, Restriction, Stat, Zone } from "./ids.js";
 import type { CardSelector, NumberExpression, PlayerRef, TargetDeclaration, TargetRef } from "./expressions.js";
 import type { Condition } from "./conditions.js";
+import type { Cost } from "./costs.js";
 
 export type Effect =
   | {
@@ -35,6 +36,11 @@ export type Effect =
       type: "moveCard";
       target: TargetRef;
       to: Zone;
+      /**
+       * Where in the destination when `to` is `"deck"` — `"top"` or
+       * `"bottom"` (default `"bottom"`). Ignored for every other zone.
+       */
+      position?: "top" | "bottom";
     }
   | {
       type: "destroy";
@@ -224,6 +230,134 @@ export type Effect =
       selected: string;
       amount: NumberExpression;
       effects: Effect[];
+    }
+  | {
+      /**
+       * Moves the top `count` cards of `player`'s deck to their discard pile
+       * ("put the top N cards of a deck into the discard pile"). Fewer than
+       * `count` in the deck: mills whatever is there. No reshuffle.
+       */
+      type: "mill";
+      player: PlayerRef;
+      count: NumberExpression;
+    }
+  | {
+      /**
+       * Evaluates `value` immediately and stores it in
+       * `ResolutionContext.variables[id]`, so later effects in the same
+       * ability can read it via `{ type: "variable", id }` even after the
+       * card it was derived from has left play — "X is that character's
+       * strength" captured before a `destroy` in the same effect list.
+       */
+      type: "bind";
+      id: string;
+      value: NumberExpression;
+    }
+  | {
+      /**
+       * Removes a still-unresolved card/ability from the response stack
+       * ("terminate" / "counter"). A terminated card goes to its owner's
+       * discard without its effects resolving; a terminated ability is
+       * dropped. No-op if the target isn't on the stack.
+       *
+       * - `scope: "target"` (default) — terminate the stack item whose
+       *   source card is `target` (e.g. `"eventCard"`, the card just played).
+       * - `scope: "othersOnStack"` — terminate every remaining stack item
+       *   ("all other unresolved cards are terminated"); `target` ignored.
+       */
+      type: "terminate";
+      scope?: "target" | "othersOnStack";
+      target?: TargetRef;
+    }
+  | {
+      /**
+       * Sets (or with `value: false`, clears) `CardInstance.restoreLocked` —
+       * "characters depleted by this card cannot be restored by their
+       * controller's faction's restore rule". Pair with a `deplete` effect
+       * on the same target. Cleared automatically when the card leaves play.
+       */
+      type: "setRestoreLock";
+      target: TargetRef;
+      value?: boolean;
+    }
+  | {
+      /**
+       * Sets `target`'s accumulated damage to `amount` (clamped >= 0) —
+       * "reduce the amount of damage already inflicted to this character to
+       * 0". Distinct from healing via a life modifier.
+       */
+      type: "setDamage";
+      target: TargetRef;
+      amount: NumberExpression;
+    }
+  | {
+      /**
+       * Pulls `target` out of the current battle's attacking/blocking party
+       * ("remove it from battle"). No-op if there's no battle or the card
+       * isn't in it.
+       */
+      type: "removeFromBattle";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * Resolves `effects` once per player, in turn order starting from the
+       * active player (or `order: "startingWith"` + `player`), rebinding
+       * `controller`/`owner` to that player. "Each player may draw a card
+       * or play a resource." Nested chooser effects pause per player, the
+       * same as anywhere else.
+       */
+      type: "forEachPlayer";
+      effects: Effect[];
+    }
+  | {
+      /**
+       * Pauses for `chooser` to name a value from a closed vocabulary
+       * (`kind: "subtype"` — any card subtype; `kind: "cardName"` — any
+       * card name in the game). The chosen string is stored on the source
+       * card instance under `counters`-adjacent `namedValues[storeAs]` and
+       * read back by a `CardSelector.subtypeVar` / conditions.
+       */
+      type: "nameValue";
+      chooser: PlayerRef;
+      valueKind: "subtype" | "cardName";
+      storeAs: string;
+    }
+  | {
+      /**
+       * "You may pay <costs>. If you do, <effects>; otherwise
+       * <elseEffects>." Pauses for `player` to accept or decline; declines
+       * (or can't afford) fall through to `elseEffects`.
+       */
+      type: "mayPay";
+      player: PlayerRef;
+      costs: Cost[];
+      effects: Effect[];
+      elseEffects?: Effect[];
+    }
+  | {
+      /**
+       * Puts `count` token permanents into play under `controller` — cards
+       * with no deck backing that cease to exist on leaving play. `token`
+       * is a minimal inline definition (name + type + optional stats /
+       * subtype).
+       */
+      type: "createTokens";
+      controller: PlayerRef;
+      count: NumberExpression;
+      token: TokenSpec;
+    }
+  | {
+      /**
+       * Activates one of `target`'s own activated abilities as a nested
+       * sub-resolution (chosen by `chooser`), optionally resolving its
+       * effects twice. "You may use one of the card's abilities. If you do,
+       * the effect happens twice instead of once."
+       */
+      type: "useTargetAbility";
+      chooser: PlayerRef;
+      target: TargetRef;
+      times?: number;
     };
 
 /**
@@ -239,19 +373,83 @@ export interface EffectOption {
   effects: Effect[];
 }
 
+/**
+ * A continuous ability's stat modifier. Set **either** `target` (a single
+ * `TargetRef`, e.g. `"attachedTo"` or `{ type: "selected", id: "target" }`)
+ * **or** `selector` (an aura: applies to *every* in-play card matching it,
+ * recomputed live — "all your characters lose 1 strength", "every character
+ * loses life equal to its printed life minus 2"). With `selector`, `value`
+ * is evaluated per affected card with that card bound to
+ * `{ type: "selected", id: "__candidate" }`, so per-target derived amounts
+ * (`printedStat`/`stat` of `__candidate`) work.
+ */
+/** A minimal inline card definition for a token permanent (see `createTokens`). */
+export interface TokenSpec {
+  name: string;
+  cardType: "character" | "item" | "location";
+  subtype?: string[];
+  strength?: number;
+  life?: number;
+  speed?: number;
+  /** For a location token. */
+  structure?: number;
+}
+
 export interface ModifierDefinition {
-  target: TargetRef;
+  target?: TargetRef;
+  selector?: CardSelector;
   stat: Stat;
   operation: ModifierOperation;
   value: NumberExpression;
 }
 
 export interface KeywordGrantDefinition {
-  target: TargetRef;
+  target?: TargetRef;
+  /** Aura form — grant to every in-play card matching this (see ModifierDefinition). */
+  selector?: CardSelector;
   keyword: Keyword;
 }
 
 export interface RestrictionGrantDefinition {
-  target: TargetRef;
+  target?: TargetRef;
+  /** Aura form — grant to every in-play card matching this (see ModifierDefinition). */
+  selector?: CardSelector;
   restriction: Restriction;
+}
+
+/**
+ * A continuous ability's effect on how much it costs to deploy a card —
+ * "your opponents must pay 1 more to deploy a tactic", "reduce the numeric
+ * cost of characters you play by 2, to a minimum of 1". Recomputed live
+ * while the source is in play; feeds both `getCardPlayability` and the
+ * actual payment in `playCard`.
+ */
+export interface CostModifierDefinition {
+  /** Whose deploys this affects (`controller` = the source's controller). */
+  affects: PlayerRef;
+  /** Added to the printed numeric cost — negative discounts, positive taxes. */
+  delta: NumberExpression;
+  /** The modified cost can't drop below this (default 0). */
+  minCost?: number;
+  /**
+   * Which cards this applies to, matched against the card being deployed.
+   * Omit for "any card". Don't constrain `zone` (the card is in hand) —
+   * use `type` / `subtype` / `conditions` (`cardTradeIs`, etc.).
+   */
+  selector?: CardSelector;
+}
+
+/**
+ * A continuous ability's adjustment to damage amounts as they're inflicted —
+ * "when battle damage is inflicted to a character you control, reduce the
+ * amount by 2". Applied in `dealDamage`; not a replacement effect (it tunes
+ * an amount, it can't cancel).
+ */
+export interface DamageModifierDefinition {
+  /** Match the card being damaged. Omit `zone` (it's in play by definition). */
+  selector: CardSelector;
+  /** Only battle damage, or all damage. Default: all. */
+  battleOnly?: boolean;
+  /** Added to each incoming damage amount — negative reduces. Floors the amount at 0. */
+  delta: NumberExpression;
 }

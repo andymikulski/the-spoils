@@ -48,4 +48,37 @@ export type Cost =
        */
       type: "depleteSelected";
       declarationId: string;
+    }
+  | {
+      /**
+       * "Remove <target> from the game" as a cost — typically `"source"`
+       * (e.g. a RECUR ability that exiles itself from the discard pile).
+       * Throws if `target` doesn't resolve to a real card, like the other
+       * card-consuming costs.
+       */
+      type: "removeFromGame";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * Consumes every card already selected under `declarationId` by the
+       * given `disposition` — "remove X tactics in your discard pile from
+       * the game" as a cost. All-or-nothing.
+       */
+      type: "sacrificeSelected";
+      declarationId: string;
+      disposition: "removeFromGame" | "destroy" | "discard";
+    }
+  | {
+      /**
+       * "Inflict N damage to <target>" as a cost — typically `"source"`, for
+       * a location that spends its own structure to activate an ability
+       * (e.g. "Inflict 1 damage to this location. If you do, ..."). Always
+       * payable (a card can always take damage); the resulting destruction,
+       * if any, is handled by the normal state-based check after the
+       * ability resolves.
+       */
+      type: "dealDamage";
+      target: TargetRef;
+      amount: NumberExpression;
     };

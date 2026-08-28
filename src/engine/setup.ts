@@ -123,7 +123,10 @@ export function createTwoPlayerGame(
     restrictions: [],
     costReductions: [],
     responseStack: [],
-    pendingEffectFrames: []
+    pendingEffectFrames: [],
+    turnEventTally: {},
+    turnDeploys: {},
+    mulligan: {}
   };
 
   // Anything already in play before turn 1 began counts as having started
