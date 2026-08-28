@@ -64,6 +64,23 @@ describe("RULES.md §1 — victory", () => {
     assert.throws(() => engine.perform({ type: "passPriority", playerId: P1 }));
   });
 
+  test("CR §102.1a / §306.2 — running out of cards to draw does not lose the game", () => {
+    const { engine } = buildGame({ cards: [] });
+
+    // P1's deck is empty (buildGame places no deck cards). Draw well past it.
+    assert.equal(engine.state.players[P1].deck.length, 0);
+    for (let i = 0; i < 5; i++) {
+      engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+      engine.perform({ type: "endTurn", playerId: P1 });
+      resolvePendingResponses(engine);
+      engine.perform({ type: "endTurn", playerId: P2 });
+      resolvePendingResponses(engine);
+    }
+
+    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.getFlowView().mode, "main");
+  });
+
   test("both factions hitting 0 influence at once is a draw", () => {
     const { engine, id } = buildGame({
       playerA: { influence: 0 },

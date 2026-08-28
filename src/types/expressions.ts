@@ -149,7 +149,18 @@ export interface CardSelector {
   controller?: "self" | "opponent" | "any";
   owner?: "self" | "opponent" | "any";
 
-  zone?: Zone | Zone[];
+  /**
+   * The game area(s) this selector looks in. **When omitted, it matches
+   * only the In-Play area** (CR §402.3 / §402.3a — "pick a character" means
+   * a character *in play*). Set it explicitly to reach `hand` / `deck` /
+   * `discard` / `void`. A few internal contexts pass a selector whose zone
+   * is intentionally the card's current location rather than "in play" —
+   * `deployForFree` (a hand card), `CostModifierDefinition` (a card being
+   * deployed), the target of a `chooserSelectsTarget` over a prior
+   * search/selection — those carry `zone: "any"` (or an explicit zone) so
+   * this default doesn't over-narrow them.
+   */
+  zone?: Zone | Zone[] | "any";
   type?: CardType;
   subtype?: string;
   /**

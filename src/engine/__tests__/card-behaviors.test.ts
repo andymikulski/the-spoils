@@ -2267,7 +2267,7 @@ function spontaneousDisplacement(): CardDefinition {
                 by: 2,
                 rounding: "up"
               },
-              selector: { conditions: [nonResource] }
+              selector: { zone: "any", conditions: [nonResource] }
             }
           ]
         }
@@ -3247,6 +3247,7 @@ function arcanaExperiment(): CardDefinition {
               declaration: {
                 id: "chosen",
                 selector: {
+                  zone: "any",
                   conditions: [
                     { type: "targetInSelection", target: { type: "selected", id: "__candidate" }, selection: "found" }
                   ]
@@ -3795,8 +3796,8 @@ describe("Seed 3 Wave C: costModifiers (continuous deploy-cost adjustment)", () 
             type: "continuous",
             modifiers: [],
             costModifiers: [
-              { affects: "opponent", delta: 1, selector: { type: "tactic" } },
-              { affects: "controller", delta: -2, minCost: 1, selector: { type: "character" } }
+              { affects: "opponent", delta: 1, selector: { zone: "any", type: "tactic" } },
+              { affects: "controller", delta: -2, minCost: 1, selector: { zone: "any", type: "character" } }
             ]
           }
         ]
@@ -3878,11 +3879,11 @@ describe("Seed 3 Wave C: damageModifiers (continuous battle-damage adjustment)",
     assert.equal(engine.state.cards[id("ally")].damage, 1);
   });
 
-  // RULES.md §8: a damageModifiers entry tunes each damage *assignment* (one
-  // per source's contribution), not the summed speed-group application. Two
-  // attackers each assigning 2 to one warded blocker => (2-2) + (2-2) = 0,
-  // NOT (2+2) - 2 = 2.
-  test("applies per assignment, not once per summed speed-group application", () => {
+  // CR §609.1f + §408.2: damage from several characters to the same thing
+  // this round is inflicted as a single summed amount, and the reduction
+  // applies once to that sum. Two attackers each assigning 2 to one warded
+  // blocker => (2 + 2) - 2 = 2, NOT (2-2) + (2-2) = 0.
+  test("applies once to the summed speed-group amount, not per assignment", () => {
     const shield = character({
       name: "Shieldmane",
       strength: 1,
@@ -3931,7 +3932,97 @@ describe("Seed 3 Wave C: damageModifiers (continuous battle-damage adjustment)",
       ];
     });
 
-    assert.equal(engine.state.cards[id("blocker")].damage, 0);
+    assert.equal(engine.state.cards[id("blocker")].damage, 2);
+  });
+
+  // RULES.md §8 / CR §408.2 + §408.3: combat damage to a faction IS damage —
+  // increase/reduction effects apply to it before it converts to influence
+  // loss. Only a direct "loses N influence" effect (CR §408.3b) is exempt.
+  test("a battle-damage reduction on your faction cuts the influence an unblocked attacker costs you", () => {
+    const bulwark = character({
+      name: "Bulwark",
+      behavior: {
+        abilities: [
+          {
+            id: "ward-faction",
+            type: "continuous",
+            modifiers: [],
+            damageModifiers: [
+              { selector: { controller: "self", type: "faction" }, battleOnly: true, delta: -2 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "bulwark", def: bulwark, owner: P1, attackEligible: false },
+        { key: "raider", def: character({ name: "Raider", strength: 3 }), owner: P2 }
+      ]
+    });
+
+    const before = engine.state.players[P1].influence;
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P2,
+      attackerIds: [id("raider")],
+      target: { type: "faction", playerId: P1 }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [] });
+    autoResolveBattle(engine);
+
+    // 3 strength - 2 ward = 1 influence lost.
+    assert.equal(engine.state.players[P1].influence, before - 1);
+  });
+
+  test("the same reduction does NOT touch a direct 'loses N influence' effect (CR §408.3b)", () => {
+    const bulwark = character({
+      name: "Bulwark",
+      behavior: {
+        abilities: [
+          {
+            id: "ward-faction",
+            type: "continuous",
+            modifiers: [],
+            damageModifiers: [
+              { selector: { controller: "self", type: "faction" }, battleOnly: true, delta: -2 }
+            ]
+          }
+        ]
+      }
+    });
+    const drain = tactic({
+      name: "Drain",
+      behavior: {
+        abilities: [
+          {
+            id: "d",
+            type: "activated",
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "bulwark", def: bulwark, owner: P1 },
+        { key: "drain", def: drain, owner: P2, zone: "hand" }
+      ]
+    });
+
+    const before = engine.state.players[P1].influence;
+
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("drain") });
+    resolvePendingResponses(engine);
+
+    // Full 3 lost — a "loses influence" effect isn't damage.
+    assert.equal(engine.state.players[P1].influence, before - 3);
   });
 });
 
@@ -4279,7 +4370,7 @@ describe("Seed 3 Wave G: eventOrdinal condition", () => {
         startingInfluence: 25,
         setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
         turn: {
-          restore: { clearCharacterDamage: true, detachResources: true, restoreNonResources: true },
+          restore: { detachResources: true, restoreNonResources: true },
           develop: { choices: [{ type: "playResource", count: 1 }] }
         }
       }
@@ -4292,8 +4383,7 @@ describe("Seed 3 Wave G: eventOrdinal condition", () => {
         { key: "r1", def: resourceCard({ name: "R1" }), owner: P2, zone: "hand" },
         { key: "r2", def: resourceCard({ name: "R2" }), owner: P2, zone: "hand" }
       ],
-      activePlayerId: P2,
-      turnPhase: "develop"
+      activePlayerId: P2
     });
 
     const start = engine.state.players[P2].influence;
@@ -4402,7 +4492,7 @@ describe("Seed 3 Wave H: dealDamage cost + setRestoreLock effect", () => {
         startingInfluence: 25,
         setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
         turn: {
-          restore: { clearCharacterDamage: true, detachResources: true, restoreNonResources: true },
+          restore: { detachResources: true, restoreNonResources: true },
           develop: { choices: [{ type: "draw", count: 1 }] }
         }
       } }) }
@@ -4868,6 +4958,86 @@ describe("Seed 3 Wave K: replacement ability (moveToZone -> destroy instead)", (
     resolvePendingResponses(engine);
     assert.equal(engine.state.players[P2].hand.includes(id("victim")), true);
   });
+
+  // CR §506.2 / §506.2a: a replacement never applies to something happening
+  // as part of an extra cost — but a replacement on a card *attached* to the
+  // cost-paid card still does.
+  test("a card destroyed as an ability cost is really gone, but an attached card's own replacement still fires", () => {
+    const guardedChar = character({
+      name: "Guarded",
+      behavior: {
+        abilities: [
+          {
+            // "if this would be destroyed, put it into its owner's hand instead"
+            id: "self-guard",
+            type: "replacement",
+            replaces: { event: "destroy" },
+            effects: [{ type: "moveCard", target: { type: "selected", id: "__candidate" }, to: "hand" }]
+          }
+        ]
+      }
+    });
+
+    const clingyGear = item({
+      name: "Clingy Gear",
+      attachTo: "character",
+      behavior: {
+        abilities: [
+          {
+            // "if an item would be put into a discard pile from play, remove
+            // it from the game instead" (scoped to items so it doesn't also
+            // catch the character destroyed as a cost).
+            id: "gear-guard",
+            type: "replacement",
+            replaces: { event: "moveToZone", zone: "discard", cardType: "item" },
+            effects: [{ type: "removeFromGame", target: { type: "selected", id: "__candidate" } }]
+          }
+        ]
+      }
+    });
+
+    // Ability whose cost destroys a chosen character.
+    const engineOfRuin = character({
+      name: "Engine of Ruin",
+      behavior: {
+        abilities: [
+          {
+            id: "feed",
+            type: "activated",
+            targets: [{ id: "fuel", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }],
+            costs: [{ type: "destroy", target: { type: "selected", id: "fuel" } }],
+            effects: []
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ruin", def: engineOfRuin, owner: P1 },
+        { key: "guarded", def: guardedChar, owner: P1 },
+        { key: "gear", def: clingyGear, owner: P1, attachedToKey: "guarded" }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("ruin"),
+      abilityId: "feed",
+      selected: { fuel: [id("guarded")] }
+    });
+    resolvePendingResponses(engine);
+
+    // The destroy was an extra cost — the "put into hand instead"
+    // replacement did NOT apply; Guarded is in the discard pile.
+    assert.equal(engine.state.cards[id("guarded")].zone, "discard");
+    assert.equal(engine.state.players[P1].hand.includes(id("guarded")), false);
+
+    // The attached gear, now hostless, would go to the discard pile — but
+    // its own replacement fires: removed from the game instead.
+    assert.equal(engine.state.cards[id("gear")].zone, "removed");
+  });
 });
 
 // ===========================================================================
@@ -5050,7 +5220,7 @@ describe("Seed 3 Wave L: nameValue + subtypeVar cost modifier", () => {
             id: "tax",
             type: "continuous",
             modifiers: [],
-            costModifiers: [{ affects: "controller", delta: 2, selector: { subtypeVar: "banned" } }]
+            costModifiers: [{ affects: "controller", delta: 2, selector: { zone: "any", subtypeVar: "banned" } }]
           }
         ]
       }

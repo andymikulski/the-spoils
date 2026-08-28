@@ -26,7 +26,6 @@ const FACTION = factionCard({
     },
     turn: {
       restore: {
-        clearCharacterDamage: true,
         detachResources: true,
         restoreNonResources: true
       },
@@ -94,10 +93,10 @@ describe("RULES.md §5 — setup", () => {
 
     engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
 
-    // Both players have mulliganed; setup completes and turn 1 begins in develop.
+    // Both players have mulliganed; setup completes and turn 1 begins.
     assert.equal(engine.state.setup.phase, "complete");
     assert.equal(engine.state.started, true);
-    assert.equal(engine.state.turnPhase, "develop");
+    assert.equal(engine.state.developedThisTurn, false);
     assert.equal(engine.state.activePlayerId, P1);
   });
 
@@ -142,24 +141,27 @@ describe("RULES.md §5 — setup", () => {
   });
 });
 
-describe("RULES.md §6 — the develop step", () => {
-  test("choosing 'draw' adds a card to hand and moves to the main phase", () => {
+describe("RULES.md §6 — the develop rule (optional, once per turn)", () => {
+  function startedGame() {
     const engine = newFactionGame();
     engine.perform({ type: "mulligan", playerId: P1, cardIds: [] });
     engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
+    return engine;
+  }
+
+  test("choosing 'draw' adds a card to hand and marks the rule used for the turn", () => {
+    const engine = startedGame();
 
     const before = engine.state.players[P1].hand.length;
     engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
 
     assert.equal(engine.state.players[P1].hand.length, before + 1);
-    assert.equal(engine.state.turnPhase, "main");
+    assert.equal(engine.state.developedThisTurn, true);
     assert.equal(engine.state.priorityPlayerId, P1);
   });
 
   test("choosing 'playResource' plays the named hand card(s) as resources", () => {
-    const engine = newFactionGame();
-    engine.perform({ type: "mulligan", playerId: P1, cardIds: [] });
-    engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
+    const engine = startedGame();
 
     const fillerInHand = engine.state.players[P1].hand.find(
       id => engine.getDefinition(id).name === "Filler"
@@ -173,16 +175,52 @@ describe("RULES.md §6 — the develop step", () => {
 
     assert.equal(engine.state.cards[fillerInHand].zone, "play");
     assert.equal(engine.state.cards[fillerInHand].faceDown, true);
-    assert.equal(engine.state.turnPhase, "main");
+    assert.equal(engine.state.developedThisTurn, true);
   });
 
-  test("a normal turn action cannot be taken before the develop decision is made", () => {
-    const engine = newFactionGame();
-    engine.perform({ type: "mulligan", playerId: P1, cardIds: [] });
-    engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
+  test("CR §602/§603 — normal turn actions do not require the develop rule first", () => {
+    const engine = startedGame();
 
+    // No develop yet — ending the turn is still legal.
+    assert.equal(engine.state.developedThisTurn, false);
+    assert.doesNotThrow(() => engine.perform({ type: "endTurn", playerId: P1 }));
+  });
+
+  test("the develop rule can only be used once per turn", () => {
+    const { engine } = buildGame({ cards: [] });
+
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
     assert.throws(() =>
-      engine.perform({ type: "endTurn", playerId: P1 })
+      engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } })
+    );
+  });
+
+  test("it can be used later in the turn, not only at the start", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "gadget", def: FILLER, owner: P1, zone: "hand" }]
+    });
+
+    // Take a normal action first...
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("gadget") });
+    resolvePendingResponses(engine);
+
+    // ...then develop.
+    assert.ok(engine.canDevelopNow(P1));
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    assert.equal(engine.state.developedThisTurn, true);
+  });
+
+  test("the rule resets for the next turn", () => {
+    const { engine } = buildGame({ cards: [] });
+
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.activePlayerId, P2);
+    assert.equal(engine.state.developedThisTurn, false);
+    assert.doesNotThrow(() =>
+      engine.perform({ type: "chooseDevelop", playerId: P2, choice: { type: "draw" } })
     );
   });
 });
@@ -191,7 +229,6 @@ describe("RULES.md §6 — start-of-turn restore", () => {
   test("ending a turn restores the next active player's board", () => {
     const { engine, id } = buildGame({
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         {
           key: "p2Character",
@@ -218,10 +255,102 @@ describe("RULES.md §6 — start-of-turn restore", () => {
     assert.equal(engine.state.cards[id("p2Resource")].attachedTo, undefined);
   });
 
+  test("CR §602.1a — character damage clears at the start of a turn regardless of the faction's Restore Rule", () => {
+    // A faction whose Restore Rule does nothing (no detach, no restore).
+    const barrenFaction = factionCard({
+      name: "Barren",
+      faction: defaultFactionDefinition({
+        turn: {
+          restore: { detachResources: false, restoreNonResources: false },
+          develop: { choices: [{ type: "draw", count: 1 }] }
+        }
+      })
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      playerB: { faction: barrenFaction },
+      cards: [
+        {
+          key: "p2Character",
+          def: character({ name: "Wounded", life: 5 }),
+          owner: P2,
+          damage: 4,
+          depleted: true
+        }
+      ]
+    });
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.activePlayerId, P2);
+    // Damage cleared (core rule)...
+    assert.equal(engine.state.cards[id("p2Character")].damage, 0);
+    // ...but the barren Restore Rule left the character depleted.
+    assert.equal(engine.state.cards[id("p2Character")].depleted, true);
+  });
+
+  test("CR §602.1b / §610.1a — 'this turn' effects are still active when end-of-turn triggers resolve, and gone by the next start of turn", () => {
+    // A card carrying its own "this turn" +5 strength buff and an
+    // end-of-turn trigger that bumps influence only while the buff holds.
+    const watcher = character({
+      name: "Watcher",
+      strength: 1,
+      behavior: {
+        abilities: [
+          {
+            id: "buff-self",
+            type: "activated",
+            effects: [
+              {
+                type: "createModifier",
+                target: "source",
+                stat: "strength",
+                operation: "add",
+                value: 5,
+                duration: { type: "untilEndOfTurn" }
+              }
+            ]
+          },
+          {
+            id: "eot-check",
+            type: "triggered",
+            event: "turnEnding",
+            condition: {
+              type: "numberCompare",
+              left: { type: "stat", target: "source", stat: "strength" },
+              operator: ">=",
+              right: 5
+            },
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [{ key: "watcher", def: watcher, owner: P1 }]
+    });
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("watcher"), abilityId: "buff-self" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.getStat(id("watcher"), "strength"), 6);
+
+    const before = engine.state.players[P1].influence;
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+
+    // The end-of-turn trigger saw the buff still active.
+    assert.equal(engine.state.players[P1].influence, before + 1);
+    // And by the start of P2's turn, the "this turn" buff has ended.
+    assert.equal(engine.getStat(id("watcher"), "strength"), 1);
+  });
+
   test("attack eligibility resets to the new active player's settled board", () => {
     const { engine, id } = buildGame({
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "p1Character", def: character({ name: "Settled P1" }), owner: P1 },
         { key: "p2Character", def: character({ name: "Settled P2" }), owner: P2 }

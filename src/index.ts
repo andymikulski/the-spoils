@@ -40,7 +40,7 @@ const game = exampleGame();
 // Faction-driven setup already ran: each player's faction is in play with
 // its starting resources, decks are shuffled, opening hands are drawn, and
 // the game is sitting in whatever step comes next (mulligan, if the faction
-// offers one, otherwise turn 1's develop step).
+// offers one, otherwise the start of turn 1).
 for (const player of Object.values(game.state.players)) {
   console.log(
     `${player.name}: ${player.hand.length} in hand, ${player.deck.length} in deck, ${player.influence} influence`

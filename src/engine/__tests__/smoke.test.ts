@@ -14,5 +14,5 @@ test("smoke: fixture builds a running game with placed cards", () => {
   assert.equal(engine.state.players[P2].influence, 25);
   assert.equal(engine.state.cards[id("attacker")].zone, "play");
   assert.equal(engine.state.cards[id("attacker")].controllerId, P1);
-  assert.equal(engine.getFlowView().turnPhase, "main");
+  assert.equal(engine.getFlowView().mode, "main");
 });

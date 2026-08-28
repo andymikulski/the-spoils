@@ -124,7 +124,7 @@ const KNOWN_TYPE_TAGS = new Set([
   "and", "or", "not", "sourceInZone", "sourceIsEventCard",
   "eventCardControlledBy", "targetExists", "cardTypeIs", "cardTradeIs",
   "hasUnique", "hasAbility", "statCompare", "counterCompare", "numberCompare", "inBattle",
-  "sourceIsDamageSource", "cardMovedFromZone", "battleRole", "eventPlayerIs",
+  "sourceIsDamageSource", "cardMovedFromZone", "cardMovedToZone", "battleRole", "eventPlayerIs",
   "targetInSelection", "eventOrdinal", "deploySameNameThisTurn",
   "respondingTo", "deployedViaFlipUp", "cardNameEquals", "bottomedInMulligan",
   // number expressions

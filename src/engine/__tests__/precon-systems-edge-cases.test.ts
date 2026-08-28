@@ -72,7 +72,6 @@ describe("systems: several independent battles inside one main phase", () => {
       playerB: { faction: TOURNAMENT_FACTION },
       turn: 1,
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "oozling", def: OMINOUS_OOZLING, owner: P1 },
         { key: "spitspider", def: SNEAKING_SPITSPIDER, owner: P1 },
@@ -112,10 +111,10 @@ describe("systems: several independent battles inside one main phase", () => {
 
     assert.equal(engine.state.battle, undefined);
     assert.equal(engine.state.players[P2].influence, p2Start - (5 + 2));
-    // A battle doesn't end the turn or change phase by itself.
+    // A battle doesn't end the turn by itself.
     assert.equal(engine.state.turn, 1);
     assert.equal(engine.state.activePlayerId, P1);
-    assert.equal(engine.state.turnPhase, "main");
+    assert.equal(engine.getFlowView().mode, "main");
 
     // --- Turn 1, battle #2: a second, independent attack with a different,
     // still-undepleted party. Nothing about declareAttack limits a player to
@@ -147,7 +146,7 @@ describe("systems: several independent battles inside one main phase", () => {
     assert.equal(engine.state.activePlayerId, P2);
 
     engine.perform({ type: "chooseDevelop", playerId: P2, choice: { type: "draw" } });
-    assert.equal(engine.state.turnPhase, "main");
+    assert.equal(engine.getFlowView().mode, "main");
 
     // Turn 2's restore only touches the new active player's own board —
     // Plodding Brute (P2's) is undepleted/undamaged again; Nullifier stays
@@ -186,7 +185,7 @@ describe("systems: several independent battles inside one main phase", () => {
     assert.equal(engine.state.battle, undefined);
     assert.equal(engine.state.turn, 2);
     assert.equal(engine.state.activePlayerId, P2);
-    assert.equal(engine.state.turnPhase, "main");
+    assert.equal(engine.getFlowView().mode, "main");
   });
 });
 
@@ -201,7 +200,6 @@ describe("systems: a battle spanning multiple speed-group rounds", () => {
       playerA: { faction: TOURNAMENT_FACTION },
       playerB: { faction: TOURNAMENT_FACTION },
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "scout", def: SCOUT, owner: P2 }, // str3 speed4
         { key: "bask", def: RAGING_BASK, owner: P2 }, // str4 speed3, redirectDamage
@@ -328,7 +326,6 @@ describe("systems: simultaneous deaths each fire their own trigger, independentl
       playerA: { faction: TOURNAMENT_FACTION },
       playerB: { faction: TOURNAMENT_FACTION },
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "brute", def: PLODDING_BRUTE, owner: P2 }, // str5 speed2
         { key: "creaky", def: CREAKY_OLD_SWORDSMAN, owner: P2 }, // str3 life2 speed2
@@ -425,7 +422,6 @@ describe("systems: a response window can carry a long back-and-forth chain befor
       playerA: { faction: TOURNAMENT_FACTION },
       playerB: { faction: TOURNAMENT_FACTION },
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "oozling", def: OMINOUS_OOZLING, owner: P1 }, // str5 life4 speed3 — the attacker
         { key: "spitspider", def: SNEAKING_SPITSPIDER, owner: P1 }, // bystander, Flash-Bang's bounce target
@@ -547,7 +543,6 @@ describe("systems: enter/leave-play triggers fire off real playCard/ability acti
       playerA: { faction: TOURNAMENT_FACTION },
       playerB: { faction: TOURNAMENT_FACTION },
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "nullifier", def: MEPHITIC_NULLIFIER, owner: P1 },
         { key: "obsession1", def: OBSESSION, owner: P1 },
@@ -619,7 +614,6 @@ describe("systems: a continuous attachment can move between bearers mid-turn", (
       playerA: { faction: TOURNAMENT_FACTION },
       playerB: { faction: TOURNAMENT_FACTION },
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "scout", def: SCOUT, owner: P2 }, // base str 3
         { key: "kettinger", def: KETTINGER, owner: P2, attachedToKey: "scout" }, // +2 str continuous
@@ -662,7 +656,6 @@ describe("systems: turn-start triggers recur every one of their controller's tur
       playerB: { faction: TOURNAMENT_FACTION },
       turn: 1,
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "observatory", def: VOIDAL_OBSERVATORY, owner: P1 },
         { key: "berserker", def: BERSERKER_CORPS, owner: P2 }, // base str 5

@@ -90,6 +90,54 @@ describe("RULES.md §11 — state-based actions", () => {
       assert.equal(engine.state.cards[id("fort")].zone, "discard");
     }
   );
+
+  // CR §506.6 / §408.4b: a replacement that replaces a card's *destruction*
+  // reduces the damage it took to 0, so it doesn't immediately re-die on the
+  // next state-based check.
+  test("replacing a lethal-damage destruction zeroes the damage — the card survives", () => {
+    const stalwart = character({
+      name: "Stalwart",
+      life: 3,
+      behavior: {
+        abilities: [
+          {
+            // A mandatory "if this would be destroyed, put a token on it
+            // instead" — note it does NOT itself clear damage.
+            id: "guard",
+            type: "replacement",
+            replaces: { event: "destroy" },
+            effects: [
+              { type: "addCounter", target: { type: "selected", id: "__candidate" }, counter: "shield", amount: 1 }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "zapper",
+          def: character({ name: "Zapper", behavior: { abilities: [zapAbility(9)] } }),
+          owner: P1
+        },
+        { key: "stalwart", def: stalwart, owner: P2 }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("zapper"),
+      abilityId: "zap",
+      selected: { target: [id("stalwart")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("stalwart")].zone, "play");
+    assert.equal(engine.state.cards[id("stalwart")].counters.shield, 1);
+    assert.equal(engine.state.cards[id("stalwart")].damage, 0);
+  });
 });
 
 describe("RULES.md §2 — zones", () => {

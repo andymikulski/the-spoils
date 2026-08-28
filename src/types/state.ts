@@ -257,8 +257,6 @@ export interface ResponseWindowState {
   continuation: ResponseContinuation;
 }
 
-export type TurnPhase = "develop" | "main";
-
 export type GameSetupState =
   | {
       phase: "mulligan";
@@ -296,7 +294,6 @@ export interface GameFlowView {
   priorityPlayerId: PlayerId;
   mode:
     | "setup"
-    | "develop"
     | "main"
     | "response"
     | "resolvingResponses"
@@ -305,7 +302,13 @@ export interface GameFlowView {
     | "pendingChoice"
     | "gameOver";
 
-  turnPhase: TurnPhase;
+  /**
+   * Whether the active player has yet to exercise their faction's Develop
+   * Rule this turn (CR §202.8) — a UI hint only. The develop rule is an
+   * optional once-per-turn action (`chooseDevelop`), not a phase, so this
+   * never blocks anything.
+   */
+  developAvailable: boolean;
   setup: GameSetupState;
 
   responseWindow?: ResponseWindowState;
@@ -319,9 +322,16 @@ export interface GameState {
   turn: number;
   activePlayerId: PlayerId;
   priorityPlayerId: PlayerId;
-  turnPhase: TurnPhase;
   setup: GameSetupState;
   started: boolean;
+
+  /**
+   * Set once the active player has used their faction's Develop Rule
+   * (CR §202.8) this turn — the develop rule is an optional, once-per-turn
+   * action (`chooseDevelop`) usable any time during the active player's
+   * turn, not a phase. Reset to `false` at the start of every turn.
+   */
+  developedThisTurn: boolean;
 
   /**
    * Current position in the game's single deterministic RNG stream (deck

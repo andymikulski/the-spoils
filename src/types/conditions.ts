@@ -110,6 +110,16 @@ export type Condition =
     }
   | {
       /**
+       * True when the triggering event is `cardMoved` and it moved *into*
+       * `zone` (e.g. `{ zone: "discard" }` for "when this card is put into a
+       * discard pile"). Combine with `sourceIsEventCard` via `and` to scope
+       * to this card.
+       */
+      type: "cardMovedToZone";
+      zone: Zone;
+    }
+  | {
+      /**
        * True while the controller is the attacker/defender of the current
        * battle (e.g. a tactic's "deploy this only while you are
        * attacking"). Unlike `inBattle`, this is about the *player's* role

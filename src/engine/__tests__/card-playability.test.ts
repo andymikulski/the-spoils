@@ -79,13 +79,13 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
     assert.equal(engine.getCardPlayability(P2, id("gadget")).legalTiming, false);
   });
 
-  test("not playable before the faction's develop rule is resolved", () => {
+  test("the develop rule is not a gate — a card is playable before it's used", () => {
     const { engine, id } = buildGame({
-      cards: [{ key: "gadget", def: item({ name: "Gadget", cost: 0 }), owner: P1, zone: "hand" }],
-      turnPhase: "develop"
+      cards: [{ key: "gadget", def: item({ name: "Gadget", cost: 0 }), owner: P1, zone: "hand" }]
     });
 
-    assert.equal(engine.getCardPlayability(P1, id("gadget")).legalTiming, false);
+    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.getCardPlayability(P1, id("gadget")).legalTiming, true);
   });
 
   test("in a response window, only a tactic or TACTICAL card is playable, even for whoever holds priority", () => {
@@ -117,7 +117,7 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
     assert.equal(engine.getCardPlayability(P1, id("gadget")).legalTiming, false);
   });
 
-  test("RULES.md §6 — a resource card in hand is never playable via a normal card play, even in the main phase", () => {
+  test("RULES.md §6 — a resource card in hand is never playable via a normal card play", () => {
     const { engine, id } = buildGame({
       cards: [
         { key: "rage1", def: resourceCard({ name: "Rage 1" }), owner: P1 },
@@ -125,9 +125,9 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
       ]
     });
 
-    // Playing a resource is a develop-step choice, not a normal turn action —
-    // it must never show up as playable, or a UI built on this query would
-    // let a player play more than one resource in a turn.
+    // CR §203.1: a resource is played only when an effect instructs you to
+    // (the develop rule, or a card effect) — it must never show up as a
+    // normal deployable card.
     assert.equal(engine.getCardPlayability(P1, id("spareResource")).legalTiming, false);
     assert.deepEqual(engine.getPlayableHandCards(P1), []);
 

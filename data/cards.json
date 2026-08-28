@@ -226,7 +226,8 @@
                       },
                       "selection": "found"
                     }
-                  ]
+                  ],
+                  "zone": "any"
                 },
                 "count": {
                   "type": "selectionCount",
@@ -1351,7 +1352,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -1435,7 +1437,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -5296,7 +5299,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -8168,7 +8170,8 @@
                       },
                       "selection": "found"
                     }
-                  ]
+                  ],
+                  "zone": "any"
                 },
                 "count": {
                   "type": "selectionCount",
@@ -9188,7 +9191,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -9272,7 +9276,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -15853,7 +15858,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -15954,7 +15958,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -16055,7 +16058,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -16156,7 +16158,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -16731,7 +16732,8 @@
                       },
                       "selection": "found"
                     }
-                  ]
+                  ],
+                  "zone": "any"
                 },
                 "count": {
                   "type": "selectionCount",
@@ -17793,7 +17795,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -17877,7 +17880,8 @@
                       "cardType": "resource"
                     }
                   }
-                ]
+                ],
+                "zone": "any"
               }
             }
           ]
@@ -21500,7 +21504,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -24958,7 +24961,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -25059,7 +25061,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -25160,7 +25161,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -25261,7 +25261,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -25362,7 +25361,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -25463,7 +25461,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -28221,14 +28218,16 @@
               "affects": "controller",
               "delta": 2,
               "selector": {
-                "subtypeVar": "banned"
+                "subtypeVar": "banned",
+                "zone": "any"
               }
             },
             {
               "affects": "opponent",
               "delta": 2,
               "selector": {
-                "subtypeVar": "banned"
+                "subtypeVar": "banned",
+                "zone": "any"
               }
             }
           ]
@@ -28337,7 +28336,8 @@
               "affects": "opponent",
               "delta": 1,
               "selector": {
-                "type": "tactic"
+                "type": "tactic",
+                "zone": "any"
               }
             }
           ]
@@ -28487,7 +28487,8 @@
               "delta": -2,
               "minCost": 1,
               "selector": {
-                "type": "character"
+                "type": "character",
+                "zone": "any"
               }
             }
           ]
@@ -29956,7 +29957,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30057,7 +30057,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30158,7 +30157,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30259,7 +30257,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30360,7 +30357,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30461,7 +30457,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30562,7 +30557,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -30663,7 +30657,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -35986,7 +35979,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36087,7 +36079,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36188,7 +36179,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36289,7 +36279,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36390,7 +36379,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36491,7 +36479,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36592,7 +36579,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -36693,7 +36679,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },

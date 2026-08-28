@@ -91,7 +91,6 @@ export const TOURNAMENT_FACTION_DEFAULTS: FactionDefinition = {
   },
   turn: {
     restore: {
-      clearCharacterDamage: true,
       detachResources: true,
       restoreNonResources: true
     },

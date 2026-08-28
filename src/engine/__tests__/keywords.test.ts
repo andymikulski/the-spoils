@@ -1,9 +1,33 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildGame, character, item, P1, resolvePendingResponses } from "./support/fixtures.js";
-import type { ActivatedAbility } from "../../engine.js";
+import { autoResolveBattle, buildGame, character, item, P1, P2, resolvePendingResponses } from "./support/fixtures.js";
+import type { ActivatedAbility, TriggeredAbility } from "../../engine.js";
 
 const NOOP_ABILITY: ActivatedAbility = { id: "noop", type: "activated", effects: [] };
+
+/** "When this card is put into a discard pile, controller gains 1 influence." */
+const ON_DISCARDED: TriggeredAbility = {
+  id: "on-discarded",
+  type: "triggered",
+  event: "cardMoved",
+  condition: {
+    type: "and",
+    conditions: [
+      { type: "sourceIsEventCard" },
+      { type: "cardMovedToZone", zone: "discard" }
+    ]
+  },
+  effects: [{ type: "modifyInfluence", player: "controller", amount: 1 }]
+};
+
+/** "When this card is destroyed, controller gains 1 influence." */
+const ON_DESTROYED: TriggeredAbility = {
+  id: "on-destroyed",
+  type: "triggered",
+  event: "cardDestroyed",
+  condition: { type: "sourceIsEventCard" },
+  effects: [{ type: "modifyInfluence", player: "controller", amount: 1 }]
+};
 
 // Tactical (RULES.md §9) is covered in priority-and-responses.test.ts.
 // Aggro (RULES.md §9) and Covert (RULES.md §9) are covered in battle.test.ts.
@@ -141,27 +165,64 @@ describe("RULES.md §9 — Unique", () => {
 });
 
 describe("RULES.md §9 — Attach to X", () => {
-  test("an 'Attach to Character' card is destroyed if its target character leaves play", () => {
+  test("CR §507.2c — with no valid host, an Attach-to-X card is put into its owner's discard pile (a move, not a destruction)", () => {
     const { engine, id } = buildGame({
       cards: [
         { key: "host", def: character({ name: "Host" }), owner: P1 },
         {
           key: "gear",
-          def: item({ name: "Attached Gear", attachTo: "character", behavior: { abilities: [NOOP_ABILITY] } }),
+          def: item({
+            name: "Attached Gear",
+            attachTo: "character",
+            behavior: { abilities: [NOOP_ABILITY, ON_DISCARDED, ON_DESTROYED] }
+          }),
           owner: P1,
           attachedToKey: "host"
         }
       ]
     });
 
-    // Simulate the host leaving play the way a real destroy would.
-    engine.state.cards[id("host")].zone = "discard";
+    const before = engine.state.players[P1].influence;
 
-    // Any action triggers a state-based check.
+    // Host leaves play; the gear is now hostless.
+    engine.state.cards[id("host")].zone = "discard";
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("gear"), abilityId: "noop" });
     resolvePendingResponses(engine);
 
     assert.equal(engine.state.cards[id("gear")].zone, "discard");
+    // It was *moved* to discard — the "put into a discard pile" trigger
+    // fired, the "when destroyed" trigger did not.
+    assert.equal(engine.state.players[P1].influence, before + 1);
+  });
+
+  test("CR §507.2e — an Attach-to-X card is destroyed when its host stops being type X", () => {
+    // Artificial: attach-to-Item gear placed onto a Character host. First
+    // state-based check sees the host isn't an item and destroys the gear.
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "host", def: character({ name: "Host" }), owner: P1 },
+        {
+          key: "gear",
+          def: item({
+            name: "Wrong-Type Gear",
+            attachTo: "item",
+            behavior: { abilities: [NOOP_ABILITY, ON_DISCARDED, ON_DESTROYED] }
+          }),
+          owner: P1,
+          attachedToKey: "host"
+        }
+      ]
+    });
+
+    const before = engine.state.players[P1].influence;
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("gear"), abilityId: "noop" });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("gear")].zone, "discard");
+    // Destroyed (CR §507.2e), so both a "when destroyed" and a "put into a
+    // discard pile" trigger fire (destroy routes through discard).
+    assert.equal(engine.state.players[P1].influence, before + 2);
   });
 
   test("playing an 'Attach to Character' card requires choosing a legal character target", () => {
@@ -207,6 +268,69 @@ describe("RULES.md §9 — Attach to X", () => {
 
     assert.throws(() =>
       engine.perform({ type: "playCard", playerId: P1, cardId: id("gear") })
+    );
+  });
+});
+
+describe("CR §412 — cannot be blocked (unblockability)", () => {
+  test("while the whole attacking party cannot be blocked, the defender may not declare blockers", () => {
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [
+        {
+          key: "ghost",
+          def: character({ name: "Ghost", strength: 3, behavior: { keywords: ["cannotBeBlocked"] } }),
+          owner: P1
+        },
+        { key: "guard", def: character({ name: "Guard", strength: 2, life: 4 }), owner: P2, attackEligible: false }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("ghost")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+
+    // A block is illegal...
+    assert.throws(() =>
+      engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("guard")] })
+    );
+
+    // ...an empty blocking party is fine.
+    const before = engine.state.players[P2].influence;
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine);
+
+    assert.equal(engine.state.players[P2].influence, before - 3);
+  });
+
+  test("a mixed party (only some members unblockable) can still be blocked normally", () => {
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [
+        {
+          key: "ghost",
+          def: character({ name: "Ghost", strength: 3, behavior: { keywords: ["cannotBeBlocked"] } }),
+          owner: P1
+        },
+        { key: "brute", def: character({ name: "Brute", strength: 3, life: 4 }), owner: P1 },
+        { key: "guard", def: character({ name: "Guard", strength: 2, life: 6 }), owner: P2, attackEligible: false }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("ghost"), id("brute")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+
+    assert.doesNotThrow(() =>
+      engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("guard")] })
     );
   });
 });

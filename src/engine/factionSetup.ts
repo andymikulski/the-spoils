@@ -163,7 +163,7 @@ function drawSetupCards(state: GameState, playerId: PlayerId, count: number): vo
  *   -> shuffle
  *   -> first player draws 8, second draws 9
  *   -> mulligan decisions in turn order
- *   -> start turn 1 in the develop phase
+ *   -> start turn 1
  */
 export function createTwoPlayerFactionGame(
   definitionsInput: CardDefinition[],
@@ -201,7 +201,7 @@ export function createTwoPlayerFactionGame(
   state.turn = 1;
   state.activePlayerId = firstPlayerId;
   state.priorityPlayerId = firstPlayerId;
-  state.turnPhase = "develop";
+  state.developedThisTurn = false;
   state.started = false;
   if (options.seed !== undefined) {
     state.rngState = options.seed >>> 0;

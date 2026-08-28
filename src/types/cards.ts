@@ -55,8 +55,12 @@ export interface FactionDefinition {
   };
 
   turn: {
+    /**
+     * The faction's Restore Rule (CR §202.7) — what it replenishes at the
+     * start of its controller's turn. (Clearing character damage is a core
+     * start-of-turn rule, CR §602.1a, not part of this.)
+     */
     restore: {
-      clearCharacterDamage: boolean;
       detachResources: boolean;
       restoreNonResources: boolean;
     };

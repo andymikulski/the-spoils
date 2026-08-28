@@ -121,6 +121,35 @@ describe("RULES.md §7 — priority and response windows", () => {
     assert.equal(engine.state.cards[id("flashCharacter")].controllerId, P2);
   });
 
+  test("CR §607.1 — the acting player is never handed priority to respond to their own action", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "opener", def: tactic({ name: "Opener" }), owner: P1, zone: "hand" },
+        { key: "p1Response", def: tactic({ name: "P1 Response" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("opener") });
+
+    // The opener's response window hands priority to the opponent, never
+    // back to the acting player.
+    assert.equal(engine.state.responseWindow?.firstPlayerId, P2);
+    assert.equal(engine.state.responseWindow?.priorityPlayerId, P2);
+    assert.equal(engine.state.priorityPlayerId, P2);
+
+    // P1 can neither pass (not their priority) nor deploy a response to
+    // their own card.
+    assert.throws(() => engine.perform({ type: "passPriority", playerId: P1 }));
+    assert.throws(() => engine.perform({ type: "playCard", playerId: P1, cardId: id("p1Response") }));
+
+    // Once P2 declines, the window resolves. P1's own "pass" here is a
+    // formality of the two-pass close, not a chance to respond to its
+    // opener (it has no response to make against its own card).
+    engine.perform({ type: "passPriority", playerId: P2 });
+    engine.perform({ type: "passPriority", playerId: P1 });
+    assert.equal(engine.state.responseWindow?.phase, "resolving");
+  });
+
   test("a response window closes only after both players pass consecutively", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "opener", def: tactic({ name: "Opener" }), owner: P1, zone: "hand" }]

@@ -18,7 +18,6 @@ import type {
   PlayerId,
   ResponseWindowState,
   Trade,
-  TurnPhase,
   Zone
 } from "../../../engine.js";
 
@@ -95,7 +94,6 @@ export function defaultFactionDefinition(
     },
     turn: {
       restore: {
-        clearCharacterDamage: true,
         detachResources: true,
         restoreNonResources: true
       },
@@ -148,7 +146,6 @@ export interface BuildGameOptions {
   cards?: CardPlacement[];
   turn?: number;
   activePlayerId?: PlayerId;
-  turnPhase?: TurnPhase;
   priorityPlayerId?: PlayerId;
   responseWindow?: ResponseWindowState;
   /** Overrides the engine's RNG (shuffling, coin flips, random targets) for deterministic tests. Defaults to the seeded stream on `GameState.rngState`. */
@@ -225,7 +222,6 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   state.turn = options.turn ?? 1;
   state.activePlayerId = options.activePlayerId ?? playerA.id;
   state.priorityPlayerId = options.priorityPlayerId ?? state.activePlayerId;
-  state.turnPhase = options.turnPhase ?? "main";
   state.setup = { phase: "complete" };
   state.started = true;
   state.responseWindow = options.responseWindow;

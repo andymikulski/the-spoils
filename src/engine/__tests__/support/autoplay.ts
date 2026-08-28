@@ -11,7 +11,7 @@
 //
 // This exists to prove a real precon-deck game (arcanist vs warlord, full
 // card behaviors) can be played end to end through the public perform()/
-// getFlowView() surface: setup, mulligans, develop, main-phase play,
+// getFlowView() surface: setup, mulligans, the develop rule, main-turn play,
 // activated/triggered abilities, multi-round battles with response windows
 // on both sides, and every kind of GameState.pendingChoice — all the way to
 // a winner. See full-game.test.ts.
@@ -567,7 +567,7 @@ function handlePendingChoice(
       engine.perform({
         type: "resolvePendingChoice",
         playerId: pending.playerId,
-        choice: { kind: "orderTriggers", order: pending.triggers }
+        choice: { kind: "orderTriggers", next: pending.triggers[0] }
       });
       return;
     }
@@ -696,6 +696,13 @@ function handleMain(
   rng: () => number,
   report: AutoplayReport
 ): void {
+  // The develop rule is an optional, once-per-turn action available any
+  // time during the turn — take it up front here.
+  if (engine.canDevelopNow(playerId)) {
+    handleDevelop(engine, playerId, rng, report);
+    return;
+  }
+
   for (const cardId of shuffled(handCardCandidates(engine, playerId), rng)) {
     if (tryPlayCard(engine, playerId, cardId, rng)) {
       report.cardsPlayed += 1;
@@ -777,11 +784,6 @@ export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOpti
       case "pendingChoice": {
         if (!flow.pendingChoice) throw new Error("pendingChoice mode with no pendingChoice.");
         handlePendingChoice(engine, flow.pendingChoice, rng, report);
-        break;
-      }
-
-      case "develop": {
-        handleDevelop(engine, flow.activePlayerId, rng, report);
         break;
       }
 

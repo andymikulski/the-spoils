@@ -181,7 +181,7 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
     for (let i = 0; i < 6; i++) {
       const view = engine.getFlowView();
       assert.ok(view.mode);
-      if (view.turnPhase === "develop") {
+      if (view.developAvailable) {
         engine.perform({ type: "chooseDevelop", playerId: view.activePlayerId, choice: { type: "draw" } });
         resolvePendingResponses(engine);
       }
@@ -207,13 +207,13 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
       { seed: 3 }
     );
 
-    // The Evil Alliance offers a mulligan — clear both, then we're in develop.
+    // The Evil Alliance offers a mulligan — clear both, then turn 1 begins.
     engine.perform({ type: "mulligan", playerId: engine.state.setup.phase === "mulligan" ? engine.state.setup.order[0] : P1, cardIds: [] });
     engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
 
     assert.equal(engine.state.setup.phase, "complete");
     assert.equal(engine.state.turn, 1);
-    assert.equal(engine.state.turnPhase, "develop");
+    assert.equal(engine.state.developedThisTurn, false);
     // 2 staple resources found + moved to play for each side.
     for (const pid of [P1, P2]) {
       const inPlay = engine.state.players[pid].play

@@ -47,7 +47,12 @@ export interface PendingTriggerOrderChoice {
   kind: "orderTriggers";
   id: string;
   playerId: PlayerId;
-  /** The triggers that fired at once and need a resolution order (RULES.md §7). */
+  /**
+   * The triggers from one event still waiting to resolve (RULES.md §7).
+   * The deciding player picks which one happens *next* (CR §503.4a); after
+   * it resolves, if two or more remain this choice is re-raised for the
+   * next pick.
+   */
   triggers: TriggerRef[];
 }
 

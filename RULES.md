@@ -8,515 +8,820 @@ itself?"
 
 ## Sources
 
-- *The Spoils CCG Rulebook* (Basic Rules, v2.2), Tenacious Games — covers
-  core mechanics: turn actions, resources/threshold, card types, zones,
-  priority/responses, battle, abilities, victory. Archived at
-  [archive.org/details/TheSpoilsCCGRulebook](https://archive.org/details/TheSpoilsCCGRulebook).
+- **The Spoils™ Comprehensive Rules Reference, v2.5** (last updated
+  2016‑05‑19), Tenacious Games — the authoritative rules text. Copy in
+  `docs/Comprehensive-Rules-2.5.pdf`. Cited below as **(CR §NNN)** using its
+  own numbered sections. Where anything in this file conflicts with the CR,
+  **the CR wins** and this file is wrong and should be fixed.
+- **The Spoils USA™ Rules FAQ, v2.0**, Tenacious Games — judge-facing
+  clarifications of common interactions. Copy in
+  `docs/The-Spoils-Rules-FAQ-2.0.pdf`. Cited as **(FAQ)**.
 - `data/cards.json` — the real card database (2101 cards). Used to verify
-  and fill in mechanics the v2.2 basic rulebook doesn't cover (it predates
-  later card pools). Where the two disagree, the card text wins, since it's
-  what actually shipped. Every claim below marked **(card-verified)** was
-  cross-checked against real printed card text, not just the rulebook.
-- `src/engine` itself, where a rule's current *implementation* clarifies an
-  ambiguity in the source material (e.g. exactly what "provides a resource
-  icon" means for a face-down card). Marked **(engine-derived)**.
+  and fill in mechanics the rules documents leave implicit (keyword names,
+  ability shapes). Where a claim was cross-checked against real printed card
+  text it is marked **(card-verified)**.
+- `src/engine` itself, where a rule's current *implementation* resolves an
+  ambiguity the source material leaves open, or where the note describes an
+  engine-internal representation (a `pendingChoice` kind, a `GameState`
+  field) rather than a game rule. Marked **(engine-derived)**. An
+  engine-derived note is not a rule — if it contradicts the CR it is a bug.
+
+**Most Important Rule (CR §101.1):** if a card's text directly contradicts
+these rules, the card wins.
 
 Anything not covered by these sources should be treated as undecided —
 flag it rather than guessing.
 
 ## 1. Objective
 
-A player wins when their opponent's faction reaches 0 influence. If both
-factions hit 0 influence from the same event, the game is a draw. Influence
-loss is tracked separately from character/location damage — effects that
-key off "damage" do not fire from influence loss, and vice versa.
+**(CR §102)** The object of the game is to reduce your opponent's faction's
+influence to 0. The rule is phrased as a *loss* condition: **if at any time
+a faction's influence is 0, that faction's owner immediately loses.** The
+other player then wins.
 
-**(engine-derived)** This is surfaced as `GameState.winner` /
-`GameFlowView.winner` (`PlayerId | "draw"`), set by the same state-based
-check as everything else in §11, and `GameFlowView.mode` becomes
-`"gameOver"`. Once set, `perform()` rejects anything that would start a new
-action; it still allows whatever was already in flight (an open response
-window, an in-progress battle) to drain to a clean stop, since a lethal blow
-is often struck mid-battle-resolution.
+- **(CR §102.2 / §306.4)** If every player still in the game loses at the
+  same time, the game is a **draw** between them.
+- **(CR §102.1a / §306.2)** Running out of cards in your deck does **not**
+  lose you the game — you simply fail to draw the cards you can't.
+- **(CR §408.3 / §408.3b)** Influence lost through a "loses N influence"
+  effect is **not** damage: nothing that modifies or triggers off *damage*
+  interacts with it. Combat damage to a faction is different — see §8.
+- **(CR §202.9 / §402.9)** A faction is not affected by an effect unless the
+  effect specifically says it applies to factions; in particular a faction
+  cannot be *picked* unless an effect explicitly picks a faction
+  **(FAQ:** *Quotidian Assassination* cannot pick a faction; *Bask Bile*
+  can**)**.
 
-## 2. Zones
+**(engine-derived)** Surfaced as `GameState.winner` / `GameFlowView.winner`
+(`PlayerId | "draw"`), set by the same continuous check as everything else
+in §11; `GameFlowView.mode` becomes `"gameOver"`. Once set, `perform()`
+rejects anything that would start a new action but still lets whatever was
+already in flight (an open response window, an in-progress battle) drain to
+a clean stop, since a lethal blow is often struck mid-battle-resolution.
 
-| Zone | Meaning |
-|---|---|
-| `deck` | The player's draw pile. Hidden, ordered. Searched only when a card explicitly allows it, and reshuffled after a search. |
-| `hand` | Cards drawn but not yet played. Hidden from the opponent. |
-| `deploying` | Transient zone a card occupies while it is being played — cost paid, but not yet resolved / not yet in play. Exists so responses can be raised against it before it lands. |
-| `play` | Characters, items, locations, and the faction card live here while active. Resources (face-up or face-down) also live here, attached to the controller's faction. |
-| `discard` | Destroyed permanents and resolved tactics land here. Recoverable by effects that say so. |
-| `void` **(card-verified)** | A zone for cards set aside by specific effects, distinct from both `discard` and being "removed from the game." Cards in the void can be returned to play/hand only by effects that explicitly reference the void (e.g. *Eldridge Gosche, Godstealer*'s "pick a tactic you own in the void", *Deity Delimitation Device*'s "release"). Default trajectory (destruction) does **not** send cards to the void — only effects that say "put into the void" do. |
-| `removed` **(card-verified)** | "Removed from the game" (seen on cards like *Master Scavenger*, *Swashbuckler*, *Resurrection Emporium*) — permanent and unretrievable, unlike `void`. Reached via the `removeFromGame` effect. Nothing in the effect vocabulary can move a card back out of `removed`, by design. |
+## 2. Game areas (zones)
 
-Conceptually a card removed from the game is just *gone* — it doesn't need
-to be a place a card can be found. It's still tracked as a real `Zone`
-value (`PlayerState.removed`) rather than deleted from `GameState.cards`
-outright, purely so ordinary bookkeeping (search-the-deck exclusions,
-"cards in your discard pile" counts, etc.) doesn't have to special-case a
-card that stopped existing. Nothing in the effect vocabulary can move a
-card back out of `removed`. A `CardSelector` with no explicit `zone` filter
-still matches every zone including `removed`, same as it would `deck` or
-`hand` — that's an existing, general property of selectors (scope them
-explicitly), not something specific to this zone.
+**(CR §403)** The game areas are: Deck, Hand, Being Deployed, In Play,
+Discard Pile, Out of Game, and Void. The engine's `Zone` values map to them:
+
+| Zone (`Zone`) | CR area | Meaning |
+|---|---|---|
+| `deck` | Deck (CR §403.1) | The player's draw pile. Hidden, ordered. No one may look through it or shuffle it unless an effect says so. Searched decks are shuffled afterward (CR §312.1). |
+| `hand` | Hand (CR §403.2) | Cards you have access to, hidden from the opponent. No hand-size limit (CR §403.2b). |
+| `deploying` | Being Deployed (CR §403.3) | Where a non-resource card sits after you play it from hand, cost paid, while the opponent may respond, until it resolves. Exists so responses can be raised against it before it lands. |
+| `play` | In Play (CR §403.4) | Characters, items, locations, and the faction card live here while active. Resources (face-up or face-down) also live here, attached to the controller's faction. |
+| `discard` | Discard Pile (CR §403.5) | Destroyed permanents (CR §304.1) and resolved tactics (CR §205.2) land here, face-up. Order need not be maintained (CR §403.5b). |
+| `removed` | Out of Game (CR §403.6) | "Removed from the game" — the card is set aside face-up for the rest of the game. Nothing in the effect vocabulary moves a card back out, by design. Reached via `removeFromGame`. |
+| `void` **(card-verified)** | Void (CR §403.7) | A distinct set-aside zone. A card is sent there face-up or face-down depending on the effect (CR §403.7a). Cards return from the void only via effects that explicitly reference it (e.g. *Eldridge Gosche, Godstealer*, *Deity Delimitation Device*). **(CR §403.7b)** You may not pick or choose a face-down card in the void unless an effect specifically picks/chooses a face-down card in the void. Ordinary destruction goes to `discard`, never the void. |
+
+**Damage / depletion are In-Play-only.** **(CR §408.9)** When a card changes
+game areas, all damage it has received is reduced to 0. **(CR §409.2)**
+tokens on it disappear. Depletion likewise has no meaning outside `play`.
+So any card leaving `play` for any reason (bounced to hand, discarded, put
+in the void, removed) sheds `damage`, `depleted`, `faceDown`, and
+`attachedTo` immediately. This matters even for a location, whose damage
+otherwise persists turn to turn while it stays in play (§3): that
+persistence stops the instant it leaves play **(CR §207.5b)**, so a bounced
+or returned location doesn't carry old damage into a fresh stint in play.
+
+**Face-down cards and flipping.** **(CR §411.1)** Every face-down card in
+play is a resource providing one Volition icon (cards in the void are not in
+play). **(CR §411.3 / §411.4, FAQ)** Flipping a card face-up *or* face-down
+counts as the card **leaving play and a brand-new card entering play** —
+"leaves play" triggers fire on the flip, "enters play" triggers fire on the
+result, and nothing about the old object (damage, tokens, temporary rules
+text, attachments) carries over.
+
+**(engine-derived)** A card removed from the game is still tracked as a real
+`Zone` value (`PlayerState.removed`) rather than deleted from
+`GameState.cards`, purely so ordinary bookkeeping (search exclusions,
+discard-pile counts) doesn't have to special-case a card that stopped
+existing.
+
+**(CR §402.3 / §402.3a, FAQ)** An effect that does not name a game area
+affects only the In-Play area — "pick a character" means a character *in
+play*. **(engine-derived)** A `CardSelector` with no `zone` filter therefore
+matches only the `play` zone; a selector reaches `hand` / `deck` / `discard`
+/ `void` only by naming it. A handful of internal contexts that legitimately
+span zones — a `deployForFree` targeting a hand card, a `CostModifier`
+matching a card being deployed, a chooser picking among a prior deck search —
+carry an explicit `zone: "any"` to opt out of the In-Play default.
 
 ## 3. Card types
 
-- **Character** — has strength (battle damage dealt), life (damage it can
-  absorb before dying), speed (battle damage ordering), and may have
-  abilities/keywords. Can attack and block. Only playable on the
-  controller's own turn (unless it has the **Tactical** keyword).
-- **Item** — persistent, may modify stats/effects of itself or another card
-  (including via "Attach to X"). Never depletes on its own. Only playable
-  on the controller's own turn (unless **Tactical**).
-- **Location** — persistent, has a damage capacity ("structure") and
-  ongoing effects. Can be attacked directly instead of the controller's
-  faction. Damage persists turn to turn (does not clear at end of turn the
-  way character damage does) and destroys the location once accumulated
-  damage ≥ structure. Only playable on the controller's own turn (unless
-  **Tactical**).
+**(CR §201.4e)** The six types are Resource, Tactic, Character, Location,
+Item, and Faction. Types can be gained or lost, and a card can hold more
+than one at once (§3.7).
 
-  **(engine-derived)** A location's capacity is its own
-  `CardDefinition.structure` field (not `life`). `checkStateBasedActions`
-  destroys characters and locations the same way — accumulated damage ≥
-  capacity — reading `life` for a character and `structure` for a location.
+### 3.1 Character (CR §204)
 
-  > **(resolved)** All 140 real location cards in `data/cards.json` now
-  > carry a numeric `structure`; `card-data-integrity.test.ts` enforces it
-  > (a location with no structure could never be destroyed by damage). The
-  > last gap, *Zenobia's Tower*, was filled from the card art after the
-  > source dump mislabelled its STRUCTURE shield as `speed` — see its
-  > coverage-manifest note. Engine-rules tests still use synthetic location
-  > fixtures with an explicit `structure`, on purpose (they must fail for
-  > engine reasons, not data ones).
-- **Tactic** — one-shot effect; resolves then goes to `discard`. Can always
-  be played as a response (that's the entire point of the type), during
-  battle response windows, or as a normal turn action.
-- **Resource** — provides one resource icon while in play, attached to the
-  controller's faction. Never depletes; only becomes usable again via a
-  faction's restore rule detaching it.
-- **Faction** — the player's avatar. Not included in a deck; one is chosen
-  (or supplied) at setup. Defines: starting influence, starting resources,
-  opening hand size (first vs. second player), whether/how a mulligan is
-  offered, the turn-start restore rule, and the develop-step choices
-  available each turn. May also carry its own activated abilities.
+- Has strength (battle damage dealt), life (damage it can absorb before
+  dying), and speed (battle damage ordering); may have abilities/keywords.
+- **(CR §204.3)** Can attack only if it started the turn in play under your
+  control (see §6); it can always *block* while in play.
+- **(CR §204.3a)** It may use its abilities the first turn it is in play
+  under your control, even though it can't attack.
+- **(CR §204.3b)** A character *put into play by a start-of-turn effect*
+  can't attack that turn — it wasn't in play at the instant the turn
+  actually started. (The **Aggro** keyword, §9, lifts the "started the turn
+  in play" restriction.)
+- **(CR §204.5 / §408.4)** Destroyed immediately once the damage it has
+  received *this turn* is ≥ its life. Checked continuously (§11), not only at
+  end of battle.
+- **(CR §204.4c, FAQ)** Speed decides *when* its damage is inflicted in
+  battle. A 0-speed character still assigns and deals damage normally — 0 is
+  just the lowest speed, so it assigns last.
+- Only playable on the controller's own turn unless an effect deploys it or
+  it has **Tactical** (CR §204.1, §507.6).
+
+### 3.2 Item (CR §206)
+
+Persistent; may modify stats/effects of itself or another card (including
+via **Attach to X**, §9). Never depletes on its own. When it resolves, it is
+put into play. Only playable on your own turn unless deployed by an effect
+or **Tactical**.
+
+### 3.3 Location (CR §207)
+
+Persistent; has a **structure** value (upper-right, in place of battle
+stats — CR §201.8) = the damage markers it takes to destroy it.
+
+- **(CR §207.3)** Your opponent can attack your locations instead of your
+  faction.
+- **(CR §207.5 / §408.5)** Destroyed immediately once its accumulated damage
+  markers are ≥ its structure.
+- **(CR §207.5b / §408.9)** If a location leaves play, all its damage
+  markers disappear — accumulation does not survive a trip out of play.
+- **(CR §207.6 / §408.5b)** An effect that removes damage markers adjusts
+  the running total accordingly.
+
+**(engine-derived)** A location's capacity is `CardDefinition.structure`,
+not `life`. `checkStateBasedActions` destroys characters and locations the
+same way (damage ≥ capacity), reading `life` for a character and
+`structure` for a location. All 140 real location cards carry a numeric
+`structure`; `card-data-integrity.test.ts` enforces it. Engine-rules tests
+use synthetic location fixtures with an explicit `structure`, on purpose.
+
+### 3.4 Tactic (CR §205)
+
+One-shot effect; when it resolves, follow its instructions and put it into
+its owner's discard pile. **(CR §205.1)** May be deployed on your turn, in
+response to the opponent's actions on either player's turn, and at the
+special response points within a battle (§8).
+
+### 3.5 Resource (CR §203)
+
+Provides resource icons while in play, attached to the controller's faction.
+**(CR §203.1)** You may play a resource **only when an effect instructs you
+to** (usually your faction's develop rule). **(CR §203.7)** Resources never
+deplete; when used to pay, they are attached to your faction and stay
+attached until detached (typically by the faction's turn-start restore
+rule).
+
+- **(CR §203.2)** When you play a resource you choose face-up or face-down.
+  Any card may be played face-down; only actual resource cards may be played
+  face-up.
+- **(CR §203.5)** The five staple resources are Obsession, Greed, Elitism,
+  Deception, Rage; each provides one icon of its type. Any number may be
+  included in a constructed deck (CR §103.1c).
+- **(CR §203.4a / §405.5)** Every face-down card provides one **Volition**
+  icon regardless of what it really is.
+
+### 3.6 Faction (CR §202)
+
+The player's avatar. Not part of the deck; one is chosen (or supplied) at
+setup and starts the game in play (CR §202.2). Its rules text defines:
+starting influence (CR §202.3a), Starting Resources (CR §202.5), Starting
+Draw — usually different for first vs. second player (CR §202.6), the
+Restore Rule (CR §202.7), and the Develop Rule (CR §202.8). It may also
+carry activated abilities, usable any time you could use an ability
+**(FAQ)**.
+
+- **(CR §202.4 / §408.3)** Damage inflicted on a faction makes it lose an
+  equal amount of influence (see §8 for how damage modification interacts).
+- **(CR §202.9 / §402.9)** A faction is unaffected by effects that don't
+  name factions, and cannot be picked unless an effect explicitly picks a
+  faction.
+
+### 3.7 Changing card types (CR §208)
+
+- **(CR §208.1)** A card may have several types at once; "gains a type"
+  keeps the existing ones.
+- **(CR §208.2)** If an effect refers to a specific type but its target is
+  no longer that type, the target is not affected by that effect.
+- **(CR §208.3)** If a card loses the character type, it forgets all damage
+  it received this turn (becoming a character again later does not restore
+  it).
+- **(CR §208.4)** If a card loses the character type *during a battle*, it
+  is removed from the battle immediately (§8).
 
 ## 4. Resources, thresholds, and costs
 
-- **Trades**: Arcanist (Obsession), Banker (Greed), Gearsmith (Elitism),
-  Rogue (Deception), Warlord (Rage) — five trades, five matching resource
-  icons. `Universal` is not a trade with its own resource; it marks cards
-  playable by any faction (staples, and — per the real card pool — a body
-  of "Story"/crossover cards keyed off the Volition icon, see below).
-- **Threshold** is the *icon* requirement printed on a card (shorthand: a
-  string of letters, e.g. `"rr"` = two Rage icons required). It is a gate,
-  not a cost: once satisfied by resources in play, it isn't consumed and
-  doesn't limit how many threshold-gated cards can be played.
-- **Numeric cost** is paid by attaching that many of your in-play,
-  unattached resources to your faction. Attached resources can't be reused
-  until detached (typically by the controlling faction's turn-start restore
-  rule). Playing something "for free" skips the numeric cost but not the
-  threshold or any other listed cost.
+- **Trades (CR §201.4d):** Gearsmith, Warlord, Banker, Rogue, Arcanist, and
+  Universal. The staple-resource icons pair with the first five —
+  Arcanist ↔ Obsession, Banker ↔ Greed, Gearsmith ↔ Elitism,
+  Rogue ↔ Deception, Warlord ↔ Rage. `Universal` is not a trade with its
+  own resource; it marks cards any faction may play.
+- **Threshold (CR §201.3a / §405):** the resource-*icon* requirement printed
+  under the cost number. To meet it you must **control** cards providing
+  those icons. **(CR §405.6)** Icons are never *spent* — threshold is a
+  gate, not a cost, and satisfying it doesn't limit how many
+  threshold-gated cards you can play.
+  - **(CR §405.3 / §502.2)** An ability may print its own threshold after
+    its name (the "RECUR: [G][G]" / "EXHUMATION: [O][O]" clause); you can't
+    use the ability unless you meet it.
+  - **(CR §405.4 / §201.5d)** A *paragraph* of rules text may begin with
+    threshold icons; it is active only while its controller currently meets
+    that threshold, and turns off the instant they stop.
+- **Volition (CR §405.5, card-verified):** the sixth icon, provided by every
+  face-down resource. This is why `"v"` threshold requirements appear only
+  on `Universal`-trade cards in the real data (e.g. *Zigalburgonglgr, the
+  Stolen God* at `"vvvvvv"`) — they're meant to be paid for by face-down
+  resources from any deck. `Threshold`/`ResourceIcon` therefore has six
+  members (`rage, greed, deception, elitism, obsession, volition`);
+  `getResourceIcons` implements `card.faceDown → ["volition"]`.
+- **Numeric cost (CR §406):**
+  - **(CR §406.1 / §406.2)** Outside of being played, a card's numeric cost
+    is its printed cost number, or 0 if it has none.
+  - **(CR §406.3)** While a card is being played you keep a running total:
+    start at the cost number; as you satisfy extra costs, a "pay N" extra
+    cost *adds* N to the total rather than being paid on the spot; then
+    apply **all cost increases** (any order), then **all cost reductions**
+    (any order); the result is what you pay, and **(CR §406.3a)** numeric
+    costs are always paid *last*.
+  - **(CR §406.6 / §410.4)** A numeric cost can never go below 0. **(CR
+    §410.5)** "reduced to a minimum of N" doesn't apply if the value was
+    already below N.
+  - **(CR §308.1)** Playing something "for free" sets its cost number to 0
+    for that deploy but does **not** waive its threshold or its extra costs.
+  - **(CR §406.5)** An effect that says "pay N" *is* a numeric cost, so
+    generic "reduce the next numeric cost you pay" effects apply to it —
+    but **(CR §406.5b)** card-type-specific reductions ("your items cost 1
+    less") do not, because that N isn't "an item's numeric cost."
+- **Paying a numeric cost (CR §203.3 / §309.1):** attach that many of your
+  in-play resources to your faction. **(CR §203.3a / §309.1a)** Only
+  resources not already attached to anything may be attached. **(CR
+  §309.1b)** "pay" never refers to a faction losing influence.
+- **No floating (FAQ):** you must be able to satisfy a card's or ability's
+  entire cost *at once*, when you attempt it. There is no window during
+  payment to use abilities or detach resources, so a resource already spent
+  on a card cannot be freed and reused for the same card.
 - **Non-numeric ability costs** (deplete a card, destroy a card, discard N
-  cards) that name a specific card require the player to have already
-  chosen it — there's no auto-pick. A "discard N" cost carries its own `id`
-  (`Cost` with `type: "discard"`) and is satisfied the same way a target
-  declaration is: via `selected[cost.id]`, supplied up front in the
-  `activateAbility` action alongside any target selections, and checked for
-  legality (right zone/controller, no duplicates, exactly N) before the
-  ability can be paid for at all.
-- **Playing a resource**: either (a) put an actual resource card from hand
+  cards) that name a specific card require the player to have already chosen
+  it — there's no auto-pick. **(engine-derived)** A "discard N" cost carries
+  its own `id` (`Cost` with `type: "discard"`) and is satisfied like a
+  target declaration: via `selected[cost.id]`, supplied up front in the
+  `activateAbility` action, checked for legality (right zone/controller, no
+  duplicates, exactly N) before the ability can be paid for.
+- **Playing a resource:** either (a) put an actual resource card from hand
   into play face-up, providing its printed icon, or (b) put *any* card from
-  hand into play face-down as a resource.
-- **Volition (card-verified, engine-derived)** — the icon a face-down
-  resource provides, regardless of what the card actually is. This is why
-  `"v"` threshold requirements appear only on `Universal`-trade cards in the
-  real data (e.g. *Zigalburgonglgr, the Stolen God* at `"vvvvvv"`) — those
-  cards are designed to be paid for by face-down resources from any deck,
-  not by a dedicated Volition resource card. `Threshold`/`ResourceIcon` in
-  the type system therefore has six members (`rage, greed, deception,
-  elitism, obsession, volition`), not five — this is intentional, not a
-  typo, and the engine's `getResourceIcons` already implements it correctly
-  (`card.faceDown → ["volition"]`).
+  hand into play face-down as a resource (Volition).
 
-## 5. Setup
+## 5. Setup (CR §601)
 
-1. Each player's faction enters play; its printed starting influence
-   becomes that player's influence total.
-2. Each player finds their faction's required starting resources in their
-   deck and puts them into play (per the Tournament Faction: 2 staple
-   resources), then shuffles.
-3. Determine turn order (first/second player).
-4. Each player draws their faction's starting-draw count — first player and
-   second player amounts usually differ (Tournament Faction: 8 / 9) to
-   offset the advantage of going first.
-5. If the faction offers a mulligan, each player in turn order may set aside
-   any number of hand cards to the bottom of the deck (in an order of their
-   choosing) and draw that many replacements. This can only happen once per
-   player — no rummaging through it again. **(engine-derived)** which cards
-   each player set aside is recorded on `GameState.mulligan` and read by
-   the `bottomedInMulligan` condition (*Community Chest*).
-6. Turn 1 begins in the develop step for the first player.
+1. **(CR §601.1a)** Each faction card starts in play; its printed starting
+   influence becomes that player's influence total.
+2. **(CR §601.1b)** Each player searches their deck for the resources listed
+   under their faction's *Starting Resources* and puts them into play
+   **face-down**, then shuffles (Tournament Faction: 2 staple resources).
+3. **(CR §601.1c)** Randomly determine which player decides turn order; that
+   player chooses who goes first.
+4. **(CR §601.1d)** All players flip their starting resources **face-up**.
+5. **(CR §601.1e)** Each player draws their faction's *Starting Draw* count
+   — first- and second-player amounts usually differ to offset going first
+   (Tournament Faction: 8 / 9).
+6. **(CR §601.1f / §601.1g)** The first player may mulligan: set aside any
+   number of hand cards to the bottom of the deck in an order of their
+   choosing and draw that many replacements. Then each other player, in
+   turn order, does the same. Once per player only.
+7. **(CR §601.1h)** The first turn begins (see §6).
+
+**(engine-derived)** Which cards each player set aside is recorded on
+`GameState.mulligan` and read by the `bottomedInMulligan` condition
+(*Community Chest*).
 
 ## 6. Turn structure
 
-A turn has two steps:
+**(CR §602) Start of turn** is a single simultaneous point in time — *not*
+a phase or step, and these are not triggers:
 
-1. **Develop** — the active player must resolve exactly one of the choices
-   their faction's develop rule offers (Tournament Faction: draw 1 card, or
-   play 1 resource). This is a required, one-time decision at the start of
-   the turn, not an optional action repeated later.
-2. **Main** — the active player may, in any order and any number of times:
-   play a card, use an ability, declare an attack, and finally end the
-   turn. Ending the turn is the one action that can happen at most once.
-   "Play a card" here excludes resource cards: playing a resource only
-   happens through the develop step's choice (or a card effect that
-   explicitly plays a card as a resource, e.g. the `playResource` effect) —
-   never as a normal main-step card play. **(engine-derived)** — this is
-   enforced by the same timing check (`assertCanDeployAtCurrentTiming`) used
-   by both `playCard` and the `getCardPlayability`/`getPlayableHandCards`
-   query surface, so a card of type `resource` never reports as playable and
-   is rejected if attempted, regardless of turn phase.
+- **(CR §602.1a)** All damage on characters is cleared to 0.
+- **(CR §602.1b)** All "this turn" effects end.
+- **(CR §602.1c / §608.1b)** Every character in play under the active
+  player's control (and continuously so since the turn started) becomes
+  eligible to attack this turn. A character that enters play mid-turn is
+  **not** attack-eligible that turn unless it has **Aggro** (§9).
 
-At the start of a player's turn, before develop:
-- Every character that both (a) is not face-down and (b) has been
-  continuously under that player's control in `play` becomes attack-eligible
-  for the turn. A character that enters play mid-turn is **not**
-  attack-eligible that turn unless it has **Aggro**.
-- The faction's restore rule then applies (Tournament Faction: clear all
-  character damage, detach resources from the faction, restore/untap all
-  non-resource permanents).
+**(CR §602.2)** Then all "at the start of your turn" triggers happen; the
+active player orders them (§7).
 
-## 7. Priority and the response window ("stack")
+The faction's **Restore Rule (CR §202.7)** and **Develop Rule (CR §202.8)**
+are sections of faction rules text, not built-in phases:
 
-Whenever a player:
-- finishes paying the cost for a card (before it resolves/enters play),
-- finishes paying the cost for an ability (before its effects execute), or
-- declares they are ending their turn,
+- The restore rule replenishes resources and cards each turn — for the
+  Tournament Faction: detach this player's resources from the faction and
+  restore (untap) their non-resource permanents. (Character-damage clearing
+  is the core start-of-turn rule above, CR §602.1a, not part of the restore
+  rule.)
+- The develop rule usually lets you **draw 1 card *or* play 1 resource**,
+  once per turn, at any point during your turn. **(FAQ)** you choose one,
+  not both; **(FAQ)** it is *optional* ("you may"). Playing a resource is
+  otherwise impossible: **(CR §603.2)** it is not one of the turn's actions,
+  and **(CR §203.1)** only an effect can let you play one.
 
-...the opponent gets a chance to respond. A response window stays open as
-long as either player keeps adding responses; it closes only once both
-players have had a chance to respond and neither adds one (two consecutive
-passes). Once closed, everything added during the window resolves — most
-recently added first (LIFO) — and then the original action/effect that
-opened the window proceeds.
+**(CR §603) During the turn** the active player may take these actions in
+any order, any number of times:
 
-Only two kinds of things can be played *into* a response window: **Tactics**,
-and any other card type that has the **Tactical** keyword. Activated
-abilities can also be used in a response window, following the same
-priority rules.
+- **(CR §603.2a)** Deploy a card (§ below).
+- **(CR §603.2b)** Use an ability (§10).
+- **(CR §603.2c)** Attack (§8).
+- **(CR §603.2d)** End the turn — **at most once**.
 
-**Terminate (card-verified).** Some effects remove a still-unresolved card
-or ability from the stack ("terminate", equivalent to "counter") — it never
-resolves, and a terminated card goes to its owner's discard. A card can be
+**(CR §610)** Ending the turn: when the active player announces it, the turn
+doesn't end until the opponent has finished responding; then end-of-turn
+triggers fire "at the moment the turn actually ends" (CR §610.1a).
+
+**Deploying a card (CR §604.1):** selection → threshold check (CR §604.1b;
+fail here and you can't play it) → put the card face-up into Being Deployed
+→ satisfy costs, extra costs first then numeric cost (CR §604.1d) →
+legality (CR §604.1e; can't pay ⇒ the deploy was illegal, undo everything,
+terminate any triggers it caused) → pending triggers resolve (CR §604.1f) →
+opponent responds (CR §604.1g) → resolution: a character/item/location goes
+into play under your control, a tactic follows its text then goes to its
+owner's discard (CR §604.1h).
+
+**(CR §402.8 / §402.8a) "Deploy" ≠ "put into play."** An effect that *puts*
+a card into play is not deploying it, so anything that triggers "when a card
+is deployed" does not fire. **(FAQ)** A card is *being deployed* once its
+costs are paid and it sits in Being Deployed with the opponent able to
+respond; it *enters play* when it resolves (no more responses, but
+enters-play triggers fire). A card *put into play* was never "being
+played."
+
+**(engine-derived)** The develop rule is the `chooseDevelop` action — an
+optional, once-per-turn move the active player may make any time during
+their turn while nothing else is in flight (no battle, response window, or
+pending choice). `GameState.developedThisTurn` guards the once-per-turn
+limit and resets at the start-of-turn point; `SpoilsEngine.canDevelopNow`
+is the query surface, surfaced as `GameFlowView.developAvailable`. There is
+no develop phase and no ordering constraint — a deploy, ability, or attack
+before (or instead of) developing is legal.
+
+## 7. Responding to actions (CR §607)
+
+**(CR §607.1)** You may respond **only to your opponent**, and only when
+they:
+
+- finish paying for a card they are deploying (before it resolves), or
+- finish paying for an ability (before its effects run), or
+- announce they are ending their turn.
+
+You can never respond to your own action **(CR §607.1)**.
+
+**(CR §607.2)** A response is a **tactic** or an **ability** (and any card
+with the **Tactical** keyword, CR §507.6 — see §9). When you have a chance
+to respond you may make one; once it resolves you may make another, any
+number of times; when you stop, the action you were responding to resolves.
+**(CR §607.2a)** Your opponent may respond to each of your responses in the
+same way, so a chain can nest indefinitely; nested responses resolve
+**last-in, first-out** in effect.
+
+**(CR §607.2b / §607.2c)** There is no priority-passing system and no formal
+stack in The Spoils — because you can't respond to your own actions, the
+non-acting player simply drives a series of responses, each resolving before
+the next is made. Many things that would go on a stack elsewhere (notably
+triggers) cannot be responded to here.
+
+**Terminate (CR §314, card-verified).** To terminate a card or ability is to
+stop it before it resolves — cease all its instructions immediately; a
+terminated *card* goes to its owner's discard (CR §314.1). To terminate an
+*effect* is to stop its impact entirely (CR §314.2). A card can be
 terminated in the same instant it is played, by a `cardPlayed`-triggered
 ability (e.g. *The Great Wall of Keeping Stuff Out*). **(engine-derived)**
 the `cardPlayed` event and the stack push happen as one batched step so
 such a trigger sees the card already on the stack.
 
-**Triggered abilities are not responses.** They fire automatically the
-instant their condition becomes true, cannot be responded to as a discrete
-action, and use the game state at the moment they fired even if something
-about the source changes afterward. Multiple triggers firing at once from
-one player's cards are ordered by that player; across both players (or
-game-rule triggers), the active player chooses the order.
+**Triggers are not responses (CR §503).** **(CR §503.1)** A trigger begins
+with *if*, *when*, or *at*; it fires automatically the instant its condition
+is met, using its text as written *at that instant* even if you're mid-way
+through resolving something else or its source has since left play. **(CR
+§503.2)** Players cannot respond to it. **(CR §503.3)** A trigger that
+happens while a player is paying a cost waits until the cost is fully
+satisfied before it resolves. **(CR §503.4, FAQ)** When several triggers
+happen at once: if all come from one player's cards, that player orders
+them; if from both players' cards (or game-rule triggers), the **active
+player** orders them. **(CR §503.4a, FAQ)** the order is chosen one trigger
+at a time — resolve one, then decide the next — not fixed up front.
+
+**(engine-derived)** Playing a card or activating an ability pushes a
+`StackItem` onto `state.responseStack` and opens a `responseWindow` giving
+the opponent priority; when responses stop, `advanceFlow()` pops and
+resolves one stack item, then resumes the window's `continuation`.
 
 **(engine-derived)** Every trigger found for one emitted event shares a
-batch. Before resolving the first trigger in a batch of 2+, the engine
-pauses on `GameState.pendingChoice` (kind `"orderTriggers"`, listing each
-as `{sourceId, abilityId}`) rather than resolving in whatever order
-`Object.values(GameState.cards)` happened to iterate. `playerId` is that
-batch's sole controller if they're all the same player's cards, otherwise
-the active player, matching the rule above. Answered via
-`perform({ type: "resolvePendingChoice", choice: { kind: "orderTriggers", order: [...] } })`
-with a full permutation of the batch.
+batch. While 2+ of a batch are still waiting, the engine pauses on
+`GameState.pendingChoice` (kind `"orderTriggers"`, listing the remaining
+`{sourceId, abilityId}` entries); the deciding player answers with a single
+`next` pick (CR §503.4a). That one resolves fully, then — if 2+ still
+remain — the choice is re-raised for the next pick; a lone leftover resolves
+without prompting. `playerId` is the batch's sole controller if the cards
+share one, otherwise the active player.
 
 **(engine-derived)** A batch is *everything found for one emitted event* —
-not everything that happened in one simultaneous game action. Two
-characters destroyed together by the same round of battle damage (§8 step
-5) each get their own separate "this card left play" event (one per card),
-so a "when this leaves play" trigger on each does **not** join an
-`orderTriggers` batch with the other — there's nothing to jointly order.
-Instead each event's trigger (including any chooser sub-decision it itself
-raises, e.g. `chooserSelectsTarget`) resolves fully, in turn, queued behind
-the others emitted in the same instant, before the next one begins; none of
-them are skipped or overwritten by one that pauses first.
+not everything in one simultaneous game action. Two characters destroyed
+together by the same round of battle damage (§8) each get their own "left
+play" event, so their "when this leaves play" triggers do **not** share an
+`orderTriggers` batch; each resolves fully, in turn, queued behind the
+others emitted in that instant.
 
 **(engine-derived)** When a triggered ability's target declaration has more
-legal candidates than it needs, the engine can't guess which one the
-controller means — it pauses on `GameState.pendingChoice` (kind
-`"selectTargets"`, same mechanism as Unique below) instead of picking one
-for them or throwing. Answered via
-`perform({ type: "resolvePendingChoice", choice: { kind: "selectTargets", selected: {...} } })`.
-A declaration with *too few* candidates (a genuinely unplayable trigger,
-not a choice) is unaffected — that's still a hard failure.
+legal candidates than it needs, the engine pauses on
+`GameState.pendingChoice` (kind `"selectTargets"`). A declaration with *too
+few* candidates is an unplayable trigger, a hard failure, not a choice.
 
-**A note on pending choices generally.** Response windows and battle phases
-already interrupt synchronous resolution and wait for a specific follow-up
-action (`passPriority`/`advanceFlow`, `declareBlockers`, ...) — that's the
-engine's normal idiom for "pause here until told to continue," and it's
-what makes the engine steppable by a UI instead of needing to run a whole
-turn in one call. `GameState.pendingChoice` extends the same idiom to
-moments that aren't tied to one specific player action: a state-based check
-or a batch of triggers can, on its own, decide a *real* decision is needed
-and pause there. While it's set, `perform()` rejects everything except a
-matching `resolvePendingChoice`, the same way an open response window
-rejects everything but a response. The kinds today are `uniqueSurvivor`
+**A note on pending choices generally.** `GameState.pendingChoice` extends
+the engine's "pause here until told to continue" idiom to moments not tied
+to one player action: a state-based check or a batch of triggers can decide
+a real decision is needed. While it's set, `perform()` rejects everything
+except a matching `resolvePendingChoice`. Kinds today: `uniqueSurvivor`
 (§9), `selectTargets` / `orderTriggers` (this section), the chooser-effect
 pauses (`chooserSelectsTarget`, `chooserSelectsOption`, `reorderDeck`,
-`deployForFree`, `distributeAmong`), and — added for the card-coverage
-effort — `replacementChoice` (an optional "you may ... instead", §10),
-`mayPay` ("you may pay N. If you do, ..."), `nameValue` ("name a card
-subtype"), and `useTargetAbility` ("use one of the card's abilities").
-`GameFlowView.mode` becomes `"pendingChoice"` so a
-renderer can detect one without inspecting `GameState.pendingChoice.kind`
-itself.
+`deployForFree`, `distributeAmong`), and `replacementChoice` (§10),
+`mayPay`, `nameValue`, `useTargetAbility`. `GameFlowView.mode` becomes
+`"pendingChoice"`.
 
-## 8. Battle Rules
+## 8. Battle (CR §608–§609)
 
-**Declaring the attack**
-1. Active player picks characters to attack with — each must be
-   attack-eligible (see §6) and not depleted. Declaring depletes them.
-2. Active player names a target: an opponent's faction, or an opponent's
-   location in play. (If unspecified, default to the opponent's faction.)
-3. If every attacking character has **Covert**, the attacking party is
-   Covert — it can be blocked only by Covert characters.
+### Declaring the attack (CR §608.1)
 
-A response window opens after attackers are declared (both players may play
-tactics/abilities).
+1. **(CR §608.1a) Announcement.** The active player names a faction or
+   location they don't control as the target. If they forget, the target
+   defaults to the opponent's faction. An attack can only be announced under
+   legal circumstances — **if there are no possible attackers, or an effect
+   prevents attacking, the battle ends here before anything can trigger off
+   the attack.**
+2. **(CR §608.1b) Attackers.** Choose one or more characters you control
+   that can attack — each not depleted and controlled by you continuously
+   since the start of the turn (§6; **Aggro** waives the latter). **Declaring
+   depletes them.** They form the attacking party.
+3. **(CR §507.3 / §302.11)** If *every* attacker has **Covert**, the
+   attacking party is a **covert party**.
+4. **(CR §608.1c) Response window** — the attacker may play tactics / use
+   abilities as much as they want, then the defender may. If an effect adds
+   characters to "the blocking party" during this step, the party isn't
+   formed yet; those characters join once it forms in the next step (or
+   become the blocking party if none forms — but "formation" effects don't
+   fire in that case).
 
-**Declaring blockers**
-1. Defending player may pick any number of non-depleted characters they
-   control to block. Declaring does **not** deplete blockers.
-2. A Covert character may only block a Covert attacking party; conversely
-   only Covert characters may block a Covert party. Whether a party "is"
-   Covert is locked in at the moment blocking is declared — later keyword
-   changes don't retroactively legalize/void the block.
-3. Face-down cards (resources) cannot block.
+### Declaring blockers (CR §608.1d)
 
-A response window opens after blockers are declared.
+1. The defending player may choose any number of non-depleted characters
+   they control to block; they form the blocking party. Declaring does
+   **not** deplete blockers.
+2. **(CR §507.3b / §507.3c)** Only covert characters may block a covert
+   party, and covert characters may block *only* covert parties. **(CR
+   §302.11b)** Whether the party is covert is locked when blocking is
+   declared — later keyword changes don't retroactively legalize or void a
+   block.
+3. **(CR §412) Unblockable.** While every member of a battle party is
+   "cannot be blocked," the defender may not form a blocking party at all.
+   (Effects that *add* a character into the blocking party still work.)
+   **(engine-derived)** the `cannotBeBlocked` keyword; `declareBlockers`
+   rejects a non-empty defender-declared blocking party while the whole
+   attacking party has it.
+4. Face-down cards (resources) are not characters and cannot block.
+5. **(CR §608.1e) Response window** — attacker then defender.
 
-**Resolving damage — speed groups**
+### Resolving the battle (CR §609.1)
 
-Battle damage resolves in repeating rounds, highest speed first, attacker
-before defender within a round:
+Repeating rounds, highest speed first, attacker before defender within a
+round:
 
-1. Response window (attacker, then defender).
-2. Let X = the highest speed among attacking characters that haven't yet
-   assigned damage this battle. All attackers at speed X simultaneously
-   assign damage equal to their strength, split however the attacker
-   chooses among the blocking party (if any) or the target (faction/
-   location) if unblocked.
-3. Let X = the highest speed among blocking characters that haven't yet
-   assigned damage this battle. All blockers at speed X simultaneously
-   assign damage equal to their strength, split however the defender
-   chooses among the attacking party.
-4. Response window (attacker, then defender).
-5. All damage assigned in this round is inflicted simultaneously; multiple
-   instances hitting the same target sum into one application.
-6. Repeat from step 1 until every character in the battle has either
-   assigned damage once or been removed from the battle.
-7. Surviving characters that took part in the battle become depleted.
+1. **(CR §609.1a)** Response window (attacker, then defender).
+2. **(CR §609.1b / §609.1c)** X = the highest speed among battle characters
+   that haven't yet assigned battle damage this battle. Every **attacker**
+   at speed X assigns damage equal to its strength, divided as the attacker
+   chooses among the blocking party — or, if no blocking-party members
+   remain, among the target (faction/location).
+3. **(CR §609.1d)** Every **blocker** at speed X assigns damage equal to its
+   strength, divided as the defender chooses among the attacking party.
+4. **(CR §609.1e)** Response window (attacker, then defender).
+5. **(CR §609.1f)** All damage assigned this round is inflicted
+   simultaneously. **If several instances hit the same target, their sum is
+   inflicted as a single amount.**
+6. **(CR §609.1g)** Repeat from step 1 until every character in the battle
+   has either assigned battle damage once or is no longer in play / in the
+   battle.
+7. **(CR §609.1h)** Deplete all surviving characters that were in the
+   battle.
 
-**Damage resolution:**
-- Character: destroyed once its accumulated damage this turn ≥ its life
-  (checked continuously as a state-based action, not just at end of
-  battle).
-- Location: destroyed once its accumulated damage (persists across turns)
-  ≥ its structure.
-- Faction: damage directly reduces influence by the same amount — this is
-  the *only* normal way influence changes from combat, and it is not
-  "damage" for the purposes of damage-prevention/redirection effects.
-- A character removed from the battle (destroyed, or its control changes)
-  is immediately pulled from the attacking/blocking party.
-- **(engine-derived)** A continuous ability can *tune* an amount of damage
-  as it is inflicted ("reduce battle damage to your characters by 2",
-  "increase ... by 2") via `ContinuousAbility.damageModifiers`. This is an
-  amount adjustment, floored at 0 — it can't cancel an instance the way a
-  replacement effect would. **Ruling:** each source's contribution is a
-  distinct instance of damage (the standard CCG reading), so the modifier
-  is applied *per damage assignment*, not once per summed speed-group
-  application: a two-attacker speed group each assigning 2 to one character
-  warded by "reduce battle damage by 2" deals 0, not 2. This matches the
-  engine's per-assignment `damageDealt` model and is locked by a
-  `card-behaviors.test.ts` case.
+**(CR §609.2 / §407.5a / §408.1b / §408.2a)** If a character has nothing
+left to assign to (its target was destroyed earlier in the battle, a
+targeted location's controller changed, or the assigned amount came out to
+0), it does nothing but still counts as "having assigned" for ending the
+loop — the resolution loop never repeats infinitely.
 
-  **(engine-derived)** "Control changes" is the `takeControl` effect
-  (`{ type: "takeControl", target, controller }`) — the only way
-  `CardInstance.controllerId` ever changes. It also moves the card between
-  the old and new controller's `play` array bookkeeping (see §2), since
-  in-play zone membership is filed by controller, not owner.
-  `isCardStillInBattle` already checks `controllerId` against the
-  attacker/defender for party membership, so this falls out for free the
-  next time the party gets pruned (battle damage assignment, or the next
-  `declareBlockers` call).
+### Damage (CR §408)
 
-## 9. Keywords
+- **Character:** destroyed once its damage *this turn* is ≥ its life,
+  checked continuously (CR §408.4; §11). **(CR §408.8)** it is considered
+  destroyed *by* the damage instance that pushed it over.
+- **Location:** destroyed once its accumulated damage markers are ≥ its
+  structure (CR §408.5).
+- **Faction:** **(CR §408.3)** damage inflicted on a faction makes it lose
+  an equal amount of influence. This *is* damage — **(CR §408.2)** damage
+  increase and reduction effects apply to it, and "when damage is inflicted"
+  triggers fire — and only the influence-loss half is exempt from
+  damage-modification. **(CR §408.3b)** A *direct* "loses N influence"
+  effect is not damage and ignores all damage modification. **(CR §309.1b)**
+  "pay" is never influence loss.
+- **(CR §408.1 / §408.1a)** An attempt to inflict 0 damage inflicts nothing
+  and triggers nothing (but a battle-damage source still counts as having
+  assigned, CR §408.1b).
+- **(CR §408.6, FAQ) Battle damage** is *only* the damage inflicted through
+  the battle-resolution steps above. Damage dealt by a tactic, ability, or
+  trigger *during* a battle is **not** battle damage and doesn't interact
+  with battle-damage-specific rules or cards.
+- **(CR §408.7)** The source of inflicted damage is the card that inflicted
+  it; for battle damage, the character that assigned it.
+- **Removed from battle (CR §302.15).** A character leaves the
+  attacking/blocking party immediately if it is destroyed, if its control
+  changes (CR §407.4), or if it loses the character type (CR §208.4). Any
+  battle damage already assigned to it is **not** inflicted. **(CR §407.6)**
+  An effect that would add a character you don't control to a party you do
+  control is terminated. **(CR §407.5)** If the target of the attack is a
+  location whose controller changes mid-battle, it stops being the target.
 
-- **Covert** — see battle rules (§8) for the blocking restriction. A card
-  can gain Covert temporarily via an effect, same rules apply while it has
-  the keyword.
-- **Tactical (card-verified)** — the card can be played during a response
-  window (as if it were a Tactic) regardless of its actual card type. It's
-  still subject to the type's normal rules once in play (a Tactical
-  character still needs a legal target/etc., and still resolves into
-  `play` rather than `discard` the way a Tactic does).
-- **Aggro (card-verified)** — the character is exempt from the "must have
-  started this turn under your control" attack-eligibility rule (§6). A
-  character with Aggro that enters play this turn may still attack this
-  turn.
-- **Unique X** — a player may not control more than one card carrying a
-  given Unique designation; if they somehow do, they immediately choose one
-  to keep and destroy the rest. The opponent controlling a copy of the same
-  Unique card at the same time is fine — the restriction is per-player.
+**(engine-derived)** Per CR §609.1f + §408.2, battle damage from several
+characters to one target in a speed group is summed first, then
+`ContinuousAbility.damageModifiers` ("reduce battle damage to your
+characters by 2") acts *once* on that sum, floored at 0
+(`inflictLockedBattleDamage`). The summed final amount then applies — as
+damage to a character/location, or as influence loss for a faction, which
+runs through the same modifier pass before it converts (CR §408.3). Only a
+direct "loses N influence" effect bypasses it (CR §408.3b). Each
+contributing character still emits its own `damageDealt` (CR §408.7), with
+the final amount distributed across them.
+
+**(engine-derived)** "Control changes" is the `takeControl` effect — the
+only writer of `CardInstance.controllerId`; it also moves the card between
+the players' `play` arrays. `isCardStillInBattle` checks `controllerId`
+against the attacker/defender, so party pruning falls out for free.
+
+## 9. Keywords (CR §507)
+
+**(CR §507.1)** A card has a keyword when it's printed in bold on the card
+or granted one by an effect ("gains a keyword" = temporary rules text, CR
+§508.2). Merely *mentioning* a keyword in text doesn't grant it.
+
+- **Covert (CR §507.3).** A party of all-covert attackers is a covert party
+  (§8). **(CR §507.3d)** "gains covert" means the character genuinely has
+  the keyword. **(CR §507.3e)** A card can't hold two instances of covert —
+  extra copies vanish. **(CR §302.11a)** if any member of a covert party
+  loses covert mid-battle the party stops being covert immediately (but
+  existing blocks stand, CR §302.11b).
+- **Tactical (CR §507.6, card-verified).** The card may be deployed any time
+  you could deploy a tactic, whatever its real type. **(CR §507.6b)**
+  Tactical is active even while the card is a face-down resource or in your
+  hand. Once in play it obeys its type's normal rules (a Tactical character
+  still needs a legal target and resolves into `play`, not `discard`).
+- **Aggro (card-verified).** Exempts the character from the "must have
+  started this turn under your control" attack-eligibility rule (§6); a card
+  that enters play this turn with Aggro may still attack this turn. *(Not
+  enumerated in CR §507's keyword list — a 2016-era omission; the printed
+  card text governs per CR §101.1.)*
+- **Unique X (CR §507.5).** You may not control more than one card carrying
+  a given Unique identifier; if you do, you immediately choose one to keep
+  and destroy the rest (**FAQ**: the controller chooses). The restriction is
+  **per player** — your opponent controlling their own copy is fine. **(CR
+  §507.5b)** If destroying an extra copy is prevented by an effect, Unique
+  doesn't try again until the prevention ends.
 
   **(engine-derived)** The designation is `CardDefinition.unique?: string`
-  (e.g. `"eldridge"`); real card text has no structured field for this today
-  so it must be assigned when authoring/importing card data. "Choose one to
-  keep" *is* a real player decision: the state-based check pauses on
+  (assigned at import). "Choose one to keep" pauses on
   `GameState.pendingChoice` (kind `"uniqueSurvivor"`, listing every
-  candidate) rather than picking one, and everything else stays blocked
-  until the affected player answers with
-  `perform({ type: "resolvePendingChoice", choice: { kind: "uniqueSurvivor", keep: cardId } })`.
-- **Attach to X** — the card must have a legal target of type X chosen as
-  part of playing it, and enters play attached to that target. If the
-  target is missing, or later leaves play / stops qualifying as type X, the
-  attached card is destroyed (items/tactics attached this way go to
-  discard). If the target itself leaves play for any reason, everything
-  attached to it leaves the same way.
+  candidate); everything else stays blocked until the affected player
+  answers with `resolvePendingChoice`.
 
-  **(engine-derived)** Declared via `CardDefinition.attachTo?: CardType`.
-  Playing such a card adds a synthetic target declaration (reserved id
-  `"attachTo"`) requiring a card of that type, same as any other target —
-  `selected: { attachTo: [cardId] }`. `CardInstance.attachedTo` is reused
-  from the numeric-cost resource-attachment mechanic (a resource attached to
-  its controller's faction to pay a cost uses the same field) — the two
-  never conflict since a resource being attached-for-cost is never itself an
-  Attach-to-X card. The generic "detach on target destruction" behavior
-  (§2/zones) still fires first; the Attach-to-X state-based check is what
-  turns that detachment into an actual destruction when `attachTo` is set.
+- **Attach to X (CR §507.2).**
+  - **(CR §507.2a)** Picking a legal target of type X is the *first extra
+    cost* of playing the card; on resolution it enters play attached to that
+    target.
+  - **(CR §507.2b)** If it's put into play without a specified target, pick
+    one as it enters.
+  - **(CR §507.2c)** If there is no legal target to pick, or the chosen
+    target is gone by the time the card would enter play, put the card into
+    its owner's **discard pile** instead (it is *not* "destroyed").
+  - **(CR §507.2d)** A card entering play simultaneously can be chosen as
+    the target.
+  - **(CR §507.2e)** If the target later stops being type X, **destroy** the
+    attached card immediately.
+  - **(CR §301.4 / §301.4a / §301.4b)** If the target leaves play by any
+    means (destroyed, removed, to hand, to deck), every card attached to it
+    leaves play *the same way*; if the target's method of leaving play is
+    replaced (§10), the attached card's is replaced too.
 
-## 10. Abilities
+  **(engine-derived)** Declared via `CardDefinition.attachTo?: CardType`;
+  playing the card adds a synthetic target declaration (reserved id
+  `"attachTo"`). `CardInstance.attachedTo` is shared with the numeric-cost
+  resource-attachment mechanic — the two never collide.
 
-- **Activated** — has a cost and effects; only its controller may use it;
-  requires priority (see §7) the same as any other stack action. All listed
-  costs must be payable simultaneously or the ability cannot be activated
-  at all (no partial payment). **(engine-derived)** an ability may also
-  carry its own icon `threshold` (`ActivatedAbility.threshold`, same
-  shorthand as a card's) — the "RECUR: [G][G]" / "EXHUMATION: [O][O]"
-  clause — checked as a gate before condition/targets/costs.
-- **EXTRA COST (card-verified)** — a printed "EXTRA COST: ..." on a card
-  being *played* is a real, hard cost on the deploy, not a "you may": if it
-  can't be paid the card can't be played (mirroring §4/§12). It may be
-  derived/conditional — *Anatidaephobia*'s "if you did not deploy this
-  using FLIP UP, pay X where X is the character's numeric cost" is one
-  `payResources` cost whose amount reads the responded-to card's cost and
+## 10. Abilities (CR §502–§506)
+
+- **Activated (CR §502 / §606).** A named ability with a cost and an effect;
+  only its controller may use it, at any time they could use an ability
+  (including in response and at battle response points, CR §502.3). **(CR
+  §606.1c)** all its costs must be satisfiable *at once* — no partial
+  payment. **(CR §606.1a)** the ability may sit on a card you *own but don't
+  have in play* — the "RECUR" / "EXHUMATION" abilities used from the discard
+  pile. **(FAQ)** using such an ability is *not* "playing a tactic"; RECUR
+  is an ability (it has a name, a cost, and an effect) regardless of the
+  card type it's printed on. **(CR §502.4)** an ability resolves using its
+  text *as written when you paid the cost*, even if the text later changes
+  or its source leaves play.
+- **EXTRA COST (CR §401.3, card-verified).** Any instruction in the cost
+  section. Extra costs are completed in printed order (except "pay"
+  instructions, which fold into the numeric total per CR §406.3). **(CR
+  §401.3b)** a "lose X" extra cost can't be paid unless the card has X. A
+  printed "EXTRA COST: …" on a card being *played* is a hard requirement: if
+  it can't be paid, the card can't be played. It may be conditional —
+  *Anatidaephobia*'s "if you did not deploy this using FLIP UP, pay X …"
   collapses to 0 when `deployedViaFlipUp`. **(engine-derived)** carried by
-  the tactic-first-ability / `behavior.onPlay` cost convention, evaluated
-  with the same context (`respondedToCard`, `deployedViaFlipUp`) the play
-  itself resolves under.
-- **Triggered** — keyed to "if/when/at" wording; fires automatically per §7,
-  cannot be responded to directly.
-- **Continuous** — always-on while the source is in play; a "while X"
-  conditional continuous ability turns on/off immediately as the condition
-  becomes true/false, with no lingering state.
-- **Replacement (card-verified)** — "if <X> would happen, instead <Y>"
-  (*The Stone of Shame*: "If a character would be put into a player's hand,
-  destroy it instead"; *Giada, the Elegant*: "If this card would be
-  destroyed by an opposing card or effect, you may put a token on it
-  instead"). Checked *before* the event it replaces actually happens; when
-  it applies, the original event does not occur and the replacement effects
-  run in its place. **(engine-derived)** `ReplacementAbility` — consulted
-  from inside `moveCard` (a card leaving `play` for a matched `zone`) and
-  `destroyCard`, recursion-guarded. Both forms are wired: the **mandatory**
-  form runs its `effects` inline, and the **optional** "you may pay/choose
-  ... instead" gate (`optional` / `optionalCost`) pauses the engine on a
-  `replacementChoice` pending choice for the source's controller. Scoping:
-  `replaces.controlledBy` filters on *whose card* is affected;
-  `replaces.by` (`"self" | "opponent" | "any"`) filters on *who initiated*
-  the event ("by an opposing card or effect") — the controller of the
-  effect currently resolving, or, for lethal battle damage, the player who
-  dealt it. An unknown initiator (a bare state-based check with no
-  preceding effect) satisfies neither `"self"` nor `"opponent"`.
-- **FLIP UP (card-verified)** — a card printed with a "FLIP UP: <cost>"
-  clause can be played face-down as a resource and later flipped up by
-  paying that cost (numeric + threshold, plus any "...and <rider>"), at
-  which point it resolves as its real card type. Its own text can branch on
-  "if you deployed this card using FLIP UP." **(engine-derived)** the
-  `flipUp` action + `deployedViaFlipUp` on the resolution context. Flipping
-  up opens no response window, but its effects (the "...and <rider>" first,
-  then the card's own) run through the same suspendable effect-frame path
-  as everything else: one that pauses on a chooser suspends on a
-  `pendingChoice`, and the wrap-up (a flipped tactic to discard, a flipped
-  permanent into play) waits until it resumes and finishes.
-- **Depleting** ("tapping") — a card used to pay a deplete cost, or that
-  attacks, becomes depleted and can't be depleted again until restored.
-  Resources are never depleted (they're attached instead).
-- **Restoring** ("untapping") — reverses depletion; normally happens via
-  the controlling faction's turn-start restore rule, or an explicit effect.
+  the tactic-first-ability / `behavior.onPlay` cost convention.
+- **Triggered (CR §503).** Keyed to *if / when / at*; fires automatically
+  per §7; cannot be responded to.
+- **Continuous / Conditional (CR §504).** Always on while the source is in
+  play; a "while X" conditional turns on and off the instant X becomes
+  true/false, leaving no lingering state.
+- **Replacement (CR §506, card-verified).** "if <X> would happen, instead
+  <Y>" (*The Stone of Shame*, *Giada, the Elegant*). Checked *before* the
+  event it replaces; when it applies, the original event never happens and
+  the replacement runs in its place.
+  - **(CR §506.2)** Replacements do **not** apply to things happening as
+    part of an *extra cost* — destroying a card as a cost is not replaced by
+    "if this would be destroyed…". **(CR §506.2a)** but a replacement on a
+    card *attached* to that card still applies.
+  - **(CR §506.3)** "the next …" replacements are *delayed* — they wait for
+    the thing to happen.
+  - **(CR §506.4)** If several replacements apply to the same event at once,
+    the controller (or, across players, the active player) picks one; the
+    rest are ignored — except an unchosen *delayed* replacement, which keeps
+    waiting.
+  - **(CR §506.5)** Infinite replacement recursion is prevented: each
+    replacement may be applied to a given instance only once (two identical
+    copies each get one application).
+  - **(CR §506.6 / §408.4b / §408.5c)** A replacement that replaces a card's
+    *destruction* reduces to 0 all damage that card received from the source
+    of that destruction.
 
-**(engine-derived)** Damage and depletion are play-zone concepts — a card
-has neither while sitting in hand, deck, discard, void, or removed. Any
-card leaving `play`, for any reason (bounced to hand, discarded, put in the
-void, removed from the game), clears both `damage` and `depleted`
-immediately, the same way it already sheds `faceDown`/`attachedTo` (RULES.md
-§2). This matters even for a location, whose damage otherwise persists
-turn to turn while it stays in play (§3): that persistence stops the
-instant it leaves play, so a bounced or returned location doesn't carry
-old damage back into a fresh stint in play (destroying it on re-entry, or
-returning to a hand as a "damaged"/"depleted" card in the first place).
+  **(engine-derived)** `ReplacementAbility` — consulted from inside
+  `moveCard` (a card leaving `play` for a matched `zone`) and `destroyCard`,
+  recursion-guarded, and **skipped entirely** when the move/destroy is
+  being done to pay an extra cost (CR §506.2) — the cost-payment paths pass
+  `skipReplacement`. The **mandatory** form runs its `effects` inline; the
+  **optional** "you may … instead" form pauses on a `replacementChoice`
+  pending choice for the source's controller. Whenever a `destroy`
+  replacement is *applied* (mandatory, or optional-accepted), the affected
+  card's `damage` is reset to 0 (CR §506.6) so it doesn't re-die on the next
+  state-based check. `replaces.controlledBy` filters on *whose card* is
+  affected; `replaces.by` (`"self" | "opponent" | "any"`) filters on *who
+  initiated* the event — an unknown initiator (a bare state-based check)
+  satisfies neither `"self"` nor `"opponent"`.
+- **FLIP UP (CR §507.4, card-verified).** A card printed with "FLIP UP:
+  <cost>" that you control face-down as a resource can be played as though
+  from your hand by paying that cost and flipping it face-up, then meeting
+  its Flip Up threshold (printed next to the keyword). **(CR §507.4b)** you
+  pay the Flip Up cost *before* flipping, so the card may pay for its own
+  Flip Up. **(CR §507.4c)** Flip Up extra costs are satisfied directly
+  before the card's regular extra costs. **(CR §507.4d)** Flip Up does not
+  change *when* a type may be deployed — a character still only on your
+  turn, unless the card's own text says otherwise. **(CR §406.7 / §507.4e)**
+  its numeric cost uses the normal running total but seeded at the Flip Up
+  cost value, and at the end you pay the total *minus* the already-paid Flip
+  Up cost. Its own text may branch on "if you deployed this card using FLIP
+  UP." **(engine-derived)** the `flipUp` action + `deployedViaFlipUp` on the
+  resolution context; flipping up opens no response window, but its effects
+  run through the same suspendable effect-frame path as everything else.
+- **Depleting / restoring (CR §303).** A card used to pay a deplete cost, or
+  that attacks, becomes depleted and **(CR §303.2)** can't be depleted again
+  until restored — and can't be restored unless currently depleted.
+  Restoring normally happens via the controlling faction's turn-start
+  restore rule or an explicit effect. Resources are never depleted (they're
+  attached instead, CR §203.7).
 
-## 11. State-based actions
+**(engine-derived)** Damage and depletion are play-zone concepts (§2): any
+card leaving `play` for any reason clears both `damage` and `depleted`
+immediately, the same way it sheds `faceDown` / `attachedTo`. **(CR
+§208.3)** losing the character type mid-turn also forgets that turn's
+damage.
 
-Checked continuously (after every effect/stack resolution, not just once
-per turn):
+## 11. Continuous ("state-based") checks
 
-- Any character with accumulated damage this turn ≥ life is destroyed.
-- Any location with accumulated damage ≥ structure (its `life` stat) is
-  destroyed.
-- Any player controlling more than one card sharing a Unique designation
-  reduces to one — via that player's choice (see §9), not automatically.
-- A card requiring "Attach to X" whose attachment target isn't a legal,
-  in-play card of the right type is destroyed.
-- Any faction at 0 influence ends the game for that player, immediately (a
-  draw if both hit 0 from the same event). Checked last, after every
-  destruction above has settled.
+**(CR §204.5, §207.5, §408.3a, §507.2e, §507.5a)** These are checked
+*immediately* / continuously — the CR phrases each as its own "destroy it
+immediately" rule rather than as one batched pass, but the effect is the
+same: after every effect or resolution, in a loop until nothing changes —
+
+- Any character whose damage this turn is ≥ its life is destroyed (CR
+  §408.4).
+- Any location whose damage markers are ≥ its structure is destroyed (CR
+  §408.5).
+- Any player controlling more than one card sharing a Unique identifier
+  reduces to one — by that player's choice (§9), not automatically; and not
+  again while a prevention effect is suppressing the destruction (CR
+  §507.5b).
+- A card with **Attach to X** whose host is still in play but no longer type
+  X is **destroyed** (CR §507.2e). If instead it has *no* host at all (none
+  was pickable on entry, or the host has left play), it is **put into its
+  owner's discard pile** — a move, not a destruction (CR §507.2c), which
+  fires "put into a discard pile" triggers and honours discard
+  replacements.
+- Any faction at 0 influence loses the game for its owner immediately — a
+  draw if more than one loses at once (CR §102.1 / §102.2). Checked last,
+  after all destruction above settles.
 
 **(engine-derived)** The whole check is skipped while a `pendingChoice` is
-outstanding — the engine is frozen awaiting input, and in particular an
-*optional replacement* awaiting accept/decline leaves its would-be-destroyed
-card sitting with lethal damage; re-running the check would just re-offer
-the replacement forever. Every `resolvePendingChoice` branch re-runs the
-check once it has settled.
+outstanding — the engine is frozen awaiting input, and an *optional
+replacement* awaiting accept/decline deliberately leaves its
+would-be-destroyed card sitting with lethal damage; re-running the check
+would re-offer the replacement forever. Every `resolvePendingChoice` branch
+re-runs the check once it has settled.
 
 ## 12. Miscellaneous rulings
 
-- `"cannot"` always overrides `"can"`. (No engine mechanism needed — this is
-  guidance for whoever authors a card's structured `Condition`/`Effect`
-  data, not a runtime primitive.)
-- An instruction that's impossible to fully carry out (destroy a card no
-  longer in play, discard from an empty hand, etc.) is carried out as far
-  as possible and the rest is ignored — it does not invalidate the whole
-  effect.
+- **(CR §101.1)** A card that directly contradicts the rules wins.
+- **(CR §402.7 / §402.7a)** `"cannot"` always beats `"can"`. A "can do X"
+  permission and an actual instruction to do X are different: "characters
+  cannot be destroyed" makes every "destroy a character" instruction be
+  ignored. **(No engine primitive — guidance for authoring structured
+  `Condition`/`Effect` data.)**
+- **(CR §402.6)** When one ongoing effect grants a property and another
+  removes it, the *lose* effect wins.
+- **(CR §402.5)** An instruction you can't fully carry out is carried out as
+  far as possible and the rest ignored — it does not invalidate the whole
+  effect. **(CR §402.5a)** effects never "fizzle" just because their target
+  left play. **(CR §402.5b)** but an instruction that *depends* on an
+  earlier one you skipped/replaced (typically an "If you do …" clause) is
+  itself skipped.
+- **(CR §402.4)** When a card changes game areas, unresolved effects that
+  meant to act on it in the old area lose track of it (a character
+  destroyed in response to "put it into your hand from play" is not then
+  fetched from the discard pile).
+- **(CR §402.2 / §305.2 / §306.3)** When an effect makes several players act
+  "at the same time," the active player acts first, then clockwise.
+  Discarding multiple cards, or drawing multiple, happens as one group event
+  — **(FAQ)** but repeated separate triggers ("draw a card" three times from
+  *Dwarvish Grimalkin*) are three distinct events, each separately
+  modifiable.
+- **(CR §410.4 / §406.6)** Any number an effect would push below 0 stays at
+  0. **(CR §410.5)** "to a minimum of N" doesn't raise a value that was
+  already below N. **(CR §410.2)** chosen variable numbers must be whole
+  numbers (0 counts).
+- A cost variable (`X`, …) never assigned because the card was played for
+  free defaults to 0. **(engine-derived)** not yet exercised —
+  `NumberExpression` has no "unassigned variable" form today.
+- **(CR §312.2)** You may always choose to *fail* a search that has specific
+  criteria ("search for an item"), even if a legal card is present; an
+  unconditional "search for a card" must find one if the deck has any.
+- **(CR §313.2)** "Shuffle X into a deck" only shuffles if at least one card
+  is added.
+- **(CR §505.2, FAQ)** When several requirements apply to one action, do the
+  one that satisfies the most of them; if tied, you choose (**FAQ**:
+  *Hangdog Alley* + *Arcana Department*; two cards each forcing "must pick
+  this" — pick one, ignore the other, and only the picked one counts as
+  picked). Not taking the action at all is never a valid way to "satisfy"
+  its requirements (CR §505.2c).
+- **(FAQ)** *Tactician Vacation* closes the tactic-play window for the rest
+  of the turn, which also closes every "can be played whenever you could
+  play a tactic" (Tactical) window — though such a card can still be played
+  at the times it *normally* could be.
 
-  **(engine-derived)** Every *effect* (post-cost, already-committed
-  resolution) that resolves a `TargetRef`/destination silently no-ops
-  instead of throwing when that reference doesn't resolve to a card — most
-  commonly a `{type:"random", selector}` ref whose selector matches nothing
-  (e.g. "discard a card at random from your opponent's hand" when their
-  hand is empty), but also e.g. `destroy`/`removeFromGame` targeting
-  something a second effect in the same ability, or a batched trigger,
-  already took care of. This is deliberately *not* extended to cost
-  payment: a `destroy` **cost** still throws if its target isn't a legal
-  in-play card, since an unpayable cost should block the whole activation
-  (§4/§10), and `validateTargetDeclarations` guarantees the target was
-  legal at the moment of activation anyway — reaching an unresolved cost
-  target can only happen if something external mutated the state between
-  target validation and cost payment, which is a real bug to surface, not
-  something to paper over.
-- A cost variable (`X`, etc.) that's never assigned because the card was
-  played for free defaults to 0. (Not yet applicable: `NumberExpression`
-  has no "unassigned variable" form today — every current card behavior
-  supplies a literal or a derived value.)
+**(engine-derived)** Every *effect* (post-cost, already-committed) that
+resolves a `TargetRef`/destination silently no-ops instead of throwing when
+the reference doesn't resolve to a card — a `{type:"random", selector}` ref
+matching nothing, a `destroy`/`removeFromGame` whose target a sibling effect
+already handled. This is **not** extended to cost payment: a `destroy`
+**cost** still throws if its target isn't a legal in-play card, since an
+unpayable cost must block the whole activation (§4/§10).
+
+## 13. Tokens (CR §409)
+
+**(CR §409.1)** A token is a marker placed on an in-play card; it has no
+inherent meaning — the card's text defines what its tokens do. **(CR
+§409.2)** If the card leaves play, its tokens disappear. **(CR §409.3)** A
+*Card Token* (e.g. a Micromajig — a Gearsmith character with 1/1/3 and the
+"majig" subtype, CR §409.3c) that leaves play takes its attached cards with
+it, then disappears; its owner is whoever controlled the effect that
+created it.
+
+## 14. Action loops (CR §414)
+
+**(CR §414.1)** If cards create an infinitely repeating loop that neither
+player can voluntarily stop, the game ends as a **draw**. **(CR §414.2 /
+§414.3)** A voluntary loop can be shortcut: demonstrate it, choose a finite
+repeat count (infinity is not allowed), and the opponent may break in to
+respond at any chosen iteration.
+
+**(CR §413)** A few effects have players *bid*: take turns naming an
+increasing number or passing; a player who passes is out; the last player
+in wins the bid. Bidding starts with the active player and goes clockwise.

@@ -120,9 +120,9 @@ export class SpoilsEngine {
 
     this.state = initialState;
 
-    // Compatibility with states created by older versions of this monofile.
+    // Normalize partially-specified states (test fixtures, hand-built saves).
     this.state.responseStack ??= [];
-    this.state.turnPhase ??= "main";
+    this.state.developedThisTurn ??= false;
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
     this.state.rngState ??= randomSeed();
@@ -233,8 +233,7 @@ export class SpoilsEngine {
    * Single query surface intended for a UI / renderer.
    */
   getFlowView(): GameFlowView {
-    let mode: GameFlowView["mode"] =
-      this.state.turnPhase === "develop" ? "develop" : "main";
+    let mode: GameFlowView["mode"] = "main";
 
     if (this.state.winner) {
       mode = "gameOver";
@@ -256,7 +255,7 @@ export class SpoilsEngine {
       activePlayerId: this.state.activePlayerId,
       priorityPlayerId: this.state.priorityPlayerId,
       mode,
-      turnPhase: this.state.turnPhase,
+      developAvailable: this.canDevelopNow(this.state.activePlayerId),
       setup: structuredClone(this.state.setup),
       responseWindow: this.state.responseWindow
         ? structuredClone(this.state.responseWindow)
@@ -540,7 +539,7 @@ export class SpoilsEngine {
     assert(!this.state.started, "The game has already started.");
 
     this.state.started = true;
-    this.state.turnPhase = "develop";
+    this.state.developedThisTurn = false;
     this.state.priorityPlayerId = this.state.activePlayerId;
     this.state.turnEventTally = {};
     this.state.turnDeploys = {};
@@ -604,14 +603,36 @@ export class SpoilsEngine {
     }
   }
 
+  /**
+   * Whether `playerId` may use their faction's Develop Rule (CR §202.8)
+   * right now. It is an optional, once-per-turn action — not a phase and
+   * not on CR §603.2's list of turn actions — usable any time during the
+   * active player's own turn while nothing else (a battle, a response
+   * window, a pending choice, unresolved responses) is in flight.
+   */
+  canDevelopNow(playerId: PlayerId): boolean {
+    return (
+      this.state.setup.phase === "complete" &&
+      this.state.started &&
+      !this.state.winner &&
+      !this.state.developedThisTurn &&
+      playerId === this.state.activePlayerId &&
+      !this.state.responseWindow &&
+      !this.state.battle &&
+      !this.state.pendingChoice &&
+      this.responseStack.length === 0 &&
+      this.getDevelopChoices(playerId).length > 0
+    );
+  }
+
   private chooseDevelop(
     playerId: PlayerId,
     choice: Extract<GameAction, { type: "chooseDevelop" }>["choice"]
   ): void {
-    assert(this.state.setup.phase === "complete", "Game setup is not complete.");
-    assert(playerId === this.state.activePlayerId, "Only the active player develops.");
-    assert(this.state.turnPhase === "develop", "The develop decision has already been made.");
-    assert(!this.state.responseWindow && !this.state.battle, "Cannot develop during another flow.");
+    assert(
+      this.canDevelopNow(playerId),
+      "The develop rule is a once-per-turn action, usable only on your own turn outside a battle or response window."
+    );
 
     const available = this.getDevelopChoices(playerId);
     const rule = available.find(candidate => candidate.type === choice.type);
@@ -632,16 +653,47 @@ export class SpoilsEngine {
       }
     }
 
-    this.state.turnPhase = "main";
+    this.state.developedThisTurn = true;
     this.state.priorityPlayerId = playerId;
   }
 
+  /**
+   * The start-of-turn point (CR §602) — a single instant, not a phase.
+   * Applies the three core start-of-turn rules (clear all character damage,
+   * end all "this turn" effects, set attack eligibility) and then the new
+   * active player's faction Restore Rule (CR §202.7).
+   */
   private applyFactionStartOfTurn(playerId: PlayerId): void {
     const player = this.requirePlayer(playerId);
     const faction = this.getFactionDefinition(playerId);
     const restore = faction?.turn.restore;
 
-    // Start-of-turn attack eligibility is a core rule, not a faction ability.
+    // CR §602.1a — all damage on characters is cleared, everywhere, every
+    // turn. Not part of any faction's Restore Rule.
+    for (const card of Object.values(this.state.cards)) {
+      if (
+        card.zone === "play" &&
+        !card.faceDown &&
+        this.getDefinition(card.id).type === "character"
+      ) {
+        card.damage = 0;
+      }
+    }
+
+    // CR §602.1b — all "this turn" effects end at this same instant.
+    this.state.modifiers = this.state.modifiers.filter(modifier =>
+      this.durationStillActive(modifier)
+    );
+    this.state.keywordGrants = this.state.keywordGrants.filter(grant =>
+      this.durationStillActive(grant)
+    );
+    this.state.restrictions = this.state.restrictions.filter(grant =>
+      this.durationStillActive(grant)
+    );
+    this.state.costReductions = [];
+
+    // CR §602.1c — start-of-turn attack eligibility is a core rule, not a
+    // faction ability.
     for (const card of Object.values(this.state.cards)) {
       card.attackEligibleTurn = undefined;
     }
@@ -660,18 +712,6 @@ export class SpoilsEngine {
     }
 
     if (!restore) return;
-
-    if (restore.clearCharacterDamage) {
-      for (const card of Object.values(this.state.cards)) {
-        if (
-          card.zone === "play" &&
-          !card.faceDown &&
-          this.getDefinition(card.id).type === "character"
-        ) {
-          card.damage = 0;
-        }
-      }
-    }
 
     if (restore.detachResources && player.factionId) {
       for (const cardId of player.play) {
@@ -1583,12 +1623,12 @@ export class SpoilsEngine {
     playerId: PlayerId,
     definition: CardDefinition
   ): void {
-    // RULES.md §6: playing a resource happens only via the develop step's
-    // "play resource" choice (or a card effect that explicitly does so) —
-    // never as a normal card play, which would bypass the once-per-turn limit.
+    // CR §203.1: a resource is played only when an effect instructs you to
+    // (the faction Develop Rule via `chooseDevelop`, or a card effect) —
+    // never as a normal card deploy.
     assert(
       definition.type !== "resource",
-      "Resource cards can only be played during the develop step."
+      "Resource cards can only be played when an effect instructs you to (e.g. the develop rule)."
     );
 
     const window = this.state.responseWindow;
@@ -1622,10 +1662,6 @@ export class SpoilsEngine {
       playerId === this.state.activePlayerId,
       "Only the active player may deploy a normal turn action."
     );
-    assert(
-      this.state.turnPhase === "main",
-      "Complete the faction's develop rule before taking normal turn actions."
-    );
   }
 
   private assertCanUseAbilityAtCurrentTiming(
@@ -1652,8 +1688,7 @@ export class SpoilsEngine {
     return (
       !this.state.battle &&
       this.responseStack.length === 0 &&
-      playerId === this.state.activePlayerId &&
-      this.state.turnPhase === "main"
+      playerId === this.state.activePlayerId
     );
   }
 
@@ -2076,6 +2111,13 @@ export class SpoilsEngine {
         );
       }
 
+      case "cardMovedToZone": {
+        return (
+          context.event?.type === "cardMoved" &&
+          context.event.to === condition.zone
+        );
+      }
+
       case "eventOrdinal": {
         const event = context.event;
         if (!event) return false;
@@ -2408,10 +2450,18 @@ export class SpoilsEngine {
       }
     }
 
-    if (selector.zone) {
-      const zones = Array.isArray(selector.zone)
-        ? selector.zone
-        : [selector.zone];
+    // CR §402.3 / §402.3a: a selector that doesn't name a game area affects
+    // only the In-Play area ("pick a character" = a character in play). An
+    // explicit `zone: "any"` opts a selector out of that default (used by
+    // the few contexts that legitimately span zones — deployForFree,
+    // cost modifiers, a chooser targeting a prior search result).
+    if (selector.zone !== "any") {
+      const zones: Zone[] =
+        selector.zone === undefined
+          ? ["play"]
+          : Array.isArray(selector.zone)
+            ? selector.zone
+            : [selector.zone];
 
       if (!zones.includes(card.zone)) {
         return false;
@@ -2609,6 +2659,12 @@ export class SpoilsEngine {
     context: ResolutionContext,
     emitEvents: boolean
   ): void {
+    // CR §506.2: replacements never apply to something happening as part of
+    // an extra cost — a card destroyed / discarded / removed as a cost is
+    // really gone, its own "if this would be destroyed …" replacement
+    // notwithstanding. (A replacement on a card *attached* to it still
+    // applies — CR §506.2a — but that's handled when the attachment's own
+    // leave-play is processed, not here.)
     switch (cost.type) {
       case "payResources": {
         const amount = this.evaluateNumber(
@@ -2689,7 +2745,7 @@ export class SpoilsEngine {
         }
 
         for (const cardId of selected) {
-          this.moveCard(cardId, "discard", emitEvents);
+          this.moveCard(cardId, "discard", emitEvents, "bottom", true);
         }
 
         return;
@@ -2703,7 +2759,7 @@ export class SpoilsEngine {
 
         assert(targetId, "Missing destroy-cost target.");
 
-        this.destroyCard(targetId, emitEvents);
+        this.destroyCard(targetId, emitEvents, true);
         return;
       }
 
@@ -2714,7 +2770,7 @@ export class SpoilsEngine {
           this.state.cards[targetId],
           "removeFromGame-cost target is not a real card."
         );
-        this.moveCard(targetId, "removed", emitEvents);
+        this.moveCard(targetId, "removed", emitEvents, "bottom", true);
         return;
       }
 
@@ -2750,9 +2806,9 @@ export class SpoilsEngine {
           const card = this.state.cards[targetId];
           assert(card, "sacrificeSelected target is not a real card.");
           if (cost.disposition === "destroy" && card.zone === "play") {
-            this.destroyCard(targetId, emitEvents);
+            this.destroyCard(targetId, emitEvents, true);
           } else {
-            this.moveCard(targetId, zone, emitEvents);
+            this.moveCard(targetId, zone, emitEvents, "bottom", true);
           }
         }
         return;
@@ -3853,20 +3909,31 @@ export class SpoilsEngine {
           }
         }
 
-        // Attach to X: destroyed once its target is no longer a legal,
-        // in-play card of the required type (RULES.md §9).
+        // Attach to X (RULES.md §9): two different outcomes —
+        //  - host still in play but no longer the required type: CR §507.2e,
+        //    destroy the attaching card;
+        //  - no valid host at all (none was pickable on entry, or the host
+        //    has since left play): CR §507.2c, put the attaching card into
+        //    its owner's discard pile — a move, not a destruction (fires
+        //    `cardMoved`, honours discard replacements).
         if (definition.attachTo) {
           const target = card.attachedTo
             ? this.state.cards[card.attachedTo]
             : undefined;
 
-          const validTarget =
-            !!target &&
-            target.zone === "play" &&
-            this.getDefinition(target.id).type === definition.attachTo;
+          const hostInPlay = !!target && target.zone === "play";
+          const hostRightType =
+            hostInPlay &&
+            this.getDefinition(target!.id).type === definition.attachTo;
 
-          if (!validTarget) {
+          if (hostInPlay && !hostRightType) {
             this.destroyCard(card.id);
+            changed = true;
+            break;
+          }
+
+          if (!hostInPlay) {
+            this.moveCard(card.id, "discard");
             changed = true;
             break;
           }
@@ -4023,35 +4090,30 @@ export class SpoilsEngine {
         const batchId = this.immediateQueue[0]?.batchId;
         const batch = batchId ? this.getUnorderedTriggerBatch(batchId) : [];
 
-        assert(
-          choice.order.length === batch.length,
-          "Order must include every triggered ability in the batch, exactly once."
+        // CR §503.4a: the order is decided one trigger at a time — the
+        // deciding player picks which happens *next*, it resolves fully,
+        // then (if 2+ remain) they pick again. Not a full permutation up
+        // front, since resolving one trigger can change another's legality
+        // or targets.
+        const pickIndex = batch.findIndex(
+          queued =>
+            queued.sourceId === choice.next.sourceId &&
+            queued.ability.id === choice.next.abilityId
         );
 
-        const remaining = [...batch];
-        const reordered: TriggerResolution[] = [];
+        assert(
+          pickIndex !== -1,
+          `'${choice.next.sourceId}:${choice.next.abilityId}' is not one of the triggers waiting to resolve.`
+        );
 
-        for (const ref of choice.order) {
-          const index = remaining.findIndex(
-            queued => queued.sourceId === ref.sourceId && queued.ability.id === ref.abilityId
-          );
+        const [picked] = batch.splice(pickIndex, 1);
+        // Fresh, unshared batch id so the picked trigger resolves alone and
+        // isn't re-detected as needing an ordering decision.
+        picked.batchId = nextId("batch");
 
-          assert(
-            index !== -1,
-            `'${ref.sourceId}:${ref.abilityId}' is not part of this batch, or was already placed.`
-          );
-
-          reordered.push(remaining[index]);
-          remaining.splice(index, 1);
-        }
-
-        // Fresh, unshared batch ids so this same group isn't re-detected as
-        // needing another ordering decision once we resume.
-        for (const queued of reordered) {
-          queued.batchId = nextId("batch");
-        }
-
-        this.immediateQueue.splice(0, batch.length, ...reordered);
+        // Queue head becomes: picked, then the still-unordered rest (their
+        // shared batch id intact, so 2+ of them re-prompt after `picked`).
+        this.immediateQueue.splice(0, 1 + batch.length, picked, ...batch);
 
         this.state.pendingChoice = undefined;
         this.processImmediateQueue();
@@ -4142,6 +4204,16 @@ export class SpoilsEngine {
             for (const effect of pr.effects) this.resolveEffect(effect, ctx);
           } finally {
             this.replacing.delete(pr.affectedCardId);
+          }
+
+          // CR §506.6 / §408.4b / §408.5c: replacing a card's destruction
+          // reduces to 0 the damage it took from that destruction's source,
+          // so a replaced-lethal card doesn't immediately re-die on the
+          // next state-based check. (No per-source damage tracking — the
+          // accumulator is cleared.)
+          if (pr.original.event === "destroy") {
+            const saved = this.state.cards[pr.affectedCardId];
+            if (saved) saved.damage = 0;
           }
         } else if (this.state.cards[pr.affectedCardId]?.zone === "play") {
           // Declined — carry out the original event, bypassing the
@@ -4554,6 +4626,16 @@ export class SpoilsEngine {
         } finally {
           this.replacing.delete(cardId);
         }
+
+        // CR §506.6 / §408.4b / §408.5c: replacing a card's destruction
+        // reduces to 0 the damage it took from that destruction's source,
+        // so a replaced-lethal card doesn't immediately re-die on the next
+        // state-based check.
+        if (trigger.event === "destroy") {
+          const saved = this.state.cards[cardId];
+          if (saved) saved.damage = 0;
+        }
+
         return true;
       }
     }
@@ -4656,10 +4738,6 @@ export class SpoilsEngine {
       playerId === this.state.activePlayerId,
       "Only the active player can end the turn."
     );
-    assert(
-      this.state.turnPhase === "main",
-      "Complete the faction's develop rule before ending the turn."
-    );
     assert(!this.state.battle, "Cannot end the turn during a battle.");
     assert(!this.state.responseWindow, "A response window is already open.");
     assert(
@@ -4711,27 +4789,17 @@ export class SpoilsEngine {
       "Turn owner changed before end-turn resolution."
     );
 
-    this.state.modifiers = this.state.modifiers.filter(modifier =>
-      this.durationStillActive(modifier)
-    );
-    this.state.keywordGrants = this.state.keywordGrants.filter(grant =>
-      this.durationStillActive(grant)
-    );
-    this.state.restrictions = this.state.restrictions.filter(grant =>
-      this.durationStillActive(grant)
-    );
-    // Always "this turn only" — no permanent/whileSourceInPlay variant.
-    this.state.costReductions = [];
-
     const next = this.getOpponent(playerId);
 
     this.state.turn++;
     this.state.activePlayerId = next.id;
     this.state.priorityPlayerId = next.id;
-    this.state.turnPhase = "develop";
+    this.state.developedThisTurn = false;
     this.state.turnEventTally = {};
     this.state.turnDeploys = {};
 
+    // The start-of-turn point (CR §602): clears character damage, ends all
+    // "this turn" effects, resets attack eligibility, runs the Restore Rule.
     this.applyFactionStartOfTurn(next.id);
 
     this.emit({
@@ -4824,10 +4892,6 @@ export class SpoilsEngine {
     assert(
       playerId === this.state.activePlayerId,
       "Only the active player may attack."
-    );
-    assert(
-      this.state.turnPhase === "main",
-      "Complete the faction's develop rule before attacking."
     );
     assert(attackerIds.length > 0, "No attackers selected.");
     assert(
@@ -4999,12 +5063,27 @@ export class SpoilsEngine {
       blockerIds
     );
 
+    // CR §412.1 — while every member of the attacking party "cannot be
+    // blocked", the defending player may not form a blocking party.
+    // (Effects that *add* a character into the blocking party still work,
+    // but that's not a defender-declared block.)
+    const attackingPartyUnblockable =
+      battle.attackingParty.length > 0 &&
+      battle.attackingParty.every(cardId =>
+        this.hasKeyword(cardId, "cannotBeBlocked")
+      );
+    assert(
+      !attackingPartyUnblockable || blockerIds.length === 0,
+      "The attacking party cannot be blocked."
+    );
+
     // "must block if it can": a non-depleted controlled character with
     // `mustBlock` that could legally join this block has to be declared.
     const attackerIsCovert = battle.attackingParty.every(cardId =>
       this.hasKeyword(cardId, "covert")
     );
     for (const cardId of this.requirePlayer(playerId).play) {
+      if (attackingPartyUnblockable) break;
       if (unique.has(cardId)) continue;
       const c = this.state.cards[cardId];
       if (!c || c.zone !== "play" || c.faceDown || c.depleted) continue;
@@ -5335,80 +5414,125 @@ export class SpoilsEngine {
       ...battle.defenderAssignments
     ];
 
+    // CR §609.1f: damage from several characters to the same thing this
+    // round is inflicted as a *single amount*. CR §408.2: damage increase
+    // and reduction effects apply to that amount. So group by target, sum
+    // the raw assignments, then apply any `damageModifiers` delta once to
+    // the sum (floored at 0) — not per assignment.
+    const groups = new Map<
+      string,
+      {
+        target: BattleDamageAssignment["target"];
+        /** The in-play card the modifier lookup / damage / triggers hang off — the faction card itself for a faction target (CR §408.3). */
+        cardId: CardInstanceId | undefined;
+        contributors: BattleDamageAssignment[];
+      }
+    >();
+
+    for (const assignment of assignments) {
+      const key =
+        assignment.target.type === "faction"
+          ? `faction:${assignment.target.playerId}`
+          : `card:${assignment.target.cardId}`;
+
+      const cardId =
+        assignment.target.type === "faction"
+          ? this.requirePlayer(assignment.target.playerId).factionId
+          : assignment.target.cardId;
+
+      const group = groups.get(key) ?? {
+        target: assignment.target,
+        cardId,
+        contributors: []
+      };
+      group.contributors.push(assignment);
+      groups.set(key, group);
+    }
+
     this.beginEventBatch();
 
     try {
-      // Apply every locked amount before any triggered ability resolves.
-      // A continuous `damageModifiers` entry (e.g. "reduce battle damage to
-      // your characters by 2") tunes each instance here, floored at 0 —
-      // (engine-derived) it applies per assignment, matching the engine's
-      // per-assignment `damageDealt` model, not once per summed round.
-      for (const assignment of assignments) {
-        if (assignment.target.type === "faction") {
-          this.requirePlayer(
-            assignment.target.playerId
-          ).influence -= assignment.amount;
-
-          continue;
-        }
-
-        const target = this.state.cards[
-          assignment.target.cardId
-        ];
-
-        // Locking protects the source assignment, not a target which has
+      // Apply every final amount before any triggered ability resolves.
+      for (const group of groups.values()) {
+        // Locking protects the source assignments, not a target that has
         // already left play before damage is inflicted.
-        if (!target || target.zone !== "play") {
+        const targetCard = group.cardId
+          ? this.state.cards[group.cardId]
+          : undefined;
+        if (!targetCard || targetCard.zone !== "play") {
+          group.contributors = [];
           continue;
         }
 
-        assignment.amount = Math.max(
-          0,
-          assignment.amount +
-            this.damageDeltaFor(assignment.target.cardId, true)
+        const rawSum = group.contributors.reduce(
+          (sum, a) => sum + a.amount,
+          0
         );
-        target.damage += assignment.amount;
 
-        if (assignment.amount > 0) {
-          const source = this.state.cards[assignment.sourceId];
-          if (source) {
-            this.lethalDamageCause.set(
-              assignment.target.cardId,
-              source.controllerId
-            );
+        // CR §408.2 modification applies to combat damage against a faction
+        // too, before it converts to influence loss (CR §408.3).
+        const final = Math.max(
+          0,
+          rawSum + this.damageDeltaFor(group.cardId!, true)
+        );
+
+        // Redistribute the adjusted final amount back across the
+        // contributing sources so each still emits its own `damageDealt`
+        // (CR §408.7 — every assigning character is a source), while the
+        // total inflicted stays the single summed amount. Any leftover from
+        // an increase, or shortfall from a reduction, lands on the last
+        // contributor.
+        let remaining = final;
+        group.contributors.forEach((contributor, i) => {
+          const isLast = i === group.contributors.length - 1;
+          const share = isLast
+            ? Math.max(0, remaining)
+            : Math.min(contributor.amount, remaining);
+          contributor.amount = share;
+          remaining -= share;
+        });
+
+        if (group.target.type === "faction") {
+          // A faction takes no damage markers; it loses influence equal to
+          // the final adjusted amount (CR §408.3 / §202.4).
+          this.requirePlayer(group.target.playerId).influence -= final;
+        } else {
+          targetCard.damage += final;
+
+          if (final > 0) {
+            const cause = group.contributors.find(c => c.amount > 0)
+              ?? group.contributors[0];
+            const source = cause && this.state.cards[cause.sourceId];
+            if (source) {
+              this.lethalDamageCause.set(
+                group.cardId!,
+                source.controllerId
+              );
+            }
           }
         }
       }
 
-      for (const assignment of assignments) {
-        // A faction hit is damage to that player's faction *card* — resolve
-        // it the same way so "when this card deals/takes damage" triggers
-        // (sourceIsDamageSource / sourceIsEventCard) fire for faction
-        // damage exactly like they do for character/location damage.
-        const targetId =
-          assignment.target.type === "faction"
-            ? this.requirePlayer(assignment.target.playerId).factionId
-            : assignment.target.cardId;
+      // A faction hit fires "when this card deals/takes damage" triggers
+      // (sourceIsDamageSource / sourceIsEventCard) against the faction card,
+      // exactly like character/location damage.
+      for (const group of groups.values()) {
+        if (!group.cardId) continue;
+        const targetCard = this.state.cards[group.cardId];
+        if (!targetCard || targetCard.zone !== "play") continue;
 
-        if (!targetId) {
-          continue;
+        for (const contributor of group.contributors) {
+          if (contributor.amount <= 0) continue;
+          this.emit({
+            type: "damageDealt",
+            sourceId: contributor.sourceId,
+            targetId: group.cardId,
+            amount: contributor.amount
+          });
         }
-
-        const target = this.state.cards[targetId];
-
-        if (!target || target.zone !== "play") {
-          continue;
-        }
-
-        this.emit({
-          type: "damageDealt",
-          sourceId: assignment.sourceId,
-          targetId,
-          amount: assignment.amount
-        });
       }
 
-      // Lethal characters leave play only after the entire speed group's raw
+      // Lethal characters leave play only after the entire speed group's
       // damage has been applied.
       this.checkStateBasedActions();
     } finally {
@@ -5682,7 +5806,13 @@ export class SpoilsEngine {
 
   /** Every keyword `cardId` currently has (see `hasKeyword`). */
   getKeywords(cardId: CardInstanceId): Keyword[] {
-    const all: Keyword[] = ["tactical", "aggro", "covert", "redirectDamage"];
+    const all: Keyword[] = [
+      "tactical",
+      "aggro",
+      "covert",
+      "cannotBeBlocked",
+      "redirectDamage"
+    ];
     return all.filter(keyword => this.hasKeyword(cardId, keyword));
   }
 

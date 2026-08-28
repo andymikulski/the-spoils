@@ -29,7 +29,6 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
   test("two triggers from one player's cards pause on that player's ordering decision", () => {
     const { engine, id } = buildGame({
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "depleter", def: character({ name: "Depleter", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "restorer", def: character({ name: "Restorer", behavior: { abilities: [restoreOnTurnStart()] } }), owner: P1 },
@@ -55,7 +54,6 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
   test("the chosen order decides the outcome — deplete-then-restore ends restored", () => {
     const { engine, id } = buildGame({
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "depleter", def: character({ name: "Depleter", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "restorer", def: character({ name: "Restorer", behavior: { abilities: [restoreOnTurnStart()] } }), owner: P1 },
@@ -66,15 +64,15 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
     engine.perform({ type: "endTurn", playerId: P2 });
     resolvePendingResponses(engine);
 
+    // Pick the deplete trigger to happen next; the lone remaining restore
+    // trigger then resolves on its own (CR §503.4a — no second prompt for a
+    // single leftover).
     engine.perform({
       type: "resolvePendingChoice",
       playerId: P1,
       choice: {
         kind: "orderTriggers",
-        order: [
-          { sourceId: id("depleter"), abilityId: "depleteMark" },
-          { sourceId: id("restorer"), abilityId: "restoreMark" }
-        ]
+        next: { sourceId: id("depleter"), abilityId: "depleteMark" }
       }
     });
     resolvePendingResponses(engine);
@@ -86,7 +84,6 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
   test("the reverse order ends the other way — restore-then-deplete ends depleted", () => {
     const { engine, id } = buildGame({
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "depleter", def: character({ name: "Depleter", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "restorer", def: character({ name: "Restorer", behavior: { abilities: [restoreOnTurnStart()] } }), owner: P1 },
@@ -102,10 +99,7 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
       playerId: P1,
       choice: {
         kind: "orderTriggers",
-        order: [
-          { sourceId: id("restorer"), abilityId: "restoreMark" },
-          { sourceId: id("depleter"), abilityId: "depleteMark" }
-        ]
+        next: { sourceId: id("restorer"), abilityId: "restoreMark" }
       }
     });
     resolvePendingResponses(engine);
@@ -113,10 +107,9 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
     assert.equal(engine.state.cards[id("mark")].depleted, true);
   });
 
-  test("only the deciding player may answer, and only with a full permutation", () => {
+  test("only the deciding player may answer, and only with a trigger from the batch", () => {
     const { engine, id } = buildGame({
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "depleter", def: character({ name: "Depleter", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "restorer", def: character({ name: "Restorer", behavior: { abilities: [restoreOnTurnStart()] } }), owner: P1 },
@@ -133,10 +126,7 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
         playerId: P2,
         choice: {
           kind: "orderTriggers",
-          order: [
-            { sourceId: id("depleter"), abilityId: "depleteMark" },
-            { sourceId: id("restorer"), abilityId: "restoreMark" }
-          ]
+          next: { sourceId: id("depleter"), abilityId: "depleteMark" }
         }
       })
     );
@@ -147,7 +137,7 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
         playerId: P1,
         choice: {
           kind: "orderTriggers",
-          order: [{ sourceId: id("depleter"), abilityId: "depleteMark" }]
+          next: { sourceId: id("mark"), abilityId: "nope" }
         }
       })
     );
@@ -156,7 +146,6 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
   test("triggers from both players' cards are ordered by the active player", () => {
     const { engine, id } = buildGame({
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "p1trigger", def: character({ name: "P1 Trigger", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "p2trigger", def: character({ name: "P2 Trigger", behavior: { abilities: [restoreOnTurnStart()] } }), owner: P2 },
@@ -181,10 +170,7 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
         playerId: P1,
         choice: {
           kind: "orderTriggers",
-          order: [
-            { sourceId: id("p1trigger"), abilityId: "depleteMark" },
-            { sourceId: id("p2trigger"), abilityId: "restoreMark" }
-          ]
+          next: { sourceId: id("p1trigger"), abilityId: "depleteMark" }
         }
       })
     );
@@ -193,7 +179,6 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
   test("a single trigger with no siblings resolves immediately, no ordering pause", () => {
     const { engine, id } = buildGame({
       activePlayerId: P2,
-      turnPhase: "main",
       cards: [
         { key: "depleter", def: character({ name: "Depleter", behavior: { abilities: [depleteOnTurnStart()] } }), owner: P1 },
         { key: "mark", def: character({ name: "Mark", subtype: ["mark"] }), owner: P1, depleted: false }
@@ -205,5 +190,62 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
 
     assert.equal(engine.state.pendingChoice, undefined);
     assert.equal(engine.state.cards[id("mark")].depleted, true);
+  });
+
+  test("CR §503.4a — deciding one at a time: resolving the first pick can strip a target from the rest", () => {
+    // Two "at start of turn" triggers on the same Mark: one destroys it,
+    // the other *may* buff it. Resolving the destroy first leaves the
+    // (optional) buff with no legal target — it auto-declines rather than
+    // being locked in by an up-front permutation.
+    const destroyMark: TriggeredAbility = {
+      id: "destroyMark",
+      type: "triggered",
+      event: "turnStarted",
+      targets: [{ id: "t", selector: MARK_SELECTOR, count: 1 }],
+      effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+    };
+    const buffMark: TriggeredAbility = {
+      id: "buffMark",
+      type: "triggered",
+      event: "turnStarted",
+      targets: [{ id: "t", selector: MARK_SELECTOR, count: 1, optional: true }],
+      effects: [
+        {
+          type: "createModifier",
+          target: { type: "selected", id: "t" },
+          stat: "strength",
+          operation: "add",
+          value: 5,
+          duration: { type: "permanent" }
+        }
+      ]
+    };
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "destroyer", def: character({ name: "Destroyer", behavior: { abilities: [destroyMark] } }), owner: P1 },
+        { key: "buffer", def: character({ name: "Buffer", behavior: { abilities: [buffMark] } }), owner: P1 },
+        { key: "mark", def: character({ name: "Mark", strength: 1, life: 5, subtype: ["mark"] }), owner: P1 }
+      ]
+    });
+
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "orderTriggers");
+
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: {
+        kind: "orderTriggers",
+        next: { sourceId: id("destroyer"), abilityId: "destroyMark" }
+      }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("mark")].zone, "discard");
+    assert.equal(engine.state.pendingChoice, undefined);
   });
 });

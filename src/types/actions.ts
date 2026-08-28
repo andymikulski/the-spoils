@@ -93,7 +93,12 @@ export type GameAction =
       choice:
         | { kind: "uniqueSurvivor"; keep: CardInstanceId }
         | { kind: "selectTargets"; selected: Record<string, CardInstanceId[]> }
-        | { kind: "orderTriggers"; order: TriggerRef[] }
+        /**
+         * Pick the *next* trigger to resolve out of the batch still waiting
+         * (CR §503.4a — the order is decided one at a time, resolving one
+         * before choosing the next, not as a full permutation up front).
+         */
+        | { kind: "orderTriggers"; next: TriggerRef }
         | { kind: "chooserSelectsTarget"; selected: CardInstanceId[] }
         | { kind: "chooserSelectsOption"; index: number }
         | { kind: "reorderDeck"; order: CardInstanceId[] }

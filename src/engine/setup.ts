@@ -112,7 +112,7 @@ export function createTwoPlayerGame(
     turn: 1,
     activePlayerId: playerA.id,
     priorityPlayerId: playerA.id,
-    turnPhase: "main",
+    developedThisTurn: false,
     setup: { phase: "complete" },
     started: true,
     rngState: randomSeed(),

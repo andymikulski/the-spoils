@@ -254,7 +254,6 @@ describe("createModifier durations", () => {
 
     const { engine, id } = buildGame({
       activePlayerId: P1,
-      turnPhase: "main",
       cards: [
         { key: "caster", def: character({ name: "Caster", behavior: { abilities: [buff] } }), owner: P1 },
         { key: "buffed", def: character({ name: "Buffed", strength: 1 }), owner: P1 }

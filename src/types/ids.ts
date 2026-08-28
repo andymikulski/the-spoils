@@ -23,6 +23,13 @@ export type Keyword =
   | "aggro"
   | "covert"
   /**
+   * "Cannot be blocked" (CR §412). While every member of a battle party
+   * has this keyword, the defending player may not declare a blocking
+   * party at all. Effects that *add* a character into the blocking party
+   * still work.
+   */
+  | "cannotBeBlocked"
+  /**
    * While attacking and blocked, this character's controller may assign
    * its battle damage to the attack's original target instead of the
    * blocking party (e.g. Raging Bask) — `getLegalBattleDamageTargets`

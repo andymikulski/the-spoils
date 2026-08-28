@@ -119,7 +119,7 @@ const FACTION = factionCard({
       mulligan: { count: 1, mode: "replaceAny" }
     },
     turn: {
-      restore: { clearCharacterDamage: true, detachResources: true, restoreNonResources: true },
+      restore: { detachResources: true, restoreNonResources: true },
       develop: { choices: [{ type: "draw", count: 1 }, { type: "playResource", count: 1 }] }
     }
   })
@@ -166,7 +166,7 @@ test("full game: a hand-scripted walkthrough from mulligan to a decided winner",
   engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
 
   assert.equal(engine.state.setup.phase, "complete");
-  assert.equal(engine.state.turnPhase, "develop");
+  assert.equal(engine.state.developedThisTurn, false);
   assert.equal(engine.state.activePlayerId, P1);
 
   // --- Turn 1 (P1): develop by playing a resource, then deploy two Recruits ---
@@ -175,7 +175,7 @@ test("full game: a hand-scripted walkthrough from mulligan to a decided winner",
     playerId: P1,
     choice: { type: "playResource", cards: [{ cardId: handCard(engine, P1, "Rage"), faceDown: false }] }
   });
-  assert.equal(engine.state.turnPhase, "main");
+  assert.equal(engine.state.developedThisTurn, true);
   assert.equal(engine.getAvailableResourceCount(P1), 3);
 
   const recruitA = handCard(engine, P1, "Recruit");

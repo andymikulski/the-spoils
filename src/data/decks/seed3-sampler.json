@@ -22,7 +22,6 @@
       },
       "turn": {
         "restore": {
-          "clearCharacterDamage": true,
           "detachResources": true,
           "restoreNonResources": true
         },
@@ -459,14 +458,16 @@
               "affects": "controller",
               "delta": 2,
               "selector": {
-                "subtypeVar": "banned"
+                "subtypeVar": "banned",
+                "zone": "any"
               }
             },
             {
               "affects": "opponent",
               "delta": 2,
               "selector": {
-                "subtypeVar": "banned"
+                "subtypeVar": "banned",
+                "zone": "any"
               }
             }
           ]
@@ -823,6 +824,7 @@
           "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
+          "threshold": "gg",
           "costs": [
             {
               "type": "payResources",
@@ -1367,6 +1369,7 @@
           "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
+          "threshold": "oooo",
           "costs": [
             {
               "type": "payResources",
@@ -1379,141 +1382,136 @@
           ],
           "effects": [
             {
-              "type": "forEachPlayer",
-              "effects": [
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "keepC",
-                    "selector": {
-                      "controller": "self",
-                      "zone": "hand",
-                      "type": "character"
-                    },
-                    "count": 1,
-                    "optional": true
-                  },
-                  "effects": []
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "keepC",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand",
+                  "type": "character"
                 },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "keepI",
-                    "selector": {
-                      "controller": "self",
-                      "zone": "hand",
-                      "type": "item"
-                    },
-                    "count": 1,
-                    "optional": true
-                  },
-                  "effects": []
+                "count": 1,
+                "optional": true
+              },
+              "effects": []
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "keepI",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand",
+                  "type": "item"
                 },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "keepL",
-                    "selector": {
-                      "controller": "self",
-                      "zone": "hand",
-                      "type": "location"
-                    },
-                    "count": 1,
-                    "optional": true
-                  },
-                  "effects": []
+                "count": 1,
+                "optional": true
+              },
+              "effects": []
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "keepL",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand",
+                  "type": "location"
                 },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "keepT",
-                    "selector": {
-                      "controller": "self",
-                      "zone": "hand",
-                      "type": "tactic"
-                    },
-                    "count": 1,
-                    "optional": true
-                  },
-                  "effects": []
+                "count": 1,
+                "optional": true
+              },
+              "effects": []
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "keepT",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand",
+                  "type": "tactic"
                 },
-                {
-                  "type": "forEach",
-                  "selector": {
-                    "controller": "self",
-                    "zone": "hand",
-                    "conditions": [
-                      {
-                        "type": "not",
-                        "condition": {
-                          "type": "cardTypeIs",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          },
-                          "cardType": "resource"
-                        }
-                      },
-                      {
-                        "type": "not",
-                        "condition": {
-                          "type": "targetInSelection",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          },
-                          "selection": "keepC"
-                        }
-                      },
-                      {
-                        "type": "not",
-                        "condition": {
-                          "type": "targetInSelection",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          },
-                          "selection": "keepI"
-                        }
-                      },
-                      {
-                        "type": "not",
-                        "condition": {
-                          "type": "targetInSelection",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          },
-                          "selection": "keepL"
-                        }
-                      },
-                      {
-                        "type": "not",
-                        "condition": {
-                          "type": "targetInSelection",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          },
-                          "selection": "keepT"
-                        }
-                      }
-                    ]
-                  },
-                  "effects": [
-                    {
-                      "type": "moveCard",
+                "count": 1,
+                "optional": true
+              },
+              "effects": []
+            },
+            {
+              "type": "forEach",
+              "selector": {
+                "controller": "opponent",
+                "zone": "hand",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "cardTypeIs",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
                       },
-                      "to": "discard"
+                      "cardType": "resource"
                     }
-                  ]
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetInSelection",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "selection": "keepC"
+                    }
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetInSelection",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "selection": "keepI"
+                    }
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetInSelection",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "selection": "keepL"
+                    }
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetInSelection",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "selection": "keepT"
+                    }
+                  }
+                ]
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "to": "discard"
                 }
               ]
             }
@@ -1593,7 +1591,44 @@
     "text": "All other unresolved cards are terminated. -- If an opponent deployed at least 2 cards with the same name this turn, put up to 2 Micromajig tokens into play under your control. Otherwise, each opponent may put 3 Micromajig tokens into play under their control. -- FLIP UP: 2 [E][E] and you may play a resource.",
     "flipUp": {
       "cost": 2,
-      "threshold": "ee"
+      "threshold": "ee",
+      "effects": [
+        {
+          "type": "chooserSelectsTarget",
+          "chooser": "controller",
+          "declaration": {
+            "id": "flipRes",
+            "selector": {
+              "controller": "self",
+              "zone": "hand"
+            },
+            "count": 1,
+            "optional": true
+          },
+          "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "targetExists",
+                "target": {
+                  "type": "selected",
+                  "id": "flipRes"
+                }
+              },
+              "effects": [
+                {
+                  "type": "playResource",
+                  "target": {
+                    "type": "selected",
+                    "id": "flipRes"
+                  },
+                  "faceDown": "auto"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -1777,7 +1812,17 @@
               "id": "pick",
               "selector": {
                 "controller": "self",
-                "zone": "play"
+                "zone": "play",
+                "conditions": [
+                  {
+                    "type": "hasAbility",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    },
+                    "abilityType": "activated"
+                  }
+                ]
               },
               "count": 1
             }
