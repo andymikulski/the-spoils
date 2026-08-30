@@ -201,7 +201,7 @@ export function createTwoPlayerFactionGame(
   state.turn = 1;
   state.activePlayerId = firstPlayerId;
   state.priorityPlayerId = firstPlayerId;
-  state.developedThisTurn = false;
+  state.developsUsedThisTurn = 0;
   state.started = false;
   if (options.seed !== undefined) {
     state.rngState = options.seed >>> 0;

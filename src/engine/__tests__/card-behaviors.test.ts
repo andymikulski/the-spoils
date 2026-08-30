@@ -7631,7 +7631,7 @@ describe("Seed 2: revealFromHand alt-deploy (Witty Worm)", () => {
     resolvePendingResponses(engine);
 
     assert.equal(engine.state.cards[id("worm")].zone, "play", "deployed from hand");
-    assert.equal(engine.state.developedThisTurn, true, "consumed the develop rule for the turn");
+    assert.equal(engine.state.developsUsedThisTurn, 1, "consumed the develop rule for the turn");
     const factionId = engine.state.players[P1].factionId!;
     const spent = [id("o1"), id("o2"), id("o3")].filter(r => engine.state.cards[r].attachedTo === factionId);
     assert.equal(spent.length, 1, "exactly the flat cost of 1 was paid");
@@ -7936,5 +7936,138 @@ describe("Seed 2: Rosy Palmer, and Her Five Friends (fromTop pool + reorder to b
       [id("c6"), id("c5"), id("c4"), id("c2"), id("c1")],
       "C6 (unrevealed) stays on top; the 4 leftovers are bottomed in P2's chosen order"
     );
+  });
+});
+
+// Seed 3 "EPIC"/"Showdown" faction cards (The Evil Alliance, Imperial Army,
+// The Knitting Coalition, ...) — FactionDefinition.abilities /
+// meetsAllThresholds / turn.startOfTurnEffects / develop.usesPerTurn, and
+// ActivatedAbility.usableBy. See RULES.md §3.6.
+describe("Seed 3: faction-card mechanics", () => {
+  const fac = (over: Record<string, unknown>): CardDefinition =>
+    factionCard({
+      name: "F",
+      faction: {
+        startingInfluence: 25,
+        setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
+        turn: {
+          restore: { detachResources: true, restoreNonResources: true },
+          develop: { choices: [{ type: "draw", count: 1 }] }
+        },
+        ...over
+      }
+    });
+  const staple = (icon: string, i: number): CardDefinition =>
+    resourceCard({ name: icon, id: `fm-${icon}-${i}`, resource: { provides: [icon as "rage"], staple: true } });
+
+  test("FactionDefinition.abilities: the controller can activate a faction's printed ability", () => {
+    const { engine } = buildGame({
+      playerA: {
+        faction: fac({
+          abilities: [
+            { id: "fac-draw", name: "Draw", type: "activated", costs: [{ type: "payResources", amount: 1 }], effects: [{ type: "draw", player: "controller", amount: 1 }] }
+          ]
+        })
+      },
+      cards: [
+        { key: "g", def: staple("greed", 0), owner: P1 },
+        { key: "d1", def: character({ name: "D1", id: "fm-d1" }), owner: P1, zone: "deck" }
+      ]
+    });
+    const factionId = engine.state.players[P1].factionId!;
+    const before = engine.state.players[P1].hand.length;
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: "fac-draw" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].hand.length, before + 1);
+  });
+
+  test("meetsAllThresholds (OMNIPOTENCE) lets the controller ignore every threshold", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: fac({ meetsAllThresholds: true }) },
+      cards: [{ key: "gated", def: character({ name: "Gated", id: "omni-x", cost: 0, threshold: "rrrrrr" }), owner: P1, zone: "hand" }]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("gated") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("gated")].zone, "play", "deployed despite [R]x6 unmet");
+  });
+
+  test("turn.startOfTurnEffects: reduceNextCost{cardType:'character'} discounts only the next character", () => {
+    const { engine, id } = buildGame({
+      playerA: {
+        faction: fac({
+          turn: {
+            restore: { detachResources: false, restoreNonResources: true },
+            develop: { choices: [{ type: "draw", count: 1 }] },
+            startOfTurnEffects: [{ type: "reduceNextCost", player: "controller", amount: 2, cardType: "character" }]
+          }
+        })
+      },
+      cards: [
+        { key: "it", def: item({ name: "Item3", id: "sote-it", cost: 3 }), owner: P1, zone: "hand" },
+        { key: "ch", def: character({ name: "Char3", id: "sote-ch", cost: 3 }), owner: P1, zone: "hand" },
+        ...Array.from({ length: 4 }, (_, i) => ({ key: `r${i}`, def: staple("rage", i), owner: P1 }))
+      ]
+    });
+    // cycle to a fresh P1 turn so the start-of-turn effect fires
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    const factionId = engine.state.players[P1].factionId!;
+    const spent = () => [0, 1, 2, 3].map(i => id(`r${i}`)).filter(r => engine.state.cards[r].attachedTo === factionId).length;
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("it") });
+    resolvePendingResponses(engine);
+    assert.equal(spent(), 3, "the item paid full 3 — the discount is character-only");
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("ch") });
+    resolvePendingResponses(engine);
+    assert.equal(spent(), 4, "the character cost 3-2=1");
+  });
+
+  test("develop.usesPerTurn: 2 (OVERTIME) allows a second develop the same turn", () => {
+    const { engine } = buildGame({
+      playerA: {
+        faction: fac({
+          turn: {
+            restore: { detachResources: true, restoreNonResources: true },
+            develop: { choices: [{ type: "draw", count: 1 }], usesPerTurn: 2 }
+          }
+        })
+      },
+      cards: Array.from({ length: 4 }, (_, i) => ({ key: `d${i}`, def: character({ name: `D${i}`, id: `ov-d${i}` }), owner: P1, zone: "deck" }))
+    });
+    const before = engine.state.players[P1].hand.length;
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    assert.equal(engine.state.developsUsedThisTurn, 1);
+    assert.equal(engine.canDevelopNow(P1), true, "second develop still available");
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    assert.equal(engine.state.developsUsedThisTurn, 2);
+    assert.equal(engine.canDevelopNow(P1), false, "no third develop");
+    assert.equal(engine.state.players[P1].hand.length, before + 2);
+  });
+
+  test("ActivatedAbility.usableBy:'anyPlayer' — the opponent can use it", () => {
+    const { engine } = buildGame({
+      playerA: {
+        faction: fac({
+          abilities: [
+            { id: "shared-draw", name: "Inflationary Forces", type: "activated", usableBy: "anyPlayer", costs: [{ type: "payResources", amount: 2 }], effects: [{ type: "draw", player: "controller", amount: 1 }] }
+          ]
+        })
+      },
+      cards: [
+        { key: "g0", def: staple("greed", 10), owner: P2 },
+        { key: "g1", def: staple("greed", 11), owner: P2 },
+        { key: "d1", def: character({ name: "D1", id: "kc-d1" }), owner: P2, zone: "deck" }
+      ],
+      activePlayerId: P2
+    });
+    const factionAId = engine.state.players[P1].factionId!;
+    const before = engine.state.players[P2].hand.length;
+    engine.perform({ type: "activateAbility", playerId: P2, cardId: factionAId, abilityId: "shared-draw" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P2].hand.length, before + 1, "P2 drew via P1's faction ability");
   });
 });

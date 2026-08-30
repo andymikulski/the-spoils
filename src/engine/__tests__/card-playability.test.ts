@@ -84,7 +84,7 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
       cards: [{ key: "gadget", def: item({ name: "Gadget", cost: 0 }), owner: P1, zone: "hand" }]
     });
 
-    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.state.developsUsedThisTurn, 0);
     assert.equal(engine.getCardPlayability(P1, id("gadget")).legalTiming, true);
   });
 

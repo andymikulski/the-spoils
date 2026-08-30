@@ -39177,8 +39177,8 @@ export default [
           "stapleOnly": true
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 7,
+          "goingSecond": 8
         },
         "mulligan": {
           "count": 1,
@@ -39202,7 +39202,76 @@ export default [
             }
           ]
         }
-      }
+      },
+      "meetsAllThresholds": true,
+      "abilities": [
+        {
+          "id": "evil-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "evil-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39270,14 +39339,13 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 30,
       "setup": {
         "startingResources": {
-          "count": 2,
-          "stapleOnly": true
+          "count": 2
         },
         "openingHand": {
-          "goingFirst": 8,
+          "goingFirst": 10,
           "goingSecond": 9
         },
         "mulligan": {
@@ -39301,8 +39369,140 @@ export default [
               "count": 1
             }
           ]
+        },
+        "startOfTurnEffects": [
+          {
+            "type": "addCounter",
+            "target": "source",
+            "counter": "token",
+            "amount": 1
+          }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "society-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "society-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "society-encyclopedic",
+          "name": "Encyclopedic Knowledge",
+          "type": "activated",
+          "threshold": "oo",
+          "costs": [
+            {
+              "type": "removeCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "t",
+                "selector": {
+                  "controller": "self",
+                  "zone": "deck",
+                  "type": "tactic"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "t"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "t"
+                      },
+                      "to": "hand"
+                    }
+                  ]
+                },
+                {
+                  "type": "shuffleDeck",
+                  "player": "controller"
+                }
+              ]
+            }
+          ]
         }
-      }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39370,15 +39570,18 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 28,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "names": [
+            "Greed",
+            "Greed"
+          ]
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 3,
+          "goingSecond": 4
         },
         "mulligan": {
           "count": 1,
@@ -39402,7 +39605,77 @@ export default [
             }
           ]
         }
-      }
+      },
+      "abilities": [
+        {
+          "id": "knitting-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ],
+          "usableBy": "anyPlayer"
+        },
+        {
+          "id": "knitting-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "usableBy": "anyPlayer"
+        }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39502,7 +39775,75 @@ export default [
             }
           ]
         }
-      }
+      },
+      "abilities": [
+        {
+          "id": "rd-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "rd-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39570,15 +39911,14 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 22,
       "setup": {
         "startingResources": {
-          "count": 2,
-          "stapleOnly": true
+          "count": 2
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 5,
+          "goingSecond": 6
         },
         "mulligan": {
           "count": 1,
@@ -39600,9 +39940,78 @@ export default [
               "type": "playResource",
               "count": 1
             }
+          ],
+          "usesPerTurn": 2
+        }
+      },
+      "abilities": [
+        {
+          "id": "miners-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "miners-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 5
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
           ]
         }
-      }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39670,15 +40079,18 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "names": [
+            "Rage",
+            "Rage"
+          ]
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 3,
+          "goingSecond": 3
         },
         "mulligan": {
           "count": 1,
@@ -39687,22 +40099,89 @@ export default [
       },
       "turn": {
         "restore": {
-          "detachResources": true,
+          "detachResources": false,
           "restoreNonResources": true
         },
         "develop": {
-          "choices": [
+          "choices": []
+        },
+        "startOfTurnEffects": [
+          {
+            "type": "reduceNextCost",
+            "player": "controller",
+            "amount": 2,
+            "cardType": "character"
+          }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "imperial-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 1
+            }
+          ],
+          "effects": [
             {
               "type": "draw",
-              "count": 1
-            },
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "imperial-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
             {
-              "type": "playResource",
-              "count": 1
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
-      }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39770,15 +40249,18 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "names": [
+            "Rage",
+            "Rage"
+          ]
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 3,
+          "goingSecond": 3
         },
         "mulligan": {
           "count": 1,
@@ -39788,7 +40270,7 @@ export default [
       "turn": {
         "restore": {
           "detachResources": true,
-          "restoreNonResources": true
+          "restoreNonResources": false
         },
         "develop": {
           "choices": [
@@ -39802,7 +40284,75 @@ export default [
             }
           ]
         }
-      }
+      },
+      "abilities": [
+        {
+          "id": "counter-imperial-draw",
+          "name": "Draw",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "counter-imperial-resource",
+          "name": "Resource",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     },
     "behavior": {
       "abilities": [
@@ -39877,8 +40427,8 @@ export default [
           "stapleOnly": true
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 7,
+          "goingSecond": 8
         },
         "mulligan": {
           "count": 1,

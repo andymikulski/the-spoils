@@ -96,7 +96,7 @@ describe("RULES.md §5 — setup", () => {
     // Both players have mulliganed; setup completes and turn 1 begins.
     assert.equal(engine.state.setup.phase, "complete");
     assert.equal(engine.state.started, true);
-    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.state.developsUsedThisTurn, 0);
     assert.equal(engine.state.activePlayerId, P1);
   });
 
@@ -156,7 +156,7 @@ describe("RULES.md §6 — the develop rule (optional, once per turn)", () => {
     engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
 
     assert.equal(engine.state.players[P1].hand.length, before + 1);
-    assert.equal(engine.state.developedThisTurn, true);
+    assert.equal(engine.state.developsUsedThisTurn, 1);
     assert.equal(engine.state.priorityPlayerId, P1);
   });
 
@@ -175,14 +175,14 @@ describe("RULES.md §6 — the develop rule (optional, once per turn)", () => {
 
     assert.equal(engine.state.cards[fillerInHand].zone, "play");
     assert.equal(engine.state.cards[fillerInHand].faceDown, true);
-    assert.equal(engine.state.developedThisTurn, true);
+    assert.equal(engine.state.developsUsedThisTurn, 1);
   });
 
   test("CR §602/§603 — normal turn actions do not require the develop rule first", () => {
     const engine = startedGame();
 
     // No develop yet — ending the turn is still legal.
-    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.state.developsUsedThisTurn, 0);
     assert.doesNotThrow(() => engine.perform({ type: "endTurn", playerId: P1 }));
   });
 
@@ -207,7 +207,7 @@ describe("RULES.md §6 — the develop rule (optional, once per turn)", () => {
     // ...then develop.
     assert.ok(engine.canDevelopNow(P1));
     engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
-    assert.equal(engine.state.developedThisTurn, true);
+    assert.equal(engine.state.developsUsedThisTurn, 1);
   });
 
   test("the rule resets for the next turn", () => {
@@ -218,7 +218,7 @@ describe("RULES.md §6 — the develop rule (optional, once per turn)", () => {
     resolvePendingResponses(engine);
 
     assert.equal(engine.state.activePlayerId, P2);
-    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.state.developsUsedThisTurn, 0);
     assert.doesNotThrow(() =>
       engine.perform({ type: "chooseDevelop", playerId: P2, choice: { type: "draw" } })
     );

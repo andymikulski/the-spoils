@@ -316,11 +316,15 @@ export type Effect =
        * Reduces the numeric cost of the next card `player` deploys this
        * turn by `amount` (floored at 0), consumed by exactly one
        * subsequent `playCard` — "reduce the next numeric cost you pay this
-       * turn by N." Unused reductions expire at end of turn.
+       * turn by N." Unused reductions expire at end of turn. With
+       * `cardType`, only a play of that type benefits from and consumes the
+       * reduction — "the next CHARACTER you play this turn" (Imperial
+       * Army's develop rule).
        */
       type: "reduceNextCost";
       player: PlayerRef;
       amount: NumberExpression;
+      cardType?: CardType;
     }
   | {
       /**

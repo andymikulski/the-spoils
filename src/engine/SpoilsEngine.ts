@@ -124,7 +124,7 @@ export class SpoilsEngine {
 
     // Normalize partially-specified states (test fixtures, hand-built saves).
     this.state.responseStack ??= [];
-    this.state.developedThisTurn ??= false;
+    this.state.developsUsedThisTurn ??= 0;
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
     this.state.rngState ??= randomSeed();
@@ -525,6 +525,11 @@ export class SpoilsEngine {
     );
   }
 
+  /** How many times `playerId`'s faction may use its Develop Rule per turn (default 1; "OVERTIME" = 2). */
+  private developsAllowed(playerId: PlayerId): number {
+    return this.getFactionDefinition(playerId)?.turn.develop.usesPerTurn ?? 1;
+  }
+
   private getResourceIcons(cardId: CardInstanceId): ResourceIcon[] {
     const card = this.requireCard(cardId);
 
@@ -639,7 +644,7 @@ export class SpoilsEngine {
     assert(!this.state.started, "The game has already started.");
 
     this.state.started = true;
-    this.state.developedThisTurn = false;
+    this.state.developsUsedThisTurn = 0;
     this.state.priorityPlayerId = this.state.activePlayerId;
     this.state.turnEventTally = {};
     this.state.turnDeploys = {};
@@ -715,7 +720,7 @@ export class SpoilsEngine {
       this.state.setup.phase === "complete" &&
       this.state.started &&
       !this.state.winner &&
-      !this.state.developedThisTurn &&
+      this.state.developsUsedThisTurn < this.developsAllowed(playerId) &&
       playerId === this.state.activePlayerId &&
       !this.state.responseWindow &&
       !this.state.battle &&
@@ -759,7 +764,7 @@ export class SpoilsEngine {
         "You may only reveal a card from your own hand."
       );
 
-      this.state.developedThisTurn = true;
+      this.state.developsUsedThisTurn += 1;
 
       this.deployCard(
         playerId,
@@ -785,7 +790,7 @@ export class SpoilsEngine {
       }
     }
 
-    this.state.developedThisTurn = true;
+    this.state.developsUsedThisTurn += 1;
     this.state.priorityPlayerId = playerId;
   }
 
@@ -858,9 +863,7 @@ export class SpoilsEngine {
       }
     }
 
-    if (!restore) return;
-
-    if (restore.detachResources && player.factionId) {
+    if (restore?.detachResources && player.factionId) {
       for (const cardId of player.play) {
         const card = this.requireCard(cardId);
         if (card.attachedTo === player.factionId && this.isResource(cardId)) {
@@ -869,7 +872,7 @@ export class SpoilsEngine {
       }
     }
 
-    if (restore.restoreNonResources) {
+    if (restore?.restoreNonResources) {
       for (const cardId of player.play) {
         const card = this.requireCard(cardId);
         if (
@@ -879,6 +882,21 @@ export class SpoilsEngine {
         ) {
           card.depleted = false;
         }
+      }
+    }
+
+    // Faction "at the start of your turn ..." automatic effects (Imperial
+    // Army's next-character discount; a token on The Society of Magical
+    // Propriety), resolved with the faction card as `source`.
+    const startOfTurnEffects = faction?.turn.startOfTurnEffects ?? [];
+    if (startOfTurnEffects.length > 0 && player.factionId) {
+      const context: ResolutionContext = {
+        sourceId: player.factionId,
+        controllerId: playerId,
+        selected: {}
+      };
+      for (const effect of startOfTurnEffects) {
+        this.resolveEffect(effect, context);
       }
     }
   }
@@ -916,6 +934,20 @@ export class SpoilsEngine {
     return value;
   }
 
+  /**
+   * A card's activatable abilities — its `behavior.abilities` plus, for a
+   * faction card, its `faction.abilities` (RULES.md §3.6).
+   */
+  private getCardActivatedAbilities(
+    cardId: CardInstanceId
+  ): ActivatedAbility[] {
+    const definition = this.getDefinition(cardId);
+    return [
+      ...(definition.behavior?.abilities ?? []),
+      ...(definition.faction?.abilities ?? [])
+    ].filter((a): a is ActivatedAbility => a.type === "activated");
+  }
+
   getAvailableActivatedAbilities(
     playerId: PlayerId
   ): Array<{ cardId: CardInstanceId; ability: ActivatedAbility }> {
@@ -929,16 +961,13 @@ export class SpoilsEngine {
     }> = [];
 
     for (const card of Object.values(this.state.cards)) {
-      if (card.controllerId !== playerId || card.zone !== "play" || card.faceDown) {
-        continue;
-      }
+      if (card.zone !== "play" || card.faceDown) continue;
+      const controlsIt = card.controllerId === playerId;
 
-      const definition = this.getDefinition(card.id);
-
-      for (const ability of definition.behavior?.abilities ?? []) {
-        if (ability.type !== "activated") {
-          continue;
-        }
+      for (const ability of this.getCardActivatedAbilities(card.id)) {
+        // A non-controlled card only offers abilities marked "both players
+        // may use this" (The Knitting Coalition — INFLATIONARY FORCES).
+        if (!controlsIt && ability.usableBy !== "anyPlayer") continue;
 
         const context: ResolutionContext = {
           sourceId: card.id,
@@ -989,7 +1018,10 @@ export class SpoilsEngine {
     const thresholdMet = this.meetsThreshold(playerId, definition.threshold);
 
     const pendingReduction = this.state.costReductions.find(
-      reduction => reduction.playerId === playerId
+      reduction =>
+        reduction.playerId === playerId &&
+        (reduction.cardType === undefined ||
+          reduction.cardType === definition.type)
     );
     const numericCost = this.applyCostModifiers(
       playerId,
@@ -1143,7 +1175,10 @@ export class SpoilsEngine {
       free || costOverride !== undefined
         ? undefined
         : this.state.costReductions.find(
-            reduction => reduction.playerId === playerId
+            reduction =>
+              reduction.playerId === playerId &&
+              (reduction.cardType === undefined ||
+                reduction.cardType === definition.type)
           );
 
     const numericCost = free
@@ -1392,18 +1427,17 @@ export class SpoilsEngine {
   ): void {
     const card = this.requireCard(action.cardId);
 
-    assert(
-      card.controllerId === action.playerId,
-      "You do not control that card."
+    const ability = this.getCardActivatedAbilities(card.id).find(
+      a => a.id === action.abilityId
     );
 
-    const ability = this.getDefinition(card.id).behavior?.abilities?.find(
-      ability =>
-        ability.id === action.abilityId &&
-        ability.type === "activated"
-    ) as ActivatedAbility | undefined;
-
     assert(ability, "Activated ability not found.");
+
+    assert(
+      card.controllerId === action.playerId ||
+        ability.usableBy === "anyPlayer",
+      "You do not control that card."
+    );
 
     // Most abilities are usable only from `play`; RECUR / RETIRE-style ones
     // declare `activationZone: "discard"` (or hand/void) and are used from
@@ -2345,7 +2379,11 @@ export class SpoilsEngine {
       case "hasAbility": {
         const cardId = this.resolveTargetRef(condition.target, context);
         if (!cardId) return false;
-        const abilities = this.getDefinition(cardId).behavior?.abilities ?? [];
+        const definition = this.getDefinition(cardId);
+        const abilities = [
+          ...(definition.behavior?.abilities ?? []),
+          ...(definition.faction?.abilities ?? [])
+        ];
         return condition.abilityType
           ? abilities.some(a => a.type === condition.abilityType)
           : abilities.length > 0;
@@ -4296,6 +4334,7 @@ export class SpoilsEngine {
           id: nextId("costReduction"),
           playerId: player.id,
           amount,
+          cardType: effect.cardType,
           createdTurn: this.state.turn
         });
 
@@ -6039,7 +6078,7 @@ export class SpoilsEngine {
     this.state.turn++;
     this.state.activePlayerId = next.id;
     this.state.priorityPlayerId = next.id;
-    this.state.developedThisTurn = false;
+    this.state.developsUsedThisTurn = 0;
     this.state.turnEventTally = {};
     this.state.turnDeploys = {};
     this.state.abilityUsesThisTurn = {};
@@ -6999,6 +7038,11 @@ export class SpoilsEngine {
     threshold: string | number
   ): boolean {
     if (!threshold || threshold === 0 || threshold === "") {
+      return true;
+    }
+
+    // OMNIPOTENCE (The Evil Alliance) — meet every threshold regardless of icons.
+    if (this.getFactionDefinition(playerId)?.meetsAllThresholds) {
       return true;
     }
 

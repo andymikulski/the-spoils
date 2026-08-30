@@ -354,7 +354,7 @@ describe("Seed 2 smoke: authored behavior drives the engine", () => {
     }
 
     assert.equal(engine.state.cards[id("worm")].zone, "play");
-    assert.equal(engine.state.developedThisTurn, true);
+    assert.equal(engine.state.developsUsedThisTurn, 1);
   });
 
   test("Rosy Palmer: destroyed -> take a top-5 character, opponent bottoms the rest", () => {

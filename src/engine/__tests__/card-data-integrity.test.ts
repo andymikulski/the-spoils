@@ -255,9 +255,12 @@ describe("card-data-integrity: authored behavior parses against the vocabulary",
 
   test("every `type:` tag in a behavior block is a known vocabulary tag", () => {
     const bad: string[] = [];
-    for (const c of withBehavior) {
+    for (const c of catalog) {
       const tags: string[] = [];
+      // a faction card carries its abilities / start-of-turn effects under
+      // `faction`, not `behavior` — vocab-check both.
       collectTypeTags(c.behavior, tags);
+      collectTypeTags((c as { faction?: unknown }).faction, tags);
       for (const t of tags) {
         if (!KNOWN_TYPE_TAGS.has(t)) bad.push(`${c.name}: unknown type "${t}"`);
       }
@@ -267,8 +270,12 @@ describe("card-data-integrity: authored behavior parses against the vocabulary",
 
   test("abilities are well-formed (id, discriminant, required arrays)", () => {
     const problems: string[] = [];
-    for (const c of withBehavior) {
-      const abilities = c.behavior?.abilities ?? [];
+    for (const c of catalog) {
+      const factionAbilities =
+        (c as { faction?: { abilities?: Array<Record<string, unknown>> } })
+          .faction?.abilities ?? [];
+      const abilities = [...(c.behavior?.abilities ?? []), ...factionAbilities];
+      if (abilities.length === 0) continue;
       const seenIds = new Set<string>();
       for (const a of abilities) {
         const id = a.id as string | undefined;

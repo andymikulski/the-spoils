@@ -56,6 +56,10 @@ ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 - **`ActivatedAbility.usesPerTurn`** — a per-turn activation cap ("Use
   this only 5 times each turn"; Vast Mastabatorium). Tracked in
   `GameState.abilityUsesThisTurn`, reset each turn.
+- **`ActivatedAbility.usableBy`** — `"controller"` (default) or
+  `"anyPlayer"`. An `"anyPlayer"` faction ability (The Knitting Coalition —
+  "Both players may use this ability") is offered to the opponent and
+  resolves under whoever activated it.
 - **`ActivatedAbility.variableBounds`** — `{ [id]: { min?, max? } }`
   (each an optional `NumberExpression`) — the action's `variables[id]`
   must satisfy `min <= v <= max`, beyond plain affordability. "Pick a
@@ -594,10 +598,13 @@ to touch when just authoring card data.)
   to the **bottom** of the deck in the chosen order ("...put the remaining
   cards on the bottom of their deck in any order" — Rosy Palmer); default
   `"top"` leaves them on top.
-- **`reduceNextCost`** — `{ player, amount }` — reduces the numeric cost of
-  the next card `player` deploys this turn by `amount` (floored at 0),
-  consumed by exactly one subsequent `playCard`; unused reductions expire
-  at end of turn. Not itself a pause point (doesn't set a pendingChoice).
+- **`reduceNextCost`** — `{ player, amount, cardType? }` — reduces the
+  numeric cost of the next card `player` deploys this turn by `amount`
+  (floored at 0), consumed by exactly one subsequent `playCard`; unused
+  reductions expire at end of turn. With `cardType`, only a play of that
+  type benefits from and consumes it ("the next CHARACTER you play" —
+  Imperial Army's develop rule, via `FactionDefinition.turn.startOfTurnEffects`).
+  Not itself a pause point.
 - **`deployForFree`** — `{ player, maxCost, selector? }` — pauses for
   `player` to pick a hand card (matching `selector`, printed cost <=
   `maxCost`) and deploy it immediately without paying its numeric cost.
@@ -876,6 +883,24 @@ check in `assertCanDeployAtCurrentTiming` still uses the static-only
 `definitionHasKeyword` (that call site only has a `CardDefinition`, not a
 `CardInstanceId`, in scope) — a dynamically-granted TACTICAL wouldn't be
 honored there. Not currently blocking any card; flag if one needs it.
+
+## Faction cards (`FactionDefinition`)
+
+A faction card's mechanical text lives in `CardDefinition.faction`, not
+`behavior`. Beyond `startingInfluence` / `setup` / `turn.{restore,develop}`:
+
+- **`abilities`** — `ActivatedAbility[]` printed on the faction card,
+  activated via `activateAbility` with the faction card's id (RULES.md
+  §3.6). Same shape as any activated ability; `usableBy: "anyPlayer"` opens
+  it to the opponent too.
+- **`meetsAllThresholds`** — the controller auto-satisfies every threshold
+  (The Evil Alliance — OMNIPOTENCE).
+- **`turn.startOfTurnEffects`** — `Effect[]` run automatically at the start
+  of the faction's controller's turn (source = the faction card). Imperial
+  Army's develop rule is `[{ "type": "reduceNextCost", "player":
+  "controller", "amount": 2, "cardType": "character" }]`.
+- **`turn.develop.usesPerTurn`** — Develop Rule uses per turn (default 1;
+  "OVERTIME" = 2).
 
 ## Duration / ModifierOperation (`src/types/ids.ts`)
 

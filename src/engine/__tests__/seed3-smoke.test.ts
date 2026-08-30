@@ -213,7 +213,7 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
 
     assert.equal(engine.state.setup.phase, "complete");
     assert.equal(engine.state.turn, 1);
-    assert.equal(engine.state.developedThisTurn, false);
+    assert.equal(engine.state.developsUsedThisTurn, 0);
     // 2 staple resources found + moved to play for each side.
     for (const pid of [P1, P2]) {
       const inPlay = engine.state.players[pid].play

@@ -67,8 +67,41 @@ export interface FactionDefinition {
 
     develop: {
       choices: DevelopChoice[];
+      /**
+       * How many times per turn the Develop Rule may be used — default 1.
+       * The Union of Unextraordinary Miners' "OVERTIME" clause gives a
+       * second develop, so `usesPerTurn: 2`.
+       */
+      usesPerTurn?: number;
     };
+
+    /**
+     * Effects run automatically at the start of this faction's
+     * controller's turn — after the core start-of-turn rules (CR §602.1)
+     * and this faction's Restore Rule, before "at the start of your turn"
+     * triggers. `source` is the faction card. Imperial Army — "reduce the
+     * numeric cost of the next character you play this turn by 2"
+     * (`reduceNextCost` with `cardType: "character"`); The Society of
+     * Magical Propriety — accrue a token.
+     */
+    startOfTurnEffects?: Effect[];
   };
+
+  /**
+   * Activated abilities printed on the faction card, usable any time its
+   * controller could use an ability (RULES.md §3.6 / FAQ). E.g. The Open
+   * R&D Faction's "DRAW — COST: Pay 3. EFFECT: Draw a card." Merged with
+   * any `CardDefinition.behavior.abilities` for ability lookup. An ability
+   * with `usableBy: "anyPlayer"` is offered to the opponent too (The
+   * Knitting Coalition's "Both players may use this ability").
+   */
+  abilities?: ActivatedAbility[];
+
+  /**
+   * OMNIPOTENCE (The Evil Alliance) — the controller automatically meets
+   * every threshold, regardless of which resource icons they control.
+   */
+  meetsAllThresholds?: boolean;
 }
 
 export interface ResourceDefinition {
@@ -205,6 +238,13 @@ export interface ActivatedAbility extends AbilityBase {
    * place for finer gates ("use this only if ...").
    */
   activationZone?: Zone;
+  /**
+   * Who may activate this ability — `"controller"` (default) or
+   * `"anyPlayer"`. An `"anyPlayer"` faction ability (The Knitting
+   * Coalition — "Both players may use this ability") is offered to the
+   * opponent too and resolves under whoever activated it.
+   */
+  usableBy?: "controller" | "anyPlayer";
   /**
    * An *icon* requirement to activate this ability, same shorthand as
    * `CardDefinition.threshold` (e.g. `"gg"` = two Greed icons) — a gate,

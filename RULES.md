@@ -203,6 +203,35 @@ carry activated abilities, usable any time you could use an ability
   name factions, and cannot be picked unless an effect explicitly picks a
   faction.
 
+**(engine-derived)** The faction card's mechanical rules text lives in
+`FactionDefinition`:
+
+- **`abilities`** — activated abilities printed on the faction card,
+  activatable through `activateAbility` with the faction card's id, any time
+  its controller could use an ability (e.g. The Open R&D Faction's "DRAW —
+  Pay 3 — Draw a card"). An ability with `usableBy: "anyPlayer"` (The
+  Knitting Coalition — "Both players may use this ability") is offered to
+  the opponent too and resolves under whoever activates it.
+- **`meetsAllThresholds`** — OMNIPOTENCE (The Evil Alliance): the
+  controller automatically satisfies every threshold regardless of which
+  resource icons they control (`meetsThreshold` short-circuits).
+- **`turn.startOfTurnEffects`** — effects run automatically at the start of
+  the faction's controller's turn, after the core start-of-turn rules and
+  the Restore Rule, with the faction card as `source` — Imperial Army's
+  "reduce the numeric cost of the next character you play this turn by 2"
+  (a `reduceNextCost` with `cardType: "character"`).
+- **`turn.develop.usesPerTurn`** — how many times the Develop Rule may be
+  used per turn (default 1; the Union of Unextraordinary Miners' "OVERTIME"
+  clause is `2`).
+
+Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
+Alliance, Imperial Army, ...) additionally reference format mechanics that
+are **out of scope for a two-player engine** and are left unmodelled:
+double-sided card-flipping (INTERNAL CONFLICT), Showdown multiplayer (the
+X = number-of-opponents scaling, the Temptation Pile, the Hero deck), and
+one faction rewriting another player's rules (The Knitting Coalition's
+HIDDEN INFLUENCE / PULLING STRINGS).
+
 ### 3.7 Changing card types (CR §208)
 
 - **(CR §208.1)** A card may have several types at once; "gains a type"
