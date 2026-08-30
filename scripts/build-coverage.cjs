@@ -168,6 +168,10 @@ function buildManifest(cards, prev) {
         "Source of truth for card implementation status. build-coverage.cjs only adds skeletons / prunes dead ids; it never advances status or edits classification.",
       statuses: STATUSES,
       capabilities: prev.capabilities || {},
+      // Deliberately-unmodelled printed clauses that need a large engine /
+      // format refactor. Hand-maintained; build-coverage preserves it
+      // verbatim. See BEHAVIORS.md -> "Coverage workflow".
+      parityGaps: prev.parityGaps || {},
       cards: entries
     },
     pruned
@@ -248,6 +252,42 @@ function renderCoverageMd(manifest, cards) {
     }
   }
   lines.push("");
+
+  const gaps = Object.entries(manifest.parityGaps || {});
+  if (gaps.length > 0) {
+    lines.push("## Parity gaps");
+    lines.push("");
+    lines.push(
+      "_Printed clauses deliberately left unmodelled — each needs a large " +
+        "engine / format refactor. The affected cards are still `verified` " +
+        "for their in-scope parts._"
+    );
+    lines.push("");
+    lines.push("| Gap | Scope | Cards | Summary |");
+    lines.push("|---|---|--:|---|");
+    for (const [id, gap] of gaps.sort((a, b) => a[0].localeCompare(b[0]))) {
+      const affected = manifest.cards.filter(e =>
+        (e.parityGaps || []).includes(id)
+      );
+      lines.push(
+        `| \`${id}\` | ${gap.scope || "?"} | ${affected.length} | ${(gap.summary || "").replace(/\n/g, " ")} |`
+      );
+    }
+    lines.push("");
+    for (const [id, gap] of gaps.sort((a, b) => a[0].localeCompare(b[0]))) {
+      const affected = manifest.cards.filter(e =>
+        (e.parityGaps || []).includes(id)
+      );
+      lines.push(`### \`${id}\``);
+      lines.push("");
+      if (gap.clause) lines.push(`- **Clause:** ${gap.clause.replace(/\n/g, " ")}`);
+      if (gap.needs) lines.push(`- **Needs:** ${gap.needs.replace(/\n/g, " ")}`);
+      lines.push(
+        `- **Cards:** ${affected.map(e => `${e.name} (${e.set})`).join(", ") || "_none_"}`
+      );
+      lines.push("");
+    }
+  }
 
   const flag = (title, pred) => {
     const hits = manifest.cards.filter(pred);

@@ -56,6 +56,7 @@ interface CoverageEntry {
     keywords: string[];
   };
   engineCapability: string[];
+  parityGaps?: string[];
   display: Record<string, unknown>;
   confidence: string | null;
   notes: string;
@@ -69,9 +70,17 @@ interface Capability {
   rulesRef?: string;
 }
 
+interface ParityGap {
+  summary: string;
+  clause?: string;
+  needs: string;
+  scope: string;
+}
+
 interface Manifest {
   statuses: string[];
   capabilities: Record<string, Capability>;
+  parityGaps?: Record<string, ParityGap>;
   cards: CoverageEntry[];
 }
 
@@ -400,6 +409,56 @@ describe("card-data-integrity: coverage invariants", () => {
       missing,
       [],
       "an authored card flagged as a NEW ability shape needs its own describe() in card-behaviors.test.ts"
+    );
+  });
+});
+
+describe("card-data-integrity: parity gaps", () => {
+  const gaps = manifest.parityGaps ?? {};
+  const SCOPES = new Set(["medium", "large", "xlarge"]);
+
+  test("every parityGaps entry is well-formed", () => {
+    const problems: string[] = [];
+    for (const [id, gap] of Object.entries(gaps)) {
+      if (!gap.summary || gap.summary.trim().length < 10)
+        problems.push(`${id}: missing/short summary`);
+      if (!gap.needs || gap.needs.trim().length < 10)
+        problems.push(`${id}: missing/short needs`);
+      if (!SCOPES.has(gap.scope))
+        problems.push(`${id}: bad scope ${JSON.stringify(gap.scope)}`);
+    }
+    assert.deepEqual(problems, []);
+  });
+
+  test("every card's parityGaps id resolves to a registered gap", () => {
+    const bad: string[] = [];
+    for (const e of manifest.cards) {
+      for (const g of e.parityGaps ?? []) {
+        if (!(g in gaps)) bad.push(`${e.name}: unknown parity gap "${g}"`);
+      }
+    }
+    assert.deepEqual(bad, []);
+  });
+
+  test("every registered gap is referenced by at least one card (no orphans)", () => {
+    const referenced = new Set(
+      manifest.cards.flatMap(e => e.parityGaps ?? [])
+    );
+    const orphans = Object.keys(gaps).filter(id => !referenced.has(id));
+    assert.deepEqual(orphans, [], "prune an unused parityGaps entry or link a card");
+  });
+
+  test("a card with a parity gap is not left at `high` confidence unless the gap is only a secondary clause", () => {
+    // Not enforced automatically — a `high` card with a parity gap must have
+    // a note explaining the gap is a secondary clause. Just require the note.
+    const bad = manifest.cards
+      .filter(e => (e.parityGaps ?? []).length > 0 && e.confidence === "high")
+      .filter(e => !/unmodelled|out of scope|Showdown|EPIC|card flip/i.test(e.notes || ""))
+      .map(e => e.name);
+    assert.deepEqual(
+      bad,
+      [],
+      "a `high` card carrying a parity gap must note in `notes` why the gap is non-blocking"
     );
   });
 });

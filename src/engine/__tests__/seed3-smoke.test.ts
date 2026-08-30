@@ -367,4 +367,32 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
 
     assert.equal(engine.state.players[P1].hand.length, handBefore, "no mulligan bottom -> no draw");
   });
+
+  test("The Open R&D Faction: its printed DRAW ability activates off the faction card", () => {
+    const { engine } = buildGame({
+      playerA: { faction: def("The Open R&D Faction") },
+      cards: [
+        ...Array.from({ length: 3 }, (_, i) => ({ key: `g${i}`, def: greedRes(), owner: P1 })),
+        { key: "d1", def: character({ name: "D1", id: "rd-d1" }), owner: P1, zone: "deck" }
+      ]
+    });
+    const factionId = engine.state.players[P1].factionId!;
+    const before = engine.state.players[P1].hand.length;
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: "rd-draw" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].hand.length, before + 1);
+    const paid = engine.state.players[P1].play
+      .filter(cid => engine.state.cards[cid].attachedTo === factionId).length;
+    assert.equal(paid, 3, "paid its 3-resource cost");
+  });
+
+  test("The Evil Alliance: OMNIPOTENCE deploys a card whose threshold isn't met", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: def("The Evil Alliance") },
+      cards: [{ key: "gated", def: character({ name: "Gated", id: "omni-ea", cost: 0, threshold: "eeee" }), owner: P1, zone: "hand" }]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("gated") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("gated")].zone, "play", "deployed despite [E]x4 unmet");
+  });
 });

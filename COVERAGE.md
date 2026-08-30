@@ -48,8 +48,12 @@ _Rules-audited: 260/2101._
 | `deploy-from-zone` | implemented | effect | 0 | Generalise deployForFree to source zone 'play' (a face-down permanent/tactic) or 'discard': { type:'deployFromZone', chooser, declaration, free?, } — the chosen card is DEPLOYED (a tactic resolves; a permanent enters play) without paying its numeric cost; threshold and non-numeric extra costs still apply; resolves synchronously as a nested consequence. 'Reveal a face-down tactic you control. You may deploy the tactic.' (Manifest, Hidden Ruins, Accidental Invention, Burly Assailment); 'Pick a non-resource card in your discard pile. You may deploy the card.' (Dark Awakening). |
 | `deploy-history` | implemented | state, condition | 1 | Per-turn record of what each player deployed (by name) so a condition can ask 'did an opponent deploy >=2 cards with the same name this turn'. Refrigerator Alarm. |
 | `detach-effect` | implemented | effect | 0 | Effect { type:'detach', target } — clears CardInstance.attachedTo (a resource stops being attached to a faction; an Attach-to-X item is left unattached and cleaned up by the state-based check). 'You may pick a resource attached to your faction. If you do, detach it from your faction.' (Braggadocian Aide). |
+| `develop-uses-per-turn` | implemented | cards | 1 | FactionDefinition.turn.develop.usesPerTurn (default 1). The Union of Unextraordinary Miners' 'OVERTIME' = 2. GameState.developsUsedThisTurn counts. |
 | `duplicate-stack-card` | implemented | effect | 0 | Effect { type:'duplicate', target } — instantiate a transient copy of the targeted tactic/card on the response stack (same definitionId, owner = original owner, a fresh CardInstance in a 'deploying' zone), resolve its effects under the current controller, then the copy ceases to exist (like a token). 'Duplicate the tactic. Terminate the tactic.' (Muddle). |
 | `facedown-selector` | implemented | expression | 0 | CardSelector.faceDown?: boolean. When true, match face-down in-play cards by their REAL definition.type (today face-down cards are excluded from any type-matched selector, SpoilsEngine ~L2476). Enables 'a face-down tactic/item/location/character/resource you control' targets (Foment, Manifest, Hidden Ruins, Accidental Invention, Burly Assailment, Implosive Explosion) and conditions on 'while this card is a face-down resource' (Fired Hand, Vorpal Sword). |
+| `faction-abilities` | implemented | cards, ability | 0 | FactionDefinition.abilities (ActivatedAbility[] on a faction card, activated via activateAbility with the faction card's id, RULES.md §3.6) + ActivatedAbility.usableBy ('controller' | 'anyPlayer'). Open R&D / Imperial Army / Evil Alliance DRAW & RESOURCE; Knitting Coalition INFLATIONARY FORCES (anyPlayer); Society ENCYCLOPEDIC KNOWLEDGE. |
+| `faction-omnithreshold` | implemented | cards | 1 | FactionDefinition.meetsAllThresholds — meetsThreshold short-circuits true. The Evil Alliance's OMNIPOTENCE. |
+| `faction-start-of-turn-effects` | implemented | cards, effect | 2 | FactionDefinition.turn.startOfTurnEffects (Effect[] run automatically at the start of the faction controller's turn, source = faction card) + reduceNextCost.cardType. Imperial Army's develop rule ('reduce the next character's cost by 2'); Society token accrual. |
 | `flip-face-down` | implemented | effect | 0 | Effect { type:'flipFaceDown', target } — flip an in-play card (character/item/location/resource) face-down under its OWNER's control. Per RULES.md §2 (CR §411.3/§411.4) the flip is 'leaves play' + 'a brand-new card enters play': damage/tokens/attachments/temp text all cleared; the result is a face-down resource providing Volition. Also the tactic self-disposition form 'Put this card into play under its owner's control as a face-down resource instead of into their discard pile' — authored as the tactic's own effect { type:'flipFaceDown', target:'source' }; finishStackItem/finishFlipUp bookkeeping must detect the source already re-entered play and skip the move-to-discard. Pervasive from the FLIP UP era on (~28 Seed 2 cards). |
 | `flip-up` | implemented | cost, context | 5 | Alternate deploy path: a card may be played face-down as a resource now and later 'flipped up' by paying its FLIP UP cost (icons + sometimes an influence loss / bonus action). Needs (a) a play mode that pays an alternate Cost[] parsed from a 'FLIP UP: ...' clause, (b) a resolution-context flag deployedViaFlipUp readable by conditions/variables, (c) a face-down permanent that remembers its flip-up cost. Pervasive from Seed 2 on. |
 | `for-each-player` | implemented | effect | 2 | Effect { type:'forEachPlayer', order, effects } running sub-effects once per player with `controller`/`owner` rebound to that player (turn order). Community Chest, Spatchcocking. |
@@ -92,6 +96,41 @@ _Rules-audited: 260/2101._
 | `type-change-modifier` | implemented | effect, state | 1 | setCardType effect + GameState.cardTypeGrants + getCardTypes/hasCardType. For `duration` ADDS `cardType` (CR §208.1 — the card keeps its printed type; the §208.3 example still calls it "an item" while it "becomes a character"). Everything keyed off type consults hasCardType (typed selectors match both types, lethal-damage / attach-to SBAs, battle legality + CR §208.4 mid-battle removal, cardTypeIs, start-of-turn damage-clear + attack eligibility). grantStats -> `set` modifiers, same duration. Losing character type forgets this-turn damage (CR §208.3). RULES.md §3.7. Contrabulous Fabtraption RUNE OF ANIMATION. |
 | `use-any-ability` | implemented | effect, choice | 0 | Effect { type:'useAnyAbility', chooser, selector? } — chooser picks any one activatable ability of a card matching selector (default: any card they control) and resolves it as a nested sub-resolution. Generalises useTargetAbility (which needs a fixed target). 'At the start of your turn, you may use an ability.' (The Poshernacle). |
 | `variable-bounds` | implemented | ability | 0 | ActivatedAbility.variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }> validated when the playCard/activateAbility action supplies variables[id] — a chosen number capped by something OTHER than affordability. 'Pick a number for X, where X is less than or equal to the number of [O] you control.' (Desolate). |
+
+## Parity gaps
+
+_Printed clauses deliberately left unmodelled — each needs a large engine / format refactor. The affected cards are still `verified` for their in-scope parts._
+
+| Gap | Scope | Cards | Summary |
+|---|---|--:|---|
+| `cross-faction-rule-override` | medium | 1 | A faction that replaces one of the OPPONENT's faction rules with its own. |
+| `double-sided-faction` | large | 2 | EPIC faction cards have two sides and flip between them mid-game. |
+| `mixed-starting-resources` | medium | 2 | Starting-resource rules more expressive than `{ count, names?, stapleOnly? }` — a chosen count, a mix of specific + free picks, face-down non-resource cards, or an opponent-topped-up-to-match clause. |
+| `showdown-multiplayer` | xlarge | 2 | The multiplayer "Showdown" format — 1 Villain vs. N Heroes, shared Temptation Pile, a separate Hero deck, Allegiance cards, and faction values that scale with X = the number of opponents. |
+
+### `cross-faction-rule-override`
+
+- **Clause:** The Knitting Coalition — HIDDEN INFLUENCE ("Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead.") and DEVELOP RULE — PULLING STRINGS ("Your opponent ignores their faction's DEVELOP RULE.").
+- **Needs:** A layer that lets one in-play faction card suppress / substitute specific sub-rules of another player's FactionDefinition (setup draw, restore, develop), resolved before setup and re-checked each turn.
+- **Cards:** The Knitting Coalition (Seed 3)
+
+### `double-sided-faction`
+
+- **Clause:** INTERNAL CONFLICT / CONSTANT IN-FIGHTING — "At the end of your turn, flip a coin. If you win, turn this card over. (Only the face-up side is active.)"
+- **Needs:** A double-sided CardDefinition model + an engine action that swaps the in-play faction card's active FactionDefinition to its reverse. Touches setup, getFactionDefinition, and every restore/develop/threshold path.
+- **Cards:** Counter-Imperial Army (Seed 3), Imperial Army (Seed 3)
+
+### `mixed-starting-resources`
+
+- **Clause:** The Society of Magical Propriety — "Any 1 resource, Any 1 card (if it's not a resource, put it into play face-down)." The Union of Unextraordinary Miners — MONEY FOR NOTHING ("choose a number for X ... You start with X staple resources and 1 Deception. Your opponent starts with ... enough staple resources so that both players have the same number of starting resources.").
+- **Needs:** Extend FactionDefinition.setup.startingResources to a small program: a chosen variable, per-slot constraints (specific name | any staple | any card→face-down), and an opponent-normalisation rule. Currently modelled as a flat `count: 2`.
+- **Cards:** The Society of Magical Propriety (Seed 3), The Union of Unextraordinary Miners (Seed 3)
+
+### `showdown-multiplayer`
+
+- **Clause:** The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and "INFLUENCE = 15 + 10*X" / "repeat X-1 times".
+- **Needs:** N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.
+- **Cards:** Slightly Less Evil Alliance (Seed 3), The Evil Alliance (Seed 3)
 
 ---
 

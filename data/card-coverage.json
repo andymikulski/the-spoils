@@ -651,6 +651,74 @@
         "4d801a32-d054-413d-9eaf-d915a82139b1"
       ],
       "rulesRef": "RULES.md §12"
+    },
+    "faction-abilities": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "ability"
+      ],
+      "spec": "FactionDefinition.abilities (ActivatedAbility[] on a faction card, activated via activateAbility with the faction card's id, RULES.md §3.6) + ActivatedAbility.usableBy ('controller' | 'anyPlayer'). Open R&D / Imperial Army / Evil Alliance DRAW & RESOURCE; Knitting Coalition INFLATIONARY FORCES (anyPlayer); Society ENCYCLOPEDIC KNOWLEDGE.",
+      "cards": [],
+      "rulesRef": "RULES.md §3.6"
+    },
+    "faction-omnithreshold": {
+      "status": "implemented",
+      "kind": [
+        "cards"
+      ],
+      "spec": "FactionDefinition.meetsAllThresholds — meetsThreshold short-circuits true. The Evil Alliance's OMNIPOTENCE.",
+      "cards": [
+        "9dc309f4-d43f-4515-841e-ed982ce026e7"
+      ]
+    },
+    "faction-start-of-turn-effects": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "effect"
+      ],
+      "spec": "FactionDefinition.turn.startOfTurnEffects (Effect[] run automatically at the start of the faction controller's turn, source = faction card) + reduceNextCost.cardType. Imperial Army's develop rule ('reduce the next character's cost by 2'); Society token accrual.",
+      "cards": [
+        "2ce14e80-b0c6-4a3a-999b-c240b4fff9d5",
+        "ce1ccf05-7a09-4363-b3b2-67d3d28b1973"
+      ]
+    },
+    "develop-uses-per-turn": {
+      "status": "implemented",
+      "kind": [
+        "cards"
+      ],
+      "spec": "FactionDefinition.turn.develop.usesPerTurn (default 1). The Union of Unextraordinary Miners' 'OVERTIME' = 2. GameState.developsUsedThisTurn counts.",
+      "cards": [
+        "71038369-24cc-48d9-a58c-e658edc01944"
+      ]
+    }
+  },
+  "parityGaps": {
+    "double-sided-faction": {
+      "summary": "EPIC faction cards have two sides and flip between them mid-game.",
+      "clause": "INTERNAL CONFLICT / CONSTANT IN-FIGHTING — \"At the end of your turn, flip a coin. If you win, turn this card over. (Only the face-up side is active.)\"",
+      "needs": "A double-sided CardDefinition model + an engine action that swaps the in-play faction card's active FactionDefinition to its reverse. Touches setup, getFactionDefinition, and every restore/develop/threshold path.",
+      "scope": "large"
+    },
+    "showdown-multiplayer": {
+      "summary": "The multiplayer \"Showdown\" format — 1 Villain vs. N Heroes, shared Temptation Pile, a separate Hero deck, Allegiance cards, and faction values that scale with X = the number of opponents.",
+      "clause": "The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and \"INFLUENCE = 15 + 10*X\" / \"repeat X-1 times\".",
+      "needs": "N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.",
+      "scope": "xlarge"
+    },
+    "cross-faction-rule-override": {
+      "summary": "A faction that replaces one of the OPPONENT's faction rules with its own.",
+      "clause": "The Knitting Coalition — HIDDEN INFLUENCE (\"Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead.\") and DEVELOP RULE — PULLING STRINGS (\"Your opponent ignores their faction's DEVELOP RULE.\").",
+      "needs": "A layer that lets one in-play faction card suppress / substitute specific sub-rules of another player's FactionDefinition (setup draw, restore, develop), resolved before setup and re-checked each turn.",
+      "scope": "medium"
+    },
+    "mixed-starting-resources": {
+      "summary": "Starting-resource rules more expressive than `{ count, names?, stapleOnly? }` — a chosen count, a mix of specific + free picks, face-down non-resource cards, or an opponent-topped-up-to-match clause.",
+      "clause": "The Society of Magical Propriety — \"Any 1 resource, Any 1 card (if it's not a resource, put it into play face-down).\" The Union of Unextraordinary Miners — MONEY FOR NOTHING (\"choose a number for X ... You start with X staple resources and 1 Deception. Your opponent starts with ... enough staple resources so that both players have the same number of starting resources.\").",
+      "needs": "Extend FactionDefinition.setup.startingResources to a small program: a chosen variable, per-slot constraints (specific name | any staple | any card→face-down), and an opponent-normalisation rule. Currently modelled as a flat `count: 2`.",
+      "scope": "medium"
     }
   },
   "cards": [
@@ -773,7 +841,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -783,11 +854,16 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities"
+      ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "confidence": "high",
+      "notes": "EPIC double-sided faction (back, of Imperial Army). Inherits Imperial Army's influence 20 / 3-3 hand / 2 Rage. Restore rule = detach all resources, do NOT restore depleted cards. Standard develop. Abilities: DRAW (pay 3), RESOURCE (pay 4). Unmodelled: CONSTANT IN-FIGHTING (coin-flip card flip) — EPIC format, out of scope.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "double-sided-faction"
+      ]
     },
     {
       "id": "0833ee0d-bce2-43b5-bb59-c01271b2aad5",
@@ -1142,7 +1218,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities, faction-start-of-turn-effects"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1152,11 +1231,17 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities",
+        "faction-start-of-turn-effects"
+      ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "confidence": "high",
+      "notes": "EPIC double-sided faction (front). Influence 20, 3/3 opening hand, 2 Rage starting resources, restore-non-resources only (no detach). Develop rule = automatic startOfTurnEffects reduceNextCost{cardType:'character', amount:2} ('reduce the next character's cost by 2'); choices [] so there is no chooseDevelop action. Abilities: DRAW (pay 1), RESOURCE (pay 2). Unmodelled: INTERNAL CONFLICT (coin-flip flips the card to the Counter-Imperial Army side) — EPIC format, out of scope.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "double-sided-faction"
+      ]
     },
     {
       "id": "d5a76074-c837-4279-8f74-bef9e4878b92",
@@ -1487,7 +1572,9 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1500,8 +1587,11 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "notes": "Showdown-format companion to The Evil Alliance ('All Heroes can use abilities on this card'). Every ability (GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, TEAMWORK, YOUR TRUE COLORS ARE REVEALED) is Showdown multiplayer — Villain/Heroes/Temptation Pile/Allegiance cards — with no 2-player equivalent. Carries a structurally-valid placeholder faction block (influence 25 / standard setup) only so it can be instantiated; it is not a real 2-player faction.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "showdown-multiplayer"
+      ]
     },
     {
       "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
@@ -1541,7 +1631,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities, faction-omnithreshold"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1551,11 +1644,17 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities",
+        "faction-omnithreshold"
+      ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "confidence": "high",
+      "notes": "Showdown-format faction; setup resolved for 2-player (X = 1 opponent). Influence 25 (15+10X), 7/8 opening hand, 2 staple starting resources, restore-all + detach, standard develop (its 'repeat X-1 times' is 0 extra at X=1). OMNIPOTENCE = FactionDefinition.meetsAllThresholds. Abilities: DRAW (pay 3), RESOURCE (pay 3). Unmodelled: ENTICEMENT / DARING GAMBIT (Showdown multiplayer — Hero deck, Temptation Pile) — out of scope for a 2-player engine.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "showdown-multiplayer"
+      ]
     },
     {
       "id": "8866ccbf-a8dc-4c2f-8dbc-4d879b5b10cf",
@@ -1592,7 +1691,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1602,11 +1704,16 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities"
+      ],
       "display": {},
       "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "notes": "EPIC faction. Influence 28, 3/4 opening hand, 2 Greed starting resources, standard restore + develop. INFLATIONARY FORCES DRAW (pay 2) and RESOURCE (pay 2) both authored with usableBy:'anyPlayer' ('Both players may use this ability'). Unmodelled: HIDDEN INFLUENCE and PULLING STRINGS ('your opponent ignores their faction's STARTING DRAW / DEVELOP rule and uses this card's instead') — one faction rewriting another player's rules; no cross-faction-override mechanism.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "cross-faction-rule-override"
+      ]
     },
     {
       "id": "ebef8b79-0dcb-401f-81e9-eafd9235fd7d",
@@ -1617,7 +1724,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1627,10 +1737,12 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities"
+      ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
+      "confidence": "high",
+      "notes": "PROMO faction. Influence 25, 8/9 opening hand, 2 staple starting resources, standard restore + develop. Abilities: DRAW (pay 3), RESOURCE (pay 4). The 'RESEARCH & DEVELOPMENT' clause ('both players invent the rules text for an ability') is a joke, not a mechanic — nothing to model.",
       "rulesAudited": true
     },
     {
@@ -1642,7 +1754,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities, faction-start-of-turn-effects"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1652,11 +1767,17 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities",
+        "faction-start-of-turn-effects"
+      ],
       "display": {},
       "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "notes": "EPIC faction. Influence 30, 10/9 opening hand, restore-all + detach, standard develop. Abilities: DRAW (pay 3), RESOURCE (pay 3), ENCYCLOPEDIC KNOWLEDGE ([O][O]; remove 3 tokens -> search deck for a tactic -> hand). APPROXIMATIONS: starting resources 'any 1 resource + any 1 card (face-down if not a resource)' modelled as 2 resources; 'you may put a token on this card' when you develop is modelled as an automatic startOfTurnEffects token (over-generates if you skip develop); 300-card minimum deck is a deckbuilding rule, not runtime.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "mixed-starting-resources"
+      ]
     },
     {
       "id": "91803a23-9aff-4665-87cf-ff3e40580ede",
@@ -1722,7 +1843,10 @@
       "textHash": "da39a3ee5e6b",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "faction setup block (createTwoPlayerFactionGame)",
+          "FactionDefinition.abilities: faction-abilities, develop-uses-per-turn"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
@@ -1732,11 +1856,17 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "faction-abilities",
+        "develop-uses-per-turn"
+      ],
       "display": {},
       "confidence": "medium",
-      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
-      "rulesAudited": true
+      "notes": "EPIC faction. Influence 22, 5/6 opening hand, restore-all + detach. 'OVERTIME' = a second develop per turn (develop.usesPerTurn: 2). Abilities: DRAW (pay 4), RESOURCE (pay 5). APPROXIMATION: 'MONEY FOR NOTHING' starting resources (choose X where 0<X<11; you get X staples + 1 Deception; the opponent is topped up to the same count) is modelled as a flat 2 resources.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "mixed-starting-resources"
+      ]
     },
     {
       "id": "b91d33d1-aeed-4953-b57b-463204b25bc6",

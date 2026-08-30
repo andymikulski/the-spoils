@@ -1108,6 +1108,7 @@ enforces everything below.
     "keywords": ["covert"]
   },
   "engineCapability": ["flip-up"],        // capability ids required; [] = expressible with today's vocab
+  "parityGaps": ["double-sided-faction"], // (optional) top-level parityGaps ids this card hits
   "display": { "notes": "…" },            // renderer hints (labels, captions) — no engine meaning
   "confidence": "high" | "medium" | "low",
   "notes": "rules question / RULES.md cite / ambiguity"
@@ -1124,6 +1125,26 @@ Top-level `capabilities` is the deduplicated engine-gap backlog:
     "spec": "one-paragraph description",
     "cards": ["<id>", "…"],
     "rulesRef": "RULES.md §…"
+  }
+}
+```
+
+Top-level `parityGaps` tracks **printed clauses we deliberately don't
+model** because closing them needs a large engine or game-format refactor —
+distinct from `capabilities` (small, buildable additions) and
+`wontImplement` (the *whole card* is unmodellable). An affected card stays
+`verified`/`authored` for its in-scope parts and lists the gap id in its
+`parityGaps`. `build-coverage.cjs` renders a "Parity gaps" section in
+`COVERAGE.md`; `card-data-integrity.test.ts` checks every entry is
+well-formed, every per-card id resolves, and no gap is orphaned.
+
+```jsonc
+"parityGaps": {
+  "double-sided-faction": {
+    "summary": "one line — what the mechanic is",
+    "clause": "the exact printed text this covers",
+    "needs": "what the refactor would take",
+    "scope": "medium" | "large" | "xlarge"
   }
 }
 ```

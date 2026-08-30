@@ -21,23 +21,30 @@ engine. The pick-up point for a future session.
 | `vanilla` (no behavior needed) | 156 |
 | `unclassified` | 1690 |
 | `rulesAudited` | 260 / 2101 |
-| Engine capabilities | 65 / 65 implemented |
-| Test suite | 349 passing (`npm test`), `npm run typecheck` clean |
+| Engine capabilities | 69 / 69 implemented |
+| Test suite | 356 passing (`npm test`), `npm run typecheck` clean |
 
 **Seed 2 and Seed 3 are fully implemented and audited** — every card with
-rules text is `authored`/`verified` at `high` confidence, its JSON verified
-against the printed text + the CR, all referenced capabilities implemented.
-Between them the two sets exercise ~65 capabilities; new sets should mostly
-reuse that vocabulary rather than grow it.
+rules text is `authored`/`verified`, its JSON verified against the printed
+text (card art in `data/assets/*.jpg` where the source dump has none) + the
+CR, all referenced capabilities implemented. Between them the two sets
+exercise ~69 capabilities; new sets should mostly reuse that vocabulary.
 
-**Seed 3 data gap:** the 8 parody *faction* cards (The Evil Alliance,
-Imperial Army, Counter-Imperial Army, Slightly Less Evil Alliance, The
-Knitting Coalition, The Open R&D Faction, The Society of Magical Propriety,
-The Union of Unextraordinary Miners) have **no rules text in the source
-dump** (`data/raw-database.json`). Their faction setup blocks are
-placeholders copied from the base Tournament Faction — structurally valid
-and engine-consumed, but not verifiable against the real card. They sit at
-`medium` confidence until the printed cards are available.
+**Seed 3's 8 non-tournament "EPIC"/"Showdown" faction cards** have their
+setup blocks + in-scope activated abilities authored from the card art
+(`FactionDefinition.{abilities, meetsAllThresholds}`, `turn.{startOfTurnEffects,
+develop.usesPerTurn}`, `ActivatedAbility.usableBy` — RULES.md §3.6). 4 are
+`high`, 4 `medium`. Their unmodelled clauses (double-sided card-flipping,
+Showdown multiplayer, cross-faction rule override, mixed starting-resources)
+are recorded in the **`parityGaps`** registry in `data/card-coverage.json`
+— see the "Parity gaps" section of `COVERAGE.md`.
+
+**`parityGaps`** (new): a top-level `data/card-coverage.json` registry of
+printed clauses deliberately left unmodelled because closing them needs a
+large engine / game-format refactor. Distinct from `capabilities` (small
+buildable additions) and `wontImplement` (whole card unmodellable) — a card
+with a parity gap is still `verified` for its in-scope parts and links the
+gap id. `card-data-integrity.test.ts` keeps the registry honest.
 
 **The 107 `classified` cards** (Open Beta 40, 1st Edition 40, 2nd Edition
 26, Ungodly Mess 1) are pre-existing `behavior` blocks, audited against
