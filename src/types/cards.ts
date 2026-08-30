@@ -255,11 +255,13 @@ export interface TriggeredAbility extends AbilityBase {
   event: GameEventType;
   /**
    * Where the source card must be for this trigger to be live — defaults to
-   * `"play"`. Set `"discard"` / `"void"` for "while this card is in your
-   * discard pile, when <event> ..." abilities (Manifest, Hidden Ruins,
-   * I Drink Your Milkshake!), the triggered-ability parallel of
+   * `"play"`. Set another zone for "while this card is in your <zone>, when
+   * <event> ..." abilities: `"discard"` (Manifest, Hidden Ruins),
+   * `"void"` (I Drink Your Milkshake!), `"deck"` (Community Chest's
+   * mulligan-draw clause). The triggered-ability parallel of
    * `ActivatedAbility.activationZone`. `condition` still carries any finer
-   * gate ("... under your control").
+   * gate ("... under your control", "... if you bottomed it in your
+   * mulligan").
    */
   triggerZone?: Zone;
   condition?: Condition;

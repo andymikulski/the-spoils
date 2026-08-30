@@ -6186,6 +6186,94 @@ describe("Seed 2: TriggeredAbility.triggerZone", () => {
 
     assert.equal(engine.state.players[P1].influence, 20, "not in the discard pile - no trigger");
   });
+
+  // "... choose to put this card on the bottom of your deck as part of your
+  // mulligan ... draw a card at the start of your turn." (Community Chest) —
+  // a triggered ability that fires while its source sits in the DECK.
+  test("a deck-zone trigger fires from the deck at the start of the owner's turn", () => {
+    const chest = tactic({
+      name: "Deck Sitter",
+      id: "deck-sitter",
+      behavior: {
+        abilities: [
+          {
+            id: "from-deck",
+            type: "triggered",
+            triggerZone: "deck",
+            event: "turnStarted",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "eventPlayerIs", player: "controller" },
+                { type: "bottomedInMulligan" }
+              ]
+            },
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "chest", def: chest, owner: P1, zone: "deck" },
+        { key: "filler", def: character({ name: "Filler", id: "filler-ds" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.state.mulligan[P1] = [id("chest")];
+    const handBefore = engine.state.players[P1].hand.length;
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    assert.equal(
+      engine.state.players[P1].hand.length,
+      handBefore + 1,
+      "drew a card at the start of P1's next turn, from the deck"
+    );
+  });
+
+  test("the deck-zone trigger does not fire when the card was NOT bottomed in the mulligan", () => {
+    const chest = tactic({
+      name: "Deck Sitter 2",
+      id: "deck-sitter-2",
+      behavior: {
+        abilities: [
+          {
+            id: "from-deck",
+            type: "triggered",
+            triggerZone: "deck",
+            event: "turnStarted",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "eventPlayerIs", player: "controller" },
+                { type: "bottomedInMulligan" }
+              ]
+            },
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "chest", def: chest, owner: P1, zone: "deck" },
+        { key: "filler", def: character({ name: "Filler", id: "filler-ds2" }), owner: P1, zone: "deck" }
+      ]
+    });
+    const handBefore = engine.state.players[P1].hand.length;
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].hand.length, handBefore, "no mulligan bottom -> no draw");
+  });
 });
 
 // "PROVIDES: [O]" on a character / crest item, and "When a card that
@@ -7704,5 +7792,149 @@ describe("Seed 2: partitionAndPick (Mustache Aficionado — MUSTACHE SHOWDOWN)",
     assert.equal(engine.state.pendingPartition, undefined);
     assert.equal(engine.state.players[P1].deck.length, 3);
     assert.equal(engine.state.players[P2].deck.length, 3);
+  });
+});
+
+// "Reveal the top 5 cards of an opponent's deck. You may choose a revealed
+// character ... put it into play. That player puts the remaining cards on
+// the bottom of their deck in any order." (Rosy Palmer, and Her Five
+// Friends) — CardSelector.fromTop + lookAndReorder `to: "bottom"`.
+describe("Seed 2: Rosy Palmer, and Her Five Friends (fromTop pool + reorder to bottom)", () => {
+  test("lookAndReorder `to: \"bottom\"` relocates the top N to the deck bottom in the chosen order", () => {
+    const mover = character({
+      name: "Bottom Feeder",
+      behavior: {
+        abilities: [
+          {
+            id: "shuffle-down",
+            type: "activated",
+            effects: [{ type: "lookAndReorder", player: "controller", count: 2, to: "bottom" }]
+          }
+        ]
+      }
+    });
+    const dc = (n: string) => character({ name: n, id: n.toLowerCase() + "-bf" });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "m", def: mover, owner: P1 },
+        { key: "d1", def: dc("D1"), owner: P1, zone: "deck" },
+        { key: "d2", def: dc("D2"), owner: P1, zone: "deck" },
+        { key: "d3", def: dc("D3"), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("m"), abilityId: "shuffle-down" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "reorderDeck");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "reorderDeck", order: [id("d2"), id("d1")] } });
+    resolvePendingResponses(engine);
+
+    assert.deepEqual(engine.state.players[P1].deck, [id("d3"), id("d2"), id("d1")], "D1/D2 went to the bottom in the chosen order");
+  });
+
+  test("the full Rosy sequence: pick a top-5 character, opponent bottoms the leftovers", () => {
+    const bolt = tactic({
+      name: "Rosy Bolt",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 10 }]
+          }
+        ]
+      }
+    });
+    const rosy = character({
+      name: "Rosy Palmer, and Her Five Friends",
+      id: "rosy-fix",
+      life: 2,
+      unique: "rosy",
+      behavior: {
+        abilities: [
+          {
+            id: "parting-gift",
+            type: "triggered",
+            event: "cardDestroyed",
+            condition: { type: "sourceIsEventCard" },
+            effects: [
+              {
+                type: "chooserSelectsTarget",
+                chooser: "controller",
+                declaration: {
+                  id: "grab",
+                  selector: { owner: "opponent", zone: "deck", type: "character", fromTop: 5 },
+                  count: 1,
+                  optional: true
+                },
+                effects: [
+                  {
+                    type: "if",
+                    condition: { type: "targetExists", target: { type: "selected", id: "grab" } },
+                    effects: [{ type: "putIntoPlay", target: { type: "selected", id: "grab" }, controller: "controller" }]
+                  },
+                  {
+                    type: "lookAndReorder",
+                    player: "opponent",
+                    to: "bottom",
+                    count: { type: "add", values: [5, { type: "multiply", values: [-1, { type: "selectionCount", id: "grab" }] }] }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const dk = (n: string, kind: "char" | "item") =>
+      kind === "char"
+        ? character({ name: n, id: n.toLowerCase() + "-r" })
+        : item({ name: n, id: n.toLowerCase() + "-r" });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "rosy", def: rosy, owner: P1 },
+        { key: "bolt", def: bolt, owner: P1, zone: "hand" },
+        // P2 deck top->bottom: C1 C2 C3 C4 C5 C6  (C6 is a character but OUT of the top 5)
+        { key: "c1", def: dk("C1", "char"), owner: P2, zone: "deck" },
+        { key: "c2", def: dk("C2", "item"), owner: P2, zone: "deck" },
+        { key: "c3", def: dk("C3", "char"), owner: P2, zone: "deck" },
+        { key: "c4", def: dk("C4", "char"), owner: P2, zone: "deck" },
+        { key: "c5", def: dk("C5", "item"), owner: P2, zone: "deck" },
+        { key: "c6", def: dk("C6", "char"), owner: P2, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bolt"), selected: { t: [id("rosy")] } });
+    resolvePendingResponses(engine);
+
+    // fresh read each step: `assert.equal` is an assertion fn, so reusing
+    // one `pendingChoice` reference across the sequence narrows it to `never`
+    const pc = () => engine.state.pendingChoice as { kind: string; playerId: string; cardIds?: string[] } | undefined;
+
+    assert.equal(pc()?.kind, "chooserSelectsTarget");
+    // C6 is a character but not in the top 5 -> illegal pick
+    assert.throws(
+      () => engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: [id("c6")] } }),
+      /Illegal target/
+    );
+    // take C3 (a character in the top 5)
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: [id("c3")] } });
+
+    // opponent now reorders the 4 leftover revealed cards onto the bottom
+    assert.equal(pc()?.kind, "reorderDeck");
+    assert.equal(pc()?.playerId, P2);
+    assert.deepEqual(pc()?.cardIds, [id("c1"), id("c2"), id("c4"), id("c5")]);
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "reorderDeck", order: [id("c5"), id("c4"), id("c2"), id("c1")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("c3")].zone, "play");
+    assert.equal(engine.state.cards[id("c3")].controllerId, P1);
+    assert.deepEqual(
+      engine.state.players[P2].deck,
+      [id("c6"), id("c5"), id("c4"), id("c2"), id("c1")],
+      "C6 (unrevealed) stays on top; the 4 leftovers are bottomed in P2's chosen order"
+    );
   });
 });

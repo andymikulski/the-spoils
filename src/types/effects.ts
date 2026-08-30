@@ -299,12 +299,17 @@ export type Effect =
       /**
        * Pauses ability resolution for `player` to reorder the top `count`
        * cards of their own deck however they like ("look at the top N
-       * cards... put them back in any order"). A no-op if the deck has
-       * fewer than `count` cards — reorders whatever's actually there.
+       * cards... put them back in any order"). Reorders whatever is
+       * actually there if the deck is shorter than `count`. `to: "bottom"`
+       * instead relocates those top `count` cards to the **bottom** of the
+       * deck in the chosen order ("...put the remaining cards on the bottom
+       * of their deck in any order" — Rosy Palmer); default `"top"` leaves
+       * them on top.
        */
       type: "lookAndReorder";
       player: PlayerRef;
       count: NumberExpression;
+      to?: "top" | "bottom";
     }
   | {
       /**

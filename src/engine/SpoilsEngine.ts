@@ -2937,6 +2937,12 @@ export class SpoilsEngine {
       return false;
     }
 
+    if (selector.fromTop !== undefined) {
+      const deck = this.state.players[card.ownerId]?.deck ?? [];
+      const index = deck.indexOf(card.id);
+      if (index < 0 || index >= selector.fromTop) return false;
+    }
+
     if (
       selector.staple !== undefined &&
       !!definition.resource?.staple !== selector.staple
@@ -4275,7 +4281,8 @@ export class SpoilsEngine {
           kind: "reorderDeck",
           id: nextId("choice"),
           playerId: player.id,
-          cardIds
+          cardIds,
+          to: effect.to ?? "top"
         };
 
         return;
@@ -5381,7 +5388,12 @@ export class SpoilsEngine {
         );
 
         const player = this.requirePlayer(pending.playerId);
-        player.deck.splice(0, pending.cardIds.length, ...choice.order);
+        player.deck.splice(0, pending.cardIds.length);
+        if ((pending.to ?? "top") === "bottom") {
+          player.deck.push(...choice.order);
+        } else {
+          player.deck.unshift(...choice.order);
+        }
 
         this.state.pendingChoice = undefined;
         this.resumeEffectFrames();

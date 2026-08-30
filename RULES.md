@@ -221,11 +221,11 @@ RUNE OF ANIMATION). Per **CR §208.1 / §208.1a** the new type is **added**,
 not substituted — the card keeps its printed type as well (the §208.3
 example still calls the card "an item" while it "becomes a character").
 `hasCardType` / `getCardTypes` report the added type, and every rules
-decision keyed off type consults them: typed `CardSelector`s (so the card
-now matches *both* a "character" and an "item" selector), the lethal-damage
-and "Attach to X" state-based checks, battle attack/block legality and the
-mid-battle removal above, the `cardTypeIs` condition, and the start-of-turn
-damage-clear / attack-eligibility rules. Optional `grantStats` ride along as
+decision keyed off type consults them: typed `CardSelector`s (the card
+matches *both* a "character" and an "item" selector while the grant holds),
+the lethal-damage and "Attach to X" state-based checks, battle attack/block
+legality and the mid-battle removal above, the `cardTypeIs` condition, and
+the start-of-turn damage-clear / attack-eligibility rules. Optional `grantStats` ride along as
 `set` stat modifiers with the same duration. When the grant ends and the
 card is no longer a character it forgets this-turn damage (§208.3, applied
 at the next start-of-turn); §208.4 removal runs through the state-based
@@ -320,8 +320,15 @@ animated later this turn cannot attack until the following turn.
 7. **(CR §601.1h)** The first turn begins (see §6).
 
 **(engine-derived)** Which cards each player set aside is recorded on
-`GameState.mulligan` and read by the `bottomedInMulligan` condition
-(*Community Chest*).
+`GameState.mulligan` and read by the `bottomedInMulligan` condition.
+*Community Chest* ("... choose to put this card on the bottom of your deck
+as part of your mulligan ... you may reveal it. If you do, draw a card at
+the start of your turn.") pairs that with a `turnStarted` trigger whose
+`triggerZone` is `"deck"`, so it fires while the card sits in the deck; the
+"you may reveal it" step is treated as automatic (there is no
+hidden-deck-info model and revealing has no downside), and "control at
+least [D]" gates the draw at trigger time rather than at game start, where
+it could never be true.
 
 ## 6. Turn structure
 
@@ -858,6 +865,15 @@ re-runs the check once it has settled.
   takes. Every card not taken stays where it was (on top of its owner's
   deck) and both decks are then reshuffled. The revealed cards never leave
   the deck zone — only a taken card moves (to hand).
+- **(engine-derived — reveal top N, pick, bottom the rest)** *Rosy Palmer,
+  and Her Five Friends* ("reveal the top 5 cards of an opponent's deck. You
+  may choose a revealed character ... put it into play ... That player puts
+  the remaining cards on the bottom of their deck in any order.") composes
+  from a `CardSelector.fromTop: 5` (a `chooserSelectsTarget` whose
+  candidates are only characters among the opponent's top 5) → `putIntoPlay`
+  → `lookAndReorder` with `to: "bottom"` and `count` = 5 − (cards taken),
+  driven by that deck's owner. The un-revealed cards below the top 5 keep
+  their positions; only a taken card and the bottomed leftovers move.
 
 **(engine-derived)** Every *effect* (post-cost, already-committed) that
 resolves a `TargetRef`/destination silently no-ops instead of throwing when

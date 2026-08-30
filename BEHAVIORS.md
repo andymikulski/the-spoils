@@ -103,12 +103,13 @@ ContinuousAbility: { id, name?, type: "continuous", condition?, modifiers, keywo
 ReplacementAbility:{ id, name?, type: "replacement", replaces, condition?, optional?, optionalCost?, effects }
 ```
 
-**`TriggeredAbility.triggerZone`** — `"discard"` / `"void"` (default
-`"play"`) makes the trigger live while its source sits in that zone —
-"While this card is in your discard pile, when <event> ..." (Manifest,
-Hidden Ruins, Accidental Invention, Burly Assailment, I Drink Your
-Milkshake!). The parallel of `ActivatedAbility.activationZone`. Keep the
-"... under your control" half in `condition` (`eventCardControlledBy` /
+**`TriggeredAbility.triggerZone`** — any `Zone` (default `"play"`) makes the
+trigger live while its source sits in that zone — "While this card is in
+your discard pile, when <event> ..." (`"discard"`: Manifest, Hidden Ruins,
+Accidental Invention, Burly Assailment; `"void"`: I Drink Your Milkshake!;
+`"deck"`: Community Chest's "draw a card at the start of your turn" after a
+mulligan bottom). The parallel of `ActivatedAbility.activationZone`. Keep
+the "... under your control" half in `condition` (`eventCardControlledBy` /
 `cardProvides` etc.).
 
 **`ReplacementAbility`** — "if <X> would happen, instead <Y>". `replaces` is
@@ -431,10 +432,10 @@ simulates on a cloned state) — no partial payment.
   turn, the item is a golem character ..." (Contrabulous Fabtraption, RUNE
   OF ANIMATION). For `duration`, ADDS `cardType` to `target` — it keeps its
   printed type too (CR §208.1). `hasCardType` / `getCardTypes` and
-  everything keyed off them (typed selectors — the card now matches both
-  types, the lethal-damage / attach-to state-based checks, battle legality,
-  mid-battle §208.4 removal, `cardTypeIs`, start-of-turn damage-clear +
-  attack eligibility). `grantStats` (a partial `Stat → NumberExpression`
+  everything keyed off them (typed selectors match either type, the
+  lethal-damage / attach-to state-based checks, battle legality, mid-battle
+  §208.4 removal, `cardTypeIs`, start-of-turn damage-clear + attack
+  eligibility). `grantStats` (a partial `Stat → NumberExpression`
   map) become `set` modifiers with the same duration. Losing the character
   type forgets this-turn damage (CR §208.3). See RULES.md §3.7.
 - **`retargetExtraCost`** — `{ cardType, to }` — "its effect happens as
@@ -586,10 +587,13 @@ to touch when just authoring card data.)
   `Effect[]` has no inherent human-readable meaning, so a renderer has
   nothing else to show for each branch in a choice UI — set it whenever a
   branch isn't self-evident (an empty "decline" branch usually is).
-- **`lookAndReorder`** — `{ player, count }` — pauses for `player` to
+- **`lookAndReorder`** — `{ player, count, to? }` — pauses for `player` to
   reorder the top `count` cards of their own deck ("look at the top N
-  cards... put them back in any order"). A no-op if the deck has fewer than
-  `count` cards.
+  cards... put them back in any order"); reorders whatever's there if the
+  deck is shorter. `to: "bottom"` instead relocates those top `count` cards
+  to the **bottom** of the deck in the chosen order ("...put the remaining
+  cards on the bottom of their deck in any order" — Rosy Palmer); default
+  `"top"` leaves them on top.
 - **`reduceNextCost`** — `{ player, amount }` — reduces the numeric cost of
   the next card `player` deploys this turn by `amount` (floored at 0),
   consumed by exactly one subsequent `playCard`; unused reductions expire
@@ -717,13 +721,20 @@ TargetRef = "source" | "attachedTo" | "eventCard"
 `then` when the `Condition` holds, else `else`.
 
 ```ts
-CardSelector = { controller?, owner?, zone?, type?, name?, subtype?, depleted?, conditions? }
+CardSelector = { controller?, owner?, zone?, type?, name?, subtype?, depleted?, fromTop?, conditions? }
 ```
 
 **`name`** — exact printed-name match (`CardDefinition.name`). "Search your
 deck for a card named Elitism" (`{ "zone": "deck", "name": "Elitism" }`),
 "a card named Micromajig". Distinct from the `cardNameEquals` *condition*,
 which compares two cards rather than a literal.
+
+**`fromTop`** — a number: restrict to cards currently within the top N of
+their owner's deck. "Reveal the top 5 cards of an opponent's deck. You may
+choose a revealed character." is `{ "owner": "opponent", "zone": "deck",
+"type": "character", "fromTop": 5 }`. Pair with a `lookAndReorder`
+(`to: "bottom"`, `count` = N minus whatever was taken) to bottom the
+leftovers (Rosy Palmer).
 
 **No implicit zone.** A selector with no `zone` matches *every* zone,
 including `deck`/`hand`/`removed` (RULES.md §2, deliberate). Always set
@@ -733,17 +744,17 @@ is a silent correctness bug, not a convenience default.
 **`staple`** — `true` matches only staple resources
 (`ResourceDefinition.staple`), `false` only non-staples. "Search your deck
 for a staple resource" (`{ "zone": "deck", "type": "resource", "staple":
-true }`). Since `type: "resource"` now matches real resource *cards* in any
-named zone (not just face-down cards in play), a deck/discard resource
+true }`). A `type: "resource"` selector matches real resource *cards* in any
+named zone (not just face-down cards in play), so a deck/discard resource
 search works directly.
 
 **`faceDown`** — `true` matches only face-down in-play cards, and a `type`
 filter is then matched against the card's **real (hidden)** `definition.type`
 — "reveal a face-down tactic/item/location/character you control"
 (`{ "controller": "self", "zone": "play", "type": "tactic", "faceDown": true }`).
-`false` excludes face-down cards. Omitted keeps the historical default
-(`type: "resource"` still matches a face-down card as an anonymous resource;
-any other `type` filter skips them).
+`false` excludes face-down cards. Omitted — the default: `type: "resource"`
+still matches a face-down card as an anonymous resource; any other `type`
+filter skips face-down cards.
 
 `selector.conditions` lets you filter by an arbitrary `Condition[]`,
 evaluated with the *candidate* card bound to `{ type: "selected", id:

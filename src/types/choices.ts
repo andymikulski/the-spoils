@@ -83,6 +83,8 @@ export interface PendingReorderDeckChoice {
   playerId: PlayerId;
   /** The cards being looked at, in their current top-to-bottom order. */
   cardIds: CardInstanceId[];
+  /** Where the reordered cards go — `"top"` (default) leaves them on top, `"bottom"` relocates them to the bottom of the deck. */
+  to?: "top" | "bottom";
 }
 
 /** "You may deploy a card with cost X or less for free" (see the `deployForFree` effect). */

@@ -181,6 +181,15 @@ export interface CardSelector {
 
   depleted?: boolean;
 
+  /**
+   * Restrict to cards currently among the **top `fromTop`** of their
+   * owner's deck — "reveal the top 5 cards of an opponent's deck. You may
+   * choose a revealed character." (Rosy Palmer). Only meaningful with
+   * `zone: "deck"`; a card not in a deck never matches. Pairs with a
+   * `lookAndReorder` (`to: "bottom"`) over the leftovers.
+   */
+  fromTop?: number;
+
   /** Match only staple resources (`ResourceDefinition.staple`) when `true`, only non-staples when `false`. "Search your deck for a staple resource." */
   staple?: boolean;
 

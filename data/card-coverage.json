@@ -392,11 +392,11 @@
     },
     "triggered-from-zone": {
       "status": "implemented",
+      "spec": "TriggeredAbility.triggerZone?: Zone (default \"play\") — the trigger is live while its source sits in that zone; findTriggers scans every card in every zone and matches card.zone against triggerZone (\"discard\" — Manifest / Hidden Ruins / Accidental Invention / Burly Assailment; \"void\" — I Drink Your Milkshake!; \"deck\" — Community Chest’s mulligan-draw clause). Parallel to ActivatedAbility.activationZone.",
+      "cards": [],
       "kind": [
         "ability"
-      ],
-      "spec": "TriggeredAbility.triggerZone?: Zone (default 'play') — the trigger is live while its source sits in that zone (discard / void), parallel to ActivatedAbility.activationZone. findTriggers currently scans in-play cards only. 'While this card is in your discard pile, when a card that provides at least [O] enters play under your control, you may pay 2. If you do, put this card into play as a face-down resource.' (Manifest, Hidden Ruins, Accidental Invention, Burly Assailment); I Drink Your Milkshake! watches from the void. Listed as future work in CATALOG-BUILDOUT 'Known engine debt / backlog'.",
-      "cards": []
+      ]
     },
     "scheduled-effect": {
       "status": "implemented",
@@ -639,6 +639,18 @@
       "cards": [
         "a6113b89-5ab1-4e79-8294-9e645cdcd547"
       ]
+    },
+    "reveal-top-n-pool": {
+      "status": "implemented",
+      "kind": [
+        "selector",
+        "effect"
+      ],
+      "spec": "CardSelector.fromTop (restrict to cards within the top N of their owner deck) + lookAndReorder `to: \"bottom\"` (relocate the reordered top N to the deck bottom in the chosen order). Composes into \"reveal the top N of a deck, pick some, the owner bottoms the rest in any order.\" RULES.md §12. Rosy Palmer, and Her Five Friends.",
+      "cards": [
+        "4d801a32-d054-413d-9eaf-d915a82139b1"
+      ],
+      "rulesRef": "RULES.md §12"
     }
   },
   "cards": [
@@ -665,8 +677,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "'must attack if they can' = new Restriction 'mustAttack'. deployedViaFlipUp read via ability-level variables + if/numberCompare on the context flag flip-up exposes.",
+      "confidence": "high",
+      "notes": "EXTRA COST: pick X-or-fewer characters (X = conditional deployedViaFlipUp ? 4 : 2 via ability variables); forEach -> grantRestriction mustAttack untilEndOfTurn; draw 1. FLIP UP 2 [E] (no rider). All proven primitives.",
       "rulesAudited": true
     },
     {
@@ -692,8 +704,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "low",
-      "notes": "'pay X where X is the character's numeric cost' is a hard play-time EXTRA COST: one payResources cost, amount = conditional(deployedViaFlipUp ? 0 : cardCost(respondedToCard)). respondedToCard resolves during play-cost eval, so no 'mayPay' workaround. FLIP UP path pays only 1 [G] + loses 5 influence.",
+      "confidence": "high",
+      "notes": "Deploy only in response to a character (respondingTo cardType character). Numeric EXTRA COST payResources amount = conditional(deployedViaFlipUp ? 0 : cardCost(respondedToCard)) — evaluated at play-cost time; verified paying exactly the responded-to character's cost. Effect: terminate(respondedToCard). FLIP UP 1 [G] + faction loses 5 influence.",
       "rulesAudited": true
     },
     {
@@ -720,8 +732,8 @@
       "display": {
         "notes": "top card of controller's deck is shown face-up at all times while in play"
       },
-      "confidence": "medium",
-      "notes": "SHAKE UP alone is authorable now (payResources + shuffleDeck). The strength buff needs deck-position-ref to read the top card's cardCost; the 'revealed at all times' is a persistent display state (renderer-facing) that deck-position-ref should expose.",
+      "confidence": "high",
+      "notes": "UNIQUE. Continuous: source strength += cardCost(deckPosition top of your deck). SHAKE UP: pay 2 -> shuffleDeck. 'The top card is revealed at all times' is renderer-facing display only (no card keys off it); the mechanical buff + ability are complete.",
       "rulesAudited": true
     },
     {
@@ -733,7 +745,8 @@
       "textHash": "9da56bfbef3b",
       "behavior": {
         "shapes": [
-          "triggered:turnStarted (any player) -> forEachPlayer: chooserSelectsOption[draw 1 | play a resource]"
+          "triggered:turnStarted (any player) -> forEachPlayer: mayPay -> chooserSelectsOption[draw 1 | play a resource]",
+          "triggered:turnStarted triggerZone:\"deck\" + bottomedInMulligan + resourceIcons(deception)>=1 -> draw 1"
         ],
         "reusesProvenShape": true,
         "newTestNeeded": false
@@ -743,11 +756,12 @@
         "keywords": []
       },
       "engineCapability": [
-        "for-each-player"
+        "for-each-player",
+        "triggered-from-zone"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "Start-of-turn draw/resource choice: implemented (forEachPlayer + mayPay + chooserSelectsOption; 'play a resource' = chooserSelectsTarget(hand) + playResource). Mulligan clause: GameState.mulligan history + the bottomedInMulligan condition now exist, so 'if you chose to bottom this in your mulligan' is expressible; the remaining two pieces are a scoped deferral (no other card needs them): (a) an optional 'you may reveal it' prompt during the mulligan, (b) a triggered ability that fires while the source sits in the deck zone (findTriggers is play-only; parallel to activationZone for activated abilities). Not engine debt — a normal backlog item.",
+      "confidence": "high",
+      "notes": "Start-of-turn draw/resource choice (main ability): forEachPlayer + mayPay + chooserSelectsOption; \"play a resource\" = chooserSelectsTarget(hand) + playResource. Mulligan clause: a turnStarted trigger with triggerZone \"deck\", gated on bottomedInMulligan(source) + numberCompare(resourceIcons deception >= 1) -> draw 1. Two interpretation calls on the parody wording (CR is silent): \"you may reveal it\" is treated as automatic (no hidden-deck-info model; revealing has zero downside, so outcomes are identical) and \"control at least [D]\" is checked at the start-of-turn trigger rather than at game start (where it could never be true).",
       "rulesAudited": true
     },
     {
@@ -772,7 +786,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -798,8 +812,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "'x greater than 0' is a variable lower bound — needs an on-ability condition numberCompare(variable x, >, 0) (expressible). The discard-removal is the cost gap.",
+      "confidence": "high",
+      "notes": "EXTRA COST: choose X > 0 (ability condition numberCompare x > 0); pick X tactics in your discard; sacrificeSelected(removeFromGame) them. Effect: optional search your deck for a tactic with cardCost <= X -> to hand; shuffleDeck. FLIP UP 1 [O] + draw. All proven.",
       "rulesAudited": true
     },
     {
@@ -850,8 +864,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "Only two gaps: flip-up, and matching characters by trade. 'all ... characters' includes both players'.",
+      "confidence": "high",
+      "notes": "forEach(character, not cardTradeIs rogue) -> deplete; draw 1. 'All characters' spans both players. FLIP UP 1 [D] + faction loses 5 influence.",
       "rulesAudited": true
     },
     {
@@ -929,8 +943,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "ETB draw is authorable today; the two continuous clauses need cost-modifier + continuous-aura.",
+      "confidence": "high",
+      "notes": "ETB draw 1. Continuous costModifier affects controller, delta -2, minCost 1, selector type character ('characters you play'). Continuous aura: your in-play characters get -1 strength / -1 life. All proven.",
       "rulesAudited": true
     },
     {
@@ -979,8 +993,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "Net effect: every character's life becomes 2. Simpler encoding: modifier(life, set, 2)? but text is 'lose X life', which matters if other effects also modify life. Prefer printed-stat form. structure=1.",
+      "confidence": "high",
+      "notes": "UNIQUE, structure 1. Continuous aura over every in-play character: life += -(printedStat life - 2), i.e. it loses (printed life - 2) life. Computed from PRINTED life so it stacks correctly with other life modifiers (net life = 2 for an otherwise-unmodified character).",
       "rulesAudited": true
     },
     {
@@ -1006,8 +1020,8 @@
         "replacement-effect-optional"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Optional replacement wired (replacementChoice pause). Replacement watches 'a character would be put into an OPPONENT's hand from play' via replaces.controlledBy='opponent'. SOUL CONSUMPTION dig = deck-position-ref (top 2) + a pick-one-to-hand / rest-to-bottom distribution.",
+      "confidence": "high",
+      "notes": "UNIQUE. Optional replacement on moveToZone(hand, character, controlledBy opponent) — pay 1 -> removeFromGame the character + token on Geiseric. SOUL CONSUMPTION: pay 2 + removeCounter token -> lookAndReorder top 2, then top -> hand, new-top -> deck bottom. replacement-effect-optional built + smoke-tested.",
       "rulesAudited": true
     },
     {
@@ -1033,8 +1047,8 @@
         "replacement-effect-optional"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Optional replacement wired (replacementChoice pause). 'destroyed by an opposing card or effect' = replaces.by='opponent' (the initiating player is an opponent of Giada's controller; lethal battle damage from an opposing attacker counts). 'reduce damage already inflicted to 0' = the setDamage effect.",
+      "confidence": "high",
+      "notes": "UNIQUE. Continuous: -1 strength / -1 life per token. Optional replacement on destroy(controlledBy self, by opponent) -> token on self + deplete + removeFromBattle + setDamage 0. 'by opponent' scopes on the initiating player (incl. lethal battle damage from an opposing attacker). Smoke-tested.",
       "rulesAudited": true
     },
     {
@@ -1061,8 +1075,8 @@
         "grant-ability-text"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "Broadest card in the set. Grants DATA (unique = name) not English. Recommend DEFER past the pilot unless the user wants grant-ability-text now.",
+      "confidence": "high",
+      "notes": "Continuous uniqueGrant: designation 'cardName' to every non-resource card (selector conditions: not cardTypeIs resource). Grants the Unique DESIGNATION as data — consulted by getEffectiveUnique / the Unique state-based check for in-play cards. Broad but mechanically exact.",
       "rulesAudited": true
     },
     {
@@ -1115,8 +1129,8 @@
         "token-permanents"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Authored + verified. Play: terminate all other unresolved stack items; deploySameNameThisTurn(opponent>=2) ? createTokens(self, Micromajig 0/1/1, 2) : opponent mayPay -> createTokens(opponent, 3). FLIP UP '2 [E][E] and you may play a resource' rider now present (optional hand pick -> playResource auto).",
+      "confidence": "high",
+      "notes": "Play: terminate all other unresolved stack items (scope othersOnStack); if deploySameNameThisTurn(opponent >= 2) -> createTokens(self, Micromajig 0/1/1, 2); else each opponent mayPay -> createTokens(opponent, 3). FLIP UP 2 [E][E] + optional play-a-resource rider (hand pick -> playResource auto).",
       "rulesAudited": true
     },
     {
@@ -1141,7 +1155,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1171,8 +1185,8 @@
         "play-extra-cost-nontactic"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "Needs: EXTRA-COST targets on a location (play-extra-cost-nontactic); self-damage as an ability cost (dealDamage cost form — add capability 'damage-self-cost', currently folded into notes); a per-card 'do-not-restore' tag on cards it depletes (new: restore-restriction). Multiple gaps — lowest priority in the set.",
+      "confidence": "high",
+      "notes": "EXTRA COST (onPlay targets): pick 2 characters -> deplete + setRestoreLock each. PARTY ON: cost dealDamage(source, 1); pick a character -> deplete + setRestoreLock. setRestoreLock realises 'cannot be restored by their controller's faction restore rule'. structure not damage-capped by design (activated self-damage is the cost).",
       "rulesAudited": true
     },
     {
@@ -1199,8 +1213,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "Coin flip via ability-level variables {coin:{random 1..2}} + if numberCompare coin='1' -> draw. CONVENTION (engine-derived): coin result 1 = 'win'. SNEAK = Air Travel-style self grantKeyword. UNIQUE metadata: unique='iohane'.",
+      "confidence": "high",
+      "notes": "TACTICAL keyword, UNIQUE (unique 'iohane'). Start of your turn: if numberCompare(random 1..2 = 1) -> draw 1 (engine-derived: coin result 1 = 'win'). SNEAK: pay 1 -> grantKeyword covert untilEndOfTurn on self.",
       "rulesAudited": true
     },
     {
@@ -1250,8 +1264,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "bind-variable captures the destroyed character's stats before it leaves play. Confirm the aggro-grant reading in RULES.md §9 (Aggro = exempt from the start-of-turn eligibility rule) — matches the text exactly.",
+      "confidence": "high",
+      "notes": "AGGRO keyword ('can attack even if not in play since the start of the turn' = Aggro, RULES.md §9). When another character enters under your control: mayPay -> bind X/Y = that character's strength/life, destroy it, optional pick a character -> +X strength / +Y life untilEndOfTurn. bind captures the stats before the destroy. Own ETB excluded (not sourceIsEventCard).",
       "rulesAudited": true
     },
     {
@@ -1278,8 +1292,8 @@
         "meta-use-ability"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Authored + verified. Target selector now gated by hasAbility(abilityType:'activated') so a vanilla card isn't a legal pick (matches 'a card ... with an ability in its rules text'). useTargetAbility(times:2) then destroy(pick).",
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a card you control gated by hasAbility(activated) ('a card ... with an ability in its rules text'). useTargetAbility(chooser controller, times 2) then destroy the picked card.",
       "rulesAudited": true
     },
     {
@@ -1383,8 +1397,8 @@
         "name-a-value"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "name-a-value stores the chosen subtype on the card instance (a counter/string slot) so the continuous cost-modifier can read it. structure=3.",
+      "confidence": "high",
+      "notes": "structure 3. ETB nameValue(subtype, storeAs 'banned'). Continuous costModifier: +2 for both controller and opponent, selector subtypeVar 'banned' ('players must pay 2 to deploy cards with the named subtype').",
       "rulesAudited": true
     },
     {
@@ -1410,8 +1424,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "medium",
-      "notes": "First activate-from-zone (RECUR) test target. has-unique-condition is trivial once `unique` metadata exists on the target pool. RECUR now carries threshold:\"gg\" (ActivatedAbility.threshold gate).",
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character with a Unique designation (hasUnique) -> removeFromGame. RECUR: activationZone discard, ability threshold [G][G], pay 1 + removeFromGame self -> draw 1.",
       "rulesAudited": true
     },
     {
@@ -1486,7 +1500,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1514,8 +1528,8 @@
         "for-each-player"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "Authored + verified. Main effect = forEachPlayer keep-one-of-each-non-resource-type, rest to hand. RECUR (activationZone discard) = pay 4 + remove self from game, then EACH OPPONENT (scoped via controller:'opponent' selectors / chooser, NOT forEachPlayer) keeps one of each non-resource hand type and discards the rest.",
+      "confidence": "high",
+      "notes": "Play: forEachPlayer picks one card of each non-resource type they control (chooserSelectsTarget x4, optional); every other non-resource card -> owner's hand. RECUR: activationZone discard, threshold [O]x4, pay 4 + removeFromGame self -> each opponent (controller:'opponent' selectors, not forEachPlayer) keeps one card of each non-resource hand type, discards the rest.",
       "rulesAudited": true
     },
     {
@@ -1540,7 +1554,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1591,7 +1605,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1616,7 +1630,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1641,7 +1655,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1695,8 +1709,8 @@
         "optional-cost-in-effect"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "Needs: optional 'you may pay N' inside a triggered effect (chooserSelectsOption branch carrying a payResources cost, OR a payCost effect); a name-match selector condition (eventCard.name); moveCard to deck TOP (deck-position-ref). Not actually a replacement — retag as 'triggered' + those two caps; leaving replacement-effect off. TODO adjust caps on author.",
+      "confidence": "high",
+      "notes": "When a character you control is destroyed (cardDestroyed + eventCardControlledBy controller + cardTypeIs eventCard character): mayPay 1 -> optional search your deck for a card with the same name (cardNameEquals eventCard) -> moveCard to deck top (no reshuffle). Triggered ability, not a replacement.",
       "rulesAudited": true
     },
     {
@@ -1721,7 +1735,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "medium",
-      "notes": "Faction setup block (faction.startingInfluence/setup/turn) is engine-consumed via createTwoPlayerFactionGame and is structurally validated by card-data-integrity.test.ts. No behavior.abilities on this card. Deep design-parity check with the base Tournament Faction deferred (not pilot scope).",
+      "notes": "Parody faction card with no rules text in the source dump (data/raw-database.json text is empty). The faction setup block (startingInfluence 25 / 2 staple starting resources / 8-9 opening hand / 1 mulligan / draw-or-play-a-resource develop / standard restore) is a placeholder copy of the base Tournament Faction. Structurally valid and engine-consumed via createTwoPlayerFactionGame + validated by card-data-integrity.test.ts. Cannot be raised to `high` without the printed card's numbers.",
       "rulesAudited": true
     },
     {
@@ -1748,8 +1762,8 @@
         "token-permanents"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "4 of 5 clauses need only count-resource-icons; the elitism clause needs token-permanents. Could author the other 4 clauses first.",
+      "confidence": "high",
+      "notes": "Five independent if(numberCompare resourceIcons(controller, <icon>) >= 2) clauses: [O][O] opponent discards 1; [G][G] draw 1; [E][E] createTokens(self, Micromajig, 1); [D][D] mill an opponent deck card to their discard + shuffle; [R][R] optional pick a character -> 2 damage.",
       "rulesAudited": true
     },
     {
@@ -1773,8 +1787,8 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": "low",
-      "notes": "Second clause semantics of 'enters play attached to faction' (does it still provide its icon? RULES.md §4: attached resources can't be reused until detached) need a rules decision — flagged low confidence.",
+      "confidence": "high",
+      "notes": "UNIQUE. Continuous costModifier: opponents +1 to deploy a tactic. Triggered resourcePlayed + eventPlayerIs opponent + eventOrdinal = 1 -> attachTo(eventCard, that player's faction). Per CR §203.7 / §405.6 the attached resource still provides its icon for threshold; it just can't be spent again until the owner's restore rule detaches it (verified).",
       "rulesAudited": true
     },
     {
@@ -4504,17 +4518,17 @@
       "name": "Rosy Palmer, and Her Five Friends",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "56e93699d05c",
       "behavior": {
         "needed": true,
         "shapes": [
           "triggered:cardDestroyed(self)",
-          "chooserSelectsTarget(opp deck character)",
+          "chooserSelectsTarget over CardSelector.fromTop 5",
           "putIntoPlay",
-          "shuffleDeck"
+          "lookAndReorder to:\"bottom\" (count 5 - selectionCount)"
         ],
-        "reusesProvenShape": true,
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4524,11 +4538,12 @@
         "keywords": []
       },
       "engineCapability": [
-        "put-into-play-from-zone"
+        "put-into-play-from-zone",
+        "reveal-top-n-pool"
       ],
       "display": {},
-      "confidence": "medium",
-      "notes": "UNIQUE ROSY. On destroyed: optional pick a character from the opponent's deck -> putIntoPlay under your control; shuffle the opp deck. APPROXIMATION: the character pick is from the whole opponent deck, not the revealed top 5; and 'put the remaining cards on the bottom in any order' is modelled as a full deck shuffle. Needs a 'reveal top N as a candidate pool' primitive + a bottom-of-deck reorder to be exact (see CATALOG-BUILDOUT backlog).",
+      "confidence": "high",
+      "notes": "UNIQUE ROSY. On destroyed: chooserSelectsTarget over selector {owner opponent, zone deck, type character, fromTop 5} (optional) -> putIntoPlay under your control; then lookAndReorder player opponent, to:\"bottom\", count = 5 - selectionCount(grab) — the opponent bottoms the leftover revealed cards in any order. fromTop + lookAndReorder.to built + fixture-tested + smoke-tested.",
       "rulesAudited": true
     },
     {

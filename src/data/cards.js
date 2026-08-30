@@ -33371,7 +33371,8 @@ export default [
                 "selector": {
                   "owner": "opponent",
                   "zone": "deck",
-                  "type": "character"
+                  "type": "character",
+                  "fromTop": 5
                 },
                 "count": 1,
                 "optional": true
@@ -33398,8 +33399,25 @@ export default [
                   ]
                 },
                 {
-                  "type": "shuffleDeck",
-                  "player": "opponent"
+                  "type": "lookAndReorder",
+                  "player": "opponent",
+                  "to": "bottom",
+                  "count": {
+                    "type": "add",
+                    "values": [
+                      5,
+                      {
+                        "type": "multiply",
+                        "values": [
+                          -1,
+                          {
+                            "type": "selectionCount",
+                            "id": "grab"
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -38165,6 +38183,41 @@ export default [
                   "elseEffects": []
                 }
               ]
+            }
+          ]
+        },
+        {
+          "id": "chest-mulligan-draw",
+          "type": "triggered",
+          "triggerZone": "deck",
+          "event": "turnStarted",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "eventPlayerIs",
+                "player": "controller"
+              },
+              {
+                "type": "bottomedInMulligan"
+              },
+              {
+                "type": "numberCompare",
+                "left": {
+                  "type": "resourceIcons",
+                  "player": "controller",
+                  "icon": "deception"
+                },
+                "operator": ">=",
+                "right": 1
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
             }
           ]
         }

@@ -356,4 +356,59 @@ describe("Seed 2 smoke: authored behavior drives the engine", () => {
     assert.equal(engine.state.cards[id("worm")].zone, "play");
     assert.equal(engine.state.developedThisTurn, true);
   });
+
+  test("Rosy Palmer: destroyed -> take a top-5 character, opponent bottoms the rest", () => {
+    const bolt = tactic({
+      name: "Rosy Smoke Bolt",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 10 }]
+          }
+        ]
+      }
+    });
+    const dc = (name: string, kind: "char" | "item"): CardDefinition =>
+      kind === "char"
+        ? { ...character({ name, life: 3 }), id: `smoke-r-${name}` }
+        : { ...item({ name }), id: `smoke-r-${name}` };
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "rosy", def: def("Rosy Palmer, and Her Five Friends"), owner: P1, damage: 0 },
+        { key: "bolt", def: bolt, owner: P1, zone: "hand" },
+        { key: "c1", def: dc("C1", "char"), owner: P2, zone: "deck" },
+        { key: "c2", def: dc("C2", "item"), owner: P2, zone: "deck" },
+        { key: "c3", def: dc("C3", "char"), owner: P2, zone: "deck" },
+        { key: "c4", def: dc("C4", "char"), owner: P2, zone: "deck" },
+        { key: "c5", def: dc("C5", "item"), owner: P2, zone: "deck" },
+        { key: "c6", def: dc("C6", "char"), owner: P2, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bolt"), selected: { t: [id("rosy")] } });
+    resolvePendingResponses(engine);
+    const pc = () => engine.state.pendingChoice as { kind: string; playerId: string; cardIds?: string[] } | undefined;
+
+    assert.equal(pc()?.kind, "chooserSelectsTarget");
+    // C6 is a character but outside the revealed top 5
+    assert.throws(
+      () => engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: [id("c6")] } }),
+      /Illegal target/
+    );
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: [id("c3")] } });
+
+    assert.equal(pc()?.kind, "reorderDeck");
+    assert.equal(pc()?.playerId, P2);
+    assert.deepEqual(pc()?.cardIds, [id("c1"), id("c2"), id("c4"), id("c5")]);
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "reorderDeck", order: [id("c1"), id("c2"), id("c4"), id("c5")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("c3")].zone, "play");
+    assert.equal(engine.state.cards[id("c3")].controllerId, P1);
+    assert.deepEqual(engine.state.players[P2].deck, [id("c6"), id("c1"), id("c2"), id("c4"), id("c5")]);
+  });
 });

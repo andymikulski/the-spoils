@@ -325,4 +325,46 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
     assert.equal(engine.state.players[P2].hand.includes(id("victim")), false);
     assert.equal(engine.state.cards[id("geiseric")].counters.token, 1);
   });
+
+  test("Community Chest: bottomed in the mulligan -> draws from the deck at the start of your turn while you control [D]", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        // chest is at the BOTTOM (it was bottomed in the mulligan)
+        { key: "f1", def: character({ name: "F1", id: "cc-f1" }), owner: P1, zone: "deck" },
+        { key: "f2", def: character({ name: "F2", id: "cc-f2" }), owner: P1, zone: "deck" },
+        { key: "chest", def: def("Community Chest"), owner: P1, zone: "deck" },
+        { key: "d1", def: resourceCard({ name: "Dec", id: "cc-dec", resource: { provides: ["deception"], staple: true } }), owner: P1 }
+      ]
+    });
+    engine.state.mulligan[P1] = [id("chest")];
+    const handBefore = engine.state.players[P1].hand.length;
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    // the deck-zone trigger drew a card; the chest-boon ability does NOT
+    // fire from the deck (no triggerZone -> play only)
+    assert.equal(engine.state.players[P1].hand.length, handBefore + 1);
+    assert.equal(engine.state.cards[id("chest")].zone, "deck", "stays in the deck");
+  });
+
+  test("Community Chest: not bottomed / no [D] -> no deck draw", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "chest", def: def("Community Chest"), owner: P1, zone: "deck" },
+        { key: "d1", def: resourceCard({ name: "Dec", id: "cc-dec2", resource: { provides: ["deception"], staple: true } }), owner: P1 },
+        { key: "filler", def: character({ name: "Filler", id: "cc-filler2" }), owner: P1, zone: "deck" }
+      ]
+    });
+    const handBefore = engine.state.players[P1].hand.length;
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].hand.length, handBefore, "no mulligan bottom -> no draw");
+  });
 });
