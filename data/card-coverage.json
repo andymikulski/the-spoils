@@ -339,6 +339,306 @@
       "cards": [
         "dc1f0f31-d593-4619-8af1-9a66cd544e5c"
       ]
+    },
+    "flip-face-down": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Effect { type:'flipFaceDown', target } — flip an in-play card (character/item/location/resource) face-down under its OWNER's control. Per RULES.md §2 (CR §411.3/§411.4) the flip is 'leaves play' + 'a brand-new card enters play': damage/tokens/attachments/temp text all cleared; the result is a face-down resource providing Volition. Also the tactic self-disposition form 'Put this card into play under its owner's control as a face-down resource instead of into their discard pile' — authored as the tactic's own effect { type:'flipFaceDown', target:'source' }; finishStackItem/finishFlipUp bookkeeping must detect the source already re-entered play and skip the move-to-discard. Pervasive from the FLIP UP era on (~28 Seed 2 cards).",
+      "cards": []
+    },
+    "self-disposition": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "engine"
+      ],
+      "spec": "CardDefinition/behavior marker selfDisposition?: 'faceDownResource' | 'hand' — where a resolving tactic goes AFTER its effects instead of the discard pile ('Put this card into play under its owner's control as a face-down resource instead of into their discard pile'; Clam Hash: '...into its owner's hand instead...'). Consulted by the post-resolution bookkeeping (finishStackItem / finishFlipUp). Distinct from flip-face-down which is the general effect; this is the disposition-override for the tactic itself and interacts with 'if you deployed this using FLIP UP' riders.",
+      "cards": []
+    },
+    "put-into-play-from-zone": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Effect { type:'putIntoPlay', target, controller, faceDown? } — move a card from deck/discard/void INTO play as its real type, running entrance bookkeeping (cardEnteredPlay emit, attach-requirement check, attackEligibleTurn). faceDown:true => enters as a face-down resource (like playResourceCard faceDown but sourced from any zone). Covers 'put the card into play under your control' / '...as a face-down resource' (Overzealous Excavation RECUR, Miraculous Regeneration, Peculate, Rosy Palmer, Party Clowns, Contrabulous RUNE OF ACCELERATION, Gilded Yurt).",
+      "cards": []
+    },
+    "deploy-from-zone": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Generalise deployForFree to source zone 'play' (a face-down permanent/tactic) or 'discard': { type:'deployFromZone', chooser, declaration, free?, } — the chosen card is DEPLOYED (a tactic resolves; a permanent enters play) without paying its numeric cost; threshold and non-numeric extra costs still apply; resolves synchronously as a nested consequence. 'Reveal a face-down tactic you control. You may deploy the tactic.' (Manifest, Hidden Ruins, Accidental Invention, Burly Assailment); 'Pick a non-resource card in your discard pile. You may deploy the card.' (Dark Awakening).",
+      "cards": []
+    },
+    "facedown-selector": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "CardSelector.faceDown?: boolean. When true, match face-down in-play cards by their REAL definition.type (today face-down cards are excluded from any type-matched selector, SpoilsEngine ~L2476). Enables 'a face-down tactic/item/location/character/resource you control' targets (Foment, Manifest, Hidden Ruins, Accidental Invention, Burly Assailment, Implosive Explosion) and conditions on 'while this card is a face-down resource' (Fired Hand, Vorpal Sword).",
+      "cards": []
+    },
+    "card-provides-icon": {
+      "status": "implemented",
+      "kind": [
+        "condition",
+        "engine"
+      ],
+      "spec": "(1) getThresholds must also count non-resource in-play cards whose definition provides resource icons — 'PROVIDES: [O]' on a character, and the Crest items — not just cards where isResource() is true. getResourceIcons already returns definition.resource.provides regardless of type; only the isResource gate in getThresholds excludes them. (2) New condition { type:'cardProvides', target, icon, min } true when getResourceIcons(target) has >= min of icon — used with cardEnteredPlay / resourcePlayed triggers + target:'eventCard' for 'When a card that provides at least [X] enters play under your control'. ~15 Seed 2 cards.",
+      "cards": []
+    },
+    "triggered-from-zone": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "TriggeredAbility.triggerZone?: Zone (default 'play') — the trigger is live while its source sits in that zone (discard / void), parallel to ActivatedAbility.activationZone. findTriggers currently scans in-play cards only. 'While this card is in your discard pile, when a card that provides at least [O] enters play under your control, you may pay 2. If you do, put this card into play as a face-down resource.' (Manifest, Hidden Ruins, Accidental Invention, Burly Assailment); I Drink Your Milkshake! watches from the void. Listed as future work in CATALOG-BUILDOUT 'Known engine debt / backlog'.",
+      "cards": []
+    },
+    "scheduled-effect": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'scheduleEffect', when:'startOfNextTurn' | 'endOfTurn', condition?, effects } — registers a one-shot delayed effect on a serializable GameState list, fired at that moment (with the source/controller context captured) then discarded. 'Put the character into the void. At the start of your next turn, if this card is in play, put the voided character into play under your control.' (Gilded Yurt); 'At the end of the turn, put a token on this card and an opponent takes control of it.' (Vast Mastabatorium); Contrabulous RUNE OF ACCELERATION.",
+      "cards": []
+    },
+    "cards-drawn-event": {
+      "status": "implemented",
+      "kind": [
+        "event"
+      ],
+      "spec": "GameEvent cardsDrawn { playerId, count } emitted after any draw resolves (draw effect, Develop draw, faction opening/again). 'When a player draws any number of cards, that player may add or remove a token from this card.' (Meat of the Mountain).",
+      "cards": []
+    },
+    "keyword-suppression": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "ContinuousAbility.suppressKeywords?: KeywordGrantDefinition[] — while condition holds, target/selector cards LOSE the named keyword (hasKeyword returns false even if statically printed or otherwise granted). 'While there is a token on this card, it loses COVERT and gains 1 strength and 1 life.' (Nattering Stoopswaggler).",
+      "cards": []
+    },
+    "can-block-covert": {
+      "status": "implemented",
+      "kind": [
+        "ids"
+      ],
+      "spec": "New Keyword 'canBlockCovert' — a character with it is a legal blocker against a Covert attacking party (declareBlockers Covert check in SpoilsEngine treats it like Covert for blocking eligibility only). 'While there is a token on this card, it ... can block COVERT parties.' (Recyclable Golem).",
+      "cards": []
+    },
+    "cannot-be-restored": {
+      "status": "implemented",
+      "kind": [
+        "ids"
+      ],
+      "spec": "New Restriction 'cannotBeRestored' — honoured in applyFactionStartOfTurn and the restore effect (same effect as restoreLocked, but grantable as a continuous aura). 'Characters cannot attack or be restored.' (Framptle Tromwibbler — aura over all characters).",
+      "cards": []
+    },
+    "damage-prevention-shield": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'preventDamage', target, amount, mode:'reduce' | 'redirect', redirectTo? } + a serializable per-card runtime shield list consumed as damage is inflicted this turn, expiring end of turn. 'Reduce the next damage inflicted to the character this turn by 2.' (Tiny Shiny); 'The next X damage that would be inflicted to the first picked card this turn is inflicted to the second picked card instead.' (Delectable Boon). Distinct from ContinuousAbility.damageModifiers (needs a live in-play source) and the redirectDamage keyword (battle-only, all damage).",
+      "cards": []
+    },
+    "superlative-selector": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'isExtremum', target, metric:'cost' | Stat, direction:'min' | 'max', among: CardSelector } — true when no card matching `among` has a strictly lower/higher metric than `target`. Lets a target declaration express 'the character with the lowest numeric cost' (count 1 + this in selector.conditions; ties => the controller picks among the extrema). Verrucose Brains.",
+      "cards": []
+    },
+    "detach-effect": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Effect { type:'detach', target } — clears CardInstance.attachedTo (a resource stops being attached to a faction; an Attach-to-X item is left unattached and cleaned up by the state-based check). 'You may pick a resource attached to your faction. If you do, detach it from your faction.' (Braggadocian Aide).",
+      "cards": []
+    },
+    "remembered-target": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'rememberTarget', key, target } storing a CardInstanceId on CardInstance.linkedTargets[key] (cleared on leaving play) + TargetRef { type:'remembered', key } to read it back, and via targetExists a 'that card is still in play' gate. 'EXTRA COST: Pick a location you control. While the picked location is in play, this card cannot attack or block.' (Conscientious Objector — onPlay.targets remembers it, a continuous self-restriction gates on it).",
+      "cards": []
+    },
+    "variable-bounds": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "ActivatedAbility.variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }> validated when the playCard/activateAbility action supplies variables[id] — a chosen number capped by something OTHER than affordability. 'Pick a number for X, where X is less than or equal to the number of [O] you control.' (Desolate).",
+      "cards": []
+    },
+    "mill-destination": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "mill effect gains to?: 'discard' | 'removed' (default 'discard') — 'remove the top N cards of their deck from the game'. Hideous Hexapede of Horror (top 6, all players). (Single-card top-of-deck removal already works via moveCard + deckPosition.)",
+      "cards": []
+    },
+    "duplicate-stack-card": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Effect { type:'duplicate', target } — instantiate a transient copy of the targeted tactic/card on the response stack (same definitionId, owner = original owner, a fresh CardInstance in a 'deploying' zone), resolve its effects under the current controller, then the copy ceases to exist (like a token). 'Duplicate the tactic. Terminate the tactic.' (Muddle).",
+      "cards": []
+    },
+    "type-change-modifier": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "setCardType effect + GameState.cardTypeGrants + getCardTypes/hasCardType. For `duration` ADDS `cardType` (CR §208.1 — the card keeps its printed type; the §208.3 example still calls it \"an item\" while it \"becomes a character\"). Everything keyed off type consults hasCardType (typed selectors match both types, lethal-damage / attach-to SBAs, battle legality + CR §208.4 mid-battle removal, cardTypeIs, start-of-turn damage-clear + attack eligibility). grantStats -> `set` modifiers, same duration. Losing character type forgets this-turn damage (CR §208.3). RULES.md §3.7. Contrabulous Fabtraption RUNE OF ANIMATION.",
+      "cards": [
+        "a6113b89-5ab1-4e79-8294-9e645cdcd547"
+      ],
+      "rulesRef": "RULES.md §3.7"
+    },
+    "activate-while-facedown": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "condition"
+      ],
+      "spec": "Allow an ActivatedAbility with activationZone covering 'play' AND a new condition { type:'sourceIsFaceDown' } to be used while source.faceDown && zone==='play' (bypass the 'a face-down card's abilities cannot be activated' assert for that ability only). 'Reveal this card' in the cost is cosmetic; the card stays face-down unless an effect flips it. 'PETTY VENGEANCE — COST: Use this only while this card is a face-down resource. Reveal this card. Pay 1. ...' (Fired Hand); Vorpal Sword SNICKER SNACK.",
+      "cards": []
+    },
+    "partition-and-pick": {
+      "status": "implemented",
+      "kind": [
+        "choice",
+        "effect"
+      ],
+      "spec": "`partitionAndPick` effect + `GameState.pendingPartition` state machine driven by `partitionCards` -> `pickPile` -> `takeFromPile` pending choices. Both players reveal top N, split into K non-empty piles, cross-pick one of the other's piles, higher total `cost` pile's owner may take `winnerTakes` card(s), rest shuffled back. RULES.md §12. Mustache Aficionado (MUSTACHE SHOWDOWN).",
+      "cards": [
+        "1dffc074-b158-4134-b52e-9e6e56541cf0"
+      ],
+      "rulesRef": "RULES.md §12"
+    },
+    "staple-selector": {
+      "status": "implemented",
+      "kind": [
+        "expression",
+        "condition"
+      ],
+      "spec": "CardSelector.staple?: boolean + condition { type:'isStaple', target } — match/require a card whose ResourceDefinition.staple is true. 'search your deck for a staple resource' (Dowsing Cleric); 'reveal the top card of your deck ... if it is a staple resource' (Prophetic Assistant).",
+      "cards": []
+    },
+    "respond-to-ability": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "respondingTo condition gains a way to match 'an ability is the newest unresolved stack item' (e.g. respondsTo: 'ability'), and terminate scope:'target' can point at that ability's stack item. 'Deploy this only in response to an ability. Terminate the ability.' (Cock Block).",
+      "cards": []
+    },
+    "alternative-cost": {
+      "status": "implemented",
+      "kind": [
+        "cost"
+      ],
+      "spec": "Cost { type:'oneOf', options: Cost[][] } — the activator chooses one payable branch (a chooserSelectsOption-style pause at activation, or auto when only one branch is payable). 'Pay 1 or destroy a Micromajig token you control.' (Time Traveler Tourist Trap, ENSNARE).",
+      "cards": []
+    },
+    "activation-limit-per-turn": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "ActivatedAbility.usesPerTurn?: number — a per-turn cap on how many times this ability may be activated (serializable per-turn tally keyed by card+ability, reset each turn). 'Use this only 5 times each turn.' (Vast Mastabatorium, YOU KNOW YOU WANT TO...).",
+      "cards": []
+    },
+    "retarget-extra-cost": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "condition"
+      ],
+      "spec": "`retargetExtraCost` effect + `respondedToPicked` condition. Rewrites the responded-to stack item's stored EXTRA-COST card pick (the single in-play card of `cardType` -> `to`) everywhere it appears under that item's `context.selected`, so it resolves against the new pick. RULES.md §7. Mistaken Identity.",
+      "cards": [
+        "e38f4972-a3c7-47b4-adb2-25177eda9065"
+      ],
+      "rulesRef": "RULES.md §7"
+    },
+    "temp-resource-icons": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'grantResourceIcons', player, icon, amount, duration } adding phantom resource icons to a player's count for the duration, read by getThresholds / the resourceIcons expression (a serializable runtime list, cleaned up like modifiers). 'This turn, you control an additional [E][E][E][E].' (31337!).",
+      "cards": []
+    },
+    "source-depleted-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'cardDepleted', target } (default 'source') — true when target is depleted. 'At the end of your turn, if this card is depleted, inflict 1 damage to it.' (Dying Hero).",
+      "cards": []
+    },
+    "reveal-from-hand-alt-cost": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "context"
+      ],
+      "spec": "`CardDefinition.revealFromHand: { cost }` + a `revealFromHand` payload on the `chooseDevelop` `playResource` choice + a `costOverride` on `deployCard`. Reveal the card from hand instead of playing a resource and deploy it for the flat `cost` (threshold + EXTRA COSTs still apply), consuming the turn's develop resource play. RULES.md §6. Witty Worm.",
+      "cards": [
+        "5161057f-2ee8-4f52-be3d-1c983ac1e2e0"
+      ],
+      "rulesRef": "RULES.md §6"
+    },
+    "card-type-equals-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'cardTypeEquals', target, other } — true when target and other resolve to cards of the same type. 'You may pick a card of the same type as the discarded card.' (Perturb).",
+      "cards": []
+    },
+    "use-any-ability": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "choice"
+      ],
+      "spec": "Effect { type:'useAnyAbility', chooser, selector? } — chooser picks any one activatable ability of a card matching selector (default: any card they control) and resolves it as a nested sub-resolution. Generalises useTargetAbility (which needs a fixed target). 'At the start of your turn, you may use an ability.' (The Poshernacle).",
+      "cards": []
+    },
+    "same-party-damage-modifier": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "A selector/condition predicate 'in the same battle party as <source>' for ContinuousAbility.damageModifiers. 'When battle damage is inflicted to a character in a party with this card, reduce the amount by 1.' (Necromantic Healer).",
+      "cards": []
+    },
+    "name-selector": {
+      "status": "implemented",
+      "kind": [
+        "selector"
+      ],
+      "spec": "`CardSelector.name` — exact printed-name match ('search your deck for a card named Elitism' / 'a card named Micromajig'). Distinct from the `cardNameEquals` condition (compares two cards, not a literal). Contrabulous Fabtraption RUNE OF ACCELERATION.",
+      "cards": [
+        "a6113b89-5ab1-4e79-8294-9e645cdcd547"
+      ]
     }
   },
   "cards": [
@@ -1482,12 +1782,15 @@
       "name": "31337!",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5d0d4f9ee47e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:grantResourceIcons",
+          "selfDisposition:faceDownResource"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1496,23 +1799,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "self-disposition",
+        "temp-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "This turn +[E][E][E][E] via grantResourceIcons (untilEndOfTurn), read by getThresholds/resourceIcons; selfDisposition faceDownResource. Both capabilities built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "12d7d798-f74e-44af-9a45-4cf653fe6c64",
       "name": "3cc3n7r1c 73chn1c14n",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "212e49782599",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked(self-limit)",
+          "grantRestriction",
+          "activated:restore(ASSIST)",
+          "activated:restore@threshold(RESTORE)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1523,46 +1834,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Attack only once each turn' => triggered characterAttacked + sourceIsEventCard -> grantRestriction cannotAttack self untilEndOfTurn (clean reuse). ASSIST: deplete, pick another character you control -> restore it + grantRestriction cannotAttack EOT. RESTORE: [E][E][E] pay 3 -> restore self (ActivatedAbility.threshold).",
+      "rulesAudited": true
     },
     {
       "id": "5e8c791e-940b-4edf-95e3-3f043072179a",
       "name": "3p1c D00dm4k3r",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d8059eb7e79c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(attachedTo, value=resourceIcons)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ATTACH TO CHARACTER. Continuous: attachedTo +X strength & +X life where X = resourceIcons(controller, elitism).",
+      "rulesAudited": true
     },
     {
       "id": "a51b7b2b-e098-4000-9eca-b3664af565cb",
       "name": "4rm0r3d 31f",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e1264b41fd45",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(self, -life = counter)",
+          "activated:addCounter+createTokens(FALL APART)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1573,21 +1891,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Continuous: self -X life where X = counter(token). FALL APART: pay 1, +1 token -> createTokens 1 Micromajig.",
+      "rulesAudited": true
     },
     {
       "id": "7e5bb861-d287-4c8b-8eac-44144ab6ef99",
       "name": "A Blazing Zero",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b6769151123b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:respondingTo(tactic)",
+          "terminate",
+          "putIntoPlay(that tactic -> face-down resource under owner)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1596,24 +1918,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "If deployed in response to a tactic: terminate it, then instead of discard put THAT tactic into play under its owner's control as a face-down resource (putIntoPlay target:respondedToCard, controller:ownerOf, faceDown).",
+      "rulesAudited": true
     },
     {
       "id": "e3ca7aad-a38b-4181-a743-e70c6e2f119b",
       "name": "Accidental Invention",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f3c08bbcf49b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:deployFromZone(item)",
+          "draw",
+          "triggered:cardEnteredPlay@discard",
+          "flipUp"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -1621,23 +1950,32 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone",
+        "facedown-selector",
+        "triggered-from-zone",
+        "put-into-play-from-zone",
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Sibling of Manifest/Hidden Ruins for items. FLIP UP 1 [E].",
+      "rulesAudited": true
     },
     {
       "id": "bb958389-aea2-49dd-b8b1-b5f8c20f826b",
       "name": "Acidic Phlegm",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "ea7e45544855",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:forEach:dealDamage",
+          "flipUp(withPlayResourceRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1648,21 +1986,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Inflict 1 to all characters (forEach). FLIP UP 3 [R][R] + play a resource.",
+      "rulesAudited": true
     },
     {
       "id": "48ee8c98-eb09-4d02-b16f-4fc38f686d7a",
       "name": "Alluring Quicksand",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "11816beec116",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:flipFaceDown",
+          "activated:flipFaceDown@discard(RECUR)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1671,23 +2012,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character -> flipFaceDown (face-down under owner). RECUR: [G][G][G][G] activationZone discard, pay 2, removeFromGame self, pick a character -> flipFaceDown.",
+      "rulesAudited": true
     },
     {
       "id": "3423878b-36d4-43e7-a0b1-9818a91d5c2c",
       "name": "Aroused Stiffbone",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6de5146987bf",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay:payResources(amount=7 - resourceIcons rage)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1696,23 +2041,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pay X = 7 - resourceIcons(controller, rage) (add[7, multiply[-1, ...]]; clamp >=0). onPlay.costs on a character.",
+      "rulesAudited": true
     },
     {
       "id": "5159bbf9-b008-42e8-a3ba-a7480ede862c",
       "name": "Ascendant Madcap",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ab0a28ce89b7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay:addCounter",
+          "continuous:modifier(+str per token)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1721,23 +2071,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "When a card providing >=[R] enters under your control: +1 token. +1 strength per token.",
+      "rulesAudited": true
     },
     {
       "id": "e3fae5c4-c6ed-4c28-af91-2d85d11fceb1",
       "name": "Ass",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "fe1a6fdd33ff",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding x2",
+          "chooserSelectsTarget(opponent)",
+          "takeControl"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1748,46 +2104,54 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Two end-of-your-turn triggers: (1) chooserSelectsTarget opponent picks a character they control+own -> takeControl to you (targetExists guards 'if they can'); (2) takeControl of this card to the opponent. Same-event triggers, active player orders.",
+      "rulesAudited": true
     },
     {
       "id": "7d27517d-2354-46ca-80a0-3ec605d43b7d",
       "name": "Athalamund Mangod, The Iron Fist",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "555d649126d3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:bind X,Y",
+          "dealDamage self",
+          "dealDamage target"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "athalamund",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE ATHALAMUND. PUNCH: pay 1, deplete, pick a character. X = its strength, Y = 2*this.strength (bind before damage). Inflict X to self, Y to the character.",
+      "rulesAudited": true
     },
     {
       "id": "bc75cfe1-2ee1-4eb5-82f5-5ea281cf451e",
       "name": "Barrier of Benevolence",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6f6c642a3551",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:variable X",
+          "payResources(X+X)",
+          "forEach selected:createModifier(+X/+X EOT)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1798,47 +2162,60 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: choose X, pay X+X, pick 2 or fewer characters -> +X str & +X life EOT each. Proven X-variable shape (BEHAVIORS recipe).",
+      "rulesAudited": true
     },
     {
       "id": "0c2563df-d5fa-4444-a48e-9506e158f5b8",
       "name": "Braggadocian Aide",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b335aed41cdc",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(opponent)",
+          "detach"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "elitism"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "detach-effect",
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "PROVIDES: [E] (set resource.provides). Start of each opponent's turn: may pick a resource attached to your faction -> detach it.",
+      "rulesAudited": true
     },
     {
       "id": "1c5c411a-4655-4284-b1b2-b38a73713292",
       "name": "Burly Assailment",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "13011636204f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:deployFromZone(character)",
+          "draw",
+          "triggered:cardEnteredPlay@discard",
+          "flipUp"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -1846,48 +2223,62 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone",
+        "facedown-selector",
+        "triggered-from-zone",
+        "put-into-play-from-zone",
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Sibling of Manifest for characters. FLIP UP 1 [D].",
+      "rulesAudited": true
     },
     {
       "id": "717fc4d5-6709-4176-9418-a405a345ab87",
       "name": "Cantankerous Claywork",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ee14606803b2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords:aggro",
+          "triggered:characterAttacked",
+          "forEach:createModifier"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "aggro"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Can attack even if it has not been in play since the start of the turn' = AGGRO (RULES.md §8, CR §507 — Aggro waives the start-of-turn restriction). When this attacks: all your OTHER characters +1/+1 EOT (forEach, exclude self via conditions).",
+      "rulesAudited": true
     },
     {
       "id": "997b12c2-9e41-4c19-b4af-6c629c1aad42",
       "name": "Ceremonious Groomer",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "855782228b98",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "replacement:destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1896,23 +2287,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Replacement: if this would be destroyed, flipFaceDown source instead (mandatory).",
+      "rulesAudited": true
     },
     {
       "id": "64ae29fe-f51d-4637-bfef-221d5ecbdf61",
       "name": "Clam Hash",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b1d68fe22567",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:createModifier",
+          "activated:if:deployedViaFlipUp",
+          "selfDisposition:hand",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1921,23 +2319,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "self-disposition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character; +2 life untilEndOfTurn. If deployedViaFlipUp, selfDisposition 'hand' (tactic returns to owner hand instead of discard). FLIP UP 2 [G][G].",
+      "rulesAudited": true
     },
     {
       "id": "3a8414ae-466f-48ea-b429-7b562830015b",
       "name": "Clay Node",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "94e880764b85",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(search)",
+          "triggered:cardMovedFromZone(play)",
+          "forEach:destroy",
+          "activated:flipFaceDown(DISSOLVE)",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1946,23 +2352,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB: may search deck for a 'node' subtype card, reveal, to hand; shuffleDeck. LTB: destroy all other node cards (forEach subtype:node, exclude self). DISSOLVE: pay 2 -> flipFaceDown source. FLIP UP 1 [E][E][E].",
+      "rulesAudited": true
     },
     {
       "id": "979512b2-3b58-489f-96c9-e7b0ae051cbb",
       "name": "Cock Block",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f751e29443a7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:terminate(ability)",
+          "selfDisposition:faceDownResource",
+          "flipUp(withDiscardRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -1971,48 +2383,69 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "self-disposition",
+        "respond-to-ability"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: respondingTo an ability (respondingTo — currently cardType only; 'ability' is not a card. NOTE: respondingTo needs an 'ability' kind, or a new condition 'respondingToAbility'). terminate the ability. selfDisposition faceDownResource. FLIP UP 4 [E] + discard a card.",
+      "rulesAudited": true
     },
     {
       "id": "ef598868-fa9c-42d7-bedb-111651c097e4",
       "name": "Conscientious Objector",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "16accce7d49d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "keywords:tactical",
+          "onPlay:targets(pick a location you control)",
+          "rememberTarget",
+          "continuous:restriction(self) gated on remembered in play",
+          "flipUp"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "remembered-target"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "TACTICAL. onPlay EXTRA COST: pick a location you control -> rememberTarget key 'anchor'. Continuous condition linkedCardInPlay('anchor') -> self cannotAttack + cannotBlock. FLIP UP 2 [R][R]. remembered-target built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "a6113b89-5ab1-4e79-8294-9e645cdcd547",
       "name": "Contrabulous Fabtraption",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "c5864c15060b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated x6 (RUNE OF ...)",
+          "createModifier",
+          "createTokens",
+          "setCardType (RUNE OF ANIMATION)",
+          "chooserSelectsTarget + name-selector + putIntoPlay + scheduleEffect (RUNE OF ACCELERATION)",
+          "addCounter (RUNE OF OVERCLOCKING)",
+          "removeFromGame (RUNE OF DESTRUCTION)"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2021,148 +2454,197 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "type-change-modifier",
+        "name-selector",
+        "put-into-play-from-zone",
+        "scheduled-effect"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "6 RUNE modes as 6 activated abilities, each COST: destroy self. ENHANCEMENT (+2/+2 EOT), SUMMONING (2 Micromajig tokens), ANIMATION (setCardType ADD character type (keeps item type, CR §208.1) — golem character, str/life=cost, 3 speed, EOT), ACCELERATION (search deck for a card named Elitism via CardSelector.name -> putIntoPlay -> scheduleEffect EOT destroy an Elitism), OVERCLOCKING (token on a Gearsmith card you control), DESTRUCTION (removeFromGame an item).",
+      "rulesAudited": true
     },
     {
       "id": "0786957e-6db1-42f2-b8cd-0162b889d0b9",
       "name": "Crest of Deception",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f2333bd9a811",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "may pick a character -> -1 life EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "crest",
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "deception",
+          "deception"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE CREST. PROVIDES: [deception][deception] (item that provides icons — card-provides-icon). When a card providing >=[deception] enters under your control: may pick a character -> -1 life EOT.",
+      "rulesAudited": true
     },
     {
       "id": "29786d2d-d558-4aec-9bb4-220601822bc4",
       "name": "Crest of Elitism",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f0b19e5f2793",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "may createTokens 1 Micromajig"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "crest",
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "elitism",
+          "elitism"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE CREST. PROVIDES: [elitism][elitism] (item that provides icons — card-provides-icon). When a card providing >=[elitism] enters under your control: may createTokens 1 Micromajig.",
+      "rulesAudited": true
     },
     {
       "id": "c8205cbe-f1dd-43c0-be10-84f527c7f792",
       "name": "Crest of Greed",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f85dc6b2dc62",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "may pick a faction -> +2 influence"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "crest",
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "greed",
+          "greed"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE CREST. PROVIDES: [greed][greed] (item that provides icons — card-provides-icon). When a card providing >=[greed] enters under your control: may pick a faction -> +2 influence.",
+      "rulesAudited": true
     },
     {
       "id": "351670b7-13a8-4398-a4f9-416e5ec9eb31",
       "name": "Crest of Obsession",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c5e81d4a1c69",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "may search deck for a tactic, reveal, put on top of deck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "crest",
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "obsession",
+          "obsession"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE CREST. PROVIDES: [obsession][obsession] (item that provides icons — card-provides-icon). When a card providing >=[obsession] enters under your control: may search deck for a tactic, reveal, put on top of deck.",
+      "rulesAudited": true
     },
     {
       "id": "9b44d317-14f6-4647-96cb-4a6a5166dc50",
       "name": "Crest of Rage",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "29e9fadab58e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "may search deck for a character, reveal, put on top of deck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "crest",
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "rage",
+          "rage"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE CREST. PROVIDES: [rage][rage] (item that provides icons — card-provides-icon). When a card providing >=[rage] enters under your control: may search deck for a character, reveal, put on top of deck.",
+      "rulesAudited": true
     },
     {
       "id": "4134b966-4ee1-4116-adad-7616dc580ddd",
       "name": "Dark Awakening",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "950080f3feda",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:deployFromZone(discard non-resource)",
+          "draw",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2171,24 +2653,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a non-resource card in your discard; may deploy it (deploy-from-zone source:discard, free). Draw 1. FLIP UP 2 [R].",
+      "rulesAudited": true
     },
     {
       "id": "0239722a-85a6-46ab-ab23-dc85d11fd4b3",
       "name": "Delectable Boon",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a25461e89ff6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:preventDamage(redirect)"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -2196,48 +2682,64 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damage-prevention-shield"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST choose X, pay X, pick 2 of {character,location,faction}. preventDamage on first pick, amount X, mode 'redirect', redirectTo second pick, expires EOT. damage-prevention-shield built + tested. (Picking the same card for both is not blocked but is a harmless self-redirect no-op.)",
+      "rulesAudited": true
     },
     {
       "id": "a17915e2-28d9-48ba-b721-3683f2c92d22",
       "name": "Delusive Strumpet",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4140fbd111d4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords:tactical",
+          "activated:discard-cost+flipFaceDown(GRACEFUL EXIT)",
+          "flipUp(withPlayResourceRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "TACTICAL. GRACEFUL EXIT: discard a card -> flipFaceDown source. FLIP UP 4 [D][D] + play a resource.",
+      "rulesAudited": true
     },
     {
       "id": "4600d164-3e6d-4799-a2d5-97ac92d5a5e3",
       "name": "Derelict Seafarer",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2348807d9dee",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "modifyInfluence",
+          "moveCard(random from discard)",
+          "activated:flipFaceDown@RETIRE",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2246,23 +2748,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB: faction -3 influence; put a random discard card into hand. RETIRE: [G][G][G], use only while not in a battle (not inBattle source), pay 2 -> flipFaceDown source. FLIP UP 3 [G].",
+      "rulesAudited": true
     },
     {
       "id": "0dc13c6b-c12b-455f-af0c-5d2be13c3cba",
       "name": "Desolate",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2565b2a19025",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:forEach",
+          "activated:destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2271,23 +2778,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "variable-bounds",
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: choose X (bounded by [O] count — variable-bounds). forEach over characters whose live strength == X, destroy. 'characters with X strength' is an exact match (statCompare '=').",
+      "rulesAudited": true
     },
     {
       "id": "599db9fe-dcc4-4812-b91d-9957d2ce504d",
       "name": "Dowsing Cleric",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a934471acbfa",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "triggered:cardMovedFromZone(play)",
+          "moveCard(deck->hand)",
+          "shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2296,23 +2811,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "staple-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "When this enters OR leaves play (two triggered abilities): may search deck for a STAPLE resource (selector resource + staple), reveal, to hand; shuffleDeck. Needs a staple predicate on CardSelector (small).",
+      "rulesAudited": true
     },
     {
       "id": "052053ff-5823-4d01-9a23-e3c488c991cd",
       "name": "Drygulch",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "acd779c0b647",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:if(statCompare life<=X)",
+          "removeFromGame"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2321,23 +2841,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character. If its life <= X (X = resourceIcons deception) -> removeFromGame it.",
+      "rulesAudited": true
     },
     {
       "id": "d39ed5bb-20a7-403c-99c5-1612f53abb4e",
       "name": "Dwarvish Grimalkin",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "97563f42bc8b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay x3 (threshold-gated)",
+          "draw",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2346,23 +2872,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Three stacked paragraph-threshold ETB draws: [G][G] / [G]x5 / [G]x9, each a triggered cardEnteredPlay + sourceIsEventCard + numberCompare(resourceIcons greed >= N) -> draw 1. FLIP UP 2 [G].",
+      "rulesAudited": true
     },
     {
       "id": "5feab281-375b-4cc3-ac68-98682fef7738",
       "name": "Dying Hero",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "2338e3f7c58e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding:if(depleted):dealDamage self",
+          "continuous:modifier(+4 life) threshold-gated"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2371,48 +2902,62 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons",
+        "source-depleted-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "End of your turn: if cardDepleted(source) -> 1 self damage (cleared at the next start-of-turn per CR §602.1a). [R]x9 paragraph: +4 life via a threshold-gated continuous modifier (numberCompare resourceIcons rage >= 9). Smoke-tested.",
+      "rulesAudited": true
     },
     {
       "id": "569e946d-73c2-4bd6-a33a-43798c5740bd",
       "name": "Embittered Cadet",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d17e686b88a1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "provides-only"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "rage"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Text is only 'PROVIDES: [R]'. Set resource.provides:['rage']; getThresholds must count it. No ability.",
+      "rulesAudited": true
     },
     {
       "id": "2d1759ee-5b02-4642-a97f-3c44f8d3475b",
       "name": "Emissary of Loot",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2717571ac5b2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "addCounter",
+          "activated:createModifier(DELIVER)",
+          "activated:grantKeyword(SHORTCUT)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2421,23 +2966,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Trigger: a card providing >=[G] enters under your control -> may +1 token. DELIVER: pay 1, remove a token, pick a character -> +2 life EOT. SHORTCUT: pay 1, remove a token -> this gains COVERT EOT (grantKeyword self).",
+      "rulesAudited": true
     },
     {
       "id": "c92296bd-41c4-4efa-9be9-5605d1c40806",
       "name": "Enormous and Uncooperative Golem",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0b88dafed349",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay:variable+payResources",
+          "onPlay:addCounter",
+          "triggered:turnStarted:removeCounter",
+          "continuous:modifier(counter-gated)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2448,21 +3000,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: choose X, pay X -> ETB with X tokens (onPlay effects addCounter amount:{variable x}). Start of your turn: remove a token. While token>=1: +5/+5 (continuous condition counterCompare).",
+      "rulesAudited": true
     },
     {
       "id": "0642737a-cb86-402f-bca9-293ea6c252cc",
       "name": "Epic Smackdown",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "344d9cd65e94",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:variable X",
+          "destroy X chars you control (target+depleteSelected-style / sacrificeSelected)",
+          "forEachPlayer:if(count>=X) chooserSelectsTarget destroy X else forEach destroy all",
+          "draw"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2473,21 +3030,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST choose X; sacrificeSelected(destroy) X characters you control. bind oppHad = count(opp characters); if >= X -> opp chooserSelectsTarget destroys X, else forEach destroy all opp characters; draw 1. 'Each opponent' = the sole opponent (engine is 2-player).",
+      "rulesAudited": true
     },
     {
       "id": "e2ae141f-1ec6-4613-9cd9-0401a36538db",
       "name": "Epicureous Mammajamma",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "58cbdbf620f6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated x3 (createModifier self, EOT stat swaps)",
+          "chooserSelectsOption(RUB IT DOWN)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2498,21 +3058,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "SLAP IT UP: pay 1 -> -1 str +1 life EOT. FLIP IT: pay 1 -> -1 life +1 str EOT. RUB IT DOWN: pay 1 -> (choose: -1 str or -1 life) +1 speed EOT (chooserSelectsOption).",
+      "rulesAudited": true
     },
     {
       "id": "ce1bd138-b938-4d98-b69a-cc0ecf05d7d3",
       "name": "Fired Hand",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "288894ddd96c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "replacement:destroy -> flipFaceDown",
+          "activated:PETTY VENGEANCE (from face-down)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2521,23 +3084,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down",
+        "activate-while-facedown",
+        "facedown-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Replacement: would-be-destroyed -> flipFaceDown self. PETTY VENGEANCE: fromFaceDown + sourceIsFaceDown gate, pay 1 + discard a card + pick a character -> -1 life EOT. 'Reveal this card' is cosmetic (no hidden-hand model). All capabilities built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "cccbf037-ad87-4626-952d-22351b64d91c",
       "name": "Foment",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "be14ea8a2166",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:moveCard",
+          "activated:draw",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2546,73 +3117,92 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "facedown-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a resource you control incl. face-down (facedown-selector / selector type:resource zone:play matches face-down too). moveCard to owner hand (a face-down card reverts to its real card in hand), draw 1. FLIP UP 1 [O][O] + playResource rider.",
+      "rulesAudited": true
     },
     {
       "id": "324900c1-ea19-480a-ab4f-6ac5528757b5",
       "name": "Framptle Tromwibbler, Lord of Bling",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "34a3246a005c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:aura restrictions",
+          "triggered:turnStarted",
+          "addCounter",
+          "triggered/replacement destroy-self at token>=2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "framptle",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "cannot-be-restored"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE FRAMPTLE. Aura: all characters gain cannotAttack + cannotBeRestored (continuous restrictions with selector). Start of your turn: +1 token. When token>=2, destroy this (triggered counterCompare, or a continuous state-based via if).",
+      "rulesAudited": true
     },
     {
       "id": "94b05fef-2998-4935-b8d7-7952acb58953",
       "name": "G14n7 5p0rk D3f3n53",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "963dc3631df4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords:tactical",
+          "activated:destroy-self+destroy(IMPALE)",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "TACTICAL. IMPALE: destroy self (cost), pick an attacking character (inBattle role attacker) -> destroy it. FLIP UP 1 [E][E].",
+      "rulesAudited": true
     },
     {
       "id": "38060403-d6bc-450e-9644-94be30d5ddb9",
       "name": "Gewgawed Gimcrack",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "3ea6d294bc94",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (x2, one threshold-gated)",
+          "addCounter",
+          "activated:variable+destroy-self+forEach:destroy(DO...SOMETHING!)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2621,24 +3211,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Start of your turn: may +1 token; extra [E][E][E] paragraph: may +1 token again. DO...SOMETHING!: X = counter(token); destroy self; destroy all characters with numeric cost == X (forEach char + numberCompare cardCost = X).",
+      "rulesAudited": true
     },
     {
       "id": "07df2997-8872-48c4-bbd6-3c03d2aaddc1",
       "name": "Gilded Yurt",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "aeae4862ca5f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:moveCard(->void)",
+          "scheduleEffect:startOfNextTurn",
+          "putIntoPlay"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -2646,73 +3242,89 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "scheduled-effect",
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "CHILLAX: deplete, pick a character you control -> rememberTarget + moveCard to void; scheduleEffect startOfNextTurn, condition sourceInZone play -> putIntoPlay the remembered card under your control. Smoke-tested.",
+      "rulesAudited": true
     },
     {
       "id": "84ffcb2a-5b0a-42d2-97e6-c6358f6faf41",
       "name": "Golemizer",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "6343fcc7c6d9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(attachedTo -speed = counter)",
+          "triggered:turnEnding",
+          "addCounter(attachedTo)",
+          "if:statCompare -> destroy",
+          "replacement:destroy(optional flipFaceDown)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ATTACH TO CHARACTER. Continuous: attachedTo -1 speed per token ON GOLEMIZER. End of your turn: may +1 token on the attached character; if it has 0 speed, destroy it. Replacement: if this would be destroyed, MAY flipFaceDown source instead (optional). FLIP UP 4 [E][E][E].",
+      "rulesAudited": true
     },
     {
       "id": "372d7e22-04be-4a71-a2bc-a6cbd3bfd506",
       "name": "Goloam",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "750eebac2f0c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(self, value=count(items in play))"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "goloam",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE GOLOAM. Continuous: self +X/+X where X = count(items in play, any controller).",
+      "rulesAudited": true
     },
     {
       "id": "145f40d1-97bb-4df3-a6df-84ad89d3537a",
       "name": "Grandiose Resurrector",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4b05db1fea3e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated@discard(RECUR)",
+          "moveCard(discard->hand)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2723,72 +3335,82 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "RECUR: [G][G] activationZone discard, use only while in discard, pay 5, removeFromGame self, pick up to 4 characters in your discard -> to hand. Proven activate-from-zone shape.",
+      "rulesAudited": true
     },
     {
       "id": "fcb58c44-ffb6-4ac8-81de-3e95adfd7cb5",
       "name": "Gus VanBaymaven",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "8cabd6bd3742",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:takeControl",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "gus",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE GUS. ALL YOUR BAYS...: pay 2, deplete, pick a location -> takeControl controller:self. FLIP UP 2 [G][G][G].",
+      "rulesAudited": true
     },
     {
       "id": "ce72ca69-590d-41fd-90d8-a749fab83011",
       "name": "Hextilda, the Exiled Crone",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "543e4cc5c2e9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:addCounter"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "hextilda",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE HEXTILDA. Activated: pay 4, deplete, pick a card you control with >=1 token (counterCompare). 'Double the number of tokens' = addCounter counter:'token' amount:{counter token of same target}.",
+      "rulesAudited": true
     },
     {
       "id": "6331bedf-cb85-42f9-a5b6-b84aee290627",
       "name": "Hidden Ruins",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "856269ba872b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:deployFromZone(location)",
+          "draw",
+          "triggered:cardEnteredPlay@discard",
+          "flipUp"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -2796,23 +3418,34 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone",
+        "facedown-selector",
+        "triggered-from-zone",
+        "put-into-play-from-zone",
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Sibling of Manifest for locations. Reveal a face-down location you control, may deploy it, draw 1. Discard trigger on a card providing >=[G] -> mayPay 2 -> putIntoPlay source faceDown. FLIP UP 1 [G].",
+      "rulesAudited": true
     },
     {
       "id": "de6f188a-119d-4da0-9965-70b258c40ec5",
       "name": "Hideous Hexapede of Horror",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "92b1fb892d0f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:forEach",
+          "activated:dealDamage",
+          "activated:mill",
+          "activated:chooserSelectsTarget"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2821,23 +3454,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "mill-destination"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "pay 6 + destroy self + pick <=6 characters -> 6 damage each; 6 to all factions (forEach faction); forEachPlayer removes <=6 from hand + <=6 from discard (chooserSelectsTarget) and top 6 of deck (mill to:'removed'). Composition of proven primitives; no bespoke test (each sub-shape is covered elsewhere).",
+      "rulesAudited": true
     },
     {
       "id": "6f1bdb80-2506-4724-bf83-950a81cc531a",
       "name": "I Drink Your Milkshake!",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "3feabc01935f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:search opp deck -> void",
+          "triggered:cardPlayed@discard (rest of game)",
+          "deployFromZone(free, ignoreThreshold)",
+          "terminate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2846,23 +3486,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "triggered-from-zone",
+        "deploy-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Search an opp deck for a card -> moveCard to void. Discard-zone triggered ability (triggerZone 'discard'): opp deploys a non-resource card -> optional reveal the voided card if cardNameEquals -> deployFromZone ignoreThreshold (free, threshold waived) + terminate the opp card. The 'face-down in the void' hidden state is not modelled (nothing depends on it; the reveal is the optional chooser).",
+      "rulesAudited": true
     },
     {
       "id": "e2126c92-6654-406e-9bcc-c2682df3696f",
       "name": "Imperial Thaumaturge",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c7a8ba8962ff",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:chooserSelectsTarget"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2873,21 +3518,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "TICKLE: pay 1, deplete, opponent discards a card (chooserSelectsTarget chooser:opponent, hand zone, moveCard->discard). Proven shape.",
+      "rulesAudited": true
     },
     {
       "id": "5384f0ca-4c8b-42a9-870b-de4ffb5229be",
       "name": "Implosive Explosion",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "3c9a7a1f7ff9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:reveal face-down resource, bind X=cardCost, destroy it",
+          "dealDamage(X) to a character or location",
+          "selfDisposition:faceDownResource"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2896,23 +3545,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "facedown-selector",
+        "self-disposition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: reveal a face-down resource you control (facedown-selector type:resource), X = its cardCost, destroy it. Pick a character or location -> X damage. selfDisposition faceDownResource.",
+      "rulesAudited": true
     },
     {
       "id": "4bbe221f-8085-43fe-b1a7-70c332d10958",
       "name": "Inadequate Wand",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d5bee868a616",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:moveCard",
+          "activated:bind",
+          "activated:if",
+          "activated:shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2923,21 +3580,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "PRESENT THE STAFF: pay 2, deplete, pick a character you control -> moveCard to owner hand; bind X = cardCost(that char); optional deck target tactic with numberCompare(cardCost <= X) -> moveCard hand + shuffleDeck. 'if you can' => if effect on targetExists.",
+      "rulesAudited": true
     },
     {
       "id": "194bea41-c877-4b84-a14d-80b8caba8cb8",
       "name": "Lab of Luxury",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "3df57c88a33c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:discard-cost",
+          "chained if on discarded card type",
+          "moveCard(deck->hand)",
+          "shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2948,46 +3610,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "INNOVATE: pay 1 + discard a card. Chained if on the discarded card's type -> search deck for the next type in the cycle (resource->location->character->tactic->item->resource), reveal to hand, shuffleDeck. All proven primitives.",
+      "rulesAudited": true
     },
     {
       "id": "8a4f4138-4326-4029-a0a1-132f879e5531",
       "name": "Lodge Dock Florist",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "64453949bbdd",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:grantAbilityText"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "lodge dock florist",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-ability-text"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE. Continuous grantedAbilities: every in-play character gains a turnStarted trigger -> mayPay 1, elseEffects destroy self. grant-ability-text (full TriggeredAbility body) built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "85fcf752-5566-427e-a993-49531a2f38b0",
       "name": "Lucky Bastard",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "17f706812ec6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay:draw",
+          "replacement:destroy (each player removes top of deck; compare costs; draw + setDamage 0, else removeFromGame self)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -2996,24 +3665,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "mill-destination"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB draw 1. Replacement (destroy): bind mine/opp = cardCost(deckPosition top); removeFromGame both top cards; if mine >= opp -> draw 1 + setDamage self 0 (survives), else removeFromGame self. Composition of proven primitives; 2-player (one opponent) so the >= comparison is exact.",
+      "rulesAudited": true
     },
     {
       "id": "c60f04b2-f629-4183-8daf-9219af91bb4a",
       "name": "Manifest",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "f1fb4fa9d5f8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:deployFromZone",
+          "activated:draw",
+          "triggered:cardEnteredPlay@discard",
+          "flipUp"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -3021,24 +3697,34 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone",
+        "facedown-selector",
+        "triggered-from-zone",
+        "put-into-play-from-zone",
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: reveal a face-down tactic you control -> deployFromZone (free); draw 1. Discard-zone triggers (triggerZone 'discard') on resourcePlayed / cardEnteredPlay + cardProvides obsession>=1 + controlledBy controller -> mayPay 2 -> putIntoPlay source faceDown. FLIP UP 1 [O]. Smoke-tested.",
+      "rulesAudited": true
     },
     {
       "id": "60eab41e-55d8-428c-991a-de347296fa4f",
       "name": "Meat of the Mountain",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d86d6442db8c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:cardsDrawn",
+          "chooserSelectsOption",
+          "if:counterCompare"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -3046,48 +3732,56 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "cards-drawn-event"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "cardsDrawn trigger (per drawing player). chooserSelectsOption: do nothing / add token / remove token; then a chained if on counterCompare(token = 0/1/2/>=3) runs the matching sub-effect (discard via opp / look-2 keep-1 / bounce a character-or-location / play a resource). Large composition; cards-drawn-event built + tested. 2-player so '0 TOKENS: choose an opponent' = the sole opponent.",
+      "rulesAudited": true
     },
     {
       "id": "b3a12b5c-893f-40bc-8967-8ce2eb2cd9af",
       "name": "Melty Cheese",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "04e5fe1f0355",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier+restriction (attachedTo)",
+          "flipUp(withInfluenceRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ATTACH TO CHARACTER. Continuous: attachedTo +2 life, cannotAttack. FLIP UP 2 [G] + faction gains 4 influence (flipUp.effects modifyInfluence).",
+      "rulesAudited": true
     },
     {
       "id": "8dd7d98c-b6c5-4040-ac3b-316d707f5777",
       "name": "Midget Mine",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "417c81858ff8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:AMBUSH (pick attacking char, 2 dmg, flipFaceDown self)",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3096,48 +3790,61 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "AMBUSH: pick an attacking character (inBattle attacker) -> 2 damage; flipFaceDown source. FLIP UP 5 [R].",
+      "rulesAudited": true
     },
     {
       "id": "dfaf62e3-40f4-4020-940f-bf82b2a48850",
       "name": "Minion of Thabbash",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2db5e574846c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords:covert"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
-        "keywords": []
+        "resourceProvides": [
+          "obsession"
+        ],
+        "keywords": [
+          "covert"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "COVERT + 'PROVIDES: [O]' on a character. Set resource.provides:['obsession'] on the def; getThresholds must count it (card-provides-icon). Otherwise vanilla-ish.",
+      "rulesAudited": true
     },
     {
       "id": "5df56b56-1925-4958-ba48-67ab47781ff1",
       "name": "Miraculous Regeneration",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c7ae1e31fc3c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:putIntoPlay(faceDown)",
+          "activated:moveCard(discard->hand)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3146,23 +3853,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick 2 characters in your discard. putIntoPlay one under your control faceDown; moveCard the other to hand.",
+      "rulesAudited": true
     },
     {
       "id": "e38f4972-a3c7-47b4-adb2-25177eda9065",
       "name": "Mistaken Identity",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "d6adefe37860",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:and(respondingTo, respondedToPicked character)",
+          "retargetExtraCost"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3171,24 +3883,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "retarget-extra-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST gate: respondingTo + respondedToPicked cardType 'character'. Pick another character; retargetExtraCost swaps the responded-to stack item's picked character for it so it resolves against the new pick. 'could be picked by that card or ability' approximated as any in-play character (retargetExtraCost no-ops if the same card is re-picked).",
+      "rulesAudited": true
     },
     {
       "id": "102d3f1f-e47a-4edf-bc68-a5df45643cb4",
       "name": "Muddle",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d93aa311a987",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:duplicate",
+          "activated:terminate"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -3196,23 +3913,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "duplicate-stack-card"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: respondingTo tactic; pay X = cardCost(respondedToCard). duplicate the responded-to tactic (transient copy under you, reusing its picks) then terminate the original. duplicate-stack-card built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "6192784f-3ce3-4153-b98d-20da867884af",
       "name": "Muscle Tribe of Danger and Excellence",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "143f76c3c7c7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "createModifier(self +1 str EOT)",
+          "grantKeyword(covert EOT)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3221,23 +3944,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "When a card providing >=[D] enters under your control: this +1 strength EOT and COVERT EOT.",
+      "rulesAudited": true
     },
     {
       "id": "1dffc074-b158-4134-b52e-9e6e56541cf0",
       "name": "Mustache Aficionado",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "747cc87ee1b4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated: deplete self -> partitionAndPick(count 3, piles 2, cost, winnerTakes 1)"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3246,48 +3973,62 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "partition-and-pick"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "MUSTACHE SHOWDOWN = partitionAndPick. Both players reveal top 3, split into 2 non-empty piles, cross-pick one of the other's piles, higher total numeric cost pile's owner may take 1 card, everything else shuffled back into its owner's deck.",
+      "rulesAudited": true
     },
     {
       "id": "9f1639c2-f84f-4b74-b222-aae1fe8bfb4f",
       "name": "Nattering Stoopswaggler",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "14965710dba4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords:covert",
+          "flipUp.effects:addCounter (enters with a token via FLIP UP)",
+          "continuous:modifier+suppressKeywords (while token>=1)",
+          "replacement:destroy -> flipFaceDown (while 0 tokens)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "keyword-suppression",
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "COVERT. flipUp.effects add a token (only on the FLIP UP path). Continuous while token>=1: +1/+1 and suppressKeywords COVERT. Replacement: 0 tokens + would-be-destroyed -> flipFaceDown self. FLIP UP 3 [O][O]. keyword-suppression built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "c6b38fc4-a716-40b2-874d-10df6d8429b2",
       "name": "Necromantic Healer",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9e6f5bab8151",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:damageModifiers (battle dmg to a character in a party with this, -1)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3296,23 +4037,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "same-party-damage-modifier"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Continuous damageModifiers: selector = characters in the same battle party as this card, battleOnly, delta -1. 'party with this card' => selector conditions inBattle same-side-as-source. May need a 'sameParty' predicate; else approximate as 'any character in a battle party' when this card is in one (condition inBattle source). Confidence medium.",
+      "rulesAudited": true
     },
     {
       "id": "4c9c9c1f-d3e1-4ebe-9ff1-8d2295cb79b0",
       "name": "Obscene Astrologer",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "bf222e938ae3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:deployForFree"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3321,23 +4066,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "GAZE UPON THE STARS: deplete. deployForFree maxCost = min(5, [O] count) via a NumberExpression (conditional / a min built from add+multiply, or a new 'min' — prefer conditional numberCompare). Tactic only.",
+      "rulesAudited": true
     },
     {
       "id": "ba216f9c-c69d-44ab-8d4f-137d675b4207",
       "name": "Otter Floss",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e2b127d0ec10",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:draw",
+          "activated:moveCard",
+          "selfDisposition:faceDownResource"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3346,23 +4097,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "self-disposition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Draw 1; put a hand card on bottom of deck (discard cost or targeted moveCard to deck position:bottom). selfDisposition 'faceDownResource' — the tactic itself re-enters play face-down instead of going to discard.",
+      "rulesAudited": true
     },
     {
       "id": "65d782aa-becf-4d04-8be1-2da121a27c7e",
       "name": "Overzealous Excavation",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2ff4131d827c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:mill",
+          "activated:draw",
+          "activated@discard(RECUR):putIntoPlay(faceDown)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3371,48 +4128,59 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Mill 8 (to discard) + draw 1. RECUR: [G] activationZone discard, pay 4, removeFromGame self, pick a card in your discard -> putIntoPlay faceDown under your control.",
+      "rulesAudited": true
     },
     {
       "id": "1be3f538-efa8-4269-ace1-af5a0ddcdefd",
       "name": "Padamose, Emperor of Marduun",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "bec5e803491a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:aura (buff your 'sword of great justice', debuff opp 'mau' + Arcanist chars)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "padamose",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "continuous-aura",
+        "trade-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE PADAMOSE. Aura 1: your characters subtype 'sword of great justice' +1/+1. Aura 2: opponent's 'mau' characters AND opponent's Arcanist-trade characters -1/-1 (cardTradeIs). Two continuous auras with selectors.",
+      "rulesAudited": true
     },
     {
       "id": "1a08f63f-1eb2-4592-a78e-dd83820fcbd7",
       "name": "Party Clowns",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0b0361f1556b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted",
+          "mayPay",
+          "putIntoPlay(deck->play)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3421,23 +4189,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Include as many copies as you want' — deckbuild text, no engine effect (display note). Start of your turn: may pay 1 -> search deck for a card named 'Party Clowns' (selector conditions cardNameEquals to a literal — or a name filter), reveal, putIntoPlay under your control.",
+      "rulesAudited": true
     },
     {
       "id": "2db3791b-3472-44b9-ad9b-ea65743ea4fc",
       "name": "Peculate",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0e9ad28ea6d0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:respondedCost(pay X = cardCost of picked)",
+          "putIntoPlay(opp discard -> your play)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3446,23 +4219,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character/item/location in an opponent's discard; pay X = its cardCost. putIntoPlay it under your control.",
+      "rulesAudited": true
     },
     {
       "id": "35c6055b-db4e-428b-ab6a-7caaf564f62f",
       "name": "Perturb",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a9376201a520",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:chooserSelectsTarget",
+          "activated:if"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3471,23 +4249,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-type-equals-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Pick a non-resource card in opp hand (selector conditions: not cardTypeIs resource) -> that player discards it. Then optional: pick an in-play card whose type equals the discarded card's (cardTypeEquals) -> owner's hand. card-type-equals-condition built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "afecc5f2-5714-46ee-9279-b6827de2ee46",
       "name": "Plunging Shriever",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2bd1f93c677c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (may destroy an item, faction -2)",
+          "activated:FLY AWAY (removeFromGame an item in opp discard -> flipFaceDown self)",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3496,23 +4280,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB: may pick an item -> destroy it + faction -2 influence. FLY AWAY: cost removeFromGame an item in an opp discard -> flipFaceDown source. FLIP UP 3 [R][R].",
+      "rulesAudited": true
     },
     {
       "id": "a9d9be90-b1ba-4cea-9abb-1b570317441d",
       "name": "Prophetic Assistant",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "eb3ead4dbf0b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding",
+          "if(deckPosition top is staple resource)",
+          "moveCard(deck top->hand)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3521,23 +4311,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "staple-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "End of your turn: mayPay (empty cost) 'you may reveal' -> if deckPosition top is a resource AND isStaple -> moveCard to hand. staple-selector built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "778e9579-eb05-4391-9d2c-2851f79b635d",
       "name": "Recyclable Golem",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b96a7c25c6c7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay:deployedViaFlipUp",
+          "addCounter",
+          "continuous:modifier+keyword(canBlockCovert) counter-gated",
+          "replacement:destroy -> flipFaceDown"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3546,23 +4343,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down",
+        "can-block-covert"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "If deployedViaFlipUp -> ETB token. While token>=1: -2/-2 and gains canBlockCovert. If 0 tokens and would be destroyed -> flipFaceDown source instead. FLIP UP 4 [E].",
+      "rulesAudited": true
     },
     {
       "id": "464b99b7-c1b7-43ae-9248-68f7614fd2cb",
       "name": "Redonkulous",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9167f01c414b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:if:deployedViaFlipUp",
+          "activated:chooserSelectsTarget",
+          "activated:removeFromGame",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3573,21 +4378,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character. If deployedViaFlipUp: that char's controller discards 2 (chooserSelectsTarget x2 / count 2). Then if that controller has <=3 cards in hand (numberCompare count hand) -> removeFromGame the character. FLIP UP 5 [O][O].",
+      "rulesAudited": true
     },
     {
       "id": "6ef1f956-2ea5-4c1f-943f-6a1b3338ae98",
       "name": "Research Intern",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4d97909f7a43",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:reduceNextCost(RESEARCH)",
+          "activated:reduceNextCost@threshold(RESEARCH HARDER)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3598,46 +4406,55 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "RESEARCH: deplete -> reduceNextCost controller 1. RESEARCH HARDER: [E]x5 threshold, deplete -> reduceNextCost 2. Proven.",
+      "rulesAudited": true
     },
     {
       "id": "54acfe5d-ccfe-4f8e-b324-65b65e6d927f",
       "name": "Resistance Fighter",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e53bcb63997f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(self) condition numberCompare(count chars you don't own >=1)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "deception"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "PROVIDES: [D]. While you control a character you don't own (count selector controller:self + not owner:self, >=1): +2/+2/+1 speed.",
+      "rulesAudited": true
     },
     {
       "id": "63046a8b-0158-4148-89db-49f18cbe470e",
       "name": "Rewarding Salvage",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e80ed3f6b3c4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:moveCard(discard->hand) up to 2",
+          "flipUp(withPlayResourceRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3648,21 +4465,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick 2 or fewer items in your discard -> to hand (forEach selected). FLIP UP 2 [E][E] + play a resource.",
+      "rulesAudited": true
     },
     {
       "id": "e93a6fc4-da98-4698-b44f-3d1269903dfb",
       "name": "Ritual of the Double Monkey",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "7b2cf263200f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:chooserSelectsTarget",
+          "activated:if:numberCompare(resourceIcons)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3671,48 +4491,61 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Opp discards 1; if control [O][O][O] discard another; if [O]x8 discard another (two stacked numberCompare-on-resourceIcons gates). FLIP UP 2 [O].",
+      "rulesAudited": true
     },
     {
       "id": "4d801a32-d054-413d-9eaf-d915a82139b1",
       "name": "Rosy Palmer, and Her Five Friends",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "56e93699d05c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardDestroyed(self)",
+          "chooserSelectsTarget(opp deck character)",
+          "putIntoPlay",
+          "shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "rosy",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "put-into-play-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "UNIQUE ROSY. On destroyed: optional pick a character from the opponent's deck -> putIntoPlay under your control; shuffle the opp deck. APPROXIMATION: the character pick is from the whole opponent deck, not the revealed top 5; and 'put the remaining cards on the bottom in any order' is modelled as a full deck shuffle. Needs a 'reveal top N as a candidate pool' primitive + a bottom-of-deck reorder to be exact (see CATALOG-BUILDOUT backlog).",
+      "rulesAudited": true
     },
     {
       "id": "e2e00e93-fcaa-4ef4-8f21-71d9306ed76b",
       "name": "Roundalicious Breasticles",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "89f316dd674e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding:addCounter",
+          "activated:addCounter(JIGGLE)",
+          "activated:destroy-self+takeControl(TANTALIZE)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3723,46 +4556,57 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "End of your turn: +1 token. JIGGLE JIGGLE: pay 2 -> +1 token. TANTALIZE: pick a character with cardCost <= counter(token); destroy self -> takeControl it.",
+      "rulesAudited": true
     },
     {
       "id": "0b3b61aa-3ea4-4acc-8f76-c6242af992e0",
       "name": "Rusty Pickaxe",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "de3ccb212be5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(attachedTo +1/+1)",
+          "replacement:destroy -> flipFaceDown",
+          "flipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ATTACH TO CHARACTER. attachedTo +1/+1. Replacement: would-be-destroyed -> flipFaceDown source. FLIP UP 1 [D].",
+      "rulesAudited": true
     },
     {
       "id": "48ac4062-dca5-469f-8b39-54f4519e137d",
       "name": "Smothering Corpulence",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "016dfaa1e302",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:forEachPlayer removeFromGame top of deck",
+          "bind X = cost diff",
+          "createModifier(-X life EOT)",
+          "draw"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3773,21 +4617,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character an opponent controls. You + that player each remove top of deck from game (moveCard deckPosition->removed). X = (their removed cost) - (your removed cost) via bind + add. Character -X life EOT; draw 1.",
+      "rulesAudited": true
     },
     {
       "id": "2d8037fa-f57b-4695-bf7a-aac71fc74e2e",
       "name": "Spiky Pumpkin",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9c5da92ea4cd",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay:addCounter 3",
+          "triggered:turnStarted:removeCounter + if(0) destroy",
+          "triggered:turnEnding: may pick char -> dmg X=counter(token)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3798,21 +4646,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB with 3 tokens. Start of your turn: remove a token; if none, destroy self. End of your turn: may pick a character -> X damage where X = counter(token).",
+      "rulesAudited": true
     },
     {
       "id": "68f78435-b01d-43a8-92c7-ce9bb9a9c3d1",
       "name": "Sprint",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "8fd88b9353c9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:createModifier(+1 speed EOT)",
+          "selfDisposition:faceDownResource"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3821,23 +4672,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "self-disposition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character; +1 speed EOT. selfDisposition faceDownResource.",
+      "rulesAudited": true
     },
     {
       "id": "98321c0c-3aef-4820-8636-9353e3c8a3b0",
       "name": "Spry Archer",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "985bfb90bee9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked: dmg 1 to opp faction",
+          "triggered:characterAttacked @ [R]x4 paragraph: may pick char -> 1 dmg"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3846,23 +4702,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "When this attacks: 1 damage to an opponent's faction (dealDamage target factionOf opponent). [R][R][R][R] paragraph: when this attacks, may pick a character -> 1 damage.",
+      "rulesAudited": true
     },
     {
       "id": "95cc746f-1d3e-4cde-bc30-c0a884c4fbd0",
       "name": "Surplus Soldier",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "855782228b98",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "replacement:destroy -> flipFaceDown"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3871,23 +4731,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Replacement: if this would be destroyed -> flipFaceDown source instead (mandatory).",
+      "rulesAudited": true
     },
     {
       "id": "414bcffa-7213-40f1-810f-9563a33cc619",
       "name": "Swinish Elder",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "30c9d34db1f9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:resourcePlayed",
+          "mayPay",
+          "attachTo"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3898,71 +4764,86 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "When an opponent plays a resource (resourcePlayed + eventPlayerIs opponent): mayPay 1 -> attachTo eventCard to { factionOf: { ownerOf eventCard } }.",
+      "rulesAudited": true
     },
     {
       "id": "48201447-079d-4a67-814c-dfbf44e91ad4",
       "name": "The Emperor Barduse",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f12b8894ba38",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay: distributeAmong (X = 2*count dragons)",
+          "continuous:aura (other 'dragon' chars +1/+1)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "emperor barduse",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "continuous-aura"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE. ETB: may pick any number of characters -> distributeAmong X damage, X = 2 * count(dragon characters you control). Aura: your other 'dragon' characters +1/+1.",
+      "rulesAudited": true
     },
     {
       "id": "ad08166f-f1cd-4ce8-b6d7-239f48d83d00",
       "name": "The Poshernacle",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "7b85fe40cc38",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted x3",
+          "useAnyAbility",
+          "draw",
+          "modifyInfluence"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "poshernacle",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "use-any-ability"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE. Three turnStarted triggers (eventPlayerIs controller): (1) useAnyAbility chooser controller; (2) mayPay -> draw 1; (3) modifyInfluence +1. use-any-ability built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "8e6f51ba-81da-4014-990b-953835ac6816",
       "name": "Thorough Sanitization",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1bfdc1678f94",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:flipFaceDown",
+          "flipUp(withDrawRider)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3971,23 +4852,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick an item -> flipFaceDown. FLIP UP 1 [E] + draw a card.",
+      "rulesAudited": true
     },
     {
       "id": "95faefae-3b2a-454b-a2a5-f10544095ff8",
       "name": "Time Traveler Tourist Trap",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "bfcbf1711360",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:ENSNARE (pay-or-destroy-token cost, +1 token)",
+          "activated:MICROMAJIG APOCALYPSE (>=20 tokens, destroy self, createTokens X=opp deck size)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -3996,24 +4882,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "count-resource-icons",
+        "alternative-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ENSNARE: oneOf cost [pay 1] / [destroy a random Micromajig token you control] -> +1 token. MICROMAJIG APOCALYPSE: ability threshold [E]x6 + counterCompare(token >= 20) gate + destroy self -> createTokens count = count(opp deck). oneOf cost + ability threshold both built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "580a6694-9b65-4aa5-9668-a18ddfd3f06a",
       "name": "Tiny Shiny",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b62176c84d94",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "activated:preventDamage(reduce)",
+          "selfDisposition:faceDownResource"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -4021,23 +4913,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damage-prevention-shield",
+        "self-disposition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST: pick a character. preventDamage target, amount 2, mode:'reduce', next instance this turn. selfDisposition faceDownResource.",
+      "rulesAudited": true
     },
     {
       "id": "db404dae-6ec9-474f-b603-35ebe3520d10",
       "name": "Titillated Mooncalf",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "451c7c29c9d3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay",
+          "grantKeyword"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4046,23 +4944,32 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-provides-icon"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Trigger: a card that provides >=[O] enters play under your control (cardEnteredPlay + cardProvides obsession>=1 + eventCardControlledBy controller). May pick a character -> grantKeyword covert untilEndOfTurn.",
+      "rulesAudited": true
     },
     {
       "id": "0b790bde-153c-42d9-8038-feb93e327764",
       "name": "Tumescent Guilt Bladder",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "7450a023a780",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding",
+          "triggered:turnStarted",
+          "addCounter",
+          "modifyInfluence",
+          "takeControl",
+          "removeCounter"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4073,21 +4980,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "End of your turn: +1 token; lose influence = token count (multiply -1 x counter); optional play a resource. Start of EACH turn (no player gate): if token>=3, opponent takes control of it + removeCounter(amount = counter value). All proven primitives.",
+      "rulesAudited": true
     },
     {
       "id": "d2519bcd-7e4c-4ff6-918d-82aade2e81f0",
       "name": "Uncontrollable Jalopy",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e745673574bc",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted:addCounter",
+          "continuous:modifier(+1 speed per token)",
+          "continuous:keyword(cannotBeBlocked) counter-gated"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4098,21 +5009,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Start of your turn: may +1 token. +1 speed per token (modifier value = counter). While token>=5: gains cannotBeBlocked ('unblockable' — existing keyword).",
+      "rulesAudited": true
     },
     {
       "id": "ab1abe6e-7428-492b-8eb1-0f0ceef7e512",
       "name": "Vast Mastabatorium",
       "set": "Seed 2",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "773a5299e738",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated:YOU KNOW... (per-turn-limit, pay1+dmg self, draw, scheduleEffect EOT)",
+          "activated:SWEET RELEASE (pay2, removeCounter, playResource)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4121,23 +5035,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "scheduled-effect",
+        "activation-limit-per-turn"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "YOU KNOW YOU WANT TO...: usesPerTurn 5, pay 1 + 1 self-damage -> draw 1 + scheduleEffect EOT (+1 token, opponent takes control). SWEET RELEASE: pay 2 + removeCounter token -> optional play a resource. usesPerTurn (activation-limit-per-turn) built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "d047e039-379a-442a-9221-6b37edff2363",
       "name": "Verrucose Brains",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1ebc3252a01a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding",
+          "moveCard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4146,48 +5066,61 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "superlative-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "End of EACH turn (numberCompare guard for >=1 character): move the lowest-numeric-cost character to its owner's hand; target decl count 1 over selector conditions isExtremum(metric 'cost', direction 'min'); ties -> the source's controller picks. superlative-selector (isExtremum) built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "8012f792-69c0-4a16-88dd-9209463f4f58",
       "name": "Vorpal Sword",
       "set": "Seed 2",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "aba91695e839",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:modifier(attachedTo +2/+1)",
+          "replacement:destroy -> flipFaceDown",
+          "activated:SNICKER SNACK (from face-down)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-down",
+        "activate-while-facedown",
+        "facedown-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ATTACH TO CHARACTER: attachedTo +2 strength / +1 life. Replacement: would-be-destroyed -> flipFaceDown self. SNICKER SNACK: fromFaceDown + sourceIsFaceDown gate, pay 3 + discard a card + pick a character -> 2 damage to it + 1 to your faction. All capabilities built + tested.",
+      "rulesAudited": true
     },
     {
       "id": "5161057f-2ee8-4f52-be3d-1c983ac1e2e0",
       "name": "Witty Worm",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "e0f2768c5eaa",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "revealFromHand alt-deploy (cost 1) via chooseDevelop",
+          "triggered:cardEnteredPlay -> optional bounce a resource -> may play a resource"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -4196,36 +5129,42 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "reveal-from-hand-alt-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "revealFromHand { cost: 1 }: revealed from hand as the develop resource play, deployed for a flat 1 (threshold [O][O] still enforced). ETB: optional chooserSelectsTarget bounce a resource you control to hand -> if done, optional play-a-resource (chooserSelectsTarget hand + playResource auto).",
+      "rulesAudited": true
     },
     {
       "id": "a7a11a96-2201-43c6-9710-be53bc9e6ab3",
       "name": "Woadenworm Gloamspike, Thabbashite Prince",
       "set": "Seed 2",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a98d0aec4757",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous:grantFlipUp"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "gloamspike",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "UNIQUE GLOAMSPIKE. Continuous grantFlipUp over selector {controller self, zone play, type tactic, faceDown true}: each such face-down tactic without its own FLIP UP gains one at its printed cost/threshold. grantFlipUp built + fixture-tested.",
+      "rulesAudited": true
     },
     {
       "id": "1082ff2c-afd3-4c84-89ae-1002579977df",

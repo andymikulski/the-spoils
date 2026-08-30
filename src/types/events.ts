@@ -48,6 +48,12 @@ export interface GameEventMap {
     faceDown: boolean;
   };
 
+  /** "When a player draws any number of cards" — one event per completed draw batch. */
+  cardsDrawn: {
+    playerId: PlayerId;
+    count: number;
+  };
+
   damageDealt: {
     sourceId?: CardInstanceId;
     targetId: CardInstanceId;

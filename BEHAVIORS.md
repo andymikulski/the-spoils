@@ -21,6 +21,24 @@ Sibling `CardDefinition` fields the coverage effort added:
   face-down as a resource, then the `flipUp` action pays this and resolves
   it as its real type with `deployedViaFlipUp` set.
 - **`unique: "<designation>"`** — a Unique designation (RULES.md §9).
+- **`selfDisposition: { to: "faceDownResource" | "hand", condition? }`** —
+  where a resolving **tactic** goes after its effects *instead of* the
+  discard pile. `"faceDownResource"` = it re-enters play as an anonymous
+  face-down resource under its owner ("Put this card into play under its
+  owner's control as a face-down resource instead of into their discard
+  pile"); `"hand"` = its owner's hand (Clam Hash). `condition` is evaluated
+  in the tactic's own resolution context — use `{ "type":
+  "deployedViaFlipUp" }` for "if you deployed this card using FLIP UP,
+  ... instead". Tactic-only; a permanent that flips itself uses the
+  `flipFaceDown` effect.
+- **`revealFromHand: { cost }`** — "While this card is in your hand you may
+  reveal this card as you are playing a resource. If you do, you may deploy
+  this card for N." (Witty Worm). A hand-sourced alt deploy taken *instead
+  of* the faction Develop Rule's resource play for the turn: threshold + any
+  EXTRA COSTs still apply, only the numeric cost is replaced by `cost` (no
+  cost modifiers / reductions). Driven by a `revealFromHand: { cardId,
+  selected?, variables? }` payload on the `chooseDevelop` action's
+  `playResource` choice (`cards` must be empty). See RULES.md §6.
 
 `AbilityDefinition` is one of `ActivatedAbility | TriggeredAbility |
 ContinuousAbility | ReplacementAbility` (discriminated on `type`).
@@ -35,9 +53,26 @@ ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 - **`ActivatedAbility.threshold`** — icon requirement to activate (same
   shorthand as `CardDefinition.threshold`, e.g. `"gg"`), a gate not a cost.
   For "RECUR: [G][G]" / "EXHUMATION: [O][O]"-style ability clauses.
+- **`ActivatedAbility.usesPerTurn`** — a per-turn activation cap ("Use
+  this only 5 times each turn"; Vast Mastabatorium). Tracked in
+  `GameState.abilityUsesThisTurn`, reset each turn.
+- **`ActivatedAbility.variableBounds`** — `{ [id]: { min?, max? } }`
+  (each an optional `NumberExpression`) — the action's `variables[id]`
+  must satisfy `min <= v <= max`, beyond plain affordability. "Pick a
+  number for X, where X ≤ the number of [O] you control." (Desolate). For
+  a tactic, put it on the first activated ability (same convention as
+  `costs`/`targets`/`variables`).
 - **`ContinuousAbility.uniqueGrant`** — `{ selector, designation:
   "cardName" | "<fixed>" }` grants a Unique designation to matching in-play
   cards ("all non-resource cards gain Unique X where X is their name").
+- **`ContinuousAbility.grantedAbilities`** — `[{ selector, abilities:
+  AbilityDefinition[] }]` grants whole ability bodies to every in-play,
+  face-up card matching `selector` while the source is in play ("all
+  characters gain the rules text «At the start of your turn, ...»"; Lodge
+  Dock Florist). Granted **triggered** abilities fire for the recipient
+  card (`"source"` inside them is that card). Granted `activated` /
+  `continuous` / `replacement` bodies aren't wired yet — flag if a card
+  needs them.
 - **`ReplacementAbility`** — `{ replaces: { event: "moveToZone" | "destroy",
   zone?, cardType?, controlledBy?, by? }, condition?, optional?,
   optionalCost?, effects }`. Runs *instead of* the matched mutation.
@@ -63,10 +98,18 @@ ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 
 ```ts
 ActivatedAbility:  { id, name?, type: "activated", activationZone?, threshold?, condition?, costs?, targets?, effects, variables? }
-TriggeredAbility:  { id, name?, type: "triggered", event, condition?, targets?, effects }
+TriggeredAbility:  { id, name?, type: "triggered", event, triggerZone?, condition?, targets?, effects }
 ContinuousAbility: { id, name?, type: "continuous", condition?, modifiers, keywords?, restrictions?, costModifiers?, damageModifiers? }
 ReplacementAbility:{ id, name?, type: "replacement", replaces, condition?, optional?, optionalCost?, effects }
 ```
+
+**`TriggeredAbility.triggerZone`** — `"discard"` / `"void"` (default
+`"play"`) makes the trigger live while its source sits in that zone —
+"While this card is in your discard pile, when <event> ..." (Manifest,
+Hidden Ruins, Accidental Invention, Burly Assailment, I Drink Your
+Milkshake!). The parallel of `ActivatedAbility.activationZone`. Keep the
+"... under your control" half in `condition` (`eventCardControlledBy` /
+`cardProvides` etc.).
 
 **`ReplacementAbility`** — "if <X> would happen, instead <Y>". `replaces` is
 `{ event: "moveToZone", zone, cardType?, controlledBy?, by? }` or
@@ -149,8 +192,12 @@ alongside the `cardEnteredPlay` one.
 
 `turnStarted`, `turnEnding`, `cardPlayed`, `cardEnteredPlay`, `cardMoved`,
 `cardDestroyed`, `cardDepleted`, `cardRestored`, `resourcePlayed`,
-`damageDealt`, `abilityActivated`, `battleStarted`, `battleEnded`,
-`characterAttacked`, `characterBlocked`.
+`cardsDrawn`, `damageDealt`, `abilityActivated`, `battleStarted`,
+`battleEnded`, `characterAttacked`, `characterBlocked`.
+
+`cardsDrawn` (`{ playerId, count }`) fires once per completed draw batch
+(the whole `draw N` at once, not per card) — "When a player draws any
+number of cards" (Meat of the Mountain). Gate with `eventPlayerIs`.
 
 `characterAttacked` fires once per attacker at `declareAttack` (before
 `battleStarted`); `characterBlocked` fires once per blocker at
@@ -174,6 +221,7 @@ work on it like any other damage target.
 | `removeFromGame` | `target: TargetRef` | "remove `target` from the game" as a cost — typically `"source"` (a RECUR ability exiling itself from the discard pile). Throws if it doesn't resolve to a real card. |
 | `sacrificeSelected` | `declarationId`, `disposition` | consumes every card selected under `declarationId` via `"removeFromGame" \| "destroy" \| "discard"` — "remove X tactics in your discard pile from the game" as a cost. |
 | `dealDamage` | `target`, `amount` | "inflict N damage to `target`" as a cost — typically `"source"` for a location spending its own structure. Always payable; any resulting destruction is left to the normal state-based check. |
+| `oneOf` | `options: Cost[][]` | "Pay 1 **or** destroy a Micromajig token" — the engine auto-pays the first fully-payable branch (no player choice yet). Time Traveler Tourist Trap. |
 
 **Activating from another zone** — an `ActivatedAbility` may set
 `activationZone: "discard" | "hand" | "void"` (default `"play"`) to be used
@@ -189,8 +237,48 @@ simulates on a cloned state) — no partial payment.
 `and`, `or`, `not`, `sourceInZone`, `sourceIsEventCard`,
 `eventCardControlledBy`, `targetExists`, `cardTypeIs`, `cardTradeIs`,
 `hasUnique`, `hasAbility`, `statCompare`, `counterCompare`, `numberCompare`,
-`inBattle`, `sourceIsDamageSource`, `cardMovedFromZone`, `battleRole`,
-`eventPlayerIs`, `targetInSelection`.
+`inBattle`, `sourceIsDamageSource`, `cardMovedFromZone`, `cardMovedToZone`,
+`battleRole`, `eventPlayerIs`, `targetInSelection`, `eventOrdinal`,
+`deploySameNameThisTurn`, `respondingTo`, `respondedToPicked`,
+`deployedViaFlipUp`, `cardNameEquals`, `bottomedInMulligan`, `cardProvides`,
+`isStaple`, `cardDepleted`, `cardTypeEquals`.
+
+- **`cardProvides`** — `{ target, icon, min }` — true when `target`'s
+  current resource icons (`getResourceIcons` — face-up printed icons, a
+  `PROVIDES:` line, or Volition for a face-down card) include ≥ `min` of
+  `icon`. "A card that provides at least [O]" — bind `target` to
+  `"eventCard"` on a `resourcePlayed` or `cardEnteredPlay` trigger. Note a
+  face-down obsession resource provides *Volition*, not [O], so it doesn't
+  match `icon: "obsession"` (RULES.md §3).
+- **`isStaple`** — `{ target }` — `target` is a staple resource. Pairs
+  with `CardSelector.staple: true` ("...and it is a staple resource").
+- **`cardDepleted`** — `{ target? }` (default `"source"`) — `target` is
+  depleted. "At the end of your turn, if this card is depleted, ..."
+- **`cardTypeEquals`** — `{ target, other }` — both resolve to cards of
+  the same `CardType`. "A card of the same type as the discarded card."
+- **`sourceIsFaceDown`** — the ability's `source` is a face-down card in
+  play. Pair with `ActivatedAbility.fromFaceDown: true` ("use this only
+  while this card is a face-down resource"; Fired Hand, Vorpal Sword).
+- **`isExtremum`** — `{ target, metric: "cost" | Stat, direction: "min" |
+  "max", among }` — no card in `among` has a strictly lower/higher
+  `metric` than `target`. "The character with the lowest numeric cost"
+  (`count: 1` declaration + this in `selector.conditions`, `target` bound
+  to `__candidate`). Ties: every extremum qualifies, so the controller
+  picks. Verrucose Brains.
+- **`linkedCardInPlay`** — `{ key }` — the card `source` remembered under
+  `key` (`rememberTarget`) is still in play. Conscientious Objector.
+- **`sharesBattlePartyWithSource`** — `{ target }` — `target` and the
+  ability's `source` are both in the current battle on the same side.
+  Used inside a `damageModifiers` selector's `conditions` with `target`
+  bound to `__candidate`. "a character in a party with this card"
+  (Necromantic Healer).
+- **`cardProvides` / `respondingTo`** — `respondingTo` gains
+  `respondsTo: "ability"` for "in response to an ability" (Cock Block).
+- **`respondedToPicked`** — `{ cardType }` — true while responding to a
+  card/ability whose stored selections (`StackItem.context.selected`)
+  include an in-play card of `cardType`; it "picked a `<cardType>` as an
+  extra cost." Gates Mistaken Identity's EXTRA COST; pairs with the
+  `retargetExtraCost` effect. See RULES.md §7.
 
 - **`cardTradeIs`** — `{ target, trade }`, true when `target`'s printed
   `trade` equals `trade`. `CardSelector` has no trade filter — compose with
@@ -276,7 +364,93 @@ simulates on a cloned state) — no partial payment.
 `terminate`, `setRestoreLock`, `setDamage`, `removeFromBattle`,
 `forEachPlayer`, `nameValue`, `mayPay`, `createTokens`, `useTargetAbility`,
 `chooserSelectsTarget`, `chooserSelectsOption`, `lookAndReorder`,
-`reduceNextCost`, `deployForFree`, `distributeAmong`.
+`reduceNextCost`, `deployForFree`, `distributeAmong`, `flipFaceDown`,
+`putIntoPlay`.
+
+- **`flipFaceDown`** — `{ target }` — "flip `target` face-down under its
+  owner's control." Per RULES.md §2 the flip is a *leaves-play +
+  enters-play* boundary: damage, counters, attachments, temporary
+  modifiers/keywords/restrictions and named values are all wiped, control
+  reverts to the owner, and it becomes an anonymous face-down resource
+  (Volition). "Leaves play" triggers fire. No-op if `target` isn't in
+  play. Also the "if this would be destroyed, flip it face-down instead"
+  replacement — a `ReplacementAbility` with `replaces: { event:
+  "destroy" }` and `effects: [{ "type": "flipFaceDown", "target": {
+  "type": "selected", "id": "__candidate" } }]` (`optional: true` for
+  "you may").
+- **`putIntoPlay`** — `{ target, controller, faceDown? }` — move a card
+  from deck / discard / void **into play** under `controller`, as its real
+  type with the normal entrance bookkeeping (`cardEnteredPlay`, the
+  `attachTo` requirement drawn from the same `context.selected`, attack
+  eligibility). `faceDown: true` → it enters as an anonymous face-down
+  resource instead (no ETB). "Put the card into play under your control
+  [as a face-down resource]."
+- **`deployFromZone`** — `{ player, target, ignoreThreshold? }` — "you may
+  deploy the &lt;card&gt;": deploy `target` (a card *not* in hand — a
+  face-down permanent/tactic in play, or a card in the discard pile) as its
+  real type, waiving only its numeric cost. Pauses on a `deployForFree`
+  pending choice so `player` can supply the sub-card's own EXTRA COST picks
+  (or decline). Threshold + non-numeric extra costs still apply — unless
+  `ignoreThreshold: true` ("deploy it for free even if you cannot meet its
+  threshold"; I Drink Your Milkshake!). Flipping a face-down source face-up
+  fires its leaves-play triggers (RULES.md §2). Wrap in `mayPay` (empty
+  `costs`) if the "you may" needs an explicit yes/no before the pick, but
+  the choice itself is already declinable.
+- **`grantResourceIcons`** — `{ player, icon, amount, duration }` — adds
+  `amount` phantom `icon` resource-icons to `player`'s threshold count for
+  `duration`. "This turn, you control an additional [E][E][E][E]." (31337!).
+- **`detach`** — `{ target }` — clears `target`'s `attachedTo` (a resource
+  stops being attached to a faction; an "Attach to X" item is left
+  unattached and cleaned up by the state-based check).
+- **`scheduleEffect`** — `{ when: "startOfNextTurn" | "endOfTurn",
+  condition?, effects }` — registers a one-shot delayed effect, fired at
+  that moment (with the source/controller captured) then discarded.
+  `endOfTurn` fires as the current turn ends; `startOfNextTurn` at the
+  start of the source controller's *next* turn. `condition` is re-checked
+  at fire time ("if this card is in play"). Keep `effects` self-resolving
+  — a chooser pause inside a scheduled effect is not supported.
+- **`useAnyAbility`** — `{ chooser, selector? }` — "you may use an
+  ability": pauses for `chooser` to pick one of their in-play cards
+  (matching `selector`, default any card they control with an activated
+  ability), then a follow-up `useTargetAbility` choice for that card's
+  abilities. The Poshernacle.
+- **`preventDamage`** — `{ target, amount, mode: "reduce" | "redirect",
+  redirectTo? }` — a runtime damage shield on `target`, consumed as damage
+  is inflicted this turn (expires next start-of-turn). `reduce` absorbs up
+  to `amount` (Tiny Shiny). `redirect` sends up to `amount` of the next
+  damage to `redirectTo` instead, raw (Delectable Boon).
+- **`rememberTarget`** — `{ key, target }` — store `target`'s id on
+  `source`'s `linkedTargets[key]` (cleared on leaving play). Read back via
+  the `{ type: "remembered", key }` TargetRef or `linkedCardInPlay`
+  condition. Conscientious Objector's "while the picked location is in
+  play."
+- **`duplicate`** — `{ target }` — "Duplicate the tactic": resolve a copy
+  of `target` (a tactic on the response stack) under the current
+  controller, reusing the original's selections. Muddle.
+- **`setCardType`** — `{ target, cardType, grantStats?, duration }` — "this
+  turn, the item is a golem character ..." (Contrabulous Fabtraption, RUNE
+  OF ANIMATION). For `duration`, ADDS `cardType` to `target` — it keeps its
+  printed type too (CR §208.1). `hasCardType` / `getCardTypes` and
+  everything keyed off them (typed selectors — the card now matches both
+  types, the lethal-damage / attach-to state-based checks, battle legality,
+  mid-battle §208.4 removal, `cardTypeIs`, start-of-turn damage-clear +
+  attack eligibility). `grantStats` (a partial `Stat → NumberExpression`
+  map) become `set` modifiers with the same duration. Losing the character
+  type forgets this-turn damage (CR §208.3). See RULES.md §3.7.
+- **`retargetExtraCost`** — `{ cardType, to }` — "its effect happens as
+  though your opponent had picked the other character instead" (Mistaken
+  Identity). Rewrites the responded-to stack item's stored EXTRA-COST pick:
+  the in-play card of `cardType` it selected is swapped for `to` everywhere
+  it appears under that item's `context.selected`. No-op if there's no
+  responded-to item, it holds no such pick, or `to` is that same card.
+  Gate the response with the `respondedToPicked` condition. See RULES.md §7.
+- **`partitionAndPick`** — `{ count, piles, compareBy: "cost", winnerTakes }`
+  — the MUSTACHE SHOWDOWN primitive (Mustache Aficionado); see the "Chooser"
+  effects section below and RULES.md §12.
+- **`mill`** now takes `to?: "discard" | "removed"` (default `"discard"`).
+- **`terminate`** gains `scope: "respondedItem"` — terminate the newest
+  unresolved non-self stack item, card **or** ability ("Terminate the
+  ability"; Cock Block).
 
 - **`setDamage`** — `{ target, amount }` — sets accumulated damage to
   `amount` (>= 0), e.g. "reduce the damage already inflicted to this
@@ -383,10 +557,11 @@ alongside the `moveCard`.
 ### "Chooser" effects — pause resolution for a player's input
 
 `chooserSelectsTarget`, `chooserSelectsOption`, `lookAndReorder`,
-`reduceNextCost`, `deployForFree`, and `distributeAmong` all pause the
-current ability's effect list the moment they're reached, set
+`reduceNextCost`, `deployForFree`, `distributeAmong`, and `partitionAndPick`
+all pause the current ability's effect list the moment they're reached, set
 `state.pendingChoice`, and resume the remaining effects only once that
-choice is answered (`resolvePendingChoice`) — this is transparent to
+choice (or, for `partitionAndPick`, the whole `partitionCards` → `pickPile`
+→ `takeFromPile` sequence) is answered (`resolvePendingChoice`) — this is transparent to
 ability authoring; just write the effect and its nested `effects: Effect[]`
 like any other, and don't assume the ability finishes resolving
 synchronously within one `perform()` call when one of these appears. (The
@@ -432,6 +607,15 @@ to touch when just authoring card data.)
   once per card with a nonzero share, that card bound to `{ "type":
   "selected", "id": "__candidate" }` and its share to `{ "type":
   "variable", "id": "__amount" }`.
+- **`partitionAndPick`** — `{ count, piles, compareBy: "cost", winnerTakes }`
+  — the MUSTACHE SHOWDOWN primitive (Mustache Aficionado). Drives a
+  three-stage per-player pause: `partitionCards` (split your revealed
+  top-`count` into `piles` non-empty groups) → `pickPile` (choose one of
+  the *other* player's piles) → `takeFromPile` (higher total-`cost` pile's
+  owner may move up to `winnerTakes` of its cards to hand; a tie skips
+  this). Un-taken cards stay on top of their owner's deck; both decks are
+  reshuffled at the end. In-flight state lives on `GameState.pendingPartition`.
+  See RULES.md §12.
 
 ## NumberExpression (`src/types/expressions.ts`)
 
@@ -526,18 +710,40 @@ TargetRef = "source" | "attachedTo" | "eventCard"
   being played in response to (pairs with the `respondingTo` condition).
 - **`{ type: "factionOf", player }`** — that player's faction card instance
   ("attach it to that player's faction").
+- **`{ type: "remembered", key }`** — a card `source` earlier remembered
+  under `key` (`rememberTarget`); `undefined` if none / it left play.
 
 `NumberExpression` also has **`{ type: "conditional", if, then, else }`** —
 `then` when the `Condition` holds, else `else`.
 
 ```ts
-CardSelector = { controller?, owner?, zone?, type?, subtype?, depleted?, conditions? }
+CardSelector = { controller?, owner?, zone?, type?, name?, subtype?, depleted?, conditions? }
 ```
+
+**`name`** — exact printed-name match (`CardDefinition.name`). "Search your
+deck for a card named Elitism" (`{ "zone": "deck", "name": "Elitism" }`),
+"a card named Micromajig". Distinct from the `cardNameEquals` *condition*,
+which compares two cards rather than a literal.
 
 **No implicit zone.** A selector with no `zone` matches *every* zone,
 including `deck`/`hand`/`removed` (RULES.md §2, deliberate). Always set
 `zone: "play"` explicitly for "pick a character/item/location" — omitting it
 is a silent correctness bug, not a convenience default.
+
+**`staple`** — `true` matches only staple resources
+(`ResourceDefinition.staple`), `false` only non-staples. "Search your deck
+for a staple resource" (`{ "zone": "deck", "type": "resource", "staple":
+true }`). Since `type: "resource"` now matches real resource *cards* in any
+named zone (not just face-down cards in play), a deck/discard resource
+search works directly.
+
+**`faceDown`** — `true` matches only face-down in-play cards, and a `type`
+filter is then matched against the card's **real (hidden)** `definition.type`
+— "reveal a face-down tactic/item/location/character you control"
+(`{ "controller": "self", "zone": "play", "type": "tactic", "faceDown": true }`).
+`false` excludes face-down cards. Omitted keeps the historical default
+(`type: "resource"` still matches a face-down card as an anonymous resource;
+any other `type` filter skips them).
 
 `selector.conditions` lets you filter by an arbitrary `Condition[]`,
 evaluated with the *candidate* card bound to `{ type: "selected", id:
@@ -577,8 +783,20 @@ non-optional `count` is still an exact requirement, even a variable one).
 
 ```ts
 Keyword = "tactical" | "aggro" | "covert" | "redirectDamage"
+        | "cannotBeBlocked" | "canBlockCovert"
 Restriction = "cannotAttack" | "cannotBlock" | "mustAttack" | "mustBlock"
+            | "cannotBeRestored"
 ```
+
+`canBlockCovert` — "can block COVERT parties" (Recyclable Golem): counts as
+Covert for *blocking* an all-Covert attacking party only. `cannotBeBlocked`
+— "unblockable" (Uncontrollable Jalopy). `cannotBeRestored` — the faction
+Restore Rule skips it (aura form of `restoreLocked`; Framptle).
+
+**`ContinuousAbility.suppressKeywords`** — `KeywordGrantDefinition[]`,
+parallel to `.keywords` but *removes* the keyword while `condition` holds
+("it loses COVERT while there is a token on this card"; Nattering
+Stoopswaggler). Beats every grant, printed or otherwise.
 
 `mustAttack` / `mustBlock` — "must attack/block if it can". Enforced at
 `declareAttack` / `declareBlockers`: if the controller declares a battle

@@ -53,6 +53,19 @@ export type GameAction =
         | {
             type: "playResource";
             cards: Array<{ cardId: CardInstanceId; faceDown: boolean }>;
+            /**
+             * Instead of playing the resource(s): reveal this hand card
+             * (which must carry `CardDefinition.revealFromHand`) and deploy
+             * it for its `revealFromHand.cost`, consuming this turn's
+             * develop resource play. `cards` must be empty when set.
+             * "You may reveal this card as you are playing a resource; if
+             * you do, you may deploy it for N." (Witty Worm).
+             */
+            revealFromHand?: {
+              cardId: CardInstanceId;
+              selected?: Record<string, CardInstanceId[]>;
+              variables?: Record<string, number>;
+            };
           };
     }
   | {
@@ -124,5 +137,16 @@ export type GameAction =
             abilityId?: AbilityId;
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
-          };
+          }
+        | {
+            kind: "useAnyAbility";
+            /** Which controlled card's ability to use; omit to decline. Leads to a follow-up `useTargetAbility` choice. */
+            cardId?: CardInstanceId;
+          }
+        /** MUSTACHE SHOWDOWN — `piles` must partition the revealed cards into the pending choice's `piles` non-empty groups. */
+        | { kind: "partitionCards"; piles: CardInstanceId[][] }
+        /** MUSTACHE SHOWDOWN — index into the opponent's piles. */
+        | { kind: "pickPile"; index: number }
+        /** MUSTACHE SHOWDOWN — 0..`max` of the winning pile's cards to move to hand. */
+        | { kind: "takeFromPile"; cardIds: CardInstanceId[] };
     };

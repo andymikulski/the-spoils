@@ -104,9 +104,12 @@ const EVENT_TYPES = new Set([
   "turnStarted", "turnEnding", "cardPlayed", "cardEnteredPlay", "cardMoved",
   "cardDestroyed", "cardDepleted", "cardRestored", "resourcePlayed",
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
-  "characterAttacked", "characterBlocked"
+  "characterAttacked", "characterBlocked", "cardsDrawn"
 ]);
-const KEYWORDS = new Set(["tactical", "aggro", "covert", "redirectDamage"]);
+const KEYWORDS = new Set([
+  "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
+  "canBlockCovert"
+]);
 const KNOWN_TYPE_TAGS = new Set([
   ...ABILITY_TYPES,
   // effects
@@ -118,6 +121,9 @@ const KNOWN_TYPE_TAGS = new Set([
   "forEachPlayer", "nameValue", "mayPay", "createTokens", "useTargetAbility",
   "chooserSelectsTarget", "chooserSelectsOption", "lookAndReorder",
   "reduceNextCost", "deployForFree", "distributeAmong",
+  "flipFaceDown", "putIntoPlay", "deployFromZone", "detach", "scheduleEffect",
+  "preventDamage", "rememberTarget", "grantResourceIcons", "useAnyAbility",
+  "duplicate", "oneOf", "setCardType", "retargetExtraCost", "partitionAndPick",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   // conditions
@@ -126,7 +132,10 @@ const KNOWN_TYPE_TAGS = new Set([
   "hasUnique", "hasAbility", "statCompare", "counterCompare", "numberCompare", "inBattle",
   "sourceIsDamageSource", "cardMovedFromZone", "cardMovedToZone", "battleRole", "eventPlayerIs",
   "targetInSelection", "eventOrdinal", "deploySameNameThisTurn",
-  "respondingTo", "deployedViaFlipUp", "cardNameEquals", "bottomedInMulligan",
+  "respondingTo", "respondedToPicked", "deployedViaFlipUp", "cardNameEquals",
+  "bottomedInMulligan",
+  "cardProvides", "isStaple", "cardDepleted", "cardTypeEquals", "sourceIsFaceDown",
+  "isExtremum", "linkedCardInPlay", "sharesBattlePartyWithSource", "remembered",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",

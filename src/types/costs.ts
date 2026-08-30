@@ -81,4 +81,13 @@ export type Cost =
       type: "dealDamage";
       target: TargetRef;
       amount: NumberExpression;
+    }
+  | {
+      /**
+       * "Pay 1 or destroy a Micromajig token you control." — the engine
+       * auto-pays the first fully-payable branch (a player-choice variant
+       * is future work). Time Traveler Tourist Trap.
+       */
+      type: "oneOf";
+      options: Cost[][];
     };

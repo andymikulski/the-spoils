@@ -46,7 +46,9 @@ export type TargetRef =
    */
   | { type: "respondedToCard" }
   /** A player's faction card instance — "attach it to that player's faction". */
-  | { type: "factionOf"; player: PlayerRef };
+  | { type: "factionOf"; player: PlayerRef }
+  /** A card `source` earlier "remembered" under `key` (see the `rememberTarget` effect); `undefined` if none / it left play. */
+  | { type: "remembered"; key: string };
 
 export type NumberExpression =
   | number
@@ -162,6 +164,13 @@ export interface CardSelector {
    */
   zone?: Zone | Zone[] | "any";
   type?: CardType;
+  /**
+   * Exact printed-name match ("search your deck for a card named Elitism",
+   * "a card named Micromajig") — compared against `CardDefinition.name`.
+   * For "a card with the same name as this one" use a `cardNameEquals`
+   * condition instead (that compares two cards, not a literal).
+   */
+  name?: string;
   subtype?: string;
   /**
    * Match cards whose subtype list contains the string a `nameValue` effect
@@ -171,6 +180,20 @@ export interface CardSelector {
   subtypeVar?: string;
 
   depleted?: boolean;
+
+  /** Match only staple resources (`ResourceDefinition.staple`) when `true`, only non-staples when `false`. "Search your deck for a staple resource." */
+  staple?: boolean;
+
+  /**
+   * Match on face-down state. `true` — only face-down in-play cards, and a
+   * `type` filter is matched against the card's REAL (hidden)
+   * `definition.type` ("a face-down tactic you control"); face-down cards
+   * are otherwise excluded from any typed selector. `false` — only face-up
+   * cards. Omitted — the historical default (`type: "resource"` still
+   * matches a face-down card as an anonymous resource; any other `type`
+   * filter skips face-down cards).
+   */
+  faceDown?: boolean;
 
   conditions?: Condition[];
 }

@@ -93,6 +93,18 @@ export interface PendingDeployForFreeChoice {
   /** Legal hand cards (matching maxCost/selector) at the moment this paused. */
   candidates: CardInstanceId[];
   context: ResolutionContext;
+  /**
+   * Set by the `deployFromZone` effect — the single candidate is being
+   * deployed from a zone OTHER than the hand (a face-down permanent/tactic
+   * in play, or a card in the discard pile).
+   */
+  fromZone?: boolean;
+  /**
+   * Set by `deployFromZone.ignoreThreshold` — waive the printed-threshold
+   * gate too ("deploy it for free even if you cannot meet its threshold";
+   * I Drink Your Milkshake!).
+   */
+  ignoreThreshold?: boolean;
 }
 
 /** "Divide N however you want among the selected cards" (see the `distributeAmong` effect). */
@@ -158,6 +170,46 @@ export interface PendingUseTargetAbilityChoice {
   times: number;
 }
 
+/**
+ * "You may use an ability" (of any card you control) — The Poshernacle.
+ * Answering with a `cardId` narrows to a follow-up `useTargetAbility`
+ * choice for that card's abilities; omitting it declines.
+ */
+export interface PendingUseAnyAbilityChoice {
+  kind: "useAnyAbility";
+  id: string;
+  playerId: PlayerId;
+  /** In-play cards `playerId` controls that have at least one activated ability. */
+  candidateCardIds: CardInstanceId[];
+  context: ResolutionContext;
+}
+
+/** MUSTACHE SHOWDOWN, step 1 — `playerId` splits `cardIds` into `piles` non-empty face-down piles (see the `partitionAndPick` effect). */
+export interface PendingPartitionCardsChoice {
+  kind: "partitionCards";
+  id: string;
+  playerId: PlayerId;
+  cardIds: CardInstanceId[];
+  piles: number;
+}
+
+/** MUSTACHE SHOWDOWN, step 2 — `playerId` picks one of their opponent's face-down `piles` by index. */
+export interface PendingPickPileChoice {
+  kind: "pickPile";
+  id: string;
+  playerId: PlayerId;
+  piles: CardInstanceId[][];
+}
+
+/** MUSTACHE SHOWDOWN, step 3 — the higher-total-cost pile's owner may move up to `max` of its `candidates` to hand. */
+export interface PendingTakeFromPileChoice {
+  kind: "takeFromPile";
+  id: string;
+  playerId: PlayerId;
+  candidates: CardInstanceId[];
+  max: number;
+}
+
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
@@ -170,4 +222,8 @@ export type PendingChoice =
   | PendingReplacementChoice
   | PendingNameValueChoice
   | PendingMayPayChoice
-  | PendingUseTargetAbilityChoice;
+  | PendingUseTargetAbilityChoice
+  | PendingUseAnyAbilityChoice
+  | PendingPartitionCardsChoice
+  | PendingPickPileChoice
+  | PendingTakeFromPileChoice;

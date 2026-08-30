@@ -7,6 +7,7 @@ import type {
   BattleId,
   CardDefinitionId,
   CardInstanceId,
+  CardType,
   Duration,
   Keyword,
   ModifierId,
@@ -18,6 +19,7 @@ import type {
 } from "./ids.js";
 import type { ResolutionContext, StackItem } from "./resolution.js";
 import type { PendingChoice } from "./choices.js";
+import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
 
@@ -51,6 +53,14 @@ export interface CardInstance {
    * `nameValue` effect and `CardSelector.subtypeVar`. Cleared on leaving play.
    */
   namedValues?: Record<string, string>;
+
+  /**
+   * Card ids this card has "remembered" as part of an EXTRA COST / ability
+   * ("pick a location you control; while THAT location is in play, ...") —
+   * see the `rememberTarget` effect and the `{ type: "remembered", key }`
+   * TargetRef. Cleared on leaving play.
+   */
+  linkedTargets?: Record<string, CardInstanceId>;
 
   /** True for a token permanent (`createTokens`) — ceases to exist on leaving play. */
   isToken?: boolean;
@@ -124,6 +134,56 @@ export interface RuntimeRestriction {
   createdTurn: number;
 }
 
+/**
+ * A temporary ADDED card type from a `setCardType` effect ("this turn, the
+ * item is a golem character" — RULES.md §3.7 / CR §208.1: a card may hold
+ * several types at once). While active (see `durationStillActive`) the
+ * card has `cardType` *in addition to* its printed type, everywhere
+ * `getCardTypes` / `hasCardType` are consulted. The stat grants that ride
+ * along are separate `RuntimeModifier`s with a matching duration/source.
+ */
+export interface RuntimeCardTypeGrant {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  targetId: CardInstanceId;
+  cardType: CardType;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/** A temporary phantom resource-icon grant ("this turn, you control an additional [E][E][E][E]" — 31337!). */
+export interface RuntimeResourceGrant {
+  id: ModifierId;
+  playerId: PlayerId;
+  icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
+  amount: number;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/** A runtime damage "shield" registered by `preventDamage`, consumed as damage is inflicted this turn. */
+export interface DamageShield {
+  id: ModifierId;
+  targetId: CardInstanceId;
+  /** Remaining points this shield can still absorb. */
+  amount: number;
+  mode: "reduce" | "redirect";
+  redirectToId?: CardInstanceId;
+  createdTurn: number;
+}
+
+/** A one-shot delayed effect registered by `scheduleEffect`, fired at the next matching moment then discarded. */
+export interface ScheduledEffect {
+  id: ModifierId;
+  when: "startOfNextTurn" | "endOfTurn";
+  /** The turn on which it was scheduled — an `endOfTurn` entry fires at the end of THIS turn; a `startOfNextTurn` entry fires at the start of its controller's next turn. */
+  turnScheduled: number;
+  sourceId: CardInstanceId;
+  controllerId: PlayerId;
+  condition?: Condition;
+  effects: Effect[];
+}
+
 /** A pending "reduce the next numeric cost you pay this turn" from a `reduceNextCost` effect, consumed by one `playCard`. */
 export interface RuntimeCostReduction {
   id: ModifierId;
@@ -152,7 +212,11 @@ export interface PendingEffectFrame {
   index: number;
   context: ResolutionContext;
   finishStackItem?: StackItem;
-  finishFlipUp?: { cardId: CardInstanceId; attachTargetId?: CardInstanceId };
+  finishFlipUp?: {
+    cardId: CardInstanceId;
+    attachTargetId?: CardInstanceId;
+    context?: ResolutionContext;
+  };
 }
 
 export interface BattleDamageAssignment {
@@ -350,6 +414,17 @@ export interface GameState {
   keywordGrants: RuntimeKeywordGrant[];
   restrictions: RuntimeRestriction[];
   costReductions: RuntimeCostReduction[];
+  resourceGrants: RuntimeResourceGrant[];
+  cardTypeGrants: RuntimeCardTypeGrant[];
+  damageShields: DamageShield[];
+  scheduledEffects: ScheduledEffect[];
+
+  /**
+   * Per-turn count of how many times each activated ability has been used,
+   * keyed `"<cardId>:<abilityId>"`. Reset at the start of every turn. Read
+   * by `ActivatedAbility.usesPerTurn` ("use this only N times each turn").
+   */
+  abilityUsesThisTurn: Record<string, number>;
 
   /** Fully serializable response/stack state for UI, replay, or networking. */
   responseStack: StackItem[];
@@ -365,6 +440,27 @@ export interface GameState {
 
   /** Blocks perform() except resolvePendingChoice until a player answers it. */
   pendingChoice?: PendingChoice;
+
+  /**
+   * The in-flight MUSTACHE SHOWDOWN (`partitionAndPick` effect), advanced
+   * one player at a time by the `partitionCards` → `pickPile` →
+   * `takeFromPile` pending choices. Cleared when the showdown resolves.
+   */
+  pendingPartition?: {
+    sourceId: CardInstanceId;
+    controllerId: PlayerId;
+    compareBy: "cost";
+    winnerTakes: number;
+    /** The two players, in the order they act (controller first). */
+    order: PlayerId[];
+    /** Top-`count` cards each player revealed (still sitting on top of their deck). */
+    revealed: Record<PlayerId, CardInstanceId[]>;
+    /** Each player's split of their own revealed cards, once made. */
+    partitions: Record<PlayerId, CardInstanceId[][]>;
+    /** Which of the OTHER player's piles each player chose (index), once made. */
+    picks: Record<PlayerId, number>;
+    phase: "partition" | "pick";
+  };
 
   /**
    * The continuation for an outstanding optional replacement (paired with a

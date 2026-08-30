@@ -2,10 +2,11 @@
 // Effects
 // -----------------------------------------------------------------------------
 
-import type { Duration, Keyword, ModifierOperation, Restriction, Stat, Zone } from "./ids.js";
+import type { CardType, Duration, Keyword, ModifierOperation, Restriction, Stat, Zone } from "./ids.js";
 import type { CardSelector, NumberExpression, PlayerRef, TargetDeclaration, TargetRef } from "./expressions.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
+import type { ResourceIcon } from "./cards.js";
 
 export type Effect =
   | {
@@ -115,6 +116,124 @@ export type Effect =
       type: "attachTo";
       target: TargetRef;
       to: TargetRef;
+    }
+  | {
+      /**
+       * Flip an in-play card face-down under its OWNER's control. Per
+       * RULES.md §2 (CR §411.3 / §411.4) the flip counts as the card
+       * *leaving play* and *a brand-new card entering play* — accumulated
+       * damage, counters, attachments, temporary modifiers/keywords/
+       * restrictions and named values are all cleared; the result is a
+       * face-down resource providing one Volition. "Leaves play" triggers
+       * fire. No-op if `target` doesn't resolve to a card in play. Used
+       * both directly ("flip the character face-down under its owner's
+       * control") and as a "would be destroyed → flip it face-down
+       * instead" replacement (bind `target` to `{ type: "selected", id:
+       * "__candidate" }` there).
+       */
+      type: "flipFaceDown";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * Move a card from deck / discard / void INTO play as its real type,
+       * running the normal entrance bookkeeping (`cardEnteredPlay`, the
+       * attach-target requirement, attack eligibility). `faceDown: true`
+       * puts it into play as an anonymous face-down resource instead. "Put
+       * the card into play under your control [as a face-down resource]."
+       */
+      type: "putIntoPlay";
+      target: TargetRef;
+      controller: PlayerRef;
+      faceDown?: boolean;
+    }
+  | {
+      /**
+       * "You may deploy the <card>" — deploy an already-picked card that is
+       * NOT in hand (a face-down permanent/tactic in play; a card in the
+       * discard pile) as its real type, waiving only its numeric cost.
+       * Threshold and any non-numeric EXTRA COSTs still apply (unless
+       * `ignoreThreshold`) — the player supplies the sub-card's own picks
+       * when the pending `deployForFree` choice pauses. Compose with
+       * `mayPay` (empty `costs`) for the "you may" prompt. Manifest /
+       * Hidden Ruins / Accidental Invention / Burly Assailment (a revealed
+       * face-down card), Dark Awakening (a card in your discard pile).
+       */
+      type: "deployFromZone";
+      player: PlayerRef;
+      target: TargetRef;
+      /** "deploy it for free even if you cannot meet its threshold" (I Drink Your Milkshake!). */
+      ignoreThreshold?: boolean;
+    }
+  | {
+      /**
+       * Adds `amount` phantom `icon` resource-icons to `player`'s threshold
+       * count for `duration` — "This turn, you control an additional
+       * [E][E][E][E]." (31337!). Read by `getThresholds` / the
+       * `resourceIcons` expression; cleaned up like `modifiers`.
+       */
+      type: "grantResourceIcons";
+      player: PlayerRef;
+      icon: ResourceIcon;
+      amount: NumberExpression;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Clears `target`'s attachment — a resource stops being attached to a
+       * faction ("detach it from your faction"; Braggadocian Aide), or an
+       * "Attach to X" item is left unattached (and cleaned up by the
+       * state-based check). No-op if `target` isn't attached to anything.
+       */
+      type: "detach";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * Registers a runtime damage "shield" on `target`, consumed as
+       * damage is inflicted to it this turn (expires at the next
+       * start-of-turn if unused). `mode: "reduce"` absorbs up to `amount`
+       * points ("Reduce the next damage inflicted to the character this
+       * turn by 2" — Tiny Shiny). `mode: "redirect"` sends up to `amount`
+       * of the next damage to `redirectTo` instead ("The next X damage
+       * that would be inflicted to the first picked card this turn is
+       * inflicted to the second picked card instead" — Delectable Boon).
+       * Redirected damage lands raw (no further modifiers/shields on the
+       * redirect target).
+       */
+      type: "preventDamage";
+      target: TargetRef;
+      amount: NumberExpression;
+      mode: "reduce" | "redirect";
+      redirectTo?: TargetRef;
+    }
+  | {
+      /**
+       * Registers a one-shot delayed effect fired at the next `endOfTurn`
+       * (the current turn's end) or `startOfNextTurn` (the source
+       * controller's next turn), then discarded. `condition`, if set, is
+       * checked at fire time. "At the start of your next turn, if this card
+       * is in play, put the voided character into play." (Gilded Yurt);
+       * "At the end of the turn, ..." (Vast Mastabatorium). A chooser
+       * effect inside `effects` is not supported — keep the delayed
+       * effects self-resolving.
+       */
+      type: "scheduleEffect";
+      when: "startOfNextTurn" | "endOfTurn";
+      condition?: Condition;
+      effects: Effect[];
+    }
+  | {
+      /**
+       * "You may use an ability" — pauses for `chooser` to pick one of
+       * their in-play cards (matching `selector`, default: any card they
+       * control) and then one of its activated abilities, resolved as a
+       * nested sub-resolution. Generalises `useTargetAbility` (which needs
+       * a fixed `target`). The Poshernacle.
+       */
+      type: "useAnyAbility";
+      chooser: PlayerRef;
+      selector?: CardSelector;
     }
   | {
       /**
@@ -233,13 +352,97 @@ export type Effect =
     }
   | {
       /**
-       * Moves the top `count` cards of `player`'s deck to their discard pile
-       * ("put the top N cards of a deck into the discard pile"). Fewer than
-       * `count` in the deck: mills whatever is there. No reshuffle.
+       * Moves the top `count` cards of `player`'s deck to `to` (default
+       * `"discard"`; `"removed"` for "remove the top N cards of their deck
+       * from the game"). Fewer than `count` in the deck: whatever's there.
+       * No reshuffle.
        */
       type: "mill";
       player: PlayerRef;
       count: NumberExpression;
+      to?: "discard" | "removed";
+    }
+  | {
+      /**
+       * Store `target`'s card id on `source`'s `linkedTargets[key]` — an
+       * EXTRA-COST pick a later continuous ability keys off ("pick a
+       * location you control; while THAT location is in play, this card
+       * cannot attack or block"). Read back via the `{ type: "remembered",
+       * key }` TargetRef or the `linkedCardInPlay` condition. Cleared on
+       * leaving play.
+       */
+      type: "rememberTarget";
+      key: string;
+      target: TargetRef;
+    }
+  | {
+      /**
+       * "Duplicate the tactic." Resolve a copy of `target` (a tactic on the
+       * response stack) under the current ability's controller, reusing the
+       * original's already-made selections (RULES.md §12). No transient
+       * card instance is created. Muddle.
+       */
+      type: "duplicate";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * The MUSTACHE SHOWDOWN primitive (Mustache Aficionado). `controller`
+       * and their `opponent` each reveal the top `count` cards of their own
+       * deck and split them into `piles` face-down piles (>= 1 card each);
+       * each then picks one of the OTHER player's piles; the two chosen
+       * piles are revealed and their total `compareBy` (`"cost"`) compared.
+       * If one is strictly higher, that pile's OWNER may move up to
+       * `winnerTakes` of its cards to hand. Every card not taken stays in
+       * its owner's deck, which is then shuffled. Pauses on `partitionCards`
+       * → `pickPile` → (`takeFromPile`) pending choices, one player at a
+       * time. No-op if either player has fewer than `piles` cards to
+       * reveal. See RULES.md §12.
+       */
+      type: "partitionAndPick";
+      count: number;
+      piles: number;
+      compareBy: "cost";
+      winnerTakes: number;
+    }
+  | {
+      /**
+       * "... its effect happens as though your opponent had picked the
+       * other character instead." (Mistaken Identity). Rewrites the
+       * responded-to stack item's stored EXTRA-COST pick: the in-play card
+       * of `cardType` it selected is swapped for `to` everywhere it appears
+       * under that item's `context.selected`, so the item resolves against
+       * the new pick. No-op if there is no responded-to item, it holds no
+       * such pick, or `to` is that same card. See RULES.md §7.
+       */
+      type: "retargetExtraCost";
+      cardType: CardType;
+      to: TargetRef;
+    }
+  | {
+      /**
+       * "This turn, the <card> is a <cardType> ..." (RULES.md §3.7 /
+       * CR §208). For `duration`, `target` GAINS `cardType` — it keeps its
+       * printed type too (CR §208.1: a card may hold several types at once;
+       * §208.1a: gaining one keeps the rest). `hasCardType` /
+       * `getCardTypes`, and everything keyed off them (typed selectors, the
+       * lethal-damage / attach state-based checks, battle legality, the
+       * `cardTypeIs` condition), see the added type. `grantStats`, if set,
+       * apply as `set` stat modifiers with the same duration and source
+       * (each value a `NumberExpression`, evaluated once now — e.g.
+       * "strength and life equal to its numeric cost and 3 speed" is
+       * `{ strength: {type:"cardCost",target}, life: {type:"cardCost",
+       * target}, speed: 3 }`). When the grant ends and the card thereby
+       * stops being a character it forgets the damage it took this turn
+       * (CR §208.3, handled at start-of-turn) and is pulled from any battle
+       * it is in (CR §208.4, via the state-based check). Contrabulous
+       * Fabtraption — RUNE OF ANIMATION.
+       */
+      type: "setCardType";
+      target: TargetRef;
+      cardType: CardType;
+      grantStats?: Partial<Record<Stat, NumberExpression>>;
+      duration: Duration;
     }
   | {
       /**
@@ -264,9 +467,12 @@ export type Effect =
        *   source card is `target` (e.g. `"eventCard"`, the card just played).
        * - `scope: "othersOnStack"` — terminate every remaining stack item
        *   ("all other unresolved cards are terminated"); `target` ignored.
+       * - `scope: "respondedItem"` — terminate the newest unresolved
+       *   non-self stack item, whatever its kind ("Terminate the ability" —
+       *   Cock Block); `target` ignored.
        */
       type: "terminate";
-      scope?: "target" | "othersOnStack";
+      scope?: "target" | "othersOnStack" | "respondedItem";
       target?: TargetRef;
     }
   | {

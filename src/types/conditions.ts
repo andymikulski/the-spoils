@@ -3,7 +3,8 @@
 // -----------------------------------------------------------------------------
 
 import type { CardType, ComparisonOperator, Stat, Trade, Zone } from "./ids.js";
-import type { NumberExpression, PlayerRef, TargetRef } from "./expressions.js";
+import type { CardSelector, NumberExpression, PlayerRef, TargetRef } from "./expressions.js";
+import type { ResourceIcon } from "./cards.js";
 
 export type Condition =
   | { type: "and"; conditions: Condition[] }
@@ -186,6 +187,19 @@ export type Condition =
        */
       type: "respondingTo";
       cardType?: CardType;
+      /** `"ability"` — true when the newest unresolved non-self stack item is an activated ability ("in response to an ability"; Cock Block). Default `"card"`. */
+      respondsTo?: "card" | "ability";
+    }
+  | {
+      /**
+       * True while responding to a card or ability whose stored selections
+       * (`StackItem.context.selected`) include an in-play card of
+       * `cardType` — it "picked a <cardType> as an extra cost". Gates
+       * Mistaken Identity's EXTRA COST; pair with the `retargetExtraCost`
+       * effect.
+       */
+      type: "respondedToPicked";
+      cardType: CardType;
     }
   | {
       /**
@@ -218,4 +232,71 @@ export type Condition =
        */
       type: "bottomedInMulligan";
       target?: TargetRef;
+    }
+  | {
+      /**
+       * True when `target`'s current resource icons (`getResourceIcons` —
+       * face-up printed icons / a PROVIDES line / Volition for a face-down
+       * card) include at least `min` of `icon`. "A card that provides at
+       * least [O]" — bind `target` to `"eventCard"` on a `resourcePlayed`
+       * or `cardEnteredPlay` trigger.
+       */
+      type: "cardProvides";
+      target: TargetRef;
+      icon: ResourceIcon;
+      min: NumberExpression;
+    }
+  | {
+      /** True when `target` resolves to a staple resource (`ResourceDefinition.staple`). "...and it is a staple resource." */
+      type: "isStaple";
+      target: TargetRef;
+    }
+  | {
+      /** True when `target` (default `"source"`) resolves to a depleted card. "At the end of your turn, if this card is depleted, ..." (Dying Hero). */
+      type: "cardDepleted";
+      target?: TargetRef;
+    }
+  | {
+      /** True when `target` and `other` resolve to cards of the same `CardType`. "A card of the same type as the discarded card." (Perturb). */
+      type: "cardTypeEquals";
+      target: TargetRef;
+      other: TargetRef;
+    }
+  | {
+      /**
+       * True when `target` and the ability's `source` are both in the
+       * current battle on the SAME side (both attacking, or both blocking)
+       * — "a character in a party with this card" (Necromantic Healer,
+       * used inside a `damageModifiers` selector's `conditions` with
+       * `target` bound to `__candidate`).
+       */
+      type: "sharesBattlePartyWithSource";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * True when the card `source` has "remembered" as `key` (via the
+       * `rememberTarget` effect) is still in play — "while the picked
+       * location is in play" (Conscientious Objector).
+       */
+      type: "linkedCardInPlay";
+      key: string;
+    }
+  | {
+      /** True while the ability's `source` is a face-down card in play — "use this only while this card is a face-down resource" (Fired Hand, Vorpal Sword). */
+      type: "sourceIsFaceDown";
+    }
+  | {
+      /**
+       * True when no card matching `among` has a strictly lower (`"min"`) /
+       * higher (`"max"`) `metric` than `target` — "the character with the
+       * lowest numeric cost" (Verrucose Brains; `metric: "cost"`,
+       * `direction: "min"`, `among` = all characters). Ties: every extremum
+       * satisfies it, so a `count: 1` declaration lets the controller pick.
+       */
+      type: "isExtremum";
+      target: TargetRef;
+      metric: "cost" | Stat;
+      direction: "min" | "max";
+      among: CardSelector;
     };

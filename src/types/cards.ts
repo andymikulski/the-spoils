@@ -138,6 +138,33 @@ export interface CardDefinition {
     effects?: Effect[];
   };
 
+  /**
+   * "While this card is in your hand you may reveal this card as you are
+   * playing a resource. If you do, you may deploy this card for <cost>."
+   * (Witty Worm). A hand-sourced alternative deploy taken *instead of* the
+   * faction Develop Rule's resource play for the turn — the `chooseDevelop`
+   * action's `playResource` choice carries a `revealFromHand` payload that
+   * routes here. Threshold and any EXTRA COSTs still apply; only the numeric
+   * cost is replaced by `cost`.
+   */
+  revealFromHand?: {
+    cost: number;
+  };
+
+  /**
+   * Where a resolving TACTIC goes AFTER its effects instead of the discard
+   * pile — "Put this card into play under its owner's control as a
+   * face-down resource instead of into their discard pile"
+   * (`to: "faceDownResource"`), or "...into its owner's hand instead..."
+   * (`to: "hand"`, Clam Hash). `condition`, when set, is evaluated in the
+   * tactic's own resolution context (so it can read `deployedViaFlipUp`);
+   * if it fails, the tactic goes to the discard pile as normal.
+   */
+  selfDisposition?: {
+    to: "faceDownResource" | "hand";
+    condition?: Condition;
+  };
+
   behavior?: {
     abilities?: AbilityDefinition[];
     keywords?: Keyword[];
@@ -199,11 +226,42 @@ export interface ActivatedAbility extends AbilityBase {
    * takes precedence over the same id here.
    */
   variables?: Record<string, NumberExpression>;
+  /**
+   * Bounds on a player-chosen `variable` beyond plain affordability — the
+   * action's `variables[id]` must satisfy `min <= v <= max` (each an
+   * optional `NumberExpression`). "Pick a number for X, where X is less
+   * than or equal to the number of [O] you control." (Desolate).
+   */
+  variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }>;
+  /**
+   * "Use this only N times each turn." — a per-turn cap on activations of
+   * this ability (tracked in `GameState.abilityUsesThisTurn`). Vast
+   * Mastabatorium.
+   */
+  usesPerTurn?: number;
+  /**
+   * Allow this ability to be activated while its source is a face-down
+   * resource in play (bypasses the "a face-down card's abilities cannot be
+   * activated" rule for this ability only). Pair with a `sourceIsFaceDown`
+   * condition. "Use this only while this card is a face-down resource"
+   * (Fired Hand PETTY VENGEANCE, Vorpal Sword SNICKER SNACK). The card
+   * stays face-down unless an effect flips it.
+   */
+  fromFaceDown?: boolean;
 }
 
 export interface TriggeredAbility extends AbilityBase {
   type: "triggered";
   event: GameEventType;
+  /**
+   * Where the source card must be for this trigger to be live — defaults to
+   * `"play"`. Set `"discard"` / `"void"` for "while this card is in your
+   * discard pile, when <event> ..." abilities (Manifest, Hidden Ruins,
+   * I Drink Your Milkshake!), the triggered-ability parallel of
+   * `ActivatedAbility.activationZone`. `condition` still carries any finer
+   * gate ("... under your control").
+   */
+  triggerZone?: Zone;
   condition?: Condition;
   targets?: TargetDeclaration[];
   effects: Effect[];
@@ -262,6 +320,8 @@ export interface ContinuousAbility extends AbilityBase {
   modifiers: ModifierDefinition[];
   /** Keywords granted to `target`/`selector` while `condition` holds (e.g. "the attached character gains COVERT"). */
   keywords?: KeywordGrantDefinition[];
+  /** Keywords SUPPRESSED on `target`/`selector` while `condition` holds — `hasKeyword` returns false even for a statically-printed keyword ("it loses COVERT"). Nattering Stoopswaggler. */
+  suppressKeywords?: KeywordGrantDefinition[];
   /** Restrictions granted to `target`/`selector` while `condition` holds (e.g. "the attached character cannot attack or block"). */
   restrictions?: RestrictionGrantDefinition[];
   /** Deploy-cost adjustments while `condition` holds (e.g. "opponents pay 1 more to deploy a tactic"). */
@@ -278,5 +338,27 @@ export interface ContinuousAbility extends AbilityBase {
   uniqueGrant?: {
     selector: CardSelector;
     designation: "cardName" | (string & {});
+  };
+  /**
+   * Grants whole ability bodies to every in-play card matching `selector`
+   * while the source is in play — "All characters gain the rules text «At
+   * the start of your turn, you may pay 1. If you don't, destroy this
+   * card.»" (Lodge Dock Florist). Granted **triggered** abilities fire for
+   * the recipient card (its own `source`); granted **activated** abilities
+   * are not yet usable via `activateAbility` (flag if a card needs it).
+   */
+  grantedAbilities?: Array<{
+    selector: CardSelector;
+    abilities: AbilityDefinition[];
+  }>;
+  /**
+   * Grants a FLIP UP path to every in-play face-down card matching
+   * `selector` that lacks its own — the granted cost/threshold are the
+   * card's printed `cost`/`threshold`. "All your face-down tactics gain
+   * FLIP UP with numeric cost and threshold equal to their regular numeric
+   * cost and threshold." (Woadenworm Gloamspike).
+   */
+  grantFlipUp?: {
+    selector: CardSelector;
   };
 }

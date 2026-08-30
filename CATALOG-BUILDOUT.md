@@ -10,19 +10,89 @@ data-driven engine. This is the pick-up point for a future session.
 
 ---
 
-## Current state (Seed 3 complete; TODO 1–5 done)
+## Current state (Seed 2 + Seed 3 complete; TODO 1–5 done)
 
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` | 38 (all of Seed 3: 30 authored + 8 factions) |
+| `verified` | 50 (Seed 3: 38 · Seed 2: 12 smoke-tested) |
+| `authored` (JSON written, driven by fixture tests) | 98 (rest of Seed 2) |
 | `classified` (audited, awaiting a smoke path) | 107 (TODO 1 — prior-pass behavior blocks) |
+| `blocked` | 0 |
 | `vanilla` (no behavior needed) | 156 |
-| `unclassified` (remaining work) | 1800 |
-| `rulesAudited` | 150 / 2101 (107 prior-behavior + all 43 Seed 3) |
-| Engine capabilities implemented | 32 (+`hasAbility` condition, +`ActivatedAbility.threshold`) |
-| Test suite (spoils-db) | 268 passing (`npm test`), `npm run typecheck` clean |
-| Test suite (spoils-game) | core 35 + web 19 passing, typecheck clean |
+| `unclassified` (remaining work) | 1690 |
+| `rulesAudited` | 260 / 2101 (107 prior-behavior + 43 Seed 3 + 110 Seed 2) |
+| Engine capabilities implemented | 64 / 64 (nothing unimplemented) |
+| Seed 2 confidence | 109 `high` · 1 `medium` (Rosy Palmer) · 0 `low` |
+| Test suite (spoils-db) | 342 passing (`npm test`), `npm run typecheck` clean |
+| Test suite (spoils-game) | core 35 + web 19 passing (TODO 7 wires 3 new engine surfaces) |
+
+**Seed 2 pass (2026-08-30):** all 110 cards classified against printed text
++ `RULES.md`, then authored — **98 `authored`, 12 `verified`, 0 `blocked`**.
+~32 new engine capabilities, all implemented in this pass — no deferral, no
+cut cards. The set is the "FLIP UP era": heavy face-down manipulation.
+
+- New effects: `flipFaceDown`, `putIntoPlay`, `deployFromZone`,
+  `grantResourceIcons`, `detach`, `scheduleEffect`, `useAnyAbility`,
+  `rememberTarget`, `duplicate`, `setCardType`, `retargetExtraCost`,
+  `partitionAndPick`; `mill.to`, `terminate` `respondedItem` scope.
+- New conditions: `cardProvides`, `isStaple`, `cardDepleted`,
+  `cardTypeEquals`, `sharesBattlePartyWithSource`, `linkedCardInPlay`,
+  `sourceIsFaceDown`, `isExtremum`, `respondedToPicked`;
+  `respondingTo.respondsTo:"ability"`.
+- New card/ability shape fields: `CardDefinition.{selfDisposition,
+  revealFromHand}`, `TriggeredAbility.triggerZone`,
+  `ActivatedAbility.{variableBounds,usesPerTurn,fromFaceDown}`,
+  `ContinuousAbility.{suppressKeywords,grantedAbilities,grantFlipUp}`,
+  `CardSelector.{faceDown,staple,name}`, `deployFromZone.ignoreThreshold`,
+  `{type:"remembered"}` TargetRef, `{type:"oneOf"}` Cost, `cardsDrawn`
+  event, `canBlockCovert` keyword, `cannotBeRestored` restriction.
+- New state: `GameState.{cardTypeGrants,pendingPartition}`; new
+  `PendingChoice` kinds `partitionCards` / `pickPile` / `takeFromPile`; a
+  `revealFromHand` payload on the `chooseDevelop` action.
+- `src/engine/__tests__/seed2-smoke.test.ts` — 12 scenarios (Alluring
+  Quicksand, Surplus Soldier, Acidic Phlegm, Gilded Yurt, Golemizer,
+  Manifest, Crest of Rage, Dying Hero, Contrabulous Fabtraption, Mistaken
+  Identity, Mustache Aficionado, Witty Worm).
+
+**The former 4 `blocked` cards — now built (2026-08-30).** Total parity was
+chosen over cutting them (the primitives will recur — Seed Saga already
+reprints all four):
+- *Contrabulous Fabtraption* — `setCardType` effect + `getCardTypes` /
+  `hasCardType` + `GameState.cardTypeGrants` (RUNE OF ANIMATION: the item
+  *gains* the character type — CR §208.1, keeps its item type — with
+  str/life = cost, 3 speed, EOT; RULES.md §3.7). Also needed
+  `CardSelector.name` for RUNE OF ACCELERATION ("a card named Elitism").
+  All 6 runes authored.
+- *Mistaken Identity* — `retargetExtraCost` effect + `respondedToPicked`
+  condition: rewrites a responded-to stack item's stored extra-cost card
+  pick (RULES.md §7).
+- *Mustache Aficionado* — `partitionAndPick` effect + a `partitionCards` →
+  `pickPile` → `takeFromPile` pending-choice state machine on
+  `GameState.pendingPartition` (RULES.md §12).
+- *Witty Worm* — `CardDefinition.revealFromHand` + a `revealFromHand`
+  payload on `chooseDevelop` + a `costOverride` on `deployCard`: reveal
+  from hand instead of the develop resource play, deploy for a flat cost
+  (RULES.md §6).
+
+**Seed 2 bookkeeping pass (2026-08-30).** Re-audited all 110 authored
+cards' coverage `notes` / `confidence` against the *implemented* behavior
+(the classification-time notes were written before the capabilities
+existed). 27 stale entries refreshed → **109 `high`, 1 `medium`, 0 `low`**.
+One real authoring gap found and fixed: I Drink Your Milkshake!'s "deploy
+it even if you cannot meet its threshold" now uses the new
+`deployFromZone.ignoreThreshold` flag.
+
+**The one remaining Seed 2 approximation** — *Rosy Palmer, and Her Five
+Friends* (`medium`): "reveal the top 5 of an opponent's deck, you may take
+a revealed character, that player bottoms the rest in any order" is modelled
+as "pick a character from anywhere in the opponent's deck → put into play;
+shuffle their deck." Faithful in outcome shape, not in the reveal-window /
+bottom-order detail. Needs a "reveal top N as a candidate pool" primitive +
+a bottom-of-deck reorder — see backlog. Not blocking; the card functions.
+
+`"each opponent"` / `"that character's controller"` on other cards resolve
+to the single opponent — exact, since the engine is 2-player only.
 
 **Seed 3 final review (2026-08-27):** all 38 authored cards re-read against
 printed text + `RULES.md`. Fixes:
@@ -53,7 +123,7 @@ future edits produce clean diffs.
 | `COVERAGE.md` | generated status roll-up (never hand-edit) |
 | `src/engine/__tests__/card-data-integrity.test.ts` | enforces manifest↔catalog agreement, vocabulary parse, the one-pass invariant, metadata mirroring |
 | `src/engine/__tests__/card-behaviors.test.ts` | one test per ability *shape* (see "Testing convention" in BEHAVIORS.md) |
-| `src/engine/__tests__/seed3-smoke.test.ts` | per-set smoke: authored JSON driven through the public API |
+| `src/engine/__tests__/seed3-smoke.test.ts` · `seed2-smoke.test.ts` | per-set smoke: authored JSON driven through the public API |
 | `BEHAVIORS.md` | the authoring vocabulary index + "Coverage workflow" |
 | `RULES.md` | authoritative rules the engine is tested against |
 
@@ -180,7 +250,7 @@ their per-set `unclassified` counts dropped):
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Seed 2 | 110 | first real set — expect several small vocab additions (FLIP UP era) |
+| ~~Seed 2~~ | ~~110~~ | **DONE (2026-08-30)** — 98 authored, 8 verified, 4 blocked; +27 capabilities |
 | Shade of the Devoured Emperor | 125 | |
 | Holy Heist | 132 | 33 already vanilla |
 | Ungodly Mess | 161 | Zenobia's Tower structure fixed; 1 already classified |
@@ -196,6 +266,36 @@ additions (surfaced as `blocked` + spec), ~2–5% `wontImplement`. A set's
 manifest must not be left half-classified — finish the whole set's
 classification (`classified`/`vanilla`/`blocked`/`wontImplement` for every
 entry) before moving on, per the one-pass invariant.
+
+### 7. Catch spoils-game up to the Seed 2 engine surface — NOT STARTED
+
+The Seed 2 pass added renderer-facing surfaces that spoils-game does not
+handle yet (same failure mode TODO 2 fixed for Seed 3 — an unhandled
+pending choice / event / action stalls the UI):
+
+- [ ] `PendingChoice` kind **`useAnyAbility`** (`{ kind, id, playerId,
+      candidateCardIds, context }`) — needs a `case` in
+      `PendingChoicePanel.tsx` (pick one of `candidateCardIds`, then route
+      through `ActionFlow` for the chosen ability's own targets, like
+      `useTargetAbility` / `deployForFree`) and in
+      `statusText.ts` `describePendingChoice`. Resolved with
+      `{ kind: "useAnyAbility", cardId }`.
+- [ ] `PendingChoice` kinds **`partitionCards`** (`{ cardIds, piles }` →
+      `{ piles: CardInstanceId[][] }`), **`pickPile`** (`{ piles }` →
+      `{ index }`), **`takeFromPile`** (`{ candidates, max }` →
+      `{ cardIds }`) — the MUSTACHE SHOWDOWN sequence (Mustache
+      Aficionado). Each needs a panel case + `describePendingChoice`.
+- [ ] `chooseDevelop` **`revealFromHand`** payload (`{ type: "playResource",
+      cards: [], revealFromHand: { cardId } }`) — the develop-rule UI needs
+      an "instead: reveal & deploy for N" affordance for a hand card with
+      `CardDefinition.revealFromHand` (Witty Worm). Cost/threshold via the
+      existing `getFlipUpAffordability`-style helper.
+- [ ] Event **`cardsDrawn`** (`{ playerId, count }`) — if the log / status
+      layer enumerates `GameEventType`, add it (informational; no
+      interaction).
+- `spoils-db` is a `file:` dep — `npm run build` here refreshes it. No
+  version bump. Do this before shipping a deck that includes Seed 2 cards
+  to the renderer.
 
 ---
 
@@ -240,6 +340,20 @@ entry) before moving on, per the one-pass invariant.
   (b) a triggered ability that fires while its source sits in the *deck*
   zone (`findTriggers` is play-only — the parallel of `activationZone` for
   triggered abilities). Ambiguous parody-card wording; deferred.
+- **"Reveal the top N of a deck as a candidate pool" + bottom-of-deck
+  reorder** — *Rosy Palmer* wants "reveal the top 5 of an opponent's deck,
+  you may take a revealed character, the owner bottoms the rest in any
+  order." Today a `zone: "deck"` selector reaches the *whole* deck and the
+  only deck reorders are top-N (`lookAndReorder`). Model would be a target
+  declaration scoped to a snapshot of the top N + a `lookAndReorder`
+  variant that writes to the bottom. Only Rosy Palmer so far; she's
+  authored with the outcome approximated (`medium` confidence).
+- ~~**The 4 `blocked` Seed 2 cards**~~ — **built 2026-08-30**
+  (`type-change-modifier`, `retarget-extra-cost`, `partition-and-pick`,
+  `reveal-from-hand-alt-cost` + `name-selector`, all `implemented`). See
+  "The former 4 `blocked` cards" under Current state. Total parity chosen
+  over cutting: the primitives recur in later sets (Seed Saga reprints all
+  four).
 
 ---
 

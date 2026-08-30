@@ -215,6 +215,29 @@ carry activated abilities, usable any time you could use an ability
 - **(CR §208.4)** If a card loses the character type *during a battle*, it
   is removed from the battle immediately (§8).
 
+**(engine-derived)** A temporary type change is the `setCardType` effect
+("this turn, the item is a golem character ..." — Contrabulous Fabtraption,
+RUNE OF ANIMATION). Per **CR §208.1 / §208.1a** the new type is **added**,
+not substituted — the card keeps its printed type as well (the §208.3
+example still calls the card "an item" while it "becomes a character").
+`hasCardType` / `getCardTypes` report the added type, and every rules
+decision keyed off type consults them: typed `CardSelector`s (so the card
+now matches *both* a "character" and an "item" selector), the lethal-damage
+and "Attach to X" state-based checks, battle attack/block legality and the
+mid-battle removal above, the `cardTypeIs` condition, and the start-of-turn
+damage-clear / attack-eligibility rules. Optional `grantStats` ride along as
+`set` stat modifiers with the same duration. When the grant ends and the
+card is no longer a character it forgets this-turn damage (§208.3, applied
+at the next start-of-turn); §208.4 removal runs through the state-based
+check so it fires whatever ended the grant.
+
+**(engine-derived)** The CR does not settle whether a card that *gains* the
+character type mid-turn can attack that turn (§204.3 "started the turn in
+play" vs. §602.1c "in play under the active player's control ... eligible"),
+so the engine takes the conservative reading: attack eligibility is fixed at
+the start-of-turn instant for cards that are characters *then*, so an item
+animated later this turn cannot attack until the following turn.
+
 ## 4. Resources, thresholds, and costs
 
 - **Trades (CR §201.4d):** Gearsmith, Warlord, Banker, Rogue, Arcanist, and
@@ -329,6 +352,18 @@ are sections of faction rules text, not built-in phases:
   otherwise impossible: **(CR §603.2)** it is not one of the turn's actions,
   and **(CR §203.1)** only an effect can let you play one.
 
+  **(engine-derived — reveal-from-hand alt deploy)** A card with
+  `CardDefinition.revealFromHand` ("While this card is in your hand you may
+  reveal this card as you are playing a resource. If you do, you may deploy
+  this card for N." — Witty Worm) offers a third option *for that turn's
+  resource play*: instead of playing a resource you reveal the card from
+  hand and deploy it for the flat numeric cost `revealFromHand.cost`. It
+  still checks the card's printed threshold and pays any EXTRA COSTs; only
+  the numeric cost is replaced (no cost modifiers / reductions apply). It
+  consumes the develop rule for the turn just like a normal resource play.
+  Driven by a `revealFromHand` payload on the `chooseDevelop` action's
+  `playResource` choice.
+
 **(CR §603) During the turn** the active player may take these actions in
 any order, any number of times:
 
@@ -433,6 +468,20 @@ together by the same round of battle damage (§8) each get their own "left
 play" event, so their "when this leaves play" triggers do **not** share an
 `orderTriggers` batch; each resolves fully, in turn, queued behind the
 others emitted in that instant.
+
+**(engine-derived — retarget an extra-cost pick)** *Mistaken Identity*
+("Deploy this only in response to a card or ability that picked a character
+as an extra cost. Pick another character ... its effect happens as though
+your opponent had picked the other character instead.") is a response whose
+effect *rewrites the responded-to stack item's stored selection*: the
+in-play character it had picked as an EXTRA COST is swapped for the new
+pick everywhere it appears under that item's `context.selected`, so when the
+item resolves (after Mistaken Identity, LIFO) its effects hit the swapped-in
+card. The `respondedToPicked` condition gates the response on the
+responded-to item actually holding such a pick; the `retargetExtraCost`
+effect does the swap (no-op if there is nothing to swap or the same card is
+re-picked). "Another character that could be picked by that card or ability"
+is enforced only as "any in-play character."
 
 **(engine-derived)** When a triggered ability's target declaration has more
 legal candidates than it needs, the engine pauses on
@@ -795,6 +844,20 @@ re-runs the check once it has settled.
   of the turn, which also closes every "can be played whenever you could
   play a tactic" (Tactical) window — though such a card can still be played
   at the times it *normally* could be.
+- **(engine-derived — MUSTACHE SHOWDOWN)** *Mustache Aficionado* ("You and
+  an opponent look at the top 3 cards of your decks and divide them into 2
+  face-down piles ... Each of you choose one of their opponent's piles.
+  Reveal ... the owner of the higher-total-cost pile may put one card into
+  their hand. Shuffle the remaining cards into their owner's deck.") is the
+  `partitionAndPick` effect. Sequence, one player at a time (controller
+  first): each reveals the top *N* of their own deck and splits them into
+  *K* non-empty piles (`partitionCards`); each picks one of the *other*
+  player's piles (`pickPile`); the two chosen piles' total numeric `cost`
+  is compared; if one is strictly higher its **owner** may move up to
+  `winnerTakes` of its cards to hand (`takeFromPile`); a tie means nobody
+  takes. Every card not taken stays where it was (on top of its owner's
+  deck) and both decks are then reshuffled. The revealed cards never leave
+  the deck zone — only a taken card moves (to hand).
 
 **(engine-derived)** Every *effect* (post-cost, already-committed) that
 resolves a `TargetRef`/destination silently no-ops instead of throwing when

@@ -36,7 +36,13 @@ export type Keyword =
    * appends that target as an extra option rather than replacing the
    * blockers, since it's "may... instead of," not a forced redirect.
    */
-  | "redirectDamage";
+  | "redirectDamage"
+  /**
+   * "Can block COVERT parties" (Recyclable Golem). A character with this
+   * keyword counts as Covert for the purpose of *blocking* an all-Covert
+   * attacking party only (it is not otherwise Covert).
+   */
+  | "canBlockCovert";
 
 /** A boolean combat restriction, granted like a Keyword but never printed statically — always via a `grantRestriction` effect or `ContinuousAbility.restrictions`. */
 export type Restriction =
@@ -45,7 +51,9 @@ export type Restriction =
   /** "must attack if it can" — if its controller declares any attack, an eligible, un-depleted `mustAttack` character with a legal target has to be among the attackers. */
   | "mustAttack"
   /** "must block if it can" — a non-depleted `mustBlock` character that can legally block the attacking party has to be among the declared blockers. */
-  | "mustBlock";
+  | "mustBlock"
+  /** "cannot be restored" — its controller's faction Restore Rule skips it (an aura form of `CardInstance.restoreLocked`). Framptle Tromwibbler. */
+  | "cannotBeRestored";
 
 export type CardType =
   | "character"
