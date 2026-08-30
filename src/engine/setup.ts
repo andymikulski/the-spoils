@@ -123,14 +123,22 @@ export function createTwoPlayerGame(
     restrictions: [],
     costReductions: [],
     resourceGrants: [],
+    provideGrants: [],
+    playRestrictions: [],
+    numericCostModifiers: [],
+    outgoingDamageModifiers: [],
+    thresholdReductions: [],
     cardTypeGrants: [],
     damageShields: [],
     scheduledEffects: [],
     abilityUsesThisTurn: {},
+    attacksThisTurn: {},
     responseStack: [],
     pendingEffectFrames: [],
     turnEventTally: {},
     turnDeploys: {},
+    damageThisTurn: {},
+    restoreRuleSkips: {},
     mulligan: {}
   };
 

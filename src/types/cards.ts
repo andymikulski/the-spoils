@@ -5,7 +5,7 @@
 import type { AbilityId, CardDefinitionId, CardType, Keyword, Trade, Zone } from "./ids.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
-import type { CardSelector, NumberExpression, TargetDeclaration } from "./expressions.js";
+import type { CardSelector, NumberExpression, TargetDeclaration, TargetRef } from "./expressions.js";
 import type {
   CostModifierDefinition,
   DamageModifierDefinition,
@@ -182,6 +182,10 @@ export interface CardDefinition {
    */
   revealFromHand?: {
     cost: number;
+    /** Extra icon gate for the reveal deploy (e.g. FINE PRINT: [G][G][G][G]). */
+    threshold?: string | number;
+    /** Rider effects that resolve alongside the deploy ("your faction loses 2 influence"). Unexpected Codicil — FINE PRINT. */
+    effects?: Effect[];
   };
 
   /**
@@ -214,7 +218,38 @@ export interface CardDefinition {
       costs?: Cost[];
       targets?: TargetDeclaration[];
       effects?: Effect[];
+      /**
+       * Added (usually negative) to the numeric cost actually paid,
+       * evaluated in the play context, floored at 0 — "reduce this card's
+       * numeric cost by the number of cards removed [as an EXTRA COST]"
+       * (Opportunistic Pirate: `{ type: "multiply", values: [{ type:
+       * "selectionCount", id: "removed" }, -1] }`).
+       */
+      costAdjust?: NumberExpression;
     };
+    /**
+     * "Your opponents cannot respond to this card." — a tactic that opens
+     * no response window when it's played; it resolves immediately. Swindle.
+     */
+    noResponse?: boolean;
+    /**
+     * "Choose one of the following as this card's rules text." — a modal
+     * **tactic**: the controller picks a mode index on the `playCard`
+     * action (`mode`), and only that mode's `condition` / `costs` /
+     * `targets` / `variables` / `variableBounds` / `effects` apply (in place
+     * of the first activated ability's). Distinct from a `chooserSelectsOption`
+     * effect, which needs shared cost/targets and picks *after* they resolve.
+     * Expedition Endeavour, Shriever Breeding Program, Surreptitious Larceny.
+     */
+    modes?: Array<{
+      label?: string;
+      condition?: Condition;
+      costs?: Cost[];
+      targets?: TargetDeclaration[];
+      variables?: Record<string, NumberExpression>;
+      variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }>;
+      effects?: Effect[];
+    }>;
   };
 }
 
@@ -358,12 +393,41 @@ export interface ReplacementAbility extends AbilityBase {
 
 export interface ContinuousAbility extends AbilityBase {
   type: "continuous";
+  /**
+   * The zone the source must sit in for this ability to be live — defaults
+   * to `"play"` (face-up). `"hand"` for "while this card is in your hand,
+   * ..." effects (Parkour Hoodlum's TACTICAL-in-hand; Gloamspike-Gosche
+   * Bridge's "all characters in your hand gain TACTICAL" aura). Currently
+   * honoured for `keywords` grants.
+   */
+  activeZone?: Zone;
   condition?: Condition;
   modifiers: ModifierDefinition[];
   /** Keywords granted to `target`/`selector` while `condition` holds (e.g. "the attached character gains COVERT"). */
   keywords?: KeywordGrantDefinition[];
   /** Keywords SUPPRESSED on `target`/`selector` while `condition` holds — `hasKeyword` returns false even for a statically-printed keyword ("it loses COVERT"). Nattering Stoopswaggler. */
   suppressKeywords?: KeywordGrantDefinition[];
+  /**
+   * While `condition` holds, the `target` (default `"source"`) / `selector`
+   * cards lose **every other ability** — activated, triggered, continuous,
+   * replacement, and granted — keeping only this suppressing ability itself.
+   * "This card loses all other rules text" (Monstrous Lassitude, Rushing
+   * Crushing Blockhead — where the same paragraph also grants a -1 speed
+   * that survives); "the attached character ... has no rules text" (Mittens
+   * of Muffled Thought, `target: "attachedTo"`).
+   */
+  suppressAllAbilities?: { target?: TargetRef; selector?: CardSelector };
+  /**
+   * While `condition` holds, all damage that would be dealt to `from`, and
+   * any way `from` would leave play, is redirected onto `to` instead —
+   * "If the picked character would be dealt damage, deal damage to this
+   * card instead. If the picked character would leave play, this character
+   * leaves play in that way instead." (6r4wny 60dy9u4rd5 — `from` a
+   * `{ remembered }` EXTRA-COST pick, `to: "source"`). Unbounded; distinct
+   * from `preventDamage` (bounded/self) and the `redirectDamage` keyword
+   * (battle-only).
+   */
+  redirects?: Array<{ from: TargetRef; to: TargetRef }>;
   /** Restrictions granted to `target`/`selector` while `condition` holds (e.g. "the attached character cannot attack or block"). */
   restrictions?: RestrictionGrantDefinition[];
   /** Deploy-cost adjustments while `condition` holds (e.g. "opponents pay 1 more to deploy a tactic"). */

@@ -8071,3 +8071,1210 @@ describe("Seed 3: faction-card mechanics", () => {
     assert.equal(engine.state.players[P2].hand.length, before + 1, "P2 drew via P1's faction ability");
   });
 });
+
+// ---------------------------------------------------------------------------
+// Shade of the Devoured Emperor — read-side vocabulary (conditions / exprs /
+// refs used pervasively by that set). One case per primitive.
+// ---------------------------------------------------------------------------
+describe("SotDE read-side vocabulary", () => {
+  const rageRes = (i: number): CardDefinition =>
+    resourceCard({ name: "Rage", id: `sotde-rage-${i}`, trade: "warlord", resource: { provides: ["rage"], staple: true } });
+  const ctx = (sourceId: string, controllerId: string, extra: Record<string, unknown> = {}) => ({
+    sourceId,
+    controllerId,
+    selected: {},
+    ...extra
+  });
+
+  test("isActivePlayer — true only on the resolved player's turn", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "a", def: character({ name: "A" }), owner: P1 }],
+      activePlayerId: P1
+    });
+    const c = ctx(id("a"), P1);
+    assert.equal(engine.evaluateCondition({ type: "isActivePlayer" }, c as never), true);
+    assert.equal(
+      engine.evaluateCondition({ type: "isActivePlayer", player: "opponent" }, c as never),
+      false
+    );
+  });
+
+  test("battleActive — false with no battle, true mid-battle", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "atk", def: character({ name: "Atk", strength: 2 }), owner: P1 },
+        { key: "def", def: character({ name: "Def", life: 5 }), owner: P2 }
+      ]
+    });
+    const c = ctx(id("atk"), P1);
+    assert.equal(engine.evaluateCondition({ type: "battleActive" }, c as never), false);
+    engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("atk")], target: { type: "faction", playerId: P2 } });
+    assert.equal(engine.evaluateCondition({ type: "battleActive" }, c as never), true);
+  });
+
+  test("cardSubtypeIs — matches the printed subtype list", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "drg", def: character({ name: "Wyrm", subtype: ["dragon"] }), owner: P1 },
+        { key: "guy", def: character({ name: "Guy", subtype: ["lackey"] }), owner: P1 }
+      ]
+    });
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "cardSubtypeIs", target: { type: "selected", id: "t" }, subtype: "dragon" },
+        ctx(id("drg"), P1, { selected: { t: [id("drg")] } }) as never
+      ),
+      true
+    );
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "cardSubtypeIs", target: { type: "selected", id: "t" }, subtype: "dragon" },
+        ctx(id("guy"), P1, { selected: { t: [id("guy")] } }) as never
+      ),
+      false
+    );
+  });
+
+  test("inPlaySinceTurnStart — true for a card present at turn start, false for one just deployed", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "old", def: character({ name: "Old" }), owner: P1 },
+        { key: "new", def: character({ name: "New", id: "sotde-new" }), owner: P1, zone: "hand" },
+        ...Array.from({ length: 3 }, (_, i) => ({ key: `r${i}`, def: rageRes(i), owner: P1 }))
+      ]
+    });
+    assert.equal(
+      engine.evaluateCondition({ type: "inPlaySinceTurnStart" }, ctx(id("old"), P1) as never),
+      true
+    );
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("new") });
+    resolvePendingResponses(engine);
+    assert.equal(
+      engine.evaluateCondition({ type: "inPlaySinceTurnStart" }, ctx(id("new"), P1) as never),
+      false,
+      "a character deployed this turn has not been in play since turn start"
+    );
+  });
+
+  test("uniqueIs condition + CardSelector.uniqueDesignation", () => {
+    const withU = (name: string, u: string): CardDefinition => character({ name, id: `u-${name}`, unique: u });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "eu", def: withU("Eustace", "eustace"), owner: P1 },
+        { key: "jo", def: withU("Jo", "jo"), owner: P1 },
+        { key: "plain", def: character({ name: "Plain" }), owner: P1 }
+      ]
+    });
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "uniqueIs", target: { type: "selected", id: "t" }, designations: ["eustace", "ignatious"] },
+        ctx(id("eu"), P1, { selected: { t: [id("eu")] } }) as never
+      ),
+      true
+    );
+    assert.equal(
+      engine.evaluateCondition(
+        { type: "uniqueIs", target: { type: "selected", id: "t" }, designations: ["eustace"] },
+        ctx(id("jo"), P1, { selected: { t: [id("jo")] } }) as never
+      ),
+      false
+    );
+    const matched = engine
+      .queryCards({ zone: "play", uniqueDesignation: ["eustace", "jo"] }, ctx(id("eu"), P1) as never)
+      .map(x => x.id)
+      .sort();
+    assert.deepEqual(matched, [id("eu"), id("jo")].sort());
+  });
+
+  test("controllerOf PlayerRef — follows a take-control", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "c", def: character({ name: "C" }), owner: P1, controller: P2 }]
+    });
+    assert.equal(
+      engine.resolvePlayerRef(
+        { type: "controllerOf", target: { type: "selected", id: "t" } },
+        ctx(id("c"), P1, { selected: { t: [id("c")] } }) as never
+      ).id,
+      P2
+    );
+    assert.equal(
+      engine.resolvePlayerRef(
+        { type: "ownerOf", target: { type: "selected", id: "t" } },
+        ctx(id("c"), P1, { selected: { t: [id("c")] } }) as never
+      ).id,
+      P1
+    );
+  });
+
+  test("sumStat / thresholdIconCount / eventDamageAmount / damageSource", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "a", def: character({ name: "A", strength: 3 }), owner: P2 },
+        { key: "b", def: character({ name: "B", strength: 5 }), owner: P2 },
+        { key: "mine", def: character({ name: "Mine", strength: 1 }), owner: P1 },
+        { key: "thr", def: character({ name: "Thr", threshold: "rrro" }), owner: P1 }
+      ]
+    });
+    const c = ctx(id("mine"), P1);
+    assert.equal(
+      engine.evaluateNumber(
+        { type: "sumStat", selector: { controller: "opponent", zone: "play", type: "character" }, stat: "strength" },
+        c as never
+      ),
+      8
+    );
+    assert.equal(
+      engine.evaluateNumber(
+        { type: "thresholdIconCount", target: { type: "selected", id: "t" } },
+        ctx(id("thr"), P1, { selected: { t: [id("thr")] } }) as never
+      ),
+      4
+    );
+    const evt = { type: "damageDealt", sourceId: id("mine"), targetId: id("a"), amount: 7 } as const;
+    assert.equal(engine.evaluateNumber({ type: "eventDamageAmount" }, { ...c, event: evt } as never), 7);
+    assert.equal(engine.evaluateNumber({ type: "eventDamageAmount" }, c as never), 0, "0 outside a damageDealt event");
+    assert.equal(
+      engine.resolvePlayerRef({ type: "controllerOf", target: { type: "damageSource" } }, { ...c, event: evt } as never).id,
+      P1
+    );
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — grantProvides / loseInfluence cost / removeCardType / nameValue icon
+// ---------------------------------------------------------------------------
+describe("SotDE effect/cost vocabulary", () => {
+  const obsRes = (i: number): CardDefinition =>
+    resourceCard({ name: "Obsession", id: `sotde-obs-${i}`, trade: "arcanist", resource: { provides: ["obsession"], staple: true } });
+
+  test("grantProvides — card gains PROVIDES this turn, counted for thresholds, gone next turn", () => {
+    const imp = character({
+      name: "Anxious Imp",
+      threshold: "o",
+      behavior: {
+        abilities: [
+          {
+            id: "obsess",
+            type: "activated",
+            costs: [{ type: "payResources", amount: 2 }],
+            effects: [
+              { type: "grantProvides", target: "source", icon: "obsession", amount: 3, duration: { type: "untilEndOfTurn" } }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "imp", def: imp, owner: P1 },
+        { key: "o1", def: obsRes(1), owner: P1 },
+        { key: "o2", def: obsRes(2), owner: P1 }
+      ]
+    });
+    assert.equal(engine.getThresholds(P1).obsession ?? 0, 2, "just the two obsession resources");
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("imp"), abilityId: "obsess" });
+    resolvePendingResponses(engine);
+    // spent resources still count for threshold (attachment only marks them
+    // unavailable to pay again) — 2 + the Imp's own granted [O][O][O]
+    assert.equal(engine.getThresholds(P1).obsession ?? 0, 5, "2 resources + Imp's granted PROVIDES [O][O][O]");
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.getThresholds(P1).obsession ?? 0, 2, "grant expired; the 2 resources remain");
+  });
+
+  test("loseInfluence cost — activating drops the faction's influence", () => {
+    const fin = character({
+      name: "Thabbashite Financier",
+      behavior: {
+        abilities: [
+          {
+            id: "blood-gold",
+            type: "activated",
+            costs: [{ type: "loseInfluence", amount: 1 }],
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      playerA: { influence: 20 },
+      cards: [
+        { key: "fin", def: fin, owner: P1 },
+        { key: "d1", def: character({ name: "D", id: "bg-d" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("fin"), abilityId: "blood-gold" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].influence, 19);
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true);
+  });
+
+  test("removeCardType — clears an added type and its ride-along stats", () => {
+    const bunny = item({
+      name: "Pogo-Bunny",
+      behavior: {
+        abilities: [
+          {
+            id: "raar",
+            type: "activated",
+            effects: [
+              {
+                type: "setCardType",
+                target: "source",
+                cardType: "character",
+                grantStats: { strength: 2, life: 2, speed: 3 },
+                duration: { type: "untilEndOfTurn" }
+              }
+            ]
+          },
+          {
+            id: "hide",
+            type: "activated",
+            effects: [{ type: "removeCardType", target: "source", cardType: "character" }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({ cards: [{ key: "b", def: bunny, owner: P1 }] });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("b"), abilityId: "raar" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.hasCardType(id("b"), "character"), true);
+    assert.equal(engine.getStat(id("b"), "strength"), 2);
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("b"), abilityId: "hide" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.hasCardType(id("b"), "character"), false, "lost the character type");
+    assert.equal(engine.hasCardType(id("b"), "item"), true, "kept its printed type");
+    assert.equal(engine.getStat(id("b"), "strength"), 0, "ride-along strength grant dropped");
+  });
+
+  test("nameValue resourceIcon + grantProvides { fromNamed } — name an icon, grant it", () => {
+    const chemist = character({
+      name: "Thabbashite Chemist",
+      behavior: {
+        abilities: [
+          {
+            id: "deliniate",
+            type: "activated",
+            effects: [
+              { type: "nameValue", chooser: "controller", valueKind: "resourceIcon", storeAs: "x" },
+              {
+                type: "forEach",
+                selector: { controller: "self", zone: "play", type: "resource", faceDown: true },
+                effects: [
+                  {
+                    type: "grantProvides",
+                    target: { type: "selected", id: "__candidate" },
+                    icon: { fromNamed: "x" },
+                    amount: 1,
+                    duration: { type: "untilEndOfTurn" }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const hidden = character({ name: "Hidden", id: "chem-fd" });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "chem", def: chemist, owner: P1 },
+        { key: "fd", def: hidden, owner: P1, zone: "play", faceDown: true }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("chem"), abilityId: "deliniate" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "nameValue");
+    assert.throws(
+      () => engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "nameValue", value: "banana" } }),
+      /resource icon/
+    );
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "nameValue", value: "rage" } });
+    resolvePendingResponses(engine);
+    // the face-down resource provided only Volition; now also [R]
+    assert.equal(engine.getThresholds(P1).rage ?? 0, 1);
+    assert.equal(engine.getThresholds(P1).volition ?? 0, 1, "still a face-down Volition source too");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — restriction / battle vocabulary
+// ---------------------------------------------------------------------------
+describe("SotDE restriction/battle vocabulary", () => {
+  const bolt = (): CardDefinition =>
+    tactic({
+      name: "Bolt",
+      id: "sotde-bolt",
+      behavior: {
+        abilities: [
+          {
+            id: "b",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 1 }]
+          }
+        ]
+      }
+    });
+
+  test("cannotBePicked — excluded from target candidates but not from forEach", () => {
+    const shy = character({
+      name: "Shy",
+      behavior: {
+        abilities: [
+          { id: "hide", type: "continuous", modifiers: [], restrictions: [{ target: "source", restriction: "cannotBePicked" }] }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "shy", def: shy, owner: P1 },
+        { key: "other", def: character({ name: "Other", id: "sotde-other", life: 5 }), owner: P1 },
+        { key: "bolt", def: bolt(), owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    assert.throws(
+      () => engine.perform({ type: "playCard", playerId: P2, cardId: id("bolt"), selected: { t: [id("shy")] } }),
+      /Illegal target/
+    );
+    // a forEach "all characters" still hits it
+    const wrath = tactic({
+      name: "Wrath",
+      id: "sotde-wrath",
+      behavior: {
+        abilities: [
+          {
+            id: "w",
+            type: "activated",
+            effects: [
+              { type: "forEach", selector: { zone: "play", type: "character" }, effects: [{ type: "dealDamage", target: { type: "selected", id: "__candidate" }, amount: 1 }] }
+            ]
+          }
+        ]
+      }
+    });
+    const g2 = buildGame({
+      cards: [
+        { key: "shy", def: shy, owner: P1 },
+        { key: "wrath", def: wrath, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    g2.engine.perform({ type: "playCard", playerId: P2, cardId: g2.id("wrath") });
+    resolvePendingResponses(g2.engine);
+    assert.equal(g2.engine.state.cards[g2.id("shy")].damage, 1, "swept up by the 'all characters' effect");
+  });
+
+  test("attackOncePerTurn restriction — a second attack the same turn is rejected", () => {
+    const roller = character({
+      name: "Skullcrush Steamroller",
+      strength: 4,
+      life: 5,
+      behavior: {
+        abilities: [
+          { id: "limit", type: "continuous", modifiers: [], restrictions: [{ target: "source", restriction: "attackOncePerTurn" }] },
+          { id: "assist", type: "activated", effects: [{ type: "restore", target: "source" }] }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "r", def: roller, owner: P1 },
+        { key: "def", def: character({ name: "Def", id: "sotde-def", life: 9 }), owner: P2 }
+      ]
+    });
+    engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("r")], target: { type: "faction", playerId: P2 } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine);
+    assert.equal(engine.state.battle, undefined, "battle finished");
+    // restore it so depletion isn't what blocks the retry
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("r"), abilityId: "assist" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("r")].depleted, false);
+    assert.throws(
+      () => engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("r")], target: { type: "faction", playerId: P2 } }),
+      /once each turn/
+    );
+  });
+
+  test("suppressAllAbilities — a card loses its other abilities, keeps the suppressor's own rider", () => {
+    // "[R][R][R][R][R][R]: loses all other rules text and loses 1 speed"
+    const blockhead = character({
+      name: "Rushing Crushing Blockhead",
+      speed: 4,
+      behavior: {
+        abilities: [
+          { id: "cantblock", type: "continuous", modifiers: [], restrictions: [{ target: "source", restriction: "cannotBlock" }] },
+          {
+            id: "etb-influence",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -5 }]
+          },
+          {
+            id: "rage6",
+            type: "continuous",
+            condition: { type: "numberCompare", left: { type: "resourceIcons", player: "controller", icon: "rage" }, operator: ">=", right: 2 },
+            modifiers: [{ target: "source", stat: "speed", operation: "add", value: -1 }],
+            suppressAllAbilities: { target: "source" }
+          }
+        ]
+      }
+    });
+    const rr = (i: number): CardDefinition =>
+      resourceCard({ name: "Rage", id: `blk-r-${i}`, trade: "warlord", resource: { provides: ["rage"], staple: true } });
+    const { engine, id } = buildGame({
+      playerB: { influence: 25 },
+      cards: [
+        { key: "blk", def: blockhead, owner: P1, zone: "hand" },
+        { key: "r1", def: rr(1), owner: P1 },
+        { key: "r2", def: rr(2), owner: P1 }
+      ]
+    });
+    const before = engine.state.players[P2].influence;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("blk") });
+    resolvePendingResponses(engine);
+    // [R][R] threshold met => rage6 suppresses the ETB trigger, so no influence hit
+    assert.equal(engine.state.players[P2].influence, before, "ETB trigger suppressed");
+    assert.equal(engine.hasRestriction(id("blk"), "cannotBlock"), false, "the other continuous is suppressed");
+    assert.equal(engine.getStat(id("blk"), "speed"), 3, "the suppressor's own -1 speed still applies");
+  });
+
+  test("restrictPlay — cannot play the named card type, and cannot FLIP UP", () => {
+    const disturb = tactic({
+      name: "Study Disturbance",
+      id: "sotde-disturb",
+      behavior: {
+        abilities: [
+          {
+            id: "d",
+            type: "activated",
+            effects: [
+              { type: "restrictPlay", player: "controller", kind: "cardType", cardType: "character", duration: { type: "untilEndOfTurn" } },
+              { type: "restrictPlay", player: "controller", kind: "flipUp", duration: { type: "untilEndOfTurn" } }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "d", def: disturb, owner: P1, zone: "hand" },
+        { key: "guy", def: character({ name: "Guy", id: "sotde-guy" }), owner: P1, zone: "hand" },
+        { key: "fd", def: { ...character({ name: "FD", id: "sotde-fd" }), flipUp: { cost: 0, threshold: 0 } }, owner: P1, zone: "play", faceDown: true }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("d") });
+    resolvePendingResponses(engine);
+    assert.throws(
+      () => engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") }),
+      /cannot play character/
+    );
+    assert.throws(
+      () => engine.perform({ type: "flipUp", playerId: P1, cardId: id("fd") }),
+      /FLIP UP/
+    );
+    // clears at end of turn
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("guy")].zone, "play");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — new-shape authored cards (smoke) + damage history + leave-play links
+// ---------------------------------------------------------------------------
+describe("SotDE new-shape cards", () => {
+  test("dealDamage to a faction card converts to influence loss (CR §408.3)", () => {
+    const bolt = tactic({
+      name: "FBolt",
+      id: "sotde-fbolt",
+      behavior: {
+        abilities: [
+          { id: "b", type: "activated", effects: [{ type: "dealDamage", target: { type: "factionOf", player: "opponent" }, amount: 4 }] }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      playerB: { influence: 20 },
+      cards: [{ key: "bolt", def: bolt, owner: P1, zone: "hand" }]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bolt") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P2].influence, 16, "faction lost 4 influence, no damage markers");
+    assert.equal(engine.state.cards[engine.state.players[P2].factionId!].damage, 0);
+  });
+
+  test("Testudine Autoframe — voids a UNIQUE JO on ETB and returns it when it leaves play", () => {
+    const jo = character({ name: "Jo", id: "test-jo", unique: "jo" });
+    const testudine = character({
+      name: "Testudine Autoframe",
+      unique: "testudine",
+      behavior: {
+        abilities: [
+          {
+            id: "etb",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            targets: [{ id: "j", selector: { controller: "self", zone: "play", uniqueDesignation: "jo" }, count: 1, optional: true }],
+            effects: [
+              { type: "if", condition: { type: "targetExists", target: { type: "selected", id: "j" } }, effects: [
+                { type: "rememberTarget", key: "voidedJo", target: { type: "selected", id: "j" } },
+                { type: "moveCard", target: { type: "selected", id: "j" }, to: "void" }
+              ] }
+            ]
+          },
+          {
+            id: "leave",
+            type: "triggered",
+            event: "cardMoved",
+            condition: { type: "and", conditions: [{ type: "sourceIsEventCard" }, { type: "cardMovedFromZone", zone: "play" }] },
+            effects: [{ type: "putIntoPlay", target: { type: "remembered", key: "voidedJo" }, controller: "controller" }]
+          }
+        ]
+      }
+    });
+    const killer = tactic({
+      name: "Killer",
+      id: "test-killer",
+      behavior: { abilities: [{ id: "k", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "destroy", target: { type: "selected", id: "t" } }] }] }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "jo", def: jo, owner: P1 },
+        { key: "tf", def: testudine, owner: P1, zone: "hand" },
+        { key: "kill", def: killer, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P1
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("tf") });
+    resolvePendingResponses(engine);
+    if (engine.state.pendingChoice?.kind === "selectTargets") {
+      engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "selectTargets", selected: { j: [id("jo")] } } });
+      resolvePendingResponses(engine);
+    }
+    assert.equal(engine.state.cards[id("jo")].zone, "void", "Jo voided on ETB");
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("kill"), selected: { t: [id("tf")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("tf")].zone, "discard", "Testudine destroyed");
+    assert.equal(engine.state.cards[id("jo")].zone, "play", "voided Jo returned via the leave-play trigger + departedLinks snapshot");
+    assert.equal(engine.state.cards[id("jo")].controllerId, P1);
+  });
+
+  test("Stuttershy — dies -> flips face-down instead, opponent +1 influence, a Micromajig appears", () => {
+    const stutter = character({
+      name: "Stuttershy",
+      life: 1,
+      behavior: {
+        abilities: [
+          {
+            id: "duck",
+            type: "replacement",
+            replaces: { event: "destroy", controlledBy: "self" },
+            condition: { type: "cardNameEquals", target: { type: "selected", id: "__candidate" }, other: "source" },
+            effects: [
+              { type: "flipFaceDown", target: { type: "selected", id: "__candidate" } },
+              { type: "modifyInfluence", player: "opponent", amount: 1 },
+              { type: "createTokens", controller: "controller", count: 1, token: { name: "Micromajig", cardType: "character", subtype: ["micromajig"], strength: 0, life: 1, speed: 1 } }
+            ]
+          }
+        ]
+      }
+    });
+    const bolt = tactic({
+      name: "SBolt",
+      id: "stut-bolt",
+      behavior: { abilities: [{ id: "b", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 9 }] }] }
+    });
+    const { engine, id } = buildGame({
+      playerB: { influence: 20 },
+      cards: [
+        { key: "s", def: stutter, owner: P1 },
+        { key: "bolt", def: bolt, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    const micromajigsBefore = Object.values(engine.state.cards).filter(c => engine.getDefinition(c.id).name === "Micromajig").length;
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("bolt"), selected: { t: [id("s")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("s")].faceDown, true, "ducked into a face-down resource");
+    assert.equal(engine.state.cards[id("s")].zone, "play");
+    assert.equal(engine.state.players[P2].influence, 21, "opponent gained 1 influence");
+    const micromajigsAfter = Object.values(engine.state.cards).filter(c => engine.getDefinition(c.id).name === "Micromajig").length;
+    assert.equal(micromajigsAfter, micromajigsBefore + 1, "a Micromajig token entered play");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — batch 4: counter trigger / restore skips / numeric cost / choose num
+// ---------------------------------------------------------------------------
+describe("SotDE batch-4 vocabulary", () => {
+  test("counterChanged trigger — 'when there are no tokens on this card, destroy it'", () => {
+    const map = item({
+      name: "Runic Map",
+      behavior: {
+        abilities: [
+          {
+            id: "empty",
+            type: "triggered",
+            event: "counterChanged",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "sourceIsEventCard" },
+                { type: "counterCompare", target: "source", counter: "token", operator: "=", value: 0 }
+              ]
+            },
+            effects: [{ type: "destroy", target: "source" }]
+          },
+          {
+            id: "spend",
+            type: "activated",
+            effects: [{ type: "removeCounter", target: "source", counter: "token", amount: 1 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [{ key: "m", def: map, owner: P1, counters: { token: 2 } }]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("m"), abilityId: "spend" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("m")].zone, "play", "1 token left");
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("m"), abilityId: "spend" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("m")].zone, "discard", "destroyed on hitting 0 tokens");
+  });
+
+  test("skipRestoreRule — the player's next Restore Rule is skipped whole", () => {
+    const lassitude = character({
+      name: "Monstrous Lassitude",
+      behavior: {
+        abilities: [
+          {
+            id: "etb",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            effects: [{ type: "skipRestoreRule", player: "controller" }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "l", def: lassitude, owner: P1, zone: "hand" },
+        { key: "dep", def: character({ name: "Dep", id: "ml-dep" }), owner: P1, depleted: true }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("l") });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("dep")].depleted, true, "restore rule skipped on P1's next turn");
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("dep")].depleted, false, "restores again the turn after");
+  });
+
+  test("skipNextRestore — a single character misses one restore then restores after", () => {
+    const kid = character({
+      name: "Numba 1 Stunna",
+      behavior: {
+        abilities: [
+          {
+            id: "no-restore",
+            type: "triggered",
+            event: "damageDealt",
+            condition: { type: "and", conditions: [{ type: "sourceIsDamageSource" }, { type: "cardTypeIs", target: "eventCard", cardType: "character" }] },
+            effects: [{ type: "skipNextRestore", target: "eventCard" }]
+          },
+          {
+            id: "zap",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 1 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "k", def: kid, owner: P1 },
+        { key: "victim", def: character({ name: "Victim", id: "n1s-v", life: 5 }), owner: P1, depleted: true }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("k"), abilityId: "zap", selected: { t: [id("victim")] } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("victim")].depleted, true, "skipped its next restore");
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("victim")].depleted, false, "restores normally the turn after");
+  });
+
+  test("modifyNumericCost lowers a card's deploy cost this turn", () => {
+    const tinker = tactic({
+      name: "Cost Tinker",
+      id: "sotde-tinker",
+      behavior: {
+        abilities: [
+          {
+            id: "t",
+            type: "activated",
+            targets: [{ id: "ch", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [
+              { type: "modifyNumericCost", target: { type: "selected", id: "ch" }, delta: -2, duration: { type: "untilEndOfTurn" } }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "tk", def: tinker, owner: P1, zone: "hand" },
+        { key: "big", def: character({ name: "Big", id: "cm-big", cost: 5 }), owner: P1 }
+      ]
+    });
+    assert.equal(engine.getCardPlayability(P1, id("big")).numericCost, 5);
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("tk"), selected: { ch: [id("big")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.getCardPlayability(P1, id("big")).numericCost, 3, "−2 this turn");
+  });
+
+  test("chooserSelectsNumber — the opponent picks X, then loses X influence", () => {
+    const appr = tactic({
+      name: "Opp Picks X",
+      id: "sotde-oppx",
+      behavior: {
+        abilities: [
+          {
+            id: "x",
+            type: "activated",
+            effects: [
+              {
+                type: "chooserSelectsNumber",
+                chooser: "opponent",
+                storeAs: "x",
+                min: 0,
+                max: 3,
+                effects: [{ type: "modifyInfluence", player: "opponent", amount: { type: "multiply", values: [{ type: "variable", id: "x" }, -1] } }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      playerB: { influence: 20 },
+      cards: [{ key: "a", def: appr, owner: P1, zone: "hand" }]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("a") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "chooseNumber");
+    assert.equal((engine.state.pendingChoice as { playerId: string }).playerId, P2);
+    assert.throws(
+      () => engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "chooseNumber", value: 9 } }),
+      /\[0, 3\]/
+    );
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "chooseNumber", value: 3 } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P2].influence, 17);
+  });
+
+  test("playResource { player } + cannotBeTakenControl", () => {
+    const followSuit = character({
+      name: "Man Shark",
+      behavior: {
+        abilities: [
+          {
+            id: "fs",
+            type: "activated",
+            effects: [
+              {
+                type: "chooserSelectsTarget",
+                chooser: "opponent",
+                declaration: { id: "pick", selector: { controller: "opponent", zone: "hand" }, count: 1 },
+                effects: [{ type: "playResource", target: { type: "selected", id: "pick" }, faceDown: true, player: "opponent" }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ms", def: followSuit, owner: P1 },
+        { key: "handc", def: character({ name: "HandC", id: "ms-h" }), owner: P2, zone: "hand" }
+      ]
+    });
+    const fdBefore = engine.getThresholds(P2).volition ?? 0;
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("ms"), abilityId: "fs" });
+    resolvePendingResponses(engine);
+    if (engine.state.pendingChoice?.kind === "chooserSelectsTarget") {
+      engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "chooserSelectsTarget", selected: [id("handc")] } });
+      resolvePendingResponses(engine);
+    }
+    assert.equal(engine.state.cards[id("handc")].zone, "play");
+    assert.equal(engine.state.cards[id("handc")].faceDown, true);
+    assert.equal(engine.state.cards[id("handc")].controllerId, P2, "under the opponent's control");
+    assert.equal(engine.getThresholds(P2).volition ?? 0, fdBefore + 1);
+
+    const giant = character({
+      name: "Gigantitect Giant",
+      behavior: { abilities: [{ id: "g", type: "continuous", modifiers: [], restrictions: [{ target: "source", restriction: "cannotBeTakenControl" }] }] }
+    });
+    const grab = tactic({
+      name: "Grab",
+      id: "sotde-grab",
+      behavior: { abilities: [{ id: "g", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }] }] }
+    });
+    const g3 = buildGame({
+      cards: [
+        { key: "giant", def: giant, owner: P1 },
+        { key: "grab", def: grab, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    g3.engine.perform({ type: "playCard", playerId: P2, cardId: g3.id("grab"), selected: { t: [g3.id("giant")] } });
+    resolvePendingResponses(g3.engine);
+    assert.equal(g3.engine.state.cards[g3.id("giant")].controllerId, P1, "take-control fizzled");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — modal tactics ("Choose one of the following as this card's text")
+// ---------------------------------------------------------------------------
+describe("SotDE modal tactics", () => {
+  const modal = tactic({
+    name: "Shriever Breeding Program",
+    id: "sotde-sbp",
+    behavior: {
+      modes: [
+        {
+          label: "Deplete a character, draw a card",
+          condition: { type: "isActivePlayer", player: "controller" },
+          targets: [{ id: "ch", selector: { zone: "play", type: "character" }, count: 1 }],
+          effects: [
+            { type: "deplete", target: { type: "selected", id: "ch" } },
+            { type: "draw", player: "controller", amount: 1 }
+          ]
+        },
+        {
+          label: "Choose a number X, lose X influence, draw X",
+          variables: { x: { type: "number" } as never },
+          costs: [{ type: "loseInfluence", amount: { type: "variable", id: "x" } }],
+          effects: [{ type: "draw", player: "controller", amount: { type: "variable", id: "x" } }]
+        }
+      ]
+    }
+  });
+
+  test("mode 0 — deplete + draw", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "m", def: modal, owner: P1, zone: "hand" },
+        { key: "v", def: character({ name: "V", id: "sbp-v" }), owner: P1 },
+        ...Array.from({ length: 2 }, (_, i) => ({ key: `d${i}`, def: character({ name: `D${i}`, id: `sbp-d${i}` }), owner: P1, zone: "deck" as const }))
+      ]
+    });
+    const hand = engine.state.players[P1].hand.length;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("m"), mode: 0, selected: { ch: [id("v")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("v")].depleted, true);
+    assert.equal(engine.state.players[P1].hand.length, hand - 1 + 1, "played the tactic, drew 1");
+  });
+
+  test("mode 1 — X influence for X cards; mode 0's target is not required", () => {
+    const { engine, id } = buildGame({
+      playerA: { influence: 20 },
+      cards: [
+        { key: "m", def: modal, owner: P1, zone: "hand" },
+        ...Array.from({ length: 3 }, (_, i) => ({ key: `d${i}`, def: character({ name: `E${i}`, id: `sbp-e${i}` }), owner: P1, zone: "deck" as const }))
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("m"), mode: 1, variables: { x: 3 } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].influence, 17, "lost X=3 influence");
+    assert.equal(engine.state.players[P1].hand.filter(c => engine.getDefinition(c).name.startsWith("E")).length, 3, "drew X=3");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// SotDE — batch 5/6: ward redirect / borrowed / granted-activated / aura-hand
+// / reduceThreshold / anyPlayerMayPay / noResponse / revealFromHand rider
+// ---------------------------------------------------------------------------
+describe("SotDE batch-5/6 vocabulary", () => {
+  // 6r4wny 60dy9u4rd5 — the canonical `ContinuousAbility.redirects` card.
+  test("ward redirect (6r4wny 60dy9u4rd5) — damage and destruction of the warded card hit the guard instead", () => {
+    const guard = character({
+      name: "Bodyguards",
+      life: 6,
+      behavior: {
+        onPlay: {
+          targets: [{ id: "ward", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }],
+          effects: [{ type: "rememberTarget", key: "ward", target: { type: "selected", id: "ward" } }]
+        },
+        abilities: [
+          {
+            id: "redir",
+            type: "continuous",
+            modifiers: [],
+            redirects: [{ from: { type: "remembered", key: "ward" }, to: "source" }]
+          }
+        ]
+      }
+    });
+    const bolt = tactic({
+      name: "WBolt",
+      id: "sotde-wbolt",
+      behavior: { abilities: [{ id: "b", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 3 }] }] }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ward", def: character({ name: "Ward", id: "wr-ward", life: 2 }), owner: P1 },
+        { key: "g", def: guard, owner: P1, zone: "hand" },
+        { key: "bolt", def: bolt, owner: P1, zone: "hand" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("g"), selected: { ward: [id("ward")] } });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("bolt"), selected: { t: [id("ward")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("ward")].damage, 0, "ward untouched");
+    assert.equal(engine.state.cards[id("g")].damage, 3, "guard soaked the 3");
+    assert.equal(engine.state.cards[id("ward")].zone, "play");
+  });
+
+  test("borrowed putIntoPlay — removed from the game at end of turn", () => {
+    const digger = character({
+      name: "Barracks Digger",
+      behavior: {
+        abilities: [
+          {
+            id: "go",
+            type: "activated",
+            effects: [
+              { type: "putIntoPlay", target: { type: "deckPosition", player: "controller", from: "top" }, controller: "controller", borrowed: true }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "d", def: digger, owner: P1 },
+        { key: "top", def: character({ name: "Borrowed", id: "brw-top" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("d"), abilityId: "go" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("top")].zone, "play");
+    engine.perform({ type: "endTurn", playerId: P1 });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("top")].zone, "removed", "borrowed card removed at end of turn");
+  });
+
+  test("granted activated ability — a character can use text granted to it", () => {
+    const jo = character({
+      name: "Jo",
+      unique: "jo",
+      behavior: {
+        abilities: [
+          {
+            id: "grant",
+            type: "continuous",
+            modifiers: [],
+            grantedAbilities: [
+              {
+                selector: { controller: "self", zone: "play", type: "character" },
+                abilities: [
+                  { id: "research", type: "activated", costs: [{ type: "deplete", target: "source" }], effects: [{ type: "draw", player: "controller", amount: 1 }] }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "jo", def: jo, owner: P1 },
+        { key: "grunt", def: character({ name: "Grunt", id: "ga-grunt" }), owner: P1 },
+        ...Array.from({ length: 2 }, (_, i) => ({ key: `d${i}`, def: character({ name: `D${i}`, id: `ga-d${i}` }), owner: P1, zone: "deck" as const }))
+      ]
+    });
+    const before = engine.state.players[P1].hand.length;
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("grunt"), abilityId: "research" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("grunt")].depleted, true);
+    assert.equal(engine.state.players[P1].hand.length, before + 1, "the granted RESEARCH drew a card");
+  });
+
+  test("aura over hand zone + dynamic TACTICAL honored at deploy timing", () => {
+    const bridge = location({
+      name: "Gloamspike Bridge",
+      behavior: {
+        abilities: [
+          {
+            id: "hand-tactical",
+            type: "continuous",
+            activeZone: "play",
+            modifiers: [],
+            keywords: [{ selector: { controller: "self", zone: "hand", type: "character" }, keyword: "tactical" }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "bridge", def: bridge, owner: P1 },
+        { key: "atk", def: character({ name: "Atk", id: "gl-atk", strength: 2 }), owner: P2 },
+        { key: "guy", def: character({ name: "Guy", id: "gl-guy" }), owner: P1, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    assert.equal(engine.hasKeyword(id("guy"), "tactical"), true, "P1's hand character has aura TACTICAL");
+    // The deploy-timing check consults hasKeyword (dynamic grants), so a
+    // response-window deploy of this by-aura-TACTICAL character is legal
+    // once P1 has priority.
+    engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [id("atk")], target: { type: "faction", playerId: P1 } });
+    engine.perform({ type: "passPriority", playerId: P2 });
+    assert.doesNotThrow(
+      () => engine.perform({ type: "playCard", playerId: P1, cardId: id("guy") }),
+      "deploy-timing check honours the dynamically-granted TACTICAL"
+    );
+    // it's on the response stack now (a TACTICAL character deployed as a response)
+    assert.ok(
+      engine.state.cards[id("guy")].zone === "deploying" ||
+        engine.state.cards[id("guy")].zone === "play"
+    );
+  });
+
+  test("reduceThreshold — the next deploy needs one fewer of the named icon", () => {
+    const dock = location({
+      name: "Skydocks",
+      behavior: {
+        abilities: [
+          {
+            id: "bday",
+            type: "activated",
+            effects: [
+              { type: "nameValue", chooser: "controller", valueKind: "resourceIcon", storeAs: "ic" },
+              { type: "reduceThreshold", player: "controller", icon: { fromNamed: "ic" }, amount: 2 }
+            ]
+          }
+        ]
+      }
+    });
+    const rr = (i: number): CardDefinition =>
+      resourceCard({ name: "Rage", id: `sd-r-${i}`, trade: "warlord", resource: { provides: ["rage"], staple: true } });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "dock", def: dock, owner: P1 },
+        { key: "big", def: character({ name: "BigThreshold", id: "sd-big", threshold: "rrr" }), owner: P1, zone: "hand" },
+        { key: "r1", def: rr(1), owner: P1 }
+      ]
+    });
+    assert.equal(engine.getCardPlayability(P1, id("big")).thresholdMet, false, "rrr not met with 1 rage");
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("dock"), abilityId: "bday" });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "nameValue", value: "rage" } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.getCardPlayability(P1, id("big")).thresholdMet, true, "rrr − 2 = r, met");
+  });
+
+  test("noResponse tactic resolves with no opponent window", () => {
+    const swindle = tactic({
+      name: "Swindle",
+      id: "sotde-swindle",
+      behavior: {
+        noResponse: true,
+        abilities: [{ id: "s", type: "activated", effects: [{ type: "draw", player: "controller", amount: 1 }] }]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sw", def: swindle, owner: P1, zone: "hand" },
+        { key: "d1", def: character({ name: "D", id: "sw-d" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("sw") });
+    assert.equal(engine.state.responseWindow, undefined, "no response window opened");
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true, "resolved immediately");
+  });
+
+  test("alternatingPayLoop (Negotiation Ceremonies) — tallies each player's payments", () => {
+    const neg = tactic({
+      name: "Negotiation Ceremonies",
+      id: "sotde-neg",
+      behavior: {
+        abilities: [
+          {
+            id: "n",
+            type: "activated",
+            effects: [
+              {
+                type: "alternatingPayLoop",
+                first: "controller",
+                opponent: "opponent",
+                cost: [{ type: "payResources", amount: 1 }],
+                onEnd: [
+                  { type: "draw", player: "controller", amount: { type: "variable", id: "__paidByFirst" } },
+                  { type: "draw", player: "opponent", amount: { type: "variable", id: "__paidByOpponent" } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const staple = (owner: string, i: number) =>
+      ({ key: `${owner}r${i}`, def: resourceCard({ name: "Greed", id: `neg-${owner}-${i}`, trade: "banker", resource: { provides: ["greed"], staple: true } }), owner });
+    const deckCard = (owner: string, i: number) =>
+      ({ key: `${owner}d${i}`, def: character({ name: `${owner}D${i}`, id: `neg-dc-${owner}-${i}` }), owner, zone: "deck" as const });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "neg", def: neg, owner: P1, zone: "hand" },
+        staple(P1, 0), staple(P1, 1), staple(P1, 2),
+        staple(P2, 0), staple(P2, 1),
+        ...Array.from({ length: 4 }, (_, i) => deckCard(P1, i)),
+        ...Array.from({ length: 4 }, (_, i) => deckCard(P2, i))
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("neg") });
+    resolvePendingResponses(engine);
+    // P1 pays, P2 pays, P1 pays, P2 declines -> P1 paid 2, P2 paid 1
+    assert.equal(engine.state.pendingChoice?.kind, "alternatingPay");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "alternatingPay", pay: true } });
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "alternatingPay", pay: true } });
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "alternatingPay", pay: true } });
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "alternatingPay", pay: false } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.players[P1].hand.filter(c => engine.getDefinition(c).name.startsWith(`${P1}D`)).length, 2, "P1 drew 2 (paid twice)");
+    assert.equal(engine.state.players[P2].hand.filter(c => engine.getDefinition(c).name.startsWith(`${P2}D`)).length, 1, "P2 drew 1 (paid once)");
+  });
+});

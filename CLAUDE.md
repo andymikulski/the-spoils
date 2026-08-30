@@ -173,3 +173,8 @@ shells).
   indicates yarn is the one actually used to install.
 - Only write comments that relate to the current state of code/etc. Do not mention historical context,
   how code used to be, etc.
+
+
+# Docs
+
+The /docs/ folder has the latest rules. RULES.md is a helper file to condense data and track implementation details.

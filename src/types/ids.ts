@@ -52,8 +52,22 @@ export type Restriction =
   | "mustAttack"
   /** "must block if it can" — a non-depleted `mustBlock` character that can legally block the attacking party has to be among the declared blockers. */
   | "mustBlock"
-  /** "cannot be restored" — its controller's faction Restore Rule skips it (an aura form of `CardInstance.restoreLocked`). Framptle Tromwibbler. */
-  | "cannotBeRestored";
+  /** "cannot be restored" (broad — no effect can un-deplete it either). Framptle Tromwibbler. */
+  | "cannotBeRestored"
+  /** "cannot be restored **by your faction's RESTORE RULE**" (narrow — an explicit `restore` effect still works). Aura form of `CardInstance.restoreLocked`. Skullcrush Steamroller. */
+  | "cannotBeRestoredByRule"
+  /**
+   * "This card cannot be picked." — it's excluded from the legal-candidate
+   * set of every player-or-chooser TARGET declaration (but not from
+   * `forEach` / `count` / aura selectors, nor from random selection). Usually
+   * a conditional `ContinuousAbility.restrictions` entry ("while you control
+   * more characters than any opponent, this card cannot be picked").
+   */
+  | "cannotBePicked"
+  /** "This card can attack only once each turn." — `declareAttack` rejects a character that already attacked this turn while it has this restriction. Granted statically or as a continuous aura. */
+  | "attackOncePerTurn"
+  /** "Opponents cannot take control of this card." — a `takeControl` effect that would move it to a different controller fizzles. Gigantitect's Giant Giant. */
+  | "cannotBeTakenControl";
 
 export type CardType =
   | "character"

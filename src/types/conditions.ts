@@ -11,6 +11,89 @@ export type Condition =
   | { type: "or"; conditions: Condition[] }
   | { type: "not"; condition: Condition }
   | { type: "sourceInZone"; zone: Zone }
+  | {
+      /**
+       * True when the resolved player is the active player
+       * (`GameState.activePlayerId`) — "use this only during your turn" /
+       * "deploy this only during your turn". `player` defaults to
+       * `"controller"`.
+       */
+      type: "isActivePlayer";
+      player?: PlayerRef;
+    }
+  | {
+      /**
+       * True while there is an in-flight battle (`GameState.battle` set and
+       * not `finished`). Compose with `not` for "deploy this only NOT during
+       * a battle".
+       */
+      type: "battleActive";
+    }
+  | {
+      /**
+       * True when `target` resolves to a card whose printed
+       * `CardDefinition.subtype` list includes `subtype` — for an eventCard
+       * subtype check a `CardSelector.subtype` filter can't reach ("when
+       * another 'gear' card is deployed", "if the picked character is a
+       * 'dragon'").
+       */
+      type: "cardSubtypeIs";
+      target: TargetRef;
+      subtype: string;
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) has been in play under its
+       * controller continuously since the start of this turn
+       * (`CardInstance.attackEligibleTurn === GameState.turn`) — "use this
+       * only if this card has been in play since the start of the turn".
+       */
+      type: "inPlaySinceTurnStart";
+      target?: TargetRef;
+    }
+  | {
+      /**
+       * True when `target`'s printed Unique designation
+       * (`CardDefinition.unique`) is one of `designations` — "a character you
+       * control with UNIQUE EUSTACE". Distinct from `hasUnique` ("has any
+       * designation").
+       */
+      type: "uniqueIs";
+      target: TargetRef;
+      designations: string[];
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) has inflicted any damage
+       * this turn (`GameState.damageThisTurn`) — "use this only if this card
+       * has NOT assigned damage this turn" is this wrapped in `not`
+       * (Backdoor Brigand).
+       */
+      type: "assignedDamageThisTurn";
+      target?: TargetRef;
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) has inflicted damage this
+       * turn to `player`'s faction — "a character that inflicted damage to
+       * your faction this turn" (Drive By Boobing; `target` bound to
+       * `__candidate` in a selector, `player: "controller"`).
+       */
+      type: "inflictedDamageToFactionThisTurn";
+      player: PlayerRef;
+      target?: TargetRef;
+    }
+  | {
+      /**
+       * True when at least one in-play card (optionally of `ofType`) is
+       * currently attached to `target` (default `{ type: "selected", id:
+       * "__candidate" }`) — "a character with an item attached to it"
+       * (Enlightened Mau's `damageModifiers.sourceSelector`).
+       */
+      type: "hasAttachment";
+      target?: TargetRef;
+      ofType?: CardType;
+    }
   | { type: "sourceIsEventCard" }
   | { type: "eventCardControlledBy"; player: PlayerRef }
   | { type: "targetExists"; target: TargetRef }

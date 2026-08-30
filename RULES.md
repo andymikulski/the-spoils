@@ -912,6 +912,48 @@ already handled. This is **not** extended to cost payment: a `destroy`
 **cost** still throws if its target isn't a legal in-play card, since an
 unpayable cost must block the whole activation (§4/§10).
 
+**(engine-derived — Volition-era additions, all in `BEHAVIORS.md` → "Shade
+of the Devoured Emperor additions")**
+
+- **CR §408.3 for non-battle damage.** The `dealDamage` *effect* (and cost)
+  now converts damage dealt to a faction card into an equal influence loss
+  immediately — a faction never accumulates damage markers (it did nothing
+  before; battle damage already did this). The damage-modification pass
+  (`damageModifiers`, shields) still runs first; a direct `loseInfluence`
+  cost bypasses it (CR §408.3b).
+- **"loses all other rules text."** A `ContinuousAbility.suppressAllAbilities`
+  turns off every *other* ability of the matched card(s) — the CR §402.6
+  "lose beats grant" principle applied at the ability level. The suppressing
+  ability itself is exempt, so "loses all other rules text **and** loses 1
+  speed" keeps its own −1 speed.
+- **"cannot be picked" (§9/§12).** A `cannotBePicked` restriction removes a
+  card from the legal-candidate set of every player-or-chooser *target
+  declaration*, but not from `forEach` / `count` / aura selectors or random
+  selection — "cannot be picked" blocks *choosing*, not being swept up.
+- **"can attack only once each turn."** `attackOncePerTurn` — `declareAttack`
+  rejects a character that has already been declared as an attacker this
+  turn (tracked in `GameState.attacksThisTurn`, reset each turn), regardless
+  of whether it has since been restored.
+- **"opponents cannot take control of this card."** `cannotBeTakenControl`
+  — a `takeControl` that would change the controller is skipped.
+- **Redirect (6r4wny 60dy9u4rd5).** `ContinuousAbility.redirects: [{ from,
+  to }]` — while active, damage that would be dealt to `from`, and any way
+  `from` would leave play, is applied to `to` instead (and `from` is
+  spared). CR §301.4-style "leaves play the same way": `moveCard` /
+  `destroyCard` re-issue the identical event on `to`.
+- **Borrowed entrance (Barracks of Precipitancy — GO TIME).** A
+  `putIntoPlay` with `borrowed: true` sets a per-instance flag; `moveCard`
+  redirects any leave-play of that card to `removed`, and it is removed from
+  the game outright if still in play at end of turn.
+- **Threshold reduction (Clockman Skydocks).** `reduceThreshold` lowers the
+  *next* deploy's printed-threshold requirement of one named icon by N for
+  its controller (a per-player one-shot, cleared by the next deploy and at
+  end of turn); the numeric cost is untouched (that's `reduceNextCost`).
+- **Modal tactic.** `behavior.modes` — the `playCard` action's `mode` index
+  selects which of "Choose one of the following as this card's rules text"
+  blocks supplies the play-time condition / costs / targets / effects. The
+  unchosen modes' EXTRA COSTs and targets never apply.
+
 ## 13. Tokens (CR §409)
 
 **(CR §409.1)** A token is a marker placed on an in-play card; it has no

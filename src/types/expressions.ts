@@ -13,7 +13,9 @@ export type PlayerRef =
   | "opponent"
   | { type: "player"; id: PlayerId }
   /** The owner of a targeted card (e.g. "any one deck" — the caster picks a faction card, this resolves to that player). */
-  | { type: "ownerOf"; target: TargetRef };
+  | { type: "ownerOf"; target: TargetRef }
+  /** The *current controller* of a targeted card ("that character's controller ..."), which can differ from its owner after a take-control effect. */
+  | { type: "controllerOf"; target: TargetRef };
 
 export type TargetRef =
   | "source"
@@ -45,6 +47,13 @@ export type TargetRef =
    * outside a response window. Pairs with the `respondingTo` condition.
    */
   | { type: "respondedToCard" }
+  /**
+   * The source card of the current `damageDealt` triggering event
+   * (`event.sourceId`) — the thing that dealt the damage, as opposed to
+   * `"eventCard"` which resolves to what was damaged. `undefined` outside a
+   * `damageDealt` event.
+   */
+  | { type: "damageSource" }
   /** A player's faction card instance — "attach it to that player's faction". */
   | { type: "factionOf"; player: PlayerRef }
   /** A card `source` earlier "remembered" under `key` (see the `rememberTarget` effect); `undefined` if none / it left play. */
@@ -137,6 +146,29 @@ export type NumberExpression =
       id: string;
     }
   | {
+      /** Sum of `stat` (the live value) over every in-play card matching `selector` — "X is the total strength of all characters your opponents control." */
+      type: "sumStat";
+      selector: CardSelector;
+      stat: Stat;
+    }
+  | {
+      /**
+       * The number of threshold icons in `target`'s printed threshold — the
+       * length of the icon string (`"rrr"` → 3), or the value of a numeric
+       * threshold. "X is the number of threshold icons of the character."
+       */
+      type: "thresholdIconCount";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * The damage amount of the current `damageDealt` triggering event — 0
+       * outside one. "put the top X cards of that deck into the discard pile,
+       * where X is the amount of damage inflicted by this character."
+       */
+      type: "eventDamageAmount";
+    }
+  | {
       /**
        * `then` when `if` holds, otherwise `else` — "X is 4 if you deployed
        * this card using FLIP UP, otherwise 2".
@@ -171,6 +203,13 @@ export interface CardSelector {
    * condition instead (that compares two cards, not a literal).
    */
   name?: string;
+  /**
+   * Match by Unique designation (`CardDefinition.unique`) — a single
+   * designation or any of a list. "search your deck for a UNIQUE JO /
+   * UNIQUE EUSTACE / …", "all UNIQUE EUSTACE gain +3/+3". Distinct from the
+   * `hasUnique` condition (which only asks "has *any* designation").
+   */
+  uniqueDesignation?: string | string[];
   subtype?: string;
   /**
    * Match cards whose subtype list contains the string a `nameValue` effect

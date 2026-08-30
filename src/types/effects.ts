@@ -17,11 +17,15 @@ export type Effect =
   | {
       /**
        * Play a selected card as a resource. "auto" plays actual resource
-       * cards face-up and all other cards face-down.
+       * cards face-up and all other cards face-down. `player` (default the
+       * ability's controller) is who plays it and under whose control it
+       * enters — "that opponent puts a card from their hand face-down as a
+       * resource under their control" (Man Shark, Forgotten Tentacle).
        */
       type: "playResource";
       target: TargetRef;
       faceDown: boolean | "auto";
+      player?: PlayerRef;
     }
   | {
       type: "dealDamage";
@@ -146,6 +150,13 @@ export type Effect =
       target: TargetRef;
       controller: PlayerRef;
       faceDown?: boolean;
+      /**
+       * "If that card would leave play or is in play at the end of the
+       * turn, remove it from the game instead." — a borrowed entrance: the
+       * card is removed from the game the moment it would otherwise leave
+       * play, and unconditionally at end of turn (Barracks of Precipitancy).
+       */
+      borrowed?: boolean;
     }
   | {
       /**
@@ -164,6 +175,14 @@ export type Effect =
       target: TargetRef;
       /** "deploy it for free even if you cannot meet its threshold" (I Drink Your Milkshake!). */
       ignoreThreshold?: boolean;
+      /**
+       * Whether the numeric cost is waived. `true` (default) = for free;
+       * `false` = the player still pays the card's printed cost; a
+       * `Condition` = waived only when it holds ("if its numeric cost is 4
+       * or less, you may deploy it for free" — Gang Weapon Dealer, a
+       * `numberCompare` on `cardCost` of the revealed card).
+       */
+      free?: boolean | Condition;
     }
   | {
       /**
@@ -177,6 +196,39 @@ export type Effect =
       icon: ResourceIcon;
       amount: NumberExpression;
       duration: Duration;
+    }
+  | {
+      /**
+       * Adds `amount` of resource `icon` to `target`'s **own** PROVIDES for
+       * `duration` — "This turn, this card gains PROVIDES: [O][O][O]".
+       * Card-scoped (unlike the player-level `grantResourceIcons`): read by
+       * `getResourceIcons`, so `getThresholds` / the `cardProvides`
+       * condition / the `resourceIcons` expression all see it, and it stops
+       * counting the moment the card leaves play. Stacks on top of the
+       * card's printed icons / Volition. `icon` may be `{ fromNamed }` to use
+       * a resource icon a `nameValue` (`valueKind: "resourceIcon"`) effect
+       * stored on the ability's source card ("gains PROVIDES X" where the
+       * player named X).
+       */
+      type: "grantProvides";
+      target: TargetRef;
+      icon: ResourceIcon | { fromNamed: string };
+      amount: NumberExpression;
+      duration: Duration;
+    }
+  | {
+      /**
+       * "This turn, reduce the threshold requirement of the next card you
+       * deploy by `amount` of `icon`." — a per-player one-shot
+       * (`GameState.thresholdReductions`), consumed by the next successful
+       * deploy and cleared at end of turn. `icon` may be `{ fromNamed }`
+       * (a `nameValue` `valueKind: "resourceIcon"` on the source). Clockman
+       * Skydocks (BUSINESS DAY / OVERTIME).
+       */
+      type: "reduceThreshold";
+      player: PlayerRef;
+      icon: ResourceIcon | { fromNamed: string };
+      amount: NumberExpression;
     }
   | {
       /**
@@ -219,7 +271,7 @@ export type Effect =
        * effects self-resolving.
        */
       type: "scheduleEffect";
-      when: "startOfNextTurn" | "endOfTurn";
+      when: "startOfNextTurn" | "endOfTurn" | "endOfBattle";
       condition?: Condition;
       effects: Effect[];
     }
@@ -253,6 +305,34 @@ export type Effect =
       type: "grantRestriction";
       target: TargetRef;
       restriction: Restriction;
+      duration: Duration;
+    }
+  | {
+      /**
+       * A runtime adjustment to damage *dealt by* `source` for `duration`,
+       * floored at 0 — "this turn, if damage is inflicted to a character or
+       * faction by this card, reduce the amount by 1" (Sockem Bot). Keyed
+       * on the damage source, unlike `ContinuousAbility.damageModifiers`
+       * (keyed on the target and needing a live in-play source).
+       */
+      type: "modifyOutgoingDamage";
+      source: TargetRef;
+      delta: NumberExpression;
+      duration: Duration;
+    }
+  | {
+      /**
+       * "That player cannot play <X> this turn." `kind: "cardType"` blocks
+       * deploying a card of `cardType` (a normal deploy or a response);
+       * `kind: "flipUp"` blocks the FLIP UP action. A per-player runtime
+       * entry (`GameState.playRestrictions`) swept like the other duration
+       * lists. Study Disturbance ("cannot play characters"), Surreptitious
+       * Larceny ("may not play cards using FLIP UP").
+       */
+      type: "restrictPlay";
+      player: PlayerRef;
+      kind: "cardType" | "flipUp";
+      cardType?: CardType;
       duration: Duration;
     }
   | {
@@ -455,6 +535,18 @@ export type Effect =
     }
   | {
       /**
+       * Clears a card type previously ADDED to `target` by `setCardType`
+       * (drops matching `GameState.cardTypeGrants` entries, plus the `set`
+       * stat modifiers from the same source that rode along with it). No-op
+       * on the card's printed type. "If this card is a character, it loses
+       * the 'character' type." (Frickin' Sweet Pogo-Bunny — HIDE!).
+       */
+      type: "removeCardType";
+      target: TargetRef;
+      cardType: CardType;
+    }
+  | {
+      /**
        * Evaluates `value` immediately and stores it in
        * `ResolutionContext.variables[id]`, so later effects in the same
        * ability can read it via `{ type: "variable", id }` even after the
@@ -497,6 +589,72 @@ export type Effect =
     }
   | {
       /**
+       * "On your next turn, skip your faction's RESTORE RULE." — adds
+       * `turns` (default 1) charges to `player`'s
+       * `GameState.restoreRuleSkips`; each start of that player's turn
+       * consumes one and skips the whole Restore Rule (both the resource
+       * detach and the non-resource un-deplete). Monstrous Lassitude.
+       */
+      type: "skipRestoreRule";
+      player: PlayerRef;
+      turns?: number;
+    }
+  | {
+      /**
+       * "That character does not restore during its controller's next
+       * RESTORE RULE." — a one-shot per-card skip
+       * (`CardInstance.skipNextRestore`), consumed and cleared at that next
+       * restore. Numba 1 Stunna!.
+       */
+      type: "skipNextRestore";
+      target: TargetRef;
+    }
+  | {
+      /**
+       * "This turn, the character loses / gains N numeric cost." — a
+       * per-card runtime adjustment to what it costs to deploy that specific
+       * in-play/hand card (`GameState.numericCostModifiers`), floored at 0,
+       * read by `getCardPlayability` / the real payment. Guileful Astucion.
+       */
+      type: "modifyNumericCost";
+      target: TargetRef;
+      delta: NumberExpression;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Pauses for `chooser` (not necessarily the acting player) to pick an
+       * integer in `[min, max]` (each an optional `NumberExpression`,
+       * defaults 0..99), bound into `context.variables[storeAs]` for
+       * `effects`. "That character's controller chooses a number for X."
+       * Audacious Appraisal.
+       */
+      type: "chooserSelectsNumber";
+      chooser: PlayerRef;
+      storeAs: string;
+      min?: NumberExpression;
+      max?: NumberExpression;
+      effects: Effect[];
+    }
+  | {
+      /**
+       * "You may pay `cost`. If you do, the other player may pay `cost`.
+       * Repeat until someone doesn't." — alternately offers `cost` to
+       * `first` then `opponent`, tallying each acceptance into
+       * `context.variables["paid:" + <playerId>]`; stops at the first
+       * decline (or `maxRounds`, default 20). Then runs `onEnd`, which can
+       * read the tallies. Negotiation Ceremonies ("each player draws cards
+       * equal to the amount they paid").
+       */
+      type: "alternatingPayLoop";
+      first: PlayerRef;
+      opponent: PlayerRef;
+      cost: Cost[];
+      maxRounds?: number;
+      onEnd: Effect[];
+    }
+  | {
+      /**
        * Sets `target`'s accumulated damage to `amount` (clamped >= 0) —
        * "reduce the amount of damage already inflicted to this character to
        * 0". Distinct from healing via a life modifier.
@@ -513,6 +671,21 @@ export type Effect =
        */
       type: "removeFromBattle";
       target: TargetRef;
+    }
+  | {
+      /**
+       * Inserts an in-play character `target` into the current battle's
+       * `attacking` / `blocking` party (the inverse of `removeFromBattle`) —
+       * "add it to your attacking or blocking party". No-op with no active
+       * battle, if `target` isn't a controlled in-play character, if the
+       * controller isn't on that side of the battle, or if it's already in
+       * that party. Does NOT deplete it or re-check AGGRO (it's being added
+       * by an effect, not declared). Wrap in `chooserSelectsOption` for the
+       * "attacking or blocking" choice. Carnival Ringmaster, Sneaker Attack!.
+       */
+      type: "addToBattle";
+      target: TargetRef;
+      side: "attacking" | "blocking";
     }
   | {
       /**
@@ -535,7 +708,7 @@ export type Effect =
        */
       type: "nameValue";
       chooser: PlayerRef;
-      valueKind: "subtype" | "cardName";
+      valueKind: "subtype" | "cardName" | "resourceIcon";
       storeAs: string;
     }
   | {
@@ -552,6 +725,17 @@ export type Effect =
     }
   | {
       /**
+       * "Any player may pay <costs> to <effects>." — offers the optional
+       * paid effect to each player (active player first) in turn; the first
+       * to accept pays and resolves `effects`, then the offer stops. All
+       * decline → nothing. Recycling Scheme Facility.
+       */
+      type: "anyPlayerMayPay";
+      costs: Cost[];
+      effects: Effect[];
+    }
+  | {
+      /**
        * Puts `count` token permanents into play under `controller` — cards
        * with no deck backing that cease to exist on leaving play. `token`
        * is a minimal inline definition (name + type + optional stats /
@@ -561,6 +745,13 @@ export type Effect =
       controller: PlayerRef;
       count: NumberExpression;
       token: TokenSpec;
+      /**
+       * Resolved once per created token, with that token bound to
+       * `{ type: "selected", id: "__candidate" }` — e.g. shield it ("this
+       * turn, all damage inflicted to that token is reduced to 0";
+       * Micromajigmakermachinemajig).
+       */
+      effects?: Effect[];
     }
   | {
       /**
@@ -663,6 +854,12 @@ export interface CostModifierDefinition {
 export interface DamageModifierDefinition {
   /** Match the card being damaged. Omit `zone` (it's in play by definition). */
   selector: CardSelector;
+  /**
+   * When set, also require the *dealer* of the damage to match this — "all
+   * damage assigned to this card **by characters with items attached to
+   * them** is reduced to 0" (Enlightened Mau). Omit for "by anything".
+   */
+  sourceSelector?: CardSelector;
   /** Only battle damage, or all damage. Default: all. */
   battleOnly?: boolean;
   /** Added to each incoming damage amount — negative reduces. Floors the amount at 0. */

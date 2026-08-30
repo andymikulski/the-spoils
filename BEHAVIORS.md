@@ -43,6 +43,98 @@ Sibling `CardDefinition` fields the coverage effort added:
 `AbilityDefinition` is one of `ActivatedAbility | TriggeredAbility |
 ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 
+## Shade of the Devoured Emperor (Volition era) additions
+
+A condensed index of vocabulary added for that set — full detail is in the
+per-category sections below and in `src/types/*`.
+
+**Card-def / behavior siblings**
+- **`behavior.modes: [{ label?, condition?, costs?, targets?, variables?,
+  variableBounds?, effects? }]`** — a modal **tactic** ("Choose one of the
+  following as this card's rules text"). The `playCard` action carries
+  `mode: N`; only `modes[N]`'s block applies (in place of the first
+  activated ability's). Distinct from `chooserSelectsOption` (shared
+  cost/targets, chosen *after* they resolve).
+- **`behavior.onPlay.costAdjust: NumberExpression`** — added (usually
+  negative) to the numeric cost paid, floored at 0, evaluated in the play
+  context (so it can read EXTRA-COST `selectionCount`s). Opportunistic
+  Pirate.
+- **`behavior.noResponse: true`** — the tactic resolves with no opponent
+  response window. Swindle.
+- **`revealFromHand` gains `threshold?` + `effects?`** — an icon gate + rider
+  effects for a FINE PRINT reveal deploy (Unexpected Codicil).
+
+**ContinuousAbility fields**
+- **`suppressAllAbilities: { target?, selector? }`** — the matched cards lose
+  every *other* ability (activated/triggered/continuous/replacement/granted),
+  keeping only this one. "loses all other rules text" (Monstrous Lassitude,
+  Rushing Crushing Blockhead — its own `modifiers` still apply); "the
+  attached character has no rules text" (Mittens, `target: "attachedTo"`).
+- **`redirects: [{ from, to }]`** — while `condition` holds, *all* damage and
+  *any* leave-play of `from` happens to `to` instead. 6r4wny 60dy9u4rd5
+  (`from` a `{ remembered }` EXTRA-COST pick, `to: "source"`). Unbounded —
+  unlike `preventDamage` (bounded/self) and the `redirectDamage` keyword
+  (battle-only).
+- **`activeZone: Zone`** (default `"play"`) — the ability's `keywords` grants
+  are live while the source sits in that zone. `"hand"` for "while this card
+  is in your hand it gains TACTICAL" (Parkour Hoodlum) and the
+  `zone: "hand"` aura "all characters in your hand gain TACTICAL"
+  (Gloamspike-Gosche Bridge). `hasKeyword` now sees hand-zone auras, and the
+  response-window deploy-timing TACTICAL check consults `hasKeyword` (not
+  just the static list).
+- **`damageModifiers[].sourceSelector: CardSelector`** — also require the
+  damage *dealer* to match. "all damage assigned to this card by characters
+  with items attached to them is reduced to 0" (Enlightened Mau).
+- **`grantedAbilities`** now wires **activated** bodies too — "each character
+  you control gains 'RESEARCH — ...'" (Jo Ciendeilio). They activate with the
+  recipient as `source`.
+
+**Restrictions** (via `grantRestriction` / continuous `restrictions`)
+- **`cannotBePicked`** — removed from every player-or-chooser *target
+  declaration*'s candidate pool (not from `forEach` / `count` / auras).
+  Gloamspike-Gosche Bridge, Martial Arts Wannabe (conditional).
+- **`attackOncePerTurn`** — `declareAttack` rejects a 2nd attack by that
+  character this turn (`GameState.attacksThisTurn`). Static or aura.
+- **`cannotBeTakenControl`** — a `takeControl` to a different controller
+  fizzles. Gigantitect's Giant Giant.
+
+**Triggered `event`s**
+- **`counterChanged`** (`{ cardId, counter }`) — fires from an `addCounter` /
+  `removeCounter` effect or `removeCounter` cost. "When there are no tokens
+  on this card, destroy it" = a `counterChanged` trigger gated by
+  `sourceIsEventCard` + `counterCompare(source, token, "=", 0)`. Flaming
+  Cube, Runic Map.
+- **`attackerBlocked`** (`{ cardId, battleId, blockerCount }`) — once per
+  still-in-battle attacker when the defender declares a non-empty block.
+  Maps to the attacker for `sourceIsEventCard`. Timid Mau ("blocked by a
+  party of 2+ characters" — count blockers via `inBattle role: "blocker"`).
+
+**Conditions** — `isActivePlayer { player? }` ("during your turn"),
+`battleActive` (wrap in `not` for "not during a battle"), `cardSubtypeIs
+{ target, subtype }`, `inPlaySinceTurnStart { target? }`, `uniqueIs
+{ target, designations[] }`, `assignedDamageThisTurn { target? }`,
+`inflictedDamageToFactionThisTurn { player, target? }`.
+
+**Expressions** — `sumStat { selector, stat }`, `thresholdIconCount
+{ target }`, `eventDamageAmount`. **PlayerRef** `{ type: "controllerOf",
+target }`. **TargetRef** `{ type: "damageSource" }` (the `damageDealt`
+event's source, vs. `"eventCard"` = its target). **CardSelector**
+`uniqueDesignation: string | string[]`.
+
+**Effects** — `grantProvides { target, icon, amount, duration }` (card-level
+PROVIDES this turn; `icon` may be `{ fromNamed }`), `reduceThreshold
+{ player, icon, amount }` (cut the next deploy's threshold requirement),
+`removeCardType { target, cardType }`, `restrictPlay { player, kind:
+"cardType" | "flipUp", cardType?, duration }`, `addToBattle { target, side }`,
+`skipRestoreRule { player, turns? }`, `skipNextRestore { target }`,
+`modifyNumericCost { target, delta, duration }`, `modifyOutgoingDamage
+{ source, delta, duration }`, `chooserSelectsNumber { chooser, storeAs,
+min?, max?, effects }`, `alternatingPayLoop { first, opponent, cost,
+maxRounds?, onEnd }` (tallies into `context.variables["paid:"+playerId]`),
+`anyPlayerMayPay { costs, effects }`, `createTokens.effects?` (per-token
+follow-up), `putIntoPlay.borrowed?`, `deployFromZone.free?: boolean |
+Condition`. `nameValue.valueKind` gains `"resourceIcon"`.
+
 - **Character/item/location abilities** — listed under `behavior.abilities`
   as normal.
 - **Non-tactic "EXTRA COST" / ETB** — `behavior.onPlay` (any non-tactic

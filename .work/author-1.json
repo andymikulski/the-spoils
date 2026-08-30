@@ -1,0 +1,1351 @@
+{
+  "1082ff2c-afd3-4c84-89ae-1002579977df": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "5n4p-restore-token",
+          "type": "triggered",
+          "event": "cardRestored",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "createTokens",
+              "controller": "controller",
+              "count": 1,
+              "token": {
+                "name": "Micromajig",
+                "cardType": "character",
+                "subtype": ["micromajig"],
+                "strength": 0,
+                "life": 1,
+                "speed": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "f235f7f5-ae5d-4b85-a187-6bfaf9d454cd": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "accumulation-majig-upkeep",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": { "type": "eventPlayerIs", "player": "controller" },
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": { "type": "counter", "target": "source", "counter": "token" }
+                }
+              ],
+              "effects": [],
+              "elseEffects": [{ "type": "destroy", "target": "source" }]
+            }
+          ]
+        },
+        {
+          "id": "accumulation-majig-accrue",
+          "type": "triggered",
+          "event": "turnEnding",
+          "condition": { "type": "eventPlayerIs", "player": "controller" },
+          "effects": [
+            { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+          ]
+        },
+        {
+          "id": "accumulation-majig-feed",
+          "name": "Feed",
+          "type": "activated",
+          "costs": [{ "type": "payResources", "amount": 3 }],
+          "effects": [
+            { "type": "removeCounter", "target": "source", "counter": "token", "amount": 1 }
+          ]
+        }
+      ]
+    },
+    "notes": "Start-of-turn 'pay 1 for each token, or destroy this card' modeled with mayPay (auto-declines when the token count is unaffordable) + elseEffects destroy, matching Lodge Dock Florist's upkeep idiom."
+  },
+
+  "1ce692f6-4dff-4d0e-a195-d0df9de5eb47": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "back-breaker-etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "pick",
+              "selector": { "zone": "play", "type": "character" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "pick" } },
+              "effects": [{ "type": "deplete", "target": { "type": "selected", "id": "pick" } }]
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "3db20240-f5a5-4fd9-925d-39b32cab7618": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "bloating-bask-swell",
+          "type": "continuous",
+          "condition": {
+            "type": "numberCompare",
+            "left": { "type": "resourceIcons", "player": "controller", "icon": "rage" },
+            "operator": ">=",
+            "right": 6
+          },
+          "modifiers": [
+            { "target": "source", "stat": "strength", "operation": "add", "value": 1 },
+            { "target": "source", "stat": "life", "operation": "add", "value": 1 },
+            { "target": "source", "stat": "speed", "operation": "add", "value": 1 }
+          ]
+        }
+      ]
+    },
+    "notes": "[R][R][R][R][R][R] Volition-era icon paragraph -> continuous gated on resourceIcons(rage) >= 6 (same shape as Dying Hero)."
+  },
+
+  "2b1308a7-014c-4924-b430-0448854cb6cc": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "bottlebeard-scry-speed",
+          "type": "continuous",
+          "condition": {
+            "type": "cardTypeIs",
+            "target": { "type": "deckPosition", "player": "opponent", "from": "top" },
+            "cardType": "character"
+          },
+          "modifiers": [
+            { "target": "source", "stat": "speed", "operation": "add", "value": 3 }
+          ]
+        },
+        {
+          "id": "bottlebeard-chug",
+          "name": "Chug!",
+          "type": "activated",
+          "costs": [{ "type": "payResources", "amount": 2 }],
+          "effects": [
+            {
+              "type": "moveCard",
+              "target": { "type": "deckPosition", "player": "opponent", "from": "top" },
+              "to": "deck",
+              "position": "bottom"
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "unique": "pluck" },
+    "notes": "'The top card of each opponent's deck is revealed at all times' is a renderer/display hint with no engine effect. 'Pick an opponent' collapses to the single opponent in a 2-player game, so CHUG! needs no target declaration."
+  },
+
+  "8d77787d-29d9-405f-a8a7-5d42bd854c11": {
+    "behavior": {
+      "keywords": ["tactical"],
+      "onPlay": {
+        "costs": [
+          {
+            "type": "discard",
+            "id": "toss",
+            "player": "controller",
+            "selector": {
+              "zone": "hand",
+              "conditions": [
+                {
+                  "type": "cardTradeIs",
+                  "target": { "type": "selected", "id": "__candidate" },
+                  "trade": "rogue"
+                },
+                {
+                  "type": "not",
+                  "condition": {
+                    "type": "cardTypeIs",
+                    "target": { "type": "selected", "id": "__candidate" },
+                    "cardType": "resource"
+                  }
+                }
+              ]
+            },
+            "count": 1
+          }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "cicibeo-seize",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "not", "condition": { "type": "sourceIsEventCard" } },
+              { "type": "cardSubtypeIs", "target": "eventCard", "subtype": "cicibeo" },
+              { "type": "eventCardControlledBy", "player": "controller" },
+              {
+                "type": "numberCompare",
+                "left": { "type": "resourceIcons", "player": "controller", "icon": "deception" },
+                "operator": ">=",
+                "right": 6
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "grab",
+                "selector": { "zone": "play", "type": "character" },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": { "type": "targetExists", "target": { "type": "selected", "id": "grab" } },
+                  "effects": [
+                    {
+                      "type": "takeControl",
+                      "target": { "type": "selected", "id": "grab" },
+                      "controller": "controller"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "unique": "cicibeo" },
+    "notes": "Character with TACTICAL, so EXTRA COST discard lives in behavior.onPlay.costs (the documented home for a non-tactic permanent's EXTRA COST). 'if it was deployed from your hand' cannot be expressed (cardEnteredPlay does not carry the source zone) -- dropped, and approximated with eventCardControlledBy controller. [D][D][D][D][D][D] icon paragraph modeled as a resourceIcons(deception) >= 6 condition on the triggered ability. 'cicibeo' subtype is present on the card's printed subtype list. Renderer note: getPlayTargetDeclarations does not surface a discard-cost id, so the play flow must pass selected.toss (same as existing activated-ability discard costs like Fired Hand)."
+  },
+
+  "f8953a4a-6a5a-4104-bfbc-4626645dc766": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "clockman-etb-tuck",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "found",
+              "selector": { "controller": "self", "zone": "deck", "type": "item" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "found" } },
+              "effects": [
+                {
+                  "type": "putIntoPlay",
+                  "target": { "type": "selected", "id": "found" },
+                  "controller": "controller",
+                  "faceDown": true
+                }
+              ]
+            },
+            { "type": "shuffleDeck", "player": "controller" }
+          ]
+        },
+        {
+          "id": "clockman-trash",
+          "name": "Trash",
+          "type": "activated",
+          "threshold": "eeeeee",
+          "targets": [
+            {
+              "id": "victim",
+              "selector": { "zone": "play", "type": "item" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "payResources", "amount": 1 },
+            { "type": "destroy", "target": "source" }
+          ],
+          "effects": [
+            { "type": "destroy", "target": { "type": "selected", "id": "victim" } }
+          ]
+        }
+      ]
+    }
+  },
+
+  "6a477977-867b-4cdc-acc0-1d3f00923031": {
+    "behavior": {
+      "keywords": ["tactical"],
+      "onPlay": {
+        "condition": { "type": "not", "condition": { "type": "battleActive" } }
+      },
+      "abilities": [
+        {
+          "id": "drill-instructor-etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "pick",
+              "selector": {
+                "zone": "play",
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "cardNameEquals",
+                      "target": { "type": "selected", "id": "__candidate" },
+                      "other": "source"
+                    }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "rememberTarget",
+              "key": "buffee",
+              "target": { "type": "selected", "id": "pick" }
+            },
+            {
+              "type": "scheduleEffect",
+              "when": "startOfNextTurn",
+              "condition": { "type": "linkedCardInPlay", "key": "buffee" },
+              "effects": [
+                {
+                  "type": "createModifier",
+                  "target": { "type": "remembered", "key": "buffee" },
+                  "stat": "strength",
+                  "operation": "add",
+                  "value": 3,
+                  "duration": { "type": "untilEndOfTurn" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "'Deploy this only not during a battle' -> onPlay.condition not battleActive. 'the next turn' is modeled as scheduleEffect startOfNextTurn, which fires at the start of the SOURCE controller's next turn, not the immediately-following (opponent's) turn -- a schedule-any-next-turn primitive would be needed for exact parity. 'pick another character' uses not(cardNameEquals __candidate source), which also excludes other copies sharing this card's name."
+  },
+
+  "d1e9f12e-abc7-4768-9155-2eb23f0def8c": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "duelist-gather-res",
+          "type": "triggered",
+          "event": "resourcePlayed",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "eventPlayerIs", "player": "controller" },
+              { "type": "cardProvides", "target": "eventCard", "icon": "rage", "min": 1 }
+            ]
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsOption",
+              "chooser": "controller",
+              "options": [
+                { "label": "Decline", "effects": [] },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "duelist-gather-etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "eventCardControlledBy", "player": "controller" },
+              { "type": "cardProvides", "target": "eventCard", "icon": "rage", "min": 1 }
+            ]
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsOption",
+              "chooser": "controller",
+              "options": [
+                { "label": "Decline", "effects": [] },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "duelist-token-buff",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "target": "source",
+              "stat": "strength",
+              "operation": "add",
+              "value": { "type": "counter", "target": "source", "counter": "token" }
+            },
+            {
+              "target": "source",
+              "stat": "life",
+              "operation": "add",
+              "value": { "type": "counter", "target": "source", "counter": "token" }
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Authored as the proven Seed 2 'card that provides at least [X]' PAIR (resourcePlayed + cardEnteredPlay), not the single cardEnteredPlay shape in the slice: a face-up resource play emits resourcePlayed, not cardEnteredPlay (see Emissary of Loot / Titillated Mooncalf)."
+  },
+
+  "42d337d5-bba5-48bb-be0a-ff19f295699a": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "elementary-elemental-recover",
+          "type": "triggered",
+          "event": "cardDestroyed",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            { "type": "moveCard", "target": "source", "to": "hand" },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "toss",
+                "selector": { "controller": "self", "zone": "hand" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "toss" }, "to": "discard" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "cardDestroyed resolves with the elemental already in the discard pile; the trigger then moves it to hand, after which the mandatory 'discard a card' can target it too (matches 'put it into its owner's hand, then discard a card')."
+  },
+
+  "77e72f4c-f1c8-4d81-8133-0562dc061b65": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "elusive-wolf-howl",
+          "name": "Howl",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "dec",
+              "selector": { "owner": "self", "zone": "play", "name": "Deception" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "destroy", "target": { "type": "selected", "id": "dec" } }
+          ],
+          "effects": [
+            { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+          ]
+        },
+        {
+          "id": "elusive-wolf-prowl",
+          "name": "Prowl",
+          "type": "activated",
+          "costs": [
+            { "type": "removeCounter", "target": "source", "counter": "token", "amount": 1 }
+          ],
+          "effects": [
+            {
+              "type": "grantKeyword",
+              "target": "source",
+              "keyword": "covert",
+              "duration": { "type": "untilEndOfTurn" }
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "'a card named \"Deception\" you own' matches by CardDefinition.name in the default in-play zone, which includes face-down Deception resources."
+  },
+
+  "9eddb4f8-2055-48b8-8942-664e6c9a0f50": {
+    "behavior": {
+      "keywords": ["tactical"],
+      "onPlay": {
+        "condition": { "type": "not", "condition": { "type": "battleActive" } },
+        "targets": [
+          {
+            "id": "it",
+            "selector": { "zone": "play", "type": "item" },
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "type": "if",
+            "condition": { "type": "targetExists", "target": { "type": "selected", "id": "it" } },
+            "effects": [{ "type": "destroy", "target": { "type": "selected", "id": "it" } }]
+          }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "fanatical-shriever-rage-burn",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "sourceIsEventCard" },
+              {
+                "type": "numberCompare",
+                "left": { "type": "resourceIcons", "player": "controller", "icon": "rage" },
+                "operator": ">=",
+                "right": 6
+              }
+            ]
+          },
+          "targets": [
+            {
+              "id": "loc",
+              "selector": { "zone": "play", "type": "location" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "loc" } },
+              "effects": [
+                { "type": "dealDamage", "target": { "type": "selected", "id": "loc" }, "amount": 2 }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "EXTRA COST item pick + its 'destroy that item' ETB both live in behavior.onPlay (character with TACTICAL). [R][R][R][R][R][R] paragraph modeled as a resourceIcons(rage) >= 6 gate on the second cardEnteredPlay trigger."
+  },
+
+  "337f6b9c-02ac-4c53-aaf2-e8301635cc03": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "hassan-i-death-toll",
+          "type": "triggered",
+          "event": "cardDestroyed",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "opDestroy",
+                "selector": { "controller": "opponent", "zone": "play", "type": "character" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "destroy", "target": { "type": "selected", "id": "opDestroy" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hassan-i-harash",
+          "name": "Harash",
+          "type": "activated",
+          "activationZone": "discard",
+          "threshold": "vvv",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "sourceInZone", "zone": "discard" },
+              { "type": "isActivePlayer" }
+            ]
+          },
+          "targets": [
+            {
+              "id": "fdr",
+              "selector": { "controller": "self", "zone": "play", "type": "resource", "faceDown": true },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "payResources", "amount": 1 },
+            { "type": "destroy", "target": { "type": "selected", "id": "fdr" } }
+          ],
+          "effects": [
+            { "type": "putIntoPlay", "target": "source", "controller": "controller" }
+          ]
+        }
+      ]
+    },
+    "notes": "'each opponent must destroy a character they control' is a mandatory chooserSelectsTarget; if the opponent controls no character it is a no-op (0-candidate declaration, RULES.md §12). HARASH: activationZone discard + isActivePlayer(controller) for 'only during your turn'."
+  },
+
+  "be86071b-9c40-443e-8675-79ac4f8657e6": {
+    "behavior": {
+      "onPlay": {
+        "targets": [
+          {
+            "id": "loc",
+            "selector": { "owner": "self", "zone": "play", "type": "location" },
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "costs": [
+          {
+            "type": "oneOf",
+            "options": [
+              [
+                { "type": "dealDamage", "target": { "type": "selected", "id": "loc" }, "amount": 2 }
+              ],
+              [
+                { "type": "payResources", "amount": 3 }
+              ]
+            ]
+          }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "homewrecker-fortify",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "selector": { "controller": "self", "zone": "play", "type": "location" },
+              "stat": "structure",
+              "operation": "add",
+              "value": 1
+            }
+          ]
+        },
+        {
+          "id": "homewrecker-prostrate",
+          "name": "Prostrate",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "myLoc",
+              "selector": { "controller": "self", "zone": "play", "type": "location" },
+              "count": 1
+            },
+            {
+              "id": "ch",
+              "selector": { "zone": "play", "type": "character" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "deplete", "target": { "type": "selected", "id": "myLoc" } }
+          ],
+          "effects": [
+            { "type": "deplete", "target": { "type": "selected", "id": "ch" } }
+          ]
+        }
+      ]
+    },
+    "notes": "EXTRA COST 'Inflict 2 damage to a location you own or pay 3': the location target is optional, so the player effectively chooses -- pick a location and the oneOf auto-pays the (always-payable) damage branch; decline the target and it auto-pays the 3. A player with no location can only pay 3."
+  },
+
+  "ecba9157-e8c2-4237-8e99-0a39f6750044": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "lugubrian-poacher-restore-covert",
+          "type": "triggered",
+          "event": "cardRestored",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "grantKeyword",
+              "target": "source",
+              "keyword": "covert",
+              "duration": { "type": "untilEndOfTurn" }
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "f6da3761-a0bd-463b-9571-aba48ccf95cd": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "m3chm4n1c-etb-tokens",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [{ "type": "payResources", "amount": 2 }],
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "tok",
+                    "selector": {
+                      "zone": "play",
+                      "conditions": [
+                        {
+                          "type": "not",
+                          "condition": {
+                            "type": "cardTypeIs",
+                            "target": { "type": "selected", "id": "__candidate" },
+                            "cardType": "resource"
+                          }
+                        }
+                      ]
+                    },
+                    "count": 2,
+                    "optional": true
+                  },
+                  "effects": [
+                    {
+                      "type": "forEach",
+                      "selected": "tok",
+                      "effects": [
+                        {
+                          "type": "addCounter",
+                          "target": { "type": "selected", "id": "__candidate" },
+                          "counter": "token",
+                          "amount": 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "m3chm4n1c-self-buff",
+          "type": "continuous",
+          "condition": {
+            "type": "counterCompare",
+            "target": "source",
+            "counter": "token",
+            "operator": ">=",
+            "value": 1
+          },
+          "modifiers": [
+            { "target": "source", "stat": "strength", "operation": "add", "value": 2 },
+            { "target": "source", "stat": "life", "operation": "add", "value": 2 }
+          ]
+        }
+      ]
+    }
+  },
+
+  "739a2839-d98f-4ac4-8c2d-8717353f384c": {
+    "behavior": {
+      "onPlay": {
+        "targets": [
+          {
+            "id": "sacrifice",
+            "selector": { "controller": "self", "zone": "play", "type": "character" },
+            "count": 1
+          }
+        ],
+        "effects": [
+          { "type": "destroy", "target": { "type": "selected", "id": "sacrifice" } }
+        ]
+      },
+      "abilities": [
+        {
+          "id": "marauding-madster-recycle",
+          "type": "replacement",
+          "replaces": { "event": "moveToZone", "zone": "discard", "controlledBy": "self" },
+          "condition": {
+            "type": "cardNameEquals",
+            "target": { "type": "selected", "id": "__candidate" },
+            "other": "source"
+          },
+          "effects": [
+            { "type": "moveCard", "target": { "type": "selected", "id": "__candidate" }, "to": "deck" },
+            { "type": "shuffleDeck", "player": "controller" }
+          ]
+        }
+      ]
+    },
+    "notes": "Replacement condition uses cardNameEquals(__candidate, source) (the proven Nattering Stoopswaggler / Golemizer idiom) rather than the slice's sourceIsEventCard -- applyReplacement builds no event-bearing context, so sourceIsEventCard would never match. Downside: also matches other in-play copies of this card, but the effect is idempotent. 'from anywhere' is limited to from-play: replacement abilities only run while their source is in play and only replace moves out of play, so a discard directly from hand/deck is not caught."
+  },
+
+  "e0b38a11-024e-47b7-a886-a22221328fea": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "mau-strategist-etb-search",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "res",
+              "selector": { "controller": "self", "zone": "deck", "type": "resource", "staple": true },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "res" } },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "res" }, "to": "hand" }
+              ]
+            },
+            { "type": "shuffleDeck", "player": "controller" }
+          ]
+        },
+        {
+          "id": "mau-strategist-death-draw",
+          "type": "triggered",
+          "event": "cardDestroyed",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "chooserSelectsOption",
+              "chooser": "controller",
+              "options": [
+                { "label": "Decline", "effects": [] },
+                { "label": "Draw a card", "effects": [{ "type": "draw", "player": "controller", "amount": 1 }] }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "78e8d502-b066-4f29-a690-dd202713bcc8": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "mr-fetch-etb-exile",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "exile",
+              "selector": { "controller": "self", "zone": "discard" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "exile" } },
+              "effects": [
+                { "type": "removeFromGame", "target": { "type": "selected", "id": "exile" } },
+                { "type": "draw", "player": "controller", "amount": 1 }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "mr-fetch-good-deal",
+          "name": "Good Deal",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "selector": { "controller": "self", "zone": "discard" },
+              "count": 1
+            },
+            {
+              "id": "t2",
+              "selector": {
+                "controller": "self",
+                "zone": "discard",
+                "conditions": [
+                  {
+                    "type": "cardTypeEquals",
+                    "target": { "type": "selected", "id": "__candidate" },
+                    "other": { "type": "selected", "id": "t1" }
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetInSelection",
+                      "target": { "type": "selected", "id": "__candidate" },
+                      "selection": "t1"
+                    }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "deplete", "target": "source" },
+            { "type": "sacrificeSelected", "declarationId": "t1", "disposition": "removeFromGame" },
+            { "type": "sacrificeSelected", "declarationId": "t2", "disposition": "removeFromGame" }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "fetch",
+                "selector": {
+                  "controller": "self",
+                  "zone": "deck",
+                  "conditions": [
+                    {
+                      "type": "cardTypeEquals",
+                      "target": { "type": "selected", "id": "__candidate" },
+                      "other": { "type": "selected", "id": "t1" }
+                    }
+                  ]
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": { "type": "targetExists", "target": { "type": "selected", "id": "fetch" } },
+                  "effects": [
+                    { "type": "moveCard", "target": { "type": "selected", "id": "fetch" }, "to": "hand" }
+                  ]
+                },
+                { "type": "shuffleDeck", "player": "controller" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "unique": "pluck" },
+    "notes": "'Pick 2 cards of the same type' = two discard-pile declarations chained via cardTypeEquals (t2 must equal t1's type and not be t1); both are consumed as a removeFromGame cost. The deck search then matches t1's type; t1's CardDefinition still resolves after removal so cardTypeEquals stays valid."
+  },
+
+  "0f7da7ec-f232-4403-816e-f635a2b475c9": {
+    "behavior": {
+      "keywords": ["covert"],
+      "abilities": [
+        {
+          "id": "murderous-kleptomaniac-exile-on-death",
+          "type": "triggered",
+          "event": "cardMoved",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "sourceIsEventCard" },
+              { "type": "cardMovedFromZone", "zone": "play" },
+              { "type": "cardMovedToZone", "zone": "discard" }
+            ]
+          },
+          "targets": [
+            {
+              "id": "victim",
+              "selector": {
+                "zone": "play",
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "cardTypeIs",
+                        "target": { "type": "selected", "id": "__candidate" },
+                        "cardType": "character"
+                      },
+                      {
+                        "type": "cardTypeIs",
+                        "target": { "type": "selected", "id": "__candidate" },
+                        "cardType": "item"
+                      },
+                      {
+                        "type": "cardTypeIs",
+                        "target": { "type": "selected", "id": "__candidate" },
+                        "cardType": "location"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "victim" } },
+              "effects": [
+                { "type": "removeFromGame", "target": { "type": "selected", "id": "victim" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "murderous-kleptomaniac-klept",
+          "name": "Klept",
+          "type": "activated",
+          "threshold": "dddddddddd",
+          "costs": [{ "type": "payResources", "amount": 4 }],
+          "targets": [
+            {
+              "id": "grab",
+              "selector": {
+                "zone": "play",
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "cardTypeIs",
+                        "target": { "type": "selected", "id": "__candidate" },
+                        "cardType": "character"
+                      },
+                      {
+                        "type": "cardTypeIs",
+                        "target": { "type": "selected", "id": "__candidate" },
+                        "cardType": "item"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "takeControl",
+              "target": { "type": "selected", "id": "grab" },
+              "controller": "controller"
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "'put into a discard pile from play' = cardMoved with from play + to discard, scoped to this card via sourceIsEventCard (covers destruction, sacrifice, and effect-discards from play). KLEPT threshold [D]x10 -> 'dddddddddd'."
+  },
+
+  "d68c6b4d-ed0c-4896-a9e2-f6c91e5c951e": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "mushroom-merchant-etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "targets": [
+            {
+              "id": "pick",
+              "selector": { "zone": "play", "type": "character" },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "pick" } },
+              "effects": [
+                {
+                  "type": "createModifier",
+                  "target": { "type": "selected", "id": "pick" },
+                  "stat": "life",
+                  "operation": "add",
+                  "value": 2,
+                  "duration": { "type": "untilEndOfTurn" }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+
+  "0a7c01eb-92bd-4172-9c0d-24886de70287": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "neuralyzer-agent-attack-discard",
+          "type": "triggered",
+          "event": "characterAttacked",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "disc1",
+                "selector": { "controller": "opponent", "zone": "hand" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "disc1" }, "to": "discard" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "neuralyzer-agent-faction-hit-discard",
+          "type": "triggered",
+          "event": "damageDealt",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "sourceIsDamageSource" },
+              { "type": "cardTypeIs", "target": "eventCard", "cardType": "faction" },
+              { "type": "eventCardControlledBy", "player": "opponent" },
+              {
+                "type": "numberCompare",
+                "left": { "type": "resourceIcons", "player": "controller", "icon": "obsession" },
+                "operator": ">=",
+                "right": 6
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "disc2",
+                "selector": { "controller": "opponent", "zone": "hand" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "disc2" }, "to": "discard" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "'Pick an opponent' collapses to opponent in 2-player. No 'battle damage only' gate exists, so the [O][O][O][O][O][O] clause fires on ANY damage this card deals to the opponent's faction, not strictly battle damage -- minor over-trigger."
+  },
+
+  "7e485e5b-2d3a-4013-98d9-f7c9e47ccb57": {
+    "behavior": {
+      "onPlay": {
+        "targets": [
+          {
+            "id": "p",
+            "selector": {
+              "zone": "play",
+              "conditions": [
+                {
+                  "type": "or",
+                  "conditions": [
+                    {
+                      "type": "cardTypeIs",
+                      "target": { "type": "selected", "id": "__candidate" },
+                      "cardType": "character"
+                    },
+                    {
+                      "type": "cardTypeIs",
+                      "target": { "type": "selected", "id": "__candidate" },
+                      "cardType": "location"
+                    }
+                  ]
+                },
+                {
+                  "type": "numberCompare",
+                  "left": { "type": "resourceIcons", "player": "controller", "icon": "obsession" },
+                  "operator": ">=",
+                  "right": 3
+                }
+              ]
+            },
+            "count": 1,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "type": "if",
+            "condition": {
+              "type": "and",
+              "conditions": [
+                { "type": "targetExists", "target": { "type": "selected", "id": "p" } },
+                {
+                  "type": "or",
+                  "conditions": [
+                    {
+                      "type": "and",
+                      "conditions": [
+                        {
+                          "type": "cardTypeIs",
+                          "target": { "type": "selected", "id": "p" },
+                          "cardType": "character"
+                        },
+                        {
+                          "type": "statCompare",
+                          "target": { "type": "selected", "id": "p" },
+                          "stat": "strength",
+                          "operator": "<=",
+                          "value": 3
+                        }
+                      ]
+                    },
+                    {
+                      "type": "and",
+                      "conditions": [
+                        {
+                          "type": "cardTypeIs",
+                          "target": { "type": "selected", "id": "p" },
+                          "cardType": "location"
+                        },
+                        {
+                          "type": "statCompare",
+                          "target": { "type": "selected", "id": "p" },
+                          "stat": "structure",
+                          "operator": "<=",
+                          "value": 3
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "effects": [
+              { "type": "moveCard", "target": { "type": "selected", "id": "p" }, "to": "hand" }
+            ]
+          }
+        ]
+      }
+    },
+    "notes": "The [O][O][O] gate is folded into the target selector as a global numberCompare, so no candidate is legal unless you control 3+ obsession icons. The strength/structure check is split per type (and(character, strength<=3) OR and(location, structure<=3)) rather than the slice's loose 'strength<=3 OR structure<=3', because a character reads structure 0 (and a location reads strength 0), which would make the loose form always true."
+  },
+
+  "66e67194-792c-4d2c-b47b-f410627c1c43": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "purloinering-pirate-token-buff",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "target": "source",
+              "stat": "strength",
+              "operation": "add",
+              "value": { "type": "counter", "target": "source", "counter": "token" }
+            },
+            {
+              "target": "source",
+              "stat": "life",
+              "operation": "add",
+              "value": { "type": "counter", "target": "source", "counter": "token" }
+            }
+          ]
+        },
+        {
+          "id": "purloinering-pirate-push-overboard",
+          "name": "Push Overboard and Loot",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "v",
+              "selector": { "owner": "self", "zone": "play", "type": "character" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "payResources", "amount": 1 },
+            { "type": "destroy", "target": { "type": "selected", "id": "v" } }
+          ],
+          "effects": [
+            { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+          ]
+        }
+      ]
+    }
+  },
+
+  "db263f70-60f8-458d-bcd1-441f945f0617": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "quotidian-concealer-etb-token",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": { "type": "sourceIsEventCard" },
+          "effects": [
+            { "type": "addCounter", "target": "source", "counter": "token", "amount": 1 }
+          ]
+        },
+        {
+          "id": "quotidian-concealer-obscure",
+          "name": "Obscure",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "ch",
+              "selector": { "zone": "play", "type": "character" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "removeCounter", "target": "source", "counter": "token", "amount": 1 }
+          ],
+          "effects": [
+            {
+              "type": "grantKeyword",
+              "target": { "type": "selected", "id": "ch" },
+              "keyword": "covert",
+              "duration": { "type": "untilEndOfTurn" }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

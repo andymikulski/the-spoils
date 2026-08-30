@@ -49,6 +49,23 @@ export interface CardInstance {
   restoreLocked?: boolean;
 
   /**
+   * One-shot: this card is skipped by its controller's *next* faction
+   * turn-start restore, then the flag clears — "that character does not
+   * restore during its controller's next RESTORE RULE" (Numba 1 Stunna!).
+   * Unlike `restoreLocked`, which persists for as long as the card is in
+   * play.
+   */
+  skipNextRestore?: boolean;
+
+  /**
+   * "If that card would leave play or is in play at the end of the turn,
+   * remove it from the game instead." (Barracks of Precipitancy) — set by a
+   * borrowed `putIntoPlay`. `moveCard` redirects any leave-play to
+   * `removed`; `finishTurn` removes any still carrying the flag.
+   */
+  borrowedUntilEndOfTurn?: boolean;
+
+  /**
    * String values this card has named ("name a card subtype") — see the
    * `nameValue` effect and `CardSelector.subtypeVar`. Cleared on leaving play.
    */
@@ -151,12 +168,37 @@ export interface RuntimeCardTypeGrant {
   createdTurn: number;
 }
 
+/**
+ * A temporary card-level PROVIDES grant from a `grantProvides` effect
+ * ("This turn, this card gains PROVIDES: [O][O][O]"). Consulted by
+ * `getResourceIcons` while `targetId` is in play; swept by
+ * `durationStillActive` / cleared when the card leaves play.
+ */
+export interface RuntimeProvideGrant {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  targetId: CardInstanceId;
+  icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
+  amount: number;
+  duration: Duration;
+  createdTurn: number;
+}
+
 /** A temporary phantom resource-icon grant ("this turn, you control an additional [E][E][E][E]" — 31337!). */
 export interface RuntimeResourceGrant {
   id: ModifierId;
   playerId: PlayerId;
   icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
   amount: number;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/** A runtime "damage dealt BY this source is adjusted by `delta`" entry from a `modifyOutgoingDamage` effect (Sockem Bot). */
+export interface RuntimeOutgoingDamageModifier {
+  id: ModifierId;
+  sourceId: CardInstanceId;
+  delta: number;
   duration: Duration;
   createdTurn: number;
 }
@@ -175,13 +217,55 @@ export interface DamageShield {
 /** A one-shot delayed effect registered by `scheduleEffect`, fired at the next matching moment then discarded. */
 export interface ScheduledEffect {
   id: ModifierId;
-  when: "startOfNextTurn" | "endOfTurn";
+  when: "startOfNextTurn" | "endOfTurn" | "endOfBattle";
   /** The turn on which it was scheduled — an `endOfTurn` entry fires at the end of THIS turn; a `startOfNextTurn` entry fires at the start of its controller's next turn. */
   turnScheduled: number;
   sourceId: CardInstanceId;
   controllerId: PlayerId;
   condition?: Condition;
   effects: Effect[];
+}
+
+/**
+ * A temporary "you may not play X this turn" from a `restrictPlay` effect.
+ * `kind: "cardType"` blocks deploying a card of `cardType`; `kind: "flipUp"`
+ * blocks the FLIP UP action. Consulted by `assertCanDeployAtCurrentTiming` /
+ * the `flipUp` handler; swept by `durationStillActive`.
+ */
+export interface RuntimePlayRestriction {
+  id: ModifierId;
+  playerId: PlayerId;
+  kind: "cardType" | "flipUp";
+  cardType?: CardType;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/**
+ * A temporary per-card adjustment to a card's numeric deploy cost from a
+ * `modifyNumericCost` effect ("this turn, the character loses 1 numeric
+ * cost"). Folded into `applyCostModifiers`; swept by `durationStillActive`.
+ */
+export interface RuntimeNumericCostModifier {
+  id: ModifierId;
+  targetId: CardInstanceId;
+  delta: number;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/**
+ * A pending "reduce the threshold requirement of the next card you deploy
+ * this turn by N of `icon`" from a `reduceThreshold` effect (Clockman
+ * Skydocks). Consulted by `meetsThreshold`; cleared by the next deploy and
+ * at end of turn.
+ */
+export interface RuntimeThresholdReduction {
+  id: ModifierId;
+  playerId: PlayerId;
+  icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
+  amount: number;
+  createdTurn: number;
 }
 
 /** A pending "reduce the next numeric cost you pay this turn" from a `reduceNextCost` effect, consumed by one `playCard`. */
@@ -419,7 +503,12 @@ export interface GameState {
   keywordGrants: RuntimeKeywordGrant[];
   restrictions: RuntimeRestriction[];
   costReductions: RuntimeCostReduction[];
+  thresholdReductions: RuntimeThresholdReduction[];
+  numericCostModifiers: RuntimeNumericCostModifier[];
+  outgoingDamageModifiers: RuntimeOutgoingDamageModifier[];
+  playRestrictions: RuntimePlayRestriction[];
   resourceGrants: RuntimeResourceGrant[];
+  provideGrants: RuntimeProvideGrant[];
   cardTypeGrants: RuntimeCardTypeGrant[];
   damageShields: DamageShield[];
   scheduledEffects: ScheduledEffect[];
@@ -430,6 +519,14 @@ export interface GameState {
    * by `ActivatedAbility.usesPerTurn` ("use this only N times each turn").
    */
   abilityUsesThisTurn: Record<string, number>;
+
+  /**
+   * Per-turn count of how many times each character has been declared as an
+   * attacker this turn, keyed by `CardInstanceId`. Reset at the start of
+   * every turn. Read by the `attackOncePerTurn` restriction ("this card can
+   * attack only once each turn").
+   */
+  attacksThisTurn: Record<string, number>;
 
   /** Fully serializable response/stack state for UI, replay, or networking. */
   responseStack: StackItem[];
@@ -496,6 +593,23 @@ export interface GameState {
    * cards with the same name this turn").
    */
   turnDeploys: Record<PlayerId, string[]>;
+
+  /**
+   * Per-turn record, keyed by damage-source `CardInstanceId`: whether that
+   * card has inflicted any damage this turn (`assigned`) and the owners of
+   * every faction it damaged (`toFactionOf`). Populated from `damageDealt`
+   * events in `emit`, reset at the start of every turn. Read by the
+   * `assignedDamageThisTurn` / `inflictedDamageToFactionThisTurn`
+   * conditions.
+   */
+  damageThisTurn: Record<string, { assigned: boolean; toFactionOf: PlayerId[] }>;
+
+  /**
+   * Per-player count of upcoming faction Restore Rules to skip entirely
+   * ("on your next turn, skip your faction's RESTORE RULE" — Monstrous
+   * Lassitude). Decremented each time a skip is consumed at start of turn.
+   */
+  restoreRuleSkips: Record<PlayerId, number>;
 
   /**
    * Cards each player set aside to the bottom of their deck during the

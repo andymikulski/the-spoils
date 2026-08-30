@@ -113,7 +113,8 @@ const EVENT_TYPES = new Set([
   "turnStarted", "turnEnding", "cardPlayed", "cardEnteredPlay", "cardMoved",
   "cardDestroyed", "cardDepleted", "cardRestored", "resourcePlayed",
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
-  "characterAttacked", "characterBlocked", "cardsDrawn"
+  "characterAttacked", "characterBlocked", "cardsDrawn", "counterChanged",
+  "attackerBlocked"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
@@ -125,16 +126,23 @@ const KNOWN_TYPE_TAGS = new Set([
   "draw", "playResource", "dealDamage", "modifyInfluence", "moveCard",
   "destroy", "deplete", "restore", "addCounter", "removeCounter",
   "createModifier", "takeControl", "removeFromGame", "forEach", "attachTo",
-  "grantKeyword", "grantRestriction", "if", "shuffleDeck", "mill", "bind",
-  "terminate", "setRestoreLock", "setDamage", "removeFromBattle",
+  "grantKeyword", "grantRestriction", "restrictPlay", "modifyOutgoingDamage",
+  "alternatingPayLoop", "if", "shuffleDeck",
+  "mill", "bind",
+  "terminate", "setRestoreLock", "setDamage", "removeFromBattle", "addToBattle",
   "forEachPlayer", "nameValue", "mayPay", "createTokens", "useTargetAbility",
   "chooserSelectsTarget", "chooserSelectsOption", "lookAndReorder",
   "reduceNextCost", "deployForFree", "distributeAmong",
   "flipFaceDown", "putIntoPlay", "deployFromZone", "detach", "scheduleEffect",
-  "preventDamage", "rememberTarget", "grantResourceIcons", "useAnyAbility",
-  "duplicate", "oneOf", "setCardType", "retargetExtraCost", "partitionAndPick",
+  "preventDamage", "rememberTarget", "grantResourceIcons", "grantProvides",
+  "skipRestoreRule", "skipNextRestore", "modifyNumericCost",
+  "chooserSelectsNumber", "reduceThreshold", "anyPlayerMayPay",
+  "useAnyAbility",
+  "duplicate", "oneOf", "setCardType", "removeCardType", "retargetExtraCost",
+  "partitionAndPick",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
+  "loseInfluence",
   // conditions
   "and", "or", "not", "sourceInZone", "sourceIsEventCard",
   "eventCardControlledBy", "targetExists", "cardTypeIs", "cardTradeIs",
@@ -145,13 +153,17 @@ const KNOWN_TYPE_TAGS = new Set([
   "bottomedInMulligan",
   "cardProvides", "isStaple", "cardDepleted", "cardTypeEquals", "sourceIsFaceDown",
   "isExtremum", "linkedCardInPlay", "sharesBattlePartyWithSource", "remembered",
+  "isActivePlayer", "battleActive", "cardSubtypeIs", "inPlaySinceTurnStart",
+  "uniqueIs", "assignedDamageThisTurn", "inflictedDamageToFactionThisTurn",
+  "hasAttachment",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",
-  "selectionCount", "conditional",
+  "selectionCount", "conditional", "sumStat", "thresholdIconCount",
+  "eventDamageAmount",
   // target refs / player refs
-  "selected", "card", "player", "ownerOf", "deckPosition", "respondedToCard",
-  "factionOf",
+  "selected", "card", "player", "ownerOf", "controllerOf", "deckPosition",
+  "respondedToCard", "damageSource", "factionOf",
   // replacement ability event tags (under `replaces.event`, not `type`, but
   // harmless to allow)
   "moveToZone",

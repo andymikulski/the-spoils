@@ -14,6 +14,12 @@ export type GameAction =
       selected?: Record<string, CardInstanceId[]>;
       /** Player-chosen numeric variables ("choose a number for X"), see NumberExpression's "variable" case. */
       variables?: Record<string, number>;
+      /**
+       * For a modal tactic (`CardDefinition.behavior.modes`) — the chosen
+       * mode index ("Choose one of the following as this card's rules
+       * text"). Defaults to 0.
+       */
+      mode?: number;
     }
   | {
       type: "activateAbility";
@@ -130,7 +136,10 @@ export type GameAction =
           }
         | { kind: "replacementChoice"; apply: boolean }
         | { kind: "nameValue"; value: string }
+        | { kind: "chooseNumber"; value: number }
         | { kind: "mayPay"; pay: boolean }
+        | { kind: "alternatingPay"; pay: boolean }
+        | { kind: "anyPlayerMayPay"; pay: boolean }
         | {
             kind: "useTargetAbility";
             /** Omit to decline. */

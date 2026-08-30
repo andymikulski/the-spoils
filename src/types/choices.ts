@@ -107,6 +107,12 @@ export interface PendingDeployForFreeChoice {
    * I Drink Your Milkshake!).
    */
   ignoreThreshold?: boolean;
+  /**
+   * Set by `deployFromZone.free: false` / an unmet `free` condition — the
+   * player still pays the card's printed numeric cost ("...otherwise you
+   * may deploy it [paying its cost]"). Default (unset) is a free deploy.
+   */
+  payCost?: boolean;
 }
 
 /** "Divide N however you want among the selected cards" (see the `distributeAmong` effect). */
@@ -141,10 +147,52 @@ export interface PendingNameValueChoice {
   kind: "nameValue";
   id: string;
   playerId: PlayerId;
-  valueKind: "subtype" | "cardName";
+  valueKind: "subtype" | "cardName" | "resourceIcon";
   /** The card instance the named value is stored on, keyed by `storeAs`. */
   sourceId: CardInstanceId;
   storeAs: string;
+}
+
+/** "Any player may pay <cost> to ..." — offered to `playerId`; on decline it advances to `remaining[0]` (see the `anyPlayerMayPay` effect). */
+export interface PendingAnyPlayerMayPayChoice {
+  kind: "anyPlayerMayPay";
+  id: string;
+  playerId: PlayerId;
+  remaining: PlayerId[];
+  cost: Cost[];
+  effects: Effect[];
+  context: ResolutionContext;
+}
+
+/** "That character's controller chooses a number for X." (see the `chooserSelectsNumber` effect). */
+export interface PendingChooseNumberChoice {
+  kind: "chooseNumber";
+  id: string;
+  playerId: PlayerId;
+  storeAs: string;
+  min: number;
+  max: number;
+  effects: Effect[];
+  context: ResolutionContext;
+}
+
+/** "You may pay <cost>. If you do, the other player may. Repeat until someone doesn't." (see the `alternatingPayLoop` effect). */
+export interface PendingAlternatingPayChoice {
+  kind: "alternatingPay";
+  id: string;
+  /** Whose turn it is to decide right now. */
+  playerId: PlayerId;
+  /** The two players in order. */
+  players: [PlayerId, PlayerId];
+  /** Index into `players` of the current decider. */
+  turnIndex: 0 | 1;
+  cost: Cost[];
+  /** Rounds still allowed before the loop force-ends. */
+  roundsLeft: number;
+  /** Per-player acceptance count so far. */
+  tallies: Record<PlayerId, number>;
+  onEnd: Effect[];
+  context: ResolutionContext;
 }
 
 /** "You may pay <cost>. If you do, ..." */
@@ -223,6 +271,9 @@ export type PendingChoice =
   | PendingDistributeChoice
   | PendingReplacementChoice
   | PendingNameValueChoice
+  | PendingChooseNumberChoice
+  | PendingAlternatingPayChoice
+  | PendingAnyPlayerMayPayChoice
   | PendingMayPayChoice
   | PendingUseTargetAbilityChoice
   | PendingUseAnyAbilityChoice

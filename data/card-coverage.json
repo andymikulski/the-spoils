@@ -693,6 +693,358 @@
       "cards": [
         "71038369-24cc-48d9-a58c-e658edc01944"
       ]
+    },
+    "active-player-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'isActivePlayer', player?:PlayerRef (default 'controller') } — true when the resolved player is GameState.activePlayerId. Gates 'use this only during your turn' activated abilities / 'deploy this only during your turn' tactics. Hassan-i HARASH, Banana Peel, Confrontational Conflagration, Words of Glory, Shriever Breeding Program, Study Disturbance."
+    },
+    "battle-active-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'battleActive' } — true while GameState.battle is set and not finished. Compose with `not` for 'deploy this only NOT during a battle'. Drill Instructor, Fanatical Shriever, Fistfight, Confrontational Conflagration, Words of Glory, Sneaker Attack! (needs it true)."
+    },
+    "controller-of-playerref": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "PlayerRef { type:'controllerOf', target:TargetRef } — the current controller of a targeted card (parallel to the existing 'ownerOf'). 'That character's controller ...' / 'its controller must choose ...'. Contiguous Defalcating Machine, Audacious Appraisal, Contractual Execution, Underwhelming Performance, Thabbashite Warmonger, The Lugubrian Council."
+    },
+    "card-subtype-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'cardSubtypeIs', target:TargetRef, subtype:string } — true when target's CardDefinition.subtype includes `subtype`. For eventCard subtype checks a CardSelector can't reach ('when another \"cicibeo\"/\"gear\"/\"horsemajig\" card enters play', 'if the picked character is a \"dragon\"'). Cicibeo the Swift, Draconic Luteoderm Suit, Pwny Bomb, Confrontational Conflagration."
+    },
+    "unique-designation-selector": {
+      "status": "implemented",
+      "kind": [
+        "expression",
+        "condition"
+      ],
+      "spec": "CardSelector.uniqueDesignation?: string | string[] (match CardDefinition.unique) + Condition { type:'uniqueIs', target, designations:string[] }. 'search for a UNIQUE JO', 'all UNIQUE EUSTACE gain +3/+3', 'a character you control with UNIQUE EUSTACE'. Shade of the Devoured Emperor, Siluriformes Flaxenscale, Testudine Autoframe, Draconic Luteoderm Suit, Golden Charm."
+    },
+    "lose-influence-cost": {
+      "status": "implemented",
+      "kind": [
+        "cost"
+      ],
+      "spec": "Cost { type:'loseInfluence', amount:NumberExpression, player?:PlayerRef (default 'controller') } — 'Your faction loses N influence' as an activated-ability / EXTRA cost (distinct from the modifyInfluence effect; must be payable = influence not driven below 0? per CR influence can't be paid you don't have — treat as always payable, clamp at 0). Discordant Cadencer, Eustace Padamose-Gristwalter, Thabbashite Armorer, Thabbashite Financier."
+    },
+    "grant-provides": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'grantProvides', target:TargetRef, icon:ResourceIcon | { fromNamed:string }, amount:NumberExpression, duration:Duration } + GameState.provideGrants: RuntimeProvideGrant[] (cardId, icon, amount, duration, createdTurn), consulted by getResourceIcons (so getThresholds / cardProvides / resourceIcons all see it) and cleared like modifiers. Card-level, unlike the player-level grantResourceIcons — survives-scoped to the card, works on 'each face-down resource'. Anxious Imp, Discordant Cadencer, Elitistmajig, Goldmau Sacks Representative, Thabbashite Chemist."
+    },
+    "name-resource-icon": {
+      "status": "implemented",
+      "kind": [
+        "choice"
+      ],
+      "spec": "nameValue effect + PendingNameValueChoice gain valueKind 'resourceIcon' (name one of rage/greed/deception/elitism/obsession/volition). The stored string is read by grantProvides.icon.fromNamed / reduceThreshold.icon.fromNamed. Thabbashite Chemist, Clockman Skydocks."
+    },
+    "reduce-threshold-requirement": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'reduceThreshold', player:PlayerRef, icon:ResourceIcon | { fromNamed:string }, amount:NumberExpression } + GameState.thresholdReductions (playerId, icon, amount, createdTurn), consumed by the next successful deploy this turn (like reduceNextCost), consulted in meetsThreshold. Clockman Skydocks BUSINESS DAY / OVERTIME."
+    },
+    "in-play-since-turn-start-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'inPlaySinceTurnStart', target?:TargetRef (default 'source') } — true when the card's attackEligibleTurn === GameState.turn (i.e. it has been in play under its controller since the start of this turn). 'Use this only if this card has been in play since the start of the turn.' Jo Ciendeilio's granted RESEARCH ability."
+    },
+    "attack-limit-per-turn": {
+      "status": "implemented",
+      "kind": [
+        "ids",
+        "battle",
+        "state"
+      ],
+      "spec": "Restriction 'attackOncePerTurn' (granted statically via behavior or as a continuous aura) + GameState.attacksThisTurn: Record<CardInstanceId, number>, incremented in declareAttack, reset each turn; declareAttack rejects a character that already attacked this turn while it has the restriction. 'This card can attack only once each turn' / 'Characters you control can attack only once each turn.' Pinguid Bodyguard, Skullcrush Steamroller, Torchlight District."
+    },
+    "restore-at-end-of-battle": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "scheduleEffect gains when:'endOfBattle' — fired as the current battle ends (battleEnded), then discarded. Lets 'when this attacks, restore it at the end of the battle' be a characterAttacked trigger that schedules a `restore` of the event card. Pinguid Bodyguard, Torchlight District; Barracks of Precipitancy (partial)."
+    },
+    "add-to-battle": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "battle"
+      ],
+      "spec": "Effect { type:'addToBattle', target:TargetRef, side:'attacking' | 'blocking' | 'choose' } — insert an in-play character into the current battle's attacking/blocking party (inverse of removeFromBattle). 'choose' pauses on a chooserSelectsOption. No-op with no active battle. Does not deplete / re-check AGGRO (it's being added by an effect). Carnival Ringmaster, Sneaker Attack!."
+    },
+    "lose-rules-text": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "ContinuousAbility.suppressAllAbilities?: { target?:TargetRef; selector?:CardSelector } — while `condition` holds, the target/selector cards lose every OTHER ability (activated / triggered / continuous / replacement / granted), keeping only THIS ability. hasAbility / getActivatableAbilities / findTriggers / continuous recompute all skip a suppressed card's other abilities. Monstrous Lassitude, Rushing Crushing Blockhead, Mittens of Muffled Thought."
+    },
+    "untargetable": {
+      "status": "implemented",
+      "kind": [
+        "ids",
+        "state"
+      ],
+      "spec": "Restriction 'cannotBePicked' (continuous / conditional) — a card with it is removed from the candidate list of any player-or-chooser TARGET declaration (validateTargetDeclarations / autoSelectTargets / findUnresolvedTargetDeclarations / selectTargets pending choice / chooserSelectsTarget), but NOT from forEach / count / aura selectors. Optional scope { by?: 'nonItemSource' } for 'cannot be picked by non-item cards or abilities' (checks the resolving source's card type) — deferred if only Gigantitect needs it. Gigantitect's Giant Giant, Martial Arts Wannabe (conditional), Gloamspike-Gosche Bridge, Parkour Hoodlum (by locations — deferred scope)."
+    },
+    "remove-card-type": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'removeCardType', target:TargetRef, cardType:CardType } — clears a cardType previously ADDED by setCardType (removes matching GameState.cardTypeGrants entries for that card). No-op on the printed type. 'If this card is a character, it loses the \"character\" type.' Frickin' Sweet Pogo-Bunny."
+    },
+    "player-play-restriction": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'restrictPlay', player:PlayerRef, kind:'cardType' | 'flipUp' | 'response', cardType?:CardType, duration:Duration } + GameState.playRestrictions[]. assertCanDeployAtCurrentTiming / the flipUp action / the response-window opener consult it. 'That player cannot play characters this turn', '... may not play cards using FLIP UP', 'Your opponents cannot respond to this card' (response -> a stack-item flag, see cannot-be-responded-to). Study Disturbance, Surreptitious Larceny, Swindle."
+    },
+    "sum-stat-expression": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "NumberExpression { type:'sumStat', selector:CardSelector, stat:Stat } — sum of `stat` (live value) over every card matching selector. 'X is the total strength of all characters your opponents control.' Words of Glory."
+    },
+    "event-damage-amount-expression": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "NumberExpression { type:'eventDamageAmount' } — the damage amount of the current `damageDealt` triggering event (0 outside one). 'put the top X cards ... where X is the amount of damage inflicted by this character.' Totally Random Kid."
+    },
+    "event-damage-source-targetref": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "TargetRef { type:'damageSource' } — the source card of the current `damageDealt` event (event.sourceId), parallel to 'eventCard' resolving to its target. 'X is the number of threshold icons of the character [that dealt the damage]'. Thabbashite Warmonger."
+    },
+    "threshold-icon-count-expression": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "NumberExpression { type:'thresholdIconCount', target:TargetRef } — the number of icons in a card's printed threshold (length of the normalized threshold string / sum of a numeric threshold). 'X is the number of threshold icons of the character.' Thabbashite Warmonger."
+    },
+    "counter-threshold-trigger": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "TriggeredAbility event 'counterChanged' (emitted by addCounter/removeCounter with { cardId, counter }) + condition counterCompare on source, so 'when there are at least/no tokens on this card, ...' fires immediately. Alternatively a state-based check. Flaming Cube, Runic Map ('when there are no tokens, destroy it')."
+    },
+    "chooser-nominates-number": {
+      "status": "implemented",
+      "kind": [
+        "choice",
+        "expression"
+      ],
+      "spec": "Effect { type:'chooserSelectsNumber', chooser:PlayerRef, storeAs:string, min?:NumberExpression, max?:NumberExpression, effects:Effect[] } — pauses for `chooser` (not the acting player) to pick an integer, bound into context.variables[storeAs] for `effects`. 'That character's controller chooses a number for X.' Audacious Appraisal."
+    },
+    "damage-history-this-turn": {
+      "status": "implemented",
+      "kind": [
+        "state",
+        "condition"
+      ],
+      "spec": "GameState.damageThisTurn: per-card record { assignedDamage:boolean; toFactionOf:PlayerId[] } populated on damageDealt, reset each turn. Conditions { type:'assignedDamageThisTurn', target? } and { type:'inflictedDamageToFactionThisTurn', player:PlayerRef, target? }. Backdoor Brigand ('has not assigned damage this turn'), Drive By Boobing ('a character that inflicted damage to your faction this turn')."
+    },
+    "modal-card": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "engine",
+        "choice"
+      ],
+      "spec": "CardDefinition.behavior.modes?: Array<{ label?; condition?; costs?; targets?; effects?; onPlay?: same shape }> — 'Choose one of the following as this card's rules text'. The controller picks a mode at play time (a `mode` field on the playCard action, or a pre-play PendingChoice) BEFORE the chosen mode's EXTRA COST / targets / condition are evaluated; only that mode's effects resolve. Distinct from chooserSelectsOption (which needs shared cost/targets). Expedition Endeavour, Shriever Breeding Program, Surreptitious Larceny."
+    },
+    "temp-numeric-cost-modifier": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'modifyNumericCost', target:TargetRef, delta:NumberExpression, duration:Duration } + GameState.numericCostModifiers (per card), consulted wherever a card's numeric cost is read (getCardPlayability, deployCard, cardCost expression? — no, printed only). 'This turn, the character loses/gains 1 numeric cost.' Guileful Astucion."
+    },
+    "play-resource-as-player": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "playResource effect gains player?:PlayerRef (default context.controllerId) so 'that player puts a card from their hand face-down as a resource under their control' resolves under the right player. Man Shark, Forgotten Tentacle."
+    },
+    "borrowed-until-end-of-turn": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "putIntoPlay gains borrowed?:boolean — the card is removed from the game if it would leave play OR at end of turn (whichever first), via a scoped replacement + endOfTurn scheduled effect on that instance. 'put that card into play ... If that character would leave play or is in play at the end of the turn, remove it from the game instead.' Barracks of Precipitancy."
+    },
+    "damage-modifier-by-source": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "DamageModifierDefinition gains sourceSelector?:CardSelector matching the damage DEALER (not just the target). 'All damage assigned to this card by characters with items attached to them is reduced to 0.' Enlightened Mau."
+    },
+    "outgoing-damage-modifier": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'modifyOutgoingDamage', source:TargetRef, delta:NumberExpression, duration:Duration } — a runtime list keyed on the damage SOURCE that tunes damage it deals this turn (floored at 0). 'This turn, if damage is inflicted to a character or faction by this card, reduce the amount by 1.' Sockem Bot (usableBy anyPlayer)."
+    },
+    "skip-restore-rule": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'skipRestoreRule', player:PlayerRef, turns?:number (default 1) } — the player's faction Restore Rule is skipped on their next N turns (a per-player counter consulted in applyFactionStartOfTurn). 'On your next turn, skip your faction's RESTORE RULE.' Monstrous Lassitude."
+    },
+    "skip-next-restore": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'skipNextRestore', target:TargetRef } — a one-shot flag on a card so its controller's NEXT faction Restore Rule skips it once (then clears), unlike setRestoreLock which persists while in play. 'that character does not restore during its controller's next RESTORE RULE.' Numba 1 Stunna!."
+    },
+    "cannot-take-control": {
+      "status": "implemented",
+      "kind": [
+        "ids"
+      ],
+      "spec": "Restriction / continuous flag 'cannotBeTakenControl' — the takeControl effect skips a card that has it (relative to who's taking control — 'Opponents cannot take control of this card'). Gigantitect's Giant Giant."
+    },
+    "continuous-from-hand": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "ContinuousAbility.activeZone?: Zone (default 'play') — the ability is live while its source sits in that zone (parallel to TriggeredAbility.triggerZone). 'While this card is in your hand and there is a location in play, this card gains tactical.' Parkour Hoodlum."
+    },
+    "dynamic-tactical-honored": {
+      "status": "implemented",
+      "kind": [
+        "engine"
+      ],
+      "spec": "assertCanDeployAtCurrentTiming's TACTICAL check must consult hasKeyword (dynamic grants) not just definitionHasKeyword, so a granted/aura TACTICAL lets a card be deployed in a response window. Needs a CardInstanceId in scope at that call site. Gloamspike-Gosche Bridge (aura over hand), Parkour Hoodlum."
+    },
+    "aura-over-hand-zone": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "A ContinuousAbility aura (keywords/modifiers) whose selector names zone:'hand' must actually be evaluated for cards in hand — today auras are recomputed only over in-play cards. 'All characters in your hand gain TACTICAL.' Gloamspike-Gosche Bridge."
+    },
+    "any-player-may-pay": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "choice"
+      ],
+      "spec": "Effect { type:'anyPlayerMayPay', costs:Cost[], effects:Effect[], order?:'activeFirst' } — offer an optional paid effect to each player in turn until one accepts (or all decline). 'any player may pay 4 to put that card on top of its owner's deck.' Recycling Scheme Facility."
+    },
+    "granted-activated-ability": {
+      "status": "implemented",
+      "kind": [
+        "ability"
+      ],
+      "spec": "Wire ContinuousAbility.grantedAbilities ACTIVATED bodies: getActivatableAbilities / activateAbility resolve an ability granted to an in-play card by a selector, with source = the recipient. (Triggered granted bodies already work.) Jo Ciendeilio, M07h3r 0f 1337."
+    },
+    "create-token-then-effect": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "createTokens gains effects?:Effect[] resolved once per created token with it bound to { type:'selected', id:'__candidate' } — e.g. shield the just-made token ('all damage inflicted to that token is reduced to 0 this turn'). Micromajigmakermachinemajig, Micromajig Recycling Station (Micromajig damage immunity)."
+    },
+    "triggered-variable-prompt": {
+      "status": "implemented",
+      "kind": [
+        "choice"
+      ],
+      "spec": "TriggeredAbility.variablePrompt?: { id:string; min?:NumberExpression; max?:NumberExpression } — a triggered ability that first pauses for its controller to pick a number (bound to context.variables[id]) before targets/effects, so a trigger can do 'choose a number for X and destroy X tokens'. Micromajig Recycling Station. [IMPLEMENTED as a composition: put a chooserSelectsNumber effect first in the trigger, with the number-dependent targets/costs/effects nested inside its  — no dedicated trigger-prompt field needed.]"
+    },
+    "reveal-from-hand-rider": {
+      "status": "implemented",
+      "kind": [
+        "cards"
+      ],
+      "spec": "CardDefinition.revealFromHand gains threshold?:string|number and effects?:Effect[] (a rider: 'your faction loses 2 influence', extra icon gate). 'FINE PRINT: [G][G][G][G] EXTRA COST: Reveal this card from your hand. Your faction loses 2 influence. Pay 2. EFFECT: Draw a card.' Unexpected Codicil."
+    },
+    "cannot-be-responded-to": {
+      "status": "implemented",
+      "kind": [
+        "state"
+      ],
+      "spec": "A flag on the StackItem (set by a tactic's EXTRA COST clause) that suppresses the opponent's response window for that item — it resolves without giving priority. 'Your opponents cannot respond to this card.' Swindle."
+    },
+    "onplay-cost-adjust": {
+      "status": "implemented",
+      "kind": [
+        "engine"
+      ],
+      "spec": "behavior.onPlay gains costAdjust?:NumberExpression evaluated in the play context and added (usually negative) to the numeric cost actually paid, floored at 0 — 'reduce this card's numeric cost by the number of cards removed [as an extra cost].' Opportunistic Pirate."
+    },
+    "attacker-blocked-trigger": {
+      "status": "implemented",
+      "kind": [
+        "event"
+      ],
+      "spec": "An event / condition for 'when this attacking character becomes blocked' (declareBlockers, mapped to the attacker whose block was declared) — characterBlocked currently maps only to the blocker. 'When this card is blocked by an opposing party of 2 or more characters ...' Timid Mau."
+    },
+    "ward-redirect": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "effect"
+      ],
+      "spec": "An EXTRA-COST pick + a continuous, unbounded redirect: while both the picked card and this card are in play, (a) damage that would be dealt to the picked card is dealt to this card instead, and (b) if the picked card would leave play by any means, THIS card leaves play in that way instead. Distinct from preventDamage (bounded/self), the redirectDamage keyword (battle-only), and setCardType. Needs ContinuousAbility.damageRedirects?: [{ from, to }] hooked in dealDamage AND a replacement that mirrors any leave-play of `from` onto `to`. 6r4wny 60dy9u4rd5."
+    },
+    "deploy-from-zone-conditional-free": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "deployFromZone/deployForFree gain free?:'always'|'never'|Condition — deploy the revealed card paying its own numeric cost unless the condition holds (then waive it). 'You may deploy it even if you cannot meet its threshold. If its numeric cost is 4 or less, you may deploy it for free.' Gang Weapon Dealer."
+    },
+    "repeat-until-decline": {
+      "status": "implemented",
+      "kind": [
+        "cost",
+        "effect",
+        "choice"
+      ],
+      "spec": "Effect { type:'alternatingPayLoop', players:[PlayerRef,PlayerRef], cost:Cost[], onEnd:Effect[] } — alternately offer each player the cost; each acceptance tallies (context.variables 'paidBy<player>'); stop at the first decline; then run onEnd (which reads the tallies). 'You may pay 1. If you do, that opponent may pay 1. Repeat until someone doesn't. Each player draws cards equal to the amount they paid.' Negotiation Ceremonies."
     }
   },
   "parityGaps": {
@@ -718,6 +1070,24 @@
       "summary": "Starting-resource rules more expressive than `{ count, names?, stapleOnly? }` — a chosen count, a mix of specific + free picks, face-down non-resource cards, or an opponent-topped-up-to-match clause.",
       "clause": "The Society of Magical Propriety — \"Any 1 resource, Any 1 card (if it's not a resource, put it into play face-down).\" The Union of Unextraordinary Miners — MONEY FOR NOTHING (\"choose a number for X ... You start with X staple resources and 1 Deception. Your opponent starts with ... enough staple resources so that both players have the same number of starting resources.\").",
       "needs": "Extend FactionDefinition.setup.startingResources to a small program: a chosen variable, per-slot constraints (specific name | any staple | any card→face-down), and an opponent-normalisation rule. Currently modelled as a flat `count: 2`.",
+      "scope": "medium"
+    },
+    "opponent-may-pay-to-counter": {
+      "summary": "A tactic EXTRA COST lets a chosen player pay to peek + fizzle the card before it resolves.",
+      "clause": "EXTRA COST: Pick a player. That player may pay 2. If they do, look at the top card of your deck then terminate this card. (Study Disturbance) / Any opponent may pay 3. If they do, look at the top 3 cards ... then terminate this card. (Tedious TriAdic Truculence)",
+      "needs": "A pre-stack player-buyout interrupt: at deploy time, before the tactic goes on the response stack, offer a cost to a chosen player whose payment cancels the deploy and runs a small peek effect. Distinct from the response stack (the buyer is not responding, and the tactic never resolves). Touches deployCard / the response-window opener.",
+      "scope": "medium"
+    },
+    "search-and-develop-draw-interception": {
+      "summary": "An optional pay-to-substitute layer over another player searching their deck, or over a Develop Rule draw.",
+      "clause": "If a player would search their deck you may pay 1. If you do, draw a card and then that player searches their deck instead. (Golden Charm) / If you would draw a card as part of your Develop Rule, you may put a card voided by this card into its owner's hand instead. (Arcane Escrow)",
+      "needs": "A replacement-style hook on \"a player searches their deck\" and on \"a Develop Rule draw\" — neither is a replaceable event today (search is not an event at all; the develop draw is internal to chooseDevelop). Low value (2 cards, each a secondary clause).",
+      "scope": "medium"
+    },
+    "card-ignores-source-class": {
+      "summary": "A card that cannot be picked by, and is not affected by, cards of a given type.",
+      "clause": "This card ignores all rules text on locations. (this card cannot be picked by locations and any effects from locations do not affect this card.) — Parkour Hoodlum",
+      "needs": "Scoped targeting immunity (cannotBePicked keyed on the picking source's card type) plus a general 'effects from <type> don't affect this card' filter across dealDamage / createModifier / etc. — a per-source-type shield with no current hook.",
       "scope": "medium"
     }
   },
@@ -5316,12 +5686,14 @@
       "name": "5n4p",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "10edf7fd4fe3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardRestored (sourceIsEventCard) -> createTokens(controller,1,Micromajig)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5332,22 +5704,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "cardRestored trigger + createTokens. Micromajig TokenSpec 0/1/1 subtype [micromajig] (matches Seed 3 authoring).",
+      "rulesAudited": true
     },
     {
       "id": "8007e216-d21d-490c-ad3e-eae9677ee725",
       "name": "6r4wny 60dy9u4rd5",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "14644e13ee75",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "onPlay.targets: pick a character you control; rememberTarget 'ward'",
+          "continuous: damageRedirects [{from: remembered ward, to: source}]",
+          "replacement: any leave-play of remembered ward -> source leaves play the same way instead"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -5355,23 +5731,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "ward-redirect"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Unbounded continuous redirect of BOTH damage and leave-play from the warded character to this card, while both in play. CR §301.4-style 'leaves play the same way'. Needs the ward-redirect capability.",
+      "rulesAudited": true
     },
     {
       "id": "90e8b87e-3c0f-4293-9b51-feb0919c8b18",
       "name": "Abandoned Testing Complex",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e2209a9e9a76",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(controller) -> mayPay {costs:[payResources 3], effects:[chooserSelectsTarget(controller, {zone hand} c1 optional) -> playResource]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5382,21 +5762,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f235f7f5-ae5d-4b85-a187-6bfaf9d454cd",
       "name": "Accumulation Majig",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ff6d4d91fc6d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(controller) -> mayPay {costs:[payResources {counter token of source}], effects:[], elseEffects:[destroy source]}",
+          "triggered:turnEnding(controller) -> addCounter token 1",
+          "activated FEED: costs [payResources 3] -> removeCounter token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5407,46 +5791,51 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "mayPay auto-declines when unaffordable, falling through to destroy = 'if you don't, destroy this card'. payResources amount is a NumberExpression = counter('token').",
+      "rulesAudited": true
     },
     {
       "id": "6283dc6d-d26b-4f08-9ded-17581481b6e6",
       "name": "Ancient and Disreputable Law Office",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "28a8bc2df056",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous aura: restrictions {selector {zone play, type character, conditions:[numberCompare(cardCost(__candidate) <= 2)]}, cannotAttack}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "a & d law",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "72661539-2086-49b7-a58d-b66a2ba45a30",
       "name": "Anxious Imp",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "d5976092e622",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated OBSESS: costs [payResources 2] -> grantProvides(source, obsession, 3, untilEndOfTurn)",
+          "continuous: condition resourceIcons(controller,obsession) >= 6 -> keywords [{target:source, covert}]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5455,23 +5844,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-provides"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "PROVIDES gained this turn must be card-scoped (grant-provides), not the player-level grantResourceIcons. [O]x6 gate via numberCompare on resourceIcons.",
+      "rulesAudited": true
     },
     {
       "id": "ae2a8991-a53d-4ac4-a5d8-707b812babae",
       "name": "Arcane Escrow",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c75e85a620d2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "replacement: replaces {moveToZone, zone discard, controlledBy self} optional -> moveCard(__candidate, void) + set faceDown",
+          "GAP: 'if you would draw a card as part of your Develop Rule, you may put a voided card into hand instead'",
+          "activated WITHDRAW: costs [payResources 1] -> draw 1; discard 2",
+          "card.flipUp { cost:1, threshold:'gg' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5482,21 +5878,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "low",
+      "notes": "Author the discard->void replacement + WITHDRAW + FLIP UP; the develop-draw swap is a niche capability (or parity gap). [merge: the develop-draw-replacement clause is a parity gap (search-and-develop-draw-interception); the rest of the card is in scope.]",
+      "rulesAudited": true,
+      "parityGaps": [
+        "search-and-develop-draw-interception"
+      ]
     },
     {
       "id": "0a308026-4ef1-4c86-ad13-64df84f0f6cd",
       "name": "Audacious Appraisal",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6093c465abe3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> chooserSelectsNumber(chooser={controllerOf ch}, storeAs x) -> chooserSelectsOption(controller) [1: modifyInfluence({controllerOf ch}, -{x})] [2: destroy {ch}; modifyInfluence(controller, -({x}+{x}))]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5505,23 +5906,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "chooser-nominates-number",
+        "controller-of-playerref"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "353e341b-7e8a-4a9b-8b5e-caa53eaf3042",
       "name": "Auspicious Arrival",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a43c7f41a66e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: target {controller self, zone deck, fromTop 8, type character, conditions:[statCompare strength <= 1]} c1 optional -> if(exists) moveCard hand; shuffleDeck",
+          "card.flipUp { cost:3, threshold:'g' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5532,21 +5939,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "2f5d63f6-0f6e-4af9-9732-c15f65606f96",
       "name": "B.A.S.E. Jump",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6284b9c2f919",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{loc:location},{ch:character}] -> dealDamage({ch}, {stat {loc} structure}); draw 1",
+          "card.flipUp { cost:3, threshold:'r' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5557,21 +5967,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "766149f5-0021-41ca-bbc5-4dbf8484de40",
       "name": "Backdoor Brigand",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b6adb85559df",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated EXIT STAGE RIGHT: condition not assignedDamageThisTurn(source); costs [payResources 1] -> flipFaceDown source",
+          "card.flipUp { cost:3, threshold:'dd' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5580,48 +5993,62 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damage-history-this-turn"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'has not assigned damage this turn' needs the per-turn damage-history tracker. FLIP UP 3 [D][D].",
+      "rulesAudited": true
     },
     {
       "id": "386bbf0c-3e4d-4db2-b476-70ce87b7e228",
       "name": "Banana Peel",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "7ddfa6ebd4c0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "onPlay.effects: if(not isActivePlayer(controller)) -> mayPay {costs:[payResources 1], effects:[], elseEffects:[terminate source]}",
+          "activated SLIP: costs [destroy source], targets [{atk:{zone play, type character, conditions:[inBattle role attacker]}}] -> flipFaceDown {atk}; draw 1",
+          "card.flipUp { cost:3, threshold:'ddd' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "active-player-condition"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ab8e1b7d-a47b-4ffa-a8ff-0536a17627ca",
       "name": "Barracks of Precipitancy",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "facf5eb23941",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated GO TIME!: costs [deplete source] -> shuffleDeck; if(cardTypeIs {deckPosition top} character) putIntoPlay({deckPosition top}, controller, borrowed:true) + grantKeyword(that, aggro, EOT)",
+          "activated AT ANY COST!: costs [payResources 2, dealDamage source 3] -> restore source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5630,23 +6057,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "borrowed-until-end-of-turn"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'remove it from the game if it would leave play or is in play at end of turn' = borrowed putIntoPlay. [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "1ce692f6-4dff-4d0e-a195-d0df9de5eb47",
       "name": "Battle-Ready Back-Breaker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "54a23354ed35",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional pick character -> if(targetExists) deplete"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5657,21 +6088,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Proven optional-ETB shape.",
+      "rulesAudited": true
     },
     {
       "id": "3db20240-f5a5-4fd9-925d-39b32cab7618",
       "name": "Bloating Bask",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ab84ccd14af0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: condition resourceIcons(controller,rage) >= 6 -> modifiers str+1,life+1,speed+1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5682,9 +6115,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Volition-style [R]x6 paragraph. Proven shape (Dying Hero).",
+      "rulesAudited": true
     },
     {
       "id": "ea07095a-1dfc-453c-915d-eb72106b5b4e",
@@ -5716,37 +6149,44 @@
       "name": "Bottlebeard Brandyshanks",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e01060148e54",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "display: top card of each opponent's deck revealed at all times (renderer hint only)",
+          "continuous: condition cardTypeIs({deckPosition opponent top}, character) -> modifiers speed+3",
+          "activated CHUG!: costs [payResources 2] -> moveCard({deckPosition opponent top}, deck, position:bottom)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "pluck",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Pick an opponent' collapses to PlayerRef 'opponent' in 2p. deckPosition + cardTypeIs + moveCard all exist. UNIQUE PLUCK.",
+      "rulesAudited": true
     },
     {
       "id": "ccd054c5-3295-437d-b15e-012665c83059",
       "name": "Bug Bite",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9c74b3484e2d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> addCounter {ch} token 1; if(counterCompare {ch} token >= cardCost {ch}) destroy {ch}",
+          "activated RECUR [D]x2: activationZone discard, costs [payResources 4, removeFromGame source], targets [{ch2:character}] -> addCounter token 2; if(...) destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5757,71 +6197,89 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fddf5886-b70a-4855-b338-422a4bad3cc3",
       "name": "Carnival Ringmaster",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5eaf26ea91cd",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> addToBattle(source, choose) -> forEach character inBattle(same party) speed+1 EOT",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional pick character -> if(targetExists) addCounter token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "add-to-battle"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "TACTICAL char that adds itself to a live battle. 'that party gains 1 speed' scoped via inBattle role after the add. [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "8d77787d-29d9-405f-a8a7-5d42bd854c11",
       "name": "Cicibeo the Swift",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b0b8287ea7f0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "onPlay.costs: discard 1 {zone hand, conditions:[cardTradeIs rogue, not cardTypeIs resource]}",
+          "activated-as-triggered [D]x6: triggered:cardEnteredPlay condition and(not sourceIsEventCard, cardSubtypeIs eventCard 'cicibeo', resourceIcons(controller,deception)>=6, <entered from hand>) -> optional pick character -> takeControl controller"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "cicibeo",
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-subtype-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'if it was deployed from your hand' — cardEnteredPlay doesn't distinguish source zone today; approximate by dropping that clause or add an entered-from-hand flag (flagged in notes, not a separate cap). Subtype 'cicibeo' assumed (names carry it in quotes). [merge: shape is a composition of proven pieces (threshold-gated trigger + cardSubtypeIs + takeControl); cardSubtypeIs has its own fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "0a841e49-928b-4a3e-b4fa-ffdb9349bcf0",
       "name": "Clockman City Shuffle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9f2c1c9be1ae",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: forEach {controller self, type character} createModifier str+1,life+1 EOT; forEach {controller opponent, type character} createModifier str-1,life-1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5832,21 +6290,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f8953a4a-6a5a-4104-bfbc-4626645dc766",
       "name": "Clockman Junk Picker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2476ec3380c3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional target {zone deck, type item} -> if(exists) putIntoPlay(faceDown) + shuffleDeck",
+          "activated TRASH [E]x6: costs [payResources 1, destroy source] + targets pick item -> destroy picked"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5857,46 +6318,55 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "putIntoPlay from deck faceDown exists. threshold 'eeeeee'.",
+      "rulesAudited": true
     },
     {
       "id": "0146d330-33ea-4847-8d52-25810a946e40",
       "name": "Clockman Skydocks",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "f49f45fe0e50",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated BUSINESS DAY: costs [payResources 1, deplete source]; nameValue(controller, resourceIcon, 'x') -> reduceThreshold(controller, {fromNamed x}, 1)",
+          "activated OVERTIME [V]x5: costs [payResources 2, deplete source]; nameValue(controller, resourceIcon, 'x') -> reduceThreshold(controller, {fromNamed x}, 6)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "skydocks",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "reduce-threshold-requirement",
+        "name-resource-icon"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "c6595d11-cbd1-4731-a244-78cc20f36d19",
       "name": "Concentriculation",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "bd7e364455f0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{c:{zone play, conditions:[not resource]}}] -> moveCard {c} to deck position top",
+          "activated RECUR [O]x3: activationZone discard, costs [payResources 3, removeFromGame source], targets [{ch:character}] -> moveCard hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5907,21 +6377,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "25d8789e-b481-4c1d-aae5-8c3cb2d22786",
       "name": "Confrontational Conflagration",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1a3225d860b8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: condition and(isActivePlayer(controller), not battleActive); targets [{mine:{controller self, type character}},{theirs:{controller opponent, type character}},{loc:location optional}]",
+          "effects: bind x = conditional(cardSubtypeIs {mine} 'dragon', multiply(2, stat {mine} strength), stat {mine} strength); dealDamage {theirs} {x}; if(exists loc) dealDamage {loc} {x}  (and possibly {mine} too — 'each picked card')",
+          "card.flipUp { cost:1, threshold:'rrr' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5930,48 +6404,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "active-player-condition",
+        "battle-active-condition",
+        "card-subtype-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'each picked card' ambiguous — leaning theirs+loc; note if it should also hit your own picked character.",
+      "rulesAudited": true
     },
     {
       "id": "25ba52f8-62c9-4e2c-8daa-7e6d841f6c76",
       "name": "Contiguous Defalcating Machine",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "aee38a01a306",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay condition cardTypeIs(eventCard, character) -> chooserSelectsOption(chooser={controllerOf eventCard}) [1: chooserSelectsTarget(that player, {controller <that>, zone play, type resource} c1) -> moveCard hand] [2: destroy {eventCard}] [3: modifyInfluence({controllerOf eventCard}, -3)]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "contiguous defalcating machine",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "controller-of-playerref"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fd6b9183-805b-44d0-a3c0-dbb0758bd4b8",
       "name": "Contractual Execution",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f7205349efb8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> chooserSelectsTarget({controllerOf ch}, {controller <that>, zone play, type resource} c1) -> moveCard hand; flipFaceDown {ch}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -5980,23 +6464,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "controller-of-playerref"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "c842afad-8ee7-4e59-bb42-f06f51bf7bf6",
       "name": "Discordant Cadencer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "c25cd3a03d83",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated AGITATE: costs [payResources 1, loseInfluence 2] -> grantProvides(source, rage, 3, untilEndOfTurn)",
+          "continuous: resourceIcons(controller,rage) >= 6 -> str+2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6005,73 +6494,94 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-provides",
+        "lose-influence-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Lose 2 influence' is an ability cost.",
+      "rulesAudited": true
     },
     {
       "id": "63ad03b6-2fbb-46b0-9f86-f264cc1479fe",
       "name": "Draconic Luteoderm Suit",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4917b47438ec",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: modifiers {target attachedTo, str+2, life+2}",
+          "triggered:cardPlayed condition and(not sourceIsEventCard, cardSubtypeIs eventCard 'gear') -> chooserSelectsOption [decline]/[draw 1]",
+          "activated SERAPHIM FUSION: condition uniqueIs({attachedTo},[jo]); costs [payResources 3, destroy source] -> target {zone deck, name 'Testudine Autoframe'} -> putIntoPlay(controller) + shuffleDeck",
+          "activated EQUIP: targets [{ch:character}], variables x=conditional(uniqueIs({ch},[jo]),0,2), costs [payResources {x}] -> attachTo(source, {ch})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
-        "attachTo": null,
+        "unique": "draconic lutedoderm suit",
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-subtype-condition",
+        "unique-designation-selector"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "6a477977-867b-4cdc-acc0-1d3f00923031",
       "name": "Drill Instructor",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5452342cc9ab",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "onPlay.condition: not battleActive",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> pick another character; rememberTarget; scheduleEffect(startOfNextTurn, condition linkedCardInPlay) -> createModifier str+3 untilEndOfTurn"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "battle-active-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'the next turn' modelled as scheduleEffect startOfNextTurn (source controller's next turn). If it should fire on the opponent's turn instead, needs schedule-any-next-turn — noted, not blocking.",
+      "rulesAudited": true
     },
     {
       "id": "475ce92c-8128-4eff-b8bd-a22626d8de1f",
       "name": "Drive By Boobing",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f8cbf0ffd129",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:{zone play, type character, conditions:[inflictedDamageToFactionThisTurn(controller)]}}] -> removeFromGame {ch}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6080,23 +6590,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damage-history-this-turn"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "d1e9f12e-abc7-4768-9155-2eb23f0def8c",
       "name": "Duelist of Surfeit",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1dc206c25e0e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay condition and(eventCardControlledBy controller, cardProvides(eventCard, rage, 1)) -> chooserSelectsOption [decline]/[addCounter token 1]",
+          "continuous: str+{counter token}, life+{counter token}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6107,21 +6622,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Exact Seed 2 card-provides-icon pattern.",
+      "rulesAudited": true
     },
     {
       "id": "42d337d5-bba5-48bb-be0a-ff19f295699a",
       "name": "Elementary Elemental",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "8a9bec1135a7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardDestroyed(sourceIsEventCard) -> moveCard(source, hand); chooserSelectsTarget(controller, {zone hand} count 1) -> moveCard(discard)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6132,21 +6649,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Recover-to-hand then discard a card. Order: destroy resolves (card in discard) then trigger moves it to hand.",
+      "rulesAudited": true
     },
     {
       "id": "3a4918d7-7c70-4753-b070-0c6dd8799811",
       "name": "Elitistmajig",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "380dac02ca6c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated CRUNCH: targets [{tok: {controller self, zone play, name 'Micromajig'} count 1}], costs [destroy {selected tok}] -> grantProvides(source, elitism, 3, untilEndOfTurn)",
+          "continuous: resourceIcons(controller,elitism) >= 6 -> str+2,life+2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6155,23 +6675,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-provides"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "77e72f4c-f1c8-4d81-8133-0562dc061b65",
       "name": "Elusive Wolf",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c91f3bd307d5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated HOWL: targets [{d: {owner self, name 'Deception'} count 1}], costs [destroy {selected d}] -> addCounter token 1",
+          "activated PROWL: costs [removeCounter token 1] -> grantKeyword(source, covert, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6182,21 +6707,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'a card named Deception you own' — default zone play (face-down resource) matches by definition.name.",
+      "rulesAudited": true
     },
     {
       "id": "3e70504b-36ea-4600-afc5-70254e5dc13c",
       "name": "Enlightened Mau",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a18cf2313ed5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: damageModifiers [{selector:{type character} bind target=source, sourceSelector:{characters with an item attached}, delta:-999 (reduce to 0)}]",
+          "activated TRANSCEND: costs [payResources 5] -> grantKeyword(source, covert, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6205,23 +6733,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damage-modifier-by-source"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'damage assigned to this card BY characters with items attached' needs a source-side selector on damageModifiers.",
+      "rulesAudited": true
     },
     {
       "id": "53deaf6c-15e8-4ef6-b593-85745e2e61e8",
       "name": "EPM (Extra Powerful Magnetic) Pulse",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d2f0f3d6e6a8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: forEach {zone play, type item} destroy; forEach {zone play, type location} destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6232,46 +6764,56 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3f574bdd-e7b7-4757-a955-2a33d19a250d",
       "name": "Eustace Padamose-Gristwalter",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d98f80781636",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated FUTURE IMPLICATIONS: costs [payResources 2, loseInfluence 1] -> draw 1",
+          "activated PAST TREPIDATIONS: costs [discard 1 {zone hand}] -> createModifier life+1 EOT; if(cardTypeIs {discarded} resource) createModifier str+1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "eustace",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "lose-influence-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "The discard cost's selected id is read back for the 'if the discarded card was a resource' branch.",
+      "rulesAudited": true
     },
     {
       "id": "e0a7e6af-da4e-4442-ade8-d1b0547deb11",
       "name": "Expedition Endeavour",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1d299b2b5d7a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "modal-card, 3 modes:",
+          "  1: EXTRA COST opponent may detach up to 3; EFFECT optional search deck {Arcanist character} -> hand + shuffle",
+          "  2: EXTRA COST choose X, depleteSelected X characters you control; EFFECT detach X+3 resources from your faction",
+          "  3: EXTRA COST pick a character; EFFECT grantKeyword covert EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6280,11 +6822,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "modal-card"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "44dab93b-3b92-46ee-aa64-6bb4eb42c76a",
@@ -6316,37 +6860,48 @@
       "name": "Fanatical Shriever",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "418fe83033b4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "onPlay.condition: not battleActive; onPlay.targets [{it:{zone play, type item} optional}]; onPlay.effects: if(targetExists it) destroy {it}",
+          "triggered:cardEnteredPlay condition and(sourceIsEventCard, resourceIcons(controller,rage)>=6) -> optional pick location -> if(exists) dealDamage 2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "battle-active-condition"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5820f3c6-9768-4180-ba59-1afc35ea9bd7",
       "name": "Fistfight",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c165786b0239",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: condition not battleActive; targets [{a:{controller self, type character}},{b:{type character, conditions:[not __candidate==a]}}] -> bind x = stat {a} strength; destroy {a}; dealDamage {b} {add {x} 1}",
+          "card.flipUp { cost:3, threshold:'r' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6355,23 +6910,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "battle-active-condition"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "de91eacd-1b08-4595-a238-f4654e554ab8",
       "name": "Flaming Cube",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "52786bd4d367",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> addCounter token 3",
+          "triggered:turnStarted(controller) -> addCounter token 1",
+          "triggered:counterChanged(source) condition counterCompare(source,token,>=,6) -> destroy source; forEachPlayer(opponents) modifyInfluence(-6)",
+          "triggered:counterChanged(source) condition counterCompare(source,token,=,0) -> destroy source",
+          "activated CONTROL THE FLAME!: usableBy anyPlayer, costs [destroy {selected}], targets [{x:{controller self, zone play, conditions:[or char,item]}}] -> chooserSelectsOption [addCounter token 1]/[removeCounter token 1]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6380,23 +6943,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "counter-threshold-trigger"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
       "name": "Forgotten Tentacle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c3fa5497c789",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{fd:{controller opponent, zone play, faceDown true, type resource}}] -> chooserSelectsOption [decline]/[destroy {fd}; chooserSelectsOption(opponent)[decline]/[draw 1]; chooserSelectsOption(opponent)[decline]/[playResource for opponent]]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6405,23 +6972,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "play-resource-as-player"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "92a594d3-0560-4f4a-b872-5ed8a376967a",
       "name": "Frickin' Sweet Pogo-Bunny",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "285c647586f1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RAAR!: condition not cardTypeIs(source, character), usesPerTurn 1, costs [payResources 1] -> setCardType(source, character, grantStats {strength:2,life:2,speed:3}, untilEndOfTurn)",
+          "activated HIDE!: costs [payResources 1] -> if(cardTypeIs source character) removeCardType(source, character); deplete source",
+          "activated INTO THE RABBIT HOLE?: costs [payResources 3] -> flipFaceDown source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6430,23 +7003,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "remove-card-type"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "53f1700e-6445-4b87-bf00-c69f88c6a278",
       "name": "Gang Weapon Dealer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a3792c271e52",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> addCounter token 2",
+          "continuous: str+{counter token}",
+          "activated DELIVERY: costs [removeCounter token 1, deplete source] + targets [{g:{controller self, zone play, faceDown true, subtype 'gear'} count 1}] -> deployFromZone(controller, {g}, ignoreThreshold:true); if(cardCost {g} <= 4) it's for free"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6455,11 +7034,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploy-from-zone-conditional-free"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Two clauses: (1) may deploy ignoring threshold [paying cost], (2) if cost<=4 deploy for free. deployFromZone always frees the numeric cost today; needs a conditional-free toggle (or model as chooserSelectsOption). Added cap deploy-from-zone-conditional-free.",
+      "rulesAudited": true
     },
     {
       "id": "d0d5fc5e-9675-458e-98bc-0a7296d115d5",
@@ -6491,12 +7072,15 @@
       "name": "Gigantitect's Giant Giant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e5ebe48a1d32",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: restrictions [{target:source, cannotBePicked, by:'nonItemSource'}]",
+          "continuous: flag cannotBeTakenControl (by opponents)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6505,23 +7089,30 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "untargetable",
+        "cannot-take-control"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'cannot be picked by non-item cards or non-item abilities' = scoped untargetable. 'Opponents cannot take control' = takeControl skip. [author: 'cannot be picked by non-item cards/abilities' approximated as unconditional cannotBePicked (a 9-cost 9/9; item-tech scoping is a nicety).] [author: 'cannot be picked by non-item cards/abilities' approximated as unconditional cannotBePicked (a 9-cost 9/9; item-tech scoping is a nicety).]",
+      "rulesAudited": true
     },
     {
       "id": "40c10ab8-454a-4bab-98a0-d0530c983344",
       "name": "Gloamspike-Gosche Bridge",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "baa5563b900c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: restrictions [{target:source, cannotBePicked}]",
+          "continuous aura(hand): keywords {selector {controller self, zone hand, type character}, tactical}",
+          "continuous aura(hand) gated [O]x8: keywords {selector {controller self, zone hand, type item OR location}, tactical}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6530,48 +7121,63 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "untargetable",
+        "aura-over-hand-zone",
+        "dynamic-tactical-honored"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "b36130ca-d095-4cda-98b4-e6a1de823e40",
       "name": "Golden Charm",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "952997b45733",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "GAP: 'if a player would search their deck you may pay 1 -> draw a card, then they search instead' (search interception)",
+          "activated SERAPHIM FUSION: costs [payResources 4, destroy source], targets [{e:{controller self, zone play, type character, uniqueDesignation:'eustace'}}] -> target {zone deck, name 'Siluriformes Flaxenscale'} -> putIntoPlay(controller) + shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "charm",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "unique-designation-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "low",
+      "notes": "Author SERAPHIM FUSION; the search-interception clause is niche (2 cards) — candidate wontImplement-partial / parity note. [merge: the search-interception clause is a parity gap (search-and-develop-draw-interception); the rest of the card is in scope.]",
+      "rulesAudited": true,
+      "parityGaps": [
+        "search-and-develop-draw-interception"
+      ]
     },
     {
       "id": "94a47bcb-c174-47a9-a293-8183632b2fac",
       "name": "Goldmau Sacks Representative",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "96a42e8b60cc",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RAISE CAPITAL: costs [payResources 1, discard 1] -> grantProvides(source, greed, 3, untilEndOfTurn)",
+          "activated INVEST [G]x6: costs [payResources 2] + target {zone deck, type resource} -> moveCard hand + shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6580,23 +7186,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-provides"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "af563041-e0fc-43bd-a340-cda2eb36117b",
       "name": "Guileful Astucion",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "026271adce87",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> chooserSelectsOption(controller) [1: modifyNumericCost({ch}, -1, EOT); draw 1] [2: modifyNumericCost({ch}, +1, EOT); draw 1] [3: createModifier {ch} speed+1 EOT; draw 1]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6605,23 +7215,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "temp-numeric-cost-modifier"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Shared EXTRA COST + target, only the effect differs -> plain chooserSelectsOption, not modal-card.",
+      "rulesAudited": true
     },
     {
       "id": "337f6b9c-02ac-4c53-aaf2-e8301635cc03",
       "name": "Hassan-i of Thabbash",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "dea68d0f9c1e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardDestroyed(sourceIsEventCard) -> chooserSelectsTarget(opponent, {controller opponent, zone play, type character} count 1) -> destroy",
+          "activated HARASH [V]x3: activationZone 'discard', condition isActivePlayer(controller); costs [payResources 1, destroy {face-down resource you control}] -> putIntoPlay(source, controller)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6630,23 +7245,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "active-player-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'each opponent must destroy' is mandatory chooser target (not optional). HARASH from discard, only on your turn.",
+      "rulesAudited": true
     },
     {
       "id": "be86071b-9c40-443e-8675-79ac4f8657e6",
       "name": "Homewrecker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a96b47d0cfc3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{loc:{owner self, zone play, type location} optional}]; onPlay.costs oneOf [[dealDamage {loc} 2],[payResources 3]]",
+          "continuous aura: modifiers {selector {controller self, zone play, type location}, structure, add 1}",
+          "activated PROSTRATE: costs [deplete {selected myLoc}] + targets [{myLoc:{controller self, zone play, type location}},{ch: character}] -> deplete {ch}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6657,46 +7278,52 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "oneOf auto-pays first payable branch (no player choice) — a player with a location is forced into the damage branch. Acceptable approximation.",
+      "rulesAudited": true
     },
     {
       "id": "24e987c9-c089-4ba4-a616-ff2b2fb4592a",
       "name": "Impressionistic Furball",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "45331da973d4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: modifiers {target attachedTo, life+2}",
+          "activated COUGH UP [G]x3: costs [destroy source] -> draw 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5c7b79cb-4cf1-44e4-8729-d9a096f1dd7c",
       "name": "Industrious Usage",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b945a41a74a9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{it:item}] -> destroy {it}; createTokens(controller,1,Micromajig)",
+          "card.flipUp { cost:2, threshold:'ee' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6707,21 +7334,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fd9a88ec-982f-439b-9aa1-8d5db83960eb",
       "name": "It's a Trap!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "f23e18c42074",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{it:{controller self, type item}},{ch:character}] -> moveCard {it} hand; moveCard {ch} hand",
+          "card.flipUp { cost:2, threshold:'e' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6732,46 +7362,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f910cad2-4579-461a-ba39-6f4c322b979d",
       "name": "Jo Ciendeilio, M07h3r 0f 1337",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "528c1bdde872",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous.grantedAbilities [{selector {controller self, zone play, type character}, abilities:[{id 'research', type 'activated', condition inPlaySinceTurnStart(source), costs [deplete source], effects [reduceNextCost(controller,1)]}]}]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "jo",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "granted-activated-ability",
+        "in-play-since-turn-start-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "grantedAbilities only wires triggered bodies today; needs granted-activated. 'reduce the next numeric cost you pay' mapped to reduceNextCost (next card deploy). [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "f3e623c0-c080-4744-9599-eb4134c83662",
       "name": "Juice Closet",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "27cfd1e5b73a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(controller) -> optional pick character -> if(exists) createModifier str+1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6782,21 +7419,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "a5290ff5-114a-4ed7-804f-f751a1abf086",
       "name": "Juice Sale!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5daef199712e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:{controller opponent, type character, conditions:[isExtremum strength max among {controller opponent, type character}]}}] -> grantRestriction {ch} cannotBlock EOT",
+          "card.flipUp { cost:2, threshold:'r' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6807,21 +7447,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ecba9157-e8c2-4237-8e99-0a39f6750044",
       "name": "Lugubrian Poacher",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1f2b9a42b490",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardRestored(sourceIsEventCard) -> grantKeyword(source, covert, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6832,21 +7474,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f6da3761-a0bd-463b-9571-aba48ccf95cd",
       "name": "M3CHm4n1c 31f",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b2aa0632a2b5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> mayPay {costs:[payResources 2], effects:[chooserSelectsTarget(controller, {zone play, conditions:[not resource]} count 2 optional) -> forEach addCounter token 1]}",
+          "continuous: condition counterCompare(source, token, >=, 1) -> str+2,life+2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6857,21 +7502,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'up to 2 different non-resource cards' = count-2 optional declaration.",
+      "rulesAudited": true
     },
     {
       "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
       "name": "Man Shark",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "434f027ebd5b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: str+{count {controller opponent, zone play, faceDown true}}, life same",
+          "activated FOLLOW SUIT: costs [payResources 3] -> chooserSelectsTarget(opponent, {controller opponent, zone hand} count 1) -> playResource({selected}, faceDown true, player: that opponent)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6880,23 +7528,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "play-resource-as-player"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "playResource needs to resolve under the opponent, not the ability's controller.",
+      "rulesAudited": true
     },
     {
       "id": "739a2839-d98f-4ac4-8c2d-8717353f384c",
       "name": "Marauding Madster",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0cd1a82749a8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets: pick a character you control; onPlay.effects: destroy {selected}",
+          "replacement: replaces {moveToZone, zone:discard, controlledBy:self} condition sourceIsEventCard -> moveCard(__candidate, deck) + shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6907,21 +7560,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Destination-based moveToZone replacement covers 'to your discard from anywhere'.",
+      "rulesAudited": true
     },
     {
       "id": "53598621-abf6-4b9f-bc94-6c70bd77cb10",
       "name": "Martial Arts Wannabe",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6e70e5478051",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: condition numberCompare(count{controller self,type character} > count{controller opponent,type character}) -> restrictions [{target:source, cannotBePicked}]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6930,23 +7585,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "untargetable"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "e0b38a11-024e-47b7-a886-a22221328fea",
       "name": "Mau Strategist",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "bef5c8f24be8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional target {zone deck, type resource, staple true} -> if(exists) moveCard hand + shuffleDeck",
+          "triggered:cardDestroyed(sourceIsEventCard) -> chooserSelectsOption [decline]/[draw 1]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6957,21 +7617,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5e70e380-c62f-44a8-9b2c-abccb8f508ef",
       "name": "Micromajig Recycling Station",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e12c1c04ccb5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(controller) with variablePrompt {id x, max count{controller self, zone play, name 'Micromajig'}} -> targets [{m:{controller self, zone play, name 'Micromajig'} count {x}}], costs [sacrificeSelected m destroy] -> reduceNextCost(controller, {add {selectionCount m} 1})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -6980,23 +7642,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "triggered-variable-prompt"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "67fe9bf8-04c3-4ea0-bbde-0ec94e33b56e",
       "name": "Micromajigmakermachinemajig",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0cb4bd8438ac",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RELEASE THE MAJIGS!: costs [deplete source] -> chooserSelectsOption(opponent) [decline]/[createTokens({player opponent},1,Micromajig) with effects:[preventDamage(__candidate, 999, reduce, EOT)]]; createTokens(controller,1,Micromajig)",
+          "activated PREPARE: costs [payResources 2] -> restore source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7005,48 +7672,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "create-token-then-effect"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'damage to that token reduced to 0 this turn' needs createTokens to expose the new token for a follow-up preventDamage.",
+      "rulesAudited": true
     },
     {
       "id": "1c7ffb60-714a-4497-ae9f-13d9980158e6",
       "name": "Mittens of Muffled Thought",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e60488ab6dca",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: restrictions [{target attachedTo, cannotAttack}]; suppressAllAbilities {target: attachedTo}",
+          "activated MOVE: targets [{ch:{type character, conditions:[not inBattle]}}], costs [payResources 3] -> attachTo(source, {ch})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "lose-rules-text"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "99ed6205-1f9e-4d62-a1ae-f9038449db17",
       "name": "Monstrous Lassitude",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "974af8946352",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> skipRestoreRule(controller, 1)",
+          "continuous: condition resourceIcons(controller,volition) >= 4 -> suppressAllAbilities {target:source}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7055,73 +7732,87 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "skip-restore-rule",
+        "lose-rules-text"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "78e8d502-b066-4f29-a690-dd202713bcc8",
       "name": "Mr. Fetch",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "202c97468f69",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional target {zone discard} -> if(exists) removeFromGame + draw 1",
+          "activated GOOD DEAL: costs [deplete source], targets [{t1:{zone discard} c1},{t2:{zone discard, conditions:[cardTypeEquals(__candidate,{selected t1})]} c1}], costs [sacrificeSelected t1 removeFromGame, sacrificeSelected t2 removeFromGame] -> target {zone deck, conditions:[cardTypeEquals(__candidate,{selected t1})]} -> moveCard hand + shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "pluck",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'2 cards of the same type' modelled as two declarations chained by cardTypeEquals. UNIQUE PLUCK.",
+      "rulesAudited": true
     },
     {
       "id": "0f7da7ec-f232-4403-816e-f635a2b475c9",
       "name": "Murderous Kleptomaniac",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e020b460ab70",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [covert]",
+          "triggered:cardMoved condition and(sourceIsEventCard, cardMovedFromZone play, cardMovedToZone discard) -> optional pick {zone play, conditions:[not resource, not faction, not tactic]} -> removeFromGame",
+          "activated KLEPT [D]x10: costs [payResources 4] + targets pick {zone play, conditions:[or char,item]} -> takeControl controller"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "threshold 'dddddddddd' (10 icons). 'character, item, or location' via selector.conditions or/not composition.",
+      "rulesAudited": true
     },
     {
       "id": "d68c6b4d-ed0c-4896-a9e2-f6c91e5c951e",
       "name": "Mushroom Merchant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ab0237492871",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional pick character -> if(exists) createModifier life+2 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7132,22 +7823,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fc6ce67c-25c7-48b2-911c-fec7572c8154",
       "name": "Negotiation Ceremonies",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "88ff9f555d9e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "tactic: pick opponent; iterated optional payment loop (you pay 1, then they pay 1, repeat until a decline); each player draws = amount they paid"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -7155,23 +7848,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "repeat-until-decline"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [author: alternatingPayLoop tallies into context.variables['paid:'+playerId]; the onEnd forEachPlayer draw reads a per-player paid count. If the variable key form differs, adjust — see engine advanceAlternatingPay.]",
+      "rulesAudited": true
     },
     {
       "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
       "name": "Neuralyzer Agent",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "fc89104b876c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked(sourceIsEventCard) -> chooserSelectsTarget(opponent, {zone hand} c1) -> moveCard discard",
+          "triggered:damageDealt condition and(sourceIsDamageSource, cardTypeIs eventCard faction, eventCardControlledBy opponent, resourceIcons(controller,obsession)>=6) -> chooserSelectsTarget({ownerOf eventCard}, {zone hand} c1) -> moveCard discard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7182,46 +7880,57 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'inflicts battle damage' — battle damage to a faction already emits damageDealt; if a battle-only gate is needed it isn't available, note as minor.",
+      "rulesAudited": true
     },
     {
       "id": "6a78db5e-1ae4-4a93-95ed-d93fac077196",
       "name": "Numba 1 Stunna!",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "68feac206df2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "triggered:damageDealt condition and(sourceIsDamageSource, cardTypeIs eventCard character) -> skipNextRestore {eventCard}",
+          "card.flipUp { cost:3, threshold:'dd' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "skip-next-restore"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "One-shot restore skip (setRestoreLock persists too long). FLIP UP 3 [D][D].",
+      "rulesAudited": true
     },
     {
       "id": "7e485e5b-2d3a-4013-98d9-f7c9e47ccb57",
       "name": "Officially Offensive Overseer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "103a9cb73708",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{p:{zone play, conditions:[or(cardTypeIs char, cardTypeIs location), numberCompare(resourceIcons(self,obsession) >= 3)]} count 1 optional}]",
+          "onPlay.effects: if(and(targetExists p, or(statCompare {p} strength <= 3, statCompare {p} structure <= 3))) -> moveCard {p} hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7232,46 +7941,56 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "The [O][O][O] gate folded into the selector via a global numberCompare condition.",
+      "rulesAudited": true
     },
     {
       "id": "81f3e9be-87fd-4626-9206-c54b6d7be32e",
       "name": "Opportunistic Pirate",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "591fbc0fc188",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "onPlay.targets [{rem:{owner opponent, zone discard} count 4 optional}]; onPlay.costs [sacrificeSelected rem removeFromGame]; onPlay.costAdjust: -{selectionCount rem}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "onplay-cost-adjust"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'reduce this card's numeric cost by the number of cards removed' — needs onPlay.costAdjust.",
+      "rulesAudited": true
     },
     {
       "id": "f6404aff-0a09-46f8-b146-97f746546ff4",
       "name": "Parkour Hoodlum",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5986a312cef4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous(activeZone hand): condition numberCompare(count{zone play, type location} >= 1) -> keywords [{target:source, tactical}]",
+          "continuous: restrictions [{target:source, cannotBePicked, by:'locationSource'}] + immune to location abilities"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7280,11 +7999,18 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "continuous-from-hand",
+        "untargetable",
+        "dynamic-tactical-honored"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "low",
+      "notes": "'ignores all rules text on locations' — the can't-be-picked-by-locations half maps to scoped untargetable; the 'location effects don't affect this card' half is out of scope (author the tactical-in-hand + untargetable, gap the rest). [author: TACTICAL-in-hand authored; 'ignores all rules text on locations' (cannot be picked by / not affected by locations) is the parity gap card-ignores-source-class.] [author: TACTICAL-in-hand authored; 'ignores all rules text on locations' (cannot be picked by / not affected by locations) is the parity gap card-ignores-source-class.]",
+      "rulesAudited": true,
+      "parityGaps": [
+        "card-ignores-source-class"
+      ]
     },
     {
       "id": "5a009669-cb50-40d1-a7b3-a070121ba4af",
@@ -7316,12 +8042,16 @@
       "name": "Pinguid Bodyguard",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e2a249f1e0a3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked(sourceIsEventCard) -> scheduleEffect(endOfBattle) -> restore source",
+          "static restriction attackOncePerTurn on source",
+          "activated PROTECT: costs [deplete source] + targets pick character -> createModifier life+2 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7330,23 +8060,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "restore-at-end-of-battle",
+        "attack-limit-per-turn"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "66e67194-792c-4d2c-b47b-f410627c1c43",
       "name": "Purloinering Pirate",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "70b28799aec3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: str+{counter token}, life+{counter token}",
+          "activated PUSH OVERBOARD AND LOOT: targets [{v:{owner self, zone play, type character}}], costs [payResources 1, destroy {selected v}] -> addCounter token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7357,46 +8093,56 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f3c30c8a-69ce-443b-baed-afaed7170725",
       "name": "Pwny Bomb",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "13c8d4db2da9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: modifiers {target attachedTo, str+1, life+1}",
+          "triggered:cardEnteredPlay condition and(eventCardControlledBy controller, or(cardNameEquals? name 'Micromajig', cardSubtypeIs eventCard 'horsemajig')) -> chooserSelectsOption [decline]/[attachTo(source, {eventCard})]",
+          "activated PWNED: costs [destroy source], targets [{host: <the card this is attached to>},{ch:character}] -> dealDamage 7 to host and ch",
+          "activated MOVE: targets [{ch:{controller self, zone play, type character}}], costs [payResources 3] -> attachTo(source, {ch})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-subtype-condition"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "db263f70-60f8-458d-bcd1-441f945f0617",
       "name": "Quotidian Concealer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c6adddda581c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> addCounter token 1",
+          "activated OBSCURE: costs [removeCounter token 1] + targets pick character -> grantKeyword(covert, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7407,21 +8153,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5da75ce7-9ae6-484f-8bd5-ee7deeba9532",
       "name": "Quotidian Transposition",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1e1a09dae6a3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: forEachPlayer -> chooserSelectsTarget(controller[rebound], {owner <current>, zone play, type character} c1) -> moveCard hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7432,46 +8180,56 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "969e0f4d-8320-4a06-8fb0-2502da819c8e",
       "name": "R3p347 0ff3nd3r",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0d869f125d1a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [aggro]  (== 'can attack even if not in play since start of turn')",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> mayPay {costs:[payResources 2], effects:[addCounter token 1]}",
+          "continuous: counterCompare(source,token,>=,1) -> str+1,life+1",
+          "activated P3PP3R 61457: costs [removeCounter token 1], usesPerTurn 1 -> createModifier str+1,life+1 EOT; restore source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "aggro"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "AGGRO's only mechanical effect (RULES §9) is the attack-eligibility exemption, exactly this line.",
+      "rulesAudited": true
     },
     {
       "id": "fd3fea1f-448c-405d-96c3-e6aa6e1395ef",
       "name": "Recycling Scheme Facility",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b70ce050d0b4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> chooserSelectsOption [decline]/[draw 1]",
+          "triggered:cardMoved condition and(cardTypeIs eventCard character, cardMovedToZone discard) -> anyPlayerMayPay {costs:[payResources 4], effects:[moveCard({eventCard}, deck, position top)]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7480,23 +8238,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "any-player-may-pay"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f1b6d378-94ee-487a-bf78-b529b2131c94",
       "name": "Reluctant Reconciliation",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "fd30fb3266f4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> restore {ch}; grantRestriction {ch} cannotAttack EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7507,96 +8269,111 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ef8e7666-c491-4bdd-96e8-880193a5b01b",
       "name": "Remains of Foreman Pete, the Clock Man",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4067be84b071",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated CLOCK IN [V]x3: costs [discard 1 {staple resource}, payResources 2] -> draw 1",
+          "activated WORK IT [V]x2: costs [payResources 2], targets [{fd:{controller self, zone play, faceDown true, type resource}}] -> moveCard {fd} hand; chooserSelectsTarget(controller, {zone hand} c1 optional) -> playResource",
+          "activated CLOCK OUT [V]: effects [flipFaceDown source; detach {a resource attached to your faction}]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "foreman pete",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "CLOCK OUT's 'COST: Flip this card face-down' modelled as the first effect (always possible, so no distinct cost needed).",
+      "rulesAudited": true
     },
     {
       "id": "1dd0bbbc-1202-41c2-9073-5ce87acaf67e",
       "name": "Rocket Lawnchair",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d8eddab4c7f6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "activated NO EJECT!: costs [destroy source], targets [{mine:{owner self, type character}},{theirs:{controller opponent, type character}}] -> destroy both; if(or(inBattle {mine} attacker, inBattle {theirs} attacker)) forEach {zone play, type character, conditions:[inBattle role attacker]} destroy",
+          "card.flipUp { cost:4, threshold:'ee' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'that party' approximated as the current attacking party.",
+      "rulesAudited": true
     },
     {
       "id": "39d69cc2-0af9-4e69-b31f-b7cc964353bb",
       "name": "Rudo Mangod, Dragonweight Champion",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "808ef58cc236",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> forEach {controller self, zone play, type character, conditions:[not __candidate==source]} -> deplete + setRestoreLock true",
+          "continuous: str +{count {controller self, zone play, type character, depleted true, conditions:[cardTradeIs warlord]}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "rudolphus",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "12b25597-1514-4fc3-9a33-3b32fc436ecb",
       "name": "Runic Junker",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "4feed8e5005a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted(controller) -> mayPay {costs:[payResources 4], effects:[ if(numberCompare(count{controller self, zone play, faceDown true, type resource} >= 2)) -> chooserSelectsTarget(opponent, {controller self, zone play, faceDown true} c1) -> if(faceDown real type char|item) deployFromZone(controller, {selected}) ]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7607,21 +8384,27 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ba4a554e-4fbb-42b4-8e63-3f5f200104e5",
       "name": "Runic Map",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "4085bc156729",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> addCounter token 2",
+          "triggered:counterChanged(source) condition counterCompare(source,token,=,0) -> destroy source",
+          "activated PLAN: costs [payResources 1, removeCounter token 1] -> target {zone deck, name 'Elitism'} -> moveCard hand + shuffleDeck",
+          "activated FOLLOW PLAN: costs [payResources 2, removeCounter token 1] -> chooserSelectsTarget(controller, {zone hand} c1 optional) -> playResource",
+          "activated NEW PLAN: costs [destroy {selected fd}], targets [{fd:{controller self, zone play, faceDown true, type resource}}] -> addCounter token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7630,23 +8413,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "counter-threshold-trigger"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ef509645-3df1-44fb-955b-069fc0aebe35",
       "name": "Rushing Crushing Blockhead",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "b8f6419d0bed",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:damageDealt condition and(sourceIsDamageSource, cardTypeIs eventCard faction) -> destroy source; dealDamage {factionOf controller} 2",
+          "continuous: restrictions [{target:source, cannotBlock}]",
+          "continuous: condition resourceIcons(controller,rage) >= 6 -> suppressAllAbilities {target:source} + modifiers speed-1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7655,74 +8444,88 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "lose-rules-text"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "suppressAllAbilities must exempt its own ability so the speed-1 from the same continuous still applies.",
+      "rulesAudited": true
     },
     {
       "id": "506f383f-ef35-467b-8554-dd6b4b9729df",
       "name": "Shade of the Devoured Emperor",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1330c7939d26",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:turnEnding condition eventPlayerIs(opponent) -> mayPay {costs:[removeFromGame source], effects:[ target {zone deck (any player's), uniqueDesignation:[jo,eustace,pluck,rudolphus,ignatious]} -> putIntoPlay(controller) + shuffleDeck ]}",
+          "card.flipUp { cost:2, threshold:'vvvv' }"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
-        "unique": null,
+        "unique": "padamose",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "unique-designation-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'choose a player and search their deck' — model as a deck target picked via a faction-card selection or 'any deck'. FLIP UP 2 [V]x4.",
+      "rulesAudited": true
     },
     {
       "id": "c6e93f75-e05d-4dfb-a77d-c74b662a7c02",
       "name": "Sharpey Pointy Lethal Army Tool",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "efb1a3f3e714",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: modifiers {target attachedTo, str+2}",
+          "activated UNFOLD: costs [payResources 2, deplete {attachedTo}] -> reveal top card (display); if(cardCost {deckPosition top} >= 5) forEach {controller opponent, type character} createModifier life-1 permanent; if(and(cardCost {deckPosition top} <= 4, not cardTypeIs {deckPosition top} resource)) destroy {attachedTo}; if(cardTypeIs {deckPosition top} resource) destroy {attachedTo} + forEach {controller opponent, type character} destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "cb39b1ed-d160-4760-8c2d-5337b9ea74ec",
       "name": "Shriever Breeding Program",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "83eb9b286cab",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "modal-card, 2 modes:",
+          "  1: EXTRA COST deploy only during your turn; EFFECT optional search deck {subtype dragon} -> hand + shuffle",
+          "  2: EXTRA COST deploy only during your turn; pick a character; EFFECT deplete it; draw 1"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -7730,11 +8533,14 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "modal-card",
+        "active-player-condition"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "d96ae660-1e24-4f75-9b4f-75d359459322",
@@ -7766,37 +8572,47 @@
       "name": "Siluriformes Flaxenscale",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "245006c96ab1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous aura: modifiers {selector {uniqueDesignation:'eustace'}, str+3}, {... life+3}",
+          "activated NUMISMATIC EMISSION: costs [payResources 5] -> draw 2; modifyInfluence(controller,+2)",
+          "activated AURIFEROUS AUGMENTAION: costs [discard 2] -> createModifier str+2,life+2 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "siluriformes",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "unique-designation-selector"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ac14455c-c744-4c57-b53b-430450666fac",
       "name": "Skullcrush Steamroller",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "f79220f49171",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: restrictions [{target:source, cannotBeRestored}]",
+          "static restriction attackOncePerTurn on source",
+          "activated ASSIST: costs [payResources 2, deplete {selected other}], targets [{other:{controller self, zone play, type character}}] -> restore source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7805,23 +8621,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "attack-limit-per-turn"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "b324c5df-afe7-4ed3-8f10-7f0a7488bdfb",
       "name": "Sneaker Attack!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1fa58914aeaf",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: condition battleActive; targets [{ch:{controller self, zone play, type character, conditions:[not inBattle]}}], costs [depleteSelected ch] -> addToBattle({ch}, choose); createModifier {ch} speed+1 EOT",
+          "card.flipUp { cost:2, threshold:'dd' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7830,23 +8651,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "battle-active-condition",
+        "add-to-battle"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "a981c172-6c40-43d4-b941-0a336e4924fb",
       "name": "Sockem Bot",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6622a800333f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated PAY OFF: usableBy anyPlayer, costs [payResources 1] -> modifyOutgoingDamage(source, -1, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7855,49 +8681,60 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "outgoing-damage-modifier"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3d8bb343-be8d-48d8-b3f2-523a3564ffeb",
       "name": "Sticky Stealy Hand",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ce84a8496d4a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> if(numberCompare(random 1..2 = 1)) takeControl({attachedTo}, controller) else moveCard(source, hand)",
+          "triggered:cardMoved condition and(sourceIsEventCard, cardMovedFromZone play) -> takeControl({attachedTo}, {ownerOf attachedTo})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "item",
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Coin flip inline via numberCompare(random). No triggered `variables` needed.",
+      "rulesAudited": true
     },
     {
       "id": "9107d563-b481-4bb2-8878-64589951e341",
       "name": "Study Disturbance",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ffaee9ed5ceb",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "tactic: pick a player; EXTRA COST clause: that player may pay 2 -> look at top card of your deck + terminate this card",
+          "effects: restrictPlay(pickedPlayer, cardType:character, EOT); draw 1"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -7905,24 +8742,31 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "player-play-restriction"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: the opponent-may-pay-to-counter clause is a parity gap (opponent-may-pay-to-counter); the rest of the card is in scope.]",
+      "rulesAudited": true,
+      "parityGaps": [
+        "opponent-may-pay-to-counter"
+      ]
     },
     {
       "id": "fd095fbd-7566-4b39-832e-0f40a0181289",
       "name": "Stuttershy",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "4d928b5b7d2e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "replacement: replaces {destroy} condition sourceIsEventCard -> flipFaceDown {__candidate}; forEachPlayer(opponents) modifyInfluence(+1); createTokens(controller, {count opponents}, Micromajig)"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -7932,21 +8776,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'when this is flipped down' folded into the replacement's own effects (the only way this card flips). External-flip edge (someone else flips it) left unmodelled — noted.",
+      "rulesAudited": true
     },
     {
       "id": "43b9dddc-f557-4efa-86f9-6ce9ca46a277",
       "name": "Super Shiny Caltrops of DOOM!",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "529c93b0375f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional pick character -> if(exists) dealDamage 2",
+          "replacement: replaces {destroy} condition sourceIsEventCard, optional, optionalCost [payResources 2] -> flipFaceDown {__candidate}",
+          "activated MOVE: targets [{ch:character}], costs [payResources 2] -> attachTo(source, {ch})",
+          "card.flipUp { cost:2, threshold:'r' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7957,21 +8806,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Not ATTACH-on-play (attaches only via MOVE) so no attachTo metadata.",
+      "rulesAudited": true
     },
     {
       "id": "d2d83970-7b96-41ba-affd-ac69466455e4",
       "name": "Surreptitious Larceny",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "6a887ae94689",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "modal-card, 3 modes:",
+          "  1: EXTRA COST pick a player -> restrictPlay(that player, flipUp, EOT); EFFECT lookAndReorder any deck top 1 (peek)",
+          "  2: EXTRA COST pick a character; EFFECT grantKeyword covert EOT; draw 1",
+          "  3: EXTRA COST pick a 'gear' card + a character; EFFECT attachTo + suppressAllAbilities the gear EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -7980,23 +8834,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "modal-card",
+        "player-play-restriction"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [author: Mode 3's 'this turn the gear loses all abilities' is not expressible as a one-shot (suppressAllAbilities is continuous). Attach is authored; the temporary blank is dropped (secondary clause).] [author: Mode 3's 'this turn the gear loses all abilities' is not expressible as a one-shot (suppressAllAbilities is continuous). Attach is authored; the temporary blank is dropped (secondary clause).] [merge: composition of primitives that each have a card-behaviors fixture test].",
+      "rulesAudited": true
     },
     {
       "id": "f84cac2d-0eb2-4fc8-af31-9a6754c889d6",
       "name": "Swindle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "1d3ddaecfb2a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: onPlay marker cannotBeRespondedTo",
+          "effects: chooserSelectsTarget(opponent, {owner opponent, zone play, faceDown true / type resource, not attached} c1) -> attachTo({selected}, {factionOf opponent}); draw 1; discard 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8005,23 +8865,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "cannot-be-responded-to"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5379e1b4-5ccc-457d-8490-82d85615143e",
       "name": "Tedious TriAdic Truculence",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "0a85445f660e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{picks:character count 3}]; EXTRA COST clause: any opponent may pay 3 -> lookAndReorder(deck, top 3) + terminate this card",
+          "effects: forEach selected picks -> if(statCompare strength <= 3) destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8032,46 +8897,58 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: the opponent-may-pay-to-counter clause is a parity gap (opponent-may-pay-to-counter); the rest of the card is in scope.]",
+      "rulesAudited": true,
+      "parityGaps": [
+        "opponent-may-pay-to-counter"
+      ]
     },
     {
       "id": "f83b3af9-a7cb-4945-9632-bdfab77a111a",
       "name": "Testudine Autoframe",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "749cd780bf56",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> optional target {controller self, zone play, uniqueDesignation:'jo'} -> if(exists) moveCard(void) + rememberTarget 'voidedJo' + forEach {controller self, zone play, type character, not source} createModifier str+1,life+1 EOT",
+          "continuous aura: keywords [{selector {controller self, zone play, type character}, aggro}]",
+          "triggered:cardMoved condition and(sourceIsEventCard, cardMovedFromZone play) -> putIntoPlay({remembered voidedJo}, controller)"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
-        "unique": null,
+        "unique": "testudine",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "unique-designation-selector"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "linkedTargets clear on leaving play may race the leaves-play trigger — flag; may need remembered-target-survives-leave. AGGRO aura = the 'can attack even if not in play since start of turn' clause.",
+      "rulesAudited": true
     },
     {
       "id": "18d50b0d-08aa-4c7a-a37f-bacfd8585be0",
       "name": "Thabbashite Armorer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "a5378c4e3596",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated FOR THABBASH [V]x3: costs [payResources 2] -> createModifier str+1,life+1 EOT",
+          "activated TAMESHIGIRI [V]x6: costs [payResources 2, loseInfluence 2] -> createModifier str+2,life+2 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8080,23 +8957,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "lose-influence-cost"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f474ddf4-9fa8-44f2-b74c-9eebe554f125",
       "name": "Thabbashite Assailant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d988613c2b74",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous x4: condition resourceIcons(controller,volition) >= 1 -> life+1; >=2 -> str+1; >=3 -> speed+1; >=4 -> life+1,str+1,speed+1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8107,21 +8988,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Cumulative [V] paragraphs, 4 separate continuous abilities.",
+      "rulesAudited": true
     },
     {
       "id": "1aff6726-2aff-474e-92aa-bc997202f9b2",
       "name": "Thabbashite Chemist",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e293a8767a48",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated DELINIATE [V]x2: costs [payResources 2, deplete source]; nameValue(controller, resourceIcon, 'x'); forEach {zone play, faceDown true, type resource} -> grantProvides({__candidate}, {fromNamed x}, 1, untilEndOfTurn)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8130,23 +9013,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-provides",
+        "name-resource-icon"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3444240c-6824-4a70-83bc-2fff722afaf6",
       "name": "Thabbashite Financier",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "dbd3665b8321",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated BLOOD GOLD [V]x2: costs [payResources 2, loseInfluence 1] -> chooserSelectsTarget(controller, {zone hand} c1 optional) -> playResource({selected}, faceDown true)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8155,23 +9043,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "lose-influence-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Extra face-down resource play outside the Develop Rule.",
+      "rulesAudited": true
     },
     {
       "id": "f75a2be6-4c8f-43e2-b23f-28d1892062c0",
       "name": "Thabbashite Warmonger",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "e766b40a0140",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:damageDealt condition and(resourceIcons(controller,volition)>=1, cardTypeIs eventCard faction, cardTypeIs {damageSource} character) -> bind x = thresholdIconCount({damageSource}); dealDamage({factionOf {controllerOf {damageSource}}}, {x})"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8180,48 +9072,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "threshold-icon-count-expression",
+        "event-damage-source-targetref",
+        "controller-of-playerref"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "[V] gate on a triggered ability. 'that character's controller's faction' needs controllerOf + damageSource + thresholdIconCount. [merge: composition of tested primitives (triggered + bind + thresholdIconCount/controllerOf/damageSource — each has its own read-side fixture test); faction dealDamage->influence now handled by the engine].",
+      "rulesAudited": true
     },
     {
       "id": "e2b65004-fb6d-40f2-8f4c-18ee79e934fd",
       "name": "The Lugubrian Council of Quotidian Affairs",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d48c3bd7f7a4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated CONVENE: costs [payResources 2, discard 2] -> addCounter token 2",
+          "activated CAST VOTE: costs [payResources 2, removeCounter token 2] -> target {zone deck, type tactic} -> moveCard hand + shuffleDeck",
+          "activated PASS: variables x = cardCost({selected t}); costs [payResources 2, discard {t:{zone hand, type tactic}}], targets [{v:{controller opponent, zone play, type character, conditions:[statCompare strength <= {x}]}}] -> moveCard {v} hand; chooserSelectsTarget({ownerOf v}, {owner <that>, type resource, attached to faction} count {x} optional) -> forEach detach"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "council",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "X = discarded tactic's cost via ability variables (selected 't' available from the discard cost). 'that character's controller may detach' uses existing ownerOf.",
+      "rulesAudited": true
     },
     {
       "id": "684d1547-6f13-461a-b03a-5c1cad4cd4bb",
       "name": "This, That, and the Other Thing",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "5489f2154729",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{t:{zone discard, type tactic} count 3}] -> chooserSelectsTarget among selected t (targetInSelection) c1 -> moveCard deck + shuffleDeck; chooserSelectsTarget among remaining c1 -> putIntoPlay(faceDown); chooserSelectsTarget among remaining c1 -> moveCard hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8232,21 +9134,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "targetInSelection + selectionCount recipe from BEHAVIORS.",
+      "rulesAudited": true
     },
     {
       "id": "71389741-e470-4ab1-81b1-2629192813a2",
       "name": "Time to Retire",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2681f4d628c4",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:{controller self, type character}}] -> chooserSelectsTarget(controller, {controller self, zone play, type resource} c1 optional) -> moveCard hand; flipFaceDown {ch}",
+          "card.flipUp { cost:2, threshold:'v' }"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8257,21 +9162,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "18dc6ee3-84de-4bf8-888f-f8c09a2b12e3",
       "name": "Timid Mau",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "e8b565434c54",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:<attacker becomes blocked> condition and(sourceIsEventCard, numberCompare(count{inBattle role blocker} >= 2)) -> createModifier speed-1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8280,23 +9187,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "attacker-blocked-trigger"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "characterBlocked maps to the blocker today; need an attacker-blocked trigger/condition.",
+      "rulesAudited": true
     },
     {
       "id": "eeb9ea10-f9e7-4450-93eb-92e8efa7b074",
       "name": "Torchlight District",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "c726d2a1e3f8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked condition and(eventCardControlledBy controller, statCompare {eventCard} speed <= 3) -> scheduleEffect(endOfBattle) -> restore {eventCard}",
+          "continuous aura: restriction attackOncePerTurn {selector {controller self, zone play, type character}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8305,23 +9217,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "restore-at-end-of-battle",
+        "attack-limit-per-turn"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fc31573d-7f46-4e68-ab94-9ea36a3dbe90",
       "name": "Totally Random Kid",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "e29f3d762dec",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:damageDealt condition and(sourceIsDamageSource, cardTypeIs eventCard faction) -> bind x = eventDamageAmount; mill({ownerOf eventCard}, {x}); optional target {zone play, type item, conditions:[cardCost <= {x}]} -> destroy"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8330,23 +9247,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "event-damage-amount-expression"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": " [merge: composition of tested primitives (triggered + bind + eventDamageAmount — each has its own read-side fixture test); faction dealDamage->influence now handled by the engine].",
+      "rulesAudited": true
     },
     {
       "id": "2f4973ca-ec4c-4a2d-a9a6-6b2d67dadaab",
       "name": "Underhanded Hang-Out",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d05b4e07203c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated DIRTY DEALS: costs [payResources 2, dealDamage {selected loc} 1], targets [{loc:{owner self, zone play, type location}}] -> draw 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8357,21 +9278,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "734238ce-7a57-4fda-b9a8-86c4aef822c2",
       "name": "Underwhelming Performance",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b5247ddb0b1d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: targets [{ch:character}] -> chooserSelectsTarget({controllerOf ch}, {owner <that>, type resource, attached to faction} count 2 optional) -> forEach detach; createModifier {ch} strength-6 EOT; draw 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8380,48 +9303,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "controller-of-playerref"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "0070ffff-bc96-4245-a7e8-d376941be247",
       "name": "Undevoted Gargantuan",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "b637c4a967cf",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [covert]",
+          "triggered:cardEnteredPlay(sourceIsEventCard) -> chooserSelectsTarget(opponent, {owner opponent, type resource, attached to opp faction} count 3 optional) -> forEach detach"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "9407541a-9b2b-44cd-b1b4-e0979f192ebb",
       "name": "Unexpected Codicil",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "ac059e1c16fc",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: variables x, variableBounds; costs [discard count {x}, payResources {conditional(x>=2, x-2, 0)}] -> draw {x}",
+          "FINE PRINT: card.revealFromHand { cost:2, threshold:'gggg', effects:[loseInfluence 2] } -> draw 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8430,23 +9363,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "reveal-from-hand-rider",
+        "lose-influence-cost"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Primary mode fully expressible. FINE PRINT is an alt reveal-from-hand deploy with a threshold + influence rider. [author: Primary mode: discard is a fixed count:1 (a 'discard X' cost isn't variable-count); a fuller model needs discardSelected. FINE PRINT via revealFromHand rider.] [author: Primary mode: discard is a fixed count:1 (a 'discard X' cost isn't variable-count); a fuller model needs discardSelected. FINE PRINT via revealFromHand rider.]",
+      "rulesAudited": true
     },
     {
       "id": "3c9d8aef-10a8-4834-af0f-fb3b3e4683c8",
       "name": "Ursine Assassin",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "254cbee4d303",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated TO BEAR ARMS: costs [payResources 1, destroy {selected sac}], targets [{vic:character},{sac:{controller self, zone play, type character, depleted false}}] -> dealDamage {vic} 2",
+          "activated JUST UNBEARABLE [R]x6: costs [payResources 2, destroy {selected sac}], targets [...] -> dealDamage {vic} 5"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8457,21 +9396,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'restored character' = depleted:false.",
+      "rulesAudited": true
     },
     {
       "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
       "name": "Violating Ritual",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "d56931fd6fe9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: chooserSelectsTarget(opponent, {zone hand} count 2) -> moveCard discard; draw 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8482,21 +9423,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "e7db74e2-02ff-4297-ac9a-860b2bd3c263",
       "name": "Voidal Trinket",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "20cb5ae38173",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated AUGUR: costs [deplete source], variables x (player chosen), variableBounds x max 3 -> chooserSelectsTarget(opponent, {owner opponent, type resource, attached to faction} count {x} optional) -> forEach detach; target {controller self, zone deck, fromTop {x}} c1 optional -> moveCard(deck, position top); lookAndReorder(controller, {x}, to:bottom)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8507,21 +9450,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Look-at-X, keep 1 on top, bottom the rest = Rosy Palmer composition.",
+      "rulesAudited": true
     },
     {
       "id": "445dfe70-c2f5-4ec9-8e44-385cb5cc24ff",
       "name": "Warbeast of Thabbash",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "2b185df8b35d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous: str+{resourceIcons controller volition}, life+{resourceIcons controller volition}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8532,21 +9477,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "10d5c7f3-17fe-423e-95c7-b73715b61bc6",
       "name": "Words of Glory",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "authored",
       "textHash": "9f6c65b87fa6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "tactic: condition and(isActivePlayer(controller), not battleActive); bind x = sumStat({controller opponent, zone play, type character}, strength); forEach {zone play, type character} -> dealDamage {__candidate} {add {x} -3}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -8555,11 +9502,15 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "active-player-condition",
+        "battle-active-condition",
+        "sum-stat-expression"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "medium",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "45a1bfe0-f338-454c-b3ee-7dc5b6b55235",

@@ -1,0 +1,1005 @@
+{
+  "e7db74e2-02ff-4297-ac9a-860b2bd3c263": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "voidal-trinket-augur",
+          "name": "Augur",
+          "type": "activated",
+          "costs": [
+            { "type": "deplete", "target": "source" }
+          ],
+          "variableBounds": {
+            "x": { "max": 3 }
+          },
+          "targets": [
+            {
+              "id": "keep",
+              "selector": { "controller": "self", "zone": "deck", "fromTop": 3 },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "detach",
+                "selector": { "controller": "opponent", "zone": "play", "type": "resource" },
+                "count": { "type": "variable", "id": "x" },
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "forEach",
+                  "selected": "detach",
+                  "effects": [
+                    { "type": "detach", "target": { "type": "selected", "id": "__candidate" } }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "lookAndReorder",
+              "player": "controller",
+              "count": { "type": "variable", "id": "x" },
+              "to": "bottom"
+            },
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "keep" } },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "keep" }, "to": "deck", "position": "top" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "AUGUR. Player supplies variables.x (0-3) on activateAbility; variableBounds caps it at 3. 'That opponent may detach up to X resources from their faction' -> opponent-chooser picks up-to-X in-play resources they control, each detached (a face-down obsession/Volition resource or a face-up resource stops feeding the faction). Modeled as an EFFECT rather than part of COST since the engine has no opponent-input-during-cost step; no mechanical difference. 'Look at top X / keep 1 on top / bottom the rest in any order' = Rosy Palmer composition adapted: the kept card is chosen up front (target 'keep'), lookAndReorder(to:bottom, count X) sends the whole top X to the bottom in a player-chosen order, then the kept card is pulled back to the top. Minor deviation: CardSelector.fromTop must be a literal, so 'keep' is picked from the top 3 even when the player chooses X<3 (they see up to 3 cards instead of exactly X). Degenerate X=0 is legal per 'X that is 3 or less' but pointless; not specially blocked."
+  },
+
+  "90e8b87e-3c0f-4293-9b51-feb0919c8b18": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "abandoned-testing-complex-turn",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": { "type": "eventPlayerIs", "player": "controller" },
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [
+                { "type": "payResources", "amount": 3 }
+              ],
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "res",
+                    "selector": { "controller": "self", "zone": "hand" },
+                    "count": 1,
+                    "optional": true
+                  },
+                  "effects": [
+                    {
+                      "type": "if",
+                      "condition": { "type": "targetExists", "target": { "type": "selected", "id": "res" } },
+                      "effects": [
+                        { "type": "playResource", "target": { "type": "selected", "id": "res" }, "faceDown": "auto" }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "'you may pay 3. If you do you may play a resource' -> mayPay(3) then an optional resource play from hand (faceDown:auto, matching the Foment FLIP UP idiom). The inner play is itself a 'you may', hence the optional declaration + targetExists guard."
+  },
+
+  "6283dc6d-d26b-4f08-9ded-17581481b6e6": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "adlaw-aura",
+          "type": "continuous",
+          "modifiers": [],
+          "restrictions": [
+            {
+              "selector": {
+                "zone": "play",
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "numberCompare",
+                    "left": { "type": "cardCost", "target": { "type": "selected", "id": "__candidate" } },
+                    "operator": "<=",
+                    "right": 2
+                  }
+                ]
+              },
+              "restriction": "cannotAttack"
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "unique": "a & d law" },
+    "notes": "Static aura: every in-play character whose printed numeric cost is <= 2 gets cannotAttack while this location is in play. Framptle Tromwibbler restriction-aura shape."
+  },
+
+  "2f4973ca-ec4c-4a2d-a9a6-6b2d67dadaab": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "underhanded-hangout-dirty-deals",
+          "name": "Dirty Deals",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "loc",
+              "selector": { "owner": "self", "zone": "play", "type": "location" },
+              "count": 1
+            }
+          ],
+          "costs": [
+            { "type": "payResources", "amount": 2 },
+            { "type": "dealDamage", "target": { "type": "selected", "id": "loc" }, "amount": 1 }
+          ],
+          "effects": [
+            { "type": "draw", "player": "controller", "amount": 1 }
+          ]
+        }
+      ]
+    },
+    "notes": "'Pay 2. Pick a location you own and inflict 1 damage to it' are both COSTs (dealDamage-as-cost is always payable; any resulting destruction is left to the state-based check). EFFECT is draw 1. The picked location may be Underhanded Hang-Out itself ('a location you own')."
+  },
+
+  "353e341b-7e8a-4a9b-8b5e-caa53eaf3042": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "auspicious-arrival-play",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "pick",
+              "selector": {
+                "controller": "self",
+                "zone": "deck",
+                "type": "character",
+                "fromTop": 8,
+                "conditions": [
+                  {
+                    "type": "statCompare",
+                    "target": { "type": "selected", "id": "__candidate" },
+                    "stat": "strength",
+                    "operator": "<=",
+                    "value": 1
+                  }
+                ]
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "pick" } },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "pick" }, "to": "hand" }
+              ]
+            },
+            { "type": "shuffleDeck", "player": "controller" }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 3, "threshold": "g" } },
+    "notes": "Deck-search recipe: an optional zone:'deck' target (top 8, strength <= 1 character), moveCard to hand if chosen, then unconditional shuffleDeck. 'Reveal it' is flavor."
+  },
+
+  "2f5d63f6-0f6e-4af9-9732-c15f65606f96": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "base-jump-play",
+          "type": "activated",
+          "targets": [
+            { "id": "loc", "selector": { "zone": "play", "type": "location" }, "count": 1 },
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": { "type": "selected", "id": "ch" },
+              "amount": { "type": "stat", "target": { "type": "selected", "id": "loc" }, "stat": "structure" }
+            },
+            { "type": "draw", "player": "controller", "amount": 1 }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 3, "threshold": "r" } },
+    "notes": "EXTRA COST picks a location and a character; damage to the character equals the location's live structure; then draw 1."
+  },
+
+  "ccd054c5-3295-437d-b15e-012665c83059": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "bug-bite-play",
+          "type": "activated",
+          "targets": [
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "addCounter", "target": { "type": "selected", "id": "ch" }, "counter": "token", "amount": 1 },
+            {
+              "type": "if",
+              "condition": {
+                "type": "counterCompare",
+                "target": { "type": "selected", "id": "ch" },
+                "counter": "token",
+                "operator": ">=",
+                "value": { "type": "cardCost", "target": { "type": "selected", "id": "ch" } }
+              },
+              "effects": [
+                { "type": "destroy", "target": { "type": "selected", "id": "ch" } }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bug-bite-recur",
+          "name": "Recur",
+          "type": "activated",
+          "activationZone": "discard",
+          "threshold": "dd",
+          "condition": { "type": "sourceInZone", "zone": "discard" },
+          "costs": [
+            { "type": "payResources", "amount": 4 },
+            { "type": "removeFromGame", "target": "source" }
+          ],
+          "targets": [
+            { "id": "ch2", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "addCounter", "target": { "type": "selected", "id": "ch2" }, "counter": "token", "amount": 2 },
+            {
+              "type": "if",
+              "condition": {
+                "type": "counterCompare",
+                "target": { "type": "selected", "id": "ch2" },
+                "counter": "token",
+                "operator": ">=",
+                "value": { "type": "cardCost", "target": { "type": "selected", "id": "ch2" } }
+              },
+              "effects": [
+                { "type": "destroy", "target": { "type": "selected", "id": "ch2" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Alluring Quicksand RECUR template. 'token' counter. Destroy check compares token count to the character's printed numeric cost (cardCost)."
+  },
+
+  "0a841e49-928b-4a3e-b4fa-ffdb9349bcf0": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "clockman-city-shuffle-play",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "forEach",
+              "selector": { "controller": "self", "zone": "play", "type": "character" },
+              "effects": [
+                { "type": "createModifier", "target": { "type": "selected", "id": "__candidate" }, "stat": "strength", "operation": "add", "value": 1, "duration": { "type": "untilEndOfTurn" } },
+                { "type": "createModifier", "target": { "type": "selected", "id": "__candidate" }, "stat": "life", "operation": "add", "value": 1, "duration": { "type": "untilEndOfTurn" } }
+              ]
+            },
+            {
+              "type": "forEach",
+              "selector": { "controller": "opponent", "zone": "play", "type": "character" },
+              "effects": [
+                { "type": "createModifier", "target": { "type": "selected", "id": "__candidate" }, "stat": "strength", "operation": "add", "value": -1, "duration": { "type": "untilEndOfTurn" } },
+                { "type": "createModifier", "target": { "type": "selected", "id": "__candidate" }, "stat": "life", "operation": "add", "value": -1, "duration": { "type": "untilEndOfTurn" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Snapshot forEach over each side's characters; +1/+1 to yours, -1/-1 to opponents', until end of turn."
+  },
+
+  "c6595d11-cbd1-4731-a244-78cc20f36d19": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "concentriculation-play",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "zone": "play",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": { "type": "cardTypeIs", "target": { "type": "selected", "id": "__candidate" }, "cardType": "resource" }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            { "type": "moveCard", "target": { "type": "selected", "id": "c" }, "to": "deck", "position": "top" }
+          ]
+        },
+        {
+          "id": "concentriculation-recur",
+          "name": "Recur",
+          "type": "activated",
+          "activationZone": "discard",
+          "threshold": "ooo",
+          "condition": { "type": "sourceInZone", "zone": "discard" },
+          "costs": [
+            { "type": "payResources", "amount": 3 },
+            { "type": "removeFromGame", "target": "source" }
+          ],
+          "targets": [
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "moveCard", "target": { "type": "selected", "id": "ch" }, "to": "hand" }
+          ]
+        }
+      ]
+    },
+    "notes": "Play: pick a non-resource card in play (excludes face-down resources), put it on top of its owner's deck. RECUR from discard: pay 3 + exile self, bounce a character to its owner's hand."
+  },
+
+  "25d8789e-b481-4c1d-aae5-8c3cb2d22786": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "confrontational-conflagration-play",
+          "type": "activated",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "isActivePlayer", "player": "controller" },
+              { "type": "not", "condition": { "type": "battleActive" } }
+            ]
+          },
+          "targets": [
+            { "id": "mine", "selector": { "controller": "self", "zone": "play", "type": "character" }, "count": 1 },
+            { "id": "theirs", "selector": { "controller": "opponent", "zone": "play", "type": "character" }, "count": 1 },
+            { "id": "loc", "selector": { "zone": "play", "type": "location" }, "count": 1, "optional": true }
+          ],
+          "effects": [
+            {
+              "type": "bind",
+              "id": "x",
+              "value": {
+                "type": "conditional",
+                "if": { "type": "cardSubtypeIs", "target": { "type": "selected", "id": "mine" }, "subtype": "dragon" },
+                "then": { "type": "multiply", "values": [ 2, { "type": "stat", "target": { "type": "selected", "id": "mine" }, "stat": "strength" } ] },
+                "else": { "type": "stat", "target": { "type": "selected", "id": "mine" }, "stat": "strength" }
+              }
+            },
+            { "type": "dealDamage", "target": { "type": "selected", "id": "mine" }, "amount": { "type": "variable", "id": "x" } },
+            { "type": "dealDamage", "target": { "type": "selected", "id": "theirs" }, "amount": { "type": "variable", "id": "x" } },
+            {
+              "type": "if",
+              "condition": { "type": "targetExists", "target": { "type": "selected", "id": "loc" } },
+              "effects": [
+                { "type": "dealDamage", "target": { "type": "selected", "id": "loc" }, "amount": { "type": "variable", "id": "x" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 1, "threshold": "rrr" } },
+    "notes": "Deviation from the slice shape: the printed text says 'Inflict X damage to EACH picked card', so damage is dealt to all three picks (mine, theirs, and the location if chosen), not just theirs + loc. X = 2*strength of your picked character if it is a 'dragon' (printed subtype), else its strength. Timing gate on the tactic's first activated ability: your turn, not during a battle."
+  },
+
+  "fd6b9183-805b-44d0-a3c0-dbb0758bd4b8": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "contractual-execution-play",
+          "type": "activated",
+          "targets": [
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "self",
+                    "zone": "play",
+                    "type": "character",
+                    "conditions": [
+                      { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "ch" }
+                    ]
+                  }
+                },
+                "operator": ">=",
+                "right": 1
+              },
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "resSelf",
+                    "selector": { "controller": "self", "zone": "play", "type": "resource" },
+                    "count": 1
+                  },
+                  "effects": [
+                    { "type": "moveCard", "target": { "type": "selected", "id": "resSelf" }, "to": "hand" }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "if",
+              "condition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "opponent",
+                    "zone": "play",
+                    "type": "character",
+                    "conditions": [
+                      { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "ch" }
+                    ]
+                  }
+                },
+                "operator": ">=",
+                "right": 1
+              },
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "resOpp",
+                    "selector": { "controller": "opponent", "zone": "play", "type": "resource" },
+                    "count": 1
+                  },
+                  "effects": [
+                    { "type": "moveCard", "target": { "type": "selected", "id": "resOpp" }, "to": "hand" }
+                  ]
+                }
+              ]
+            },
+            { "type": "flipFaceDown", "target": { "type": "selected", "id": "ch" } }
+          ]
+        }
+      ]
+    },
+    "notes": "'That character's controller picks a resource they control' — CardSelector cannot be scoped by a controllerOf(target) PlayerRef, so instead of the classification's controllerOf approach this branches on whether the picked character is self- or opponent-controlled (count + targetInSelection) and runs the matching chooser/selector pair. Then the character is flipped face-down under its owner's control (wipes damage/counters/attachments per RULES.md §2)."
+  },
+
+  "53deaf6c-15e8-4ef6-b593-85745e2e61e8": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "epm-pulse-play",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "forEach",
+              "selector": { "zone": "play", "type": "item" },
+              "effects": [
+                { "type": "destroy", "target": { "type": "selected", "id": "__candidate" } }
+              ]
+            },
+            {
+              "type": "forEach",
+              "selector": { "zone": "play", "type": "location" },
+              "effects": [
+                { "type": "destroy", "target": { "type": "selected", "id": "__candidate" } }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Two snapshot forEach loops destroy every in-play item, then every in-play location (both players)."
+  },
+
+  "5820f3c6-9768-4180-ba59-1afc35ea9bd7": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "fistfight-play",
+          "type": "activated",
+          "condition": { "type": "not", "condition": { "type": "battleActive" } },
+          "targets": [
+            { "id": "a", "selector": { "controller": "self", "zone": "play", "type": "character" }, "count": 1 },
+            {
+              "id": "b",
+              "selector": {
+                "zone": "play",
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "a" }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            { "type": "bind", "id": "x", "value": { "type": "stat", "target": { "type": "selected", "id": "a" }, "stat": "strength" } },
+            { "type": "destroy", "target": { "type": "selected", "id": "a" } },
+            {
+              "type": "dealDamage",
+              "target": { "type": "selected", "id": "b" },
+              "amount": { "type": "add", "values": [ { "type": "variable", "id": "x" }, 1 ] } }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 3, "threshold": "r" } },
+    "notes": "Bind X = your picked character's live strength BEFORE destroying it, then inflict X+1 to a second (different) character. 'Pick another character' is unrestricted as to controller. Timing gate: not during a battle."
+  },
+
+  "5c7b79cb-4cf1-44e4-8729-d9a096f1dd7c": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "industrious-usage-play",
+          "type": "activated",
+          "targets": [
+            { "id": "it", "selector": { "zone": "play", "type": "item" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "destroy", "target": { "type": "selected", "id": "it" } },
+            {
+              "type": "createTokens",
+              "controller": "controller",
+              "count": 1,
+              "token": { "name": "Micromajig", "cardType": "character", "subtype": ["micromajig"], "strength": 0, "life": 1, "speed": 1 }
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 2, "threshold": "ee" } },
+    "notes": "Destroy the picked item, then put one Micromajig token character into play under your control."
+  },
+
+  "fd9a88ec-982f-439b-9aa1-8d5db83960eb": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "its-a-trap-play",
+          "type": "activated",
+          "targets": [
+            { "id": "it", "selector": { "controller": "self", "zone": "play", "type": "item" }, "count": 1 },
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "moveCard", "target": { "type": "selected", "id": "it" }, "to": "hand" },
+            { "type": "moveCard", "target": { "type": "selected", "id": "ch" }, "to": "hand" }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 2, "threshold": "e" } },
+    "notes": "Bounce the picked item (yours) and the picked character (any) to their owners' hands."
+  },
+
+  "a5290ff5-114a-4ed7-804f-f751a1abf086": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "juice-sale-play",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "ch",
+              "selector": {
+                "controller": "opponent",
+                "zone": "play",
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "isExtremum",
+                    "target": { "type": "selected", "id": "__candidate" },
+                    "metric": "strength",
+                    "direction": "max",
+                    "among": { "controller": "opponent", "zone": "play", "type": "character" }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "grantRestriction",
+              "target": { "type": "selected", "id": "ch" },
+              "restriction": "cannotBlock",
+              "duration": { "type": "untilEndOfTurn" }
+            }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 2, "threshold": "r" } },
+    "notes": "Must pick an opponent character tied for highest strength (isExtremum max; ties -> controller picks). That character cannot block this turn."
+  },
+
+  "5da75ce7-9ae6-484f-8bd5-ee7deeba9532": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "quotidian-transposition-play",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "forEachPlayer",
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "pick",
+                    "selector": { "owner": "self", "zone": "play", "type": "character" },
+                    "count": 1
+                  },
+                  "effects": [
+                    { "type": "moveCard", "target": { "type": "selected", "id": "pick" }, "to": "hand" }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "forEachPlayer rebinds controller/owner to each player in turn order; each picks a character they own in play and moves it to hand (its owner's hand). A player with no owned character in play is skipped (0-candidate chooser)."
+  },
+
+  "f1b6d378-94ee-487a-bf78-b529b2131c94": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "reluctant-reconciliation-play",
+          "type": "activated",
+          "targets": [
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            { "type": "restore", "target": { "type": "selected", "id": "ch" } },
+            {
+              "type": "grantRestriction",
+              "target": { "type": "selected", "id": "ch" },
+              "restriction": "cannotAttack",
+              "duration": { "type": "untilEndOfTurn" }
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Restore (un-deplete) the picked character, then it cannot attack this turn."
+  },
+
+  "684d1547-6f13-461a-b03a-5c1cad4cd4bb": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "this-that-play",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "three",
+              "selector": { "controller": "self", "zone": "discard", "type": "tactic" },
+              "count": 3
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "toDeck",
+                "selector": {
+                  "zone": "discard",
+                  "conditions": [
+                    { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "three" }
+                  ]
+                },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "toDeck" }, "to": "deck" },
+                { "type": "shuffleDeck", "player": "controller" }
+              ]
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "toPlay",
+                "selector": {
+                  "zone": "discard",
+                  "conditions": [
+                    { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "three" }
+                  ]
+                },
+                "count": 1
+              },
+              "effects": [
+                { "type": "putIntoPlay", "target": { "type": "selected", "id": "toPlay" }, "controller": "controller", "faceDown": true }
+              ]
+            },
+            {
+              "type": "forEach",
+              "selector": {
+                "zone": "discard",
+                "conditions": [
+                  { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "three" }
+                ]
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "__candidate" }, "to": "hand" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "EXTRA COST picks exactly 3 tactics in your discard (card is unplayable with fewer). Sub-picks then narrow via targetInSelection over 'three', relying on zone:'discard' to naturally drop cards already moved out: pick 1 -> shuffle into deck; pick 1 of the remaining 2 -> put into play face-down as a resource; the last remaining -> hand (forEach matches the single leftover)."
+  },
+
+  "71389741-e470-4ab1-81b1-2629192813a2": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "time-to-retire-play",
+          "type": "activated",
+          "targets": [
+            { "id": "ch", "selector": { "controller": "self", "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "res",
+                "selector": { "controller": "self", "zone": "play", "type": "resource" },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": { "type": "targetExists", "target": { "type": "selected", "id": "res" } },
+                  "effects": [
+                    { "type": "moveCard", "target": { "type": "selected", "id": "res" }, "to": "hand" }
+                  ]
+                }
+              ]
+            },
+            { "type": "flipFaceDown", "target": { "type": "selected", "id": "ch" } }
+          ]
+        }
+      ]
+    },
+    "cardPatch": { "flipUp": { "cost": 2, "threshold": "v" } },
+    "notes": "Pick a character you control. Optionally bounce a resource you control to its owner's hand, then flip the character face-down under its owner's control."
+  },
+
+  "734238ce-7a57-4fda-b9a8-86c4aef822c2": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "underwhelming-performance-play",
+          "type": "activated",
+          "targets": [
+            { "id": "ch", "selector": { "zone": "play", "type": "character" }, "count": 1 }
+          ],
+          "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "self",
+                    "zone": "play",
+                    "type": "character",
+                    "conditions": [
+                      { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "ch" }
+                    ]
+                  }
+                },
+                "operator": ">=",
+                "right": 1
+              },
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "detSelf",
+                    "selector": { "controller": "self", "zone": "play", "type": "resource" },
+                    "count": 2,
+                    "optional": true
+                  },
+                  "effects": [
+                    {
+                      "type": "forEach",
+                      "selected": "detSelf",
+                      "effects": [
+                        { "type": "detach", "target": { "type": "selected", "id": "__candidate" } }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "if",
+              "condition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "opponent",
+                    "zone": "play",
+                    "type": "character",
+                    "conditions": [
+                      { "type": "targetInSelection", "target": { "type": "selected", "id": "__candidate" }, "selection": "ch" }
+                    ]
+                  }
+                },
+                "operator": ">=",
+                "right": 1
+              },
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "detOpp",
+                    "selector": { "controller": "opponent", "zone": "play", "type": "resource" },
+                    "count": 2,
+                    "optional": true
+                  },
+                  "effects": [
+                    {
+                      "type": "forEach",
+                      "selected": "detOpp",
+                      "effects": [
+                        { "type": "detach", "target": { "type": "selected", "id": "__candidate" } }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "createModifier",
+              "target": { "type": "selected", "id": "ch" },
+              "stat": "strength",
+              "operation": "add",
+              "value": -6,
+              "duration": { "type": "untilEndOfTurn" }
+            },
+            { "type": "draw", "player": "controller", "amount": 1 }
+          ]
+        }
+      ]
+    },
+    "notes": "'That character's controller may detach up to 2 resources' — same controllerOf-selector-scoping limitation as Contractual Execution, so it branches on whether the picked character is self- or opponent-controlled and offers that player an optional up-to-2 detach. Then the character loses 6 strength this turn and you draw a card."
+  },
+
+  "ee97a193-2abc-4f68-880f-bb128a536f28": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "violating-ritual-play",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "disc1",
+                "selector": { "controller": "opponent", "zone": "hand" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "disc1" }, "to": "discard" }
+              ]
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "disc2",
+                "selector": { "controller": "opponent", "zone": "hand" },
+                "count": 1
+              },
+              "effects": [
+                { "type": "moveCard", "target": { "type": "selected", "id": "disc2" }, "to": "discard" }
+              ]
+            },
+            { "type": "draw", "player": "controller", "amount": 1 }
+          ]
+        }
+      ]
+    },
+    "notes": "'Pick an opponent' is trivial in 2-player. 'Discards 2 cards' modeled as two separate count:1 opponent-chooser discards (Redonkulous idiom), so a hand with fewer than 2 cards degrades gracefully. Then you draw a card."
+  },
+
+  "10d5c7f3-17fe-423e-95c7-b73715b61bc6": {
+    "behavior": {
+      "abilities": [
+        {
+          "id": "words-of-glory-play",
+          "type": "activated",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              { "type": "isActivePlayer", "player": "controller" },
+              { "type": "not", "condition": { "type": "battleActive" } }
+            ]
+          },
+          "effects": [
+            {
+              "type": "bind",
+              "id": "x",
+              "value": {
+                "type": "sumStat",
+                "selector": { "controller": "opponent", "zone": "play", "type": "character" },
+                "stat": "strength"
+              }
+            },
+            {
+              "type": "forEach",
+              "selector": { "zone": "play", "type": "character" },
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": { "type": "selected", "id": "__candidate" },
+                  "amount": { "type": "add", "values": [ { "type": "variable", "id": "x" }, -3 ] }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "notes": "Timing gate on the first activated ability (your turn, not during a battle). X = sumStat(strength) of all opponent characters; snapshot forEach inflicts X-3 to every in-play character (both sides). Negative X-3 is treated as 0 damage by the engine."
+  }
+}

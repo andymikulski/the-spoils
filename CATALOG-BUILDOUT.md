@@ -15,20 +15,41 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (smoke-tested through the public API) | 51 |
-| `authored` (behavior JSON written, fixture-tested by shape) | 97 |
-| `classified` (audited, not yet smoke-verified) | 107 |
+| `verified` (smoke-tested through the public API) | 66 |
+| `authored` (behavior JSON written, fixture-tested by shape) | 207 |
+| `classified` (audited, not yet authored) | 107 |
 | `vanilla` (no behavior needed) | 156 |
-| `unclassified` | 1690 |
-| `rulesAudited` | 260 / 2101 |
-| Engine capabilities | 69 / 69 implemented |
-| Test suite | 356 passing (`npm test`), `npm run typecheck` clean |
+| `unclassified` | 1565 |
+| `rulesAudited` | 385 / 2101 |
+| Engine capabilities | 115 / 115 implemented |
+| Test suite | 403 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 2 and Seed 3 are fully implemented and audited** — every card with
-rules text is `authored`/`verified`, its JSON verified against the printed
-text (card art in `data/assets/*.jpg` where the source dump has none) + the
-CR, all referenced capabilities implemented. Between them the two sets
-exercise ~69 capabilities; new sets should mostly reuse that vocabulary.
+**Seed 2, Seed 3, and Shade of the Devoured Emperor are fully implemented
+and audited** — every card with rules text is `authored`/`verified`, its
+JSON checked against the printed text + the CR, all referenced capabilities
+implemented. The three sets exercise ~115 capabilities; new sets should
+mostly reuse that vocabulary.
+
+**Shade of the Devoured Emperor (the Volition / Thabbash era)** added ~46
+capabilities in one pass — `grantProvides` (card-level PROVIDES this turn),
+`loseInfluence` cost, `reduceThreshold`, `nameValue:resourceIcon`,
+`removeCardType`, `cannotBePicked` / `attackOncePerTurn` /
+`cannotBeTakenControl` / `cannotBeRestoredByRule` restrictions,
+`suppressAllAbilities` ("loses all other rules text"), `redirects` (ward
+redirect), `scheduleEffect:endOfBattle`, `addToBattle`, `restrictPlay`,
+`counterChanged` + `attackerBlocked` events, `skipRestoreRule` /
+`skipNextRestore`, `modifyNumericCost` / `modifyOutgoingDamage`,
+`chooserSelectsNumber` / `alternatingPayLoop` / `anyPlayerMayPay`,
+`createTokens.effects`, `putIntoPlay.borrowed`, `deployFromZone.free`,
+granted **activated** abilities, `behavior.modes` (modal tactics),
+`behavior.onPlay.costAdjust`, `behavior.noResponse`, `revealFromHand` rider,
+`activeZone: "hand"` continuous, `damageModifiers.sourceSelector`,
+`hasAttachment` — plus a **CR §408.3 fix**: non-battle damage to a faction
+card now converts to influence loss (was inert). See `BEHAVIORS.md` → "Shade
+of the Devoured Emperor additions" and `RULES.md` §12. Four printed clauses
+left as `parityGaps` (`opponent-may-pay-to-counter` — a pre-stack player
+buyout; `search-and-develop-draw-interception`; `card-ignores-source-class`
+— Parkour Hoodlum's location-immunity).
 
 **Seed 3's 8 non-tournament "EPIC"/"Showdown" faction cards** have their
 setup blocks + in-scope activated abilities authored from the card art
@@ -106,8 +127,7 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Shade of the Devoured Emperor | 125 | |
-| Holy Heist | 132 | 33 already vanilla |
+| Holy Heist | 132 | 33 already vanilla — smallest remaining |
 | Ungodly Mess | 161 | 1 already classified |
 | 1st Edition Part 2 | 161 | |
 | Open Beta | 144 | 40 prior-behavior cards already `classified` |
@@ -115,6 +135,12 @@ before authoring any of it.
 | Seed | 209 | |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |
 | Seed Saga | 340 | largest; long tail of one-offs likely |
+
+**Shade of the Devoured Emperor — done** (130/130): 5 vanilla, 110
+`authored`, 15 `verified` (`sotde-smoke.test.ts` + per-capability fixtures in
+`card-behaviors.test.ts`). The other ~110 `authored` cards have their shape
+proven by the capability fixtures + `card-data-integrity`; promoting them to
+`verified` just needs each driven through the real-JSON smoke path.
 
 ### spoils-game (`~/dev/spoils-game`) needs wiring for these engine surfaces
 

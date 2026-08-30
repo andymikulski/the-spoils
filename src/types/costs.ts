@@ -90,4 +90,18 @@ export type Cost =
        */
       type: "oneOf";
       options: Cost[][];
+    }
+  | {
+      /**
+       * "Your faction loses N influence." as an ability / EXTRA cost —
+       * distinct from the `modifyInfluence` effect (which is an *effect*, so
+       * a replacement could theoretically touch it, and it isn't tied to
+       * paying for something). Always payable (influence can always drop);
+       * any resulting loss is left to the win-condition state-based check.
+       * Discordant Cadencer, Eustace Padamose-Gristwalter, Thabbashite
+       * Armorer, Thabbashite Financier.
+       */
+      type: "loseInfluence";
+      amount: NumberExpression;
+      player?: PlayerRef;
     };
