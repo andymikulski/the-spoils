@@ -41,6 +41,36 @@ export interface FactionDefinition {
       names?: string[];
       /** Tournament Faction uses staple resources. */
       stapleOnly?: boolean;
+      /**
+       * Per-slot starting-resource program (overrides the flat
+       * `count`/`names`/`stapleOnly` when set). Each slot puts one card from
+       * this player's deck into play at setup: a `"resource"` slot places a
+       * face-up resource (optionally `staple`-only or a specific `name`); an
+       * `"anyCard"` slot places any card — face-down as a resource if it is
+       * not itself a resource ("Any 1 resource, Any 1 card (if it's not a
+       * resource, put it into play face-down)" — The Society of Magical
+       * Propriety).
+       */
+      slots?: Array<
+        | { kind: "resource"; staple?: boolean; name?: string }
+        | { kind: "anyCard" }
+      >;
+      /**
+       * "Choose a number for X ... you start with X staple resources" (The
+       * Union of Unextraordinary Miners — MONEY FOR NOTHING). X is supplied
+       * at game setup (`FactionGameSetupOptions.startingResourceX`), clamped
+       * to `[min, max]` (default `min`). `plus` names always-included extra
+       * resources ("...and 1 Deception").
+       */
+      chosenStaples?: { min: number; max: number; plus?: string[] };
+      /**
+       * After both players' starting resources are placed, top this
+       * faction's OPPONENT up with staple resources until both players hold
+       * the same number of starting resources ("...enough staple resources
+       * so that both players have the same number of starting resources").
+       * 2-player only.
+       */
+      matchOpponentCount?: boolean;
     };
 
     openingHand: {
@@ -102,6 +132,21 @@ export interface FactionDefinition {
    * every threshold, regardless of which resource icons they control.
    */
   meetsAllThresholds?: boolean;
+
+  /**
+   * While this faction card is in play it rewrites specific sub-rules of
+   * the OPPONENT's faction (The Knitting Coalition — HIDDEN INFLUENCE:
+   * "your opponent ignores their faction's STARTING DRAW rule and uses
+   * this card's rule instead"; PULLING STRINGS: "your opponent ignores
+   * their faction's DEVELOP RULE"). Resolved before setup (opening hand)
+   * and consulted live (`getDevelopChoices`). 2-player only.
+   */
+  overridesOpponent?: {
+    /** Opponent's opening hand uses THIS faction's `setup.openingHand` sizes. */
+    startingDraw?: boolean;
+    /** Opponent has no Develop Rule (`getDevelopChoices` returns `[]`). */
+    suppressDevelop?: boolean;
+  };
 }
 
 export interface ResourceDefinition {
@@ -232,6 +277,18 @@ export interface CardDefinition {
      * no response window when it's played; it resolves immediately. Swindle.
      */
     noResponse?: boolean;
+    /**
+     * "If you would draw a card as part of your Develop Rule, you may
+     * <instead> ..." (Arcane Escrow). While the developing player controls
+     * an in-play card carrying this, choosing the `draw` develop option
+     * offers them `effects` (gated by the optional `cost`) *instead of*
+     * drawing; declining draws as normal. Resolved with this card as
+     * `source`.
+     */
+    developDrawReplacement?: {
+      cost?: Cost[];
+      effects: Effect[];
+    };
     /**
      * "Choose one of the following as this card's rules text." — a modal
      * **tactic**: the controller picks a mode index on the `playCard`
@@ -402,6 +459,16 @@ export interface ContinuousAbility extends AbilityBase {
    */
   activeZone?: Zone;
   condition?: Condition;
+  /**
+   * "This card ignores all rules text on <cardType>s." While the source is
+   * in play (and `condition` holds), the source card cannot be *picked* as
+   * a target by a card of this type, and a single-target mutating effect
+   * or a continuous aura whose origin is a card of this type does not
+   * affect it. Aggregate ("all X" / `count`) effects still see it (CR — a
+   * "cannot be picked"-style exclusion only blocks choosing, not being
+   * swept up). Parkour Hoodlum — "ignores all rules text on locations".
+   */
+  ignoresRulesTextFrom?: CardType;
   modifiers: ModifierDefinition[];
   /** Keywords granted to `target`/`selector` while `condition` holds (e.g. "the attached character gains COVERT"). */
   keywords?: KeywordGrantDefinition[];

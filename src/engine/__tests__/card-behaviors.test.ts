@@ -15,6 +15,7 @@ import {
   autoResolveBattle,
   buildGame,
   character,
+  defaultFactionDefinition,
   factionCard,
   item,
   location,
@@ -25,7 +26,7 @@ import {
   tactic
 } from "./support/fixtures.js";
 import type { CardDefinition } from "../../engine.js";
-import { TOURNAMENT_FACTION_BEHAVIOR } from "../../engine.js";
+import { createTwoPlayerFactionGame, TOURNAMENT_FACTION_BEHAVIOR } from "../../engine.js";
 
 // "When this card enters play, your faction gains 4 influence."
 function nastyButler(overrides: Partial<CardDefinition> = {}): CardDefinition {
@@ -9276,5 +9277,715 @@ describe("SotDE batch-5/6 vocabulary", () => {
     resolvePendingResponses(engine);
     assert.equal(engine.state.players[P1].hand.filter(c => engine.getDefinition(c).name.startsWith(`${P1}D`)).length, 2, "P1 drew 2 (paid twice)");
     assert.equal(engine.state.players[P2].hand.filter(c => engine.getDefinition(c).name.startsWith(`${P2}D`)).length, 1, "P2 drew 1 (paid once)");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Parity-gap resolutions (see COVERAGE.md -> "Parity gaps"): five printed
+// clauses that previously had no engine model — Study Disturbance / Tedious
+// TriAdic Truculence (opponent-may-pay-to-counter), Arcane Escrow
+// (develop-draw-replacement), Golden Charm (deck-search-trigger), Parkour
+// Hoodlum (card-ignores-source-class), The Knitting Coalition
+// (cross-faction-rule-override), The Society of Magical Propriety / The
+// Union of Unextraordinary Miners (mixed-starting-resources).
+// ---------------------------------------------------------------------------
+describe("parity: opponent-may-pay-to-counter (Study Disturbance / Tedious TriAdic Truculence)", () => {
+  const greed = (owner: string, i: number) => ({
+    key: `${owner}g${i}`,
+    def: resourceCard({ name: "Greed", id: `ompc-${owner}-${i}`, resource: { provides: ["greed"], staple: true } }),
+    owner
+  });
+
+  // "EXTRA COST: Pick a player. That player may pay 2 ... then terminate this
+  // card. -- The picked player cannot play characters this turn. Draw a card."
+  const disturb = tactic({
+    name: "Study Disturbance PG",
+    behavior: {
+      abilities: [
+        {
+          id: "sd",
+          type: "activated",
+          targets: [{ id: "p", selector: { zone: "play", type: "faction" }, count: 1 }],
+          effects: [
+            {
+              type: "mayPay",
+              player: { type: "controllerOf", target: { type: "selected", id: "p" } },
+              costs: [{ type: "payResources", amount: 2 }],
+              effects: [],
+              elseEffects: [
+                {
+                  type: "restrictPlay",
+                  player: { type: "controllerOf", target: { type: "selected", id: "p" } },
+                  kind: "cardType",
+                  cardType: "character",
+                  duration: { type: "untilEndOfTurn" }
+                },
+                { type: "draw", player: "controller", amount: 1 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  });
+
+  test("the picked player pays from THEIR resources, and the tactic body is skipped ('terminate this card')", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sd", def: disturb, owner: P1, zone: "hand" },
+        greed(P2, 0),
+        greed(P2, 1),
+        { key: "p1draw", def: character({ name: "P1 Draw", id: "ompc-d1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("sd"),
+      selected: { p: [engine.state.players[P2].factionId!] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "mayPay");
+    assert.equal(engine.state.pendingChoice?.playerId, P2, "the picked player decides");
+
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "mayPay", pay: true } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.getAvailableResourceCount(P2), 0, "P2 paid 2 from its own resources");
+    assert.equal(engine.state.cards[id("p1draw")].zone, "deck", "the tactic fizzled — no draw, no restriction");
+    assert.equal(engine.state.players[P1].hand.filter(c => engine.getDefinition(c).name === "P1 Draw").length, 0);
+  });
+
+  test("declining the buyout runs the real tactic body", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sd", def: disturb, owner: P1, zone: "hand" },
+        greed(P2, 0),
+        greed(P2, 1),
+        { key: "p1draw", def: character({ name: "P1 Draw", id: "ompc-d2" }), owner: P1, zone: "deck" },
+        { key: "p1char", def: character({ name: "P1 Char", id: "ompc-c2" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("sd"),
+      selected: { p: [engine.state.players[P2].factionId!] }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "mayPay", pay: false } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.getAvailableResourceCount(P2), 2, "P2 kept its resources");
+    assert.equal(engine.state.cards[id("p1draw")].zone, "hand", "the tactic resolved — P1 drew");
+    assert.throws(
+      () => engine.perform({ type: "playCard", playerId: P2, cardId: id("p1char") }),
+      /character/i,
+      "P2 (the picked player) cannot play characters this turn"
+    );
+  });
+
+  test("lookAndReorder chooser — 'any opponent looks at the top 3 cards of YOUR deck and puts them back'", () => {
+    const ttt = tactic({
+      name: "Tedious TriAdic Truculence PG",
+      behavior: {
+        abilities: [
+          {
+            id: "ttt",
+            type: "activated",
+            effects: [
+              {
+                type: "mayPay",
+                player: "opponent",
+                costs: [{ type: "payResources", amount: 1 }],
+                effects: [
+                  { type: "lookAndReorder", player: "controller", chooser: "opponent", count: 3 }
+                ],
+                elseEffects: [{ type: "draw", player: "controller", amount: 1 }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ttt", def: ttt, owner: P1, zone: "hand" },
+        greed(P2, 0),
+        { key: "a", def: character({ name: "A", id: "ttt-a" }), owner: P1, zone: "deck" },
+        { key: "b", def: character({ name: "B", id: "ttt-b" }), owner: P1, zone: "deck" },
+        { key: "c", def: character({ name: "C", id: "ttt-c" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("ttt") });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "mayPay", pay: true } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "reorderDeck");
+    assert.equal(engine.state.pendingChoice?.playerId, P2, "the paying opponent reorders");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P2,
+      choice: { kind: "reorderDeck", order: [id("c"), id("b"), id("a")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.deepEqual(
+      engine.state.players[P1].deck.slice(0, 3),
+      [id("c"), id("b"), id("a")],
+      "P1's deck top was reordered by P2"
+    );
+  });
+});
+
+describe("parity: card-ignores-source-class (ContinuousAbility.ignoresRulesTextFrom — Parkour Hoodlum)", () => {
+  const hoodlum = (over: Partial<CardDefinition> = {}) =>
+    character({
+      name: "Parkour Hoodlum PG",
+      strength: 2,
+      life: 6,
+      behavior: {
+        abilities: [
+          { id: "ig", type: "continuous", modifiers: [], ignoresRulesTextFrom: "location" }
+        ]
+      },
+      ...over
+    });
+
+  const zapLocation = location({
+    name: "Zap Tower",
+    behavior: {
+      abilities: [
+        {
+          id: "zap",
+          type: "activated",
+          targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+          effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 3 }]
+        }
+      ]
+    }
+  });
+
+  test("a location cannot pick it as a target, but can pick other characters", () => {
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "ph", def: hoodlum(), owner: P1 },
+        { key: "og", def: character({ name: "Other Guy", id: "cisc-og", life: 6 }), owner: P1 },
+        { key: "loc", def: zapLocation, owner: P2 }
+      ]
+    });
+
+    assert.throws(
+      () =>
+        engine.perform({
+          type: "activateAbility",
+          playerId: P2,
+          cardId: id("loc"),
+          abilityId: "zap",
+          selected: { t: [id("ph")] }
+        }),
+      /Illegal target/
+    );
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P2,
+      cardId: id("loc"),
+      abilityId: "zap",
+      selected: { t: [id("og")] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("og")].damage, 3);
+  });
+
+  test("a location effect that reaches it without picking (via 'eventCard') is a no-op", () => {
+    const trapLocation = location({
+      name: "Spike Pit",
+      behavior: {
+        abilities: [
+          {
+            id: "onenter",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "cardTypeIs", target: "eventCard", cardType: "character" },
+            effects: [{ type: "dealDamage", target: "eventCard", amount: 2 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "trap", def: trapLocation, owner: P2 },
+        { key: "ph", def: hoodlum(), owner: P1, zone: "hand" },
+        { key: "og", def: character({ name: "Other Guy 2", id: "cisc-og2", life: 6 }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("og") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("og")].damage, 2, "an ordinary character takes the location's damage");
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("ph") });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("ph")].damage, 0, "Parkour Hoodlum ignores the location's effect");
+  });
+
+  test("a non-location source is unaffected by the immunity", () => {
+    const zapGuy = character({
+      name: "Zap Guy",
+      behavior: {
+        abilities: [
+          {
+            id: "z",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 3 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "ph", def: hoodlum(), owner: P1 },
+        { key: "zg", def: zapGuy, owner: P2 }
+      ]
+    });
+    engine.perform({
+      type: "activateAbility",
+      playerId: P2,
+      cardId: id("zg"),
+      abilityId: "z",
+      selected: { t: [id("ph")] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("ph")].damage, 3, "a character's effect still hits it");
+  });
+
+  test("a location aura does not modify it", () => {
+    const weakenLocation = location({
+      name: "Weakening Field",
+      behavior: {
+        abilities: [
+          {
+            id: "aura",
+            type: "continuous",
+            modifiers: [
+              {
+                selector: { zone: "play", type: "character" },
+                stat: "strength",
+                operation: "add",
+                value: -1
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ph", def: hoodlum(), owner: P1 },
+        { key: "og", def: character({ name: "Other Guy 3", id: "cisc-og3", strength: 4 }), owner: P1 },
+        { key: "field", def: weakenLocation, owner: P2 }
+      ]
+    });
+    assert.equal(engine.getStat(id("og"), "strength"), 3, "an ordinary character loses 1 strength to the aura");
+    assert.equal(engine.getStat(id("ph"), "strength"), 2, "Parkour Hoodlum's strength is untouched");
+  });
+});
+
+describe("parity: cross-faction-rule-override (The Knitting Coalition)", () => {
+  test("PULLING STRINGS: an opposing faction's suppressDevelop removes this player's Develop Rule", () => {
+    const knitting = factionCard({
+      name: "Knitting Coalition PG",
+      faction: defaultFactionDefinition({ overridesOpponent: { suppressDevelop: true } })
+    });
+    const { engine } = buildGame({ playerB: { faction: knitting } });
+
+    assert.deepEqual(engine.getDevelopChoices(P1), [], "P1's Develop Rule is suppressed by P2's Knitting Coalition");
+    assert.ok(engine.getDevelopChoices(P2).length > 0, "P2 keeps its own Develop Rule");
+    assert.throws(
+      () => engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } }),
+      /develop/i
+    );
+  });
+
+  test("HIDDEN INFLUENCE: the opponent's opening hand uses the overriding faction's sizes", () => {
+    const filler = (i: number) => character({ name: `KC F${i}`, id: `kc-f-${i}` });
+    const fillerIds = Array.from({ length: 20 }, (_, i) => `kc-f-${i}`);
+    const knitting = factionCard({
+      name: "Knitting Coalition PG2",
+      id: "kc-fac",
+      faction: defaultFactionDefinition({
+        overridesOpponent: { startingDraw: true },
+        setup: {
+          startingResources: { count: 0 },
+          openingHand: { goingFirst: 2, goingSecond: 3 }
+        }
+      })
+    });
+    const normal = factionCard({
+      name: "Normal Faction PG",
+      id: "nf-fac",
+      faction: defaultFactionDefinition({
+        setup: {
+          startingResources: { count: 0 },
+          openingHand: { goingFirst: 7, goingSecond: 8 }
+        }
+      })
+    });
+    const defs: CardDefinition[] = [
+      knitting,
+      normal,
+      ...Array.from({ length: 20 }, (_, i) => filler(i))
+    ];
+
+    const engine = createTwoPlayerFactionGame(
+      defs,
+      { id: P1, name: "P1", deckDefinitionIds: ["kc-fac", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["nf-fac", ...fillerIds] },
+      { firstPlayerId: P1, seed: 1 }
+    );
+
+    assert.equal(engine.state.setup.phase, "complete");
+    assert.equal(engine.state.players[P1].hand.length, 2, "P1 (Knitting) uses its own goingFirst");
+    assert.equal(
+      engine.state.players[P2].hand.length,
+      3,
+      "P2 (Knitting's opponent) uses Knitting's goingSecond, not its own 8"
+    );
+  });
+});
+
+describe("parity: mixed-starting-resources (The Society of Magical Propriety / The Union of Unextraordinary Miners)", () => {
+  const inPlayResourceCount = (engine: ReturnType<typeof createTwoPlayerFactionGame>, pid: string) =>
+    engine.state.players[pid].play.filter(cid => engine.isResource(cid)).length;
+
+  test("slots: a specific-resource slot plus an any-card slot (face-down when not a resource)", () => {
+    const society = factionCard({
+      name: "Society PG",
+      id: "soc-fac",
+      faction: defaultFactionDefinition({
+        setup: {
+          startingResources: { count: 2, slots: [{ kind: "resource" }, { kind: "anyCard" }] },
+          openingHand: { goingFirst: 1, goingSecond: 1 }
+        }
+      })
+    });
+    const normal = factionCard({
+      name: "Society Opp PG",
+      id: "soc-opp-fac",
+      faction: defaultFactionDefinition({
+        setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 1, goingSecond: 1 } }
+      })
+    });
+    const socRes = resourceCard({ name: "Greed", id: "soc-res", resource: { provides: ["greed"], staple: true } });
+    const socChar = character({ name: "Society Any Card", id: "soc-char" });
+    const filler = (i: number) => character({ name: `Soc F${i}`, id: `soc-f-${i}` });
+    const fillerIds = Array.from({ length: 12 }, (_, i) => `soc-f-${i}`);
+    const defs: CardDefinition[] = [
+      society,
+      normal,
+      socRes,
+      socChar,
+      ...Array.from({ length: 12 }, (_, i) => filler(i))
+    ];
+
+    const engine = createTwoPlayerFactionGame(
+      defs,
+      { id: P1, name: "P1", deckDefinitionIds: ["soc-fac", "soc-res", "soc-char", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["soc-opp-fac", ...fillerIds] },
+      { firstPlayerId: P1, seed: 1 }
+    );
+
+    const play = engine.state.players[P1].play.map(cid => ({
+      cid,
+      name: engine.getDefinition(cid).name,
+      faceDown: engine.state.cards[cid].faceDown
+    }));
+    const res = play.find(c => c.name === "Greed");
+    const anyCard = play.find(c => c.name === "Society Any Card");
+
+    assert.ok(res && !res.faceDown, "the resource slot placed a face-up resource");
+    assert.ok(anyCard && anyCard.faceDown, "the any-card slot placed the non-resource card face-down");
+    assert.equal((engine.getThresholds(P1).volition ?? 0), 1, "the face-down any-card provides Volition");
+  });
+
+  test("chosenStaples + matchOpponentCount: X staples + fixed extra, opponent topped up to match", () => {
+    const staple = (i: number) =>
+      resourceCard({ name: "Greed", id: `uni-g-${i}`, resource: { provides: ["greed"], staple: true } });
+    const decep = resourceCard({ name: "Deception", id: "uni-decep", resource: { provides: ["deception"], staple: true } });
+    const oppStaple = (i: number) =>
+      resourceCard({ name: "Greed", id: `uni-o-${i}`, resource: { provides: ["greed"], staple: true } });
+    const filler = (i: number) => character({ name: `Uni F${i}`, id: `uni-f-${i}` });
+    const fillerIds = Array.from({ length: 12 }, (_, i) => `uni-f-${i}`);
+
+    const union = factionCard({
+      name: "Union PG",
+      id: "uni-fac",
+      faction: defaultFactionDefinition({
+        setup: {
+          startingResources: {
+            count: 2,
+            chosenStaples: { min: 1, max: 5, plus: ["Deception"] },
+            matchOpponentCount: true
+          },
+          openingHand: { goingFirst: 1, goingSecond: 1 }
+        }
+      })
+    });
+    const normal = factionCard({
+      name: "Union Opp PG",
+      id: "uni-opp-fac",
+      faction: defaultFactionDefinition({
+        setup: { startingResources: { count: 2, stapleOnly: true }, openingHand: { goingFirst: 1, goingSecond: 1 } }
+      })
+    });
+
+    const defs: CardDefinition[] = [
+      union,
+      normal,
+      ...Array.from({ length: 4 }, (_, i) => staple(i)),
+      decep,
+      ...Array.from({ length: 6 }, (_, i) => oppStaple(i)),
+      ...Array.from({ length: 12 }, (_, i) => filler(i))
+    ];
+
+    const engine = createTwoPlayerFactionGame(
+      defs,
+      {
+        id: P1,
+        name: "P1",
+        deckDefinitionIds: [
+          "uni-fac",
+          "uni-g-0",
+          "uni-g-1",
+          "uni-g-2",
+          "uni-g-3",
+          "uni-decep",
+          ...fillerIds
+        ]
+      },
+      {
+        id: P2,
+        name: "P2",
+        deckDefinitionIds: [
+          "uni-opp-fac",
+          "uni-o-0",
+          "uni-o-1",
+          "uni-o-2",
+          "uni-o-3",
+          "uni-o-4",
+          "uni-o-5",
+          ...fillerIds
+        ]
+      },
+      { firstPlayerId: P1, seed: 1, startingResourceX: { [P1]: 3 } }
+    );
+
+    assert.equal(inPlayResourceCount(engine, P1), 4, "Union: 3 chosen staples + 1 Deception");
+    assert.equal(inPlayResourceCount(engine, P2), 4, "the opponent is topped up from 2 to 4");
+  });
+
+  test("chosenStaples defaults X to its minimum when no choice is supplied", () => {
+    const staple = (i: number) =>
+      resourceCard({ name: "Greed", id: `unid-g-${i}`, resource: { provides: ["greed"], staple: true } });
+    const decep = resourceCard({ name: "Deception", id: "unid-decep", resource: { provides: ["deception"], staple: true } });
+    const filler = (i: number) => character({ name: `UniD F${i}`, id: `unid-f-${i}` });
+    const fillerIds = Array.from({ length: 12 }, (_, i) => `unid-f-${i}`);
+    const union = factionCard({
+      name: "Union Default PG",
+      id: "unid-fac",
+      faction: defaultFactionDefinition({
+        setup: {
+          startingResources: {
+            count: 2,
+            chosenStaples: { min: 1, max: 5, plus: ["Deception"] },
+            matchOpponentCount: true
+          },
+          openingHand: { goingFirst: 1, goingSecond: 1 }
+        }
+      })
+    });
+    const normal = factionCard({
+      name: "Union Default Opp PG",
+      id: "unid-opp-fac",
+      faction: defaultFactionDefinition({
+        setup: { startingResources: { count: 2, stapleOnly: true }, openingHand: { goingFirst: 1, goingSecond: 1 } }
+      })
+    });
+    const defs: CardDefinition[] = [
+      union,
+      normal,
+      staple(0),
+      staple(1),
+      decep,
+      resourceCard({ name: "Greed", id: "unid-o-0", resource: { provides: ["greed"], staple: true } }),
+      resourceCard({ name: "Greed", id: "unid-o-1", resource: { provides: ["greed"], staple: true } }),
+      ...Array.from({ length: 12 }, (_, i) => filler(i))
+    ];
+    const engine = createTwoPlayerFactionGame(
+      defs,
+      { id: P1, name: "P1", deckDefinitionIds: ["unid-fac", "unid-g-0", "unid-g-1", "unid-decep", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["unid-opp-fac", "unid-o-0", "unid-o-1", ...fillerIds] },
+      { firstPlayerId: P1, seed: 1 }
+    );
+    assert.equal(inPlayResourceCount(engine, P1), 2, "X defaults to min (1) -> 1 staple + 1 Deception");
+    assert.equal(inPlayResourceCount(engine, P2), 2, "both already equal — no top-up");
+  });
+});
+
+describe("parity: develop-draw-replacement (Arcane Escrow)", () => {
+  const escrow = item({
+    name: "Arcane Escrow PG",
+    behavior: {
+      developDrawReplacement: {
+        effects: [
+          {
+            type: "chooserSelectsTarget",
+            chooser: "controller",
+            declaration: { id: "v", selector: { owner: "self", zone: "void" }, count: 1, optional: true },
+            effects: [
+              {
+                type: "if",
+                condition: { type: "targetExists", target: { type: "selected", id: "v" } },
+                effects: [{ type: "moveCard", target: { type: "selected", id: "v" }, to: "hand" }]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  });
+
+  test("choosing the draw develop option offers pulling a card from the void instead", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "esc", def: escrow, owner: P1 },
+        { key: "voided", def: character({ name: "Voided One", id: "addr-ae-v" }), owner: P1, zone: "void" },
+        { key: "top", def: character({ name: "Top Card", id: "addr-ae-t" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    assert.equal(engine.state.pendingChoice?.kind, "mayPay");
+    assert.equal(engine.state.developsUsedThisTurn, 1, "the develop action is consumed");
+
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "mayPay", pay: true } });
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("voided")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("voided")].zone, "hand", "pulled from the void");
+    assert.equal(engine.state.cards[id("top")].zone, "deck", "did not draw");
+  });
+
+  test("declining the substitution draws as normal", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "esc", def: escrow, owner: P1 },
+        { key: "voided", def: character({ name: "Voided Two", id: "addr-ae-v2" }), owner: P1, zone: "void" },
+        { key: "top", def: character({ name: "Top Card 2", id: "addr-ae-t2" }), owner: P1, zone: "deck" }
+      ]
+    });
+    engine.perform({ type: "chooseDevelop", playerId: P1, choice: { type: "draw" } });
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "mayPay", pay: false } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("top")].zone, "hand", "drew the top card");
+    assert.equal(engine.state.cards[id("voided")].zone, "void", "the voided card stayed put");
+  });
+});
+
+describe("parity: deck-search-trigger (Golden Charm)", () => {
+  test("a deck search fires 'deckSearched'; the interceptor may pay to draw, and the search still happens", () => {
+    const charm = item({
+      name: "Golden Charm PG",
+      behavior: {
+        abilities: [
+          {
+            id: "tax",
+            name: "Search Tax",
+            type: "triggered",
+            event: "deckSearched",
+            effects: [
+              {
+                type: "mayPay",
+                player: "controller",
+                costs: [{ type: "payResources", amount: 1 }],
+                effects: [{ type: "draw", player: "controller", amount: 1 }],
+                elseEffects: []
+              }
+            ]
+          }
+        ]
+      }
+    });
+    const digger = character({
+      name: "Digger",
+      behavior: {
+        abilities: [
+          {
+            id: "dig",
+            type: "activated",
+            effects: [
+              {
+                type: "chooserSelectsTarget",
+                chooser: "controller",
+                declaration: {
+                  id: "f",
+                  selector: { controller: "self", zone: "deck", type: "character" },
+                  count: 1,
+                  optional: true
+                },
+                effects: [{ type: "moveCard", target: { type: "selected", id: "f" }, to: "hand" }]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "charm", def: charm, owner: P1 },
+        { key: "g", def: resourceCard({ name: "Greed", id: "dst-g", resource: { provides: ["greed"], staple: true } }), owner: P1 },
+        { key: "digger", def: digger, owner: P2 },
+        { key: "found", def: character({ name: "Found", id: "dst-found" }), owner: P2, zone: "deck" },
+        { key: "p1draw", def: character({ name: "P1 Draw DST", id: "dst-p1d" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "activateAbility", playerId: P2, cardId: id("digger"), abilityId: "dig" });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget", "the searcher picks first");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P2,
+      choice: { kind: "chooserSelectsTarget", selected: [id("found")] }
+    });
+    resolvePendingResponses(engine);
+
+    const gcChoice = engine.state.pendingChoice;
+    assert.equal(gcChoice?.kind, "mayPay", "the deferred deckSearched trigger fires after the search");
+    assert.equal(gcChoice?.playerId, P1, "Golden Charm's controller decides");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "mayPay", pay: true } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("found")].zone, "hand", "the search still happened");
+    assert.equal(engine.state.cards[id("p1draw")].zone, "hand", "Golden Charm's controller drew for 1");
+    assert.equal(engine.getAvailableResourceCount(P1), 0, "P1 paid 1");
   });
 });

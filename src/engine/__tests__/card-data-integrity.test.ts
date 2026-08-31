@@ -114,7 +114,7 @@ const EVENT_TYPES = new Set([
   "cardDestroyed", "cardDepleted", "cardRestored", "resourcePlayed",
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
   "characterAttacked", "characterBlocked", "cardsDrawn", "counterChanged",
-  "attackerBlocked"
+  "attackerBlocked", "deckSearched"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",

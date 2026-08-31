@@ -56,6 +56,39 @@ import { drawRandom, randomSeed } from "./rng.js";
 /** Reserved target-declaration id for an "Attach to X" card's play-time target. */
 const ATTACH_TARGET_ID = "attachTo";
 
+/**
+ * Single-target mutating effects that "an effect from an ignored card type"
+ * must not apply to its target (Parkour Hoodlum — `ignoresRulesTextFrom`).
+ * Deliberately excludes effects whose `target` is a not-yet-in-play card
+ * (`playResource`, `putIntoPlay`, `deployFromZone`) or a stack item
+ * (`terminate`, `duplicate`) — the guard would be a harmless no-op there
+ * anyway, since the check requires an in-play, face-up target.
+ */
+const SOURCE_CLASS_GUARDED_EFFECTS = new Set<Effect["type"]>([
+  "dealDamage",
+  "destroy",
+  "deplete",
+  "restore",
+  "moveCard",
+  "flipFaceDown",
+  "addCounter",
+  "removeCounter",
+  "createModifier",
+  "takeControl",
+  "grantKeyword",
+  "grantRestriction",
+  "grantProvides",
+  "setDamage",
+  "setCardType",
+  "removeCardType",
+  "modifyNumericCost",
+  "preventDamage",
+  "detach",
+  "setRestoreLock",
+  "skipNextRestore",
+  "attachTo"
+]);
+
 export class SpoilsEngine {
   readonly definitions: Record<CardDefinitionId, CardDefinition>;
   readonly state: GameState;
@@ -545,6 +578,13 @@ export class SpoilsEngine {
   }
 
   getDevelopChoices(playerId: PlayerId): DevelopChoice[] {
+    // "Your opponent ignores their faction's DEVELOP RULE." (The Knitting
+    // Coalition — PULLING STRINGS): an opposing in-play faction can suppress
+    // this player's Develop Rule entirely.
+    const opponentFaction = this.getFactionDefinition(this.getOpponent(playerId).id);
+    if (opponentFaction?.overridesOpponent?.suppressDevelop) {
+      return [];
+    }
     return structuredClone(
       this.getFactionDefinition(playerId)?.turn.develop.choices ?? []
     );
@@ -553,6 +593,24 @@ export class SpoilsEngine {
   /** How many times `playerId`'s faction may use its Develop Rule per turn (default 1; "OVERTIME" = 2). */
   private developsAllowed(playerId: PlayerId): number {
     return this.getFactionDefinition(playerId)?.turn.develop.usesPerTurn ?? 1;
+  }
+
+  /**
+   * The in-play card `playerId` controls that carries
+   * `behavior.developDrawReplacement` ("If you would draw a card as part of
+   * your Develop Rule, you may ... instead"; Arcane Escrow), or `undefined`.
+   */
+  private developDrawReplacementCardFor(
+    playerId: PlayerId
+  ): CardInstanceId | undefined {
+    for (const cardId of this.requirePlayer(playerId).play) {
+      const card = this.state.cards[cardId];
+      if (!card || card.controllerId !== playerId || card.faceDown) continue;
+      if (this.getDefinition(cardId).behavior?.developDrawReplacement) {
+        return cardId;
+      }
+    }
+    return undefined;
   }
 
   private getResourceIcons(cardId: CardInstanceId): ResourceIcon[] {
@@ -788,6 +846,35 @@ export class SpoilsEngine {
 
     if (choice.type === "draw") {
       assert(rule.type === "draw", "Invalid draw develop rule.");
+
+      // "If you would draw a card as part of your Develop Rule, you may
+      // <instead> ..." (Arcane Escrow) — offer the substitution before
+      // drawing. A `mayPay` may pause here; the plain-draw fall-through is
+      // its `elseEffects`.
+      const drawCount = rule.count;
+      const substitute = this.developDrawReplacementCardFor(playerId);
+      if (substitute) {
+        const replacement = this.getDefinition(substitute).behavior!
+          .developDrawReplacement!;
+        this.state.developsUsedThisTurn += 1;
+        this.state.priorityPlayerId = playerId;
+        this.resolveEffect(
+          {
+            type: "mayPay",
+            player: "controller",
+            costs: replacement.cost ?? [],
+            effects: replacement.effects,
+            elseEffects: [
+              { type: "draw", player: "controller", amount: drawCount }
+            ]
+          },
+          { sourceId: substitute, controllerId: playerId, selected: {} }
+        );
+        this.processImmediateQueue();
+        this.checkStateBasedActions();
+        return;
+      }
+
       this.drawCards(playerId, rule.count);
     } else if (choice.revealFromHand) {
       assert(rule.type === "playResource", "Invalid resource develop rule.");
@@ -1197,9 +1284,68 @@ export class SpoilsEngine {
     selector: CardSelector,
     context: ResolutionContext
   ): CardInstance[] {
-    return this.queryCards(selector, context).filter(
-      card => !this.hasRestriction(card.id, "cannotBePicked")
-    );
+    const pickingSourceTypes = this.state.cards[context.sourceId]
+      ? this.getCardTypes(context.sourceId)
+      : [];
+    return this.queryCards(selector, context).filter(card => {
+      if (this.hasRestriction(card.id, "cannotBePicked")) return false;
+      // "this card cannot be picked by <cardType>s" (Parkour Hoodlum) —
+      // scoped on the card/ability doing the picking.
+      for (const type of this.ignoredSourceTypesFor(card.id)) {
+        if (pickingSourceTypes.includes(type)) return false;
+      }
+      return true;
+    });
+  }
+
+  /**
+   * Card types whose rules text `cardId` currently ignores — an in-play,
+   * face-up `ContinuousAbility.ignoresRulesTextFrom` on `cardId` itself
+   * whose `condition` (if any) holds. "This card ignores all rules text on
+   * locations." (Parkour Hoodlum). A card of one of these types cannot pick
+   * `cardId` as a target, and its single-target effects / auras skip it.
+   */
+  private ignoredSourceTypesFor(cardId: CardInstanceId): CardType[] {
+    const card = this.state.cards[cardId];
+    if (!card || card.zone !== "play" || card.faceDown) return [];
+
+    const result: CardType[] = [];
+    for (const ability of this.getDefinition(cardId).behavior?.abilities ?? []) {
+      if (ability.type !== "continuous" || !ability.ignoresRulesTextFrom) {
+        continue;
+      }
+      if (this.abilitySuppressed(cardId, ability.id)) continue;
+      const ctx: ResolutionContext = {
+        sourceId: cardId,
+        controllerId: card.controllerId,
+        abilityId: ability.id,
+        selected: {}
+      };
+      if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
+        continue;
+      }
+      result.push(ability.ignoresRulesTextFrom);
+    }
+    return result;
+  }
+
+  /** True when `selector.zone` explicitly names `zone` (a bare selector defaults to in-play only, so it doesn't). */
+  private selectorNamesZone(selector: CardSelector, zone: Zone): boolean {
+    const z = selector.zone;
+    if (z === undefined || z === "any") return false;
+    return Array.isArray(z) ? z.includes(zone) : z === zone;
+  }
+
+  /** True when a mutation whose origin is `sourceId` must not affect `targetId` ("effects from <cardType> do not affect this card"; Parkour Hoodlum). */
+  private sourceClassIgnoredByTarget(
+    targetId: CardInstanceId,
+    sourceId: CardInstanceId | undefined
+  ): boolean {
+    if (!sourceId || !this.state.cards[sourceId]) return false;
+    const ignored = this.ignoredSourceTypesFor(targetId);
+    if (ignored.length === 0) return false;
+    const sourceTypes = this.getCardTypes(sourceId);
+    return ignored.some(type => sourceTypes.includes(type));
   }
 
   // ---------------------------------------------------------------------------
@@ -3882,6 +4028,24 @@ export class SpoilsEngine {
     // `applyReplacement` for `replaces.by` ("by an opposing card or effect").
     this.currentCause = context.controllerId;
 
+    // "Any effects from <cardType> do not affect this card." (Parkour
+    // Hoodlum) — a single-target mutation whose origin is a card of an
+    // ignored type is a no-op against that card. Targeted picks are already
+    // filtered by `targetCandidates`; this covers the non-pick vectors
+    // (`"eventCard"`, `"attachedTo"`, a remembered ref). A `{random}` target
+    // is skipped — resolving it here would consume the RNG twice.
+    if (
+      SOURCE_CLASS_GUARDED_EFFECTS.has(effect.type) &&
+      "target" in effect &&
+      effect.target !== undefined &&
+      !(typeof effect.target === "object" && effect.target.type === "random")
+    ) {
+      const guardedId = this.resolveTargetRef(effect.target, context);
+      if (guardedId && this.sourceClassIgnoredByTarget(guardedId, context.sourceId)) {
+        return;
+      }
+    }
+
     switch (effect.type) {
       case "draw": {
         const player = this.resolvePlayerRef(
@@ -4769,7 +4933,11 @@ export class SpoilsEngine {
         // legal candidate at all, e.g. an empty hand to discard from) is
         // carried out as far as possible, not left as an unanswerable
         // pendingChoice requiring a selection that can't exist.
-        if (this.targetCandidates(effect.declaration.selector, context).length === 0) {
+        const cstCandidates = this.targetCandidates(
+          effect.declaration.selector,
+          context
+        );
+        if (cstCandidates.length === 0) {
           return;
         }
 
@@ -4783,6 +4951,17 @@ export class SpoilsEngine {
           effects: effect.effects,
           context
         };
+
+        // "If a player would search their deck ..." (Golden Charm) — picking
+        // a card from a player's own deck IS the search. The choice is now
+        // outstanding, so `emit` defers the trigger (processImmediateQueue
+        // bails on a pending choice); it resolves once the search completes.
+        if (this.selectorNamesZone(effect.declaration.selector, "deck")) {
+          const deckOwnerId = cstCandidates[0]?.ownerId;
+          if (deckOwnerId) {
+            this.emit({ type: "deckSearched", playerId: deckOwnerId });
+          }
+        }
 
         return;
       }
@@ -4860,7 +5039,14 @@ export class SpoilsEngine {
 
       case "mayPay": {
         const player = this.resolvePlayerRef(effect.player, context);
-        if (!this.canPayCosts(effect.costs, context)) {
+        // The prospective payer isn't always the ability's controller
+        // ("that player may pay 2", "any opponent may pay 3") — check
+        // affordability against, and later pay from, THEIR resources.
+        const payCtx =
+          player.id === context.controllerId
+            ? context
+            : { ...context, controllerId: player.id };
+        if (!this.canPayCosts(effect.costs, payCtx)) {
           for (const e of effect.elseEffects ?? []) this.resolveEffect(e, context);
           return;
         }
@@ -4953,6 +5139,9 @@ export class SpoilsEngine {
 
       case "lookAndReorder": {
         const player = this.resolvePlayerRef(effect.player, context);
+        const chooser = effect.chooser
+          ? this.resolvePlayerRef(effect.chooser, context)
+          : player;
         const count = this.evaluateNumber(effect.count, context);
         const cardIds = player.deck.slice(0, Math.max(0, count));
 
@@ -4963,7 +5152,8 @@ export class SpoilsEngine {
         this.state.pendingChoice = {
           kind: "reorderDeck",
           id: nextId("choice"),
-          playerId: player.id,
+          playerId: chooser.id,
+          deckOwnerId: player.id,
           cardIds,
           to: effect.to ?? "top"
         };
@@ -5345,6 +5535,10 @@ export class SpoilsEngine {
       if (source.zone !== "play" || source.faceDown) {
         continue;
       }
+      // "Effects from <cardType> do not affect this card." (Parkour Hoodlum)
+      if (this.sourceClassIgnoredByTarget(targetId, source.id)) {
+        continue;
+      }
 
       const definition = this.getDefinition(
         source.id
@@ -5418,6 +5612,10 @@ export class SpoilsEngine {
     const results: Keyword[] = [];
 
     for (const source of Object.values(this.state.cards)) {
+      if (this.sourceClassIgnoredByTarget(targetId, source.id)) {
+        continue;
+      }
+
       const definition = this.getDefinition(source.id);
 
       for (const ability of definition.behavior?.abilities ?? []) {
@@ -5475,6 +5673,7 @@ export class SpoilsEngine {
 
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
+      if (this.sourceClassIgnoredByTarget(targetId, source.id)) continue;
 
       const definition = this.getDefinition(source.id);
 
@@ -5515,6 +5714,9 @@ export class SpoilsEngine {
 
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) {
+        continue;
+      }
+      if (this.sourceClassIgnoredByTarget(targetId, source.id)) {
         continue;
       }
 
@@ -5957,6 +6159,10 @@ export class SpoilsEngine {
           context: pending.context
         });
         this.resumeEffectFrames();
+        // A `deckSearched` trigger deferred while this search was
+        // outstanding (Golden Charm) may still be queued if the search's
+        // follow-up effects didn't themselves emit anything.
+        if (!this.state.pendingChoice) this.processImmediateQueue();
         return;
       }
 
@@ -6063,10 +6269,17 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = undefined;
 
+        // Pay from the decider's resources ("that player may pay 2"), while
+        // the chosen branch still resolves under the ability's controller.
+        const mayPayCtx =
+          pending.playerId === pending.context.controllerId
+            ? pending.context
+            : { ...pending.context, controllerId: pending.playerId };
+
         const branch =
-          choice.pay && this.canPayCosts(pending.cost, pending.context)
+          choice.pay && this.canPayCosts(pending.cost, mayPayCtx)
             ? (() => {
-                this.payCosts(pending.cost, pending.context);
+                this.payCosts(pending.cost, mayPayCtx);
                 return pending.effects;
               })()
             : pending.elseEffects;
@@ -6327,7 +6540,7 @@ export class SpoilsEngine {
           "The new order must contain exactly the same cards, each once."
         );
 
-        const player = this.requirePlayer(pending.playerId);
+        const player = this.requirePlayer(pending.deckOwnerId ?? pending.playerId);
         player.deck.splice(0, pending.cardIds.length);
         if ((pending.to ?? "top") === "bottom") {
           player.deck.push(...choice.order);

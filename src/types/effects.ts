@@ -390,6 +390,13 @@ export type Effect =
       player: PlayerRef;
       count: NumberExpression;
       to?: "top" | "bottom";
+      /**
+       * Who does the looking / reordering — defaults to `player` (the deck's
+       * owner). Set it for "any opponent ... looks at the top 3 cards of
+       * YOUR deck and puts them back in any order" (Tedious TriAdic
+       * Truculence): `player: "controller"`, `chooser: "opponent"`.
+       */
+      chooser?: PlayerRef;
     }
   | {
       /**

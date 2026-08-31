@@ -223,14 +223,31 @@ carry activated abilities, usable any time you could use an ability
 - **`turn.develop.usesPerTurn`** — how many times the Develop Rule may be
   used per turn (default 1; the Union of Unextraordinary Miners' "OVERTIME"
   clause is `2`).
+- **`overridesOpponent`** — while this faction card is in play it rewrites
+  specific sub-rules of the **opponent's** faction (The Knitting Coalition):
+  `startingDraw` makes the opponent's opening hand use *this* faction's
+  `setup.openingHand` sizes (HIDDEN INFLUENCE — resolved in
+  `createTwoPlayerFactionGame`), `suppressDevelop` gives the opponent no
+  Develop Rule at all (PULLING STRINGS — `getDevelopChoices` returns `[]`
+  for them). 2-player only.
+- **`setup.startingResources`** beyond the flat `{ count, names?,
+  stapleOnly? }` — `slots` is a per-slot program (a `"resource"` slot puts a
+  face-up resource, an `"anyCard"` slot puts any card and turns it face-down
+  if it is not a resource — The Society of Magical Propriety's "Any 1
+  resource, Any 1 card"); `chosenStaples: { min, max, plus? }` is a
+  setup-chosen count of staples plus fixed extras (The Union of
+  Unextraordinary Miners' MONEY FOR NOTHING — X comes from
+  `FactionGameSetupOptions.startingResourceX`, clamped to `[min, max]`,
+  default `min`); `matchOpponentCount` tops the **opponent** up with staples
+  until both players hold the same number of starting resources. As with the
+  flat form the engine picks cards in deck order — the player does not choose
+  *which* staple / card.
 
 Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
 Alliance, Imperial Army, ...) additionally reference format mechanics that
 are **out of scope for a two-player engine** and are left unmodelled:
-double-sided card-flipping (INTERNAL CONFLICT), Showdown multiplayer (the
-X = number-of-opponents scaling, the Temptation Pile, the Hero deck), and
-one faction rewriting another player's rules (The Knitting Coalition's
-HIDDEN INFLUENCE / PULLING STRINGS).
+double-sided card-flipping (INTERNAL CONFLICT) and Showdown multiplayer (the
+X = number-of-opponents scaling, the Temptation Pile, the Hero deck).
 
 ### 3.7 Changing card types (CR §208)
 
@@ -266,6 +283,29 @@ play" vs. §602.1c "in play under the active player's control ... eligible"),
 so the engine takes the conservative reading: attack eligibility is fixed at
 the start-of-turn instant for cards that are characters *then*, so an item
 animated later this turn cannot attack until the following turn.
+
+### 3.8 Ignoring rules text from a card type (engine-derived)
+
+**Parkour Hoodlum** — "This card ignores all rules text on locations. (this
+card cannot be picked by locations and any effects from locations do not
+affect this card.)" — is a `ContinuousAbility` with
+`ignoresRulesTextFrom: "location"`. While it is in play (and the ability's
+`condition`, if any, holds):
+
+- it is dropped from the legal-candidate set of any target declaration
+  whose resolving source is a card of that type (`targetCandidates`,
+  scoped on the *picking* source, parallel to the `cannotBePicked`
+  restriction);
+- a single-target mutating **effect** (damage, destroy, deplete, a
+  modifier, a keyword / restriction grant, take-control, move, counters,
+  …) whose resolving `source` is a card of that type is a no-op against it;
+- a continuous **aura** (stat / keyword / restriction) whose source is a
+  card of that type skips it during recompute.
+
+Aggregate "all X" / `count` selectors still see it (a "cannot be
+picked"-style exclusion only blocks *choosing*, per §12). Not modelled: a
+deploy-cost or damage-amount modifier sourced from an ignored card type
+(no card needs it).
 
 ## 4. Resources, thresholds, and costs
 
@@ -400,6 +440,17 @@ are sections of faction rules text, not built-in phases:
   Driven by a `revealFromHand` payload on the `chooseDevelop` action's
   `playResource` choice.
 
+  **(engine-derived — develop-draw replacement)** A card with
+  `behavior.developDrawReplacement` (Arcane Escrow — "If you would draw a
+  card as part of your Develop Rule, you may put a card voided by this card
+  into its owner's hand instead") intercepts the `draw` develop option
+  while the developing player controls it in play: instead of drawing, a
+  `mayPay` is offered (payer = the developer, `costs` = its optional
+  `cost`, `effects` = the substitution, `elseEffects` = the draw). The
+  develop action is consumed either way. Arcane Escrow's substitution is
+  modelled as "a card in your void" — the *this-card-voided-it* origin is
+  not tracked.
+
 **(CR §603) During the turn** the active player may take these actions in
 any order, any number of times:
 
@@ -523,6 +574,24 @@ is enforced only as "any in-play character."
 legal candidates than it needs, the engine pauses on
 `GameState.pendingChoice` (kind `"selectTargets"`). A declaration with *too
 few* candidates is an unplayable trigger, a hard failure, not a choice.
+
+**(engine-derived — a chosen player pays to fizzle a tactic)** *Study
+Disturbance* ("EXTRA COST: Pick a player. That player may pay 2. If they do,
+look at the top card of your deck then terminate this card.") and *Tedious
+TriAdic Truculence* ("Any opponent may pay 3. If they do, look at the top 3
+cards of your deck and put them back in any order then terminate this
+card.") are modelled with a `mayPay` as the tactic's *first and only*
+effect: `elseEffects` is the tactic's real body, and paying runs the peek
+(nothing / a `lookAndReorder`) and skips the body — the tactic still goes to
+the discard when it finishes resolving, which is the "terminate this card."
+Two supporting engine points: `mayPay` charges the **resolved** `effect.player`
+(the picked player / the opponent), not always the ability's controller
+(mirrors `anyPlayerMayPay`); and `lookAndReorder` takes an optional
+`chooser` so "any opponent looks at the top 3 cards of *your* deck and
+reorders them" resolves as the opponent reordering the caster's deck.
+**Concession:** the buyout is offered when the tactic resolves rather than
+truly before it hits the response stack; for these two cards the timing
+difference does not matter.
 
 **A note on pending choices generally.** `GameState.pendingChoice` extends
 the engine's "pause here until told to continue" idiom to moments not tied
@@ -903,6 +972,19 @@ re-runs the check once it has settled.
   → `lookAndReorder` with `to: "bottom"` and `count` = 5 − (cards taken),
   driven by that deck's owner. The un-revealed cards below the top 5 keep
   their positions; only a taken card and the bottomed leftovers move.
+  `lookAndReorder` also takes an optional `chooser` (default = the deck's
+  owner) so a card can have *another* player reorder your top cards.
+- **(engine-derived — a deck search as an event)** "Search your deck for
+  ..." has no dedicated action, so the engine treats a `chooserSelectsTarget`
+  effect whose declaration selector names the `deck` zone as a search and
+  emits a `deckSearched { playerId }` event (`playerId` = the deck's owner)
+  once the pick is the outstanding choice — so a trigger on it resolves
+  right after the search completes. *Golden Charm* ("If a player would
+  search their deck you may pay 1. If you do, draw a card and then that
+  player searches their deck instead.") is a `deckSearched` trigger →
+  `mayPay` (pay 1 → draw 1); the search proceeds regardless, so the net —
+  the interceptor may pay 1 to draw 1 — matches, and the "instead" ordering
+  is not observable. Only `chooserSelectsTarget`-based deck picks emit it.
 
 **(engine-derived)** Every *effect* (post-cost, already-committed) that
 resolves a `TargetRef`/destination silently no-ops instead of throwing when

@@ -21,8 +21,8 @@ engine. The pick-up point for a future session.
 | `vanilla` (no behavior needed) | 156 |
 | `unclassified` | 1565 |
 | `rulesAudited` | 385 / 2101 |
-| Engine capabilities | 115 / 115 implemented |
-| Test suite | 403 passing (`npm test`), `npm run typecheck` clean |
+| Engine capabilities | 122 / 122 implemented |
+| Test suite | 418 passing (`npm test`), `npm run typecheck` clean |
 
 **Seed 2, Seed 3, and Shade of the Devoured Emperor are fully implemented
 and audited** — every card with rules text is `authored`/`verified`, its
@@ -46,26 +46,28 @@ granted **activated** abilities, `behavior.modes` (modal tactics),
 `activeZone: "hand"` continuous, `damageModifiers.sourceSelector`,
 `hasAttachment` — plus a **CR §408.3 fix**: non-battle damage to a faction
 card now converts to influence loss (was inert). See `BEHAVIORS.md` → "Shade
-of the Devoured Emperor additions" and `RULES.md` §12. Four printed clauses
-left as `parityGaps` (`opponent-may-pay-to-counter` — a pre-stack player
-buyout; `search-and-develop-draw-interception`; `card-ignores-source-class`
-— Parkour Hoodlum's location-immunity).
+of the Devoured Emperor additions" and `RULES.md` §12.
 
 **Seed 3's 8 non-tournament "EPIC"/"Showdown" faction cards** have their
 setup blocks + in-scope activated abilities authored from the card art
 (`FactionDefinition.{abilities, meetsAllThresholds}`, `turn.{startOfTurnEffects,
 develop.usesPerTurn}`, `ActivatedAbility.usableBy` — RULES.md §3.6). 4 are
-`high`, 4 `medium`. Their unmodelled clauses (double-sided card-flipping,
-Showdown multiplayer, cross-faction rule override, mixed starting-resources)
-are recorded in the **`parityGaps`** registry in `data/card-coverage.json`
-— see the "Parity gaps" section of `COVERAGE.md`.
+`high`, 4 `medium`.
 
-**`parityGaps`** (new): a top-level `data/card-coverage.json` registry of
-printed clauses deliberately left unmodelled because closing them needs a
-large engine / game-format refactor. Distinct from `capabilities` (small
-buildable additions) and `wontImplement` (whole card unmodellable) — a card
-with a parity gap is still `verified` for its in-scope parts and links the
-gap id. `card-data-integrity.test.ts` keeps the registry honest.
+**The five "medium" parity gaps are now closed** (6 new capabilities —
+`opponent-may-pay-to-counter`, `develop-draw-replacement`,
+`deck-search-trigger`, `card-ignores-source-class`,
+`cross-faction-rule-override`, `mixed-starting-resources`; see the "parity:"
+`describe`s in `card-behaviors.test.ts` and RULES.md §3.1 / §3.6 / §3.8 / §6
+/ §7 / §12). Two `parityGaps` remain, both 2-player-engine-out-of-scope:
+`double-sided-faction` (EPIC card-flipping) and `showdown-multiplayer`.
+
+**`parityGaps`**: a top-level `data/card-coverage.json` registry of printed
+clauses deliberately left unmodelled because closing them needs a large
+engine / game-format refactor. Distinct from `capabilities` (small buildable
+additions) and `wontImplement` (whole card unmodellable) — a card with a
+parity gap is still `verified` for its in-scope parts and links the gap id.
+`card-data-integrity.test.ts` keeps the registry honest.
 
 **The 107 `classified` cards** (Open Beta 40, 1st Edition 40, 2nd Edition
 26, Ungodly Mess 1) are pre-existing `behavior` blocks, audited against

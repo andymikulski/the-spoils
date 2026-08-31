@@ -39342,7 +39342,15 @@ export default [
       "startingInfluence": 30,
       "setup": {
         "startingResources": {
-          "count": 2
+          "count": 2,
+          "slots": [
+            {
+              "kind": "resource"
+            },
+            {
+              "kind": "anyCard"
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 10,
@@ -39675,7 +39683,11 @@ export default [
           ],
           "usableBy": "anyPlayer"
         }
-      ]
+      ],
+      "overridesOpponent": {
+        "startingDraw": true,
+        "suppressDevelop": true
+      }
     },
     "behavior": {
       "abilities": [
@@ -39914,7 +39926,15 @@ export default [
       "startingInfluence": 22,
       "setup": {
         "startingResources": {
-          "count": 2
+          "count": 2,
+          "chosenStaples": {
+            "min": 1,
+            "max": 10,
+            "plus": [
+              "Deception"
+            ]
+          },
+          "matchOpponentCount": true
         },
         "openingHand": {
           "goingFirst": 5,
@@ -47965,7 +47985,7 @@ export default [
           ],
           "effects": [
             {
-              "type": "restrictPlay",
+              "type": "mayPay",
               "player": {
                 "type": "controllerOf",
                 "target": {
@@ -47973,16 +47993,35 @@ export default [
                   "id": "p"
                 }
               },
-              "kind": "cardType",
-              "cardType": "character",
-              "duration": {
-                "type": "untilEndOfTurn"
-              }
-            },
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 2
+                }
+              ],
+              "effects": [],
+              "elseEffects": [
+                {
+                  "type": "restrictPlay",
+                  "player": {
+                    "type": "controllerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "p"
+                    }
+                  },
+                  "kind": "cardType",
+                  "cardType": "character",
+                  "duration": {
+                    "type": "untilEndOfTurn"
+                  }
+                },
+                {
+                  "type": "draw",
+                  "player": "controller",
+                  "amount": 1
+                }
+              ]
             }
           ]
         }
@@ -48017,28 +48056,48 @@ export default [
           ],
           "effects": [
             {
-              "type": "forEach",
-              "selected": "picks",
+              "type": "mayPay",
+              "player": "opponent",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 3
+                }
+              ],
               "effects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "statCompare",
-                    "target": {
-                      "type": "selected",
-                      "id": "__candidate"
-                    },
-                    "stat": "strength",
-                    "operator": "<=",
-                    "value": 3
-                  },
+                  "type": "lookAndReorder",
+                  "player": "controller",
+                  "chooser": "opponent",
+                  "count": 3
+                }
+              ],
+              "elseEffects": [
+                {
+                  "type": "forEach",
+                  "selected": "picks",
                   "effects": [
                     {
-                      "type": "destroy",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "if",
+                      "condition": {
+                        "type": "statCompare",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        },
+                        "stat": "strength",
+                        "operator": "<=",
+                        "value": 3
+                      },
+                      "effects": [
+                        {
+                          "type": "destroy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -49003,7 +49062,46 @@ export default [
             }
           ]
         }
-      ]
+      ],
+      "developDrawReplacement": {
+        "effects": [
+          {
+            "type": "chooserSelectsTarget",
+            "chooser": "controller",
+            "declaration": {
+              "id": "v",
+              "selector": {
+                "owner": "self",
+                "zone": "void"
+              },
+              "count": 1,
+              "optional": true
+            },
+            "effects": [
+              {
+                "type": "if",
+                "condition": {
+                  "type": "targetExists",
+                  "target": {
+                    "type": "selected",
+                    "id": "v"
+                  }
+                },
+                "effects": [
+                  {
+                    "type": "moveCard",
+                    "target": {
+                      "type": "selected",
+                      "id": "v"
+                    },
+                    "to": "hand"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
     "flipUp": {
       "cost": 1,
@@ -49590,6 +49688,32 @@ export default [
             {
               "type": "shuffleDeck",
               "player": "controller"
+            }
+          ]
+        },
+        {
+          "id": "gc-search-tax",
+          "name": "Search Tax",
+          "type": "triggered",
+          "event": "deckSearched",
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 1
+                }
+              ],
+              "effects": [
+                {
+                  "type": "draw",
+                  "player": "controller",
+                  "amount": 1
+                }
+              ],
+              "elseEffects": []
             }
           ]
         }
@@ -54970,6 +55094,12 @@ export default [
               "keyword": "tactical"
             }
           ]
+        },
+        {
+          "id": "ph-ignore-loc",
+          "type": "continuous",
+          "modifiers": [],
+          "ignoresRulesTextFrom": "location"
         }
       ]
     }

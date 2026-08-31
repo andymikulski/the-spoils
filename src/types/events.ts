@@ -54,6 +54,19 @@ export interface GameEventMap {
     count: number;
   };
 
+  /**
+   * "If a player would search their deck ..." — emitted when a player is
+   * asked to pick a card from their own deck (a `chooserSelectsTarget`
+   * effect whose declaration selector names the `deck` zone). `playerId` is
+   * the owner of the deck being searched. The pick has already been set up
+   * as the outstanding choice, so a trigger on this event resolves right
+   * after the search completes. Golden Charm — "you may pay 1 ... draw a
+   * card ...".
+   */
+  deckSearched: {
+    playerId: PlayerId;
+  };
+
   damageDealt: {
     sourceId?: CardInstanceId;
     targetId: CardInstanceId;

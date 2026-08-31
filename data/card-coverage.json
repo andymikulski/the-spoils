@@ -1045,6 +1045,80 @@
         "choice"
       ],
       "spec": "Effect { type:'alternatingPayLoop', players:[PlayerRef,PlayerRef], cost:Cost[], onEnd:Effect[] } — alternately offer each player the cost; each acceptance tallies (context.variables 'paidBy<player>'); stop at the first decline; then run onEnd (which reads the tallies). 'You may pay 1. If you do, that opponent may pay 1. Repeat until someone doesn't. Each player draws cards equal to the amount they paid.' Negotiation Ceremonies."
+    },
+    "card-ignores-source-class": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "condition",
+        "engine"
+      ],
+      "cards": [
+        "Parkour Hoodlum"
+      ],
+      "rulesRef": "RULES.md §3.8",
+      "spec": "ContinuousAbility.ignoresRulesTextFrom?: CardType. While the source is in play (and condition holds) it cannot be PICKED as a target by a card of that type (targetCandidates filter, scoped on the resolving source's card type), and a single-target mutating effect (SOURCE_CLASS_GUARDED_EFFECTS) or a continuous aura whose origin is a card of that type is a no-op against it. Aggregate all-X / count effects still see it. 'This card ignores all rules text on locations' — Parkour Hoodlum. Not modelled: cost / damage-amount modifiers from an ignored source (edge)."
+    },
+    "cross-faction-rule-override": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "engine"
+      ],
+      "cards": [
+        "The Knitting Coalition"
+      ],
+      "rulesRef": "RULES.md §3.6",
+      "spec": "FactionDefinition.overridesOpponent?: { startingDraw?: boolean; suppressDevelop?: boolean } — while this faction card is in play it rewrites sub-rules of the OPPONENT's faction. startingDraw: the opponent's opening hand uses THIS faction's setup.openingHand (createTwoPlayerFactionGame). suppressDevelop: getDevelopChoices returns [] for the opponent. The Knitting Coalition — HIDDEN INFLUENCE / PULLING STRINGS. 2-player only."
+    },
+    "mixed-starting-resources": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "engine"
+      ],
+      "cards": [
+        "The Society of Magical Propriety",
+        "The Union of Unextraordinary Miners"
+      ],
+      "rulesRef": "RULES.md §3.1",
+      "spec": "FactionDefinition.setup.startingResources gains: slots (per-slot program — a resource slot places a face-up resource, an anyCard slot places any card, face-down if it is not a resource; The Society of Magical Propriety), chosenStaples ({ min, max, plus? } — X staples chosen at setup via FactionGameSetupOptions.startingResourceX, clamped to [min, max], default min, plus fixed extras; The Union of Unextraordinary Miners MONEY FOR NOTHING), matchOpponentCount (top the OPPONENT up with staples to equal this faction's starting-resource count). Cards drawn in deck order like the flat form; player does not choose which staple / card."
+    },
+    "opponent-may-pay-to-counter": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "choice"
+      ],
+      "cards": [
+        "Study Disturbance",
+        "Tedious TriAdic Truculence"
+      ],
+      "rulesRef": "RULES.md §7",
+      "spec": "Modelled with the existing mayPay effect: the tactic's real body is elseEffects, the buyout is effects (a peek — empty for Study Disturbance, lookAndReorder for Tedious TriAdic Truculence). Engine fixes: (1) mayPay now charges the RESOLVED effect.player's resources ('that player may pay 2', 'any opponent may pay 3'), mirroring anyPlayerMayPay; (2) lookAndReorder gains chooser?: PlayerRef so 'any opponent looks at the top 3 cards of YOUR deck and reorders them' works. CONCESSION: the buyout is offered on resolution (after a response window), not truly pre-stack; immaterial for these two cards."
+    },
+    "develop-draw-replacement": {
+      "status": "implemented",
+      "kind": [
+        "cards",
+        "effect"
+      ],
+      "cards": [
+        "Arcane Escrow"
+      ],
+      "rulesRef": "RULES.md §6",
+      "spec": "CardDefinition.behavior.developDrawReplacement?: { cost?: Cost[]; effects: Effect[] } — while the developing player controls an in-play card carrying it, choosing the draw develop option runs a mayPay (player = developer, costs = cost, effects = replacement.effects, elseEffects = the draw) instead of drawing. 'If you would draw a card as part of your Develop Rule, you may put a card voided by this card into its owner's hand instead' — Arcane Escrow (modelled as 'a card in your void'; void-origin not tracked)."
+    },
+    "deck-search-trigger": {
+      "status": "implemented",
+      "kind": [
+        "event"
+      ],
+      "cards": [
+        "Golden Charm"
+      ],
+      "rulesRef": "RULES.md §12",
+      "spec": "New GameEvent deckSearched { playerId } — emitted when a chooserSelectsTarget effect raises a pick whose declaration selector names the deck zone (playerId = the deck owner). The pick is already the outstanding choice, so processImmediateQueue defers the trigger; it resolves right after the search completes. Golden Charm — 'If a player would search their deck you may pay 1 ... draw a card' (net: the interceptor may pay 1 to draw 1; the search proceeds). Scope: only chooserSelectsTarget-based deck picks emit it."
     }
   },
   "parityGaps": {
@@ -1059,36 +1133,6 @@
       "clause": "The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and \"INFLUENCE = 15 + 10*X\" / \"repeat X-1 times\".",
       "needs": "N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.",
       "scope": "xlarge"
-    },
-    "cross-faction-rule-override": {
-      "summary": "A faction that replaces one of the OPPONENT's faction rules with its own.",
-      "clause": "The Knitting Coalition — HIDDEN INFLUENCE (\"Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead.\") and DEVELOP RULE — PULLING STRINGS (\"Your opponent ignores their faction's DEVELOP RULE.\").",
-      "needs": "A layer that lets one in-play faction card suppress / substitute specific sub-rules of another player's FactionDefinition (setup draw, restore, develop), resolved before setup and re-checked each turn.",
-      "scope": "medium"
-    },
-    "mixed-starting-resources": {
-      "summary": "Starting-resource rules more expressive than `{ count, names?, stapleOnly? }` — a chosen count, a mix of specific + free picks, face-down non-resource cards, or an opponent-topped-up-to-match clause.",
-      "clause": "The Society of Magical Propriety — \"Any 1 resource, Any 1 card (if it's not a resource, put it into play face-down).\" The Union of Unextraordinary Miners — MONEY FOR NOTHING (\"choose a number for X ... You start with X staple resources and 1 Deception. Your opponent starts with ... enough staple resources so that both players have the same number of starting resources.\").",
-      "needs": "Extend FactionDefinition.setup.startingResources to a small program: a chosen variable, per-slot constraints (specific name | any staple | any card→face-down), and an opponent-normalisation rule. Currently modelled as a flat `count: 2`.",
-      "scope": "medium"
-    },
-    "opponent-may-pay-to-counter": {
-      "summary": "A tactic EXTRA COST lets a chosen player pay to peek + fizzle the card before it resolves.",
-      "clause": "EXTRA COST: Pick a player. That player may pay 2. If they do, look at the top card of your deck then terminate this card. (Study Disturbance) / Any opponent may pay 3. If they do, look at the top 3 cards ... then terminate this card. (Tedious TriAdic Truculence)",
-      "needs": "A pre-stack player-buyout interrupt: at deploy time, before the tactic goes on the response stack, offer a cost to a chosen player whose payment cancels the deploy and runs a small peek effect. Distinct from the response stack (the buyer is not responding, and the tactic never resolves). Touches deployCard / the response-window opener.",
-      "scope": "medium"
-    },
-    "search-and-develop-draw-interception": {
-      "summary": "An optional pay-to-substitute layer over another player searching their deck, or over a Develop Rule draw.",
-      "clause": "If a player would search their deck you may pay 1. If you do, draw a card and then that player searches their deck instead. (Golden Charm) / If you would draw a card as part of your Develop Rule, you may put a card voided by this card into its owner's hand instead. (Arcane Escrow)",
-      "needs": "A replacement-style hook on \"a player searches their deck\" and on \"a Develop Rule draw\" — neither is a replaceable event today (search is not an event at all; the develop draw is internal to chooseDevelop). Low value (2 cards, each a secondary clause).",
-      "scope": "medium"
-    },
-    "card-ignores-source-class": {
-      "summary": "A card that cannot be picked by, and is not affected by, cards of a given type.",
-      "clause": "This card ignores all rules text on locations. (this card cannot be picked by locations and any effects from locations do not affect this card.) — Parkour Hoodlum",
-      "needs": "Scoped targeting immunity (cannotBePicked keyed on the picking source's card type) plus a general 'effects from <type> don't affect this card' filter across dealDamage / createModifier / etc. — a per-source-type shield with no current hook.",
-      "scope": "medium"
     }
   },
   "cards": [
@@ -2075,15 +2119,14 @@
         "keywords": []
       },
       "engineCapability": [
-        "faction-abilities"
+        "faction-abilities",
+        "cross-faction-rule-override"
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "EPIC faction. Influence 28, 3/4 opening hand, 2 Greed starting resources, standard restore + develop. INFLATIONARY FORCES DRAW (pay 2) and RESOURCE (pay 2) both authored with usableBy:'anyPlayer' ('Both players may use this ability'). Unmodelled: HIDDEN INFLUENCE and PULLING STRINGS ('your opponent ignores their faction's STARTING DRAW / DEVELOP rule and uses this card's instead') — one faction rewriting another player's rules; no cross-faction-override mechanism.",
+      "notes": "EPIC faction. Influence 28, 3/4 opening hand, 2 Greed starting resources, standard restore + develop. INFLATIONARY FORCES DRAW / RESOURCE authored usableBy:'anyPlayer'. cross-faction-rule-override resolved: HIDDEN INFLUENCE + PULLING STRINGS are faction.overridesOpponent { startingDraw: true, suppressDevelop: true } — the opponent's opening hand uses this card's openingHand and the opponent has no Develop Rule.",
       "rulesAudited": true,
-      "parityGaps": [
-        "cross-faction-rule-override"
-      ]
+      "parityGaps": []
     },
     {
       "id": "ebef8b79-0dcb-401f-81e9-eafd9235fd7d",
@@ -2139,15 +2182,14 @@
       },
       "engineCapability": [
         "faction-abilities",
-        "faction-start-of-turn-effects"
+        "faction-start-of-turn-effects",
+        "mixed-starting-resources"
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "EPIC faction. Influence 30, 10/9 opening hand, restore-all + detach, standard develop. Abilities: DRAW (pay 3), RESOURCE (pay 3), ENCYCLOPEDIC KNOWLEDGE ([O][O]; remove 3 tokens -> search deck for a tactic -> hand). APPROXIMATIONS: starting resources 'any 1 resource + any 1 card (face-down if not a resource)' modelled as 2 resources; 'you may put a token on this card' when you develop is modelled as an automatic startOfTurnEffects token (over-generates if you skip develop); 300-card minimum deck is a deckbuilding rule, not runtime.",
+      "notes": "EPIC faction. Influence 30, 10/9 opening hand, restore-all + detach, standard develop. Abilities: DRAW (pay 3), RESOURCE (pay 3), ENCYCLOPEDIC KNOWLEDGE ([O][O]; remove 3 tokens -> search deck for a tactic -> hand). mixed-starting-resources resolved: 'Any 1 resource, Any 1 card (face-down if not a resource)' is startingResources.slots [{kind:resource},{kind:anyCard}]. APPROXIMATIONS: the player does not choose WHICH resource / card (deck order, like every other faction); 'you may put a token on this card when you develop' is still an automatic startOfTurnEffects token; 300-card minimum deck is a deckbuilding rule.",
       "rulesAudited": true,
-      "parityGaps": [
-        "mixed-starting-resources"
-      ]
+      "parityGaps": []
     },
     {
       "id": "91803a23-9aff-4665-87cf-ff3e40580ede",
@@ -2228,15 +2270,14 @@
       },
       "engineCapability": [
         "faction-abilities",
-        "develop-uses-per-turn"
+        "develop-uses-per-turn",
+        "mixed-starting-resources"
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "EPIC faction. Influence 22, 5/6 opening hand, restore-all + detach. 'OVERTIME' = a second develop per turn (develop.usesPerTurn: 2). Abilities: DRAW (pay 4), RESOURCE (pay 5). APPROXIMATION: 'MONEY FOR NOTHING' starting resources (choose X where 0<X<11; you get X staples + 1 Deception; the opponent is topped up to the same count) is modelled as a flat 2 resources.",
+      "notes": "EPIC faction. Influence 22, 5/6 opening hand, restore-all + detach. OVERTIME = develop.usesPerTurn: 2. Abilities: DRAW (pay 4), RESOURCE (pay 5). mixed-starting-resources resolved: MONEY FOR NOTHING is startingResources.chosenStaples { min: 1, max: 10, plus: ['Deception'] } + matchOpponentCount. X is supplied via FactionGameSetupOptions.startingResourceX (default = min = 1); the opponent is topped up with staples to the same count.",
       "rulesAudited": true,
-      "parityGaps": [
-        "mixed-starting-resources"
-      ]
+      "parityGaps": []
     },
     {
       "id": "b91d33d1-aeed-4953-b57b-463204b25bc6",
@@ -5862,13 +5903,13 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "replacement: replaces {moveToZone, zone discard, controlledBy self} optional -> moveCard(__candidate, void) + set faceDown",
-          "GAP: 'if you would draw a card as part of your Develop Rule, you may put a voided card into hand instead'",
-          "activated WITHDRAW: costs [payResources 1] -> draw 1; discard 2",
-          "card.flipUp { cost:1, threshold:'gg' }"
+          "replacement: replaces {moveToZone, zone discard, controlledBy self} optional -> moveCard(__candidate, void)",
+          "behavior.developDrawReplacement: { effects: [chooserSelectsTarget over {owner self, zone void} optional -> if(targetExists) moveCard(v, hand)] }",
+          "activated WITHDRAW: costs [payResources 1] -> draw 1; chooserSelectsTarget discard x2",
+          "card.flipUp { cost: 1, threshold: gg }"
         ],
-        "reusesProvenShape": true,
-        "newTestNeeded": false
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -5876,14 +5917,14 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "develop-draw-replacement"
+      ],
       "display": {},
-      "confidence": "low",
-      "notes": "Author the discard->void replacement + WITHDRAW + FLIP UP; the develop-draw swap is a niche capability (or parity gap). [merge: the develop-draw-replacement clause is a parity gap (search-and-develop-draw-interception); the rest of the card is in scope.]",
+      "confidence": "medium",
+      "notes": "develop-draw-replacement resolved: 'if you would draw a card as part of your Develop Rule, you may put a voided card into hand instead' is behavior.developDrawReplacement (a mayPay wrapper around a void->hand pick, with the draw as elseEffects). Modelled as 'a card in your void' — the this-card-voided-it origin is not tracked.",
       "rulesAudited": true,
-      "parityGaps": [
-        "search-and-develop-draw-interception"
-      ]
+      "parityGaps": []
     },
     {
       "id": "0a308026-4ef1-4c86-ad13-64df84f0f6cd",
@@ -7141,11 +7182,11 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "GAP: 'if a player would search their deck you may pay 1 -> draw a card, then they search instead' (search interception)",
-          "activated SERAPHIM FUSION: costs [payResources 4, destroy source], targets [{e:{controller self, zone play, type character, uniqueDesignation:'eustace'}}] -> target {zone deck, name 'Siluriformes Flaxenscale'} -> putIntoPlay(controller) + shuffleDeck"
+          "triggered {event deckSearched} -> mayPay(controller, pay 1 -> draw 1)",
+          "activated SERAPHIM FUSION: costs [payResources 4, destroy source], targets [{e: {controller self, zone play, type character, uniqueDesignation eustace}}, {s: {zone deck, name 'Siluriformes Flaxenscale'} optional}] -> if(targetExists s) putIntoPlay(s, controller) + shuffleDeck"
         ],
-        "reusesProvenShape": true,
-        "newTestNeeded": false
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": "charm",
@@ -7154,15 +7195,14 @@
         "keywords": []
       },
       "engineCapability": [
-        "unique-designation-selector"
+        "unique-designation-selector",
+        "deck-search-trigger"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "Author SERAPHIM FUSION; the search-interception clause is niche (2 cards) — candidate wontImplement-partial / parity note. [merge: the search-interception clause is a parity gap (search-and-develop-draw-interception); the rest of the card is in scope.]",
+      "confidence": "medium",
+      "notes": "search-interception resolved via the new deckSearched event: 'if a player would search their deck you may pay 1 -> draw a card, then they search instead' is a deckSearched trigger -> mayPay(pay 1 -> draw 1). Net effect (interceptor draws 1 for 1; the search still happens) matches; the 'instead' ordering is not observable. Only chooserSelectsTarget deck picks emit the event.",
       "rulesAudited": true,
-      "parityGaps": [
-        "search-and-develop-draw-interception"
-      ]
+      "parityGaps": []
     },
     {
       "id": "94a47bcb-c174-47a9-a293-8183632b2fac",
@@ -7987,11 +8027,11 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "continuous(activeZone hand): condition numberCompare(count{zone play, type location} >= 1) -> keywords [{target:source, tactical}]",
-          "continuous: restrictions [{target:source, cannotBePicked, by:'locationSource'}] + immune to location abilities"
+          "continuous(activeZone hand): condition numberCompare(count{zone play, type location} >= 1) -> keywords [{target source, tactical}]",
+          "continuous: ignoresRulesTextFrom 'location' — cannot be picked by a location, and single-target location effects / location auras do not affect it"
         ],
-        "reusesProvenShape": true,
-        "newTestNeeded": false
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -8002,15 +8042,14 @@
       "engineCapability": [
         "continuous-from-hand",
         "untargetable",
-        "dynamic-tactical-honored"
+        "dynamic-tactical-honored",
+        "card-ignores-source-class"
       ],
       "display": {},
-      "confidence": "low",
-      "notes": "'ignores all rules text on locations' — the can't-be-picked-by-locations half maps to scoped untargetable; the 'location effects don't affect this card' half is out of scope (author the tactical-in-hand + untargetable, gap the rest). [author: TACTICAL-in-hand authored; 'ignores all rules text on locations' (cannot be picked by / not affected by locations) is the parity gap card-ignores-source-class.] [author: TACTICAL-in-hand authored; 'ignores all rules text on locations' (cannot be picked by / not affected by locations) is the parity gap card-ignores-source-class.]",
+      "confidence": "medium",
+      "notes": "card-ignores-source-class resolved: 'this card ignores all rules text on locations' is ContinuousAbility.ignoresRulesTextFrom: 'location' — targetCandidates drops it when the picking source is a location, and SOURCE_CLASS_GUARDED_EFFECTS + the continuous-aura recompute loops skip it when the origin is a location. Aggregate all-X effects still see it. Cost / damage-amount modifiers from a location are the remaining edge, noted in the capability.",
       "rulesAudited": true,
-      "parityGaps": [
-        "card-ignores-source-class"
-      ]
+      "parityGaps": []
     },
     {
       "id": "5a009669-cb50-40d1-a7b3-a070121ba4af",
@@ -8730,8 +8769,7 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "tactic: pick a player; EXTRA COST clause: that player may pay 2 -> look at top card of your deck + terminate this card",
-          "effects: restrictPlay(pickedPlayer, cardType:character, EOT); draw 1"
+          "tactic: targets [{p: faction count 1}]; effect mayPay(player = controllerOf(p), pay 2 -> [] i.e. 'terminate this card'; elseEffects: restrictPlay(controllerOf(p), character, EOT) + draw 1)"
         ],
         "reusesProvenShape": false,
         "newTestNeeded": true
@@ -8743,15 +8781,14 @@
         "keywords": []
       },
       "engineCapability": [
-        "player-play-restriction"
+        "player-play-restriction",
+        "opponent-may-pay-to-counter"
       ],
       "display": {},
       "confidence": "medium",
-      "notes": " [merge: the opponent-may-pay-to-counter clause is a parity gap (opponent-may-pay-to-counter); the rest of the card is in scope.]",
+      "notes": "opponent-may-pay-to-counter resolved: 'EXTRA COST: pick a player; that player may pay 2 -> look at top card + terminate this card' is a mayPay whose elseEffects are the real body (restrictPlay + draw). Engine fix: mayPay now charges the resolved effect.player. The pre-stack timing of the buyout is approximated as an on-resolution mayPay.",
       "rulesAudited": true,
-      "parityGaps": [
-        "opponent-may-pay-to-counter"
-      ]
+      "parityGaps": []
     },
     {
       "id": "fd095fbd-7566-4b39-832e-0f40a0181289",
@@ -8883,11 +8920,10 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "tactic: targets [{picks:character count 3}]; EXTRA COST clause: any opponent may pay 3 -> lookAndReorder(deck, top 3) + terminate this card",
-          "effects: forEach selected picks -> if(statCompare strength <= 3) destroy"
+          "tactic: targets [{picks: character count 3}]; effect mayPay(player = opponent, pay 3 -> lookAndReorder(player controller, chooser opponent, count 3); elseEffects: forEach picks -> if(strength <= 3) destroy)"
         ],
-        "reusesProvenShape": true,
-        "newTestNeeded": false
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -8895,14 +8931,14 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "opponent-may-pay-to-counter"
+      ],
       "display": {},
       "confidence": "medium",
-      "notes": " [merge: the opponent-may-pay-to-counter clause is a parity gap (opponent-may-pay-to-counter); the rest of the card is in scope.]",
+      "notes": "opponent-may-pay-to-counter resolved as a mayPay (player: opponent) whose elseEffects are the mass-destroy body; the buyout branch uses lookAndReorder with the new chooser: opponent ('any opponent looks at the top 3 cards of YOUR deck and reorders them'). Buyout timing approximated as on-resolution.",
       "rulesAudited": true,
-      "parityGaps": [
-        "opponent-may-pay-to-counter"
-      ]
+      "parityGaps": []
     },
     {
       "id": "f83b3af9-a7cb-4945-9632-bdfab77a111a",

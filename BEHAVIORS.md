@@ -290,11 +290,19 @@ alongside the `cardEnteredPlay` one.
 `turnStarted`, `turnEnding`, `cardPlayed`, `cardEnteredPlay`, `cardMoved`,
 `cardDestroyed`, `cardDepleted`, `cardRestored`, `resourcePlayed`,
 `cardsDrawn`, `damageDealt`, `abilityActivated`, `battleStarted`,
-`battleEnded`, `characterAttacked`, `characterBlocked`.
+`battleEnded`, `characterAttacked`, `characterBlocked`, `counterChanged`,
+`attackerBlocked`, `deckSearched`.
 
 `cardsDrawn` (`{ playerId, count }`) fires once per completed draw batch
 (the whole `draw N` at once, not per card) — "When a player draws any
 number of cards" (Meat of the Mountain). Gate with `eventPlayerIs`.
+
+`deckSearched` (`{ playerId }`) fires when a `chooserSelectsTarget` effect
+raises a pick whose declaration selector names the `deck` zone — `playerId`
+is the deck's owner. The pick is already the outstanding choice, so a
+trigger on this event resolves right after the search completes ("If a
+player would search their deck ..." — Golden Charm). Only
+`chooserSelectsTarget`-based deck picks emit it.
 
 `characterAttacked` fires once per attacker at `declareAttack` (before
 `battleStarted`); `characterBlocked` fires once per blocker at
@@ -563,6 +571,13 @@ simulates on a cloned state) — no partial payment.
 - **`mayPay`** — `{ player, costs, effects, elseEffects? }` — "you may pay
   <costs>. If you do, <effects>; otherwise <elseEffects>." Auto-declines if
   `costs` are unaffordable. Use `costs: []` for a bare "you may" yes/no.
+  `player` need not be the ability's controller — "that player may pay 2"
+  (`player: { "type": "controllerOf", ... }`), "any opponent may pay 3"
+  (`player: "opponent"`) — and the payment comes from *their* resources,
+  while `effects` / `elseEffects` still resolve under the ability's
+  controller. "EXTRA COST: that player may pay N ... then terminate this
+  card" is a `mayPay` whose `elseEffects` are the card's real body and whose
+  `effects` are the peek (Study Disturbance, Tedious TriAdic Truculence).
 - **`createTokens`** — `{ controller, count, token: TokenSpec }` — puts
   `count` token permanents into play (`{ name, cardType, subtype?,
   strength?, life?, speed?, structure? }`); they vanish outright on leaving
@@ -683,13 +698,15 @@ to touch when just authoring card data.)
   `Effect[]` has no inherent human-readable meaning, so a renderer has
   nothing else to show for each branch in a choice UI — set it whenever a
   branch isn't self-evident (an empty "decline" branch usually is).
-- **`lookAndReorder`** — `{ player, count, to? }` — pauses for `player` to
-  reorder the top `count` cards of their own deck ("look at the top N
-  cards... put them back in any order"); reorders whatever's there if the
-  deck is shorter. `to: "bottom"` instead relocates those top `count` cards
-  to the **bottom** of the deck in the chosen order ("...put the remaining
-  cards on the bottom of their deck in any order" — Rosy Palmer); default
-  `"top"` leaves them on top.
+- **`lookAndReorder`** — `{ player, count, to?, chooser? }` — pauses for
+  `chooser` (default = `player`) to reorder the top `count` cards of
+  `player`'s deck ("look at the top N cards... put them back in any order");
+  reorders whatever's there if the deck is shorter. `to: "bottom"` instead
+  relocates those top `count` cards to the **bottom** of the deck in the
+  chosen order ("...put the remaining cards on the bottom of their deck in
+  any order" — Rosy Palmer); default `"top"` leaves them on top. Set
+  `chooser` for "any opponent looks at the top 3 cards of *your* deck and
+  puts them back in any order" (Tedious TriAdic Truculence).
 - **`reduceNextCost`** — `{ player, amount, cardType? }` — reduces the
   numeric cost of the next card `player` deploys this turn by `amount`
   (floored at 0), consumed by exactly one subsequent `playCard`; unused
@@ -993,6 +1010,41 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
   "controller", "amount": 2, "cardType": "character" }]`.
 - **`turn.develop.usesPerTurn`** — Develop Rule uses per turn (default 1;
   "OVERTIME" = 2).
+- **`overridesOpponent`** — `{ startingDraw?, suppressDevelop? }` — while
+  this faction card is in play it rewrites the **opponent's** faction:
+  `startingDraw` makes the opponent's opening hand use *this* faction's
+  `setup.openingHand`; `suppressDevelop` gives the opponent no Develop Rule
+  (`getDevelopChoices` → `[]`). The Knitting Coalition (HIDDEN INFLUENCE /
+  PULLING STRINGS). 2-player only.
+- **`setup.startingResources`** — beyond `{ count, names?, stapleOnly? }`:
+  - `slots: [{ kind: "resource", staple?, name? } | { kind: "anyCard" }]`
+    — a per-slot program. `"resource"` places a face-up resource;
+    `"anyCard"` places any card and flips it face-down if it is not a
+    resource ("Any 1 resource, Any 1 card" — The Society of Magical
+    Propriety).
+  - `chosenStaples: { min, max, plus? }` — X staples (X from
+    `FactionGameSetupOptions.startingResourceX`, clamped to `[min, max]`,
+    default `min`) plus the named `plus` resources ("...and 1 Deception" —
+    The Union of Unextraordinary Miners' MONEY FOR NOTHING).
+  - `matchOpponentCount: true` — after both players are set up, top the
+    **opponent** up with staples until the counts match.
+  As with the flat form the engine picks in deck order — the player does
+  not choose which staple / card.
+- **`behavior.developDrawReplacement`** (on a non-faction card) —
+  `{ cost?, effects }` — while the developing player controls this card in
+  play, the `draw` develop option runs a `mayPay` (payer = developer,
+  `costs` = `cost`, `effects`, `elseEffects` = the draw) instead of
+  drawing. Arcane Escrow — "If you would draw a card as part of your
+  Develop Rule, you may put a voided card into hand instead."
+
+## Continuous ability: ignore a card type
+
+- **`ignoresRulesTextFrom: CardType`** on a `ContinuousAbility` (still needs
+  `modifiers: []`) — while the source is in play (and `condition` holds) it
+  cannot be **picked** by a card of that type, and single-target effects /
+  auras whose origin is a card of that type do not affect it (aggregate
+  "all X" effects still do). Parkour Hoodlum — "ignores all rules text on
+  locations." See RULES.md §3.8.
 
 ## Duration / ModifierOperation (`src/types/ids.ts`)
 

@@ -81,6 +81,8 @@ export interface PendingReorderDeckChoice {
   kind: "reorderDeck";
   id: string;
   playerId: PlayerId;
+  /** Whose deck is being reordered — defaults to `playerId` when omitted (the looker is usually the deck's owner). */
+  deckOwnerId?: PlayerId;
   /** The cards being looked at, in their current top-to-bottom order. */
   cardIds: CardInstanceId[];
   /** Where the reordered cards go — `"top"` (default) leaves them on top, `"bottom"` relocates them to the bottom of the deck. */
