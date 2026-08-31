@@ -1,0 +1,1031 @@
+[
+  {
+    "id": "f5bf92d7-3153-4600-b5df-3d669ece9404",
+    "name": "Cathédrale de Mau",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous damageModifiers: damage inflicted to a location you control -> delta -1, optionalCost [loseInfluence 1] (yes/no pause before the reduction)",
+        "continuous damageModifiers: damage inflicted to a character you control whose cardCost >= 6 -> delta -1, optionalCost [loseInfluence 1]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": "cathedral", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["damage-reduction-optional-cost"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Both clauses are the HH-list `damage-reduction-optional-cost` (DamageModifierDefinition gains optionalCost that pauses for yes/no). The 'cost' is a `loseInfluence` (RULES.md §8 / CR §408.3b: direct influence loss, not damage). Second selector filters via conditions numberCompare(cardCost __candidate, '>=', 6). Applies to location damage, character damage, and faction-influence conversion alike (CR §408.2)."
+  },
+  {
+    "id": "dd781007-94ae-48b3-a0dc-7a3a3d983bcf",
+    "name": "Forbidden Bibliotheca",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> addCounter(source, token, 3)",
+        "continuous self: modifier structure add value=counter(source, token)",
+        "activated RESEARCH: costs [deplete source, payResources 2]; effects [addCounter(source, token, 1), draw 2, chooserSelectsTarget controller pick a hand card -> moveCard to deck bottom]",
+        "activated CHECK OUT: costs [deplete source, removeCounter(source, token, 2)]; effects [chooserSelectsTarget chooser=opponent, hand declaration count 2 -> moveCard to discard]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "bibliotheca", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "`structure` is a valid Stat (src/types/ids.ts) so the per-token structure gain is a plain continuous modifier. RESEARCH's cost line 'Put a token on this card' has no addCounter *cost* type; modelled as the first effect (always succeeds, cost/effect timing immaterial per CR §402.5). 'Each opponent discards 2' degenerates to the one opponent in 2p."
+  },
+  {
+    "id": "9290edea-a120-4ac9-8b9b-74a86fdb2797",
+    "name": "Marduun Ruins",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous aura: selector {controller self, zone play, type character, conditions [textMentionsIcon(__candidate, volition)]} -> modifiers +2 strength, +2 life"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "marduun ruins", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["text-mentions-icon"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-list `text-mentions-icon` condition (`{type:\"textMentionsIcon\", target, icon}`) used inside the aura selector's conditions with __candidate bound. Otherwise a bog-standard stat aura."
+  },
+  {
+    "id": "bb150c67-60c5-4582-8712-224ea083393f",
+    "name": "Microdefense Autosystem",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:blockingPartyFormed + eventPlayerIs controller -> mayPay(controller, [payResources 1]) -> createTokens(controller, 1, Micromajig 1/1/3 majig character; token.effects [addToBattle {selected __candidate} side blocker])"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["blocking-party-formed-event"],
+    "proposedCapabilities": [
+      {
+        "id": "blocking-party-formed-event",
+        "kind": "events (src/types/events.ts) + TriggeredAbility.event",
+        "spec": "Add a GameEvent `blockingPartyFormed { playerId, blockerCount }` emitted once during declareBlockers immediately after the defending player forms a non-empty blocking party (playerId = defender). A TriggeredAbility may set event:\"blockingPartyFormed\"; gate ownership with eventPlayerIs / battleRole, read size via a count/inBattle(role:\"blocker\") selector. Parallel to the single-fire `battleStarted`; distinct from `characterBlocked`/`attackerBlocked` which fire once per blocker/attacker.",
+        "why": "Microdefense Autosystem — 'When you form a blocking party with at least 1 character, you may pay 1 ...'. Built on characterBlocked/attackerBlocked it fires per blocker/attacker and would mint one Micromajig per blocker instead of one per block."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Effect side composes from existing createTokens (per-token `effects`) + addToBattle. Only gap is the single-fire block-formation event. Token is a standard Micromajig (RULES.md §13). 'you' = the defender forming the party."
+  },
+  {
+    "id": "cec75dc5-9874-4e69-83a3-7557a34aa093",
+    "name": "Personal God Shrine",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> mayPay(controller, [payResources 3]) -> chooserSelectsTarget controller (optional) {owner self, zone discard, conditions [or(cardTypeIs char, cardTypeIs location)]} -> moveCard to deck position top"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "The 'card that provides at least [V] enters play under your control' cycle (HH recurring pattern). 'character or location' expressed via selector.conditions or(cardTypeIs) since CardSelector.type is a single positive match."
+  },
+  {
+    "id": "d70efc6c-9a6e-41ab-92a2-cb97662f172f",
+    "name": "Phantasmagoric Tollbooth",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "replacement: replaces {event moveToZone, zone play, cardType character, controlledBy opponent}, condition not(isToken __candidate), optional true, optionalCost [payResources 1], chooser affectedController -> effects [moveCard __candidate to discard]",
+        "triggered:cardMoved + and(numberCompare(resourceIcons(controller, rage), '>=', 6), cardMovedToZone discard, cardTypeIs(eventCard, character), eventCardControlledBy opponent) -> mayPay(controller, [payResources 1]) -> target faction -> dealDamage 1"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": "tollbooth", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["replacement-affected-chooses", "is-token-condition"],
+    "proposedCapabilities": [
+      {
+        "id": "is-token-condition",
+        "kind": "conditions",
+        "spec": "`{ type: \"isToken\", target?: TargetRef }` (default source) — true when target resolves to a token card (CardInstance.isToken). Compose with `not` for 'non-token'.",
+        "why": "Phantasmagoric Tollbooth — 'If a non-token character would enter play under an opponent's control ...'. Without it the replacement also taxes/bounces the opponent's own Micromajig tokens (bounced token just vanishes) — a real behavioral difference."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "First clause is HH-list `replacement-affected-chooses` (chooser: affectedController so the opponent makes the pay/decline). Second paragraph's '[R][R][R][R][R][R]:' prefix = active only while controller meets 6x rage threshold (RULES.md §4) -> numberCompare(resourceIcons rage) in the trigger condition. 'a character an opponent owns' approximated as eventCardControlledBy opponent (owner==controller except taken-control; no eventCardOwnedBy exists)."
+  },
+  {
+    "id": "9b446e06-feec-456a-a2e5-399ef156a523",
+    "name": "Thabbashite Temple",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated CALL UPON THE GODS: variables {x: resourceIcons(controller, volition)}; costs [deplete source, payResources add(10, multiply(variable x, -1))]; targets [{found: {controller self, zone deck, type character, conditions [numberCompare(cardCost __candidate, '<=', variable x)]}, count 1}]; effects [putIntoPlay(found, controller self), deplete(found), shuffleDeck controller]",
+        "activated VOLATE: costs [payResources 2]; targets [{res: {controller self, zone play, type resource, faceDown false}, count 1}]; effects [flipFaceDown(res)]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "No UNIQUE line (CALL UPON THE GODS / VOLATE are ability names). 'Pay 10-X' floors at 0 (CR §406.6). X is ability-determined so it lives in ability-level `variables`. 'put into play depleted' = putIntoPlay + deplete on the same target. VOLATE picks a face-up real resource card (selector faceDown:false)."
+  },
+  {
+    "id": "c1fdf3be-4790-4560-a4a0-920a951833a4",
+    "name": "Thieving Casino",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:turnStarted + eventPlayerIs controller -> effects [bind coin = random(1,2); if numberCompare(variable coin, '=', 1) -> chooserSelectsTarget controller pick a faction -> mill(player = ownerOf that faction, count 4)]",
+        "activated CASH OUT: costs [deplete source, payResources add(cardCost({selected char}), 4)]; targets [{char: {owner opponent, zone discard, type character}, count 1}]; effects [putIntoPlay(char, controller self)]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Coin flip composes via `bind` (evaluates random(1,2) now) then an `if` numberCompare on the bound variable — a triggered ability's effects list supports bind. 'pick a player' = faction target (self or opponent). CASH OUT: 'Pay X+4' where X = cardCost of the picked discard character, referenced directly in the payResources amount (cf. Anatidaephobia)."
+  },
+  {
+    "id": "ebd86598-fdf0-424d-b867-53b714ac6db9",
+    "name": "Torchlight Safehouse",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardDestroyed + sourceIsEventCard -> modifyInfluence(controller, -3)",
+        "triggered:turnStarted + eventPlayerIs controller -> targets [{picked: {controller self, zone play, type character}, count 3, optional true}] -> forEach picked -> grantKeyword(covert, untilEndOfTurn)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'up to 3 characters' = optional multi-count target declaration; 'if you do, they gain COVERT this turn' resolves via forEach + grantKeyword. Both shapes fully proven."
+  },
+  {
+    "id": "91d07791-dd91-4862-9345-d06bbc73a06b",
+    "name": "73ch!",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play (first activated ability): targets [{c: {controller self, zone deck, type character, conditions [cardTradeIs(__candidate, gearsmith)]}, count 1, optional true}]; effects [if targetExists(c) -> putIntoPlay(c, controller self, faceDown true); shuffleDeck controller]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "The searched card enters play face-down as a resource -> putIntoPlay faceDown:true (this is about the searched card, NOT this tactic, so no selfDisposition). 'reveal it' is automatic (no hidden-info model). shuffleDeck for the search (CR §312.1). CR §312.2 lets the search fail -> optional declaration."
+  },
+  {
+    "id": "a64326fe-e6a2-4398-ad70-88e4584fb7af",
+    "name": "Additional Tribute",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: and(respondingTo {} , not(cardTypeIs(respondedToCard, tactic)))",
+        "effects [ if numberCompare(resourceIcons(controller, volition), '>=', 3) -> chooserSelectsOption controller [decline | moveCard {deckPosition controller top} to deck bottom] ]",
+        "effects [ mayPay(player opponent, [payResources 1], effects [draw controller 1], elseEffects [terminate {scope respondedItem}]) ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "'in response to a non-tactic card being deployed' composed as respondingTo (any card) AND not(cardTypeIs respondedToCard tactic) — respondingTo with no cardType must mean 'any card'. 'draw a card' on the paid branch read as the controller drawing (the payer is the opponent buying out). 'terminate this card' on the paid branch is a no-op (tactic discards on resolve anyway)."
+  },
+  {
+    "id": "f44b8c88-1aa5-4422-ad4d-29d49c252959",
+    "name": "Asbestos Drywall",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{loc: {zone play, type location}, count 1}]; effects [chooserSelectsOption controller: [ 'remove 2 damage' -> healDamage(loc, 2) | 'add 2 damage' -> dealDamage(loc, 2) ]]",
+        "card.flipUp { cost: 3, threshold: 'gg' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["heal-damage"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-list `heal-damage` ({type:\"healDamage\", target, amount}) is the 'remove 2 damage markers' half (setDamage is absolute-only). 'add 2 damage markers' modelled as dealDamage 2 (minor: 'add markers' arguably bypasses damage modification; immaterial here)."
+  },
+  {
+    "id": "3f5aab3e-81e1-46be-98e7-b55fbd60c047",
+    "name": "Blitz of Destruction",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{p: {zone play, type faction, conditions [numberCompare(count(resources controlled by controllerOf __candidate), '>', count(resources controlled by self))]}, count 1}]; effects [chooserSelectsTarget chooser=opponent {controller opponent, zone play, type resource, faceDown true} -> destroy]",
+        "card.flipUp { cost: 4, threshold: 'r' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Pick a player that controls more resources than you' (HH recurring pattern) — faction target with a count-vs-count selector condition. Since you can never control more resources than yourself this is always the opponent in 2p; chooser/selector hard-coded to opponent. Hard EXTRA COST: unplayable if neither player qualifies."
+  },
+  {
+    "id": "e91b8651-6e73-4d29-af1e-82bef2e72932",
+    "name": "Catastrophic Caper",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: respondedToPicked {cardType character}",
+        "effects [ moveCard {respondedToPicked character} to hand; if uniqueIs({respondedToPicked character}, ['pluck']) -> draw controller 1 ]",
+        "card.flipUp { cost: 1, threshold: 'd' }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["responded-to-picked-target"],
+    "proposedCapabilities": [
+      {
+        "id": "responded-to-picked-target",
+        "kind": "expressions (TargetRef union)",
+        "spec": "`{ type: \"respondedToPicked\", cardType?: CardType }` — resolves to the in-play card of cardType stored in the responded-to stack item's context.selected (the pick it made as an extra cost). TargetRef analogue of the existing `respondedToPicked` *condition*, and the read side of what `retargetExtraCost` rewrites.",
+        "why": "Catastrophic Caper — 'Deploy this only in response to a card or ability that picked a character as an extra cost. Put the character into its owner's hand.' The condition gates the response; nothing can name that picked character as an effect target."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "The 'character' referenced is whatever the responded-to card/ability picked as its extra cost (RULES.md §7, cf. Mistaken Identity / retargetExtraCost). 'UNIQUE PLUCK' -> uniqueIs designations ['pluck']."
+  },
+  {
+    "id": "19d82093-9a5c-4671-844c-f6bf751580e5",
+    "name": "Change of Tactics",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: and(battleRole attacker, numberCompare(count(character inBattle role blocker), '>=', 1), battleDamageAssigned('=', 0))",
+        "tactic play cost: depleteSelected('dep'); targets [{dep: {controller self, zone play, type character, conditions [not(inBattle __candidate role attacker)]}, count = count(character inBattle role attacker)}]",
+        "effects [ forEach(character inBattle role attacker) -> removeFromBattle __candidate; forEach dep -> addToBattle(__candidate, side attacker); draw controller 1 ]",
+        "card.flipUp { cost: 4, threshold: 'rr', effects: [chooserSelectsOption controller: decline | play a resource (chooserSelectsTarget hand card -> playResource)] }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["battle-damage-not-yet-assigned"],
+    "proposedCapabilities": [
+      {
+        "id": "battle-damage-not-yet-assigned",
+        "kind": "conditions",
+        "spec": "`{ type: \"battleDamageAssigned\", operator: ComparisonOperator, value: NumberExpression }` — compares the number of battle-damage assignments made so far in the current battle against value. 'before any damage is assigned during this battle' = operator '=' value 0. False with no active battle.",
+        "why": "Change of Tactics — 'Deploy this only while you are attacking, while there is a blocking party and before any damage is assigned during this battle.' battleActive/battleRole cover the first two clauses; nothing expresses the pre-damage-resolution timing, and swapping the whole attacking party mid-resolution is nonsensical. Common battle-trick templating across the set."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "X = attacking-party size = count(character, inBattle role attacker); the deplete-X-non-attackers extra cost is depleteSelected over a variable-count declaration. Effect swaps parties via removeFromBattle + addToBattle (RULES.md §8 / CR §302.15). NOTE: the brief's `grant-keyword-to-player` entry cites 'Change of Tactics FLIP UP rider'; the slice text shows FLIP UP only as 'you may play a resource' with no attack-eligibility clause, so classified per slice text — if the printed FLIP UP actually grants deploy-this-turn attack eligibility, add grant-keyword-to-player."
+  },
+  {
+    "id": "9d26a50a-5978-4efd-8b94-df7bd81b226c",
+    "name": "Close Call",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {controller self, zone play, type character}, count 1}]; effects [moveCard(c, hand)]",
+        "card.selfDisposition { to: 'faceDownResource' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Bounce a character you control + the tactic re-enters play as a face-down resource (selfDisposition, cf. Tiny Shiny / Otter Floss). Fully proven."
+  },
+  {
+    "id": "dd583c2e-106b-4186-8614-cb320e838015",
+    "name": "Confessions of Countless Souls",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: variables {x: player-chosen}; targets [{toVoid: {controller self, zone play, type character}, count = variable x}, {bounce: {zone play, type character}, count = add(variable x, 1)}]",
+        "effects [ forEach toVoid -> moveCard __candidate to void; forEach bounce -> moveCard __candidate to hand; lookAndReorder(controller, count add(x,1), to top); chooserSelectsTarget controller (optional, count add(x,1)) among top cards -> forEach -> moveCard __candidate to deck bottom ]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "No new capability: 'Put X characters into the void' modelled as an exact-count target declaration + forEach moveCard to void (X-feasibility enforced by the declaration; cost/effect timing immaterial). 'Look at top X+1, put any number on bottom, rest on top' composed as lookAndReorder(to:top) then an optional chooserSelectsTarget of count X+1 among the top cards -> moveCard to bottom. Minor imperfection: the 'remaining on top in any order' ordering after bottoming is the pre-set order, not re-chosen; a `lookAndReorder to:\"split\"` mode would be cleaner but is not required."
+  },
+  {
+    "id": "b6b6b202-7629-49e6-a451-7b2e3feb6c11",
+    "name": "Dizzying Blow",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character, conditions [inBattle(__candidate, role attacker)]}, count 1}]; effects [dealDamage(c, 1), removeFromBattle(c), draw controller 1]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'attacking your faction' — modelled as inBattle role attacker while the tactic controller is the defender (battleRole defender). Minor nuance: does not distinguish 'attacking your faction' from 'attacking your location'; degrades to any attacker in a battle where you defend."
+  },
+  {
+    "id": "1cb45623-65ab-4331-a189-68a57d0e9cdc",
+    "name": "Don't Trip",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character, conditions [inBattle(__candidate, role attacker)]}, count 1}]; effects [battle-damage-assignment-replacement on c: if c would inflict battle damage, inflict that damage to itself instead]",
+        "card.flipUp { cost: 3, threshold: 'd' }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["battle-damage-assignment-replacement"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Exactly the HH-list `battle-damage-assignment-replacement` example. Only *battle* damage (CR §408.6); a one-turn effect on the picked attacker."
+  },
+  {
+    "id": "0178a457-888f-4e19-93c8-6475173566b4",
+    "name": "Early Investment",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{r: {controller self, zone deck, type resource}, count 1, optional true}]; effects [if targetExists(r) -> moveCard(r, hand); shuffleDeck controller]",
+        "card.selfDisposition { to: 'faceDownResource' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Search deck for a resource -> hand + shuffle; tactic re-enters play as a face-down resource. Fully proven shapes."
+  },
+  {
+    "id": "66238cd1-a654-4900-8cb0-775bb6df6c17",
+    "name": "Final Countdown",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: isActivePlayer controller",
+        "effects [ draw controller 4; scheduleEffect(when startOfOpponentNextTurn, effects [ chooserSelectsTarget controller up-to-3 staple resources you control -> detach; chooserSelectsTarget controller pick a character you control -> createModifier life add 1 untilEndOfTurn; chooserSelectsTarget controller pick a character you control -> restore ]) ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["schedule-opponent-turn"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "HH-list `schedule-opponent-turn` (scheduleEffect.when gains 'startOfOpponentNextTurn'). IMPLEMENTATION FLAG: the rider makes 3 player choices (which <=3 staples to detach, which character gains 2 life, which character to restore); today's BEHAVIORS note says a chooser pause inside a scheduled effect is unsupported — schedule-opponent-turn must allow chooser pauses at fire time (resume via the normal PendingEffectFrame path) or Final Countdown's rider can't be authored."
+  },
+  {
+    "id": "6261ae53-c180-4ae6-8027-c2ad3ab8ebea",
+    "name": "Fire Tail Kocktail",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: not(battleActive)",
+        "tactic play: targets [{c: {zone play, conditions [or(cardTypeIs(__candidate, character), cardTypeIs(__candidate, location))]}, count 1}]; effects [dealDamage(c, 2), draw controller 1]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'not during a battle' = not(battleActive). 'character or location' via selector.conditions or(cardTypeIs)."
+  },
+  {
+    "id": "b8166db8-01ba-4103-bfee-dfece934c330",
+    "name": "Gathering of Unlikely Heroes",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: and(isActivePlayer controller, not(battleActive))",
+        "tactic play: targets [{p: {zone play, type faction, owner opponent}, count 1}]",
+        "effects [ nameValue(chooser = controllerOf p, valueKind 'trade', storeAs t1); nameValue(chooser = controllerOf p, valueKind 'trade', storeAs t2); chooserSelectsTarget controller {controller self, zone deck, type character, tradeVar [t1,t2]} (optional) -> moveCard to hand; shuffleDeck controller; draw controller 1 ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["name-trade"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-list `name-trade` (nameValue.valueKind gains 'trade' + CardSelector.tradeVar). 'pick an opponent' / 'that player names' degenerates to the one opponent in 2p. 'non-Universal trades' restriction on what may be named is a minor nameValue nuance. Final 'Draw a card' is unconditional."
+  },
+  {
+    "id": "8f8af0b4-2e83-48e5-9c84-4fdcecfbbbd1",
+    "name": "Hasty Pursuit",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: isActivePlayer controller",
+        "effects [ grantKeywordToPlayer(player controller, keyword aggro, untilEndOfTurn); draw controller 1 ]",
+        "card.flipUp { cost: 4, threshold: 'eee', effects: [ chooserSelectsTarget controller (optional, count 2) {zone play, type character} -> forEach -> deplete __candidate ] }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["grant-keyword-to-player"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-list `grant-keyword-to-player` = grant aggro to every character the player controls now + deploys this turn (RULES.md §9: aggro here is exactly the start-of-turn-in-play exemption). 'If you picked any characters as part of FLIP UP, deplete those' is fully handled inside flipUp.effects (chooser up-to-2 characters + forEach deplete); when 0 picked the forEach is a no-op — no FLIP-UP-targets capability needed."
+  },
+  {
+    "id": "1866ab78-bc4c-4181-8556-73a0f675686e",
+    "name": "I See You!",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character, conditions [hasKeyword(__candidate, covert)]}, count 1}]",
+        "effects [ suppressKeyword(c, covert, untilEndOfTurn); if numberCompare(resourceIcons(controller, volition), '>=', 3) -> createModifier(c, speed, add, -1, untilEndOfTurn) ]",
+        "card.selfDisposition { to: 'faceDownResource' }",
+        "card.flipUp { cost: 3, threshold: 'ee', effects: [ chooserSelectsTarget controller {controller self, zone play, type resource, conditions [not sourceIsEventCard-equivalent 'another']} -> destroy ] }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["has-keyword-condition", "suppress-keyword-effect"],
+    "proposedCapabilities": [
+      {
+        "id": "suppress-keyword-effect",
+        "kind": "effects",
+        "spec": "`{ type: \"suppressKeyword\", target: TargetRef, keyword: Keyword, duration: Duration }` — removes keyword from target for duration (CR §402.6 lose-beats-grant); the durationed-effect mirror of `grantKeyword` and of the continuous-only `ContinuousAbility.suppressKeywords`. Pushes a runtime suppression cleaned up like grantKeyword grants.",
+        "why": "I See You! — 'This turn, the character loses COVERT.' Only a continuous suppressKeywords field exists (unusable from a resolving tactic); the HH-list `suppress-abilities-effect` removes *all* rules text, not one keyword."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "HH-list `has-keyword-condition` for the 'pick a character with COVERT' target filter. '-1 speed' is a normal createModifier gated on 3x volition. FLIP UP 'destroy another resource you control' = chooser + destroy (the 'another' = exclude this card's face-down source)."
+  },
+  {
+    "id": "ebac9b53-26af-491e-b251-a43a908d992f",
+    "name": "Inebriated Defenestration",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: effects [mill(player opponent, count 5), draw controller 2]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Plain mill + draw. No targeting, no EXTRA COST."
+  },
+  {
+    "id": "d8bbaab9-b156-48c4-abb7-967d8fdfb82b",
+    "name": "Infectious Pustulio",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "card.attachTo = 'character' (tactic resolves into play as an attachment instead of to discard)",
+        "tactic play condition: not(battleActive)",
+        "triggered:attackerBlocked + eventCardIs {target attachedTo} -> forEach(character inBattle role blocker) -> dealDamage(__candidate, 1)"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["attach-tactic-resolves-into-play", "event-card-is-target"],
+    "proposedCapabilities": [
+      {
+        "id": "attach-tactic-resolves-into-play",
+        "kind": "cards (src/types/cards.ts) + engine (applyTacticDisposition)",
+        "spec": "When a resolving tactic's CardDefinition.attachTo is set ('put this card into play attached to that character instead of into its owner's discard pile'), applyTacticDisposition — after the tactic's effects run — puts it into play attached to the attachTo target chosen as its first extra cost (reserved id 'attachTo', already added by getPlayTargetDeclarations for any definition with attachTo) instead of moving it to the discard pile. If no legal target was pickable / it has left play, it goes to the owner's discard pile (CR §507.2c). Once in play it is an ordinary attachment: its behavior.abilities (continuous modifiers on attachedTo, triggered, replacement) are live, and CR §301.4 / §507.2e apply when the host leaves play / stops being the type. Parallel branch to selfDisposition.",
+        "why": "Infectious Pustulio, Ocular Dispersal, Unstable Modification, Will of a Living God (all 'mutation' tactics), plus the 'God's Blessing' cycle. applyTacticDisposition today only handles selfDisposition (hand / faceDownResource) or discard — no path for a tactic to become a persistent attachment."
+      },
+      {
+        "id": "event-card-is-target",
+        "kind": "conditions",
+        "spec": "`{ type: \"eventCardIs\", target: TargetRef }` — true when getEventCardId(context.event) (the card sourceIsEventCard compares) is the same id as target. sourceIsEventCard becomes the target:'source' special case. Lets an attachment scope a battle / leave-play trigger to its host via eventCardIs { target: 'attachedTo' }.",
+        "why": "Infectious Pustulio — 'When the attached character is blocked ...'. The trigger fires on attackerBlocked for every blocked attacker; source is the attachment, not the attacker, so it can't be scoped without this. Also covers the DETHMÜRDERBLÜDGEON cycle."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Tactic with ATTACH TO CHARACTER. Effect body (damage all blockers when the host is blocked) is a proven forEach; the two gaps are (a) tactic->attachment resolution and (b) scoping a battle trigger to attachedTo. 'not during a battle' = not(battleActive)."
+  },
+  {
+    "id": "742847e8-f11d-4f8c-9fba-e5e891d6f308",
+    "name": "Keep Pushing",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: not(battleActive)",
+        "tactic play cost: destroy({selected res}); targets [{res: {controller self, zone play, type resource}, count 1}, {c: {zone play, type character, conditions [statCompare(__candidate, strength, '<=', 3)]}, count 1}]",
+        "effects [restore(c), draw controller 1]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Destroy a resource you control' is a destroy cost naming a pre-picked target declaration. 'character with 3 strength or less' via selector.conditions statCompare. restore + draw."
+  },
+  {
+    "id": "40b073e3-5e51-45c4-b95e-4a1dfc06f3c1",
+    "name": "Low-hanging Clothesline",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character, depleted true}, count 1}]; effects [if statCompare(c, life, '>=', 5) -> destroy(c)]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "selector.depleted:true for 'a depleted character'; conditional destroy gated on live life >= 5."
+  },
+  {
+    "id": "8cf97959-4bda-43f0-b1c5-e2661c814c8c",
+    "name": "Mass Subjugation",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: and(isActivePlayer controller, not(battleActive))",
+        "effects [forEach {zone play, type character, conditions [numberCompare(cardCost __candidate, '>=', 1), numberCompare(cardCost __candidate, '<=', 3)]} -> destroy __candidate]",
+        "card.flipUp { cost: 3, threshold: 'ggg' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'numeric cost 1, 2, and 3' = printed cost in [1,3] (CR §406.1, card not being played). forEach over both players' characters + destroy."
+  },
+  {
+    "id": "5668c682-8404-49c1-ae1c-0a73ee46ca1c",
+    "name": "Ocular Dispersal",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "card.attachTo = 'character' (tactic resolves into play as an attachment)",
+        "continuous / battle-damage-assignment-replacement on attachedTo: if the attached character would assign battle damage, it assigns damage = its cardCost instead of its strength",
+        "replacement: replaces {event destroy} on source -> effects [flipFaceDown {selected __candidate}] (mandatory 'instead')"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["attach-tactic-resolves-into-play", "battle-damage-assignment-replacement"],
+    "proposedCapabilities": [
+      {
+        "id": "attach-tactic-resolves-into-play",
+        "kind": "cards + engine (applyTacticDisposition)",
+        "spec": "see Infectious Pustulio.",
+        "why": "Ocular Dispersal is an ATTACH TO CHARACTER tactic ('put this card into play attached to that character instead of into its owner's discard pile') with no engine path to become a persistent attachment."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Main clause = HH-list `battle-damage-assignment-replacement` (assign cardCost instead of strength). 'If this card would be destroyed, flip it face-down instead' is the proven flipFaceDown destroy-replacement (cf. Nattering Stoopswaggler)."
+  },
+  {
+    "id": "7e7c80fc-1697-426e-b962-768196f6f2da",
+    "name": "Offering of False Friendship",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character}, count 1}]",
+        "effects [ mayPay(player opponent, [payResources 2], effects [], elseEffects [ forEach {zone play, type character, conditions [cardNameEquals(__candidate, {selected c})]} -> moveCard __candidate to deck position bottom ]) ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Any opponent may pay 2 -> terminate this card' via the Study Disturbance idiom (mayPay as sole effect; paid branch empty, elseEffects = real body; tactic discards on resolve = 'terminate', RULES.md §7). The forEach cardNameEquals against the picked character naturally includes that character itself (shares its own name), covering 'that character and characters with the same name'. Each goes to bottom of its own owner's deck (moveCard files by owner)."
+  },
+  {
+    "id": "7f75ce4c-b81e-45a9-973a-1bbe50fb43e4",
+    "name": "Profane Proposal",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{p: {zone play, type faction, owner opponent}, count 1}, {found: {controller self, zone deck}, count 5, distinctNames true}]",
+        "effects [ separate-into-piles(chooser = controllerOf p, selected 'found', pileA -> moveCard to hand of controller, pileB -> moveCard to deck of controller + shuffleDeck); shuffleDeck controller ]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["distinct-names-target", "separate-into-piles"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Both are HH-list caps: `distinct-names-target` (TargetDeclaration.distinctNames) for 'search for 5 cards with different names', `separate-into-piles` for 'that player separates those cards into two piles; put one into your hand and shuffle the other into your deck'. 'Pick an opponent' degenerates to the one opponent."
+  },
+  {
+    "id": "efa822c3-c417-4513-ad18-4b40fc3649d5",
+    "name": "Religious Rejection",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{c: {zone play, type character, conditions [not(hasAttachment(__candidate, ofType item))]}, count 1}]",
+        "effects [ destroy(c); if numberCompare(resourceIcons(controller, volition), '>=', 3) -> draw controller 1 ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'character without an item attached to it' via selector.conditions not(hasAttachment ofType item). Conditional draw on 3x volition."
+  },
+  {
+    "id": "d0ebba3a-1150-497d-85cd-9299abdf9f38",
+    "name": "Stern But Fair Backhand",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: effects [ if respondingTo {cardType tactic} -> terminate {scope respondedItem} ]",
+        "card.selfDisposition { to: 'faceDownResource' } (unconditional)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'If you deployed this in response to a tactic, terminate the tactic' -> if(respondingTo cardType tactic) + terminate the responded-to stack item. selfDisposition to faceDownResource is unconditional."
+  },
+  {
+    "id": "7a303331-f7dd-4abc-b223-ef0b033db6b9",
+    "name": "Subdermal Micromajig",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{p: {zone play, type faction, owner opponent}, count 1}, {tok: {controller self, zone play, name 'Micromajig'}, count 1}]; costs [destroy({selected tok})]",
+        "effects [ (target/chooser) an attacking character controlled by p -> destroy; createTokens(controller = controllerOf p, count 1, Micromajig) ]",
+        "card.flipUp { cost: 2, threshold: 'ee', effects: [draw controller 1] }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Pick an opponent' degenerates to the one opponent. 'Destroy a Micromajig token you control' is a destroy cost on a name-matched pre-picked target. 'Destroy an attacking character that player controls' -> selector controller opponent + inBattle role attacker. 'That player puts a Micromajig into play' -> createTokens controller = the opponent."
+  },
+  {
+    "id": "519a6b1a-f64e-4fe1-b586-39b32f7b328a",
+    "name": "Suicide Smash",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{sc: {controller self, zone play, type character}, count 1}, {loc: {zone play, type location}, count 1}]",
+        "effects [ bind x = stat(sc, strength); destroy(sc); if numberCompare(resourceIcons(controller, volition), '>=', 3) -> dealDamage({factionOf opponent}, 3); dealDamage(loc, variable x); if not(targetInZone(loc, play)) -> draw controller 1 ]",
+        "card.flipUp { cost: 3, threshold: 'r' }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["target-in-zone-condition"],
+    "proposedCapabilities": [
+      {
+        "id": "target-in-zone-condition",
+        "kind": "conditions",
+        "spec": "`{ type: \"targetInZone\", target: TargetRef, zone: Zone }` — true when target resolves to a card currently in zone (the general form of the existing source-only `sourceInZone`). 'If it is destroyed by that damage' = an `if` gated by not(targetInZone { target, zone:'play' }) placed right after the dealDamage, once the state-based destruction check has run.",
+        "why": "Suicide Smash — 'Inflict X damage to the location. If it is destroyed by that damage, draw a card.' Recurring template across the set; targetExists stays true for a destroyed card (now in discard) and there is no readable damage-vs-structure stat/counter."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "X = strength of the sacrificed character, captured with `bind` BEFORE the destroy (BEHAVIORS bind pattern). 'Destroy it' is in the printed cost section but modelled as the first effect so X can be bound first (timing immaterial). 'inflict 3 damage to an opponent's faction' -> dealDamage to faction converts to influence loss (CR §408.3)."
+  },
+  {
+    "id": "96441eaf-5037-4ffd-ae17-bdae465688cf",
+    "name": "Surprising Dudes",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play condition: isActivePlayer controller",
+        "effects [ createTokens(controller self, count 2, Micromajig 1/1/3 majig character) ]",
+        "card.selfDisposition { to: 'faceDownResource' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "createTokens x2 Micromajig + selfDisposition faceDownResource. Fully proven."
+  },
+  {
+    "id": "cb0c54e5-f40b-4fb7-aeb2-01d0ab697f4f",
+    "name": "Thabbashite Barbeque",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: targets [{picked: {zone play, conditions [not(cardTypeIs(__candidate, resource))]}, count 1}]",
+        "effects [ mayPay(player opponent, [payResources 2], effects [moveCard {source} to hand], elseEffects [ moveCard(picked, hand); chooserSelectsTarget controller {owner opponent, zone hand, conditions [not(cardTypeIs(__candidate, resource))]} -> moveCard to discard ]) ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Study Disturbance idiom, but the paid branch wants the card in HAND not discard ('put this card into its owner's hand and terminate it'). Verified against engine: finishStackItem only calls applyTacticDisposition while card.zone === 'deploying', so a paid-branch `moveCard {source} to hand` moves it out and the default discard is skipped — no new capability. 'Look at an opponent's hand and choose' = automatic (no hidden-info model) -> chooserSelectsTarget over their hand."
+  },
+  {
+    "id": "9d9b004f-6491-4e6e-a79b-dd2a479c637f",
+    "name": "Theological Theft",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: variables {x: player-chosen}; variableBounds {x: {max: count(faction cards)}}; targets [{players: {zone play, type faction}, count = variable x}, {chars: {owner opponent, zone discard, type character}, count = variable x}]",
+        "effects [ forEach players -> mill(player = ownerOf __candidate, count 10); forEach chars -> putIntoPlay(__candidate, controller self) ]",
+        "card.flipUp { cost: 7, threshold: 'dddd' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Choose X. Pick X players. Each of those players mills 10. Pick X characters in an opponent's discard -> put into play under your control.' 'Pick X players / each of those players' degenerates to a subset of {you, opponent} in 2p (per brief, NOT a parity gap). Same X drives both the players count and the discard-characters count."
+  },
+  {
+    "id": "1debbb17-6f36-47b4-85d7-cf4d91d320d7",
+    "name": "Unexpected Transformation",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: variables {y: player-chosen}; targets [{c: {controller self, zone play, type character}, count 1}, {found: {controller self, zone deck, type character, conditions [numberCompare(cardCost __candidate, '<=', variable y)]}, count 1, optional true}]",
+        "tactic play cost: payResources add(variable y, multiply(cardCost({selected c}), -1))",
+        "effects [ moveCard(c, deck position bottom); shuffleDeck controller; if targetExists(found) -> chooserSelectsOption controller [ 'deploy for free' -> deployFromZone(controller, found, free true) | 'put on top' -> moveCard(found, deck position top) ] ]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["deploy-from-deck"],
+    "proposedCapabilities": [
+      {
+        "id": "deploy-from-deck",
+        "kind": "effects (widen deployFromZone)",
+        "spec": "deployFromZone.target may resolve to a card in the `deck` zone (typically one just found by a search). It deploys for free per CR §308.1 — numeric cost waived, threshold + non-numeric extra costs still apply, 'when deployed' triggers fire — resolved as a nested consequence (no separate response window); the deck is reshuffled afterward as with any search.",
+        "why": "Unexpected Transformation — 'Search your deck for a character with cost Y or less ... You may deploy it for free. If you don't, put it on top of your deck.' deployFromZone today only accepts a discard-pile card or a face-down permanent in play; putIntoPlay would wrongly skip the threshold and the deploy triggers."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "X = cardCost of the sacrificed character, inlined directly in the payResources amount ('Pay Y-X', floored 0 per CR §406.6). 'Put it on the bottom of its owner's deck' is in the cost section but modelled as the first effect (X is printed cost, stable). Ordering assumption: reshuffle (CR §312.1) then the top/deploy choice, so 'put it on top' stays on top."
+  },
+  {
+    "id": "f6c1b927-e75b-48af-a84b-b46d7da78f21",
+    "name": "Unstable Modification",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "card.attachTo = 'character' (tactic resolves into play as an attachment)",
+        "triggered:turnStarted + eventPlayerIs controller -> chooserSelectsOption controller [ 'OPT1: +1 strength' -> createModifier(attachedTo, strength, add, 1, untilStartOfNextTurn) | 'OPT2: +1 life' -> createModifier(attachedTo, life, add, 1, untilStartOfNextTurn) | 'OPT3: can block COVERT parties' -> grantKeyword(attachedTo, canBlockCovert, untilStartOfNextTurn) ]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["attach-tactic-resolves-into-play", "duration-until-next-turn"],
+    "proposedCapabilities": [
+      {
+        "id": "attach-tactic-resolves-into-play",
+        "kind": "cards + engine (applyTacticDisposition)",
+        "spec": "see Infectious Pustulio.",
+        "why": "Unstable Modification is an ATTACH TO CHARACTER tactic ('put this card into play attached ... instead of into its owner's discard pile') with no engine path to become a persistent attachment."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-list `duration-until-next-turn` (Duration {type:'untilStartOfNextTurn'}). Per the brief this is composed as triggered turnStarted + chooserSelectsOption with 3 branches (createModifier / grantKeyword) — NOT behavior.modes (that is a play-time modal choice; this is a recurring start-of-turn re-choice on an in-play attachment). 'can block COVERT parties' = the existing canBlockCovert keyword."
+  },
+  {
+    "id": "cdaffb25-1b2d-4ecd-9c1e-472bbb07e44b",
+    "name": "Voidal Humour Redistribution",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic play: variables {x: player-chosen}; variableBounds {x: {max: sumCounters({controller self, zone play}, token)}}",
+        "tactic play targets [{src: {controller self, zone play, conditions [counterCompare(__candidate, token, '>=', 1)]}, count = count(same selector)}, {dest: {zone play, conditions [not(cardTypeIs(__candidate, resource))]}, count = count(same selector)}]",
+        "effects [ distributeAmong(chooser controller, selected 'src', amount variable x, effects [removeCounter(__candidate, token, variable __amount)]); distributeAmong(chooser controller, selected 'dest', amount variable x, effects [addCounter(__candidate, token, variable __amount)]); draw controller 1 ]"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["sum-counters-expression"],
+    "proposedCapabilities": [
+      {
+        "id": "sum-counters-expression",
+        "kind": "expressions (NumberExpression)",
+        "spec": "`{ type: \"sumCounters\", selector: CardSelector, counter: string }` — total count of `counter` markers across every in-play card matching selector. Parallel to the existing `sumStat`.",
+        "why": "Voidal Humour Redistribution — 'EXTRA COST: Choose a number for X. Remove X tokens from cards you control.' Needed as the variableBounds.max for X so the player can't name an X larger than the tokens actually available (which would let them place tokens they never removed via the 'Put X tokens divided however you want' half)."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "'Remove X tokens from cards you control' + 'Put X tokens divided however you want on any non-resource cards' — both halves are distributeAmong (removeCounter / addCounter, per-card __amount) over a declaration selecting the eligible cards. Only real gap is bounding X to available tokens (sum-counters-expression). cf. authored Voidal Perversion for the placement half."
+  },
+  {
+    "id": "ea29b4da-eebf-4020-ba8e-bf61d58445c8",
+    "name": "Will of a Living God",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "card.attachTo = 'character' (tactic resolves into play as an attachment)",
+        "triggered:cardEnteredPlay + sourceIsEventCard -> addCounter(source, token, 3)",
+        "continuous self: modifiers [{target attachedTo, strength add counter(source, token)}, {target attachedTo, life add counter(source, token)}]",
+        "triggered:turnStarted + eventPlayerIs controller -> effects [ bind tk = counter(source, token); if numberCompare(variable tk, '>=', 1) -> removeCounter(source, token, 1); if numberCompare(variable tk, '=', 0) -> destroy(attachedTo) ]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["attach-tactic-resolves-into-play"],
+    "proposedCapabilities": [
+      {
+        "id": "attach-tactic-resolves-into-play",
+        "kind": "cards + engine (applyTacticDisposition)",
+        "spec": "see Infectious Pustulio.",
+        "why": "Will of a Living God is an ATTACH TO CHARACTER tactic ('put this card into play attached ... instead of into its owner's discard pile') with no engine path to become a persistent attachment."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Enters-with-3-tokens + gains-stats-per-token is the HH recurring token pattern (all proven shapes). 'remove a token; if you cannot, destroy the attached character' handled by binding the token count first, then two ifs on the pre-removal value (no if/else primitive needed). Only gap is the tactic->attachment resolution shared with the other mutation cards."
+  }
+]

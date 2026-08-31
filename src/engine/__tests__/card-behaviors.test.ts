@@ -9989,3 +9989,92 @@ describe("parity: deck-search-trigger (Golden Charm)", () => {
     assert.equal(engine.getAvailableResourceCount(P1), 0, "P1 paid 1");
   });
 });
+
+// "EXTRA COST: Pick an opponent. -- Search your deck for 5 cards with
+// different names ... That player separates those cards into two piles.
+// Put one pile into your hand and shuffle the other into your deck."
+// (Profane Proposal) — distinctNames search + the separateIntoPiles choice.
+describe("card behavior: Profane Proposal (distinctNames + separateIntoPiles)", () => {
+  test("the opponent splits the found cards; pile 1 → hand, pile 2 → deck", () => {
+    const proposal = tactic({
+      name: "Profane Proposal",
+      behavior: {
+        abilities: [
+          {
+            id: "profane-proposal",
+            type: "activated",
+            targets: [
+              { id: "found", selector: { controller: "self", zone: "deck" }, count: 3, distinctNames: true }
+            ],
+            effects: [
+              {
+                type: "separateIntoPiles",
+                splitter: "opponent",
+                selected: "found",
+                pile1: [{ type: "moveCard", target: { type: "selected", id: "__candidate" }, to: "hand" }],
+                pile2: [{ type: "moveCard", target: { type: "selected", id: "__candidate" }, to: "deck", position: "bottom" }]
+              },
+              { type: "shuffleDeck", player: "controller" }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pp", def: proposal, owner: P1, zone: "hand" },
+        { key: "a", def: character({ id: "pp-a", name: "Pp Ay" }), owner: P1, zone: "deck" },
+        { key: "b", def: character({ id: "pp-b", name: "Pp Bee" }), owner: P1, zone: "deck" },
+        { key: "c", def: character({ id: "pp-c", name: "Pp Cee" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("pp"),
+      selected: { found: [id("a"), id("b"), id("c")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.pendingChoice?.kind, "pileAssignment");
+    assert.equal(engine.state.pendingChoice?.playerId, P2);
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P2,
+      choice: { kind: "pileAssignment", pile1: [id("a")], pile2: [id("b"), id("c")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("a")].zone, "hand");
+    assert.equal(engine.state.cards[id("b")].zone, "deck");
+    assert.equal(engine.state.cards[id("c")].zone, "deck");
+  });
+
+  test("rejects a search selection with a duplicate name", () => {
+    const proposal = tactic({
+      name: "Profane Proposal Dup",
+      behavior: {
+        abilities: [
+          {
+            id: "pp2",
+            type: "activated",
+            targets: [{ id: "found", selector: { controller: "self", zone: "deck" }, count: 2, distinctNames: true }],
+            effects: [{ type: "forEach", selected: "found", effects: [{ type: "moveCard", target: { type: "selected", id: "__candidate" }, to: "hand" }] }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pp", def: proposal, owner: P1, zone: "hand" },
+        { key: "d1", def: character({ id: "pp-dup", name: "Pp Twin" }), owner: P1, zone: "deck" },
+        { key: "d2", def: character({ id: "pp-dup", name: "Pp Twin" }), owner: P1, zone: "deck" }
+      ]
+    });
+    assert.throws(() =>
+      engine.perform({ type: "playCard", playerId: P1, cardId: id("pp"), selected: { found: [id("d1"), id("d2")] } })
+    );
+  });
+});

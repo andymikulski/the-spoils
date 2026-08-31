@@ -5,7 +5,7 @@
 import type { AbilityId, CardDefinitionId, CardType, Keyword, Trade, Zone } from "./ids.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
-import type { CardSelector, NumberExpression, TargetDeclaration, TargetRef } from "./expressions.js";
+import type { CardSelector, NumberExpression, PlayerRef, TargetDeclaration, TargetRef } from "./expressions.js";
 import type {
   CostModifierDefinition,
   DamageModifierDefinition,
@@ -278,6 +278,14 @@ export interface CardDefinition {
      */
     noResponse?: boolean;
     /**
+     * "This card does not leave play if the attached card leaves play."
+     * (Everlasting Blade of Light). An "Attach to X" card is normally put
+     * into its owner's discard pile by the state-based check once it has no
+     * valid host (CR §507.2c); with this set it instead stays in play,
+     * unattached, and can be re-attached by an EQUIP-style ability.
+     */
+    keepOnHostLeave?: boolean;
+    /**
      * "If you would draw a card as part of your Develop Rule, you may
      * <instead> ..." (Arcane Escrow). While the developing player controls
      * an in-play card carrying this, choosing the `draw` develop option
@@ -331,12 +339,13 @@ export interface ActivatedAbility extends AbilityBase {
    */
   activationZone?: Zone;
   /**
-   * Who may activate this ability — `"controller"` (default) or
-   * `"anyPlayer"`. An `"anyPlayer"` faction ability (The Knitting
-   * Coalition — "Both players may use this ability") is offered to the
-   * opponent too and resolves under whoever activated it.
+   * Who may activate this ability — `"controller"` (default), `"anyPlayer"`
+   * (The Knitting Coalition — "Both players may use this ability"; offered
+   * to the opponent too and resolved under whoever activated it), or
+   * `"opponent"` (iDumb De-Itemizer — "Only an opponent may use this
+   * ability"; hidden from the controller, resolved under the opponent).
    */
-  usableBy?: "controller" | "anyPlayer";
+  usableBy?: "controller" | "anyPlayer" | "opponent";
   /**
    * An *icon* requirement to activate this ability, same shorthand as
    * `CardDefinition.threshold` (e.g. `"gg"` = two Greed icons) — a gate,
@@ -439,12 +448,23 @@ export interface ReplacementAbility extends AbilityBase {
       };
   condition?: Condition;
   /**
-   * When true the replacement is OPTIONAL: the source's controller is asked
-   * whether to apply it ("you may ... instead"). If `optionalCost` is set
-   * and unaffordable, it counts as declined and the original event happens.
+   * When true the replacement is OPTIONAL: a player is asked whether to
+   * apply it ("you may ... instead"). If `optionalCost` is set and
+   * unaffordable, it counts as declined and the original event happens.
    */
   optional?: boolean;
   optionalCost?: Cost[];
+  /**
+   * Who makes the optional choice and pays `optionalCost` — a `PlayerRef`
+   * resolved relative to the **affected card's controller**. Defaults to
+   * the *source's* controller (the historical behaviour). `"controller"`
+   * targets the affected card's own controller ("if a character would enter
+   * play under an opponent's control, THEY may pay 1" — Phantasmagoric
+   * Tollbooth); `"opponent"` targets that controller's opponent ("if this
+   * would be destroyed, any opponent may pay 2" — Unloyal Necromorph).
+   * Effects then resolve with `controller` = whoever answered.
+   */
+  chooser?: PlayerRef;
   effects: Effect[];
 }
 

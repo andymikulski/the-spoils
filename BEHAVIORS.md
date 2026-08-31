@@ -43,6 +43,98 @@ Sibling `CardDefinition` fields the coverage effort added:
 `AbilityDefinition` is one of `ActivatedAbility | TriggeredAbility |
 ContinuousAbility | ReplacementAbility` (discriminated on `type`).
 
+## Holy Heist additions
+
+Condensed index of vocabulary added for Holy Heist (full detail in
+`src/types/*` and `COVERAGE.md`'s capability table).
+
+**Effects**
+- `healDamage { target, amount }` — remove up to N damage markers (floor 0).
+- `suppressAbilities { target, duration }` — duration'd "loses all rules
+  text" (the effect form of `ContinuousAbility.suppressAllAbilities`).
+- `suppressKeyword { target, keyword, duration }` — duration'd "loses
+  <keyword>" (lose beats grant).
+- `grantKeywordToPlayer { player, keyword, duration }` — every character
+  `player` controls (now + later this turn) gains `keyword`. "characters you
+  control and deploy" = grant `aggro`.
+- `transformBattleDamage { target, role: "dealer" | "receiver", kind:
+  "setAmount" | "redirectToSelf" | "bounceOther" | "bounceSelf", amount?,
+  duration }` — rewrites locked battle-damage assignments. Don't Trip
+  (`redirectToSelf`), Ocular Dispersal (`setAmount`, `amount` = host
+  `cardCost`), Vexing Nullifier (`bounceOther` + `bounceSelf`).
+- `randomFromSelection { selected, count, effects }` — run `effects` for
+  `count` random members of an existing selection (`__candidate` bound).
+- `separateIntoPiles { splitter, selected, pile1: Effect[], pile2: Effect[] }`
+  — `splitter` partitions `selected` into two piles (either may be empty);
+  `pile1`/`pile2` effects run per card in each. Profane Proposal.
+- `grantVoidPlay { selected, player, ignoreThreshold? }` — persistent grant
+  letting `player` deploy those (still-voided) cards as though from hand.
+  Cheats. Pruned when the card leaves the void.
+- `scheduleEffect.when` gains `"startOfOpponentNextTurn"` (Final Countdown).
+- `lookAndReorder.to` gains `"split"` — the chooser sends any number of the
+  looked-at cards to the deck bottom and keeps the rest on top, each pile in
+  a chosen order (`reorderDeck` choice carries `order` = top pile, `bottom`
+  = bottom pile). Ignatius Gloamspike, Confessions of Countless Souls.
+
+**Costs** — `moveSelected { id, player, selector, count, to, position?,
+shuffle? }` (paid like `discard` but to any zone; `shuffle` reshuffles a
+deck destination). Uhluhtc Niudla.
+
+**Conditions** — `hasKeyword { target?, keyword }`, `textMentionsIcon
+{ target?, icon }`, `hasAttachment` gains `ofSubtype?`, `isToken
+{ target? }`, `eventCardIs { target }` (general `sourceIsEventCard` — scope
+an attachment trigger to `attachedTo`), `targetInZone { target, zone }`
+("if it is destroyed by that damage" = `if` on `not(targetInZone play)`
+after the `dealDamage`), `battleTargetIs { controlledBy?, cardType? }`,
+`battleDamageAssigned { operator, value }` ("before any damage is assigned"
+= `=` 0).
+
+**Expressions** — `sumCounters { selector, counter }` (parallel to
+`sumStat`).
+
+**TargetRef** — `{ type: "respondedToPicked", cardType }` (the card the
+responded-to item picked as an extra cost — read side of the same-named
+condition).
+
+**Restrictions** (`grantRestriction` / continuous `restrictions`)
+- `mustBePicked` — a target declaration whose legal pool contains any
+  `mustBePicked` card collapses to just those (Ferret Oil Coating).
+- `cannotUseAbilities` — no player may activate that card's activated
+  abilities (triggered/continuous/replacement unaffected). Aura form —
+  "Abilities on locations cannot be used" (0v3rw0rk3d 31f).
+
+**Keywords** — `canBlockAnyParty` (Guardbeast of Thabbash): like
+`canBlockCovert`, plus exempt from "a COVERT character may block only a
+COVERT party".
+
+**Ability knobs**
+- `ActivatedAbility.usableBy` gains `"opponent"` (iDumb De-Itemizer RESET —
+  only the opponent may use it).
+- `ReplacementAbility.chooser?: PlayerRef` — resolved relative to the
+  *affected card's* controller; that player makes the optional choice and
+  pays `optionalCost` (Unloyal Necromorph — `chooser: "opponent"`).
+
+**TargetDeclaration** — `distinctNames: true` ("N cards with different
+names"; Cheats, Profane Proposal).
+
+**`nameValue.valueKind`** gains `"trade"`; **`CardSelector.tradeVar:
+string | string[]`** matches a card's `trade` against stored named
+value(s). Gathering of Unlikely Heroes.
+
+**Card-def siblings** — `behavior.keepOnHostLeave: true` (an "Attach to X"
+card whose host leaves play stays in play unattached; Everlasting Blade of
+Light). A **tactic** with `attachTo` set (and no `selfDisposition`) resolves
+into play attached to its picked host — its abilities are then live
+(Infectious Pustulio, Ocular Dispersal, Unstable Modification, Will of a
+Living God).
+
+**Events** — `cardsDiscarded { playerId, count }` (once per discarded card),
+`blockingPartyFormed { playerId, blockerCount }` (once for the whole
+declared blocking party; `playerId` = defender).
+
+**`Duration`** gains `{ type: "untilStartOfNextTurn" }` — survives the
+opponent's turn, expires at the start of your next.
+
 ## Shade of the Devoured Emperor (Volition era) additions
 
 A condensed index of vocabulary added for that set — full detail is in the
@@ -289,9 +381,15 @@ alongside the `cardEnteredPlay` one.
 
 `turnStarted`, `turnEnding`, `cardPlayed`, `cardEnteredPlay`, `cardMoved`,
 `cardDestroyed`, `cardDepleted`, `cardRestored`, `resourcePlayed`,
-`cardsDrawn`, `damageDealt`, `abilityActivated`, `battleStarted`,
-`battleEnded`, `characterAttacked`, `characterBlocked`, `counterChanged`,
-`attackerBlocked`, `deckSearched`.
+`cardsDrawn`, `cardsDiscarded`, `damageDealt`, `abilityActivated`,
+`battleStarted`, `battleEnded`, `characterAttacked`, `characterBlocked`,
+`blockingPartyFormed`, `counterChanged`, `attackerBlocked`, `deckSearched`.
+
+`cardsDiscarded` (`{ playerId, count }`) fires once per hand→discard card
+(`count` always 1) — a "+X for each card discarded" trigger applies per
+event and the total sums (Bewilderbeast). `blockingPartyFormed`
+(`{ playerId, blockerCount }`) fires once for the whole declared blocking
+party, `playerId` = the defender (Microdefense Autosystem).
 
 `cardsDrawn` (`{ playerId, count }`) fires once per completed draw batch
 (the whole `draw N` at once, not per card) — "When a player draws any
@@ -910,15 +1008,22 @@ non-optional `count` is still an exact requirement, even a variable one).
 
 ```ts
 Keyword = "tactical" | "aggro" | "covert" | "redirectDamage"
-        | "cannotBeBlocked" | "canBlockCovert"
+        | "cannotBeBlocked" | "canBlockCovert" | "canBlockAnyParty"
 Restriction = "cannotAttack" | "cannotBlock" | "mustAttack" | "mustBlock"
-            | "cannotBeRestored"
+            | "cannotBeRestored" | "cannotBeRestoredByRule" | "cannotBePicked"
+            | "attackOncePerTurn" | "cannotBeTakenControl"
+            | "mustBePicked" | "cannotUseAbilities"
 ```
 
 `canBlockCovert` — "can block COVERT parties" (Recyclable Golem): counts as
-Covert for *blocking* an all-Covert attacking party only. `cannotBeBlocked`
-— "unblockable" (Uncontrollable Jalopy). `cannotBeRestored` — the faction
-Restore Rule skips it (aura form of `restoreLocked`; Framptle).
+Covert for *blocking* an all-Covert attacking party only. `canBlockAnyParty`
+— that, plus exempt from "a COVERT character may block only a COVERT party"
+(Guardbeast of Thabbash). `cannotBeBlocked` — "unblockable" (Uncontrollable
+Jalopy). `cannotBeRestored` — the faction Restore Rule skips it (aura form
+of `restoreLocked`; Framptle). `mustBePicked` — a target declaration whose
+legal pool contains any `mustBePicked` card narrows to just those (Ferret
+Oil Coating). `cannotUseAbilities` — that card's *activated* abilities can't
+be used (0v3rw0rk3d 31f, aura over locations).
 
 **`ContinuousAbility.suppressKeywords`** — `KeywordGrantDefinition[]`,
 parallel to `.keywords` but *removes* the keyword while `condition` holds

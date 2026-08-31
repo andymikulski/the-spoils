@@ -42,7 +42,15 @@ export type Keyword =
    * keyword counts as Covert for the purpose of *blocking* an all-Covert
    * attacking party only (it is not otherwise Covert).
    */
-  | "canBlockCovert";
+  | "canBlockCovert"
+  /**
+   * "Can block COVERT parties and non-COVERT parties" (Guardbeast of
+   * Thabbash). Like `canBlockCovert`, but ALSO exempts the character from
+   * "a COVERT character may block only a COVERT party" — so a character that
+   * is itself Covert (e.g. via an icon clause) can still block a non-Covert
+   * attack.
+   */
+  | "canBlockAnyParty";
 
 /** A boolean combat restriction, granted like a Keyword but never printed statically — always via a `grantRestriction` effect or `ContinuousAbility.restrictions`. */
 export type Restriction =
@@ -66,6 +74,24 @@ export type Restriction =
   | "cannotBePicked"
   /** "This card can attack only once each turn." — `declareAttack` rejects a character that already attacked this turn while it has this restriction. Granted statically or as a continuous aura. */
   | "attackOncePerTurn"
+  /**
+   * "Anything that can pick this card must pick it." — the inverse of
+   * `cannotBePicked`: whenever a player-or-chooser target declaration's
+   * legal candidate pool would include one or more `mustBePicked` cards, it
+   * is narrowed to *only* those (the picker is forced to choose among
+   * them). Does not force a fully-optional ("you may pick") declaration to
+   * pick at all — only which card, once picking. Ferret Oil Coating.
+   */
+  | "mustBePicked"
+  /**
+   * "This card's activated abilities cannot be used." — no player may
+   * activate an activated ability whose source has this restriction
+   * (`getAvailableActivatedAbilities` skips it, `activateAbility` rejects
+   * it). Triggered / continuous / replacement abilities are unaffected.
+   * Granted as a continuous aura — "Abilities on locations cannot be used"
+   * (0v3rw0rk3d 31f, over `{ type: "location" }`).
+   */
+  | "cannotUseAbilities"
   /** "Opponents cannot take control of this card." — a `takeControl` effect that would move it to a different controller fizzles. Gigantitect's Giant Giant. */
   | "cannotBeTakenControl";
 
@@ -100,6 +126,14 @@ export type ComparisonOperator = ">" | ">=" | "=" | "<=" | "<";
 export type Duration =
   | { type: "permanent" }
   | { type: "untilEndOfTurn" }
+  /**
+   * Expires at the start of the source controller's *next* turn — it
+   * survives the intervening opponent turn, unlike `untilEndOfTurn`. "until
+   * the start of your next turn" (Unstable Modification's per-turn modal
+   * choice). In the 2-player engine this is "two start-of-turn points
+   * later".
+   */
+  | { type: "untilStartOfNextTurn" }
   | { type: "whileSourceInPlay" };
 
 export type ModifierOperation = "add" | "set" | "multiply";

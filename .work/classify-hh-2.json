@@ -1,0 +1,894 @@
+[
+  {
+    "id": "b1ca8db9-a359-46d8-a656-cb5ffadd68a4",
+    "name": "Rapacious Soldier",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["continuous self: restriction cannotBlock"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Cannot' beats 'can' (CR §402.7). ContinuousAbility.restrictions [{target:source, restriction:cannotBlock}] — Lugubrious Finger Trap idiom."
+  },
+  {
+    "id": "4025a8f7-ffbe-45b0-ae3c-41624ea54b33",
+    "name": "RC Flashlight",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["static: behavior.keywords ['cannotBeBlocked','canBlockCovert']"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Both lines are existing engine keywords (src/types/ids.ts): cannotBeBlocked (CR §412) and canBlockCovert (Recyclable Golem precedent — counts as covert for blocking a covert party only). Neither is a metadata.keywords value (that set is covert/aggro/tactical), so they go in behavior.keywords. No logic."
+  },
+  {
+    "id": "f8c756cc-9ee5-4429-9b90-b38e2b8585fa",
+    "name": "Resurrecting Necromorph",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardMoved (eventCard is a character, from play, into discard, owned by self) + triggerZone discard + source in discard + eventCard != source -> mayPay 1 -> putIntoPlay source from discard under controller, then deplete source"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'another character' = exclude source (routine trigger self-exclusion). Condition composes: and(cardMovedFromZone play, cardMovedToZone discard, cardTypeIs eventCard character). putIntoPlay from discard + deplete both exist; damage/depletion shed on the zone change (CR §408.9) so it returns fresh then depletes."
+  },
+  {
+    "id": "baa7224f-39ee-4e4b-8788-1f190dbb38f0",
+    "name": "Rudo Mangod, Holder of Light",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous aura: while not(cardDepleted source) ('while restored') -> +1 strength / +1 life to each character you control",
+        "triggered:turnStarted (each turn, any player's) + source has a 'gear'-subtype card attached -> restore source"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "rudolphus", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["has-attachment-subtype"],
+    "proposedCapabilities": [
+      {
+        "id": "has-attachment-subtype",
+        "kind": "conditions (Condition union)",
+        "spec": "Extend the existing `hasAttachment` condition with an optional `ofSubtype?: string` filter, parallel to the current `ofType?: CardType`. True when at least one in-play card attached to `target` (default `__candidate` / `source`) has `ofSubtype` in its printed `CardDefinition.subtype` array. Same evaluation path as `ofType`, matching the subtype list instead of the card type; `ofType` and `ofSubtype` may combine (both must hold). No other shape change.",
+        "why": "Rudo Mangod, Holder of Light ('At the start of each turn, if this card has a 'gear' card attached to it, restore this card'). The same 'gear card attached' predicate recurs on 4p7 31f and its reprint ('While a gear card is attached to this card, it gains 1 strength and 1 life'). `hasAttachment` today only filters by CardType, and 'gear' is a subtype, not a type."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "UNIQUE RUDOLPHUS -> metadata.unique 'rudolphus'. 'While this card is restored' = not(cardDepleted source) gate on the aura. 2nd clause needs a subtype-aware attachment check (proposed has-attachment-subtype)."
+  },
+  {
+    "id": "758adb58-e5d6-47c2-9545-a06561dfc92a",
+    "name": "Scrapple-Jack",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "ETB choice (models 'EXTRA COST: you may destroy a Micromajig token' + its conditional ETB as one prompt): chooserSelectsOption [A 'destroy a Micromajig token you control' -> destroy a chosen Micromajig token, then optional pick an item in your discard -> moveCard to hand; B 'decline' -> nothing]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "An optional EXTRA COST can't be a mandatory behavior.onPlay cost, and `oneOf` auto-pays with no player choice (costs.ts). Modeled as an ETB chooserSelectsOption; the cost-vs-ETB timing gap is unobservable here. Micromajig = card token (CR §409.3c); selector by name 'Micromajig', controller self."
+  },
+  {
+    "id": "8b65f186-200b-4642-bf4a-a4055a9f5372",
+    "name": "Skilled Bannerman",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": false,
+      "shapes": [],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": ["rage"], "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Character with a card-level PROVIDES line; handled by the card-def provides field / getResourceIcons + the cardProvides condition — no behavior block. Provides [R], not [V], so it does not feed the Thabbashite/[V]-enters-play cycle."
+  },
+  {
+    "id": "745b2a35-f814-4f40-a5fb-f072e281e756",
+    "name": "Sneaky Sarco",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> if( random(1..2) = 1 ) ('win the coin flip') addCounter source token 1",
+        "continuous self: while counterCompare(source, token, >=1) -> source gains covert",
+        "activated FEED: costs [payResources 1, removeCounter source token 1] -> createModifier +1 strength / +1 life untilEndOfTurn on source"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Coin flip = `random` NumberExpression min1/max2 compared inside an `if` (BEHAVIORS.md 'Coin flip / random discard'). Covert grant gated by counterCompare on token."
+  },
+  {
+    "id": "fa0943ab-fc48-4768-aab5-aee0b8aa3f37",
+    "name": "Special Forces",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["activated UNDERCOVERT OPERATIONS: cost payResources 3 -> grantKeyword covert untilEndOfTurn on source + createModifier -1 life untilEndOfTurn on source"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'loses 1 life this turn' = stat modifier -1 life untilEndOfTurn."
+  },
+  {
+    "id": "b129604c-b993-48ff-8380-9a85297a75c9",
+    "name": "Spurious Anthropologist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:characterBlocked + source is the blocker -> optional pick a character in your discard -> add it to the blocking party (put it into play into the battle) and link the pair via exile-if-leaves-play-this-turn",
+        "triggered:battleEnded + source blocked this battle -> removeFromGame source",
+        "card-def flipUp { cost: 1, threshold: 'ggg' }"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": ["tactical"] },
+    "engineCapability": ["exile-if-leaves-play-this-turn"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "TACTICAL static line. Pulls a discard-pile character into the blocking party mid-battle — treat as putIntoPlay into the party (CR §608.1c: joins once the party forms). exile-if-leaves-play-this-turn (HH list, cites this card) links both so either leaving play this turn removes both from game instead (CR §301.4-style but symmetric). FLIP UP 1 [G][G][G]."
+  },
+  {
+    "id": "9adb9f40-de34-4ce7-8e43-6fd2845a4757",
+    "name": "T Force 5 MegaManlyMajig",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + sourceIsEventCard -> optional detach up to 3 resources from your faction (target decl count:3, optional)"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "`detach` effect + range target ('N or fewer' = count:3, optional:true, BEHAVIORS.md)."
+  },
+  {
+    "id": "e76bbc29-bb2f-4f8c-a8e9-3d6fc921ef85",
+    "name": "Thabbashite Bowlegger",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> optional pick a character -> createModifier +2 strength untilEndOfTurn"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Standard Holy Heist '[V] enters play under your control' trigger (HH-BRIEF recurring pattern)."
+  },
+  {
+    "id": "aa6ad3ba-84aa-417a-9e0c-538d4faa34ca",
+    "name": "Thabbashite Communicant",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> optional lookAndReorder top 1 of own deck, to bottom (optional)"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Recurring [V]-ETB trigger. 'look at the top card ... may put it on the bottom' = lookAndReorder top:1, to:'bottom'."
+  },
+  {
+    "id": "ad2abdfd-c8dc-42fb-9e2c-e3627c2073c4",
+    "name": "Thabbashite Dartist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> optional pick a character -> createModifier -1 life untilEndOfTurn"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Recurring [V]-ETB trigger."
+  },
+  {
+    "id": "4c4df8dd-da26-4d4c-b84a-24e2b31b7008",
+    "name": "Thabbashite Deacon",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> optional pick a faction -> modifyInfluence +1"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Recurring [V]-ETB trigger. Explicitly 'pick a faction', so a faction is a legal target (CR §202.9 / §402.9). Either faction may be chosen."
+  },
+  {
+    "id": "19c7a8ca-f41e-400a-9326-99404465a5c2",
+    "name": "Thabbashite Organist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy self) -> reduceNextCost 1 this turn (no cardType filter)"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Recurring [V]-ETB trigger; mandatory (no 'you may'). Un-typed reduceNextCost applies to the next card played this turn (CR §406.5)."
+  },
+  {
+    "id": "e4730213-75fc-4614-9466-1b3c1e42e630",
+    "name": "Thabbashite Urchin",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["icon-gated continuous: while and(resourceIcons volition >= 3, count(item, controller:opponent, zone:play) >= 1) -> source gains keyword cannotBeBlocked"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'[V][V][V]:' bare-icon paragraph = threshold-gated continuous (CR §405.4); 'an opponent controls an item' folds into the same condition. cannotBeBlocked is an engine keyword."
+  },
+  {
+    "id": "b6bc3557-e0d3-4bfc-9bc1-138d0d27fb31",
+    "name": "Torchlight Sarcophyle",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["continuous self: while any player controls a character with COVERT -> source gains covert"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["has-keyword-condition"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-BRIEF cites this card for has-keyword-condition. Condition: numberCompare(count(character, controller:any, conditions:[hasKeyword covert]) >= 1), or a direct hasKeyword existence check. Self counts once it has covert, which is fine (self-sustaining once true is the intended reading)."
+  },
+  {
+    "id": "d1ec10d9-7fac-4cf9-9a2f-c9f03d662179",
+    "name": "Twisted Cannoneer",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["activated FIRE!: condition not(battleActive); targets [a faction, a character you control]; costs [sacrificeSelected the character (disposition destroy), payResources 1] -> dealDamage 1 to the picked faction (auto-converts to influence loss, CR §408.3)"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Use this only not during a battle' = not(battleActive). 'Destroy a character you control' as a cost = sacrificeSelected. Pay folds in last (CR §406.3a)."
+  },
+  {
+    "id": "7be95bf9-e696-4f1d-82cd-e9f23c94f346",
+    "name": "Uhluhtc Niudla",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated PREVAIL UPON: costs [moveSelected a resource you control -> its owner's hand; pick a player; payResources 1] -> chooserSelectsTarget (picked player) a face-down resource they control -> moveCard to its owner's hand",
+        "activated AVAIL ANEW: costs [moveSelected a resource from your hand -> shuffle into your deck (reveal); payResources 1] -> if cardNameEquals(cost-selected card, 'Obsession') grantKeyword covert untilEndOfTurn on source; draw 1"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": "uhluhtc", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["move-selected-cost"],
+    "proposedCapabilities": [
+      {
+        "id": "move-selected-cost",
+        "kind": "costs (Cost union)",
+        "spec": "New `Cost` member `{ type:'moveSelected'; id:string; player:PlayerRef; selector:CardSelector; count:number; to:Zone; position?:'top'|'bottom'; shuffle?:boolean }`. Paid exactly like the `discard` cost: the activating player chooses `count` cards matching `selector` up front, supplied via `selected[id]`, legality-checked (zone/controller, no duplicates, exactly `count`) before the ability can be paid for; on payment they move to `to` (`position` for a deck; `shuffle` reshuffles that deck per CR §313.2). All-or-nothing like every other cost. 'Reveal' in printed text is cosmetic (no hidden-info model). Referable afterwards via `{selected id}` for a follow-up condition.",
+        "why": "Uhluhtc Niudla — PREVAIL UPON ('COST: Put a resource you control into its owner's hand.') and AVAIL ANEW ('COST: Reveal a resource from your hand and shuffle it into your deck.'). No existing Cost moves a chosen card to hand or shuffles it into a deck: `discard` only targets the discard pile; `sacrificeSelected` dispositions are removeFromGame|destroy|discard."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "UNIQUE UHLUHTC -> metadata.unique 'uhluhtc'. Effect sides compose from existing vocab (chooserSelectsTarget face-down resource -> moveCard to hand; cardNameEquals on the cost-selected card for the Obsession branch; draw is unconditional). Only the two costs need the new primitive. 'Pick a player' degenerates to the one opponent — no parity gap. Also the fetch target of Seriously Weird Crystalline Artefact's SERAPHIM FUSION."
+  },
+  {
+    "id": "d000169f-1416-41e4-a603-3fc3bed83e46",
+    "name": "Underdog",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["continuous self: +X strength where X = count(character, owner:opponent, zone:play)"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'characters ... your opponents own' = selector owner:opponent (not controller). Modifier value is a count expression."
+  },
+  {
+    "id": "420418bb-f8a7-435a-a0eb-1dec094e3805",
+    "name": "Unloyal Necromorph",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["replacement: replaces destroy of source; chooser = affectedController; affected player's opponent may pay 2 -> takeControl source to that player + setDamage 0 on source; else destruction proceeds"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["replacement-affected-chooses"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-BRIEF cites this exact card for replacement-affected-chooses. 'all damage already inflicted to this card this turn is reduced to 0' = setDamage 0 (CR §506.6 also auto-resets on an applied destroy replacement)."
+  },
+  {
+    "id": "63bfbe3f-f1ad-48f7-a905-81dd2ce8b0ac",
+    "name": "Vexing Nullifier",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "battle-damage replacement (outgoing): if source would inflict battle damage to a character, instead put that character into its owner's hand",
+        "battle-damage replacement (incoming): if a character would inflict battle damage to source, instead put source into its owner's hand"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["battle-damage-assignment-replacement"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-BRIEF cites this exact card (both directions) for battle-damage-assignment-replacement. Only battle damage is intercepted (CR §408.6); non-battle damage during a battle is unaffected."
+  },
+  {
+    "id": "97ccef0f-b39a-42d7-8521-0c7549cfef60",
+    "name": "Vicious Bruiser",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["icon-gated continuous: while resourceIcons rage >= 6 -> source +2 strength / +4 life"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'[R][R][R][R][R][R]:' bare-icon paragraph = threshold-gated continuous static buff (HH-BRIEF pattern; CR §405.4)."
+  },
+  {
+    "id": "82130389-515b-4a5d-92dd-188d3f97c9ff",
+    "name": "Warehouse Sentinel",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["activated RECUR: activationZone discard, threshold 'ddd', costs [payResources 1, removeFromGame source], target [a character] -> if(cardDepleted target) destroy target"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Standard RECUR-from-discard idiom (HH-BRIEF). 'Pick a character' is any character; destroy is conditional on it being depleted."
+  },
+  {
+    "id": "9fc239ec-9f39-4fd0-ae5d-4bbd4e116f66",
+    "name": "Zigalburgonglgr, the Stolen God",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> optional: pick up to X non-resource cards (target decl count = resourceIcons volition of controller, optional) -> forEach selected addCounter token 1",
+        "triggered:cardDestroyed(source) -> forEach non-resource card (any controller) with counterCompare(token, >=1) -> destroy",
+        "activated TURN TO MUSH: cost payResources 2, target [a card with counterCompare(token, >=1)] -> flipFaceDown target"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "trade universal, threshold vvvvvv — no UNIQUE designation. 'up to X' = target declaration count as a NumberExpression (resourceIcons volition) + optional (BEHAVIORS.md supports NumberExpression counts). 'non-resource' = selector conditions [not cardTypeIs resource]. flipFaceDown sends the card to its owner as a face-down resource (CR §411)."
+  },
+  {
+    "id": "21274c5d-a966-4303-a9e6-9db01061d7a0",
+    "name": "Akashic Coin",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy opponent) -> mayPay{ player:opponent, costs:[payResources 2], effects:[], elseEffects:[ mayPay{ player:controller, costs:[loseInfluence 1], effects:[draw 1], elseEffects:[flipFaceDown source] } ] }",
+        "card-def flipUp { cost: 3, threshold: 'g' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "akashic object", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "UNIQUE AKASHIC OBJECT -> metadata.unique 'akashic object'. Nested mayPay/elseEffects (Study Disturbance idiom); mayPay charges the resolved effect.player. 'have your faction lose 1 influence' = loseInfluence cost (bypasses damage modification, CR §408.3b). FLIP UP 3 [G]."
+  },
+  {
+    "id": "27d42a55-adb9-43ca-95b6-6778af1648f0",
+    "name": "Akashic Notes",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + and(cardProvides(eventCard, volition, 1), eventCardControlledBy opponent) -> mayPay{ costs:[payResources 1], effects:[playResource { player:controller, faceDown:true }], elseEffects:[flipFaceDown source] }",
+        "card-def flipUp { cost: 3, threshold: 'vv' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "akashic object", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "UNIQUE AKASHIC OBJECT -> metadata.unique 'akashic object'. 'play a face-down resource attached to your faction' = playResource effect with faceDown, player controller. FLIP UP 3 [V][V]."
+  },
+  {
+    "id": "9c2008d3-32d2-495d-9147-203f5c33aa36",
+    "name": "Crematory Cache",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": ["triggered:cardDestroyed + cardTypeIs(eventCard, character) -> chooserSelectsOption [ 'gain 1 influence' -> modifyInfluence +1 to controller's faction ; 'decline' -> nothing ]"],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'a character' = any character, either player's. 'you may gain 1 influence' modeled as a 2-branch chooserSelectsOption. Fires once per cardDestroyed event."
+  },
+  {
+    "id": "a54da68e-49b1-4942-abbb-db480747005a",
+    "name": "Deity Delimitation Device",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated ENTRAPMENT: costs [deplete source, pick a character you control]; X = cardCost(target) -> moveCard target to void; addCounter source token (X-1, floored 0)",
+        "activated RELEASE: costs [deplete source, chooserSelectsNumber X] -> removeCounter source token X; if removed, pick a character you own in the void with cardCost = X -> putIntoPlay from void under controller"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Characters sent to the void by ENTRAPMENT go there face-up (plain 'put ... into the void', CR §403.7a), so RELEASE may legally pick them (CR §403.7b bars picking face-down void cards). Selector zone:void, owner:self, conditions numberCompare(cardCost = X). putIntoPlay from void exists."
+  },
+  {
+    "id": "5bb0adcd-38ae-467f-ad46-cd07c1e5e5ad",
+    "name": "Digital Claywork Compendium",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous self: restriction cannotBePicked",
+        "activated RESEARCH: costs [payResources 2, deplete source] -> reduceNextCost 4 this turn",
+        "activated SMASH KEYS: cost [destroy source] -> reduceNextCost 2 this turn"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "cannotBePicked restriction. Un-typed reduceNextCost applies to the next numeric cost paid, including 'pay N' on abilities (CR §406.5)."
+  },
+  {
+    "id": "473c8d59-8f53-4454-8d9a-5186b0bc697a",
+    "name": "Espionage Loafers",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: attachedTo gains covert; plus grantedAbilities on attachedTo: [triggered damageDealt + sourceIsDamageSource + cardTypeIs(eventCard, faction) -> dealDamage eventDamageAmount to controller's faction]",
+        "icon-gated continuous: while resourceIcons greed >= 5 -> attachedTo gains covert AND suppressAllAbilities { target: source } ('this card loses all other rules text')"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. 'attached card inflicts damage to a faction' modeled as a granted triggered ability on the attached character so sourceIsDamageSource resolves to it (consistent with Seed attach items). [G]x5 paragraph is threshold-gated (CR §405.4); its self-suppression exempts its own covert grant (RULES.md §12), turning off only the downside clause."
+  },
+  {
+    "id": "f83fd73a-13b6-46b8-a933-a46db57df8f7",
+    "name": "Everlasting Blade of Light",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: attachedTo gains +3 strength / +3 life",
+        "persistent-attachment: source stays in play (unattached) if the attached card leaves play",
+        "activated EQUIP: target [a character]; X = conditional( uniqueIs(target,'rudolphus') ? 0 : 2 ); cost payResources X -> attachTo effect source -> target if legal",
+        "SERAPHIM FUSION activated: condition source attached to a character with uniqueIs 'rudolphus'; costs [payResources 1, destroy source] -> search deck name 'Vexillarius Dacian-Draco' -> putIntoPlay"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "blade of light", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["persistent-attachment"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "UNIQUE BLADE OF LIGHT -> metadata.unique 'blade of light'. No printed 'ATTACH TO X' keyword — attaches only via EQUIP (attachTo effect); metadata.attachTo left null (the +3/+3 aura keys off attachedTo). HH-BRIEF cites this card for persistent-attachment. This SERAPHIM FUSION variant gates on a condition, not a 'pick a UNIQUE X you control' target (cf. Chum / Seriously Weird)."
+  },
+  {
+    "id": "e92ff486-08f4-48c6-b76e-1d866108f1f0",
+    "name": "Ferret Oil Coating",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: must-be-picked restriction on attachedTo (any target declaration that could legally pick it must)",
+        "card-def flipUp { cost: 1, threshold: 'dd' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["must-be-picked"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. HH-BRIEF cites this exact card for must-be-picked (inverse of cannotBePicked). CR §505.2 governs when two 'must pick' effects collide. FLIP UP 1 [D][D]."
+  },
+  {
+    "id": "5c78097b-5ba3-4417-96af-a465cd276977",
+    "name": "Flashy Bangs",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated BURST: target [a blocking character] (inBattle role:blocker); cost destroy source -> removeFromBattle target; deplete target",
+        "card-def flipUp { cost: 1, threshold: 'dd' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "removeFromBattle + deplete both exist. Any battle damage already assigned to the removed blocker is not inflicted (CR §302.15). FLIP UP 1 [D][D]."
+  },
+  {
+    "id": "e08c5f24-ac13-407b-acc6-dce6be5e415d",
+    "name": "Form 37-Ohhhhh",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: while numberCompare(count(character, controller:self, zone:play) = 1) -> attachedTo gains covert",
+        "continuous grantedAbilities on attachedTo: [triggered damageDealt + sourceIsDamageSource + cardTypeIs(eventCard, faction) -> draw 2]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. 'only 1 character' = count = 1. 'when the attached character inflicts damage to a faction' = a granted triggered ability on attachedTo so sourceIsDamageSource resolves correctly."
+  },
+  {
+    "id": "5a6b4473-eb1d-4e71-86ee-49f9462d9d35",
+    "name": "Heavy Fists of Robotic Pounding",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: attachedTo gains +3 strength / +3 life",
+        "continuous: suppressAllAbilities { target: attachedTo } ('treat the attached character as though it has no rules text')",
+        "activated HAND OFF: cost payResources 2 + depleteSelected a character you control not in a battle (target) -> attachTo effect source -> that character"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. Full suppression of the attached character (suppressor is on the item, so no self-exemption concern). 'not in a battle' = not(inBattle). depleteSelected cost."
+  },
+  {
+    "id": "7e5943c6-1683-4ba0-a762-e0ac3dbdd6b8",
+    "name": "Horns of Thabbash",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: attachedTo gains +1 strength / +1 life + restriction cannotBlock",
+        "icon-gated continuous: while resourceIcons volition >= 3 -> attachedTo gains +3 strength"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. '[V][V][V]:' threshold-gated paragraph (CR §405.4)."
+  },
+  {
+    "id": "a0403283-f513-4822-9e8d-afc862ff08b3",
+    "name": "iDumb De-Itemizer",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous: suppressAllAbilities { target: attachedTo } ('the attached card has no rules text')",
+        "activated RESET: usableBy 'opponent'; cost payResources 3 -> suppressAbilities { target: source, duration: untilEndOfTurn }",
+        "card-def flipUp { cost: 2, threshold: 'g' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "item", "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["usable-by-opponent", "suppress-abilities-effect"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO ITEM -> metadata.attachTo 'item'. HH-BRIEF cites this exact card for both usable-by-opponent (RESET) and suppress-abilities-effect ('this turn, this card loses all rules text' = a duration'd suppressAllAbilities). FLIP UP 2 [G]."
+  },
+  {
+    "id": "5da0f895-473d-45a1-a6a7-5fd1293344fd",
+    "name": "Runic Distribulator",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated LOAD: cost payResources 2 -> addCounter source token 1",
+        "activated GATHER: costs [chooserSelectsNumber X, payResources (X+1), removeCounter X token from a chosen card you control] -> addCounter source token X",
+        "activated SPREAD OUT!: costs [payResources 3, destroy source]; X = counter(source, token) -> distributeAmong X tokens among any number of non-resource cards you control (per-card addCounter)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "removeCounter cost, payResources amount = add(X,1). 'divided however you want on any number of' non-resource (conditions [not cardTypeIs resource]) cards you control = distributeAmong."
+  },
+  {
+    "id": "5a8d4a87-61b2-4e20-899c-250830e15eca",
+    "name": "Seance Sensor",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> addCounter source token 2",
+        "activated SEIZE: costs [removeCounter source token 1, deplete source, pick a player] -> chooserSelectsTarget (picked player) a card in their hand -> moveCard to discard",
+        "activated ABSORB HUMOUR: costs [payResources 2, deplete source] -> addCounter source token 1"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'enters play with 2 tokens' = ETB addCounter (HH-BRIEF pattern). 'That player discards a card' = chooserSelectsTarget chooser=picked player, hand-zone declaration, moveCard to discard (BEHAVIORS.md idiom). 'Pick a player' degenerates to one opponent (or self)."
+  },
+  {
+    "id": "a341e5b6-b513-45f6-b25b-d27edbe20305",
+    "name": "Seriously Weird Crystalline Artefact",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated RECYCLE JUNK: costs [payResources 3, removeFromGame a chosen non-resource card in your discard]; X = cardCost(that card) -> search your deck for a card with cardTypeEquals(that card) and cardCost <= X -> moveCard to your discard; draw 1",
+        "SERAPHIM FUSION activated: costs [payResources 4, pick a UNIQUE IGNATIOUS you control (uniqueDesignation 'ignatious'), destroy source] -> search deck name 'Uhluhtc Niudla' -> putIntoPlay"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "HH-BRIEF cites this card for the SERAPHIM FUSION pattern. cardTypeEquals compares candidate to the removed card (rememberTarget it, since it is out of game but still tracked). Deck search may be failed by choice for the specific criteria (CR §312.2)."
+  },
+  {
+    "id": "03d18824-daf1-4546-88bc-bc8e0a8d2502",
+    "name": "Serpentine Scepter",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated SOUL DRAIN: cost payResources 1 -> deplete attachedTo",
+        "activated SOUL CHARGE: usesPerTurn 1; cost payResources 1 -> restore attachedTo + grantRestriction cannotAttack untilEndOfTurn on attachedTo"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "ATTACH TO CHARACTER. 'only once each turn' = usesPerTurn:1. 'It cannot attack this turn' = grantRestriction cannotAttack, untilEndOfTurn."
+  },
+  {
+    "id": "469e7907-ded7-4533-8174-02ef735808f6",
+    "name": "Super Slingerang XL200",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> chooserSelectsOption [ 'discard at random' -> moveCard { random selector zone:hand controller:self } to discard, then optional pick a character -> destroy ; 'decline' -> nothing ]",
+        "activated SLING: costs [payResources 3, destroy source], target [an item] -> destroy target",
+        "activated RANG: cost oneOf [ [payResources 4], [discard a non-resource Rogue card] ] -> moveCard source to owner's hand",
+        "card-def flipUp { cost: 1, threshold: 'd' }"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'discard a card at random' = moveCard with a { type:'random', selector } TargetRef (expressions.ts). 'Pay 4 or discard a non-resource Rogue card' = oneOf cost (HH-BRIEF pattern). FLIP UP 1 [D]."
+  },
+  {
+    "id": "73d21c09-6bd0-4df5-9cae-72a34f702c43",
+    "name": "Visible Loaf",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered:cardEnteredPlay + sourceIsEventCard -> addCounter source token 3",
+        "activated DEFLECT: costs [payResources 3, removeCounter source token 1, deplete source], target [a character] -> prevent-next-damage-instance on target, this turn (next damage instance reduced to 0 regardless of size)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["prevent-next-damage-instance"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'enters play with 3 tokens' = ETB addCounter (HH-BRIEF pattern). HH-BRIEF cites this exact card for prevent-next-damage-instance ('the next time damage would be inflicted to the character, reduce it to 0' — a delayed one-shot preventDamage rider, this turn only)."
+  }
+]

@@ -55,6 +55,18 @@ export interface GameEventMap {
   };
 
   /**
+   * "When a player discards any number of cards" (Bewilderbeast) — a
+   * hand→discard move. Emitted once per card (`count` is always 1); a
+   * "gains X for each card discarded" trigger applies its effect per event
+   * and the total sums. `playerId` is the discarding player (the card's
+   * owner). Gate with `eventPlayerIs`.
+   */
+  cardsDiscarded: {
+    playerId: PlayerId;
+    count: number;
+  };
+
+  /**
    * "If a player would search their deck ..." — emitted when a player is
    * asked to pick a card from their own deck (a `chooserSelectsTarget`
    * effect whose declaration selector names the `deck` zone). `playerId` is
@@ -97,6 +109,16 @@ export interface GameEventMap {
   characterBlocked: {
     cardId: CardInstanceId;
     battleId: BattleId;
+  };
+
+  /**
+   * "When you form a blocking party with at least 1 character" — one event
+   * for the whole party (not per blocker), at declareBlockers. `playerId`
+   * is the defending player. Microdefense Autosystem.
+   */
+  blockingPartyFormed: {
+    playerId: PlayerId;
+    blockerCount: number;
   };
 
   /**

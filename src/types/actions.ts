@@ -120,7 +120,18 @@ export type GameAction =
         | { kind: "orderTriggers"; next: TriggerRef }
         | { kind: "chooserSelectsTarget"; selected: CardInstanceId[] }
         | { kind: "chooserSelectsOption"; index: number }
-        | { kind: "reorderDeck"; order: CardInstanceId[] }
+        | {
+            kind: "reorderDeck";
+            /**
+             * For `to: "top"` / `"bottom"` — the full set of looked-at cards
+             * in the chosen order. For `to: "split"` — the cards to LEAVE ON
+             * TOP, in order; `bottom` names the rest, in order (the two must
+             * partition the looked-at set).
+             */
+            order: CardInstanceId[];
+            /** `to: "split"` only — the looked-at cards to send to the deck bottom, in order. */
+            bottom?: CardInstanceId[];
+          }
         | {
             kind: "deployForFree";
             /** Omit to decline. */
@@ -133,6 +144,12 @@ export type GameAction =
             kind: "distributeAmong";
             /** Per-card shares; omitted/zero cards receive nothing. Must sum to the pending amount. */
             shares: Record<CardInstanceId, number>;
+          }
+        | {
+            kind: "pileAssignment";
+            /** The two piles — together they must be exactly the pending cards, disjoint. Either may be empty. */
+            pile1: CardInstanceId[];
+            pile2: CardInstanceId[];
           }
         | { kind: "replacementChoice"; apply: boolean }
         | { kind: "nameValue"; value: string }

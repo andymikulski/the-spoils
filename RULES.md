@@ -743,7 +743,21 @@ or granted one by an effect ("gains a keyword" = temporary rules text, CR
   started this turn under your control" attack-eligibility rule (§6); a card
   that enters play this turn with Aggro may still attack this turn. *(Not
   enumerated in CR §507's keyword list — a 2016-era omission; the printed
-  card text governs per CR §101.1.)*
+  card text governs per CR §101.1.)* **(engine-derived)** a card whose whole
+  text is the haste clause ("can attack even if it has not been in play
+  under your control since the start of the turn"; Guardforce Aggromajig) is
+  authored as `aggro`. "Characters you control and deploy can attack …"
+  (Hasty Pursuit) is the `grantKeywordToPlayer` effect — a turn-scoped grant
+  of `aggro` to *every* character its controller has, including ones
+  deployed later.
+- **canBlockCovert / canBlockAnyParty (card-verified, engine-derived
+  keywords).** `canBlockCovert` lets a non-Covert character help form a
+  legal blocking party against a Covert attack (counts as Covert for that
+  check only; Recyclable Golem). `canBlockAnyParty` is that *plus* an
+  exemption from CR §302.11's "a Covert character may block only a Covert
+  party" — so a character that is itself Covert (e.g. via an icon clause)
+  can still block a non-Covert attack (Guardbeast of Thabbash — "can block
+  COVERT parties and non-COVERT parties").
 - **Unique X (CR §507.5).** You may not control more than one card carrying
   a given Unique identifier; if you do, you immediately choose one to keep
   and destroy the rest (**FAQ**: the controller chooses). The restriction is
@@ -778,7 +792,15 @@ or granted one by an effect ("gains a keyword" = temporary rules text, CR
   **(engine-derived)** Declared via `CardDefinition.attachTo?: CardType`;
   playing the card adds a synthetic target declaration (reserved id
   `"attachTo"`). `CardInstance.attachedTo` is shared with the numeric-cost
-  resource-attachment mechanic — the two never collide.
+  resource-attachment mechanic — the two never collide. A **tactic** with
+  `attachTo` set (and no `selfDisposition`) resolves *into play attached* to
+  the host it picked, instead of into the discard pile — "put this card into
+  play attached to that character instead of into its owner's discard pile"
+  (Infectious Pustulio, Ocular Dispersal, Unstable Modification, Will of a
+  Living God); its triggered/continuous abilities are then live.
+  `behavior.keepOnHostLeave: true` overrides CR §507.2c/§301.4 for that one
+  card: when its host leaves play it stays in play, unattached, instead of
+  going to the discard pile (Everlasting Blade of Light).
 
 ## 10. Abilities (CR §502–§506)
 

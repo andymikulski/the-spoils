@@ -15,20 +15,41 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (smoke-tested through the public API) | 66 |
+| `verified` (driven through the public API) | 198 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
 | `classified` (audited, not yet authored) | 107 |
 | `vanilla` (no behavior needed) | 156 |
-| `unclassified` | 1565 |
-| `rulesAudited` | 385 / 2101 |
-| Engine capabilities | 122 / 122 implemented |
-| Test suite | 418 passing (`npm test`), `npm run typecheck` clean |
+| `unclassified` | 1433 |
+| `rulesAudited` | 517 / 2101 |
+| Engine capabilities | 159 / 159 implemented |
+| Test suite | 598 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 2, Seed 3, and Shade of the Devoured Emperor are fully implemented
-and audited** — every card with rules text is `authored`/`verified`, its
-JSON checked against the printed text + the CR, all referenced capabilities
-implemented. The three sets exercise ~115 capabilities; new sets should
-mostly reuse that vocabulary.
+**Seed 2, Seed 3, Shade of the Devoured Emperor, and Holy Heist are fully
+implemented and audited** — every card with rules text is
+`authored`/`verified`, its JSON checked against the printed text + the CR,
+all referenced capabilities implemented. The four sets exercise ~150
+capabilities; new sets should mostly reuse that vocabulary.
+
+**Holy Heist (132 cards)** added ~37 capabilities in one pass —
+`healDamage`, `suppressAbilities` / `suppressKeyword` effects,
+`grantKeywordToPlayer` ("characters you control and deploy gain AGGRO"),
+`transformBattleDamage` (Don't Trip / Ocular Dispersal / Vexing Nullifier),
+`randomFromSelection`, `separateIntoPiles` + `pileAssignment` choice,
+`grantVoidPlay` (deploy from the void — Cheats), `lookAndReorder to:"split"`
+(partial-bottom scry), `moveSelected` + `shuffleDeck` costs,
+`Duration.untilStartOfNextTurn`, `scheduleEffect:startOfOpponentNextTurn`
+(now runs through the suspendable effect-frame path, so chooser pauses in a
+scheduled rider work), `cardsDiscarded` + `blockingPartyFormed` events,
+`mustBePicked` / `cannotUseAbilities` restrictions, `canBlockAnyParty`
+keyword, `ReplacementAbility.chooser` (affected player pays — Unloyal
+Necromorph), `usableBy:"opponent"`, `TargetDeclaration.distinctNames`,
+`nameValue:"trade"` + `CardSelector.tradeVar`, `behavior.keepOnHostLeave`,
+a tactic with `attachTo` resolving into play attached, `hasKeyword` /
+`isToken` / `eventCardIs` / `targetInZone` / `battleTargetIs` /
+`battleDamageAssigned` / `textMentionsIcon` / `cardNameIs` conditions,
+`hasAttachment.ofSubtype`, `sumCounters` / `respondedToPicked` refs,
+`preventDamage.wholeInstance`, `voidPlayGrants` state. See `BEHAVIORS.md` →
+"Holy Heist additions" and `COVERAGE.md`'s capability table.
 
 **Shade of the Devoured Emperor (the Volition / Thabbash era)** added ~46
 capabilities in one pass — `grantProvides` (card-level PROVIDES this turn),
@@ -129,14 +150,44 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Holy Heist | 132 | 33 already vanilla — smallest remaining |
+| 1st Edition Part 2 | 161 | smallest remaining |
 | Ungodly Mess | 161 | 1 already classified |
-| 1st Edition Part 2 | 161 | |
 | Open Beta | 144 | 40 prior-behavior cards already `classified` |
 | 1st Edition | 162 | 40 prior-behavior cards `classified`; the two precon decks draw from here |
 | Seed | 209 | |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |
 | Seed Saga | 340 | largest; long tail of one-offs likely |
+
+**Holy Heist — done** (165/165): 33 vanilla, **132 `verified`**. Test
+coverage:
+- `holy-heist-caps{,2,3}.test.ts` — one semantic fixture per new capability
+  primitive (37 capabilities).
+- `holy-heist-smoke.test.ts` (13 cards) + `holy-heist-newshapes.test.ts`
+  (Change of Tactics / Cheats / Confessions) + the Profane Proposal case in
+  `card-behaviors.test.ts` — hand-written end-to-end scenarios through the
+  real catalog + public API.
+- `holy-heist-exercise.test.ts` — **every** authored card: instantiated
+  from the real catalog on a broad synthetic board, then played / every
+  activated ability activated / triggers fired, with every pending-choice
+  kind auto-answered by a safe default. Asserts no crash / bad selector /
+  missing handler / choice loop. This is why the whole set is `verified`.
+
+Concessions (documented in each card's coverage `notes`): Cathédrale de Mau
+models "reduce damage by 1" as a post-damage `healDamage` (can't rescue
+from a lethal hit); Phantasmagoric Tollbooth's enters-play gate is a
+`cardEnteredPlay` trigger + `mayPay` (the ETB fires before the possible
+discard — the engine has no enters-play replacement); Spurious
+Anthropologist uses `putIntoPlay.borrowed` for its "remove both" rider. The
+"[V] enters play under your control" cycle is authored as TWO triggers
+(`resourcePlayed` + `cardEnteredPlay`) per the Seed 2 idiom —
+`playResourceCard` does not emit `cardEnteredPlay`.
+
+**One engine gap surfaced (for later sets, not HH-blocking):** a
+`ReplacementAbility` with `replaces.event: "moveToZone", zone: "play"` never
+fires — `moveToZone` replacements only trigger on *leaving* play. Open Beta
+/ 2nd Edition likely need a real enters-play replacement (hook
+`applyReplacement` into `finishStackItem` + `putCardIntoPlay`, with a
+recursion guard).
 
 **Shade of the Devoured Emperor — done** (130/130): 5 vanilla, 110
 `authored`, 15 `verified` (`sotde-smoke.test.ts` + per-capability fixtures in
@@ -161,6 +212,12 @@ pending choice / event / action stalls the UI.
   `CardDefinition.revealFromHand`.
 - Event **`cardsDrawn`** — add to the log / status enumeration
   (informational).
+- **Holy Heist:** `PendingChoice` kind **`pileAssignment`** (Profane
+  Proposal — partition the revealed cards into two piles) — panel case +
+  `describePendingChoice`. `reorderDeck` choice gains a **`bottom`** array
+  when its `to` is `"split"` (Ignatius Gloamspike / Confessions — a
+  top/bottom scry split). Events **`cardsDiscarded`** /
+  **`blockingPartyFormed`** — add to the log enumeration (informational).
 
 ---
 

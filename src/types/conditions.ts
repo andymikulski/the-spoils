@@ -2,7 +2,7 @@
 // Conditions
 // -----------------------------------------------------------------------------
 
-import type { CardType, ComparisonOperator, Stat, Trade, Zone } from "./ids.js";
+import type { CardType, ComparisonOperator, Keyword, Stat, Trade, Zone } from "./ids.js";
 import type { CardSelector, NumberExpression, PlayerRef, TargetRef } from "./expressions.js";
 import type { ResourceIcon } from "./cards.js";
 
@@ -85,18 +85,76 @@ export type Condition =
     }
   | {
       /**
-       * True when at least one in-play card (optionally of `ofType`) is
-       * currently attached to `target` (default `{ type: "selected", id:
+       * True when at least one in-play card (optionally of `ofType` and/or
+       * carrying `ofSubtype` in its printed subtype list) is currently
+       * attached to `target` (default `{ type: "selected", id:
        * "__candidate" }`) — "a character with an item attached to it"
-       * (Enlightened Mau's `damageModifiers.sourceSelector`).
+       * (Enlightened Mau); "while a 'gear' card is attached to this card"
+       * (Damascus Sword Swinger, Rudo Mangod — `ofSubtype: "gear"`).
        */
       type: "hasAttachment";
       target?: TargetRef;
       ofType?: CardType;
+      ofSubtype?: string;
     }
   | { type: "sourceIsEventCard" }
+  | {
+      /**
+       * True when the card the current event maps to (`getEventCardId` — the
+       * same card `sourceIsEventCard` tests) is `target`. `sourceIsEventCard`
+       * is the `target: "source"` special case; this lets an attachment
+       * scope a battle / leave-play trigger to its host —
+       * `{ type: "eventCardIs", target: "attachedTo" }` (Infectious Pustulio).
+       */
+      type: "eventCardIs";
+      target: TargetRef;
+    }
   | { type: "eventCardControlledBy"; player: PlayerRef }
   | { type: "targetExists"; target: TargetRef }
+  | {
+      /**
+       * True when `target` resolves to a card currently in `zone` — the
+       * general form of `sourceInZone`. "If it is destroyed by that damage"
+       * is an `if` gated by `not` of `{ type: "targetInZone", target, zone:
+       * "play" }` placed right after the `dealDamage` (Suicide Smash).
+       */
+      type: "targetInZone";
+      target: TargetRef;
+      zone: Zone;
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) resolves to a token
+       * permanent (`CardInstance.isToken`). Compose with `not` for
+       * "non-token character" (Phantasmagoric Tollbooth).
+       */
+      type: "isToken";
+      target?: TargetRef;
+    }
+  | {
+      /**
+       * Compares how many characters have already assigned battle damage in
+       * the current battle (`BattleState.assignedDamageBy`) against `value`.
+       * "before any damage is assigned during this battle" is `operator:
+       * "=", value: 0` (Change of Tactics). False with no active battle.
+       */
+      type: "battleDamageAssigned";
+      operator: ComparisonOperator;
+      value: NumberExpression;
+    }
+  | {
+      /**
+       * True while a battle is in progress whose *target* is a card (not a
+       * faction) matching the optional `controlledBy` (resolved player) and
+       * `cardType` filters — "a location you control is being attacked"
+       * (Gargoyle of Cathédrale de Mau: `controlledBy: "controller",
+       * cardType: "location"`). `battleRole: "defender"` alone also fires on
+       * faction-target attacks; this doesn't.
+       */
+      type: "battleTargetIs";
+      controlledBy?: PlayerRef;
+      cardType?: CardType;
+    }
   | {
       type: "cardTypeIs";
       target: TargetRef;
@@ -307,6 +365,16 @@ export type Condition =
     }
   | {
       /**
+       * True when `target` resolves to a card with exactly the printed
+       * `name` — "if the revealed card was named 'Obsession'" (Uhluhtc
+       * Niudla). The literal-name counterpart of `cardNameEquals`.
+       */
+      type: "cardNameIs";
+      target: TargetRef;
+      name: string;
+    }
+  | {
+      /**
        * True when `target` (default `"source"`) resolves to a card that its
        * *owner* set aside to the bottom of their deck during the opening
        * mulligan (`GameState.mulligan`). For "if you ... chose to put this
@@ -338,6 +406,31 @@ export type Condition =
       /** True when `target` (default `"source"`) resolves to a depleted card. "At the end of your turn, if this card is depleted, ..." (Dying Hero). */
       type: "cardDepleted";
       target?: TargetRef;
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) is an in-play card that
+       * currently has `keyword` (printed, granted, or via an aura —
+       * `hasKeyword`). "while a player controls a character with COVERT"
+       * (Torchlight Sarcophyle, via a `count` selector's `conditions`);
+       * "pick a character with COVERT" (Predatory Lamp, I See You!).
+       */
+      type: "hasKeyword";
+      target?: TargetRef;
+      keyword: Keyword;
+    }
+  | {
+      /**
+       * True when `target`'s printed rules text (`CardDefinition.text`)
+       * references the given resource `icon` — e.g. a `[V]` token anywhere
+       * in the text. "Characters you control with a [V] icon in their rules
+       * text gain 2 strength and 2 life." (Marduun Ruins — bind `target` to
+       * `{ type: "selected", id: "__candidate" }` inside an aura selector's
+       * `conditions`).
+       */
+      type: "textMentionsIcon";
+      target?: TargetRef;
+      icon: ResourceIcon;
     }
   | {
       /** True when `target` and `other` resolve to cards of the same `CardType`. "A card of the same type as the discarded card." (Perturb). */

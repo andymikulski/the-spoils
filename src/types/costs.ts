@@ -3,6 +3,7 @@
 // -----------------------------------------------------------------------------
 
 import type { CardSelector, NumberExpression, PlayerRef, TargetRef } from "./expressions.js";
+import type { Zone } from "./ids.js";
 
 export type Cost =
   | {
@@ -24,6 +25,25 @@ export type Cost =
   | {
       type: "destroy";
       target: TargetRef;
+    }
+  | {
+      /**
+       * Move `count` chosen cards (matching `selector`, controlled by
+       * `player`, default zone `play`) to `to` as a cost — paid like
+       * `discard`, but to any zone: `position` for a deck destination,
+       * `shuffle: true` to reshuffle that deck afterward ("reveal a resource
+       * from your hand and shuffle it into your deck"; "put a resource you
+       * control into its owner's hand" — Uhluhtc Niudla). Chosen via
+       * `context.selected[id]`, legality-checked up front, all-or-nothing.
+       */
+      type: "moveSelected";
+      id: string;
+      player: PlayerRef;
+      selector: CardSelector;
+      count: number;
+      to: Zone;
+      position?: "top" | "bottom";
+      shuffle?: boolean;
     }
   | {
       /**
@@ -81,6 +101,15 @@ export type Cost =
       type: "dealDamage";
       target: TargetRef;
       amount: NumberExpression;
+    }
+  | {
+      /**
+       * "Shuffle your deck" as a cost (typically one branch of a `oneOf` —
+       * "Pay 3 or shuffle your deck", Dweedle Tee). Always payable; shuffles
+       * `player`'s (default `"controller"`) deck in place.
+       */
+      type: "shuffleDeck";
+      player?: PlayerRef;
     }
   | {
       /**

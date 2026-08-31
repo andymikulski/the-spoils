@@ -109,6 +109,51 @@ export type Effect =
     }
   | {
       /**
+       * "That player separates those cards into two piles" — pauses for
+       * `splitter` to partition the cards already selected under `selected`
+       * into two piles (either may be empty), then runs `pile1` effects once
+       * per card in the first pile and `pile2` effects once per card in the
+       * second (each card bound to `{ type: "selected", id: "__candidate" }`).
+       * "Put one pile into your hand and shuffle the other into your deck."
+       * (Profane Proposal — `pile1` a `moveCard` to hand, `pile2` a
+       * `moveCard` to deck; add a `shuffleDeck` after).
+       */
+      type: "separateIntoPiles";
+      splitter: PlayerRef;
+      selected: string;
+      pile1: Effect[];
+      pile2: Effect[];
+    }
+  | {
+      /**
+       * "For the rest of the game, `player` may deploy those voided cards as
+       * though they were in their hand [even if they cannot meet their
+       * threshold]." (Cheats, the Dirty Rotten). Registers a persistent
+       * `GameState.voidPlayGrant` for each card currently selected under
+       * `selected` that sits in the void. Pruned when the card leaves the
+       * void (incl. once it's deployed).
+       */
+      type: "grantVoidPlay";
+      selected: string;
+      player: PlayerRef;
+      ignoreThreshold?: boolean;
+    }
+  | {
+      /**
+       * Resolves `effects` once for each of `count` uniformly-random cards
+       * drawn from the set already selected under the `selected`
+       * TargetDeclaration id — "randomly put 2 of those [revealed] cards
+       * into their discard pile" (Cheats, the Dirty Rotten). Fewer than
+       * `count` in the set → all of them. Each chosen card is bound to
+       * `{ type: "selected", id: "__candidate" }` inside `effects`.
+       */
+      type: "randomFromSelection";
+      selected: string;
+      count: NumberExpression;
+      effects: Effect[];
+    }
+  | {
+      /**
        * Re-attaches an already-in-play "Attach to X" card to a new target
        * (e.g. an item's "HANDOFF" ability). Playing a card for the first
        * time still attaches it via its `attachTo` field + the play-time
@@ -258,20 +303,30 @@ export type Effect =
       amount: NumberExpression;
       mode: "reduce" | "redirect";
       redirectTo?: TargetRef;
+      /**
+       * `mode: "reduce"` only — absorb the *entire* next damage instance
+       * regardless of size (then the shield is spent), rather than up to
+       * `amount` points. "The next time damage would be inflicted to the
+       * character this turn, reduce it to 0." (Visible Loaf). `amount` is
+       * ignored when set.
+       */
+      wholeInstance?: boolean;
     }
   | {
       /**
        * Registers a one-shot delayed effect fired at the next `endOfTurn`
-       * (the current turn's end) or `startOfNextTurn` (the source
-       * controller's next turn), then discarded. `condition`, if set, is
-       * checked at fire time. "At the start of your next turn, if this card
-       * is in play, put the voided character into play." (Gilded Yurt);
-       * "At the end of the turn, ..." (Vast Mastabatorium). A chooser
-       * effect inside `effects` is not supported — keep the delayed
-       * effects self-resolving.
+       * (the current turn's end), `startOfNextTurn` (the source controller's
+       * next turn), `startOfOpponentNextTurn` (the *other* player's next
+       * turn — i.e. the immediately following turn; Final Countdown), or
+       * `endOfBattle`, then discarded. `condition`, if set, is checked at
+       * fire time. "At the start of your next turn, if this card is in play,
+       * put the voided character into play." (Gilded Yurt); "At the end of
+       * the turn, ..." (Vast Mastabatorium). A chooser effect inside
+       * `effects` is not supported — keep the delayed effects
+       * self-resolving.
        */
       type: "scheduleEffect";
-      when: "startOfNextTurn" | "endOfTurn" | "endOfBattle";
+      when: "startOfNextTurn" | "startOfOpponentNextTurn" | "endOfTurn" | "endOfBattle";
       condition?: Condition;
       effects: Effect[];
     }
@@ -305,6 +360,70 @@ export type Effect =
       type: "grantRestriction";
       target: TargetRef;
       restriction: Restriction;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Removes `keyword` from `target` for `duration` — "this turn, the
+       * character loses COVERT" (I See You!). The duration'd mirror of
+       * `ContinuousAbility.suppressKeywords` (which needs a live in-play
+       * source). Beats every grant, printed or otherwise (lose beats grant).
+       */
+      type: "suppressKeyword";
+      target: TargetRef;
+      keyword: Keyword;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Registers a runtime transform of how `target` assigns / receives
+       * *battle damage* (`GameState.battleDamageTransforms`), consulted as
+       * locked assignments are inflicted. `role: "dealer"` matches
+       * assignments `target` makes; `role: "receiver"` matches assignments
+       * aimed at `target`. `kind`:
+       * - `setAmount` — `target` assigns `amount` (evaluated now) instead of
+       *   its strength (Ocular Dispersal — `amount` = host's `cardCost`).
+       * - `redirectToSelf` — `target`'s damage is dealt to `target` (Don't
+       *   Trip — registered on the picked attacker for the turn).
+       * - `bounceOther` — `target` deals no battle damage; the card it would
+       *   have hit is put into its owner's hand (Vexing Nullifier).
+       * - `bounceSelf` — a character dealing battle damage to `target`
+       *   inflicts none; `target` is put into its owner's hand (Vexing
+       *   Nullifier, receiver side).
+       */
+      type: "transformBattleDamage";
+      target: TargetRef;
+      role: "dealer" | "receiver";
+      kind: "setAmount" | "redirectToSelf" | "bounceOther" | "bounceSelf";
+      amount?: NumberExpression;
+      duration: Duration;
+    }
+  | {
+      /**
+       * "This turn, `target` loses all its rules text." — the duration'd
+       * counterpart of `ContinuousAbility.suppressAllAbilities` (which needs
+       * a live in-play source holding the condition). Every ability on
+       * `target` — activated, triggered, continuous, replacement, granted —
+       * goes inert until the grant expires. iDumb De-Itemizer — RESET.
+       */
+      type: "suppressAbilities";
+      target: TargetRef;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Grants `keyword` to every character `player` controls — including
+       * ones deployed later, while the grant is live — for `duration`. "This
+       * turn, characters you control and deploy can attack even if they have
+       * not been in play under your control since the start of the turn"
+       * (Hasty Pursuit, Change of Tactics FLIP UP rider) is
+       * `{ player: "controller", keyword: "aggro", duration: untilEndOfTurn }`.
+       * Distinct from a `forEach` + `grantKeyword`, which only reaches the
+       * characters in play at resolution time.
+       */
+      type: "grantKeywordToPlayer";
+      player: PlayerRef;
+      keyword: Keyword;
       duration: Duration;
     }
   | {
@@ -389,7 +508,7 @@ export type Effect =
       type: "lookAndReorder";
       player: PlayerRef;
       count: NumberExpression;
-      to?: "top" | "bottom";
+      to?: "top" | "bottom" | "split";
       /**
        * Who does the looking / reordering — defaults to `player` (the deck's
        * owner). Set it for "any opponent ... looks at the top 3 cards of
@@ -672,6 +791,17 @@ export type Effect =
     }
   | {
       /**
+       * Removes up to `amount` damage markers from `target` (its accumulated
+       * damage drops by `amount`, floored at 0) — "remove 2 damage markers
+       * from the card" (Asbestos Drywall). Distinct from `setDamage` (which
+       * is absolute) and from a `life` modifier.
+       */
+      type: "healDamage";
+      target: TargetRef;
+      amount: NumberExpression;
+    }
+  | {
+      /**
        * Pulls `target` out of the current battle's attacking/blocking party
        * ("remove it from battle"). No-op if there's no battle or the card
        * isn't in it.
@@ -715,7 +845,7 @@ export type Effect =
        */
       type: "nameValue";
       chooser: PlayerRef;
-      valueKind: "subtype" | "cardName" | "resourceIcon";
+      valueKind: "subtype" | "cardName" | "resourceIcon" | "trade";
       storeAs: string;
     }
   | {

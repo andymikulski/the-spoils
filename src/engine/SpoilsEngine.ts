@@ -56,6 +56,16 @@ import { drawRandom, randomSeed } from "./rng.js";
 /** Reserved target-declaration id for an "Attach to X" card's play-time target. */
 const ATTACH_TARGET_ID = "attachTo";
 
+/** Bracketed rules-text token for each resource icon (`[V]` etc.) — used by the `textMentionsIcon` condition. */
+const ICON_TEXT_TOKEN: Record<ResourceIcon, string> = {
+  rage: "[R]",
+  greed: "[G]",
+  deception: "[D]",
+  elitism: "[E]",
+  obsession: "[O]",
+  volition: "[V]"
+};
+
 /**
  * Single-target mutating effects that "an effect from an ignored card type"
  * must not apply to its target (Parkour Hoodlum — `ignoresRulesTextFrom`).
@@ -186,7 +196,12 @@ export class SpoilsEngine {
     this.state.thresholdReductions ??= [];
     this.state.cardTypeGrants ??= [];
     this.state.damageShields ??= [];
+    this.state.battleDamageTransforms ??= [];
+    this.state.voidPlayGrants ??= [];
     this.state.scheduledEffects ??= [];
+    this.state.playerKeywordGrants ??= [];
+    this.state.keywordSuppressions ??= [];
+    this.state.abilitySuppressions ??= [];
     this.state.abilityUsesThisTurn ??= {};
     this.state.attacksThisTurn ??= {};
 
@@ -982,6 +997,15 @@ export class SpoilsEngine {
     this.state.keywordGrants = this.state.keywordGrants.filter(grant =>
       this.durationStillActive(grant)
     );
+    this.state.keywordSuppressions = this.state.keywordSuppressions.filter(grant =>
+      this.durationStillActive(grant)
+    );
+    this.state.playerKeywordGrants = this.state.playerKeywordGrants.filter(grant =>
+      this.durationStillActive(grant)
+    );
+    this.state.abilitySuppressions = this.state.abilitySuppressions.filter(grant =>
+      this.durationStillActive(grant)
+    );
     this.state.restrictions = this.state.restrictions.filter(grant =>
       this.durationStillActive(grant)
     );
@@ -998,6 +1022,9 @@ export class SpoilsEngine {
       grant => this.durationStillActive(grant)
     );
     this.state.outgoingDamageModifiers = this.state.outgoingDamageModifiers.filter(
+      grant => this.durationStillActive(grant)
+    );
+    this.state.battleDamageTransforms = this.state.battleDamageTransforms.filter(
       grant => this.durationStillActive(grant)
     );
     this.state.costReductions = [];
@@ -1141,12 +1168,22 @@ export class SpoilsEngine {
 
     for (const card of Object.values(this.state.cards)) {
       if (card.zone !== "play" || card.faceDown) continue;
+      if (this.hasRestriction(card.id, "cannotUseAbilities")) continue;
       const controlsIt = card.controllerId === playerId;
 
       for (const ability of this.getCardActivatedAbilities(card.id)) {
         // A non-controlled card only offers abilities marked "both players
-        // may use this" (The Knitting Coalition — INFLATIONARY FORCES).
-        if (!controlsIt && ability.usableBy !== "anyPlayer") continue;
+        // may use this" (The Knitting Coalition — INFLATIONARY FORCES) or
+        // "only an opponent may use this" (iDumb De-Itemizer — RESET).
+        if (
+          !controlsIt &&
+          ability.usableBy !== "anyPlayer" &&
+          ability.usableBy !== "opponent"
+        ) {
+          continue;
+        }
+        // "Only an opponent may use this ability" — hidden from the controller.
+        if (controlsIt && ability.usableBy === "opponent") continue;
 
         const context: ResolutionContext = {
           sourceId: card.id,
@@ -1287,7 +1324,7 @@ export class SpoilsEngine {
     const pickingSourceTypes = this.state.cards[context.sourceId]
       ? this.getCardTypes(context.sourceId)
       : [];
-    return this.queryCards(selector, context).filter(card => {
+    const eligible = this.queryCards(selector, context).filter(card => {
       if (this.hasRestriction(card.id, "cannotBePicked")) return false;
       // "this card cannot be picked by <cardType>s" (Parkour Hoodlum) —
       // scoped on the card/ability doing the picking.
@@ -1296,6 +1333,15 @@ export class SpoilsEngine {
       }
       return true;
     });
+
+    // "Anything that can pick this card must pick it" (Ferret Oil Coating) —
+    // if the legal pool contains any `mustBePicked` card, it collapses to
+    // just those. (Forces *which* card, not *whether* to pick for a
+    // fully-optional declaration.)
+    const forced = eligible.filter(card =>
+      this.hasRestriction(card.id, "mustBePicked")
+    );
+    return forced.length > 0 ? forced : eligible;
   }
 
   /**
@@ -1431,11 +1477,26 @@ export class SpoilsEngine {
       }
       card.controllerId = playerId;
     } else {
-      assert(
-        card.controllerId === playerId,
-        "You do not control that card."
-      );
-      assert(card.zone === "hand", "Card must be in your hand.");
+      // "You may deploy the voided cards as though they were in your hand"
+      // (Cheats) — a matching `voidPlayGrant` lets a void-zone card be
+      // deployed like a hand card (optionally ignoring its threshold), even
+      // one an opponent owns; the deploying player takes control of it.
+      const voidGrant =
+        card.zone === "void"
+          ? this.state.voidPlayGrants.find(
+              g => g.cardId === card.id && g.playerId === playerId
+            )
+          : undefined;
+      if (voidGrant) {
+        card.controllerId = playerId;
+        if (voidGrant.ignoreThreshold) ignoreThreshold = true;
+      } else {
+        assert(
+          card.controllerId === playerId,
+          "You do not control that card."
+        );
+        assert(card.zone === "hand", "Card must be in your hand.");
+      }
     }
 
     assert(
@@ -1765,8 +1826,10 @@ export class SpoilsEngine {
     assert(ability, "Activated ability not found.");
 
     assert(
-      card.controllerId === action.playerId ||
-        ability.usableBy === "anyPlayer",
+      ability.usableBy === "anyPlayer" ||
+        (ability.usableBy === "opponent"
+          ? card.controllerId !== action.playerId
+          : card.controllerId === action.playerId),
       "You do not control that card."
     );
 
@@ -1785,6 +1848,11 @@ export class SpoilsEngine {
     if (requiredZone === "play" && !ability.fromFaceDown) {
       assert(!card.faceDown, "A face-down card's abilities cannot be activated.");
     }
+
+    assert(
+      !this.hasRestriction(card.id, "cannotUseAbilities"),
+      "This card's abilities cannot be used."
+    );
 
     this.assertCanUseAbilityAtCurrentTiming(action.playerId);
 
@@ -2743,6 +2811,54 @@ export class SpoilsEngine {
           context.sourceId
         );
 
+      case "eventCardIs":
+        return (
+          this.getEventCardId(context.event) ===
+          this.resolveTargetRef(condition.target, context)
+        );
+
+      case "targetInZone": {
+        const cardId = this.resolveTargetRef(condition.target, context);
+        return !!cardId && this.state.cards[cardId]?.zone === condition.zone;
+      }
+
+      case "isToken": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? "source",
+          context
+        );
+        return !!cardId && !!this.state.cards[cardId]?.isToken;
+      }
+
+      case "battleDamageAssigned": {
+        const battle = this.state.battle;
+        if (!battle) return false;
+        return compare(
+          battle.assignedDamageBy.length,
+          condition.operator,
+          this.evaluateNumber(condition.value, context)
+        );
+      }
+
+      case "battleTargetIs": {
+        const battle = this.state.battle;
+        if (!battle || battle.phase === "finished" || battle.target.type !== "card") {
+          return false;
+        }
+        const targetId = battle.target.cardId;
+        if (
+          condition.cardType &&
+          !this.hasCardType(targetId, condition.cardType)
+        ) {
+          return false;
+        }
+        if (condition.controlledBy) {
+          const who = this.resolvePlayerRef(condition.controlledBy, context).id;
+          if (this.state.cards[targetId]?.controllerId !== who) return false;
+        }
+        return true;
+      }
+
       case "eventCardControlledBy": {
         const eventCardId = this.getEventCardId(context.event);
 
@@ -2958,6 +3074,11 @@ export class SpoilsEngine {
         );
       }
 
+      case "cardNameIs": {
+        const a = this.resolveTargetRef(condition.target, context);
+        return !!a && this.getDefinition(a).name === condition.name;
+      }
+
       case "bottomedInMulligan": {
         const cardId = this.resolveTargetRef(
           condition.target ?? "source",
@@ -2991,6 +3112,28 @@ export class SpoilsEngine {
           context
         );
         return !!cardId && !!this.state.cards[cardId]?.depleted;
+      }
+
+      case "hasKeyword": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? "source",
+          context
+        );
+        return (
+          !!cardId &&
+          this.state.cards[cardId]?.zone === "play" &&
+          this.hasKeyword(cardId, condition.keyword)
+        );
+      }
+
+      case "textMentionsIcon": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? "source",
+          context
+        );
+        if (!cardId) return false;
+        const token = ICON_TEXT_TOKEN[condition.icon];
+        return this.getDefinition(cardId).text.includes(token);
       }
 
       case "cardTypeEquals": {
@@ -3148,7 +3291,9 @@ export class SpoilsEngine {
           c =>
             c.attachedTo === cardId &&
             c.zone === "play" &&
-            (!condition.ofType || this.hasCardType(c.id, condition.ofType))
+            (!condition.ofType || this.hasCardType(c.id, condition.ofType)) &&
+            (!condition.ofSubtype ||
+              this.getDefinition(c.id).subtype.includes(condition.ofSubtype))
         );
       }
     }
@@ -3270,6 +3415,13 @@ export class SpoilsEngine {
         );
       }
 
+      case "sumCounters": {
+        return this.queryCards(expression.selector, context).reduce(
+          (sum, card) => sum + (card.counters?.[expression.counter] ?? 0),
+          0
+        );
+      }
+
       case "thresholdIconCount": {
         const cardId = this.resolveTargetRef(expression.target, context);
         if (!cardId) {
@@ -3336,7 +3488,22 @@ export class SpoilsEngine {
           `Illegal target '${selectedId}' for '${declaration.id}'.`
         );
       }
+
+      this.assertDistinctNames(declaration, selected);
     }
+  }
+
+  /** "N cards with different names" — `TargetDeclaration.distinctNames`. */
+  private assertDistinctNames(
+    declaration: TargetDeclaration,
+    selected: readonly CardInstanceId[]
+  ): void {
+    if (!declaration.distinctNames) return;
+    const names = selected.map(id => this.getDefinition(id).name);
+    assert(
+      new Set(names).size === names.length,
+      `Target '${declaration.id}' requires cards with different names.`
+    );
   }
 
   private autoSelectTargets(
@@ -3486,6 +3653,19 @@ export class SpoilsEngine {
       return false;
     }
 
+    if (selector.tradeVar) {
+      const keys = Array.isArray(selector.tradeVar)
+        ? selector.tradeVar
+        : [selector.tradeVar];
+      const named = this.state.cards[context.sourceId]?.namedValues ?? {};
+      const wanted = keys
+        .map(k => named[k]?.toLowerCase())
+        .filter((v): v is string => !!v);
+      if (!wanted.includes(definition.trade.toLowerCase())) {
+        return false;
+      }
+    }
+
     if (
       selector.depleted !== undefined &&
       card.depleted !== selector.depleted
@@ -3565,6 +3745,11 @@ export class SpoilsEngine {
 
     if (ref.type === "respondedToCard") {
       return this.getRespondedToCardId(context);
+    }
+
+    if (ref.type === "respondedToPicked") {
+      const item = this.getRespondedToStackItem(context);
+      return item ? this.pickedCardOfType(item, ref.cardType) : undefined;
     }
 
     if (ref.type === "factionOf") {
@@ -3832,6 +4017,12 @@ export class SpoilsEngine {
         return;
       }
 
+      case "shuffleDeck": {
+        const player = this.resolvePlayerRef(cost.player ?? "controller", context);
+        this.shuffleInPlace(player.deck);
+        return;
+      }
+
       case "deplete": {
         const targetId = this.resolveTargetRef(
           cost.target,
@@ -3896,6 +4087,48 @@ export class SpoilsEngine {
 
         for (const cardId of selected) {
           this.moveCard(cardId, "discard", emitEvents, "bottom", true);
+        }
+
+        return;
+      }
+
+      case "moveSelected": {
+        const player = this.resolvePlayerRef(cost.player, context);
+
+        const legal = new Set(
+          this.queryCards(
+            {
+              ...cost.selector,
+              controller: cost.selector.controller ?? "self",
+              zone: cost.selector.zone ?? "play"
+            },
+            context
+          )
+            .filter(card => card.controllerId === player.id)
+            .map(card => card.id)
+        );
+
+        const selected = context.selected[cost.id] ?? [];
+        assert(
+          selected.length === cost.count,
+          `Move-selected cost '${cost.id}' requires selecting exactly ${cost.count} card(s).`
+        );
+        assert(
+          new Set(selected).size === selected.length,
+          `Move-selected cost '${cost.id}' selected the same card more than once.`
+        );
+        for (const cardId of selected) {
+          assert(
+            legal.has(cardId),
+            `Illegal move-selected-cost selection '${cardId}' for '${cost.id}'.`
+          );
+        }
+
+        for (const cardId of selected) {
+          this.moveCard(cardId, cost.to, emitEvents, cost.position ?? "bottom", true);
+        }
+        if (cost.shuffle && cost.to === "deck") {
+          this.shuffleInPlace(this.requirePlayer(player.id).deck);
         }
 
         return;
@@ -4538,9 +4771,12 @@ export class SpoilsEngine {
         this.state.damageShields.push({
           id: nextId("shield"),
           targetId,
-          amount: Math.max(0, this.evaluateNumber(effect.amount, context)),
+          amount: effect.wholeInstance
+            ? 1
+            : Math.max(0, this.evaluateNumber(effect.amount, context)),
           mode: effect.mode,
           redirectToId,
+          wholeInstance: effect.wholeInstance,
           createdTurn: this.state.turn
         });
         return;
@@ -4729,6 +4965,56 @@ export class SpoilsEngine {
         return;
       }
 
+      case "grantVoidPlay": {
+        const player = this.resolvePlayerRef(effect.player, context);
+        for (const cardId of context.selected[effect.selected] ?? []) {
+          if (this.state.cards[cardId]?.zone !== "void") continue;
+          if (
+            this.state.voidPlayGrants.some(
+              g => g.cardId === cardId && g.playerId === player.id
+            )
+          ) {
+            continue;
+          }
+          this.state.voidPlayGrants.push({
+            cardId,
+            playerId: player.id,
+            ignoreThreshold: effect.ignoreThreshold ?? false
+          });
+        }
+        return;
+      }
+
+      case "randomFromSelection": {
+        const pool = [...(context.selected[effect.selected] ?? [])];
+        const take = Math.min(
+          pool.length,
+          Math.max(0, this.evaluateNumber(effect.count, context))
+        );
+        // Fisher–Yates prefix using the seeded RNG.
+        for (let i = 0; i < take; i++) {
+          const j = i + Math.floor(this.random() * (pool.length - i));
+          [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        const chosen = pool.slice(0, take);
+
+        this.beginEventBatch();
+        try {
+          for (const candidateId of chosen) {
+            const nestedContext: ResolutionContext = {
+              ...context,
+              selected: { ...context.selected, __candidate: [candidateId] }
+            };
+            for (const nested of effect.effects) {
+              this.resolveEffect(nested, nestedContext);
+            }
+          }
+        } finally {
+          this.endEventBatch();
+        }
+        return;
+      }
+
       case "attachTo": {
         const targetId = this.resolveTargetRef(effect.target, context);
         const toId = this.resolveTargetRef(effect.to, context);
@@ -4754,6 +5040,22 @@ export class SpoilsEngine {
         return;
       }
 
+      case "suppressKeyword": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        if (!targetId) return;
+
+        this.state.keywordSuppressions.push({
+          id: nextId("keywordSuppression"),
+          sourceId: context.sourceId,
+          targetId,
+          keyword: effect.keyword,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+
+        return;
+      }
+
       case "grantRestriction": {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
@@ -4767,6 +5069,51 @@ export class SpoilsEngine {
           createdTurn: this.state.turn
         });
 
+        return;
+      }
+
+      case "transformBattleDamage": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        if (!targetId || !this.state.cards[targetId]) return;
+        this.state.battleDamageTransforms.push({
+          id: nextId("bdTransform"),
+          sourceId: context.sourceId,
+          cardId: targetId,
+          role: effect.role,
+          kind: effect.kind,
+          amount:
+            effect.amount !== undefined
+              ? Math.max(0, this.evaluateNumber(effect.amount, context))
+              : undefined,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+        return;
+      }
+
+      case "suppressAbilities": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        if (!targetId || !this.state.cards[targetId]) return;
+        this.state.abilitySuppressions.push({
+          id: nextId("abilitySuppression"),
+          sourceId: context.sourceId,
+          targetId,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+        return;
+      }
+
+      case "grantKeywordToPlayer": {
+        const player = this.resolvePlayerRef(effect.player, context);
+        this.state.playerKeywordGrants.push({
+          id: nextId("playerKeywordGrant"),
+          sourceId: context.sourceId,
+          playerId: player.id,
+          keyword: effect.keyword,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
         return;
       }
 
@@ -4986,6 +5333,19 @@ export class SpoilsEngine {
         if (!targetId) return;
         const card = this.state.cards[targetId];
         if (card) card.damage = Math.max(0, this.evaluateNumber(effect.amount, context));
+        return;
+      }
+
+      case "healDamage": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        if (!targetId) return;
+        const card = this.state.cards[targetId];
+        if (card) {
+          card.damage = Math.max(
+            0,
+            (card.damage ?? 0) - Math.max(0, this.evaluateNumber(effect.amount, context))
+          );
+        }
         return;
       }
 
@@ -5230,6 +5590,22 @@ export class SpoilsEngine {
           context
         };
 
+        return;
+      }
+
+      case "separateIntoPiles": {
+        const splitter = this.resolvePlayerRef(effect.splitter, context);
+        const cardIds = context.selected[effect.selected] ?? [];
+        if (cardIds.length === 0) return;
+        this.state.pendingChoice = {
+          kind: "pileAssignment",
+          id: nextId("choice"),
+          playerId: splitter.id,
+          cardIds: [...cardIds],
+          pile1Effects: effect.pile1,
+          pile2Effects: effect.pile2,
+          context
+        };
         return;
       }
 
@@ -5509,6 +5885,14 @@ export class SpoilsEngine {
     for (const shield of this.state.damageShields) {
       if (remaining <= 0) break;
       if (shield.targetId !== targetId || shield.amount <= 0) continue;
+
+      // "Reduce the next damage instance to 0" — swallow the whole instance,
+      // then the shield is spent (Visible Loaf).
+      if (shield.wholeInstance) {
+        remaining = 0;
+        shield.amount = 0;
+        continue;
+      }
 
       const absorbed = Math.min(shield.amount, remaining);
       shield.amount -= absorbed;
@@ -5802,6 +6186,20 @@ export class SpoilsEngine {
     cardId: CardInstanceId,
     abilityId: AbilityId
   ): boolean {
+    // Duration'd "this card loses all rules text" (iDumb De-Itemizer — RESET).
+    // Entries sit in the list (like `keywordGrants`) until the start-of-turn
+    // sweep clears them; only `whileSourceInPlay` needs a live source check.
+    if (
+      this.state.abilitySuppressions.some(
+        s =>
+          s.targetId === cardId &&
+          (s.duration.type !== "whileSourceInPlay" ||
+            (!!s.sourceId && this.state.cards[s.sourceId]?.zone === "play"))
+      )
+    ) {
+      return true;
+    }
+
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
       for (const ability of this.getDefinition(source.id).behavior?.abilities ??
@@ -5932,9 +6330,20 @@ export class SpoilsEngine {
           }
 
           if (!hostInPlay) {
-            this.moveCard(card.id, "discard");
-            changed = true;
-            break;
+            // "This card does not leave play if the attached card leaves
+            // play" (Everlasting Blade of Light) — it stays in play,
+            // unattached, instead of going to the discard pile.
+            if (definition.behavior?.keepOnHostLeave) {
+              if (card.attachedTo !== undefined) {
+                card.attachedTo = undefined;
+                changed = true;
+                break;
+              }
+            } else {
+              this.moveCard(card.id, "discard");
+              changed = true;
+              break;
+            }
           }
         }
       }
@@ -6071,6 +6480,8 @@ export class SpoilsEngine {
           for (const cardId of selection) {
             assert(legal.has(cardId), `Illegal target '${cardId}' for '${declaration.id}'.`);
           }
+
+          this.assertDistinctNames(declaration, selection);
         }
 
         trigger.context.selected = {
@@ -6146,6 +6557,8 @@ export class SpoilsEngine {
         for (const cardId of selection) {
           assert(legal.has(cardId), `Illegal target '${cardId}' for '${declaration.id}'.`);
         }
+
+        this.assertDistinctNames(declaration, selection);
 
         pending.context.selected = {
           ...pending.context.selected,
@@ -6252,6 +6665,13 @@ export class SpoilsEngine {
               choice.value
             ),
           "A resource icon must be named."
+        );
+        assert(
+          pending.valueKind !== "trade" ||
+            ["arcanist", "banker", "gearsmith", "rogue", "warlord", "universal"].includes(
+              choice.value.toLowerCase()
+            ),
+          "A trade must be named."
         );
 
         const src = this.state.cards[pending.sourceId];
@@ -6531,8 +6951,27 @@ export class SpoilsEngine {
         assert(pending.kind === "reorderDeck", "This choice does not match the pending decision.");
 
         const original = new Set(pending.cardIds);
-        const reordered = new Set(choice.order);
+        const player = this.requirePlayer(pending.deckOwnerId ?? pending.playerId);
 
+        if ((pending.to ?? "top") === "split") {
+          const top = choice.order;
+          const bottom = choice.bottom ?? [];
+          const seen = new Set([...top, ...bottom]);
+          assert(
+            top.length + bottom.length === pending.cardIds.length &&
+              seen.size === original.size &&
+              [...original].every(cardId => seen.has(cardId)),
+            "The top and bottom piles together must be exactly the looked-at cards, each once."
+          );
+          player.deck.splice(0, pending.cardIds.length);
+          player.deck.unshift(...top);
+          player.deck.push(...bottom);
+          this.state.pendingChoice = undefined;
+          this.resumeEffectFrames();
+          return;
+        }
+
+        const reordered = new Set(choice.order);
         assert(
           choice.order.length === pending.cardIds.length &&
             reordered.size === original.size &&
@@ -6540,7 +6979,6 @@ export class SpoilsEngine {
           "The new order must contain exactly the same cards, each once."
         );
 
-        const player = this.requirePlayer(pending.deckOwnerId ?? pending.playerId);
         player.deck.splice(0, pending.cardIds.length);
         if ((pending.to ?? "top") === "bottom") {
           player.deck.push(...choice.order);
@@ -6581,6 +7019,44 @@ export class SpoilsEngine {
           pending.ignoreThreshold ?? false,
           pending.payCost ?? false
         );
+        return;
+      }
+
+      case "pileAssignment": {
+        assert(pending.kind === "pileAssignment", "This choice does not match the pending decision.");
+
+        const all = [...choice.pile1, ...choice.pile2];
+        const original = new Set(pending.cardIds);
+        assert(
+          all.length === pending.cardIds.length &&
+            new Set(all).size === all.length &&
+            all.every(cardId => original.has(cardId)),
+          "The two piles together must be exactly the revealed cards, each once."
+        );
+
+        this.state.pendingChoice = undefined;
+
+        const runPile = (ids: CardInstanceId[], effects: Effect[]) => {
+          this.beginEventBatch();
+          try {
+            for (const cardId of ids) {
+              const nestedContext: ResolutionContext = {
+                ...pending.context,
+                selected: { ...pending.context.selected, __candidate: [cardId] }
+              };
+              for (const nested of effects) {
+                this.resolveEffect(nested, nestedContext);
+                this.checkStateBasedActions();
+              }
+            }
+          } finally {
+            this.endEventBatch();
+          }
+        };
+        runPile(choice.pile1, pending.pile1Effects);
+        runPile(choice.pile2, pending.pile2Effects);
+
+        this.resumeEffectFrames();
         return;
       }
 
@@ -6766,6 +7242,21 @@ export class SpoilsEngine {
         from,
         to
       });
+
+      // "When a player discards ... cards" (Bewilderbeast) — a hand→discard
+      // move is a discard. Emitted once per card (a multi-card discard =
+      // several events); a "+X for each discarded" trigger sums correctly.
+      if (from === "hand" && to === "discard") {
+        this.emit({ type: "cardsDiscarded", playerId: card.ownerId, count: 1 });
+      }
+    }
+
+    // A "deploy this from the void" grant (Cheats) dies once the card
+    // actually leaves the void (deployed, milled elsewhere, ...).
+    if (from === "void" && this.state.voidPlayGrants.length) {
+      this.state.voidPlayGrants = this.state.voidPlayGrants.filter(
+        g => g.cardId !== cardId
+      );
     }
   }
 
@@ -6837,17 +7328,30 @@ export class SpoilsEngine {
         }
 
         // Optional replacement ("you may pay/choose ... instead"): pause for
-        // the source's controller. `state.pendingReplacement` carries what
-        // to do on accept (pay + effects) or decline (the original event).
+        // the chooser (the source's controller by default, or a `PlayerRef`
+        // resolved relative to the affected card's controller — Phantasmagoric
+        // Tollbooth / Unloyal Necromorph). `state.pendingReplacement` carries
+        // what to do on accept (pay + effects) or decline (the original event).
         if (ability.optional) {
           const cost = ability.optionalCost ?? [];
-          if (cost.length && !this.canPayCosts(cost, context)) {
+          const chooserId = ability.chooser
+            ? this.resolvePlayerRef(ability.chooser, {
+                ...context,
+                controllerId:
+                  this.state.cards[cardId]?.controllerId ?? source.controllerId
+              }).id
+            : source.controllerId;
+          const chooserContext: ResolutionContext = {
+            ...context,
+            controllerId: chooserId
+          };
+          if (cost.length && !this.canPayCosts(cost, chooserContext)) {
             return false;
           }
           this.state.pendingChoice = {
             kind: "replacementChoice",
             id: nextId("choice"),
-            playerId: source.controllerId,
+            playerId: chooserId,
             sourceId: source.id,
             abilityId: ability.id,
             affectedCardId: cardId,
@@ -6959,6 +7463,8 @@ export class SpoilsEngine {
 
     this.state.modifiers = this.state.modifiers.filter(m => m.targetId !== cardId);
     this.state.keywordGrants = this.state.keywordGrants.filter(g => g.targetId !== cardId);
+    this.state.keywordSuppressions = this.state.keywordSuppressions.filter(g => g.targetId !== cardId);
+    this.state.abilitySuppressions = this.state.abilitySuppressions.filter(g => g.targetId !== cardId);
     this.state.restrictions = this.state.restrictions.filter(g => g.targetId !== cardId);
     this.state.provideGrants = this.state.provideGrants.filter(g => g.targetId !== cardId);
 
@@ -7049,7 +7555,33 @@ export class SpoilsEngine {
     context: ResolutionContext
   ): void {
     const card = this.requireCard(cardId);
-    const disp = this.getDefinition(cardId).selfDisposition;
+    const definition = this.getDefinition(cardId);
+    const disp = definition.selfDisposition;
+
+    // "ATTACH TO CHARACTER (put this card into play attached to that
+    // character instead of into its owner's discard pile)" — a tactic whose
+    // `attachTo` is set enters play attached to the host it picked at play
+    // time (the reserved `attachTo` extra-cost target). Its triggered /
+    // continuous abilities are then live while it sits in play.
+    if (definition.attachTo && !disp) {
+      const hostId = context.selected[ATTACH_TARGET_ID]?.[0];
+      const host = hostId ? this.state.cards[hostId] : undefined;
+      if (host && host.zone === "play") {
+        const from = card.zone;
+        this.removeFromAllPlayerZones(cardId);
+        card.controllerId = host.controllerId;
+        card.faceDown = false;
+        card.attachedTo = hostId;
+        card.zone = "play";
+        this.requirePlayer(card.controllerId).play.push(cardId);
+        this.emit({ type: "cardMoved", cardId, from, to: "play" });
+        this.emit({ type: "cardEnteredPlay", cardId, playerId: card.controllerId });
+        return;
+      }
+      // No legal host survived — falls through to the discard pile.
+      this.moveCard(cardId, "discard");
+      return;
+    }
 
     if (
       disp &&
@@ -7186,6 +7718,15 @@ export class SpoilsEngine {
       return false;
     }
 
+    // "until the start of your next turn" — survives the opponent's
+    // intervening turn (one start-of-turn point), swept at the next.
+    if (
+      entry.duration.type === "untilStartOfNextTurn" &&
+      entry.createdTurn <= this.state.turn - 2
+    ) {
+      return false;
+    }
+
     if (entry.duration.type === "whileSourceInPlay") {
       return (
         !!entry.sourceId &&
@@ -7204,15 +7745,22 @@ export class SpoilsEngine {
    * then is discarded.
    */
   private fireScheduledEffects(
-    when: "startOfNextTurn" | "endOfTurn" | "endOfBattle",
+    when: "startOfNextTurn" | "startOfOpponentNextTurn" | "endOfTurn" | "endOfBattle",
     forActivePlayer?: PlayerId
   ): void {
     const due = this.state.scheduledEffects.filter(s => {
       if (s.when !== when) return false;
       if (when === "endOfBattle") return true;
-      return when === "endOfTurn"
-        ? s.turnScheduled === this.state.turn
-        : s.controllerId === forActivePlayer && this.state.turn > s.turnScheduled;
+      if (when === "endOfTurn") return s.turnScheduled === this.state.turn;
+      if (when === "startOfOpponentNextTurn") {
+        // The turn immediately after it was scheduled, which (turns strictly
+        // alternate) belongs to the scheduler's opponent = `forActivePlayer`.
+        return (
+          s.controllerId !== forActivePlayer &&
+          this.state.turn === s.turnScheduled + 1
+        );
+      }
+      return s.controllerId === forActivePlayer && this.state.turn > s.turnScheduled;
     });
 
     if (due.length === 0) return;
@@ -7230,12 +7778,11 @@ export class SpoilsEngine {
       };
       if (s.condition && !this.evaluateCondition(s.condition, ctx)) continue;
 
-      this.beginEventBatch();
-      try {
-        for (const effect of s.effects) this.resolveEffect(effect, ctx);
-      } finally {
-        this.endEventBatch();
-      }
+      // Route through the suspendable effect-frame path so a chooser effect
+      // inside a scheduled rider (Final Countdown — pick which staples to
+      // detach / which characters to buff and restore) pauses correctly
+      // instead of resolving the rest of the list out from under it.
+      this.runEffectFrame({ effects: s.effects, index: 0, context: ctx });
       this.checkStateBasedActions();
     }
   }
@@ -7270,6 +7817,9 @@ export class SpoilsEngine {
     // "At the start of your next turn, ..." delayed effects, after the
     // start-of-turn point and the turnStarted trigger wave.
     this.fireScheduledEffects("startOfNextTurn", next.id);
+    // "At the start of your opponent's next turn, ..." (Final Countdown) —
+    // fires now, on the turn right after it was scheduled.
+    this.fireScheduledEffects("startOfOpponentNextTurn", next.id);
   }
 
   // ---------------------------------------------------------------------------
@@ -7566,7 +8116,8 @@ export class SpoilsEngine {
       if (
         attackerIsCovert &&
         !this.hasKeyword(cardId, "covert") &&
-        !this.hasKeyword(cardId, "canBlockCovert")
+        !this.hasKeyword(cardId, "canBlockCovert") &&
+        !this.hasKeyword(cardId, "canBlockAnyParty")
       ) {
         continue;
       }
@@ -7580,6 +8131,16 @@ export class SpoilsEngine {
     this.beginEventBatch();
 
     try {
+      // "When you form a blocking party with at least 1 character ..." — one
+      // event for the whole party, mapped to the defending player
+      // (Microdefense Autosystem). Emitted before the per-blocker events.
+      if (blockerIds.length > 0) {
+        this.emit({
+          type: "blockingPartyFormed",
+          playerId: battle.defenderPlayerId,
+          blockerCount: blockerIds.length
+        });
+      }
       for (const blockerId of blockerIds) {
         this.emit({
           type: "characterBlocked",
@@ -7896,6 +8457,61 @@ export class SpoilsEngine {
     );
   }
 
+  /**
+   * Rewrite locked battle-damage assignments per any active
+   * `transformBattleDamage` entries (Don't Trip / Ocular Dispersal / Vexing
+   * Nullifier) — before they're grouped and inflicted. Bounced cards are
+   * moved to hand here; their assignments are zeroed so nothing else lands.
+   */
+  private applyBattleDamageTransforms(
+    assignments: BattleDamageAssignment[]
+  ): void {
+    if (this.state.battleDamageTransforms.length === 0) return;
+
+    // Entries sit in the list (like keyword grants) until the start-of-turn
+    // sweep; only `whileSourceInPlay` needs a live source check here.
+    const active = this.state.battleDamageTransforms.filter(
+      t =>
+        this.state.cards[t.cardId]?.zone === "play" &&
+        (t.duration.type !== "whileSourceInPlay" ||
+          (!!t.sourceId && this.state.cards[t.sourceId]?.zone === "play"))
+    );
+    if (active.length === 0) return;
+
+    const toBounce = new Set<CardInstanceId>();
+
+    for (const a of assignments) {
+      for (const t of active) {
+        if (t.role === "dealer" && t.cardId === a.sourceId) {
+          if (t.kind === "setAmount" && t.amount !== undefined) {
+            a.amount = t.amount;
+          } else if (t.kind === "redirectToSelf") {
+            a.target = { type: "card", cardId: a.sourceId };
+          } else if (t.kind === "bounceOther" && a.target.type === "card") {
+            toBounce.add(a.target.cardId);
+            a.amount = 0;
+          }
+        }
+        if (
+          t.role === "receiver" &&
+          a.target.type === "card" &&
+          t.cardId === a.target.cardId &&
+          t.kind === "bounceSelf" &&
+          this.hasCardType(a.sourceId, "character")
+        ) {
+          toBounce.add(a.target.cardId);
+          a.amount = 0;
+        }
+      }
+    }
+
+    for (const cardId of toBounce) {
+      if (this.state.cards[cardId]?.zone === "play") {
+        this.moveCard(cardId, "hand");
+      }
+    }
+  }
+
   private inflictLockedBattleDamage(
     battle: BattleState
   ): void {
@@ -7903,6 +8519,8 @@ export class SpoilsEngine {
       ...battle.attackerAssignments,
       ...battle.defenderAssignments
     ];
+
+    this.applyBattleDamageTransforms(assignments);
 
     // CR §609.1f: damage from several characters to the same thing this
     // round is inflicted as a *single amount*. CR §408.2: damage increase
@@ -8121,20 +8739,26 @@ export class SpoilsEngine {
       return;
     }
 
-    const blockersContainCovert = blockerIds.some(cardId =>
-      this.hasKeyword(cardId, "covert")
+    // A blocker with `canBlockAnyParty` (Guardbeast) never triggers the
+    // "a COVERT character can only block a COVERT party" restriction.
+    const blockersContainCovert = blockerIds.some(
+      cardId =>
+        this.hasKeyword(cardId, "covert") &&
+        !this.hasKeyword(cardId, "canBlockAnyParty")
     );
 
     const attackingPartyIsCovert = attackerIds.every(cardId =>
       this.hasKeyword(cardId, "covert")
     );
 
-    // "Can block COVERT parties" (canBlockCovert) counts as Covert for the
-    // purpose of forming a legal blocking party against a Covert attack.
+    // "Can block COVERT parties" (canBlockCovert / canBlockAnyParty) counts
+    // as Covert for the purpose of forming a legal blocking party against a
+    // Covert attack.
     const blockingPartyCanBlockCovert = blockerIds.every(
       cardId =>
         this.hasKeyword(cardId, "covert") ||
-        this.hasKeyword(cardId, "canBlockCovert")
+        this.hasKeyword(cardId, "canBlockCovert") ||
+        this.hasKeyword(cardId, "canBlockAnyParty")
     );
 
     if (attackingPartyIsCovert) {
@@ -8316,9 +8940,17 @@ export class SpoilsEngine {
    * it's the same check battle legality already uses.
    */
   hasKeyword(cardId: CardInstanceId, keyword: Keyword): boolean {
-    // A continuous suppression ("it loses COVERT") beats every grant,
-    // printed or otherwise.
+    // A suppression ("it loses COVERT") beats every grant, printed or
+    // otherwise — both the continuous form and the duration'd
+    // `suppressKeyword` effect (I See You!).
     if (this.getContinuousKeywordSuppressions(cardId).includes(keyword)) {
+      return false;
+    }
+    if (
+      this.state.keywordSuppressions.some(
+        g => g.targetId === cardId && g.keyword === keyword
+      )
+    ) {
       return false;
     }
 
@@ -8339,6 +8971,17 @@ export class SpoilsEngine {
       return true;
     }
 
+    // "Characters you control [and deploy] gain <keyword>" (Hasty Pursuit).
+    const controllerId = this.state.cards[cardId]?.controllerId;
+    if (
+      controllerId &&
+      this.state.playerKeywordGrants.some(
+        grant => grant.playerId === controllerId && grant.keyword === keyword
+      )
+    ) {
+      return true;
+    }
+
     return this.getContinuousKeywordGrants(cardId).includes(keyword);
   }
 
@@ -8350,7 +8993,8 @@ export class SpoilsEngine {
       "covert",
       "cannotBeBlocked",
       "redirectDamage",
-      "canBlockCovert"
+      "canBlockCovert",
+      "canBlockAnyParty"
     ];
     return all.filter(keyword => this.hasKeyword(cardId, keyword));
   }

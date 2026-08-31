@@ -85,8 +85,15 @@ export interface PendingReorderDeckChoice {
   deckOwnerId?: PlayerId;
   /** The cards being looked at, in their current top-to-bottom order. */
   cardIds: CardInstanceId[];
-  /** Where the reordered cards go — `"top"` (default) leaves them on top, `"bottom"` relocates them to the bottom of the deck. */
-  to?: "top" | "bottom";
+  /**
+   * Where the reordered cards go — `"top"` (default) leaves them on top,
+   * `"bottom"` relocates them all to the bottom. `"split"` lets the chooser
+   * send *any number* to the bottom and keep the rest on top, each pile in a
+   * chosen order ("put any number of those cards on the bottom of your deck
+   * in any order. Put the remaining cards on the top of your deck in any
+   * order." — Ignatius Gloamspike, Confessions of Countless Souls).
+   */
+  to?: "top" | "bottom" | "split";
 }
 
 /** "You may deploy a card with cost X or less for free" (see the `deployForFree` effect). */
@@ -128,6 +135,18 @@ export interface PendingDistributeChoice {
   context: ResolutionContext;
 }
 
+/** "That player separates those cards into two piles" (see the `separateIntoPiles` effect). */
+export interface PendingPileAssignmentChoice {
+  kind: "pileAssignment";
+  id: string;
+  playerId: PlayerId;
+  /** The revealed cards to split; the answer must partition exactly these. */
+  cardIds: CardInstanceId[];
+  pile1Effects: Effect[];
+  pile2Effects: Effect[];
+  context: ResolutionContext;
+}
+
 /** "If this card would be destroyed / bounced, you may ... instead" — an optional replacement. */
 export interface PendingReplacementChoice {
   kind: "replacementChoice";
@@ -149,7 +168,7 @@ export interface PendingNameValueChoice {
   kind: "nameValue";
   id: string;
   playerId: PlayerId;
-  valueKind: "subtype" | "cardName" | "resourceIcon";
+  valueKind: "subtype" | "cardName" | "resourceIcon" | "trade";
   /** The card instance the named value is stored on, keyed by `storeAs`. */
   sourceId: CardInstanceId;
   storeAs: string;
@@ -271,6 +290,7 @@ export type PendingChoice =
   | PendingReorderDeckChoice
   | PendingDeployForFreeChoice
   | PendingDistributeChoice
+  | PendingPileAssignmentChoice
   | PendingReplacementChoice
   | PendingNameValueChoice
   | PendingChooseNumberChoice

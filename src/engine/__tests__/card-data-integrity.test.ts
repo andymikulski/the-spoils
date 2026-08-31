@@ -86,10 +86,21 @@ interface Manifest {
 
 const catalog: CardDef[] = readJson("data/cards.json");
 const manifest: Manifest = readJson("data/card-coverage.json");
-const behaviorsTestSrc = readFileSync(
-  ROOT + "src/engine/__tests__/card-behaviors.test.ts",
-  "utf8"
-);
+// A card flagged `reusesProvenShape: false` must be named by a test — in
+// `card-behaviors.test.ts` (the general convention) or a set-specific
+// `*-newshapes.test.ts` companion.
+const behaviorsTestSrc = [
+  "src/engine/__tests__/card-behaviors.test.ts",
+  "src/engine/__tests__/holy-heist-newshapes.test.ts"
+]
+  .map(rel => {
+    try {
+      return readFileSync(ROOT + rel, "utf8");
+    } catch {
+      return "";
+    }
+  })
+  .join("\n");
 
 const STATUSES = [
   "unclassified",
@@ -113,12 +124,12 @@ const EVENT_TYPES = new Set([
   "turnStarted", "turnEnding", "cardPlayed", "cardEnteredPlay", "cardMoved",
   "cardDestroyed", "cardDepleted", "cardRestored", "resourcePlayed",
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
-  "characterAttacked", "characterBlocked", "cardsDrawn", "counterChanged",
-  "attackerBlocked", "deckSearched"
+  "characterAttacked", "characterBlocked", "blockingPartyFormed", "cardsDrawn",
+  "cardsDiscarded", "counterChanged", "attackerBlocked", "deckSearched"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
-  "canBlockCovert"
+  "canBlockCovert", "canBlockAnyParty"
 ]);
 const KNOWN_TYPE_TAGS = new Set([
   ...ABILITY_TYPES,
@@ -140,9 +151,12 @@ const KNOWN_TYPE_TAGS = new Set([
   "useAnyAbility",
   "duplicate", "oneOf", "setCardType", "removeCardType", "retargetExtraCost",
   "partitionAndPick",
+  "healDamage", "suppressAbilities", "suppressKeyword", "grantKeywordToPlayer",
+  "transformBattleDamage", "randomFromSelection", "separateIntoPiles",
+  "grantVoidPlay",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
-  "loseInfluence",
+  "loseInfluence", "moveSelected",
   // conditions
   "and", "or", "not", "sourceInZone", "sourceIsEventCard",
   "eventCardControlledBy", "targetExists", "cardTypeIs", "cardTradeIs",
@@ -150,17 +164,18 @@ const KNOWN_TYPE_TAGS = new Set([
   "sourceIsDamageSource", "cardMovedFromZone", "cardMovedToZone", "battleRole", "eventPlayerIs",
   "targetInSelection", "eventOrdinal", "deploySameNameThisTurn",
   "respondingTo", "respondedToPicked", "deployedViaFlipUp", "cardNameEquals",
-  "bottomedInMulligan",
+  "bottomedInMulligan", "cardNameIs",
   "cardProvides", "isStaple", "cardDepleted", "cardTypeEquals", "sourceIsFaceDown",
   "isExtremum", "linkedCardInPlay", "sharesBattlePartyWithSource", "remembered",
   "isActivePlayer", "battleActive", "cardSubtypeIs", "inPlaySinceTurnStart",
   "uniqueIs", "assignedDamageThisTurn", "inflictedDamageToFactionThisTurn",
-  "hasAttachment",
+  "hasAttachment", "hasKeyword", "textMentionsIcon", "isToken", "eventCardIs",
+  "targetInZone", "battleTargetIs", "battleDamageAssigned",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",
-  "selectionCount", "conditional", "sumStat", "thresholdIconCount",
-  "eventDamageAmount",
+  "selectionCount", "conditional", "sumStat", "sumCounters",
+  "thresholdIconCount", "eventDamageAmount",
   // target refs / player refs
   "selected", "card", "player", "ownerOf", "controllerOf", "deckPosition",
   "respondedToCard", "damageSource", "factionOf",
@@ -168,7 +183,7 @@ const KNOWN_TYPE_TAGS = new Set([
   // harmless to allow)
   "moveToZone",
   // durations
-  "permanent", "untilEndOfTurn", "whileSourceInPlay",
+  "permanent", "untilEndOfTurn", "untilStartOfNextTurn", "whileSourceInPlay",
   // CardType, as it legitimately appears under CardSelector.type
   "character", "item", "location", "tactic", "resource", "faction"
 ]);

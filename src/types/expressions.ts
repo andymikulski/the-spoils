@@ -57,7 +57,15 @@ export type TargetRef =
   /** A player's faction card instance — "attach it to that player's faction". */
   | { type: "factionOf"; player: PlayerRef }
   /** A card `source` earlier "remembered" under `key` (see the `rememberTarget` effect); `undefined` if none / it left play. */
-  | { type: "remembered"; key: string };
+  | { type: "remembered"; key: string }
+  /**
+   * The in-play card of `cardType` that the responded-to stack item picked
+   * as an EXTRA COST — the read side of the `respondedToPicked` *condition*
+   * (and of what `retargetExtraCost` rewrites). "Put the character [that the
+   * responded-to card/ability picked] into its owner's hand." (Catastrophic
+   * Caper). `undefined` outside a response window / if no such pick.
+   */
+  | { type: "respondedToPicked"; cardType: CardType };
 
 export type NumberExpression =
   | number
@@ -153,6 +161,17 @@ export type NumberExpression =
     }
   | {
       /**
+       * Total number of `counter` markers across every in-play card matching
+       * `selector` — parallel to `sumStat`. Bounds a player-chosen X to the
+       * tokens actually available ("Remove X tokens from cards you control";
+       * Voidal Humour Redistribution — `variableBounds.max`).
+       */
+      type: "sumCounters";
+      selector: CardSelector;
+      counter: string;
+    }
+  | {
+      /**
        * The number of threshold icons in `target`'s printed threshold — the
        * length of the icon string (`"rrr"` → 3), or the value of a numeric
        * threshold. "X is the number of threshold icons of the character."
@@ -217,6 +236,13 @@ export interface CardSelector {
    * subtype"). Takes precedence over `subtype` when both are set.
    */
   subtypeVar?: string;
+  /**
+   * Match cards whose printed `trade` equals a value a `nameValue`
+   * (`valueKind: "trade"`) stored on the source card — one key, or any of a
+   * list ("a character that is one of the [2] named trades"; Gathering of
+   * Unlikely Heroes). Case-insensitive.
+   */
+  tradeVar?: string | string[];
 
   depleted?: boolean;
 
@@ -268,4 +294,11 @@ export interface TargetDeclaration {
    * "targetExists", target: ... } }` (checks the first selection, if any).
    */
   optional?: boolean;
+  /**
+   * "N cards with different names" (Cheats, Profane Proposal) — every
+   * selection must have a distinct printed `CardDefinition.name`. Enforced
+   * wherever selections are validated (`playCard`/`activateAbility`,
+   * `selectTargets`, `chooserSelectsTarget`).
+   */
+  distinctNames?: boolean;
 }

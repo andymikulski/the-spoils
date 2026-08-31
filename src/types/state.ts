@@ -138,6 +138,38 @@ export interface RuntimeKeywordGrant {
   createdTurn: number;
 }
 
+/**
+ * A temporary keyword grant to *every character a player controls* (now and
+ * entering later this turn) from a `grantKeywordToPlayer` effect — "this
+ * turn, characters you control and deploy can attack even if they have not
+ * been in play under your control since the start of the turn" (Hasty
+ * Pursuit) grants `aggro`. Consulted by `hasKeyword`; swept by
+ * `durationStillActive`.
+ */
+export interface RuntimePlayerKeywordGrant {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  playerId: PlayerId;
+  keyword: Keyword;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/**
+ * A temporary "this card loses ALL its rules text" from a `suppressAbilities`
+ * effect — the duration'd counterpart of `ContinuousAbility.suppressAllAbilities`.
+ * While active (`durationStillActive`) every ability on `targetId` is
+ * inert (`abilitySuppressed`). "This turn, this card loses all rules text."
+ * (iDumb De-Itemizer — RESET).
+ */
+export interface RuntimeAbilitySuppression {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  targetId: CardInstanceId;
+  duration: Duration;
+  createdTurn: number;
+}
+
 /** A temporary restriction grant from a `grantRestriction` effect (e.g. "this turn, the character cannot attack"). */
 export interface RuntimeRestriction {
   id: ModifierId;
@@ -203,21 +235,50 @@ export interface RuntimeOutgoingDamageModifier {
   createdTurn: number;
 }
 
+/**
+ * A runtime transform of how a character assigns / receives *battle damage*,
+ * registered by a `transformBattleDamage` effect and consulted as locked
+ * assignments are inflicted (`inflictLockedBattleDamage`). `cardId` is the
+ * character it applies to; `role` says whether that's the assignment's
+ * dealer or its target.
+ * - `setAmount` — the dealer assigns `amount` instead of its strength
+ *   (Ocular Dispersal — `amount` = the host's numeric cost).
+ * - `redirectToSelf` — the dealer's damage is dealt to the dealer instead
+ *   (Don't Trip).
+ * - `bounceOther` — the dealer inflicts no damage; the target card is put
+ *   into its owner's hand instead (Vexing Nullifier, dealer side).
+ * - `bounceSelf` — a character dealing damage to `cardId` inflicts none;
+ *   `cardId` is put into its owner's hand instead (Vexing Nullifier,
+ *   receiver side).
+ */
+export interface BattleDamageTransform {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  cardId: CardInstanceId;
+  role: "dealer" | "receiver";
+  kind: "setAmount" | "redirectToSelf" | "bounceOther" | "bounceSelf";
+  amount?: number;
+  duration: Duration;
+  createdTurn: number;
+}
+
 /** A runtime damage "shield" registered by `preventDamage`, consumed as damage is inflicted this turn. */
 export interface DamageShield {
   id: ModifierId;
   targetId: CardInstanceId;
-  /** Remaining points this shield can still absorb. */
+  /** Remaining points this shield can still absorb (a positive sentinel while `wholeInstance`, until it is spent). */
   amount: number;
   mode: "reduce" | "redirect";
   redirectToId?: CardInstanceId;
+  /** "Reduce the next damage instance to 0" — absorbs one whole instance, ignoring `amount`, then is spent (Visible Loaf). */
+  wholeInstance?: boolean;
   createdTurn: number;
 }
 
 /** A one-shot delayed effect registered by `scheduleEffect`, fired at the next matching moment then discarded. */
 export interface ScheduledEffect {
   id: ModifierId;
-  when: "startOfNextTurn" | "endOfTurn" | "endOfBattle";
+  when: "startOfNextTurn" | "startOfOpponentNextTurn" | "endOfTurn" | "endOfBattle";
   /** The turn on which it was scheduled — an `endOfTurn` entry fires at the end of THIS turn; a `startOfNextTurn` entry fires at the start of its controller's next turn. */
   turnScheduled: number;
   sourceId: CardInstanceId;
@@ -501,6 +562,10 @@ export interface GameState {
 
   modifiers: RuntimeModifier[];
   keywordGrants: RuntimeKeywordGrant[];
+  /** Duration'd "loses <keyword>" from a `suppressKeyword` effect — mirrors `keywordGrants` but removes (lose beats grant). I See You!. */
+  keywordSuppressions: RuntimeKeywordGrant[];
+  playerKeywordGrants: RuntimePlayerKeywordGrant[];
+  abilitySuppressions: RuntimeAbilitySuppression[];
   restrictions: RuntimeRestriction[];
   costReductions: RuntimeCostReduction[];
   thresholdReductions: RuntimeThresholdReduction[];
@@ -511,7 +576,21 @@ export interface GameState {
   provideGrants: RuntimeProvideGrant[];
   cardTypeGrants: RuntimeCardTypeGrant[];
   damageShields: DamageShield[];
+  battleDamageTransforms: BattleDamageTransform[];
   scheduledEffects: ScheduledEffect[];
+
+  /**
+   * "For the rest of the game, you may deploy the voided cards as though
+   * they were in your hand [even if you cannot meet their threshold]"
+   * (Cheats, the Dirty Rotten). Each entry lets `playerId` play `cardId`
+   * from the void as though it were a hand card. Persistent; an entry is
+   * pruned when its card leaves the void.
+   */
+  voidPlayGrants: Array<{
+    cardId: CardInstanceId;
+    playerId: PlayerId;
+    ignoreThreshold: boolean;
+  }>;
 
   /**
    * Per-turn count of how many times each activated ability has been used,
