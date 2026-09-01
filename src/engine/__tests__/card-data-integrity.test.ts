@@ -94,7 +94,9 @@ const behaviorsTestSrc = [
   "src/engine/__tests__/holy-heist-newshapes.test.ts",
   "src/engine/__tests__/first-ed-part2-smoke.test.ts",
   "src/engine/__tests__/open-beta-caps.test.ts",
-  "src/engine/__tests__/open-beta-smoke.test.ts"
+  "src/engine/__tests__/open-beta-smoke.test.ts",
+  "src/engine/__tests__/first-edition-caps.test.ts",
+  "src/engine/__tests__/first-edition-smoke.test.ts"
 ]
   .map(rel => {
     try {
@@ -129,7 +131,7 @@ const EVENT_TYPES = new Set([
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
   "characterAttacked", "characterBlocked", "blockingPartyFormed", "cardsDrawn",
   "cardsDiscarded", "counterChanged", "attackerBlocked", "deckSearched",
-  "coinFlipped"
+  "coinFlipped", "cardPicked"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
@@ -167,6 +169,9 @@ const KNOWN_TYPE_TAGS = new Set([
   // Open Beta effects / expressions / conditions
   "grantSubtype", "redirectHandMoves", "installReplacement", "spendCountersMenu",
   "eventDrawAmount", "deploysThisTurn", "lastDeployedTactic", "attackedThisTurn",
+  "endOfBattle",
+  // 1st Edition effects
+  "restrictParty",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected",

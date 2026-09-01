@@ -15,34 +15,54 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 550 |
+| `verified` (driven through the public API) | 903 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
-| `classified` (audited, not yet authored) | 217 |
+| `classified` (audited, not yet authored) | 26 |
 | `vanilla` (no behavior needed) | 158 |
-| `unclassified` | 967 |
+| `unclassified` | 805 |
 | `wontImplement` | 2 |
-| `rulesAudited` | 988 / 2101 |
-| Engine capabilities | 209 / 209 implemented |
-| Test suite | 1078 passing (`npm test`), `npm run typecheck` clean |
+| `rulesAudited` | 1150 / 2101 |
+| Engine capabilities | 210 / 210 implemented |
+| Test suite | 1411 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 2, Seed 3, Shade of the Devoured Emperor, Holy Heist, 1st Edition
-Part 2, and Ungodly Mess are fully implemented and audited** — every card
-with rules text is `authored`/`verified`, its JSON checked against the
-printed text + the CR, all referenced capabilities implemented. The six sets
-exercise ~190 capabilities; new sets should mostly reuse that vocabulary.
+**Seed 3, 1st Edition Part 2, Holy Heist, Ungodly Mess, and Open Beta are
+fully implemented and audited** (Seed 2 + SotDE are authored-not-yet-
+verified) — every card with rules text is `authored`/`verified`, its JSON
+checked against the printed text + the CR, all referenced capabilities
+implemented. These sets exercise ~210 capabilities; new sets should mostly
+reuse that vocabulary. **Seed 3, 1st Edition Part 2, Holy Heist, Ungodly
+Mess, Open Beta, and 1st Edition are 100% done.**
 
-**Open Beta (206 cards) — classification + engine done; authoring in
-progress.** All 206 cards are `classified` + `rulesAudited` (22 `vanilla`,
-33 `verified`, 151 `classified`-awaiting-authoring). The 19 capabilities
-this set needs are **all implemented + unit-tested** (`open-beta-caps.test.ts`,
-20 tests) — see `BEHAVIORS.md` → "Open Beta additions" and `RULES.md`
-§12 → "Open Beta additions". Slice 1 (arcanist + warlord, 33 cards) is
-authored + `verified` (`open-beta-smoke.test.ts` + `open-beta-exercise.test.ts`
-instantiate and drive every one through the public API). **Remaining: author
-slices 2–4 (banker 36 / gearsmith 37 / rogue 38)** from
-`.work/classify-ob-{2,3,4}.json` + the merged `data/card-coverage.json`
-entries; then extend the smoke/exercise tests and flip to `verified`. One
-parity gap registered: `seat-swap` (Emergency Obfuscation).
+**1st Edition (226 cards) — done** (24 `vanilla` + 202 `verified`). **144
+of 162 non-vanilla cards are exact reprints** (same name + text) of
+already-`verified` Open Beta cards — the authored `behavior` + coverage
+classification were copied verbatim (`.work/_fe-reprints.cjs`). Only 18
+cards are novel, needing 2 small capabilities: `restrict-party-effect` (the
+"this turn" form of `partyRestriction` — Carnival King) and
+`partyRestriction.scope: "attachedParty"` (Spiky Atlasphere). Tests:
+`first-edition-{caps,smoke,exercise}.test.ts`. One concession: Resurrection
+Emporium's discard→removed replacement fires only for a character leaving
+play. Reuses the Open Beta `seat-swap` parity gap (Emergency Obfuscation is
+also a 1st Edition reprint).
+
+**Open Beta (206 cards) — done** (22 `vanilla` + 184 `verified`). Added 19
+capabilities in one pass — `draw-count-modifier`,
+`event-draw-amount-expression`, `influence-change-modifier`,
+`cannot-lose-at-zero-influence`, `attack-tax`, `deploys-this-turn-count`,
+`attacked-this-turn-condition`, `damaged-this-turn-any-source`,
+`grant-subtype`, `redirect-hand-moves`, `install-replacement-effect`,
+`foreach-sequential`, `spend-counters-menu`, `last-deployed-tactic-ref`,
+`party-restriction-any-party` (maxMembers + all-parties scope),
+`play-restriction-by-name`, `selector-fromtop-expression`,
+`card-picked-trigger`, `activate-opponents-abilities` — see `BEHAVIORS.md` →
+"Open Beta additions" and `RULES.md` §12 → "Open Beta additions". One parity
+gap: `seat-swap` (Emergency Obfuscation). Test coverage:
+`open-beta-caps.test.ts` (one fixture per new capability), `open-beta-smoke.test.ts`
+(13 hand-written end-to-end scenarios through the real catalog),
+`open-beta-exercise.test.ts` (**every** card with a `behavior` block —
+including the 40 prior-pass ones — instantiated from the catalog and played /
+activated / triggered on a broad synthetic board with every pending choice
+auto-answered; this is why the whole set is `verified`).
 
 **Ungodly Mess (167 cards) — done** (159 `verified` + 6 `vanilla` + 2
 `wontImplement`). Added 10 capabilities in one pass —
@@ -143,11 +163,11 @@ additions) and `wontImplement` (whole card unmodellable) — a card with a
 parity gap is still `verified` for its in-scope parts and links the gap id.
 `card-data-integrity.test.ts` keeps the registry honest.
 
-**The 107 `classified` cards** (Open Beta 40, 1st Edition 40, 2nd Edition
-26, Ungodly Mess 1) are pre-existing `behavior` blocks, audited against
-printed text + the CR — vocabulary-valid and faithful. Promoting them to
-`authored`/`verified` just needs each driven through a real-JSON smoke
-path.
+**The 66 `classified` cards** (1st Edition 40, 2nd Edition 26) are
+pre-existing `behavior` blocks, audited against printed text + the CR —
+vocabulary-valid and faithful. Promoting them to `authored`/`verified` just
+needs each driven through a real-JSON smoke path (a per-set `*-exercise.test.ts`
+does this — see how Open Beta's 40 prior-pass cards were promoted).
 
 `data/cards.json` is normalized to `JSON.stringify(_, null, 2)` (LF) so it
 matches `src/data/cards.js` and edits produce clean diffs.
@@ -203,11 +223,14 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Open Beta | 0 | fully classified; 33 `verified`, 151 `classified` awaiting authoring (slices 2–4) |
-| 1st Edition | 162 | 40 prior-behavior cards `classified`; the two precon decks draw from here |
-| Seed | 209 | |
+| Seed | 209 | smallest remaining |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |
 | Seed Saga | 340 | largest; long tail of one-offs likely |
+
+Open Beta + 1st Edition heavily overlapped (144 of 1st Edition's non-vanilla
+cards were byte-identical Open Beta reprints). Seed / 2nd Edition / Seed Saga
+are **not** part of that reprint cluster — expect genuine per-card
+classification + authoring like the Open Beta pass.
 
 **Holy Heist — done** (165/165): 33 vanilla, **132 `verified`**. Test
 coverage:
@@ -278,6 +301,18 @@ pending choice / event / action stalls the UI.
   case (`statusText.ts`), and a `PendingChoicePanel.tsx` panel case (soft-lock
   otherwise). Event **`coinFlipped`** — log enumeration (informational). No
   new `Cost` / `GameAction` shapes (`describeCost` unaffected).
+- **Open Beta / 1st Edition — DONE in spoils-game** (2026-09-01): one new
+  `PendingChoice` kind **`spendCountersMenu`** (Voidal Poisoning) —
+  `policyBot.ts` `decidePendingChoice` (safe branch `{ optionIndex: null }`),
+  `statusText.ts` `describePendingChoice`, `PendingChoicePanel.tsx`
+  (`SpendCountersMenuChoice` — options as buttons with token cost + greedy
+  `sources` auto-pick + Stop). Plus `ActionDock.tsx` `collectAbilityRows`
+  now surfaces borrowed opponent abilities (The Billionaire). New event
+  `cardPicked` — the consumer has no event-log enumeration, nothing to
+  wire. All other capabilities (new effects / conditions / expressions /
+  `ContinuousAbility` fields) are engine-internal — no consumer surface, no
+  new `Cost` shapes. `npm run typecheck` + `npm test` green in both
+  workspaces.
 
 ---
 

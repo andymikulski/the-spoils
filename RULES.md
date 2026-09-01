@@ -1207,6 +1207,22 @@ of the Devoured Emperor additions")**
   deck-ownership swap ("owner of the winning deck wins") is a game-state
   refactor; its token-accrual + self-destruct clauses are authored.
 
+### 1st Edition additions
+
+- **`restrictParty` effect (`card-verified`).** The "this turn" form of a
+  party-composition restriction (min/max members, parity) scoped to a
+  forming party that includes a target card — parallel to `restrictBlockers`
+  vs `blockRestriction`. Carnival King (CONGA LINE).
+- **`partyRestriction` scope `"attachedParty"` (`card-verified`).** A gear
+  item's `partyRestriction` bites a forming party that includes its *host*.
+  Spiky Atlasphere.
+- **Discard replacement scope (`engine-derived`).** Resurrection Emporium's
+  "if a character would be put into your discard pile, remove it from the
+  game instead" is authored as a `moveToZone` `zone: "discard"`
+  `ReplacementAbility`; it fires only for a character leaving *play* (the
+  `applyReplacement` `from === "play"` guard), not one milled straight from
+  the deck — a documented concession.
+
 ## 13. Tokens (CR §409)
 
 **(CR §409.1)** A token is a marker placed on an in-play card; it has no

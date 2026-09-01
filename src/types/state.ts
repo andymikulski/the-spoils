@@ -710,6 +710,26 @@ export interface GameState {
   }>;
 
   /**
+   * Durationed "this turn, a forming party that includes `targetId` must
+   * <constraint>" grants from a `restrictParty` effect — the "this turn"
+   * form of `ContinuousAbility.partyRestriction` (parallel to how
+   * `blockRestrictionGrants` is the "this turn" form of
+   * `blockRestriction`). Consulted in `assertPartyComposition`; swept by
+   * `durationStillActive`. Carnival King (CONGA LINE).
+   */
+  partyRestrictionGrants: Array<{
+    id: ModifierId;
+    sourceId: CardInstanceId;
+    targetId: CardInstanceId;
+    role: "any" | "attacking" | "blocking";
+    minMembers?: NumberExpression;
+    maxMembers?: NumberExpression;
+    parity?: "even" | "odd";
+    duration: Duration;
+    createdTurn: number;
+  }>;
+
+  /**
    * "For the rest of the game, you may deploy the voided cards as though
    * they were in your hand [even if you cannot meet their threshold]"
    * (Cheats, the Dirty Rotten). Each entry lets `playerId` play `cardId`

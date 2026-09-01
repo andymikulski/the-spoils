@@ -581,8 +581,12 @@ export interface ContinuousAbility extends AbilityBase {
      * forming attacking/blocking party regardless of whether the source is a
      * member: a location that dictates party composition (Arcana Department —
      * even members; Hangdog Alley — `minMembers: 1, maxMembers: 1`).
+     * `"attachedParty"` — bites a forming party that includes the card the
+     * source is attached to (a gear item constraining its host's party;
+     * Spiky Atlasphere — "an attacking party including the attached
+     * character must have only 1 member").
      */
-    scope?: "selfParty" | "allParties";
+    scope?: "selfParty" | "allParties" | "attachedParty";
   };
 
   /**

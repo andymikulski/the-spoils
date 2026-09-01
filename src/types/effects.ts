@@ -1108,6 +1108,25 @@ export type Effect =
     }
   | {
       /**
+       * "This turn, a forming attacking/blocking party that includes
+       * `target` (default `"source"`) must <constraint>." — the "this turn"
+       * form of `ContinuousAbility.partyRestriction` (parallel to
+       * `restrictBlockers` vs `blockRestriction`). Registered on
+       * `GameState.partyRestrictionGrants`, checked in `declareAttack` /
+       * `declareBlockers`. Carnival King — "when an attacking party is
+       * formed including the character, it must have only 1 member"
+       * (`role: "attacking", minMembers: 1, maxMembers: 1`).
+       */
+      type: "restrictParty";
+      target?: TargetRef;
+      role: "any" | "attacking" | "blocking";
+      minMembers?: NumberExpression;
+      maxMembers?: NumberExpression;
+      parity?: "even" | "odd";
+      duration: Duration;
+    }
+  | {
+      /**
        * "Remove any number of tokens from cards you control. Use the tokens
        * to generate the following effects any number of times." (Voidal
        * Poisoning). `chooser` repeatedly picks an `option` and removes its

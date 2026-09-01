@@ -280,4 +280,118 @@ describe("Open Beta smoke: authored behavior drives the engine", () => {
     settle(engine);
     assert.equal(engine.state.cards[id("rc")].zone, "discard");
   });
+
+  test("Jackmove — reveal top X of an opponent's deck, keep characters/items, discard the rest", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "jm", def: def("Jackmove"), owner: P1, zone: "play" },
+        { key: "ch", def: character({ name: "Stolen Char" }), owner: P2, zone: "deck" },
+        { key: "tac", def: tactic({ name: "Stolen Tactic" }), owner: P2, zone: "deck" },
+        { key: "deep", def: character({ name: "Untouched" }), owner: P2, zone: "deck" },
+        ...bank("deception", 6, P1)
+      ]
+    });
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("jm"),
+      abilityId: "body",
+      variables: { x: 2 }
+    });
+    settle(engine);
+    assert.equal(engine.state.cards[id("ch")].zone, "play");
+    assert.equal(engine.state.cards[id("ch")].controllerId, P1);
+    assert.equal(engine.state.cards[id("tac")].zone, "discard");
+    assert.equal(engine.state.cards[id("deep")].zone, "deck");
+  });
+
+  test("Sarcophyle Matriculation — gated to 'while you are being attacked'", () => {
+    // The installReplacement 'would be destroyed -> take control instead'
+    // mechanism itself is covered end-to-end in open-beta-caps.test.ts; here
+    // we just confirm the authored battleRole:"defender" gate on the body.
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sm", def: def("Sarcophyle Matriculation"), owner: P1, zone: "hand" },
+        { key: "foe", def: character({ name: "Foe" }), owner: P2, zone: "play" },
+        ...bank("deception", 12, P1)
+      ]
+    });
+    assert.throws(() =>
+      engine.perform({ type: "playCard", playerId: P1, cardId: id("sm"), selected: { c: [id("foe")] } })
+    );
+  });
+
+  test("The Billionaire — activate an opponent card's ability paying with your own resources", () => {
+    const oppEngine = character({
+      name: "Opp Engine",
+      behavior: { abilities: [{ id: "go", type: "activated", costs: [{ type: "payResources", amount: 1 }], effects: [{ type: "draw", player: "controller", amount: 1 }] }] }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "b", def: def("The Billionaire"), owner: P1, zone: "play" },
+        { key: "o", def: oppEngine, owner: P2, zone: "play" },
+        ...bank("deception", 1, P1),
+        ...Array.from({ length: 2 }, (_, i) => ({ key: `d${i}`, def: character({ name: `D${i}` }), owner: P2, zone: "deck" as const }))
+      ]
+    });
+    const p2HandBefore = engine.state.players[P2].hand.length;
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("o"), abilityId: "go" });
+    settle(engine);
+    assert.equal(engine.getAvailableResourceCount(P1), 0);
+    assert.equal(engine.state.players[P2].hand.length, p2HandBefore + 1);
+  });
+
+  test("3p1ph4ny 31f — deploy a non-tactic for free on ETB", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "e", def: def("3p1ph4ny 31f"), owner: P1, zone: "hand" },
+        { key: "freebie", def: character({ name: "Freebie", cost: 4 }), owner: P1, zone: "hand" },
+        ...bank("elitism", 12, P1)
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("e") });
+    settle(engine);
+    // P1's "deploy a non-tactic for free" prompt
+    if (engine.state.pendingChoice?.kind === "deployForFree") {
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: P1,
+        choice: { kind: "deployForFree", cardId: id("freebie") } as any
+      });
+    }
+    settle(engine);
+    // decline the opponent's mirrored prompt(s)
+    let g = 0;
+    while (engine.state.pendingChoice?.kind === "deployForFree" && g++ < 5) {
+      engine.perform({ type: "resolvePendingChoice", playerId: engine.state.pendingChoice.playerId, choice: { kind: "deployForFree" } });
+      settle(engine);
+    }
+    assert.equal(engine.state.cards[id("freebie")].zone, "play");
+  });
+
+  test("Free Trade Agreement — start-of-turn modal, option 3 lets each player draw", () => {
+    const { engine } = buildGame({
+      cards: [
+        { key: "fta", def: def("Free Trade Agreement"), owner: P1, zone: "play" },
+        ...Array.from({ length: 4 }, (_, i) => ({ key: `pa${i}`, def: character({ name: `PA${i}` }), owner: P1, zone: "deck" as const })),
+        ...Array.from({ length: 4 }, (_, i) => ({ key: `pb${i}`, def: character({ name: `PB${i}` }), owner: P2, zone: "deck" as const }))
+      ],
+      activePlayerId: P2,
+      turn: 2
+    });
+    engine.perform({ type: "endTurn", playerId: P2 });
+    settle(engine);
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsOption");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsOption", index: 2 } });
+    // each player: up to 2 "may draw" prompts — accept all
+    let g = 0;
+    for (;;) {
+      const pc = engine.state.pendingChoice as { kind: string; playerId: string } | undefined;
+      if (!pc || pc.kind !== "mayPay" || g++ >= 8) break;
+      engine.perform({ type: "resolvePendingChoice", playerId: pc.playerId, choice: { kind: "mayPay", pay: true } });
+      settle(engine);
+    }
+    settle(engine);
+    assert.ok(engine.state.players[P1].hand.length >= 1);
+  });
 });

@@ -141,6 +141,7 @@ export function createTwoPlayerGame(
     controlGrants: [],
     abilityGrants: [],
     blockRestrictionGrants: [],
+    partyRestrictionGrants: [],
     voidPlayGrants: [],
     scheduledEffects: [],
     damagePreventionWindows: [],

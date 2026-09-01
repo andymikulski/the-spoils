@@ -210,6 +210,7 @@ export class SpoilsEngine {
     this.state.subtypeGrants ??= [];
     this.state.runtimeReplacements ??= [];
     this.state.handMoveRedirects ??= [];
+    this.state.partyRestrictionGrants ??= [];
     this.state.damageShields ??= [];
     this.state.battleDamageTransforms ??= [];
     this.state.voidPlayGrants ??= [];
@@ -1123,6 +1124,9 @@ export class SpoilsEngine {
       grant => this.durationStillActive(grant)
     );
     this.state.blockRestrictionGrants = this.state.blockRestrictionGrants.filter(
+      grant => this.durationStillActive(grant)
+    );
+    this.state.partyRestrictionGrants = this.state.partyRestrictionGrants.filter(
       grant => this.durationStillActive(grant)
     );
     this.state.damagePreventionWindows = this.state.damagePreventionWindows.filter(
@@ -6569,6 +6573,23 @@ export class SpoilsEngine {
         return;
       }
 
+      case "restrictParty": {
+        const targetId = this.resolveTargetRef(effect.target ?? "source", context);
+        if (!targetId) return;
+        this.state.partyRestrictionGrants.push({
+          id: nextId("partyRestriction"),
+          sourceId: context.sourceId,
+          targetId,
+          role: effect.role,
+          minMembers: effect.minMembers,
+          maxMembers: effect.maxMembers,
+          parity: effect.parity,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+        return;
+      }
+
       case "restrictBlockersToChosen": {
         const battle = this.state.battle;
         if (!battle || battle.phase === "finished") return;
@@ -8602,6 +8623,9 @@ export class SpoilsEngine {
       this.state.blockRestrictionGrants = this.state.blockRestrictionGrants.filter(
         g => g.targetId !== cardId && g.sourceId !== cardId
       );
+      this.state.partyRestrictionGrants = this.state.partyRestrictionGrants.filter(
+        g => g.targetId !== cardId
+      );
       this.state.subtypeGrants = this.state.subtypeGrants.filter(
         g => g.targetId !== cardId
       );
@@ -10525,8 +10549,13 @@ export class SpoilsEngine {
         if (this.abilitySuppressed(source.id, ability.id)) continue;
         const pr = ability.partyRestriction;
         const scope = pr.scope ?? "selfParty";
-        // "selfParty" restrictions only bite a party the source is in.
+        // "selfParty" restrictions only bite a party the source is in;
+        // "attachedParty" only bites a party the source's host is in.
         if (scope === "selfParty" && !memberSet.has(source.id)) continue;
+        if (scope === "attachedParty") {
+          const host = source.attachedTo;
+          if (!host || !memberSet.has(host)) continue;
+        }
 
         const ctx: ResolutionContext = {
           sourceId: source.id,
@@ -10539,6 +10568,27 @@ export class SpoilsEngine {
 
         check(pr, ctx, this.getDefinition(source.id).name);
       }
+    }
+
+    // "This turn, a party including <target> must ..." — `restrictParty`
+    // effect grants (Carnival King).
+    for (const grant of this.state.partyRestrictionGrants) {
+      if (!memberSet.has(grant.targetId)) continue;
+      const ctx: ResolutionContext = {
+        sourceId: grant.sourceId,
+        controllerId: this.state.cards[grant.sourceId]?.controllerId ?? "",
+        selected: {}
+      };
+      check(
+        {
+          role: grant.role,
+          minMembers: grant.minMembers,
+          maxMembers: grant.maxMembers,
+          parity: grant.parity
+        },
+        ctx,
+        this.getDefinition(grant.targetId).name
+      );
     }
   }
 

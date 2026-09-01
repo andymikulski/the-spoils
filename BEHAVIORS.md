@@ -573,6 +573,35 @@ detail in `src/types/*` + `COVERAGE.md`'s capability table.
   wins" is a full seat/side/deck-ownership swap. Token-accrual + self-
   destruct clauses are authored.
 
+## 1st Edition additions
+
+1st Edition is 144/162 exact reprints of already-`verified` Open Beta cards
+(same name + text — the authored `behavior` is copied verbatim). Only 18
+cards are novel; they need 2 capabilities.
+
+- **`{ type: "restrictParty", target?, role, minMembers?, maxMembers?,
+  parity?, duration }`** — the "this turn" form of
+  `ContinuousAbility.partyRestriction` (parallel to `restrictBlockers` vs
+  `blockRestriction`). A `GameState.partyRestrictionGrants` entry checked in
+  `assertPartyComposition` against any forming party that includes the
+  grant's `target`. Carnival King — CONGA LINE ("when an attacking party is
+  formed including the character, it must have only 1 member").
+- **`partyRestriction.scope` gains `"attachedParty"`** — the constraint
+  bites a forming party that includes the card the source is *attached to*
+  (a gear item constraining its host's party). Spiky Atlasphere.
+
+Everything else composes from existing vocab — notable ones: Land Shark
+(`count { faceDown: true }`), Samuel Gristwalter (an unconditional all-damage
+faction `damageModifiers` ward), A Series of Tubes (`preventDamage`
+`mode: "redirect"` + the Basic/Hub-Node cycle), Topplemajig (a live
+conditional aura gated on `{ inBattle, target: "source" }` with an
+opposing-party selector), Recapitulating Apparition (`cardMoved`
+play→discard + `mayPay` + `putIntoPlay` self-recur), Resurrection Emporium
+(a `moveToZone` `zone: "discard"` `ReplacementAbility` → `removeFromGame` —
+CONCESSION: only fires for a character leaving *play*, not one milled from
+the deck), Bask Bomb (two `distributeAmong` steps with different
+`chooser`s), Bladefist Doomwing (`FIREBREATHING` X+X). See `.work/classify-fe-novel.json`.
+
 ## Ability types
 
 ```ts
