@@ -281,6 +281,46 @@ export interface PendingTakeFromPileChoice {
   max: number;
 }
 
+/**
+ * Wyrmfang Deathskull — `playerId` (the defender) picks any subset of
+ * `candidates` (characters they control); for the rest of this battle only
+ * those may block, and each that can legally block must. Answered with
+ * `{ kind: "chooseChosenBlockers", cardIds }`.
+ */
+export interface PendingChooseChosenBlockersChoice {
+  kind: "chooseChosenBlockers";
+  id: string;
+  playerId: PlayerId;
+  candidates: CardInstanceId[];
+}
+
+/**
+ * Two-Headed Coin — `playerId` lost a coin flip and may pay `cost` to
+ * reflip and adopt the new result. Answered with
+ * `{ kind: "coinFlipReplace", reflip: boolean }`.
+ */
+export interface PendingCoinFlipReplaceChoice {
+  kind: "coinFlipReplace";
+  id: string;
+  playerId: PlayerId;
+  cost: Cost[];
+}
+
+/**
+ * Auction House — `playerId` names a bid for `characterId`. The bid must be
+ * `0` (pass) or an integer strictly greater than `highBid` and no more than
+ * `maxBid` (their detached-resource count). Answered with
+ * `{ kind: "auctionBid", bid: number }`.
+ */
+export interface PendingAuctionBidChoice {
+  kind: "auctionBid";
+  id: string;
+  playerId: PlayerId;
+  characterId: CardInstanceId;
+  highBid: number;
+  maxBid: number;
+}
+
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
@@ -301,4 +341,7 @@ export type PendingChoice =
   | PendingUseAnyAbilityChoice
   | PendingPartitionCardsChoice
   | PendingPickPileChoice
-  | PendingTakeFromPileChoice;
+  | PendingTakeFromPileChoice
+  | PendingChooseChosenBlockersChoice
+  | PendingCoinFlipReplaceChoice
+  | PendingAuctionBidChoice;

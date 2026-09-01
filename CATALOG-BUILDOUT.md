@@ -15,20 +15,40 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 198 |
+| `verified` (driven through the public API) | 358 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
 | `classified` (audited, not yet authored) | 107 |
-| `vanilla` (no behavior needed) | 156 |
-| `unclassified` | 1433 |
-| `rulesAudited` | 517 / 2101 |
-| Engine capabilities | 159 / 159 implemented |
-| Test suite | 598 passing (`npm test`), `npm run typecheck` clean |
+| `vanilla` (no behavior needed) | 157 |
+| `unclassified` | 1272 |
+| `rulesAudited` | 678 / 2101 |
+| Engine capabilities | 180 / 180 implemented |
+| Test suite | 794 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 2, Seed 3, Shade of the Devoured Emperor, and Holy Heist are fully
-implemented and audited** — every card with rules text is
+**Seed 2, Seed 3, Shade of the Devoured Emperor, Holy Heist, and 1st Edition
+Part 2 are fully implemented and audited** — every card with rules text is
 `authored`/`verified`, its JSON checked against the printed text + the CR,
-all referenced capabilities implemented. The four sets exercise ~150
+all referenced capabilities implemented. The five sets exercise ~180
 capabilities; new sets should mostly reuse that vocabulary.
+
+**1st Edition Part 2 (165 cards) — done** (160 `verified` + 5 `vanilla`).
+Added 21 capabilities in one pass — `battlePartySize` / `extremumStat`
+expressions, `isCard` / `damagedThisTurn` / `destroyedByBattleDamage`
+conditions, `attachmentHost` / `respondedAbilitySource` TargetRefs,
+`CardSelector.nameVar`, `terminate.disposition`, `takeControl.duration`,
+`deployForFree.free`, `lockAbilityThisTurn` / `flipCoin` (+ `coinFlipped`
+event + a `replaces:{event:"coinFlip",result:"lose"}` replacement) /
+`restrictBlockers` / `restrictBlockersToChosen` / `grantAbilitiesFrom` /
+`initiateAttack` / `auctionForCard` effects, `DamageModifierDefinition`
+`minAmount`/`setTo`, `ContinuousAbility` `partyRestriction` /
+`blockRestriction` / `abilityCostModifiers`, `cardDestroyed.byBattleDamage`.
+See `BEHAVIORS.md` → "1st Edition Part 2 additions" and RULES.md §8 / §12.
+Test coverage: `first-ed-part2-caps.test.ts` (one fixture per capability),
+`first-ed-part2-smoke.test.ts` (12 hand-written end-to-end scenarios through
+the real catalog), `first-ed-part2-exercise.test.ts` (**every** authored
+card instantiated from the catalog and played / activated / triggered on a
+broad synthetic board with every pending choice auto-answered — no crash /
+bad selector / missing handler / choice loop; this is why the whole set is
+`verified`).
 
 **Holy Heist (132 cards)** added ~37 capabilities in one pass —
 `healDamage`, `suppressAbilities` / `suppressKeyword` effects,
@@ -150,8 +170,7 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| 1st Edition Part 2 | 161 | smallest remaining |
-| Ungodly Mess | 161 | 1 already classified |
+| Ungodly Mess | 161 | 1 already classified — smallest remaining |
 | Open Beta | 144 | 40 prior-behavior cards already `classified` |
 | 1st Edition | 162 | 40 prior-behavior cards `classified`; the two precon decks draw from here |
 | Seed | 209 | |
@@ -218,6 +237,15 @@ pending choice / event / action stalls the UI.
   when its `to` is `"split"` (Ignatius Gloamspike / Confessions — a
   top/bottom scry split). Events **`cardsDiscarded`** /
   **`blockingPartyFormed`** — add to the log enumeration (informational).
+- **1st Edition Part 2:** three new `PendingChoice` kinds — **`auctionBid`**
+  (Auction House — `{ bid: 0 }` = pass; cap at `maxBid`), **`coinFlipReplace`**
+  (Two-Headed Coin — `{ reflip: boolean }`), **`chooseChosenBlockers`**
+  (Wyrmfang Deathskull — `{ cardIds }` ⊆ `candidates`). Each needs a
+  `decidePendingChoice` decline/safe branch (`policyBot.ts` — non-nullable
+  return, so this is a compile error until handled), a `describePendingChoice`
+  case (`statusText.ts`), and a `PendingChoicePanel.tsx` panel case (soft-lock
+  otherwise). Event **`coinFlipped`** — log enumeration (informational). No
+  new `Cost` / `GameAction` shapes (`describeCost` unaffected).
 
 ---
 

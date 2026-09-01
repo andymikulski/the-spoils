@@ -1,0 +1,643 @@
+### Ambiguity Embiggener  [88ddad6c-4df5-4baa-b1b8-c7492f67d42e]
+item | arcanist | cost 3 | thr oo  | 
+At the start of each player's turn, that player chooses a number for X. Each player puts X cards from their hand on the bottom of their deck in any order, or their entire hand if they have less than X cards in it. Each player puts the top Y cards of their deck into their hand, where Y is the number of cards that player put on the bottom of their deck.
+
+### Ameliorate  [5a6a4268-1c9c-4a97-8d54-3c247dc82e72]
+tactic | arcanist | cost 1 | thr ooo  | 
+Put any number of cards from your hand on the bottom of your deck in any order. Put the top X cards of your deck into your hand, where X is the number of cards you put on the bottom plus 1.
+
+### Arcanology Recruitment Officer  [7b05e4a8-cff1-441c-91bc-de6f671f8b12]
+character | arcanist | cost 4 | thr oo 3/3 spd3 | muddler
+At the start of your turn, pick a character an opponent controls. It gains COVERT until the start of your next turn.
+
+### Cloaked Creeper  [2437c2d0-0578-4d66-826b-c1184c9bd72d]
+character | arcanist | cost 2 | thr ooo 1/1 spd1 | lurker
+COVERT -- While this card is a member of an attacking party, the party is COVERT.
+
+### Deceptive Muddler  [b28841ab-18e2-4a2e-aeb1-94b124f7baae]
+character | arcanist | cost 4 | thr o 2/1 spd3 | muddler
+COVERT -- When this card inflicts damage to a faction, that faction's controller puts a card from their hand on the top of their deck if they can.
+
+### Dimensional Rift  [79146bd7-cc3c-4a56-9071-feca013f73a8]
+location | arcanist | cost 0 | thr ooooo  | 
+TELEPORT -- COST: Pay 4. Deplete this card. Pick a character. -- EFFECT: Put the character into its owner's hand.
+
+### Eccentric Inquisition  [847cd807-e515-4c1f-8c4d-fa0ffd7b217d]
+tactic | arcanist | cost 2 | thr oooo  | 
+Reveal the top 7 cards of an opponent's deck. Put all tactics revealed this way into the void. Put the remaining cards on the bottom of that player's deck in any order. For the rest of the game, you may deploy tactics voided by this card as though they were in your hand without meeting their threshold.
+
+### Ectological Hazard Suit  [e667dbee-fc6b-4353-b580-ab4c38a3aeb7]
+item | arcanist | cost 3 | thr oo  | gear
+ATTACH TO CHARACTER -- When this card enters play, put a token on the attached character. -- The attached character gains 1 strength and 1 life for each token on it. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+
+### Eldridge Gosche  [11f9caf2-79de-478a-a87f-c2fcfb90e11a]
+character | arcanist | cost 8 | thr oo 4/5 spd3 | ritualist
+UNIQUE ELDRIDGE -- At the start of your turn, you may pick 2 or fewer non-resource cards you control. If you do, put up to 2 tokens divided however you want on those cards. -- EJECT -- COST: Remove 3 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand. -- DISRUPT -- COST: Remove 3 tokens from this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card.
+
+### Emphatic Ecto-Manipulator  [3d8e8296-ede6-4d43-bbe3-9f94c74d65f2]
+character | arcanist | cost 5 | thr oo 3/3 spd3 | ecto-manipulator
+EXTRA COST: You may pick a character you control. -- When this card enters play, if you picked a character as part of its cost, put 2 tokens on that character.
+
+### Entangle  [51e17074-b46e-4ba5-963b-34e1585e3208]
+tactic | arcanist | cost 3 | thr ooo  | 
+EXTRA COST: Pick 2 or fewer characters. -- This turn, the characters lose 1 speed. Draw a card.
+
+### Gnat  [d65c3554-ba90-45e8-ab26-4f8d42d498b7]
+character | arcanist | cost 1 | thr o 1/1 spd3 | lurker
+When this card leaves play, an opponent discards a card.
+
+### Infatuated Armchair  [ab4bed28-7665-4017-b829-4c95c366a61e]
+character | arcanist | cost 4 | thr o 2/2 spd3 | lurker
+When this card leaves play, you may look at the top 2 cards of any one deck. If you do, put 1 card on the bottom of that deck and 1 card on the top. Draw a card.
+
+### Insect Appreciator  [43276113-4afd-4e0f-a4c6-ff41c9a51cb2]
+character | arcanist | cost 3 | thr oo 3/3 spd3 | obsessor
+When an attacking or blocking party is formed including this card, it must have an even number of members.
+
+### Maladjustment  [556c61ec-857e-4773-80fb-b180513696f4]
+tactic | arcanist | cost 1 | thr o  | 
+EXTRA COST: Pick a resource you control. (You can pick face-down resources.) -- Put the resource into its owner's hand. You may play a resource.
+
+### Obsessive Compulsion  [2d436db8-8973-4f0b-b830-a343ab068908]
+tactic | arcanist | cost 1 | thr o  | 
+Look at the top 3 cards of your deck. You may put any number of those cards on the bottom of your deck in any order. Put the remaining cards on the top of your deck in any order. Draw a card.
+
+### Odious Diva  [b7c7b011-86ef-46db-8b26-c659ad1f24c1]
+character | arcanist | cost 2 | thr oo 1/2 spd3 | diva
+Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card.
+
+### Quotidian Disappearance  [7c522a1a-aa18-4afa-955e-2a047ff91ecb]
+tactic | arcanist | cost 0 | thr o  | 
+An opponent picks a non-resource card they control if they can. If they do, put it into its owner's hand.
+
+### Quotidian Virtuoso  [b1f959d9-c5cd-4a7c-9b1b-dfcac62fd6a6]
+character | arcanist | cost 5 | thr oo 3/3 spd3 | ritualist
+DISRUPT -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card.
+
+### Recollection Bazaar  [e5a8f861-fbbd-4c45-8b1d-2ddec10120bd]
+location | arcanist | cost 0 | thr oo  | 
+RECALL -- COST: Pick a resource you control. (You can pick face-down resources.) -- EFFECT: Put the resource into it's owner's hand.
+
+### Ritual of the Knob & Pull  [dbc439b3-5628-43ef-bbc1-ea7523e85fb0]
+tactic | arcanist | cost 3 | thr oo  | 
+EXTRA COST: Pick a character. X is its strength. -- If that character's controller controls at least X face-down resources, destroy the character.
+
+### Ritual of the Ominous Urn  [8bdf8634-d49d-43f6-b267-15978fab6227]
+tactic | arcanist | cost 4 | thr o  | 
+An opponent discards a card. You may search your deck for a card of the same type as the discarded card and reveal it. If you do, put it into your hand.
+
+### Rummaging Millipede  [91748250-8687-4e0b-84a4-4380bc3c2bab]
+character | arcanist | cost 5 | thr oo 3/1 spd3 | lurker
+COVERT -- When this card enters play, you may pick a tactic in your discard pile. If you do, put it into your hand.
+
+### The Deranger  [cebf2a7c-905e-433d-b6ab-bcdc2aafacbf]
+item | arcanist | cost 3 | thr oo  | 
+LOBOTOMIZE -- COST: Deplete this card. -- EFFECT: Look at an opponent's hand and choose 2 or fewer non-resource cards in it. That player discards those cards. That player takes control of this card.
+
+### Toxic Cultivator  [0467bfd8-73bc-425e-9f6e-44a7f28ff00a]
+character | arcanist | cost 2 | thr oo 1/1 spd3 | cultivator
+While you control an even number of characters, reduce the numeric cost of tactics you deploy by 1, to a minimum of 1.
+
+### Unnatural Alteration  [c1c2efc5-f032-4c05-89fa-ab3c97a73aba]
+tactic | arcanist | cost 4 | thr o  | 
+EXTRA COST: Deploy this only during your turn and not during a battle. Pick a character you control. -- Destroy the character if you can. If you do, X is its numeric cost. Search your deck for a character with numeric cost X+3 or less and reveal it. You may deploy it for free. If you don't, put it into your hand.
+
+### Venomous Sacspider  [b374445f-2ac5-40b2-bfc5-5ee47771db6c]
+character | arcanist | cost 3 | thr oo 2/1 spd3 | lurker
+When this card is destroyed by battle damage, an opponent discards their hand.
+
+### Violating Anomaly  [973827cb-fb59-4ce8-9681-1263a14d2e62]
+character | arcanist | cost 6 | thr oo 2/4 spd2 | muddler,lurker
+When this card enters play, look at an opponent's hand and choose a card in it. That player discards that card. -- When this card leaves play, you may pick a non-resource card. If you do, put it into its owner's hand. Draw a card.
+
+### Voidal Interference  [73269637-6bcc-4f27-9770-d42b0f146f4b]
+tactic | arcanist | cost 3 | thr o  | 
+EXTRA COST: Deploy this only in response to a card being deployed. (Playing a resource doesn't count.) -- Terminate the card, but put it into its owner's hand instead of their discard pile. Its owner puts a card from their hand on the top of their deck.
+
+### Anesthetizing Opulence  [9540ce6d-7f45-4fd9-8f71-093a8e438d50]
+tactic | banker | cost 4 | thr gg  | 
+EXTRA COST: Pick a character. -- Destroy the character. An opponent draws a card.
+
+### Clandestine Resort  [9ee4edbf-5c5a-4730-8e47-1208cacab083]
+location | banker | cost 1 | thr gg  | 
+All your characters gain 1 life.
+
+### Class Action Defender  [727008d3-b9eb-4add-9e67-72ec4d1b6937]
+character | banker | cost 3 | thr ggg 2/3 spd3 | lawyer,mau
+When any amount of damage greater than 4 is inflicted to this card, reduce it to 0. -- When you are attacked, you may pay 2. If you do, restore this card.
+
+### Club Mau Bouncer  [b4c2aed3-d9f8-4ac6-b4a0-8b97136f20b0]
+character | banker | cost 4 | thr gg 2/4 spd3 | mercenary,mau
+When a character inflicts damage to this card, inflict 1 damage to that character.
+
+### Crooked Appraiser  [4c23d2e0-da0c-4cd6-9a6c-23c43f83d5d8]
+character | banker | cost 2 | thr g 1/3 spd3 | mau
+INSPECT -- COST: Deplete this card. Pick a location. -- EFFECT: Inflict 2 damage to the location.
+
+### Embezzling Bookkeeper  [56c1a7f7-7146-43d5-8bd4-2bad9e9522e7]
+character | banker | cost 3 | thr gg 4/4 spd3 | employee,mau
+When this card enters play, an opponent draws a card.
+
+### Entry-Level Employee  [2eb2b684-8786-4248-8daf-ca614b8286a0]
+character | banker | cost 2 | thr g 3/4 spd3 | employee
+This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INVEST -- COST: Pay 2. -- EFFECT: Remove a token from this card.
+
+### Escrow Office  [d81cec8e-35a3-47e2-bb47-a4144a0d36d8]
+location | banker | cost 2 | thr g  | 
+DEPOSIT -- COST: Pay 1. -- EFFECT: Put a token on this card. -- WITHDRAW -- COST: Remove all tokens from this card. X is the number of tokens removed this way. -- EFFECT: Reduce the next numeric cost you pay this turn by X.
+
+### Extortify  [004d96b5-d33a-4f8c-905c-c7aa61ba1756]
+tactic | banker | cost 3 | thr gg  | 
+Your faction gains 8 influence.
+
+### Fat Pants  [57657edf-5653-4d4f-91a1-78a2542578ec]
+item | banker | cost 3 | thr g  | gear
+ATTACH TO CHARACTER -- The attached character gains 1 strength and 2 life. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+
+### First Unified Market of Abstract Secure Theoreticals  [914713f6-1e21-4a63-bee9-aeee7a99355b]
+location | banker | cost 6 | thr gggggg  | 
+UNIQUE F.U.M.A.S.T. -- Reduce the numeric cost of your faction's abilities by 1, to a minimum of 1.
+
+### Furtive Investor  [63394a45-b039-47ad-86ff-9853ceedf6df]
+character | banker | cost 4 | thr gg 3/3 spd3 | investor,mau
+COVERT -- This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- At the start of your turn, you may pick a non-resource card you control. If you do, remove a token from that card.
+
+### Hired Goons  [b4d02b5b-bfb5-4384-addd-ba8f738b9940]
+character | banker | cost 5 | thr gg 5/4 spd3 | mercenary,mau
+COVERT -- At the start of your turn, you may pay 2. If you don't, an opponent takes control of this card.
+
+### Inside Information  [ce20a6a6-4cf6-4b28-96d1-8b68c1441c10]
+item | banker | cost 3 | thr gg  | 
+PROFIT -- COST: Deplete this card. -- EFFECT: Draw 4 cards. An opponent takes control of this card.
+
+### Keen Stratagem  [210c93ab-9cc2-45a8-9e8e-0aec15e38f54]
+tactic | banker | cost 1 | thr g  | 
+Search your deck for a staple resource and reveal it. Put it into your hand.
+
+### Key Man  [062c99df-9e9b-4667-b615-a0e936efa356]
+character | banker | cost 1 | thr g 1/1 spd3 | executive,mau
+When this card leaves play, draw a card.
+
+### Market Oracle  [2d521705-d7e3-4c99-a5a8-682dd96ac1c6]
+character | banker | cost 2 | thr g 1/2 spd3 | investor,mau
+INVEST -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Remove a token from the card.
+
+### Mau Party  [2a3fa1ac-c90a-439b-b7fa-1343702dc16f]
+tactic | banker | cost 5 | thr gggg  | 
+EXTRA COST: Deploy this only during your turn. -- Draw 5 cards. Your faction gains 2 influence.
+
+### Moneychanger  [6bf1518b-c908-4a50-86d8-371d138e13d5]
+character | banker | cost 3 | thr gg 2/2 spd3 | investor
+This card loses 1 strength and 1 life for each token on it. -- EXCHANGE -- COST: Deplete this card. Put a token on this card. -- EFFECT: Draw a card.
+
+### Motivational Speaker  [a2816b7a-7843-44e8-b9ef-0327e17ce16d]
+character | banker | cost 4 | thr gg 0/3 spd3 | salesman
+When this card blocks, all members of the blocking party gain 2 strength and 2 life this turn. (This includes this character.)
+
+### Mutiny Grant  [1dc62434-5a69-44ce-acde-488436a14de8]
+tactic | banker | cost 2 | thr gg  | 
+EXTRA COST: Pick a character an opponent controls. Your faction loses X influence, where X is the numeric cost of that character. -- This turn, take control of the character. Restore it.
+
+### Officious Obstructionist  [e8b58fc9-9ab5-4476-8a49-f35db8424e8a]
+character | banker | cost 4 | thr g 2/2 spd3 | bureaucrat
+STUBBORNNESS -- COST: Pay 1. -- EFFECT: This turn, this card gains 1 life.
+
+### Overinsured Figurehead  [80039582-f99b-4d7f-9f35-96c725c9d4d9]
+character | banker | cost 6 | thr gg 3/5 spd3 | executive
+When this card leaves play, draw 2 cards.
+
+### Prudent Thug  [02c2f936-b92e-4051-badb-c9a15d0371c1]
+character | banker | cost 5 | thr gg 4/5 spd3 | mercenary,investor
+When this card enters play, your faction loses 3 influence. -- This card loses 1 strength and 1 life for each token on it. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 1. Put a token on this card. -- EFFECT: Restore this card.
+
+### Pugnacious Publicist  [cb4a80c5-060f-4738-bfb6-fa94e726f169]
+character | banker | cost 3 | thr gg 1/3 spd3 | publicist
+When this card enters play, all your characters gain 1 life this turn.
+
+### Randolph von Macovawitz Spitoon III, Ltd.  [61a6a464-9af8-4ffd-8519-90de271c5500]
+character | banker | cost 4 | thr gggg 2/3 spd3 | mau
+UNIQUE RANDOLPH -- When this card enters play, draw a card. -- PAYDAY LOAN -- COST: Pay 1. Discard a resource or destroy a resource you control. -- EFFECT: Draw a card.
+
+### Real Estate Auctioneer  [07fac91d-0244-4ce4-a97e-64659aa234ad]
+character | banker | cost 5 | thr gg 3/3 spd3 | auctioneer
+LIQUIDATE -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Draw 2 cards.
+
+### Reluctant Hiree  [3c2c57b8-43a8-46ef-9f6d-0e105783d92d]
+character | banker | cost 3 | thr gg 4/4 spd3 | employee
+This card enters play with 3 tokens on it. -- This card loses 1 strength for each token on it. -- INVEST -- COST: Pay X, where X is the number of tokens on this card. -- EFFECT: Remove a token from this card.
+
+### Revivatate  [a0e2b30c-c763-4182-9c34-84c3d407d60d]
+tactic | banker | cost 6 | thr ggggg  | 
+EXTRA COST: Deploy this only during your turn. Pick 2 characters in your discard pile. -- Put 1 of the characters into play under your control. Put the other character into your hand.
+
+### Short Term Investment  [00255313-8ec6-4597-8cfb-f92c227061ce]
+item | banker | cost 2 | thr gg  | 
+This card comes into play with 2 tokens on it. -- At the start of your turn, remove a token from this card. -- RETURN -- COST: Use this only if there are no tokens on this card. Destroy it. -- EFFECT: Draw 3 cards.
+
+### Smear Campaign  [338fa9ec-5021-4909-bfe3-0d71fcbebd3e]
+item | banker | cost 0 | thr g  | gear
+ATTACH TO CHARACTER -- When the attached character inflicts damage, inflict the same amount of damage to the character's controller's faction.
+
+### Snooty Doorman  [72439f0b-d9fe-4ea9-b701-e2f535669484]
+character | banker | cost 3 | thr g 2/2 spd3 | lackey
+DENIED! -- COST: Use this only in response to a character being deployed. Destroy this card. -- EFFECT: Terminate the character.
+
+### Subsection 5, Paragraph 12  [8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a]
+tactic | banker | cost 2 | thr gg  | 
+EXTRA COST: Your opponents cannot respond to this card. Deploy this only in response to an ability that's source was not a faction. -- Terminate the ability. It cannot be used again this turn. Draw a card.
+
+### Tad Disingenuous  [6ff3de61-5058-4ff5-91fd-a44cf03d1a0e]
+character | banker | cost 6 | thr gg 4/3 spd3 | lawyer,mau
+UNDERHANDED DEAL -- COST: Discard a card. -- EFFECT: This turn, this card gains COVERT.
+
+### The Garbageman  [4fcedeb9-466a-4f77-b3a0-6808cc8e9d31]
+character | banker | cost 2 | thr gg 1/3 spd3 | lackey,mau
+This card can attack only once each turn. -- SIFT -- COST: Deplete this card. -- EFFECT: Draw a card. Discard a card. -- RUMMAGE -- COST: Pay 2. Remove 3 cards in your discard pile from the game. -- EFFECT: Restore this card.
+
+### Writ of Reclamation  [9c1910b5-891f-4b4c-944d-45499fb00e50]
+tactic | banker | cost 2 | thr gg  | 
+EXTRA COST: Choose a number for X that is 3 or less. Remove X cards in your discard pile from the game. Pick X other cards in your discard pile. -- Shuffle the other cards into your deck. Draw a card.
+
+### 0p3r4710n 1337 H4x0rz  [45a1bfe0-f338-454c-b3ee-7dc5b6b55235]
+tactic | gearsmith | cost 12 | thr eeee  | 
+EXTRA COST: Deploy this only during your turn. -- You may deploy up to 4 non-tactic cards for free. (You still need to meet its threshold and satisfy its extra costs.)
+
+### 4p7 31f  [f98c69dc-d771-430d-95f0-69461bc3c1ee]
+character | gearsmith | cost 3 | thr ee 2/2 spd3 | 31f
+When you deploy a gear card attached to this card, you may detach a resource from your faction. -- While a gear card is attached to this card, it gains 1 strength and 1 life.
+
+### Acuminous Gigantitect  [43b52d42-fc5b-426d-8188-0390a4272f6c]
+character | gearsmith | cost 5 | thr ee 3/3 spd3 | inventor
+GRAND DESIGN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 6.
+
+### Contriving Engineer  [e6209034-2b54-4889-8789-15b12c330056]
+character | gearsmith | cost 4 | thr e 2/1 spd3 | inventor
+When this card enters play, you may search your deck for a card named Elitism and reveal it. If you do, put it into play. Attach it to your faction.
+
+### Discommodiousness  [42334135-ad09-4e14-b243-597d4a44384e]
+tactic | gearsmith | cost 2 | thr ee  | 
+An opponent reveals their hand. Shuffle all tactics revealed this way into their deck. That player draws X cards, where X is the number of tactics shuffled into their deck. Draw a card.
+
+### Elite Team Registration  [3dd0c05f-dd1d-49a2-b7b5-ab17f0ee8bd3]
+tactic | gearsmith | cost 4 | thr eee  | 
+Search your deck for up to 2 Gearsmith characters with different names and reveal them. Put them into your hand.
+
+### Epiphany Ball  [5f6c7c41-3be8-44ce-9293-454a35772c0f]
+item | gearsmith | cost 3 | thr ee  | 
+SUDDEN INSIGHT -- COST: Deplete this card. -- EFFECT: Search your deck for a card. Put it into your hand. An opponent takes control of this card.
+
+### Exploding Sock Puppet!  [ab111049-6ba1-430e-8d27-f647bcd5ac35]
+tactic | gearsmith | cost 2 | thr e  | 
+EXTRA COST: Your opponents cannot respond to this card. Deploy this only in response to a character's ability. -- Terminate the ability. Destroy the character.
+
+### Guardforce Alpha Prime 31f  [d8b8dada-5302-4ef8-b226-59688a14f294]
+character | gearsmith | cost 4 | thr ee 3/2 spd3 | guardforce,31f
+This card can attack even if it has not been in play under your control since the start of the turn.
+
+### Guardforce Alpha Prime H4x0r  [0d08df2b-8e38-40d5-ad9b-f90d4af1fb7c]
+character | gearsmith | cost 5 | thr eee 4/4 spd3 | guardforce,31f
+UNIQUE GUARDFORCE ALPHA PRIME H4X0R -- This card can attack even if it has not been in play under your control since the start of the turn. -- When this card inflicts damage to a faction, you may play a resource.
+
+### Guardforce Morphmajig  [6af508e9-b4a9-473d-80fc-4c1ecbdd5781]
+character | gearsmith | cost 5 | thr ee 3/3 spd3 | guardforce,majig
+This card can attack even if it has not been in play under your control since the start of the turn. -- When you deploy a card, put a token on this card. (Playing a resource doesn't count.) -- When an opponent deploys a card, remove a token from this card. (Playing a resource doesn't count.) -- This card gains 1 strength and 1 life for each token on it.
+
+### Heavy Plating  [8dfc4763-6428-4c32-a5bd-366f65dd5b80]
+item | gearsmith | cost 6 | thr ee  | gear
+ATTACH TO CHARACTER -- When this card enters play, you may detach up to 2 resources from your faction. -- The attached character gains 4 strength, 4 life, and loses 1 speed. -- HANDOFF -- COST: Pay 5. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+
+### Horsemajig of the Apocalypse - Death  [864e66a1-9fb7-404d-9576-fcc0c5e4901a]
+character | gearsmith | cost 5 | thr eee 2/3 spd4 | horsemajig
+All other horsemajig characters gain 1 strength, 1 life, and 1 speed.
+
+### Horsemajig of the Apocalypse - Famine  [143db371-4e9a-474a-b536-1d7f8efe26e6]
+character | gearsmith | cost 1 | thr ee 1/2 spd4 | horsemajig
+All other horsemajig characters gain 1 speed.
+
+### Horsemajig of the Apocalypse - Pestilence  [2f4a7db5-598c-445d-a4f6-d45c7e740582]
+character | gearsmith | cost 2 | thr e 1/3 spd3 | horsemajig
+All other horsemajig characters gain 1 life.
+
+### Horsemajig of the Apocalypse - War  [d6015ff5-c210-4133-89a3-c539461b0db0]
+character | gearsmith | cost 3 | thr e 2/2 spd3 | horsemajig
+All other horsemajig characters gain 1 strength.
+
+### Kaiser Wave  [03ff491b-019b-444d-bbf4-3cdbf5323a10]
+tactic | gearsmith | cost 2 | thr ee  | kaiser
+EXTRA COST: Pick a character. -- This turn, the character gains 1 strength and 1 life. It gains an additional 1 strength and 1 life for each kaiser card in play. It gains an additional 1 strength and 1 life if it is a kaiser character.
+
+### LeoKaiser  [48a4905f-236a-436e-b066-714b7cdbb70e]
+character | gearsmith | cost 4 | thr eee 3/3 spd3 | kaiser
+GO MEGA-NEKO-KAISER! -- COST: Deplete a card named PantherKaiser you control. Deplete a card named TigerKaiser you control. -- EFFECT: This turn, this card gains 8 strength, 8 life, and 2 speed and while it is the only member of an attacking party, only parties with at least 3 members can block it.
+
+### Micromajig Shipping Container  [c466319c-2c2d-48eb-8511-4033385a6c30]
+character | gearsmith | cost 6 | thr ee 4/5 spd3 | machine
+When this card is destroyed, put 5 Micromajig tokens into play under your control. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)
+
+### Omnidirectional Patrolmajig  [118e132f-9ad3-45c7-825e-88b00941f8ef]
+character | gearsmith | cost 6 | thr e 3/6 spd2 | majig
+When you are attacked, you may restore this card.
+
+### PantherKaiser  [eb3eb01d-cb76-4159-a269-b9d1bbe3b973]
+character | gearsmith | cost 4 | thr ee 1/3 spd2 | kaiser
+PANTHER SHIELD -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 life.
+
+### Patent Enforcement  [b3ed1ba4-1a95-4da5-94d0-f8dc5f59b36d]
+tactic | gearsmith | cost 0 | thr eee  | 
+EXTRA COST: Deploy this only in response to an item being deployed. Pay X, where X is its numeric cost. -- The item enters play under your control.
+
+### Quipmajig  [04a9990f-2c23-4788-96da-17e120fa53b7]
+character | gearsmith | cost 3 | thr e 2/3 spd1 | majig
+INSULT -- COST: Deplete this card. Pick a character with COVERT. -- EFFECT: Deplete the character. This turn, reduce all damage inflicted by it to 0.
+
+### Runic Field Enhancer  [35a182a8-dfd2-42c7-b5a3-f2a10dff9f40]
+item | gearsmith | cost 5 | thr eee  | 
+UNIQUE RUNIC FIELD ENHANCER -- All your characters gain 1 strength and 1 life for each gear card you control.
+
+### Sagacious 31f  [ac010020-67ca-4fbe-b1fa-74e261a76c84]
+character | gearsmith | cost 4 | thr eee 2/3 spd1 | 31f
+When an attacking party is formed including this card and at least 2 other characters, you may search your deck for a card. If you do, put it into your hand.
+
+### Schproingmajig  [8041780e-69a0-458a-8563-eabfa164ac2f]
+character | gearsmith | cost 6 | thr ee 4/4 spd2 | majig
+PUMP-UP -- COST: Deplete another character you control. -- EFFECT: This turn, this card gains 2 strength and 2 life. -- SCHPROING! -- COST: Destroy a character you control. -- EFFECT: This turn, this card cannot be blocked.
+
+### Scorching Runicution  [c56085da-7855-456e-81cf-5c822300ca3e]
+tactic | gearsmith | cost 2 | thr e  | 
+EXTRA COST: Pick a gear card. X is its numeric cost. -- Inflict X damage to the character the gear card is attached to. Destroy the gear card.
+
+### Senior Research Assistant  [c1d2e319-7435-40aa-a215-76bd52b37d78]
+character | gearsmith | cost 4 | thr ee 2/2 spd2 | 31f
+RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2.
+
+### Spackle  [ee76ecf6-a635-4d63-9357-fb78a53b3052]
+item | gearsmith | cost 1 | thr e  | 
+REPAIR -- COST: Deplete this card. Pick a location. -- EFFECT: Remove 2 damage markers from the location.
+
+### T Force 5 Megabrutemajig  [8039fd38-e699-489c-949b-0de160346cb2]
+character | gearsmith | cost 7 | thr ee 8/5 spd2 | t force 5,majig
+When this card enters play, you may detach up to 2 resources from your faction.
+
+### T Force 5 Megadudemajig  [8ec43855-13bb-4b04-9504-c0e6a275acc6]
+character | gearsmith | cost 6 | thr eeeee 7/5 spd3 | t force 5,majig
+When this card enters play, you may detach up to 2 resources from your faction.
+
+### T Force 5 Megascoutmajig  [dfd1b21a-d461-4031-a3db-6c56557d771b]
+character | gearsmith | cost 7 | thr ee 5/4 spd4 | t force 5,majig
+When this card enters play, you may detach up to 2 resources from your faction.
+
+### The Whatever Device  [8ac37971-303b-4ec6-bf9b-a09c1883a44a]
+item | gearsmith | cost 2 | thr eeee  | 
+THANK GOD WE INVENTED THE... -- COST: Choose a number for X. Pay X. Destroy this card. -- EFFECT: Search your deck for an item with numeric cost X or less and reveal it. You may deploy that card for free. If you don't, put it into your hand.
+
+### Top-Secret Subterranean Goofarium  [5c340546-b7ed-4cfd-805d-7abdbf465bcd]
+location | gearsmith | cost 2 | thr ee  | 
+Characters with COVERT cannot inflict damage to this card. -- When you are attacked, you may detach up to X resources from your faction, where X is the number of members in the attacking party.
+
+### Unrelenting Ridicule  [1bfa9585-adaf-4228-985e-16ace4b9cecb]
+tactic | gearsmith | cost 2 | thr e  | 
+EXTRA COST: Pick a character with COVERT. -- Destroy the character.
+
+### Auction House  [71886432-9edb-44a6-b9aa-7890b3267cf3]
+location | rogue | cost 3 | thr ddd  | 
+At the start of each player's turn, that player reveals cards from the top of their deck until a character is revealed or no cards are left. If a character is revealed, players take turns bidding on the character (starting with the active player). Players cannot bid a number greater than the number of detached resources they control. Whichever player makes the winning bid pays that many resources and puts the character into play under their control. Shuffle all other revealed cards into their owners's deck.
+
+### Cheats McGuillicutty  [0af6286e-db1d-44c2-9e23-38ccc3f558e9]
+character | rogue | cost 6 | thr dd 2/1 spd3 | pluck,grifter
+UNIQUE PLUCK -- The top card of your deck is revealed at all times. -- BOTTOM DEAL -- COST: Pay 1. -- EFFECT: Put the top card of your deck on the bottom. -- CHEAT -- COST: Deplete this card. -- EFFECT: Reveal the top card of your deck. You may deploy it. (You can't play resources with this ability.) -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control.
+
+### Clockman Pickpocket  [cc55231b-da46-435a-95ef-d26fc8de31c0]
+character | rogue | cost 1 | thr d 1/1 spd3 | thief
+While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, that faction's controller picks an item they control if they can. If they do, take control of it and destroy this card.
+
+### Counter Attack  [65bd9386-5d61-415a-be45-5d50b5b369a5]
+tactic | rogue | cost 3 | thr dd  | 
+EXTRA COST: Deploy this only during an opponent's turn and not during a battle. -- Attack that player. Draw a card. (This effect only allows you to attack once. You must resolve the battle immediately and before you draw the card.)
+
+### Cute Cutpurse  [46d4519b-b2ff-4306-9489-9ce28ecc3a5b]
+character | rogue | cost 4 | thr d 3/2 spd3 | thief
+While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, pick an item that faction's controller controls if you can. If you do, destroy it.
+
+### Early Retirement  [bc40724d-186f-4cf2-88da-ca8b8e648865]
+tactic | rogue | cost 5 | thr dd  | 
+EXTRA COST: Pick a character you control. X is its strength. Destroy it. -- Draw X cards.
+
+### Epic Turncoat Maneuver  [613f3fc5-6ef5-49e9-aec2-2c69cd9ffcdd]
+tactic | rogue | cost 13 | thr dddddd  | 
+EXTRA COST: Destroy 2 characters you control. Pick 4 or fewer characters. -- Take control of the picked characters.
+
+### Fool's Gold  [d2ef3385-bff6-42cf-8045-e5568e59efdf]
+item | rogue | cost 2 | thr dd  | 
+TRADE -- COST: Pick an item an opponent controls. Pay X, where X is its numeric cost. Destroy this card. -- EFFECT: Take control of the item.
+
+### Forcible Depredator  [a1716f04-f2d4-454f-917f-0b55eb9fbb73]
+character | rogue | cost 5 | thr dd 3/3 spd3 | thief
+PLUNDER -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Put the top 3 cards of an opponent's deck into their discard pile.
+
+### Fwing!  [e3d4cdea-9072-43f9-945d-e651067608d2]
+tactic | rogue | cost 2 | thr d  | 
+EXTRA COST: Pick a character. -- This turn, the character gains 1 speed. Flip a coin. If you win, the character also gains 1 strength this turn.
+
+### Gang Leader  [7c184d94-6d66-4d27-947d-87e6bb03d997]
+character | rogue | cost 3 | thr dd 2/2 spd3 | thief
+When this card enters play, all your characters gain 1 speed this turn.
+
+### Hollow Moose  [9fb327c0-257b-4685-98ca-de282c1dc6d7]
+item | rogue | cost 0 | thr dd  | 
+This card enters play under an opponent's control. -- At the start of your turn, your faction loses 1 influence. -- INFILTRATE -- COST: Destroy another item or character you control. Pick an opponent. -- EFFECT: That player takes control of this card.
+
+### Hulking Vigilante  [fb4fb0b3-e4ee-42f9-9a28-b184729fce40]
+character | rogue | cost 3 | thr ddddd 5/5 spd4 | outcast,vigilante
+When you control any other characters you own, destroy this card.
+
+### Impeccable Timing  [5d4a643f-9f1a-4d2c-815b-0c720598045f]
+tactic | rogue | cost 3 | thr d  | 
+EXTRA COST: Pick a depleted character. -- If the character has 4 life or less, destroy it.
+
+### Late Addition  [e987b8e3-7218-4978-bf82-1fe8fc39627c]
+tactic | rogue | cost 1 | thr d  | 
+You may deploy a character card from your hand. Draw a card. (You still pay all the character's costs.)
+
+### Martial Artist  [b2ceefd9-cf5e-459b-adba-6c0f3a806c58]
+character | rogue | cost 6 | thr dd 4/3 spd4 | martial artist
+Your opponents cannot pick this card.
+
+### Martial Arts Master  [9a90a89c-c3ef-4c6c-b185-b34813a75b54]
+character | rogue | cost 4 | thr dd 1/3 spd6 | martial artist
+While this card is in a battle and there is at least one character in the opposing party, it gains X strength, where X is this card's speed minus the highest speed among characters in the opposing party.
+
+### Martial Arts Trainee  [3142de68-bfda-45ce-b3a6-c1b085f51664]
+character | rogue | cost 3 | thr dd 2/1 spd4 | martial artist
+Your opponents cannot pick this card.
+
+### Master Thief  [bfe0fbb0-079e-4f9a-ada8-b0d18e2be880]
+character | rogue | cost 8 | thr ddd 4/3 spd4 | thief
+When this card is destroyed, you may pick a non-tactic card in an opponent's discard pile. If you do, put it into play under your control.
+
+### Mendacious Brigand  [fd6ca900-19ab-4786-b4db-7e3c7dbac204]
+character | rogue | cost 2 | thr d 2/1 spd2 | thief
+When this card is blocked, you may pick a blocking character and a character that character's controller controls that is not in a battle. If you do, remove the blocking character from the battle and add the other character to the blocking party.
+
+### Mercenary's Creed  [837d5a93-213d-4e5d-af65-0a6c14c55c7c]
+item | rogue | cost 3 | thr dd  | gear
+ATTACH TO CHARACTER -- BRIBE -- COST: Any player may use this ability. Pay 3. -- EFFECT: Take control of the attached character. -- BLACKMAIL -- COST: Use this only if you own this card. Pay 2. -- EFFECT: Take control of the attached character.
+
+### Misappropriation Machine  [5afd2312-a6aa-4aca-bc1e-2fb4eb78183d]
+item | rogue | cost 3 | thr dd  | 
+STEAL -- COST: Deplete this card. Pick a character or item in an opponent's discard pile. -- EFFECT: Put the character or item into play under your control. That card's owner takes control of this card.
+
+### Orgy Den Smoke Out  [92083650-6785-4b9a-ba1c-542a348b22aa]
+tactic | rogue | cost 2 | thr dd  | 
+An opponent discards a card at random. Put the top 2 cards of their deck into their discard pile.
+
+### Poisoned Blade  [239caecc-f9ed-4cf3-bcd1-aed627b6bbab]
+item | rogue | cost 3 | thr d  | gear
+ATTACH TO CHARACTER -- When the attached character inflicts damage to a character, destroy the damaged character. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+
+### Recreant Cad  [bad0a682-9807-466b-8d9b-3ac48a34cdb2]
+character | rogue | cost 7 | thr d 5/3 spd3 | thief
+SNEAK -- COST: Use this only if an opponent has at least 10 cards in their discard pile. Pay 1. Remove 2 cards in that player's discard pile from the game. -- EFFECT: This turn, this card gains COVERT.
+
+### Throatstabber  [7710da84-2994-4019-957f-0fc998917104]
+character | rogue | cost 3 | thr ddd 3/2 spd4 | pirate
+When this card enters play, flip a coin. If you lose, deplete this card.
+
+### Two-Headed Coin  [f4244678-8524-446d-8c1c-65f126c9df4a]
+item | rogue | cost 0 | thr dd  | 
+If you would lose a coin flip, you may shuffle this card into its owner's deck. If you do, reflip that coin and use that result instead and draw a card.
+
+### Unexpected Boobysnake  [19cf503e-f872-4199-beef-e832d1ee833c]
+character | rogue | cost 4 | thr dd 3/2 spd4 | beast
+TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, discard a card or destroy this card.
+
+### Wild Boars  [03dfc9f9-28cf-451f-a141-ace62ab3f1be]
+character | rogue | cost 4 | thr dd 2/2 spd4 | beast
+While this card is the only member of an attacking party, only characters with at least X speed can block it, where X is this card's speed.
+
+### Anxious Oaf  [5ceba10d-9cdd-4abd-9de9-13cc1cbbbe5a]
+character | warlord | cost 2 | thr r 3/1 spd3 | berserker
+When an attacking or blocking party is formed including this card, it must have at least 2 members.
+
+### Assimilation Center  [b0760e4d-f149-4fc6-a698-8e405e825036]
+location | warlord | cost 2 | thr rr  | 
+RECRUIT -- COST: Pay 1. Deplete this card. -- EFFECT: Search your deck for a character and reveal it. Put it on the top of your deck.
+
+### Barbaric Rifleman  [ad4fc0ee-cc07-4927-93ab-c1daeb97798c]
+character | warlord | cost 2 | thr rr 2/1 spd3 | soldier
+When this card enters play, inflict 1 damage to an opponent's faction.
+
+### Battle Surge  [1a6c1f62-30b3-46cb-a83f-4c6fc0cdc9f0]
+tactic | warlord | cost 1 | thr r  | 
+This turn, all your characters gain 1 strength.
+
+### Blow Up  [efa9c2c1-5448-4733-a6c4-471f7d625c02]
+tactic | warlord | cost 4 | thr r  | 
+EXTRA COST: Pick an item. -- Destroy the item. That item's controller's faction loses 3 influence.
+
+### Callow Liegeman  [4cd88c6e-b5be-4383-952a-a3a7944aff55]
+character | warlord | cost 3 | thr rr 2/2 spd3 | soldier
+When this card attacks in a party with more than 1 member, it gains 1 strength and 1 life this turn.
+
+### Deadly Striker  [46d213bf-f9f2-4e68-93c5-07e004b72e50]
+character | warlord | cost 4 | thr rr 4/2 spd3 | dragon
+When this card is destroyed, an opponent's faction loses 4 influence.
+
+### Dethmürderblüdgeon, the Craghammer  [43a51ff8-16f5-4752-aa41-94d0977d219d]
+item | warlord | cost 5 | thr rr  | gear
+UNIQUE DETHMÜRDERBLÜDGEON -- ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- When the attached character is blocked, an opponent's faction loses 2 influence. -- When the attached character inflicts damage to a faction, you may pick a character. If you do, inflict 2 damage to it. -- If this card would be put into a discard pile from play, put it into its owner's hand instead.
+
+### Distraction  [61c0d007-ee61-41da-9b15-8fdd7c15720e]
+tactic | warlord | cost 0 | thr r  | 
+EXTRA COST: Pick a character. -- Deplete the character.
+
+### Elbow Dropper  [1c35f70e-ae5e-44b0-ac2b-8c0f52b00f4a]
+character | warlord | cost 4 | thr rr 3/2 spd3 | fighter
+OFF THE TOP ROPE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character cannot block.
+
+### Explosive Fury  [408d18d4-f420-4222-8fcb-4d08f499f6fc]
+tactic | warlord | cost 2 | thr r  | 
+EXTRA COST: Pick a character you control. X is its strength. Destroy it. Pick another character. -- Inflict X damage to the character.
+
+### Fleshripping Scenepuller  [c8037ec2-03ca-464f-83d1-a00f45db5873]
+character | warlord | cost 4 | thr rrrr 4/4 spd3 | fighter
+When this card is blocked, this turn it gains 4 strength for each member in the opposing party.
+
+### Gore Engine  [45ce54bf-af20-4972-83e5-62985455e308]
+character | warlord | cost 10 | thr rr 5/10 spd3 | warmachine
+When a character is destroyed during a turn when this card damaged it, put X tokens on this card, where X is the strength of that character. -- This card gains 1 strength for each token on it. -- IMPALE -- COST: Pay 2 or remove 2 tokens from this card. Pick a character. -- EFFECT: This turn, the character must block this card if it can.
+
+### Infuriator  [914fa597-fa3b-4b90-8368-2754eafbb3f7]
+character | warlord | cost 3 | thr rr 2/2 spd2 | soldier
+When this card enters play, all your characters gain 1 strength this turn.
+
+### Lieutenant General  [8b093762-8619-4a8a-b990-80b11f352c1f]
+character | warlord | cost 4 | thr rrr 3/4 spd3 | soldier
+When an attacking party is formed including this character, all other soldier characters in that party gain 1 life this turn.
+
+### Morale Officer  [bac1cee2-b00b-40f5-80d4-3aee69dc1726]
+character | warlord | cost 2 | thr r 1/1 spd3 | soldier
+CONVINCE -- COST: Deplete this card. -- EFFECT: This turn, all your soldier characters gain 1 strength.
+
+### Murderous Commander  [84515285-34dc-4b75-95d4-51a6c072b970]
+character | warlord | cost 5 | thr rr 3/3 spd3 | soldier
+CUNNING PLAN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Inflict 2 damage to an opponent's faction.
+
+### Needless Beating  [3ea9bbe2-4b32-4f04-9e2c-7a1201b655b9]
+tactic | warlord | cost 6 | thr rr  | 
+EXTRA COST: Pick an opponent. Pick a character that player controls. -- Inflict 2 damage to the character. If that player's faction has 15 influence or less, inflict 1 additional damage to the character. If that player's faction has 10 influence or less, inflict 1 damage to each character they control. If that player's faction has 5 influence or less, draw a card.
+
+### Penetrate  [cbe794c6-519d-4454-a695-004fb18232b1]
+tactic | warlord | cost 1 | thr rr  | 
+EXTRA COST: Pick an attacking character you control. -- If the character would assign battle damage to the blocking party during this battle, assign it to the target of the attack instead.
+
+### Pinch  [d96fbfac-9ca9-484b-9e05-59a435d4a2bb]
+tactic | warlord | cost 0 | thr rr  | 
+EXTRA COST: Pick a character. -- Inflict 1 damage to the character.
+
+### Really Big Barduse  [7f0cfd7d-c9a5-48ff-bafa-a5781a91b5bf]
+character | warlord | cost 6 | thr rrrrrr 5/4 spd2 | dragon
+EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 5 damage divided however you want to those characters.
+
+### Ruthless Platoon  [5610a488-daad-4dd0-b7e0-b0860be16e8c]
+character | warlord | cost 3 | thr rrr 2/3 spd3 | soldier
+CANNIBALIZE -- COST: Destroy a character you control. -- EFFECT: This turn, this card gains 2 strength.
+
+### Sadistic Colonel  [9bb9052b-c497-4c4c-a22e-e0c2f0edf534]
+character | warlord | cost 3 | thr r 3/1 spd3 | soldier
+When an opponent deploys a tactic, inflict 2 damage to their faction.
+
+### Skin Suit  [421c7d4c-d711-4a05-9955-d3834655f5fa]
+tactic | warlord | cost 2 | thr rrrr  | 
+EXTRA COST: Pick a character you control. X is its strength. Pick a character an opponent controls. Y is its strength. -- Inflict X damage to that opponent's character and Y damage to your character simultaneously. If only 1 of the characters would be destroyed by this damage, remove it from the game instead. The surviving character gains all rules text of the removed character.
+
+### Splattergun  [69c99fee-c4fd-45ff-9d04-da0cc01ecd54]
+item | warlord | cost 3 | thr rr  | 
+UNLOAD -- COST: Deplete this card. Pick a character or faction. -- EFFECT: Inflict 3 damage to the character or faction. That faction's or character's controller takes control of this card.
+
+### Suicide Squad  [dbbaecf5-23e2-4c78-b0de-ae8c856e8d0b]
+character | warlord | cost 4 | thr rr 3/1 spd3 | soldier
+ULTIMATE SACRIFICE -- COST: X is this card's strength. Destroy this card. Pick a character. -- EFFECT: Inflict X damage to the character.
+
+### Swordchucks  [9fec08e2-6f2f-40ba-876d-6f5aacd32806]
+item | warlord | cost 4 | thr rr  | gear
+ATTACH TO CHARACTER -- The attached character gains 4 strength. -- When damage is inflicted to the attached character, increase the amount by 2. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+
+### Thundering Nilpha  [a297d28b-8f81-411b-8d1f-6d39f467952d]
+character | warlord | cost 5 | thr r 4/3 spd3 | dragon
+While this card is attacking a location, it gains 1 strength and cannot be blocked.
+
+### Torrential Bleeder  [5d437e57-b35a-4881-a2ed-c02eefe1a57d]
+character | warlord | cost 5 | thr rr 4/4 spd3 | dragon
+At the start of your turn, inflict 1 damage to all characters.
+
+### Trip Wire  [ebf61cdf-35d0-4bf7-9a54-e4927bfa3247]
+tactic | warlord | cost 4 | thr r  | 
+EXTRA COST: Deploy this only while you are being attacked. -- Inflict up to 3 damage divided however you want to the attacking characters.
+
+### Trophy Collector  [33e392bd-4d5d-475c-9cfe-a5dac86bfd2f]
+character | warlord | cost 1 | thr r 3/2 spd3 | soldier
+EXTRA COST: Deploy this only if an opponent's faction has 10 influence or less.
+
+### Wyrmfang Deathskull  [b5fbadf6-df3d-42bd-b55a-daaa1321b076]
+character | warlord | cost 7 | thr rrrr 6/6 spd3 | dragon
+UNIQUE WYRMFANG -- When you attack, the controller of the faction or location you are attacking picks any number of characters they control. Those characters must block during this battle if they can, and only those characters can block.

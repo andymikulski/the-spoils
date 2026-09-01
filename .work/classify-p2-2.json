@@ -1,0 +1,1355 @@
+[
+  {
+    "id": "9540ce6d-7f45-4fd9-8f71-093a8e438d50",
+    "name": "Anesthetizing Opulence",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: target {selector:{type:'character',zone:'play'},count:1,id:'pick'} (either player's; faction not pickable)",
+        "effects: destroy {selected 'pick'}; draw {player:'opponent', amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "EXTRA COST pick is a hard play requirement (CR 401.3). 'An opponent draws' = draw effect optional player:'opponent'; unconditional (separate sentence)."
+  },
+  {
+    "id": "9ee4edbf-5c5a-4730-8e47-1208cacab083",
+    "name": "Clandestine Resort",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous aura (no target): createModifier stat:life op:add value:1, selector {controller:'self', type:'character'}, duration whileSourceInPlay"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Recurring 'all your characters gain 1 X' -> aura, not a one-shot."
+  },
+  {
+    "id": "727008d3-b9eb-4add-9e67-72ec4d1b6937",
+    "name": "Class Action Defender",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "clause1: continuous self damage-shield — while in play, any damage instance to source with amount > 4 is reduced to 0 (needs conditional-damage-prevention: DamageModifierDefinition {selector:{isCard:source}, minAmount:5, setTo:0})",
+        "clause2: triggered event:'battleStarted' + condition battleRole:'defender' -> mayPay {player:'controller', costs:[payResources 2], effects:[restore {target:source}]}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["conditional-damage-prevention"],
+    "proposedCapabilities": [
+      {
+        "id": "conditional-damage-prevention",
+        "kind": "effects.ts DamageModifierDefinition extension + engine pre-inflict damage pass (SpoilsEngine.damageDeltaFor / inflictLockedBattleDamage)",
+        "spec": "Add optional `minAmount?: NumberExpression` and `setTo?: NumberExpression` (default 0) to DamageModifierDefinition. In the same pre-inflict pass that already sums `delta` (runs before checkStateBasedActions), after flat `delta` is applied, if `minAmount` is set and the resulting incoming amount to a card matching `selector` (and `sourceSelector`/`battleOnly` if given) is >= minAmount, clamp the amount inflicted to `setTo`. Standing/permanent, re-evaluated per damage instance, no pre-registration or expiry. Class Action Defender: {selector:{isCard:source}, minAmount:5, setTo:0} ('greater than 4' => >=5 for integer damage; 'reduce it to 0').",
+        "why": "'When any amount of damage greater than 4 is inflicted to this card, reduce it to 0' is a passive amount-thresholded shield that must act BEFORE the hit lands. preventDamage{wholeInstance} is a one-shot pre-registered shield (Visible Loaf), not a standing trait. damageModifiers.delta is flat-additive and its NumberExpression context has no access to the incoming amount (eventDamageAmount resolves to 0 inside damageDeltaFor). A post-damage damageDealt-triggered heal fails because checkStateBasedActions runs inside the battle-damage event batch (SpoilsEngine ~L8667) BEFORE queued damageDealt triggers process, and every >4 hit exceeds this card's 3 life, so it is destroyed before any heal resolves."
+      }
+    ],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Clause 1 needs pre-inflict prevention (see proposedCapabilities); a triggered heal cannot save it (SBA-before-trigger ordering in the battle-damage batch, CR 408.4 / RULES.md 11). Clause 2 is the documented 'when you are attacked, you may pay' pattern (battleStarted + battleRole defender -> mayPay)."
+  },
+  {
+    "id": "b4c2aed3-d9f8-4ac6-b4a0-8b97136f20b0",
+    "name": "Club Mau Bouncer",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'damageDealt' + condition and(sourceIsEventCard [source is the damaged card], cardTypeIs {target:{type:'damageSource'}, cardType:'character'}) -> dealDamage {target:{type:'damageSource'}, amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "damageDealt event card = targetId (the damaged card), so sourceIsEventCard scopes 'to this card'. Retaliation still fires even if a lethal hit destroyed the Bouncer (CR 503.1 — trigger queued at emit, resolves from discard). Battle damage from several attackers in a speed group is summed then re-emitted per contributor (RULES.md 8) so retaliation fires per contributing character."
+  },
+  {
+    "id": "4c23d2e0-da0c-4cd6-9a6c-23c43f83d5d8",
+    "name": "Crooked Appraiser",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'INSPECT': costs [deplete {target:source}]; targets [{selector:{type:'location',zone:'play'},count:1,id:'loc'}] (either player's location); effects [dealDamage {selected 'loc', amount:2}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Location damage accumulates vs structure (CR 408.5); SBA destroys it at >= structure."
+  },
+  {
+    "id": "56c1a7f7-7146-43d5-8bd4-2bad9e9522e7",
+    "name": "Embezzling Bookkeeper",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'cardEnteredPlay' + sourceIsEventCard -> draw {player:'opponent', amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Plain ETB drawback."
+  },
+  {
+    "id": "2eb2b684-8786-4248-8daf-ca614b8286a0",
+    "name": "Entry-Level Employee",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}",
+        "continuous self modifiers: [{stat:'strength',op:'add',value:{multiply:[{counter source token}, -1]}}, {stat:'life',op:'add',value:{multiply:[{counter source token}, -1]}}]",
+        "activated 'INVEST': costs [payResources 2]; effects [removeCounter {target:source, counter:'token', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Proven Seed 2 INVEST / loses-per-token cycle."
+  },
+  {
+    "id": "d81cec8e-35a3-47e2-bb47-a4144a0d36d8",
+    "name": "Escrow Office",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'DEPOSIT': costs [payResources 1]; effects [addCounter {target:source, counter:'token', amount:1}]",
+        "activated 'WITHDRAW': variables {x:{counter source token}} (pre-cost); costs [removeCounter {target:source, counter:'token', amount:{variable x}}]; effects [reduceNextCost {player:'controller', amount:{variable x}}] (no cardType filter = generic 'next numeric cost you pay this turn', CR 406.5)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Remove all tokens' captured via ability variables before costs (same idiom as 'pay X where X = tokens')."
+  },
+  {
+    "id": "004d96b5-d33a-4f8c-905c-c7aa61ba1756",
+    "name": "Extortify",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic effects: [modifyInfluence {player:'controller', amount:8}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Direct influence gain (not damage, CR 408.3b)."
+  },
+  {
+    "id": "57657edf-5653-4d4f-91a1-78a2542578ec",
+    "name": "Fat Pants",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous modifiers: [{target:'attachedTo', stat:'strength', op:'add', value:1}, {target:'attachedTo', stat:'life', op:'add', value:2}]",
+        "activated 'HANDOFF': costs [payResources 1, deplete {selected 'newWearer'}]; targets [{selector:{controller:'self', type:'character', conditions:[not {inBattle {selected __candidate}}]}, count:1, id:'newWearer'}]; effects [attachTo {target:source, to:{selected 'newWearer'}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented HANDOFF pattern; initial attach handled by attachTo:'character' card-def sibling."
+  },
+  {
+    "id": "914713f6-1e21-4a63-bee9-aeee7a99355b",
+    "name": "First Unified Market of Abstract Secure Theoreticals",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability: abilityCostModifiers {scope:'factionAbilities', delta:-1, minCost:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "f.u.m.a.s.t.", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["ability-cost-modifier"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for ability-cost-modifier (New capabilities list). UNIQUE F.U.M.A.S.T."
+  },
+  {
+    "id": "63394a45-b039-47ad-86ff-9853ceedf6df",
+    "name": "Furtive Investor",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "static keyword: covert",
+        "triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}",
+        "continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}",
+        "triggered turnStarted + eventPlayerIs:'controller' -> optional target {selector:{controller:'self', zone:'play', conditions:[not {cardTypeIs {selected __candidate} 'resource'}]}, count:1, optional:true, id:'pick'} -> if targetExists({selected 'pick'}) -> removeCounter {selected 'pick', counter:'token', amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": ["covert"] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "INVEST/loses-per-token cycle + optional-pick-at-turn-start (Abecedarian Investor idiom). 'non-resource card you control' = selector controller:self, not type resource."
+  },
+  {
+    "id": "b4d02b5b-bfb5-4384-addd-ba8f738b9940",
+    "name": "Hired Goons",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "static keyword: covert",
+        "triggered turnStarted + eventPlayerIs:'controller' -> mayPay {player:'controller', costs:[payResources 2], effects:[], elseEffects:[takeControl {target:source, controller:'opponent'}]}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": ["covert"] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'If you don't' = mayPay.elseEffects. Permanent control transfer (no duration)."
+  },
+  {
+    "id": "ce20a6a6-4cf6-4b28-96d1-8b68c1441c10",
+    "name": "Inside Information",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'PROFIT': costs [deplete {target:source}]; effects [draw {player:'controller', amount:4}, takeControl {target:source, controller:'opponent'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 'that player takes control of this card' pattern (Inside Information named). Permanent."
+  },
+  {
+    "id": "210c93ab-9cc2-45a8-9e8e-0aec15e38f54",
+    "name": "Keen Stratagem",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic effects: chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'deck', type:'resource', staple:true}, count:1, optional:true}} -> moveCard {selected -> hand}; then shuffleDeck {player:'controller'}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Deck search: emits deckSearched, reshuffle after (CR 312.1), may choose to fail (CR 312.2). Reveal is a no-op (no hidden-info model)."
+  },
+  {
+    "id": "062c99df-9e9b-4667-b615-a0e936efa356",
+    "name": "Key Man",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'cardMoved' + condition and(sourceIsEventCard, cardMovedFromZone 'play') -> draw {player:'controller', amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "destroyCard emits cardMoved(from:'play') before cardDestroyed, so this one trigger covers destroy / bounce / discard-from-play."
+  },
+  {
+    "id": "2d521705-d7e3-4c99-a5a8-682dd96ac1c6",
+    "name": "Market Oracle",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'INVEST': costs [deplete {target:source}]; targets [{selector:{controller:'self', zone:'play', conditions:[not {cardTypeIs {selected __candidate} 'resource'}]}, count:1, id:'pick'}]; effects [removeCounter {selected 'pick', counter:'token', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Feeds the banker token cycle across your own board."
+  },
+  {
+    "id": "2a3fa1ac-c90a-439b-b7fa-1343702dc16f",
+    "name": "Mau Party",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay.condition: isActivePlayer",
+        "effects: [draw {player:'controller', amount:5}, modifyInfluence {player:'controller', amount:2}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Deploy this only during your turn' EXTRA COST = isActivePlayer (documented)."
+  },
+  {
+    "id": "6bf1518b-c908-4a50-86d8-371d138e13d5",
+    "name": "Moneychanger",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}",
+        "activated 'EXCHANGE': costs [deplete {target:source}]; effects [addCounter {target:source, counter:'token', amount:1}, draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Put a token on this card' printed in the COST line authored as the leading EFFECT per established convention (Forbidden Bibliotheca RESEARCH); no addCounter cost primitive, no observable difference."
+  },
+  {
+    "id": "a2816b7a-7843-44e8-b9ef-0327e17ce16d",
+    "name": "Motivational Speaker",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'characterBlocked' + sourceIsEventCard -> forEach {selector:{type:'character', conditions:[sharesBattlePartyWithSource]}} -> createModifier(strength op:add 1, untilEndOfTurn) + createModifier(life op:add 1, untilEndOfTurn)... amount 2 each"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "sharesBattlePartyWithSource selects the whole blocking party incl. self. 'This turn' -> untilEndOfTurn modifiers (CR 602.1b)."
+  },
+  {
+    "id": "1dc62434-5a69-44ce-acde-488436a14de8",
+    "name": "Mutiny Grant",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: target {selector:{controller:'opponent', type:'character', zone:'play'}, count:1, id:'pick'}; cost loseInfluence {player:'controller', amount:{cardCost {selected 'pick'}}}",
+        "effects: [takeControl {target:{selected 'pick'}, controller:'controller', duration:untilEndOfTurn}, restore {target:{selected 'pick'}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["takecontrol-duration"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for takecontrol-duration (control reverts at end of turn). 'lose X influence' EXTRA COST unpayable if faction has < X (CR 401.3b); X = cardCost of the pick."
+  },
+  {
+    "id": "e8b58fc9-9ab5-4476-8a49-f35db8424e8a",
+    "name": "Officious Obstructionist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'STUBBORNNESS': costs [payResources 1]; effects [createModifier {target:source, stat:'life', op:'add', value:1, duration:untilEndOfTurn}]; repeatable"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "No usesPerTurn cap (can be used repeatedly)."
+  },
+  {
+    "id": "80039582-f99b-4d7f-9f35-96c725c9d4d9",
+    "name": "Overinsured Figurehead",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'cardMoved' + condition and(sourceIsEventCard, cardMovedFromZone 'play') -> draw {player:'controller', amount:2}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Same 'leaves play' idiom as Key Man."
+  },
+  {
+    "id": "02c2f936-b92e-4051-badb-c9a15d0371c1",
+    "name": "Prudent Thug",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> modifyInfluence {player:'controller', amount:-3}",
+        "continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}",
+        "continuous ability restrictions: ['attackOncePerTurn']",
+        "activated 'RESTORE': costs [payResources 1]; effects [addCounter {target:source, counter:'token', amount:1}, restore {target:source}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "attackOncePerTurn restriction (RULES.md 12). 'Put a token' cost -> leading effect (Forbidden Bibliotheca convention). ETB 'loses 3 influence' = modifyInfluence -3 (direct, not damage)."
+  },
+  {
+    "id": "cb4a80c5-060f-4738-bfb6-fa94e726f169",
+    "name": "Pugnacious Publicist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> forEach {selector:{controller:'self', type:'character', zone:'play'}} -> createModifier(life op:add 1, untilEndOfTurn)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'this turn' -> one-shot forEach snapshot at resolution, not an aura."
+  },
+  {
+    "id": "61a6a464-9af8-4ffd-8519-90de271c5500",
+    "name": "Randolph von Macovawitz Spitoon III, Ltd.",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> draw {player:'controller', amount:1}",
+        "activated 'PAYDAY LOAN': costs [payResources 1, oneOf([discard 1 (resource, from hand), destroy 1 (resource, controller:self)])]; effects [draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "randolph", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'discard a resource or destroy a resource you control' is the documented oneOf cost example. UNIQUE RANDOLPH."
+  },
+  {
+    "id": "07fac91d-0244-4ce4-a97e-64659aa234ad",
+    "name": "Real Estate Auctioneer",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'LIQUIDATE': costs [payResources 2, discard 1 (from hand), deplete {target:source}]; effects [draw {player:'controller', amount:2}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Plain loot ability."
+  },
+  {
+    "id": "3c2c57b8-43a8-46ef-9f6d-0e105783d92d",
+    "name": "Reluctant Hiree",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:3}",
+        "continuous self modifiers: [{stat:'strength', op:'add', value:{multiply:[{counter source token}, -1]}}] (strength only)",
+        "activated 'INVEST': variables {x:{counter source token}} (pre-cost); costs [payResources {variable x}]; effects [removeCounter {target:source, counter:'token', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 'Pay X where X = number of tokens' = variables (pre-cost) + payResources {variable x}. Debuff is strength-only."
+  },
+  {
+    "id": "a0e2b30c-c763-4182-9c34-84c3d407d60d",
+    "name": "Revivatate",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay.condition: isActivePlayer; EXTRA COST target {selector:{controller:'self', zone:'discard', type:'character'}, count:2, id:'picks'}",
+        "effects: chooserSelectsTarget {chooser:'controller', declaration:{selector:{zone:'discard', conditions:[targetInSelection {selection:'picks'}]}, count:1, id:'toPlay'}} -> putIntoPlay {selected 'toPlay', from:'discard', controller:'controller'}",
+        "then forEach {selector:{controller:'self', zone:'discard', type:'character', conditions:[targetInSelection {selection:'picks'}]}} -> moveCard {each -> hand}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'the other character' = the one of the 2 picks still in discard after the first is put into play (forEach over the pick selection). 'Deploy only during your turn' = isActivePlayer."
+  },
+  {
+    "id": "00255313-8ec6-4597-8cfb-f92c227061ce",
+    "name": "Short Term Investment",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}",
+        "triggered turnStarted + eventPlayerIs:'controller' -> removeCounter {target:source, counter:'token', amount:1} (mandatory)",
+        "activated 'RETURN': condition counterCompare {target:source, counter:'token', operator:'=', value:0}; costs [destroy {target:source}]; effects [draw {player:'controller', amount:3}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Use this only if no tokens' = ActivatedAbility.condition; 'Destroy it' = self-destroy cost."
+  },
+  {
+    "id": "338fa9ec-5021-4909-bfe3-0d71fcbebd3e",
+    "name": "Smear Campaign",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability grantedAbilities: [{selector matches attachedTo, abilities:[{triggered event:'damageDealt', condition:sourceIsDamageSource, effects:[dealDamage {target:{factionOf:'controller'}, amount:{eventDamageAmount}}]}]}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Established 'when the attached character inflicts damage' pattern (Form 37-Ohhhhh): grant the trigger to the host so sourceIsDamageSource fires and 'controller' = the host's controller. 'the character's controller's faction' = factionOf(controller). Attach to Character = any character (may be an opponent's)."
+  },
+  {
+    "id": "72439f0b-d9fe-4ea9-b701-e2f535669484",
+    "name": "Snooty Doorman",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'DENIED!': condition respondingTo {respondsTo:'card', cardType:'character'}; costs [destroy {target:source}]; effects [terminate {target:respondedToCard}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'in response to a character being deployed' = respondingTo card of type character; terminated card -> owner's discard (CR 314.1)."
+  },
+  {
+    "id": "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a",
+    "name": "Subsection 5, Paragraph 12",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "card-def behavior.noResponse: true ('your opponents cannot respond to this card')",
+        "tactic behavior.onPlay.condition: and(respondingTo {respondsTo:'ability'}, not {cardTypeIs {target:{type:'respondedAbilitySource'}, cardType:'faction'}})",
+        "effects: [terminate {target:'respondedItem'}, lockAbilityThisTurn {target:'respondedAbility'}, draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["lock-ability-this-turn", "responded-ability-source"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for lock-ability-this-turn. 'ability whose source was not a faction' needs respondedAbilitySource (New list, Exploding Sock Puppet example) to type-check the responded-to ability's source card."
+  },
+  {
+    "id": "6ff3de61-5058-4ff5-91fd-a44cf03d1a0e",
+    "name": "Tad Disingenuous",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'UNDERHANDED DEAL': costs [discard 1 (from hand)]; effects [grantKeyword {target:source, keyword:'covert', duration:untilEndOfTurn}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "COVERT is granted, not a static keyword line -> metadata.keywords empty."
+  },
+  {
+    "id": "4fcedeb9-466a-4f77-b3a0-6808cc8e9d31",
+    "name": "The Garbageman",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability restrictions: ['attackOncePerTurn']",
+        "activated 'SIFT': costs [deplete {target:source}]; effects [draw {player:'controller', amount:1}, chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'hand'}, count:1}} -> moveCard {selected -> discard}]",
+        "activated 'RUMMAGE': costs [payResources 2, removeFromGame (3 cards, selector:{controller:'self', zone:'discard'})]; effects [restore {target:source}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "attackOncePerTurn (RULES.md 12). 'Discard a card' as an EFFECT = chooser picks from hand -> moveCard discard."
+  },
+  {
+    "id": "9c1910b5-891f-4b4c-944d-45499fb00e50",
+    "name": "Writ of Reclamation",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay: chooserSelectsNumber {chooser:'controller', bounds:{min:0,max:3}} -> variable x",
+        "EXTRA COST: removeFromGame ({variable x} cards, selector:{controller:'self', zone:'discard'}, id:'rfg'); target {selector:{controller:'self', zone:'discard', conditions:[not {targetInSelection 'rfg'}]}, count:{variable x}, id:'others'}",
+        "effects: forEach {selected 'others'} -> moveCard {each -> deck}; shuffleDeck {player:'controller'}; draw {player:'controller', amount:1}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "X via chooserSelectsNumber (0-3, whole number CR 410.2); removeFromGame cost + target both sized by {variable x}; 'shuffle X into deck' only shuffles if >=1 added (CR 313.2). TargetDeclaration.count accepts a NumberExpression, so {variable x} is fine."
+  },
+  {
+    "id": "71886432-9edb-44a6-b9aa-7890b3267cf3",
+    "name": "Auction House",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'turnStarted' (NO eventPlayerIs filter — 'each player's turn') -> auctionForCard {reveal:{player:<turn's player / activePlayer>, until:'character'}, bidCurrency:'detachedResources', winnerPutsIntoPlay:true}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["bid-auction"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for bid-auction. Fires on every turnStarted regardless of player; reveal + alternating bid (start with active player) capped at each bidder's detached-resource count; winner pays that many + puts the character into play; other revealed cards shuffled back (CR 413 bidding)."
+  },
+  {
+    "id": "0af6286e-db1d-44c2-9e23-38ccc3f558e9",
+    "name": "Cheats McGuillicutty",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "'top card of your deck revealed at all times' — no-op (no hidden-deck-info model; RULES.md 5)",
+        "activated 'BOTTOM DEAL': costs [payResources 1]; effects [moveCard {target:{deckPosition player:'controller', from:'deck', index:0}, to:'deck', position:'bottom'}]",
+        "activated 'CHEAT': costs [deplete {target:source}]; effects [deployFromZone {zone:'deck', target: top card of controller deck, free:false, optional:true}] (resources cannot be deployed by definition)",
+        "activated 'CHANGE COSTUME': costs [payResources 3, moveSelected {target:source, to:'deck', shuffle:true}]; effects [chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'deck', subtype:'pluck', conditions:[not {cardNameEquals {target:source}}]}, count:1, optional:true}} -> putIntoPlay {selected, from:'deck', controller:'controller'}; shuffleDeck {player:'controller'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": "pluck", "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "UNIQUE PLUCK. Concessions: 'top card revealed at all times' is unmodelled (informational only, no downside); 'shuffle this card into its deck' as a cost via moveSelected on source (fallback: leading effect — search still happens after). 'pluck card' = subtype 'pluck'. CHANGE COSTUME 'reveal / put into play' is not a deploy."
+  },
+  {
+    "id": "cc55231b-da46-435a-95ef-d26fc8de31c0",
+    "name": "Clockman Pickpocket",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability keywords: ['cannotBeBlocked'], condition numberCompare({count {controller:'opponent', type:'item', zone:'play'}}, '>=', 1)",
+        "triggered event:'damageDealt' + condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'faction'}) -> chooserSelectsTarget {chooser:'opponent', declaration:{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, optional:true, id:'it'}} -> if targetExists({selected 'it'}) -> takeControl {target:{selected 'it'}, controller:'controller'} + destroy {target:source}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 2-player collapse: 'cannot be blocked by that player [who controls an item]' -> cannotBeBlocked gated on count(opp items) >= 1. 'that faction's controller' = opponent in 2p; that player is the chooser."
+  },
+  {
+    "id": "65bd9386-5d61-415a-be45-5d50b5b369a5",
+    "name": "Counter Attack",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay.condition: and(not isActivePlayer, not battleActive)",
+        "effects: [initiateAttack {attacker:<declaration: characters you control that can attack>, target:'activePlayer'}, draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["initiate-attack-effect"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for initiate-attack-effect (declare + fully resolve one battle mid-effect, before the draw). 'that player' = the active player (opponent's faction). Deploy gated to opponent's turn, not in battle."
+  },
+  {
+    "id": "46d4519b-b2ff-4306-9489-9ce28ecc3a5b",
+    "name": "Cute Cutpurse",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability keywords: ['cannotBeBlocked'], condition numberCompare({count {controller:'opponent', type:'item', zone:'play'}}, '>=', 1)",
+        "triggered event:'damageDealt' + condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'faction'}) -> chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, optional:true, id:'it'}} -> if targetExists({selected 'it'}) -> destroy {target:{selected 'it'}}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Same cannotBeBlocked collapse as Clockman Pickpocket. 'that faction's controller' -> opponent in 2p; YOU are the chooser here."
+  },
+  {
+    "id": "bc40724d-186f-4cf2-88da-ca8b8e648865",
+    "name": "Early Retirement",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: target {selector:{controller:'self', type:'character', zone:'play'}, count:1, id:'pick'}; bind x = {stat {selected 'pick'} strength} FIRST; then destroy {selected 'pick'}",
+        "effects: [draw {player:'controller', amount:{variable x}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 'EXTRA COST: pick a char you control, X = its strength, destroy it, ... X ...' — bind X before the destroy so it survives."
+  },
+  {
+    "id": "613f3fc5-6ef5-49e9-aec2-2c69cd9ffcdd",
+    "name": "Epic Turncoat Maneuver",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: destroy (2 cards, selector:{controller:'self', type:'character', zone:'play'}, id:'sac'); target {selector:{type:'character', zone:'play'}, count:4, optional:true, id:'picks'} ('4 or fewer', either player's)",
+        "effects: forEach {selected 'picks'} -> takeControl {target:each, controller:'controller'} (permanent)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'4 or fewer' = count 4 + optional. Picks may include chars you already control (no-op takeControl). No 'this turn' -> permanent."
+  },
+  {
+    "id": "d2ef3385-bff6-42cf-8045-e5568e59efdf",
+    "name": "Fool's Gold",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'TRADE': targets [{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, id:'pick'}]; variables {x:{cardCost {selected 'pick'}}} (pre-cost); costs [payResources {variable x}, destroy {target:source}]; effects [takeControl {target:{selected 'pick'}, controller:'controller'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "X = picked item's numeric cost, captured pre-cost via ability variables; 'Destroy this card' = self-destroy cost. Permanent take control."
+  },
+  {
+    "id": "a1716f04-f2d4-454f-917f-0b55eb9fbb73",
+    "name": "Forcible Depredator",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'PLUNDER': costs [payResources 2, discard 1 (from hand), deplete {target:source}]; effects [mill {player:'opponent', count:3, to:'discard'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Put the top 3 cards of an opponent's deck into their discard' = mill to discard."
+  },
+  {
+    "id": "e3d4cdea-9072-43f9-945d-e651067608d2",
+    "name": "Fwing!",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: target {selector:{type:'character', zone:'play'}, count:1, id:'pick'}",
+        "effects: [createModifier {selected 'pick', stat:'speed', op:'add', value:1, duration:untilEndOfTurn}, flipCoin {winEffects:[createModifier {selected 'pick', stat:'strength', op:'add', value:1, duration:untilEndOfTurn}], loseEffects:[]}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["coin-flip"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Brief: Fwing! should use flipCoin for consistency."
+  },
+  {
+    "id": "7c184d94-6d66-4d27-947d-87e6bb03d997",
+    "name": "Gang Leader",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> forEach {selector:{controller:'self', type:'character', zone:'play'}} -> createModifier(speed op:add 1, untilEndOfTurn)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "One-shot ETB team speed buff (forEach snapshot, not aura)."
+  },
+  {
+    "id": "9fb327c0-257b-4685-98ca-de282c1dc6d7",
+    "name": "Hollow Moose",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> takeControl {target:source, controller:'opponent'}",
+        "triggered turnStarted + eventPlayerIs:'controller' -> modifyInfluence {player:'controller', amount:-1}",
+        "activated 'INFILTRATE': costs [destroy (1 card, selector:{controller:'self', zone:'play', conditions:[or(cardTypeEquals character, cardTypeEquals item), not {isCard source}]}, id:'sac')]; effects [takeControl {target:source, controller:'opponent'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["selector-is-card"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 'enters play under an opponent's control' pattern (Hollow Moose named) — one-frame flicker concession. 'Destroy another item or character you control' needs selector-is-card (New list) for the self-exclusion. 'Pick an opponent' degenerates to the one opponent in 2p."
+  },
+  {
+    "id": "fb4fb0b3-e4ee-42f9-9a28-b184729fce40",
+    "name": "Hulking Vigilante",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'cardEnteredPlay' (any card) -> if numberCompare({count {owner:'self', controller:'self', type:'character', zone:'play'}}, '>=', 2) -> destroy {target:source}"
+      ],
+      "reusesProvenShape": false,
+      "newTestNeeded": true
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "'When you control any other characters you own' modelled as count(owned characters you control) >= 2 (avoids selector-is-card). Broad cardEnteredPlay self-check catches Vigilante's own ETB and any later owned character entering. Concession: won't re-fire if another owned character is acquired via takeControl (no P2 card creates that interaction). Effectively a state-based self-destruct (CR 204 / RULES.md 11)."
+  },
+  {
+    "id": "5d4a643f-9f1a-4d2c-815b-0c720598045f",
+    "name": "Impeccable Timing",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic behavior.onPlay EXTRA COST: target {selector:{type:'character', zone:'play', depleted:true}, count:1, id:'pick'}",
+        "effects: [if statCompare({selected 'pick'}, 'life', '<=', 4) -> destroy {target:{selected 'pick'}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'depleted character' = selector depleted:true (hard EXTRA COST — need a legal depleted character to play). '4 life or less' = live statCompare."
+  },
+  {
+    "id": "e987b8e3-7218-4978-bf82-1fe8fc39627c",
+    "name": "Late Addition",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic effects: [deployForFree {player:'controller', from:'hand', cardType:'character', count:1, free:false}, draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["deploy-from-hand-paying-cost"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for deploy-from-hand-paying-cost (deployForFree free:false = player still pays all the character's costs). Optional deploy, then draw regardless."
+  },
+  {
+    "id": "b2ceefd9-cf5e-459b-adba-6c0f3a806c58",
+    "name": "Martial Artist",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability restrictions: ['cannotBePicked'] (activeZone play)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'Your opponents cannot pick this card' = cannotBePicked restriction (RULES.md 12) — removes it from target-declaration candidate sets, not from count/forEach/random. Not vanilla."
+  },
+  {
+    "id": "9a90a89c-c3ef-4c6c-b185-b34813a75b54",
+    "name": "Martial Arts Master",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability: condition and(inBattle {target:source}, numberCompare({count {type:'character', conditions:[inBattle {selected __candidate}, not {sharesBattlePartyWithSource}]}}, '>=', 1))",
+        "modifiers: [{target:source, stat:'strength', op:'add', value:{add:[{stat source speed}, {multiply:[{extremumStat {selector:{type:'character', conditions:[inBattle {selected __candidate}, not sharesBattlePartyWithSource]}, stat:'speed', direction:'max'}}, -1]}]}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["extremum-stat-expression"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "Named example for extremum-stat-expression ('highest speed among characters in the opposing party'). 'Opposing party' selector = inBattle AND NOT sharesBattlePartyWithSource. X (= own speed - opposing max speed) can be <= 0 -> modifier floors / no bonus."
+  },
+  {
+    "id": "3142de68-bfda-45ce-b3a6-c1b085f51664",
+    "name": "Martial Arts Trainee",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability restrictions: ['cannotBePicked'] (activeZone play)"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Same as Martial Artist — cannotBePicked restriction. Not vanilla."
+  },
+  {
+    "id": "bfe0fbb0-079e-4f9a-ada8-b0d18e2be880",
+    "name": "Master Thief",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'cardDestroyed' + sourceIsEventCard -> optional target {selector:{owner:'opponent', zone:'discard', conditions:[not {cardTypeEquals {selected __candidate} 'tactic'}]}, count:1, optional:true, id:'pick'} -> if targetExists({selected 'pick'}) -> putIntoPlay {selected 'pick', from:'discard', controller:'controller'}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'non-tactic card' selector = not type tactic. Put into play (not a deploy — no cardPlayed/deploy triggers, CR 402.8)."
+  },
+  {
+    "id": "fd6ca900-19ab-4786-b4db-7e3c7dbac204",
+    "name": "Mendacious Brigand",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered event:'attackerBlocked' + sourceIsEventCard -> optional targets [{selector:{type:'character', conditions:[inBattle {selected __candidate} role:'blocker']}, count:1, optional:true, id:'blocker'}, {selector:{controller:'opponent', type:'character', zone:'play', conditions:[not {inBattle {selected __candidate}}]}, count:1, optional:true, id:'newMember'}]",
+        "effects: [if both targetExists -> removeFromBattle {target:{selected 'blocker'}} + addToBattle {target:{selected 'newMember'}, party:'blocking'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "'When this card is blocked' = attackerBlocked (sourceIsEventCard -> the attacker). 2p collapse: 'that character's controller' = the defender/opponent, so newMember selector is controller:'opponent'. Defender adds their own char to the blocking party (legal — they control it, CR 407.6). Second pick is conceptually linked to the first's controller (both are the defender in 2p)."
+  },
+  {
+    "id": "837d5a93-213d-4e5d-af65-0a6c14c55c7c",
+    "name": "Mercenary's Creed",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'BRIBE': usableBy:'anyPlayer'; costs [payResources 3]; effects [takeControl {target:'attachedTo', controller:'controller'}] ('controller' resolves to the activator)",
+        "activated 'BLACKMAIL': usableBy:'controller' (default); costs [payResources 2]; effects [takeControl {target:'attachedTo', controller:'controller'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "medium",
+    "notes": "'Any player may use this ability' = usableBy:'anyPlayer'; take-control resolves under the activator. Concession: BLACKMAIL's 'Use this only if you own this card' modelled as the implicit controller-only default — no P2 card transfers this item's control, so controller == owner always; the explicit owner-guard is not represented."
+  },
+  {
+    "id": "5afd2312-a6aa-4aca-bc1e-2fb4eb78183d",
+    "name": "Misappropriation Machine",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'STEAL': costs [deplete {target:source}]; targets [{selector:{owner:'opponent', zone:'discard', conditions:[or(cardTypeEquals character, cardTypeEquals item)]}, count:1, id:'pick'}]; effects [putIntoPlay {selected 'pick', from:'discard', controller:'controller'}, takeControl {target:source, controller:{ownerOf {selected 'pick'}}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Documented 'that card's owner takes control of this card' pattern (Misappropriation Machine named); {ownerOf pick} = opponent in 2p."
+  },
+  {
+    "id": "92083650-6785-4b9a-ba1c-542a348b22aa",
+    "name": "Orgy Den Smoke Out",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "tactic effects: [randomFromSelection {selector:{owner:'opponent', zone:'hand'}, count:1} -> moveCard {selected -> discard}; mill {player:'opponent', count:2, to:'discard'}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'discards a card at random' = randomFromSelection over opp hand -> moveCard discard; then mill 2."
+  },
+  {
+    "id": "239caecc-f9ed-4cf3-bcd1-aed627b6bbab",
+    "name": "Poisoned Blade",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability grantedAbilities: [{selector matches attachedTo, abilities:[{triggered event:'damageDealt', condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'character'}), effects:[destroy {target:'eventCard'}]}]}]",
+        "activated 'HANDOFF': costs [deplete {selected 'newWearer'}]; targets [{selector:{controller:'self', type:'character', conditions:[not {inBattle {selected __candidate}}]}, count:1, id:'newWearer'}]; effects [attachTo {target:source, to:{selected 'newWearer'}}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": "character", "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'When the attached character inflicts damage to a character' = grant trigger to host (Form 37-Ohhhhh pattern). HANDOFF cost is deplete-only (no pay). eventCard for damageDealt = the damaged character -> destroy it."
+  },
+  {
+    "id": "bad0a682-9807-466b-8d9b-3ac48a34cdb2",
+    "name": "Recreant Cad",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "activated 'SNEAK': condition numberCompare({count {owner:'opponent', zone:'discard'}}, '>=', 10); costs [payResources 1, removeFromGame (2 cards, selector:{owner:'opponent', zone:'discard'})]; effects [grantKeyword {target:source, keyword:'covert', duration:untilEndOfTurn}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "'at least 10 cards in their discard' = ActivatedAbility.condition; 'Remove 2 cards in that player's discard from the game' = removeFromGame cost (Cad's controller chooses which 2)."
+  },
+  {
+    "id": "7710da84-2994-4019-957f-0fc998917104",
+    "name": "Throatstabber",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "triggered cardEnteredPlay + sourceIsEventCard -> flipCoin {winEffects:[], loseEffects:[deplete {target:source}]}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["coin-flip"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Brief: Throatstabber should use flipCoin for consistency."
+  },
+  {
+    "id": "f4244678-8524-446d-8c1c-65f126c9df4a",
+    "name": "Two-Headed Coin",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "ReplacementAbility replaces:{event:'coinFlip', result:'lose'}, optional:true, optionalCost:[moveSelected {target:source, to:'deck', shuffle:true}], effects:[<reflip the coin, use that result>, draw {player:'controller', amount:1}]"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["coin-flip"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Brief: Two-Headed Coin NEEDS the coin-flip replacement hook (replaces:{event:'coinFlip', result:'lose'}). 'Shuffle this card into its owner's deck' is the optional cost; reflip + draw are the replacement effects."
+  },
+  {
+    "id": "19cf503e-f872-4199-beef-e832d1ee833c",
+    "name": "Unexpected Boobysnake",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "static keyword: tactical",
+        "triggered cardEnteredPlay + condition and(sourceIsEventCard, not isActivePlayer) -> chooserSelectsOption {chooser:'controller', options:[{label:'Discard a card', effects:[chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'hand'}, count:1}} -> moveCard {selected -> discard}]}, {label:'Destroy this card', effects:[destroy {target:source}]}]}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": ["tactical"] },
+    "engineCapability": [],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "TACTICAL keyword. 'if you deployed it during an opponent's turn' = not isActivePlayer at ETB resolution. 'discard a card or destroy this card' = player's choice (chooserSelectsOption)."
+  },
+  {
+    "id": "03dfc9f9-28cf-451f-a141-ace62ab3f1be",
+    "name": "Wild Boars",
+    "status": "classified",
+    "rulesAudited": true,
+    "behavior": {
+      "needed": true,
+      "shapes": [
+        "continuous ability blockRestriction: {minBlockerSpeed:{stat source speed}, condition: and(inBattle {target:source, role:'attacker'}, numberCompare({count {type:'character', conditions:[inBattle {selected __candidate} role:'attacker']}}, '=', 1))}"
+      ],
+      "reusesProvenShape": true,
+      "newTestNeeded": false
+    },
+    "metadata": { "unique": null, "attachTo": null, "resourceProvides": null, "keywords": [] },
+    "engineCapability": ["block-eligibility-restriction"],
+    "proposedCapabilities": [],
+    "parityGaps": [],
+    "confidence": "high",
+    "notes": "Named example for block-eligibility-restriction ('only characters with at least X speed can block it, X = its speed'). 'Sole member of an attacking party' via count(attackers) == 1 (or battlePartySize ownParty == 1)."
+  }
+]

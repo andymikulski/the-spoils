@@ -475,4 +475,41 @@ export type Condition =
       metric: "cost" | Stat;
       direction: "min" | "max";
       among: CardSelector;
+    }
+  | {
+      /**
+       * True when `target` resolves to the SAME card instance as `other`
+       * (default `"source"`). Used inside a `CardSelector.conditions` /
+       * `damageModifiers.selector` / `grantedAbilities.selector` to pin it to
+       * one card — "the attached character" (`other: "attachedTo"`;
+       * Swordchucks), "another item or character you control"
+       * (`not` + `other: "source"`; Hollow Moose). `target` defaults to the
+       * candidate (`{ type: "selected", id: "__candidate" }`).
+       */
+      type: "isCard";
+      target?: TargetRef;
+      other?: TargetRef;
+    }
+  | {
+      /**
+       * True when `by` (default `"source"`) has inflicted damage to `target`
+       * this turn (`GameState.damageThisTurn[by].toCards`). "when a character
+       * is destroyed during a turn when this card damaged it" (Gore Engine —
+       * a `cardDestroyed` trigger gated by `{ damagedThisTurn, target:
+       * "eventCard" }`).
+       */
+      type: "damagedThisTurn";
+      target: TargetRef;
+      by?: TargetRef;
+    }
+  | {
+      /**
+       * True inside a `cardDestroyed` triggered ability when the lethal
+       * instance was **battle damage** (`GameEventMap.cardDestroyed.byBattleDamage`,
+       * set when the destroy is raised from `inflictLockedBattleDamage`).
+       * "When this card is destroyed by battle damage, ..." (Venomous
+       * Sacspider) — compose with `sourceIsEventCard`.
+       */
+      type: "destroyedByBattleDamage";
+      target?: TargetRef;
     };

@@ -282,6 +282,121 @@ Condition`. `nameValue.valueKind` gains `"resourceIcon"`.
 - **Faction abilities** — same `behavior.abilities` shape, activated only,
   e.g. `TOURNAMENT_FACTION_BEHAVIOR` in `src/engine/utilities.ts`.
 
+## 1st Edition Part 2 additions
+
+Condensed index of vocabulary added for 1st Edition Part 2 (a
+combat-heavy early set). Full detail in `src/types/*` + `COVERAGE.md`.
+
+**Expressions**
+- **`{ type: "battlePartySize", side, of? }`** — member count of a battle
+  party (0 with no battle). `side`: `"attacking"` / `"blocking"` outright;
+  `"ownParty"` / `"opposingParty"` relative to `of` (default `"source"`).
+  "in a party with more than 1 member" (Callow Liegeman); "for each member
+  in the opposing party" (Fleshripping Scenepuller).
+- **`{ type: "extremumStat", selector, stat, direction }`** — highest
+  (`"max"`) / lowest (`"min"`) live `stat` over a selector (0 if none).
+  "the highest speed among characters in the opposing party" (Martial Arts
+  Master; opposing party = `conditions: [inBattle, not sharesBattlePartyWithSource]`).
+
+**Conditions**
+- **`{ type: "isCard", target?, other? }`** — `target` (default
+  `__candidate`) is the SAME instance as `other` (default `"source"`). Pins
+  a `damageModifiers.selector` / aura / `grantedAbilities.selector` to one
+  card — `other: "attachedTo"` for "the attached character" (Swordchucks);
+  `{ not: { isCard } }` for "another … you control" (Hollow Moose).
+- **`{ type: "damagedThisTurn", target, by? }`** — `by` (default `"source"`)
+  has dealt damage to `target` this turn. "a turn when this card damaged
+  it" (Gore Engine — a `cardDestroyed` trigger with `target: "eventCard"`).
+- **`{ type: "destroyedByBattleDamage", target? }`** — inside a
+  `cardDestroyed` trigger, the lethal instance was battle damage. Compose
+  with `sourceIsEventCard` (Venomous Sacspider).
+
+**TargetRef**
+- **`{ type: "attachmentHost", target }`** — the card `target` is attached
+  to (general form of `"attachedTo"`, which only works for `"source"`).
+  Scorching Runicution ("the character the gear card is attached to").
+- **`{ type: "respondedAbilitySource" }`** — the source card of the
+  responded-to *ability* on the stack (parallel to `respondedToCard` for
+  cards). Still resolves right after `terminate` pulled that ability off
+  (engine stashes it for the action). Exploding Sock Puppet!, Subsection 5.
+
+**CardSelector**
+- **`nameVar: "<key>"`** — match `CardDefinition.name` against a `nameValue`
+  (`valueKind: "cardName"`) stored on the source. Odious Diva.
+
+**Effects**
+- **`terminate` gains `disposition?: "discard" | "hand"`** (default
+  `"discard"`) — where a terminated *card* goes. "put it into its owner's
+  hand instead" (Voidal Interference).
+- **`takeControl` gains `duration?: Duration`** — control reverts to the
+  previous controller when it lapses (start-of-turn sweep). "This turn,
+  take control of the character." (Mutiny Grant).
+- **`deployForFree` gains `free?: boolean`** (default `true`) — `false` =
+  the player still pays the deployed card's numeric cost (Late Addition).
+  For "deploy up to N cards", list the effect N times.
+- **`{ type: "lockAbilityThisTurn", target }`** — `"respondedAbility"`, or a
+  `TargetRef` (locks every activated ability on that card). Bars
+  re-activation this turn. Subsection 5, Paragraph 12.
+- **`{ type: "flipCoin", player?, winEffects, loseEffects }`** — fair coin
+  (seeded RNG); emits `coinFlipped { playerId, won }`; runs the matching
+  branch. A `ReplacementAbility` `replaces: { event: "coinFlip", result:
+  "lose" }` (with `optional` + `optionalCost`) may intercept a loss and
+  offer a reflip — the engine re-rolls once and then runs the replacement's
+  `effects` as a rider (source = the replacement card). Fwing!,
+  Throatstabber, Two-Headed Coin.
+- **`{ type: "restrictBlockers", target?, minPartySize?, minSpeed?,
+  condition?, duration }`** — the "this turn" form of
+  `ContinuousAbility.blockRestriction`; `condition` re-checked at
+  `declareBlockers`. LeoKaiser GO MEGA-NEKO-KAISER!.
+- **`{ type: "restrictBlockersToChosen", chooser, declaration }`** — on a
+  `characterAttacked` trigger: `chooser` picks any number of characters
+  (a `chooseChosenBlockers` pending choice); for this battle only those may
+  block, and each that can, must. Wyrmfang Deathskull.
+- **`{ type: "grantAbilitiesFrom", target, from }`** — `target` permanently
+  gains every activated/triggered ability in `from`'s printed
+  `behavior.abilities` (a snapshot; cleared when `target` leaves play).
+  Skin Suit. (Continuous/replacement text isn't copied — concession.)
+- **`{ type: "initiateAttack", attackerSelection, target }`** — declare +
+  fully resolve one battle immediately, bypassing turn/eligibility timing;
+  `attackerSelection` is a prior `TargetDeclaration` id, `target` a
+  `PlayerRef`. The rest of the effect list resumes after `battleEnded` (as
+  an `endOfBattle` rider). Counter Attack.
+- **`{ type: "auctionForCard", revealFor }`** — reveal from the top of
+  `revealFor`'s deck until a character; players bid (active player first),
+  capped at their detached-resource count (`getAvailableResourceIds`); the
+  high bidder pays that many (attach to faction) and puts the character into
+  play; the rest shuffle back. `auctionBid` pending choice
+  (`{ bid: 0 }` = pass). Auction House.
+
+**ContinuousAbility fields**
+- **`abilityCostModifiers: [{ scope, delta, minCost? }]`** — discount/tax on
+  the `payResources` portion of matching activated abilities. `scope`:
+  `"factionAbilities"` (the controller's faction card's), `"self"`,
+  `"controlledCharacters"`. First Unified Market of Abstract Secure
+  Theoreticals ("reduce your faction's abilities' cost by 1, min 1").
+- **`partyRestriction: { role, minMembers?, parity? }`** — a *forming*
+  attacking/blocking party that includes the source must satisfy it or
+  `declareAttack`/`declareBlockers` is rejected. `role`: `"any"` /
+  `"attacking"` / `"blocking"`. Insect Appreciator (`parity: "even"`),
+  Anxious Oaf (`minMembers: 2`).
+- **`blockRestriction: { minBlockingPartySize?, minBlockerSpeed? }`** — only
+  a blocking party of ≥ N / all blockers of speed ≥ N may block this card
+  (or its attacking party), while `ability.condition` holds. LeoKaiser,
+  Wild Boars. Whole-party "cannot be blocked" stays the `cannotBeBlocked`
+  keyword.
+
+**DamageModifierDefinition**
+- **`minAmount?` / `setTo?`** — a passive amount clamp applied after
+  `delta`: if the incoming amount to a matching card is `>= minAmount`, set
+  it to `setTo` (default 0). "When any amount of damage greater than 4 is
+  inflicted to this card, reduce it to 0" (Class Action Defender —
+  `minAmount: 5, setTo: 0`).
+
+**Events**
+- **`coinFlipped { playerId, won }`** — after a `flipCoin` settles.
+- **`cardDestroyed` gains `byBattleDamage?`** — true when the lethal
+  instance was battle damage (read by `destroyedByBattleDamage`).
+
 ## Ability types
 
 ```ts

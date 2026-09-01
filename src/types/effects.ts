@@ -84,6 +84,13 @@ export type Effect =
       type: "takeControl";
       target: TargetRef;
       controller: PlayerRef;
+      /**
+       * When set, control reverts to the previous controller once the
+       * duration expires (swept at the start-of-turn point like every other
+       * "this turn" effect) — "This turn, take control of the character."
+       * (Mutiny Grant). Omit for a permanent grab.
+       */
+      duration?: Duration;
     }
   | {
       /** "Remove from the game" (RULES.md §2) — permanent, unlike moveCard to any tracked zone. */
@@ -543,11 +550,18 @@ export type Effect =
        * deployed card resolves synchronously as part of this effect (like
        * any other nested consequence of an ability, e.g. `forEach`) rather
        * than opening its own response window.
+       *
+       * `free` (default `true`) — set `false` to make the player still pay
+       * the card's numeric cost ("You may deploy a character card from your
+       * hand. ... You still pay all the character's costs" — Late Addition).
+       * For "deploy up to N cards" (0p3r4710n 1337 H4x0rz), list this effect
+       * N times — each is an independent optional pick.
        */
       type: "deployForFree";
       player: PlayerRef;
       maxCost: NumberExpression;
       selector?: CardSelector;
+      free?: boolean;
     }
   | {
       /**
@@ -697,10 +711,16 @@ export type Effect =
        * - `scope: "respondedItem"` — terminate the newest unresolved
        *   non-self stack item, whatever its kind ("Terminate the ability" —
        *   Cock Block); `target` ignored.
+       *
+       * `disposition` (default `"discard"`) is where a terminated *card*
+       * goes — `"hand"` for "Terminate the card, but put it into its owner's
+       * hand instead of their discard pile" (Voidal Interference). Ignored
+       * for a terminated ability (which just drops).
        */
       type: "terminate";
       scope?: "target" | "othersOnStack" | "respondedItem";
       target?: TargetRef;
+      disposition?: "discard" | "hand";
     }
   | {
       /**
@@ -901,6 +921,107 @@ export type Effect =
       chooser: PlayerRef;
       target: TargetRef;
       times?: number;
+    }
+  | {
+      /**
+       * "It cannot be used again this turn." — bars re-activation of an
+       * activated ability for the rest of the turn (a per-turn tally entry
+       * checked alongside `ActivatedAbility.usesPerTurn`). `target`:
+       * `"respondedAbility"` — the ability of the responded-to stack item
+       * (Subsection 5, Paragraph 12, right after `terminate`); or a
+       * `TargetRef` naming the card whose ability it is (locks that card's
+       * one just-used ability).
+       */
+      type: "lockAbilityThisTurn";
+      target: "respondedAbility" | TargetRef;
+    }
+  | {
+      /**
+       * "Flip a coin. If you win, <winEffects>; otherwise <loseEffects>."
+       * Resolves a fair coin off the seeded RNG for `player` (default
+       * `"controller"`). A `ReplacementAbility`
+       * (`replaces: { event: "coinFlip", result: "lose" }`) may intercept a
+       * loss first (Two-Headed Coin); the `coinFlipped` event fires with the
+       * settled result. Fwing!, Throatstabber.
+       */
+      type: "flipCoin";
+      player?: PlayerRef;
+      winEffects: Effect[];
+      loseEffects: Effect[];
+    }
+  | {
+      /**
+       * "Those characters must block during this battle if they can, and
+       * only those characters can block." — on a `characterAttacked`
+       * trigger: pauses for `chooser` to pick per `declaration` (any number
+       * of characters they control); for the rest of this battle only those
+       * may be declared as blockers, and each must block if it can.
+       * Wyrmfang Deathskull. No-op with no active battle.
+       */
+      type: "restrictBlockersToChosen";
+      chooser: PlayerRef;
+      declaration: TargetDeclaration;
+    }
+  | {
+      /**
+       * "This turn, only parties with at least N members / characters with
+       * at least N speed can block <target>." — a duration'd restriction on
+       * who may block `target` (default `"source"`) or its attacking party.
+       * The lasting `ContinuousAbility.blockRestriction` is the static form;
+       * this is the "this turn" effect form (LeoKaiser GO
+       * MEGA-NEKO-KAISER!).
+       */
+      type: "restrictBlockers";
+      target?: TargetRef;
+      minPartySize?: NumberExpression;
+      minSpeed?: NumberExpression;
+      /**
+       * Re-checked at `declareBlockers` time — the restriction only bites
+       * while it holds ("while it is the only member of an attacking party"
+       * — LeoKaiser). Omit for an unconditional "this turn" restriction.
+       */
+      condition?: Condition;
+      duration: Duration;
+    }
+  | {
+      /**
+       * "The surviving character gains all rules text of the removed
+       * character." — `target` permanently gains every ability in `from`'s
+       * printed `behavior.abilities` (a snapshot, recorded on
+       * `GameState.abilityGrants`; cleared when `target` leaves play). Skin
+       * Suit.
+       */
+      type: "grantAbilitiesFrom";
+      target: TargetRef;
+      from: TargetRef;
+    }
+  | {
+      /**
+       * "Attack that player." — declares and fully resolves one battle right
+       * now, mid-effect, bypassing normal turn/attack-eligibility timing:
+       * the characters selected under the `attackerSelection` TargetDeclaration
+       * id deplete and form the attacking party against `target`'s faction,
+       * and the battle runs through the standard flow. The remaining effects
+       * of the current list resume after the battle ends ("...resolve the
+       * battle immediately and before you draw the card" — Counter Attack).
+       */
+      type: "initiateAttack";
+      attackerSelection: string;
+      target: PlayerRef;
+    }
+  | {
+      /**
+       * The Auction House primitive. Reveal cards from the top of
+       * `revealFor`'s deck until a character is revealed or the deck is
+       * empty. If a character was revealed, the players bid on it in turn
+       * (the active player first), each capped at the number of detached
+       * resources they control; the high bidder pays that many resources
+       * (depleting them) and puts the character into play under their
+       * control. Every other revealed card is shuffled back into
+       * `revealFor`'s deck. Pauses on an `auctionBid` pending choice.
+       */
+      type: "auctionForCard";
+      revealFor: PlayerRef;
     };
 
 /**
@@ -1001,4 +1122,13 @@ export interface DamageModifierDefinition {
   battleOnly?: boolean;
   /** Added to each incoming damage amount — negative reduces. Floors the amount at 0. */
   delta: NumberExpression;
+  /**
+   * A passive amount-thresholded clamp applied AFTER `delta` in the same
+   * pre-inflict pass: if the incoming amount to a matching card is `>=
+   * minAmount`, it is set to `setTo` (default 0). "When any amount of damage
+   * greater than 4 is inflicted to this card, reduce it to 0" (Class Action
+   * Defender — `minAmount: 5, setTo: 0`, with `delta: 0`).
+   */
+  minAmount?: NumberExpression;
+  setTo?: NumberExpression;
 }

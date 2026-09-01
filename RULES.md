@@ -644,7 +644,23 @@ pauses (`chooserSelectsTarget`, `chooserSelectsOption`, `reorderDeck`,
    rejects a non-empty defender-declared blocking party while the whole
    attacking party has it.
 4. Face-down cards (resources) are not characters and cannot block.
-5. **(CR §608.1e) Response window** — attacker then defender.
+5. **(engine-derived) Party-composition / block-eligibility restrictions.**
+   - A character in a *forming* party (attacking or blocking) can constrain
+     that party's legal size or parity — `ContinuousAbility.partyRestriction
+     { role, minMembers?, parity? }`. `declareAttack` / `declareBlockers`
+     reject a declaration that violates it. "must have an even number of
+     members" (Insect Appreciator), "at least 2 members" (Anxious Oaf).
+   - An *attacker* can constrain who may block it / its party —
+     `ContinuousAbility.blockRestriction { minBlockingPartySize?,
+     minBlockerSpeed? }` (static, gated by `ability.condition`), or the
+     `restrictBlockers` effect (a "this turn" grant with its own
+     `condition`). "only parties with at least 3 members can block it"
+     (LeoKaiser), "only characters with at least X speed" (Wild Boars).
+   - `restrictBlockersToChosen` (on a `characterAttacked` trigger) lets the
+     attacker's controller-of-the-target pick the *only* characters that may
+     block this battle; each of them that legally can, must (Wyrmfang
+     Deathskull). Stored as `BattleState.chosenBlockers`.
+6. **(CR §608.1e) Response window** — attacker then defender.
 
 ### Resolving the battle (CR §609.1)
 
@@ -1057,6 +1073,48 @@ of the Devoured Emperor additions")**
   selects which of "Choose one of the following as this card's rules text"
   blocks supplies the play-time condition / costs / targets / effects. The
   unchosen modes' EXTRA COSTs and targets never apply.
+
+**(engine-derived — 1st Edition Part 2 additions, all in `BEHAVIORS.md` →
+"1st Edition Part 2 additions")**
+
+- **Coin flips.** `flipCoin` resolves a fair coin off the seeded RNG and
+  runs `winEffects` / `loseEffects`; it emits `coinFlipped { playerId,
+  won }`. A `ReplacementAbility` `replaces: { event: "coinFlip", result:
+  "lose" }` (optional + `optionalCost`) may intercept the *loss* for that
+  player: the engine re-rolls once, adopts the new result, then runs the
+  replacement's `effects` as a rider (Two-Headed Coin — "shuffle this card
+  into its deck, reflip, and use that result instead, and draw a card").
+- **Damage-amount clamp.** `DamageModifierDefinition.minAmount` / `setTo` —
+  in the same pre-inflict pass as `delta`, an incoming amount `>= minAmount`
+  to a matching card is set to `setTo` (default 0). Distinct from
+  `preventDamage.wholeInstance` (a one-shot pre-registered shield). "any
+  amount of damage greater than 4 … reduce it to 0" (Class Action Defender —
+  `minAmount: 5`).
+- **`destroyedByBattleDamage`.** `cardDestroyed` now carries
+  `byBattleDamage?` (set when the lethal instance came through
+  `inflictLockedBattleDamage`), read by the same-named condition
+  (Venomous Sacspider).
+- **Timed take-control.** `takeControl` gains `duration?`; the reversion
+  target is captured before the grab and control snaps back at the
+  start-of-turn sweep (Mutiny Grant — "This turn, take control …").
+- **Ability cost modifier.** `ContinuousAbility.abilityCostModifiers` tunes
+  the `payResources` portion of matching activated abilities (`scope`:
+  `factionAbilities` / `self` / `controlledCharacters`), floored at each
+  modifier's `minCost` (F.U.M.A.S.T. — "reduce your faction's abilities'
+  cost by 1, to a minimum of 1"). Deploy cost is still `costModifiers` /
+  `reduceNextCost`.
+- **Copy rules text.** `grantAbilitiesFrom` snapshots a card's printed
+  activated/triggered abilities onto another card, live while the recipient
+  is in play (Skin Suit). Continuous / replacement text isn't copied.
+- **Out-of-turn attack.** `initiateAttack` declares and fully resolves one
+  battle mid-effect, bypassing turn/eligibility timing; the effect list's
+  remainder runs as an `endOfBattle` rider (Counter Attack — "Attack that
+  player. … resolve the battle immediately and before you draw the card").
+- **Bidding (Auction House).** `auctionForCard` reveals from the top of a
+  deck until a character, then alternates bids (active player first) capped
+  at each bidder's detached-resource count; the winner pays that many
+  (attach to faction) and puts the character into play; the rest reshuffle.
+  `auctionBid` pending choice, `{ bid: 0 }` = pass.
 
 ## 13. Tokens (CR §409)
 

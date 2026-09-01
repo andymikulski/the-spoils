@@ -91,7 +91,8 @@ const manifest: Manifest = readJson("data/card-coverage.json");
 // `*-newshapes.test.ts` companion.
 const behaviorsTestSrc = [
   "src/engine/__tests__/card-behaviors.test.ts",
-  "src/engine/__tests__/holy-heist-newshapes.test.ts"
+  "src/engine/__tests__/holy-heist-newshapes.test.ts",
+  "src/engine/__tests__/first-ed-part2-smoke.test.ts"
 ]
   .map(rel => {
     try {
@@ -154,6 +155,10 @@ const KNOWN_TYPE_TAGS = new Set([
   "healDamage", "suppressAbilities", "suppressKeyword", "grantKeywordToPlayer",
   "transformBattleDamage", "randomFromSelection", "separateIntoPiles",
   "grantVoidPlay",
+  // 1st Edition Part 2 effects
+  "lockAbilityThisTurn", "flipCoin", "restrictBlockers",
+  "restrictBlockersToChosen", "grantAbilitiesFrom", "initiateAttack",
+  "auctionForCard",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected",
@@ -171,17 +176,23 @@ const KNOWN_TYPE_TAGS = new Set([
   "uniqueIs", "assignedDamageThisTurn", "inflictedDamageToFactionThisTurn",
   "hasAttachment", "hasKeyword", "textMentionsIcon", "isToken", "eventCardIs",
   "targetInZone", "battleTargetIs", "battleDamageAssigned",
+  // 1st Edition Part 2 conditions
+  "isCard", "damagedThisTurn", "destroyedByBattleDamage",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",
   "selectionCount", "conditional", "sumStat", "sumCounters",
   "thresholdIconCount", "eventDamageAmount",
+  // 1st Edition Part 2 number expressions
+  "battlePartySize", "extremumStat",
   // target refs / player refs
   "selected", "card", "player", "ownerOf", "controllerOf", "deckPosition",
   "respondedToCard", "damageSource", "factionOf",
+  // 1st Edition Part 2 target refs
+  "attachmentHost", "respondedAbilitySource",
   // replacement ability event tags (under `replaces.event`, not `type`, but
   // harmless to allow)
-  "moveToZone",
+  "moveToZone", "coinFlip",
   // durations
   "permanent", "untilEndOfTurn", "untilStartOfNextTurn", "whileSourceInPlay",
   // CardType, as it legitimately appears under CardSelector.type

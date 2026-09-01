@@ -32,6 +32,13 @@ export interface GameEventMap {
   cardDestroyed: {
     cardId: CardInstanceId;
     controllerId: PlayerId;
+    /**
+     * True when the lethal damage instance was battle damage (set by
+     * `inflictLockedBattleDamage`). Read by the `destroyedByBattleDamage`
+     * condition — "When this card is destroyed by battle damage, ..."
+     * (Venomous Sacspider).
+     */
+    byBattleDamage?: boolean;
   };
 
   cardDepleted: {
@@ -143,6 +150,19 @@ export interface GameEventMap {
   counterChanged: {
     cardId: CardInstanceId;
     counter: string;
+  };
+
+  /**
+   * A coin was flipped by a `flipCoin` effect (or a `flipUp`-style reflip),
+   * after the result is settled. `won` is from the flipping player's point
+   * of view. "Flip a coin. If you win, ..." (Fwing!, Throatstabber); a card
+   * can also intercept the *loss* via a `ReplacementAbility`
+   * (`replaces: { event: "coinFlip", result: "lose" }`) before this fires
+   * (Two-Headed Coin).
+   */
+  coinFlipped: {
+    playerId: PlayerId;
+    won: boolean;
   };
 }
 

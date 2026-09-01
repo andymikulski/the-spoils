@@ -445,6 +445,18 @@ export interface ReplacementAbility extends AbilityBase {
         controlledBy?: "self" | "opponent" | "any";
         /** Who initiated it — relative to the source controller (default `"any"`). */
         by?: "self" | "opponent" | "any";
+      }
+    | {
+        /**
+         * "If you would lose a coin flip, you may <optionalCost> to reflip
+         * that coin and use the new result." (Two-Headed Coin). Fires
+         * mid-`flipCoin`, before the `coinFlipped` event, only on a losing
+         * flip for the source's controller. The replacement `effects` run
+         * in place of accepting the loss — re-roll and adopt the new result
+         * (`{ type: "flipCoin", ... }` again, plus any rider).
+         */
+        event: "coinFlip";
+        result: "lose";
       };
   condition?: Condition;
   /**
@@ -519,8 +531,45 @@ export interface ContinuousAbility extends AbilityBase {
   restrictions?: RestrictionGrantDefinition[];
   /** Deploy-cost adjustments while `condition` holds (e.g. "opponents pay 1 more to deploy a tactic"). */
   costModifiers?: CostModifierDefinition[];
+  /**
+   * Adjustments to the `payResources` portion of *activated abilities*
+   * (not deploys) while the source is in play — "Reduce the numeric cost of
+   * your faction's abilities by 1, to a minimum of 1" (First Unified Market
+   * of Abstract Secure Theoreticals). `scope`: `"factionAbilities"` (the
+   * controller's faction card's abilities), `"self"` (this card's own),
+   * `"controlledCharacters"` (abilities on characters the controller
+   * controls).
+   */
+  abilityCostModifiers?: Array<{
+    scope: "factionAbilities" | "self" | "controlledCharacters";
+    delta: NumberExpression;
+    minCost?: number;
+  }>;
   /** Damage-amount adjustments while `condition` holds (e.g. "reduce battle damage to your characters by 2"). */
   damageModifiers?: DamageModifierDefinition[];
+  /**
+   * "When an attacking / blocking party is formed including this card, it
+   * must have <constraint>." — a legality check on a *forming* party that
+   * includes the source (`declareAttack` / `declareBlockers` reject a
+   * declaration that violates it). Insect Appreciator (`parity: "even"`),
+   * Anxious Oaf (`minMembers: 2`).
+   */
+  partyRestriction?: {
+    role: "any" | "attacking" | "blocking";
+    minMembers?: NumberExpression;
+    parity?: "even" | "odd";
+  };
+  /**
+   * "Only parties with at least N members / characters with at least N
+   * speed can block this card." — enforced in `declareBlockers` against a
+   * block on the source (while `condition`, if set, holds). LeoKaiser
+   * (`minBlockingPartySize`), Wild Boars (`minBlockerSpeed`). Whole-party
+   * "cannot be blocked" stays the `cannotBeBlocked` keyword.
+   */
+  blockRestriction?: {
+    minBlockingPartySize?: NumberExpression;
+    minBlockerSpeed?: NumberExpression;
+  };
   /**
    * Grants a Unique designation to every in-play card matching `selector`
    * while the source is in play — "All non-resource cards gain the rules

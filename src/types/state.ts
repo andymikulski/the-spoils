@@ -19,9 +19,11 @@ import type {
 } from "./ids.js";
 import type { ResolutionContext, StackItem } from "./resolution.js";
 import type { PendingChoice } from "./choices.js";
+import type { AbilityDefinition } from "./cards.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
+import type { NumberExpression } from "./expressions.js";
 
 export interface CardInstance {
   id: CardInstanceId;
@@ -407,6 +409,15 @@ export interface BattleState {
   /** Locked assignments for the current speed group. */
   attackerAssignments: BattleDamageAssignment[];
   defenderAssignments: BattleDamageAssignment[];
+
+  /**
+   * "Only those characters can block." — when set (by a
+   * `restrictBlockersToChosen` effect on a `characterAttacked` trigger),
+   * the defender-declared blocking party for this battle may contain only
+   * these ids, and each of them that can legally block must. Wyrmfang
+   * Deathskull.
+   */
+  chosenBlockers?: CardInstanceId[];
 }
 
 export interface BattleView {
@@ -580,6 +591,49 @@ export interface GameState {
   scheduledEffects: ScheduledEffect[];
 
   /**
+   * Durationed "take control" grants (`takeControl` effect with a
+   * `duration`). When one expires (swept at the start-of-turn point), the
+   * card's control reverts to `previousControllerId`. Mutiny Grant.
+   */
+  controlGrants: Array<{
+    id: ModifierId;
+    cardId: CardInstanceId;
+    previousControllerId: PlayerId;
+    duration: Duration;
+    createdTurn: number;
+  }>;
+
+  /**
+   * Ability bodies granted to a card by a `grantAbilitiesFrom` effect
+   * ("gains all rules text of the removed character" — Skin Suit). Merged
+   * into the recipient's ability lookups; entries for a card are dropped
+   * when it leaves play.
+   */
+  abilityGrants: Array<{
+    id: ModifierId;
+    cardId: CardInstanceId;
+    sourceId: CardInstanceId;
+    abilities: AbilityDefinition[];
+  }>;
+
+  /**
+   * Durationed "only <constraint> can block <target>" restrictions from a
+   * `restrictBlockers` effect (the "this turn" form of
+   * `ContinuousAbility.blockRestriction`). Consulted in `declareBlockers`;
+   * swept by `durationStillActive`. LeoKaiser.
+   */
+  blockRestrictionGrants: Array<{
+    id: ModifierId;
+    sourceId: CardInstanceId;
+    targetId: CardInstanceId;
+    minPartySize?: NumberExpression;
+    minSpeed?: NumberExpression;
+    condition?: Condition;
+    duration: Duration;
+    createdTurn: number;
+  }>;
+
+  /**
    * "For the rest of the game, you may deploy the voided cards as though
    * they were in your hand [even if you cannot meet their threshold]"
    * (Cheats, the Dirty Rotten). Each entry lets `playerId` play `cardId`
@@ -644,6 +698,43 @@ export interface GameState {
   };
 
   /**
+   * A coin flip (`flipCoin` effect) paused on a "you may reflip" replacement
+   * (Two-Headed Coin) — paired with a `coinFlipReplace` pending choice. On
+   * accept: pay `replacementCost`, reroll once, run the matching branch then
+   * `replacementEffects`. On decline: run `loseEffects`.
+   */
+  pendingCoinFlip?: {
+    context: ResolutionContext;
+    flipperId: PlayerId;
+    winEffects: Effect[];
+    loseEffects: Effect[];
+    replacementCost: Cost[];
+    replacementEffects: Effect[];
+    replacementSourceId: CardInstanceId;
+  };
+
+  /**
+   * The in-flight Auction House auction (`auctionForCard` effect), advanced
+   * by the `auctionBid` pending choice. `characterId` is the card up for
+   * bid; `otherRevealed` are the non-character cards revealed above it (all
+   * shuffled back once the auction settles). `bids` records each player's
+   * standing bid; `turn` is whose turn it is to bid or pass; `highBid` /
+   * `highBidder` track the current lead.
+   */
+  pendingAuction?: {
+    sourceId: CardInstanceId;
+    controllerId: PlayerId;
+    deckOwnerId: PlayerId;
+    characterId: CardInstanceId;
+    otherRevealed: CardInstanceId[];
+    order: PlayerId[];
+    turn: PlayerId;
+    highBid: number;
+    highBidder?: PlayerId;
+    passed: PlayerId[];
+  };
+
+  /**
    * The continuation for an outstanding optional replacement (paired with a
    * `pendingChoice` of kind `"replacementChoice"`) — what to do on accept
    * (pay `cost`, run `effects`) vs decline (perform `original`).
@@ -675,13 +766,16 @@ export interface GameState {
 
   /**
    * Per-turn record, keyed by damage-source `CardInstanceId`: whether that
-   * card has inflicted any damage this turn (`assigned`) and the owners of
-   * every faction it damaged (`toFactionOf`). Populated from `damageDealt`
-   * events in `emit`, reset at the start of every turn. Read by the
-   * `assignedDamageThisTurn` / `inflictedDamageToFactionThisTurn`
-   * conditions.
+   * card has inflicted any damage this turn (`assigned`), the owners of
+   * every faction it damaged (`toFactionOf`), and the ids of every card it
+   * damaged (`toCards`). Populated from `damageDealt` events in `emit`,
+   * reset at the start of every turn. Read by the `assignedDamageThisTurn` /
+   * `inflictedDamageToFactionThisTurn` / `damagedThisTurn` conditions.
    */
-  damageThisTurn: Record<string, { assigned: boolean; toFactionOf: PlayerId[] }>;
+  damageThisTurn: Record<
+    string,
+    { assigned: boolean; toFactionOf: PlayerId[]; toCards: CardInstanceId[] }
+  >;
 
   /**
    * Per-player count of upcoming faction Restore Rules to skip entirely

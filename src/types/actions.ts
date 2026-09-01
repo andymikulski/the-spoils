@@ -174,5 +174,11 @@ export type GameAction =
         /** MUSTACHE SHOWDOWN — index into the opponent's piles. */
         | { kind: "pickPile"; index: number }
         /** MUSTACHE SHOWDOWN — 0..`max` of the winning pile's cards to move to hand. */
-        | { kind: "takeFromPile"; cardIds: CardInstanceId[] };
+        | { kind: "takeFromPile"; cardIds: CardInstanceId[] }
+        /** Auction House — `bid` is 0 (pass) or an integer in (`highBid`, `maxBid`]. */
+        | { kind: "auctionBid"; bid: number }
+        /** Two-Headed Coin — pay to reflip a lost coin flip, or accept the loss. */
+        | { kind: "coinFlipReplace"; reflip: boolean }
+        /** Wyrmfang Deathskull — the subset of candidates that may block this battle. */
+        | { kind: "chooseChosenBlockers"; cardIds: CardInstanceId[] };
     };

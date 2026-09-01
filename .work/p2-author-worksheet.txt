@@ -1,0 +1,1399 @@
+### Ambiguity Embiggener  |  88ddad6c-4df5-4baa-b1b8-c7492f67d42e
+item arcanist cost3 thr:oo   status=classified conf=medium
+TEXT: At the start of each player's turn, that player chooses a number for X. Each player puts X cards from their hand on the bottom of their deck in any order, or their entire hand if they have less than X cards in it. Each player puts the top Y cards of their deck into their hand, where Y is the number of cards that player put on the bottom of their deck.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:turnStarted (no eventPlayerIs filter -> fires on every player's turn): chooserSelectsNumber{chooser:activePlayer,storeAs:x} then forEachPlayer[ chooserSelectsTarget{chooser:<that player>, decl:{selector:{owner:self,zone:hand}, count:{variable x}, optional:true} -> forEach selected -> moveCard __candidate -> deck bottom}, draw{player:<that player>, amount:{selectionCount:<that decl>}} ]
+  - 'in any order' on the bottom = pick order via forEach; 'entire hand if fewer than X' = CR 402.5 carry-out-as-far-as-possible on the chooser decl
+NOTES: Composes from chooserSelectsNumber + forEachPlayer + chooserSelectsTarget(hand) + moveCard(deck bottom) + draw{selectionCount}. Concession: a mandatory-feel 'X cards' inside a chooser decl relies on count clamping to available candidates (CR 402.5); symmetric per-turn wheel is a novel composition so a fresh test is warranted.
+
+### Ameliorate  |  5a6a4268-1c9c-4a97-8d54-3c247dc82e72
+tactic arcanist cost1 thr:ooo   status=classified conf=high
+TEXT: Put any number of cards from your hand on the bottom of your deck in any order. Put the top X cards of your deck into your hand, where X is the number of cards you put on the bottom plus 1.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self,zone:hand}, count:{count{owner:self,zone:hand}}, optional:true} -> forEach selected -> moveCard __candidate -> deck bottom}
+  - then draw{player:controller, amount:{add:[{selectionCount:<decl>},1]}}
+NOTES: Recurring 'put any number from hand on bottom, then draw that+N' shape (cf. Obsessive Compulsion family).
+
+### Arcanology Recruitment Officer  |  7b05e4a8-cff1-441c-91bc-de6f671f8b12
+character arcanist cost4 thr:oo 3/3 spd3 [muddler]  status=classified conf=high
+TEXT: At the start of your turn, pick a character an opponent controls. It gains COVERT until the start of your next turn.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:turnStarted + isActivePlayer(controller): chooserSelectsTarget{chooser:controller, decl:{selector:{controller:opponent,type:character}, count:1} -> grantKeyword{target:selected, keyword:covert, duration:untilStartOfNextTurn}}
+NOTES: 'muddler' is a subtype line, not a keyword. grantKeyword duration untilStartOfNextTurn covers 'until the start of your next turn'.
+
+### Cloaked Creeper  |  2437c2d0-0578-4d66-826b-c1184c9bd72d
+character arcanist cost2 thr:ooo 1/1 spd1 [lurker]  status=classified conf=medium
+TEXT: COVERT -- While this card is a member of an attacking party, the party is COVERT.
+META: unique=null attachTo=null provides=null keywords=["covert"]
+SHAPES:
+  - static keyword: covert (behavior.keywords)
+  - continuous (activeZone:play, condition:inBattle{target:source, role:attacker}): keywords aura {selector:{conditions:[sharesBattlePartyWithSource{__candidate}]}, keyword:covert} -> every attacker in source's party gains covert, so the party is a covert party (CR 507.3)
+NOTES: Composes ContinuousAbility.keywords aura + sharesBattlePartyWithSource. Conditional party-wide keyword grant is a distinct shape (new test). Timing: aura must be live from declareAttack through declareBlockers so covert-party status locks correctly (RULES §8).
+
+### Deceptive Muddler  |  b28841ab-18e2-4a2e-aeb1-94b124f7baae
+character arcanist cost4 thr:o 2/1 spd3 [muddler]  status=classified conf=high
+TEXT: COVERT -- When this card inflicts damage to a faction, that faction's controller puts a card from their hand on the top of their deck if they can.
+META: unique=null attachTo=null provides=null keywords=["covert"]
+SHAPES:
+  - static keyword: covert
+  - triggered event:damageDealt + and(sourceIsDamageSource, cardTypeIs{target:eventCard, cardType:faction}): chooserSelectsTarget{chooser:{controllerOf eventCard}, decl:{selector:{owner:{ownerOf eventCard},zone:hand}, count:1, optional:true} -> moveCard selected -> deck top}
+NOTES: 'if they can' = optional decl with 0 candidates does nothing. Recurring 'inflicts damage to a faction' trigger pattern.
+
+### Dimensional Rift  |  79146bd7-cc3c-4a56-9071-feca013f73a8
+location arcanist cost0 thr:ooooo struct1   status=classified conf=high
+TEXT: TELEPORT -- COST: Pay 4. Deplete this card. Pick a character. -- EFFECT: Put the character into its owner's hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (TELEPORT): costs[payResources 4, deplete source]; targets[{selector:{type:character}, count:1}]; effects[moveCard{target:selected, to:hand}] (owner's hand)
+
+### Eccentric Inquisition  |  847cd807-e515-4c1f-8c4d-fa0ffd7b217d
+tactic arcanist cost2 thr:oooo   status=classified conf=medium
+TEXT: Reveal the top 7 cards of an opponent's deck. Put all tactics revealed this way into the void. Put the remaining cards on the bottom of that player's deck in any order. For the rest of the game, you may deploy tactics voided by this card as though they were in your hand without meeting their threshold.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: target decl {id:voided, selector:{owner:opponent, zone:deck, fromTop:7, conditions:[cardTypeIs{__candidate,tactic}]}, count:7, optional:true}
+  - effects: forEach{selected:voided} -> moveCard __candidate -> void; then lookAndReorder{player:opponent, chooser:controller, count:{add:[7,{multiply:[{selectionCount:voided},-1]}]}, to:bottom} (bottom the non-tactic leftovers); then grantVoidPlay{selected:voided, player:controller, ignoreThreshold:true}
+NOTES: grantVoidPlay(persistent, ignoreThreshold) + fromTop selector + lookAndReorder(to:bottom) cover it. Concession: 'all tactics revealed' modelled as an all-pick optional decl (not a real choice); 'in any order' bottoming assigned to the caster (chooser). grantVoidPlay grants the OPPONENT's voided cards to the caster (cross-owner) — supported per its spec (grant keyed to player, card in any void).
+
+### Ectological Hazard Suit  |  e667dbee-fc6b-4353-b580-ab4c38a3aeb7
+item arcanist cost3 thr:oo [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- When this card enters play, put a token on the attached character. -- The attached character gains 1 strength and 1 life for each token on it. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: addCounter{target:attachedTo, counter:token, amount:1}
+  - continuous: modifiers on target:attachedTo [{stat:strength,op:add,value:{counter{target:attachedTo,counter:token}}},{stat:life,op:add,value:{counter{target:attachedTo,counter:token}}}]
+  - activated (HANDOFF): costs[payResources 1, deplete{selected}]; targets[{selector:{controller:self,type:character,conditions:[{not:{inBattle{__candidate}}}]}, count:1}]; effects[attachTo{target:source, to:selected}]
+NOTES: Exact HANDOFF recurring pattern. 'gear' is a subtype. Tokens sit on the host, so the modifier reads the host's counter, not source's.
+
+### Eldridge Gosche  |  11f9caf2-79de-478a-a87f-c2fcfb90e11a
+character arcanist cost8 thr:oo 4/5 spd3 [ritualist]  status=classified conf=high
+TEXT: UNIQUE ELDRIDGE -- At the start of your turn, you may pick 2 or fewer non-resource cards you control. If you do, put up to 2 tokens divided however you want on those cards. -- EJECT -- COST: Remove 3 tokens from this card. Pick a non-resource card. -- EFFECT: Put the card into its owner's hand. -- DISRUPT -- COST: Remove 3 tokens from this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card.
+META: unique=eldridge attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:turnStarted + isActivePlayer: chooserSelectsOption(you may)[ chooserSelectsTarget{chooser:controller, decl:{id:picks, selector:{controller:self, conditions:[{not:{cardTypeIs{__candidate,resource}}}]}, count:2, optional:true} -> chooserSelectsNumber{chooser:controller, storeAs:t, min:0, max:2} -> distributeAmong{chooser:controller, selected:picks, amount:{variable t}, effects:[addCounter{target:__candidate, counter:token, amount:{variable __amount}}]} } ]
+  - activated (EJECT): costs[removeCounter{source,token,3}]; targets[{selector:{conditions:[{not:{cardTypeIs{__candidate,resource}}}]}, count:1}]; effects[moveCard{target:selected, to:hand}]
+  - activated (DISRUPT): costs[removeCounter{source,token,3}]; effects[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:opponent,zone:hand}, count:1} -> moveCard eventCard -> discard}]
+NOTES: 'up to 2 tokens divided however you want' = chooserSelectsNumber(0..2) + distributeAmong over the picked cards. removeCounter as a cost is all-or-nothing (payable only with >=3 tokens).
+
+### Emphatic Ecto-Manipulator  |  3d8e8296-ede6-4d43-bbe3-9f94c74d65f2
+character arcanist cost5 thr:oo 3/3 spd3 [ecto-manipulator]  status=classified conf=high
+TEXT: EXTRA COST: You may pick a character you control. -- When this card enters play, if you picked a character as part of its cost, put 2 tokens on that character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - behavior.onPlay: targets[{id:pick, selector:{controller:self,type:character}, count:1, optional:true}]; effects[{if condition:targetExists{selected:pick} -> addCounter{target:{selected:pick}, counter:token, amount:2}}]
+NOTES: Exact 'EXTRA COST: you may pick ...; when it enters play, if you picked ...' -> behavior.onPlay pattern.
+
+### Entangle  |  51e17074-b46e-4ba5-963b-34e1585e3208
+tactic arcanist cost3 thr:ooo   status=classified conf=high
+TEXT: EXTRA COST: Pick 2 or fewer characters. -- This turn, the characters lose 1 speed. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: targets[{id:picks, selector:{type:character}, count:2, optional:true}]; effects[forEach{selected:picks, effects:[createModifier{target:__candidate, stat:speed, operation:add, value:-1, duration:untilEndOfTurn}]}, draw{player:controller, amount:1}]
+NOTES: 'Pick 2 or fewer characters' = optional count-2 decl over any character (either controller).
+
+### Gnat  |  d65c3554-ba90-45e8-ab26-4f8d42d498b7
+character arcanist cost1 thr:o 1/1 spd3 [lurker]  status=classified conf=high
+TEXT: When this card leaves play, an opponent discards a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardMoved + and(sourceIsEventCard, cardMovedFromZone{zone:play}): chooserSelectsTarget{chooser:opponent, decl:{selector:{owner:opponent,zone:hand}, count:1, optional:true} -> moveCard selected -> discard}
+NOTES: Recurring 'when this card leaves play' pattern; opponent chooses which card to discard.
+
+### Infatuated Armchair  |  ab4bed28-7665-4017-b829-4c95c366a61e
+character arcanist cost4 thr:o 2/2 spd3 [lurker]  status=classified conf=medium
+TEXT: When this card leaves play, you may look at the top 2 cards of any one deck. If you do, put 1 card on the bottom of that deck and 1 card on the top. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardMoved + and(sourceIsEventCard, cardMovedFromZone{zone:play}): chooserSelectsOption(you may)[ chooserSelectsOption[{label:my deck, effects:[lookAndReorder{player:controller, count:2, to:split}]},{label:opp deck, effects:[lookAndReorder{player:opponent, chooser:controller, count:2, to:split}]}] ]
+  - then draw{player:controller, amount:1}
+NOTES: lookAndReorder to:split = '1 bottom, 1 top' with the chooser deciding. 'any one deck' modelled as an option pick. Ambiguity: 'Draw a card.' read as unconditional (separate sentence), not gated by the 'if you do'.
+
+### Insect Appreciator  |  43276113-4afd-4e0f-a4c6-ff41c9a51cb2
+character arcanist cost3 thr:oo 3/3 spd3 [obsessor]  status=classified conf=high
+TEXT: When an attacking or blocking party is formed including this card, it must have an even number of members.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: party-composition-restriction
+SHAPES:
+  - continuous: partyRestriction {role:any, parity:even} -- a forming attacking OR blocking party that includes this card must have an even member count, enforced in declareAttack / declareBlockers
+NOTES: Named example for party-composition-restriction in the brief. 'obsessor' is a subtype.
+
+### Maladjustment  |  556c61ec-857e-4773-80fb-b180513696f4
+tactic arcanist cost1 thr:o   status=classified conf=high
+TEXT: EXTRA COST: Pick a resource you control. (You can pick face-down resources.) -- Put the resource into its owner's hand. You may play a resource.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: targets[{id:res, selector:{controller:self, type:resource}, count:1}] (face-down resources eligible); effects[moveCard{target:{selected:res}, to:hand} (owner), playResource optional {player:controller}]
+NOTES: 'You may play a resource' = the optional playResource effect (chooser picks a hand card + face-up/down). Selector must not exclude face-down resources.
+
+### Obsessive Compulsion  |  2d436db8-8973-4f0b-b830-a343ab068908
+tactic arcanist cost1 thr:o   status=classified conf=high
+TEXT: Look at the top 3 cards of your deck. You may put any number of those cards on the bottom of your deck in any order. Put the remaining cards on the top of your deck in any order. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: lookAndReorder{player:controller, count:3, to:split}; then draw{player:controller, amount:1}
+NOTES: to:split = 'put any number on bottom in any order, remaining on top in any order'.
+
+### Odious Diva  |  b7c7b011-86ef-46db-8b26-c659ad1f24c1
+character arcanist cost2 thr:oo 1/2 spd3 [diva]  status=classified conf=high
+TEXT: Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: name-var-selector
+SHAPES:
+  - clause 1 ('hand revealed at all times') = no-op: engine has no hidden-hand model (RULES §5 Community Chest note)
+  - activated (DISAPPROVE): costs[payResources 2]; effects[nameValue{chooser:controller, valueKind:cardName, storeAs:named}, chooserSelectsTarget{chooser:opponent, decl:{selector:{owner:opponent, zone:hand, nameVar:named}, count:1, optional:true} -> moveCard selected -> deck bottom}, {if targetExists -> draw{player:opponent, amount:1}}]
+NOTES: Named example for name-var-selector in the brief (CardSelector.nameVar matched against a nameValue cardName stored on source). 'if they can' = optional decl.
+
+### Quotidian Disappearance  |  7c522a1a-aa18-4afa-955e-2a047ff91ecb
+tactic arcanist cost0 thr:o   status=classified conf=high
+TEXT: An opponent picks a non-resource card they control if they can. If they do, put it into its owner's hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: chooserSelectsTarget{chooser:opponent, decl:{selector:{controller:opponent, conditions:[{not:{cardTypeIs{__candidate,resource}}}]}, count:1, optional:true} -> moveCard selected -> hand} (owner)
+NOTES: 'if they can' / 'if they do' = optional decl + implicit move only when a pick is made.
+
+### Quotidian Virtuoso  |  b1f959d9-c5cd-4a7c-9b1b-dfcac62fd6a6
+character arcanist cost5 thr:oo 3/3 spd3 [ritualist]  status=classified conf=high
+TEXT: DISRUPT -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Look at an opponent's hand and choose a card in it. That player discards that card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (DISRUPT): costs[payResources 2, discard{id:d,player:controller,selector:{owner:self,zone:hand},count:1}, deplete source]; effects[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:opponent,zone:hand}, count:1} -> moveCard eventCard -> discard}]
+NOTES: Recurring 'look at opponent's hand, choose, that player discards it' pattern.
+
+### Recollection Bazaar  |  e5a8f861-fbbd-4c45-8b1d-2ddec10120bd
+location arcanist cost0 thr:oo struct5   status=classified conf=high
+TEXT: RECALL -- COST: Pick a resource you control. (You can pick face-down resources.) -- EFFECT: Put the resource into it's owner's hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (RECALL): no numeric cost, no deplete; targets[{id:res, selector:{controller:self, type:resource}, count:1}] (face-down eligible); effects[moveCard{target:{selected:res}, to:hand}] (owner)
+NOTES: The 'Pick a resource you control' in the COST section is just a target selection (no sacrifice/deplete). struct 5 location; ability doesn't deplete it.
+
+### Ritual of the Knob & Pull  |  dbc439b3-5628-43ef-bbc1-ea7523e85fb0
+tactic arcanist cost3 thr:oo   status=classified conf=high
+TEXT: EXTRA COST: Pick a character. X is its strength. -- If that character's controller controls at least X face-down resources, destroy the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body (EXTRA COST): targets[{id:c, selector:{type:character}, count:1}]; bind{id:x, value:{stat{target:{selected:c}, stat:strength}}}
+  - effect: {if condition:numberCompare{left:{resourceIcons{player:{controllerOf {selected:c}}, icon:volition}}, operator:'>=', right:{variable x}} -> destroy{target:{selected:c}}}
+NOTES: 'at least X face-down resources controlled by that character's controller' == resourceIcons(that player, volition), since every face-down resource provides exactly one Volition and face-up resources never provide Volition (RULES §4). Avoids needing selector-controller-of-target. bind X before the (possible) destroy.
+
+### Ritual of the Ominous Urn  |  8bdf8634-d49d-43f6-b267-15978fab6227
+tactic arcanist cost4 thr:o   status=classified conf=high
+TEXT: An opponent discards a card. You may search your deck for a card of the same type as the discarded card and reveal it. If you do, put it into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: chooserSelectsTarget{chooser:opponent, decl:{selector:{owner:opponent,zone:hand}, count:1, optional:true} -> moveCard selected -> discard}; rememberTarget{key:disc, target:selected}
+  - then chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck, conditions:[cardTypeEquals{target:__candidate, other:{remembered:disc}}]}, count:1, optional:true} -> moveCard selected -> hand} (search; deck reshuffles)
+NOTES: cardTypeEquals exists (Perturb: 'a card of the same type as the discarded card'). Reads the discarded card's type from its discard-pile instance via a remembered ref.
+
+### Rummaging Millipede  |  91748250-8687-4e0b-84a4-4380bc3c2bab
+character arcanist cost5 thr:oo 3/1 spd3 [lurker]  status=classified conf=high
+TEXT: COVERT -- When this card enters play, you may pick a tactic in your discard pile. If you do, put it into your hand.
+META: unique=null attachTo=null provides=null keywords=["covert"]
+SHAPES:
+  - static keyword: covert
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:discard, type:tactic}, count:1, optional:true} -> moveCard selected -> hand}
+
+### The Deranger  |  cebf2a7c-905e-433d-b6ab-bcdc2aafacbf
+item arcanist cost3 thr:oo   status=classified conf=high
+TEXT: LOBOTOMIZE -- COST: Deplete this card. -- EFFECT: Look at an opponent's hand and choose 2 or fewer non-resource cards in it. That player discards those cards. That player takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (LOBOTOMIZE): costs[deplete source]; effects[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:opponent, zone:hand, conditions:[{not:{cardTypeIs{__candidate,resource}}}]}, count:2, optional:true} -> forEach selected -> moveCard __candidate -> discard}, takeControl{target:source, controller:opponent}]
+NOTES: Recurring 'look at opponent's hand + discard chosen' + 'that player takes control of this card' (permanent, no duration).
+
+### Toxic Cultivator  |  0467bfd8-73bc-425e-9f6e-44a7f28ff00a
+character arcanist cost2 thr:oo 1/1 spd3 [cultivator]  status=classified conf=high
+TEXT: While you control an even number of characters, reduce the numeric cost of tactics you deploy by 1, to a minimum of 1.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous: condition numberCompare{left:{modulo:{value:{count{controller:self,type:character}}, by:2}}, operator:'=', right:0}; costModifiers[{affects:controller, selector:{type:tactic}, delta:-1, minCost:1}]
+NOTES: Exact 'reduce numeric cost of tactics you deploy by 1, min 1' costModifiers example. 0 characters counts as even (modulo 0).
+
+### Unnatural Alteration  |  c1c2efc5-f032-4c05-89fa-ab3c97a73aba
+tactic arcanist cost4 thr:o   status=classified conf=medium
+TEXT: EXTRA COST: Deploy this only during your turn and not during a battle. Pick a character you control. -- Destroy the character if you can. If you do, X is its numeric cost. Search your deck for a character with numeric cost X+3 or less and reveal it. You may deploy it for free. If you don't, put it into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: condition and(isActivePlayer, {not:battleActive}); targets[{id:c, selector:{controller:self, type:character}, count:1}]
+  - effects: bind{id:x, value:{cardCost{target:{selected:c}}}}; destroy{target:{selected:c}}; {if targetInZone{target:{selected:c}, zone:discard} -> chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck, type:character, conditions:[numberCompare{left:{cardCost __candidate}, operator:'<=', right:{add:[{variable x},3]}}]}, count:1, optional:true} -> chooserSelectsOption[{label:deploy for free, effects:[deployFromZone{player:controller, target:selected}]},{label:to hand, effects:[moveCard selected -> hand]}]}}
+NOTES: Composes bind-through-destroy + var-filtered deck search (numberCompare on cardCost of __candidate) + deployFromZone(free)/hand branch. Deploy-only-your-turn/not-in-battle via condition on the tactic's first ability.
+
+### Venomous Sacspider  |  b374445f-2ac5-40b2-bfc5-5ee47771db6c
+character arcanist cost3 thr:oo 2/1 spd3 [lurker]  status=classified conf=medium
+TEXT: When this card is destroyed by battle damage, an opponent discards their hand.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: destroyed-by-battle-damage
+SHAPES:
+  - triggered event:cardDestroyed + and(sourceIsEventCard, destroyedByBattleDamage): chooserSelectsTarget{chooser:opponent, decl:{selector:{owner:opponent, zone:hand}, count:{count{owner:opponent,zone:hand}}} -> forEach selected -> moveCard __candidate -> discard}  (== opponent discards their whole hand)
+NOTES: Only gap is 'by battle damage' detection. 'discards their hand' = move every hand card to discard (count == current hand size, one group event).
+
+### Violating Anomaly  |  973827cb-fb59-4ce8-9681-1263a14d2e62
+character arcanist cost6 thr:oo 2/4 spd2 [muddler,lurker]  status=classified conf=high
+TEXT: When this card enters play, look at an opponent's hand and choose a card in it. That player discards that card. -- When this card leaves play, you may pick a non-resource card. If you do, put it into its owner's hand. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsTarget{chooser:controller, decl:{selector:{owner:opponent,zone:hand}, count:1} -> moveCard eventCard -> discard}
+  - triggered event:cardMoved + and(sourceIsEventCard, cardMovedFromZone{zone:play}): chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{conditions:[{not:{cardTypeIs{__candidate,resource}}}]}, count:1} -> moveCard selected -> hand} (owner)]; then draw{player:controller, amount:1}
+NOTES: Two recurring patterns (ETB hand-discard, leave-play bounce). Ambiguity: trailing 'Draw a card.' read as unconditional (like Infatuated Armchair).
+
+### Voidal Interference  |  73269637-6bcc-4f27-9770-d42b0f146f4b
+tactic arcanist cost3 thr:o   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only in response to a card being deployed. (Playing a resource doesn't count.) -- Terminate the card, but put it into its owner's hand instead of their discard pile. Its owner puts a card from their hand on the top of their deck.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: terminate-disposition
+SHAPES:
+  - tactic body: condition respondingTo{respondsTo:card}; effects[terminate{target:respondedToCard, disposition:hand}, chooserSelectsTarget{chooser:{ownerOf respondedToCard}, decl:{selector:{owner:{ownerOf respondedToCard}, zone:hand}, count:1, optional:true} -> moveCard selected -> deck top}]
+NOTES: Named example for terminate-disposition ('to owner's hand instead of discard'). 'in response to a card being deployed (not a resource)' = respondingTo{respondsTo:card}.
+
+### 0p3r4710n 1337 H4x0rz  |  45a1bfe0-f338-454c-b3ee-7dc5b6b55235
+tactic gearsmith cost12 thr:eeee   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only during your turn. -- You may deploy up to 4 non-tactic cards for free. (You still need to meet its threshold and satisfy its extra costs.)
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: deploy-from-hand-paying-cost
+SHAPES:
+  - tactic body: condition isActivePlayer; effects[deployForFree{player:controller, free:true, count:4, selector:{conditions:[{not:{cardTypeIs{__candidate,tactic}}}]}, maxCost:<none/unbounded>}] -- up to 4 distinct hand picks, each numeric cost waived, threshold + non-numeric EXTRA COSTs still apply
+NOTES: Named example for the count? extension of deployForFree (deploy-from-hand-paying-cost). Only new part vs existing deployForFree is count>1; free defaults true.
+
+### 4p7 31f  |  f98c69dc-d771-430d-95f0-69461bc3c1ee
+character gearsmith cost3 thr:ee 2/2 spd3 [31f]  status=classified conf=medium
+TEXT: When you deploy a gear card attached to this card, you may detach a resource from your faction. -- While a gear card is attached to this card, it gains 1 strength and 1 life.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + and(cardSubtypeIs{target:eventCard, subtype:gear}, hasAttachment{target:source, ofSubtype:gear}): chooserSelectsOption(you may)[detach one resource attached to your faction: chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:1} -> detach{target:selected}}]
+  - continuous: condition hasAttachment{target:source, ofSubtype:gear}; modifiers on source [{stat:strength,op:add,value:1},{stat:life,op:add,value:1}]
+NOTES: Trigger gate 'a gear card attached to THIS card' approximated as cardEnteredPlay(gear) + hasAttachment(source, gear) — gear cards attach on entry so this fires correctly for the normal case; a stray unrelated gear entering while source already has one attached would be a false positive (concession). Continuous +1/+1 is flat, not per-gear.
+
+### Acuminous Gigantitect  |  43b52d42-fc5b-426d-8188-0390a4272f6c
+character gearsmith cost5 thr:ee 3/3 spd3 [inventor]  status=classified conf=high
+TEXT: GRAND DESIGN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 6.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (GRAND DESIGN): costs[payResources 2, discard{id:d,player:controller,selector:{owner:self,zone:hand},count:1}, deplete source]; effects[reduceNextCost{player:controller, amount:6}]
+NOTES: No cardType filter -> applies to the next numeric cost incl. 'pay N' ability costs (CR §406.5).
+
+### Contriving Engineer  |  e6209034-2b54-4889-8789-15b12c330056
+character gearsmith cost4 thr:e 2/1 spd3 [inventor]  status=classified conf=high
+TEXT: When this card enters play, you may search your deck for a card named Elitism and reveal it. If you do, put it into play. Attach it to your faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck, name:'Elitism'}, count:1, optional:true} -> putIntoPlay{target:selected, controller:controller}} (search; deck reshuffles)
+NOTES: Elitism is a staple resource; putIntoPlay puts it into play as a resource (auto-attached to faction). 'reveal it' is implicit.
+
+### Discommodiousness  |  42334135-ad09-4e14-b243-597d4a44384e
+tactic gearsmith cost2 thr:ee   status=classified conf=high
+TEXT: An opponent reveals their hand. Shuffle all tactics revealed this way into their deck. That player draws X cards, where X is the number of tactics shuffled into their deck. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: bind{id:x, value:{count{owner:opponent, zone:hand, type:tactic}}}; forEach{selector:{owner:opponent, zone:hand, type:tactic}, effects:[moveCard __candidate -> deck]}; shuffleDeck{player:opponent}; draw{player:opponent, amount:{variable x}}; draw{player:controller, amount:1}
+NOTES: 'reveals their hand' = no-op (perfect info). bind X before the move so the draw count survives.
+
+### Elite Team Registration  |  3dd0c05f-dd1d-49a2-b7b5-ab17f0ee8bd3
+tactic gearsmith cost4 thr:eee   status=classified conf=high
+TEXT: Search your deck for up to 2 Gearsmith characters with different names and reveal them. Put them into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck, type:character, conditions:[cardTradeIs{__candidate, gearsmith}]}, count:2, optional:true, distinctNames:true} -> forEach selected -> moveCard __candidate -> hand} (search; deck reshuffles)
+NOTES: TargetDeclaration.distinctNames already exists ('N cards with different names'). Trade filter via cardTradeIs condition on the candidate.
+
+### Epiphany Ball  |  5f6c7c41-3be8-44ce-9293-454a35772c0f
+item gearsmith cost3 thr:ee   status=classified conf=high
+TEXT: SUDDEN INSIGHT -- COST: Deplete this card. -- EFFECT: Search your deck for a card. Put it into your hand. An opponent takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (SUDDEN INSIGHT): costs[deplete source]; effects[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck}, count:1} -> moveCard selected -> hand}, takeControl{target:source, controller:opponent}]
+NOTES: Unconditional 'search your deck for a card' (must find if deck non-empty). Recurring 'opponent takes control of this card'.
+
+### Exploding Sock Puppet!  |  ab111049-6ba1-430e-8d27-f647bcd5ac35
+tactic gearsmith cost2 thr:e   status=classified conf=medium
+TEXT: EXTRA COST: Your opponents cannot respond to this card. Deploy this only in response to a character's ability. -- Terminate the ability. Destroy the character.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: responded-ability-source
+SHAPES:
+  - behavior.noResponse: true
+  - tactic body: condition respondingTo{respondsTo:ability, cardType:character}; effects[terminate{scope:respondedItem}, destroy{target:{respondedAbilitySource}}]
+NOTES: Named example for responded-ability-source ('destroy the character whose ability it was'). 'Your opponents cannot respond to this card' = behavior.noResponse. Relies on respondingTo{respondsTo:ability} also filtering the ability source's cardType via cardType:character.
+
+### Guardforce Alpha Prime 31f  |  d8b8dada-5302-4ef8-b226-59688a14f294
+character gearsmith cost4 thr:ee 3/2 spd3 [guardforce,31f]  status=vanilla conf=high
+TEXT: This card can attack even if it has not been in play under your control since the start of the turn.
+META: unique=null attachTo=null provides=null keywords=["aggro"]
+SHAPES:
+NOTES: Whole text is the spelled-out haste clause = the aggro keyword (RULES §9); author as behavior.keywords:["aggro"]. 'guardforce'/'31f' are subtypes.
+
+### Guardforce Alpha Prime H4x0r  |  0d08df2b-8e38-40d5-ad9b-f90d4af1fb7c
+character gearsmith cost5 thr:eee 4/4 spd3 [guardforce,31f]  status=classified conf=high
+TEXT: UNIQUE GUARDFORCE ALPHA PRIME H4X0R -- This card can attack even if it has not been in play under your control since the start of the turn. -- When this card inflicts damage to a faction, you may play a resource.
+META: unique=guardforce alpha prime h4x0r attachTo=null provides=null keywords=["aggro"]
+SHAPES:
+  - static keyword: aggro (haste clause)
+  - triggered event:damageDealt + and(sourceIsDamageSource, cardTypeIs{target:eventCard, cardType:faction}): chooserSelectsOption(you may)[playResource optional {player:controller}]
+NOTES: Recurring 'inflicts damage to a faction' trigger + optional playResource.
+
+### Guardforce Morphmajig  |  6af508e9-b4a9-473d-80fc-4c1ecbdd5781
+character gearsmith cost5 thr:ee 3/3 spd3 [guardforce,majig]  status=classified conf=high
+TEXT: This card can attack even if it has not been in play under your control since the start of the turn. -- When you deploy a card, put a token on this card. (Playing a resource doesn't count.) -- When an opponent deploys a card, remove a token from this card. (Playing a resource doesn't count.) -- This card gains 1 strength and 1 life for each token on it.
+META: unique=null attachTo=null provides=null keywords=["aggro"]
+SHAPES:
+  - static keyword: aggro
+  - triggered event:cardPlayed + eventPlayerIs{controller}: addCounter{target:source, counter:token, amount:1}
+  - triggered event:cardPlayed + eventPlayerIs{opponent}: removeCounter{target:source, counter:token, amount:1}
+  - continuous: modifiers on source [{stat:strength,op:add,value:{counter{source,token}}},{stat:life,op:add,value:{counter{source,token}}}]
+NOTES: 'Playing a resource doesn't count' assumed satisfied because resource plays emit resourcePlayed, not cardPlayed. removeCounter floors at 0 so token count never goes negative.
+
+### Heavy Plating  |  8dfc4763-6428-4c32-a5bd-366f65dd5b80
+item gearsmith cost6 thr:ee [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- When this card enters play, you may detach up to 2 resources from your faction. -- The attached character gains 4 strength, 4 life, and loses 1 speed. -- HANDOFF -- COST: Pay 5. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:2, optional:true} -> forEach selected -> detach{target:__candidate}}]
+  - continuous: modifiers on target:attachedTo [{strength,add,4},{life,add,4},{speed,add,-1}]
+  - activated (HANDOFF): costs[payResources 5, deplete{selected}]; targets[{selector:{controller:self, type:character, conditions:[{not:{inBattle{__candidate}}}]}, count:1}]; effects[attachTo{target:source, to:selected}]
+NOTES: 'detach up to 2' = optional count-2 decl + forEach detach. HANDOFF is the recurring pattern (pay 5 variant).
+
+### Horsemajig of the Apocalypse - Death  |  864e66a1-9fb7-404d-9576-fcc0c5e4901a
+character gearsmith cost5 thr:eee 2/3 spd4 [horsemajig]  status=classified conf=high
+TEXT: All other horsemajig characters gain 1 strength, 1 life, and 1 speed.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura: modifiers {selector:{type:character, subtype:horsemajig, conditions:[{not:{cardNameEquals{target:__candidate, other:source}}}]}} [{strength,add,1},{life,add,1},{speed,add,1}]
+NOTES: 'all other' self-exclusion via {not: cardNameEquals(__candidate, source)} — exact for uniquely-named Horsemajigs; a `selector-is-card` isCard condition would be the precise form if two same-named copies are ever controlled (concession).
+
+### Horsemajig of the Apocalypse - Famine  |  143db371-4e9a-474a-b536-1d7f8efe26e6
+character gearsmith cost1 thr:ee 1/2 spd4 [horsemajig]  status=classified conf=high
+TEXT: All other horsemajig characters gain 1 speed.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura: modifiers {selector:{type:character, subtype:horsemajig, conditions:[{not:{cardNameEquals{target:__candidate, other:source}}}]}} [{speed,add,1}]
+NOTES: See Horsemajig - Death re: 'all other' self-exclusion concession.
+
+### Horsemajig of the Apocalypse - Pestilence  |  2f4a7db5-598c-445d-a4f6-d45c7e740582
+character gearsmith cost2 thr:e 1/3 spd3 [horsemajig]  status=classified conf=high
+TEXT: All other horsemajig characters gain 1 life.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura: modifiers {selector:{type:character, subtype:horsemajig, conditions:[{not:{cardNameEquals{target:__candidate, other:source}}}]}} [{life,add,1}]
+NOTES: See Horsemajig - Death re: 'all other' self-exclusion concession.
+
+### Horsemajig of the Apocalypse - War  |  d6015ff5-c210-4133-89a3-c539461b0db0
+character gearsmith cost3 thr:e 2/2 spd3 [horsemajig]  status=classified conf=high
+TEXT: All other horsemajig characters gain 1 strength.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura: modifiers {selector:{type:character, subtype:horsemajig, conditions:[{not:{cardNameEquals{target:__candidate, other:source}}}]}} [{strength,add,1}]
+NOTES: See Horsemajig - Death re: 'all other' self-exclusion concession.
+
+### Kaiser Wave  |  03ff491b-019b-444d-bbf4-3cdbf5323a10
+tactic gearsmith cost2 thr:ee [kaiser]  status=classified conf=high
+TEXT: EXTRA COST: Pick a character. -- This turn, the character gains 1 strength and 1 life. It gains an additional 1 strength and 1 life for each kaiser card in play. It gains an additional 1 strength and 1 life if it is a kaiser character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: targets[{id:c, selector:{type:character}, count:1}]; effects[createModifier{target:{selected:c}, stat:strength, operation:add, duration:untilEndOfTurn, value:{add:[1, {count{subtype:kaiser}}, {conditional:{if:cardSubtypeIs{target:{selected:c}, subtype:kaiser}, then:1, else:0}}]}}, same for stat:life]
+NOTES: Three additive parts folded into one NumberExpression per stat: base 1 + count of kaiser cards in play + conditional(+1 if the picked card is a kaiser character). 'kaiser' is a subtype (also on this tactic's type line).
+
+### LeoKaiser  |  48a4905f-236a-436e-b066-714b7cdbb70e
+character gearsmith cost4 thr:eee 3/3 spd3 [kaiser]  status=classified conf=medium
+TEXT: GO MEGA-NEKO-KAISER! -- COST: Deplete a card named PantherKaiser you control. Deplete a card named TigerKaiser you control. -- EFFECT: This turn, this card gains 8 strength, 8 life, and 2 speed and while it is the only member of an attacking party, only parties with at least 3 members can block it.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: block-eligibility-restriction, battle-party-size-expression
+SHAPES:
+  - activated (GO MEGA-NEKO-KAISER!): costs[deplete{selected pantherKaiser}, deplete{selected tigerKaiser}] (picks: cards you control named PantherKaiser / TigerKaiser)
+  - effects[createModifier x3 on source untilEndOfTurn (+8 strength, +8 life, +2 speed), restrictBlockers{target:source, minPartySize:3, duration:untilEndOfTurn, condition:numberCompare{left:{battlePartySize{side:ownParty, of:source}}, operator:'=', right:1}}]
+NOTES: Named example for block-eligibility-restriction ('only parties with at least 3 members can block it'). The 'while it is the only member of an attacking party' gate needs battlePartySize; the duration'd restrictBlockers effect form should accept a live `condition` so it only bites while ownParty size == 1.
+
+### Micromajig Shipping Container  |  c466319c-2c2d-48eb-8511-4033385a6c30
+character gearsmith cost6 thr:ee 4/5 spd3 [machine]  status=classified conf=high
+TEXT: When this card is destroyed, put 5 Micromajig tokens into play under your control. -- (Treat Micromajig tokens as Gearsmith character cards with 1 strength, 1 life, 3 speed, and the majig subtype. When a Micromajig token leaves play, it disappears.)
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardDestroyed + sourceIsEventCard: createTokens{controller:controller, count:5, token:{name:'Micromajig', cardType:character, subtype:[majig], strength:1, life:1, speed:3}}
+NOTES: Micromajig = CR §409.3 card-token; leave-play disappearance is built into createTokens. Concession: TokenSpec has no `trade` field, so the tokens can't carry the printed 'Gearsmith' trade (matters only for a 'Gearsmith character' selector); parenthetical is reminder text.
+
+### Omnidirectional Patrolmajig  |  118e132f-9ad3-45c7-825e-88b00941f8ef
+character gearsmith cost6 thr:e 3/6 spd2 [majig]  status=classified conf=high
+TEXT: When you are attacked, you may restore this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:battleStarted + battleRole{role:defender}: chooserSelectsOption(you may)[restore{target:source}]
+NOTES: Recurring 'when you are attacked, you may ...' pattern.
+
+### PantherKaiser  |  eb3eb01d-cb76-4159-a269-b9d1bbe3b973
+character gearsmith cost4 thr:ee 1/3 spd2 [kaiser]  status=classified conf=high
+TEXT: PANTHER SHIELD -- COST: Pay 2. Deplete this card. Pick a character. -- EFFECT: This turn, the character gains 3 life.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (PANTHER SHIELD): costs[payResources 2, deplete source]; targets[{id:c, selector:{type:character}, count:1}]; effects[createModifier{target:{selected:c}, stat:life, operation:add, value:3, duration:untilEndOfTurn}]
+
+### Patent Enforcement  |  b3ed1ba4-1a95-4da5-94d0-f8dc5f59b36d
+tactic gearsmith cost0 thr:eee   status=classified conf=medium
+TEXT: EXTRA COST: Deploy this only in response to an item being deployed. Pay X, where X is its numeric cost. -- The item enters play under your control.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: condition respondingTo{respondsTo:card, cardType:item}; play-time EXTRA COST: payResources {amount:{cardCost{target:respondedToCard}}}
+  - effects[rememberTarget{key:stolen, target:respondedToCard}, terminate{scope:respondedItem}, putIntoPlay{target:{remembered:stolen}, controller:controller}]
+NOTES: 'The item enters play under your control' reconstructed as remember -> terminate (item goes to owner's discard) -> putIntoPlay from discard under caster's control (ETB triggers fire; 'deployed' triggers correctly do not, CR §402.8). Concession: one-frame flicker through discard; a cleaner engine path would be takeControl on the still-deploying stack card. respondedToCard resolves during play-time cost eval so the 'pay X = its numeric cost' EXTRA COST works.
+
+### Quipmajig  |  04a9990f-2c23-4788-96da-17e120fa53b7
+character gearsmith cost3 thr:e 2/3 spd1 [majig]  status=classified conf=high
+TEXT: INSULT -- COST: Deplete this card. Pick a character with COVERT. -- EFFECT: Deplete the character. This turn, reduce all damage inflicted by it to 0.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (INSULT): costs[deplete source]; targets[{id:c, selector:{type:character, conditions:[hasKeyword{target:__candidate, keyword:covert}]}, count:1}]; effects[deplete{target:{selected:c}}, modifyOutgoingDamage{source:{selected:c}, delta:-999, duration:untilEndOfTurn}]
+NOTES: 'reduce all damage inflicted by it to 0 this turn' = modifyOutgoingDamage with a large negative delta (floored at 0). Concession: modelled as reduce-to-0 rather than an absolute 'cannot'.
+
+### Runic Field Enhancer  |  35a182a8-dfd2-42c7-b5a3-f2a10dff9f40
+item gearsmith cost5 thr:eee   status=classified conf=high
+TEXT: UNIQUE RUNIC FIELD ENHANCER -- All your characters gain 1 strength and 1 life for each gear card you control.
+META: unique=runic field enhancer attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura: modifiers {selector:{controller:self, type:character}} [{stat:strength,op:add,value:{count{controller:self, subtype:gear}}},{stat:life,op:add,value:{count{controller:self, subtype:gear}}}]
+NOTES: 'for each gear card you control' = count of subtype:gear cards controlled by self; aura over your characters.
+
+### Sagacious 31f  |  ac010020-67ca-4fbe-b1fa-74e261a76c84
+character gearsmith cost4 thr:eee 2/3 spd1 [31f]  status=classified conf=high
+TEXT: When an attacking party is formed including this card and at least 2 other characters, you may search your deck for a card. If you do, put it into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: battle-party-size-expression
+SHAPES:
+  - triggered event:characterAttacked + and(sourceIsEventCard, numberCompare{left:{battlePartySize{side:attacking}}, operator:'>=', right:3}): chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck}, count:1, optional:true} -> moveCard selected -> hand}]
+NOTES: Named example for battle-party-size-expression ('this card and at least 2 other characters' = attacking party size >= 3). Recurring 'attacking party formed including this card' = characterAttacked + sourceIsEventCard.
+
+### Schproingmajig  |  8041780e-69a0-458a-8563-eabfa164ac2f
+character gearsmith cost6 thr:ee 4/4 spd2 [majig]  status=classified conf=high
+TEXT: PUMP-UP -- COST: Deplete another character you control. -- EFFECT: This turn, this card gains 2 strength and 2 life. -- SCHPROING! -- COST: Destroy a character you control. -- EFFECT: This turn, this card cannot be blocked.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (PUMP-UP): costs[deplete{selected other}] (pick: {controller:self, type:character, conditions:[{not:{cardNameEquals{__candidate, source}}}]}); effects[createModifier x2 on source untilEndOfTurn (+2 strength, +2 life)]
+  - activated (SCHPROING!): costs[destroy{selected}] (pick: character you control); effects[grantKeyword{target:source, keyword:cannotBeBlocked, duration:untilEndOfTurn}]
+NOTES: Per brief, SCHPROING! 'this turn this card cannot be blocked' = grantKeyword cannotBeBlocked. PUMP-UP 'another character you control' self-exclusion via not cardNameEquals (concession vs a precise isCard); would misfire only with two identically-named controlled characters.
+
+### Scorching Runicution  |  c56085da-7855-456e-81cf-5c822300ca3e
+tactic gearsmith cost2 thr:e   status=classified conf=high
+TEXT: EXTRA COST: Pick a gear card. X is its numeric cost. -- Inflict X damage to the character the gear card is attached to. Destroy the gear card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: attachment-host-of-target
+SHAPES:
+  - tactic body: targets[{id:g, selector:{conditions:[cardSubtypeIs{__candidate, gear}]}, count:1}]; bind{id:x, value:{cardCost{target:{selected:g}}}}; effects[dealDamage{target:{attachmentHost:{selected:g}}, amount:{variable x}}, destroy{target:{selected:g}}]
+NOTES: Named example for attachment-host-of-target ('inflict X damage to the character the gear card is attached to'). bind X (its cost) before destroying the gear.
+
+### Senior Research Assistant  |  c1d2e319-7435-40aa-a215-76bd52b37d78
+character gearsmith cost4 thr:ee 2/2 spd2 [31f]  status=classified conf=high
+TEXT: RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 2.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (RESEARCH): costs[deplete source]; effects[reduceNextCost{player:controller, amount:2}]
+NOTES: No cardType filter (applies to next numeric cost incl. 'pay N', CR §406.5).
+
+### Spackle  |  ee76ecf6-a635-4d63-9357-fb78a53b3052
+item gearsmith cost1 thr:e   status=classified conf=high
+TEXT: REPAIR -- COST: Deplete this card. Pick a location. -- EFFECT: Remove 2 damage markers from the location.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (REPAIR): costs[deplete source]; targets[{id:loc, selector:{type:location}, count:1}]; effects[healDamage{target:{selected:loc}, amount:2}]
+NOTES: healDamage removes damage markers and adjusts the running total (RULES §3.3).
+
+### T Force 5 Megabrutemajig  |  8039fd38-e699-489c-949b-0de160346cb2
+character gearsmith cost7 thr:ee 8/5 spd2 [t force 5,majig]  status=classified conf=high
+TEXT: When this card enters play, you may detach up to 2 resources from your faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:2, optional:true} -> forEach selected -> detach{target:__candidate}}]
+NOTES: 'detach up to 2 resources from your faction' = optional count-2 decl over your in-play resources + forEach detach.
+
+### T Force 5 Megadudemajig  |  8ec43855-13bb-4b04-9504-c0e6a275acc6
+character gearsmith cost6 thr:eeeee 7/5 spd3 [t force 5,majig]  status=classified conf=high
+TEXT: When this card enters play, you may detach up to 2 resources from your faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:2, optional:true} -> forEach selected -> detach{target:__candidate}}]
+NOTES: Identical text to the other T Force 5 majigs.
+
+### T Force 5 Megascoutmajig  |  dfd1b21a-d461-4031-a3db-6c56557d771b
+character gearsmith cost7 thr:ee 5/4 spd4 [t force 5,majig]  status=classified conf=high
+TEXT: When this card enters play, you may detach up to 2 resources from your faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:cardEnteredPlay + sourceIsEventCard: chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:2, optional:true} -> forEach selected -> detach{target:__candidate}}]
+NOTES: Identical text to the other T Force 5 majigs.
+
+### The Whatever Device  |  8ac37971-303b-4ec6-bf9b-a09c1883a44a
+item gearsmith cost2 thr:eeee   status=classified conf=medium
+TEXT: THANK GOD WE INVENTED THE... -- COST: Choose a number for X. Pay X. Destroy this card. -- EFFECT: Search your deck for an item with numeric cost X or less and reveal it. You may deploy that card for free. If you don't, put it into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated (THANK GOD WE INVENTED THE...): variableBounds{x:{min:0}}; costs[payResources {amount:{variable x}}, destroy source]
+  - effects[chooserSelectsTarget{chooser:controller, decl:{selector:{owner:self, zone:deck, type:item, conditions:[numberCompare{left:{cardCost __candidate}, operator:'<=', right:{variable x}}]}, count:1, optional:true} -> chooserSelectsOption[{label:deploy for free, effects:[deployFromZone{player:controller, target:selected}]},{label:to hand, effects:[moveCard selected -> hand]}]}]
+NOTES: 'Choose a number for X. Pay X.' = a player-supplied `variables.x` gated by variableBounds, then payResources {variable x} + destroy source as costs. Same deck-search + deployFromZone/hand branch as Unnatural Alteration.
+
+### Top-Secret Subterranean Goofarium  |  5c340546-b7ed-4cfd-805d-7abdbf465bcd
+location gearsmith cost2 thr:ee struct4   status=classified conf=medium
+TEXT: Characters with COVERT cannot inflict damage to this card. -- When you are attacked, you may detach up to X resources from your faction, where X is the number of members in the attacking party.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: battle-party-size-expression, selector-is-card
+SHAPES:
+  - continuous: damageModifiers[{selector:{conditions:[{isCard:{target:source}}]}, sourceSelector:{conditions:[hasKeyword{__candidate, covert}]}, delta:-999}] -- covert characters deal 0 to this location
+  - triggered event:battleStarted + battleRole{role:defender}: chooserSelectsOption(you may)[chooserSelectsTarget{chooser:controller, decl:{selector:{controller:self, type:resource}, count:{battlePartySize{side:attacking}}, optional:true} -> forEach selected -> detach{target:__candidate}}]
+NOTES: Named example for battle-party-size-expression ('detach up to X resources, X = members in the attacking party'). 'Characters with COVERT cannot inflict damage to this card' = damageModifier pinned to this location (needs selector-is-card / isCard) with a large negative delta; concession: modelled as reduce-to-0, not an absolute 'cannot'.
+
+### Unrelenting Ridicule  |  1bfa9585-adaf-4228-985e-16ace4b9cecb
+tactic gearsmith cost2 thr:e   status=classified conf=high
+TEXT: EXTRA COST: Pick a character with COVERT. -- Destroy the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic body: targets[{id:c, selector:{type:character, conditions:[hasKeyword{target:__candidate, keyword:covert}]}, count:1}]; effects[destroy{target:{selected:c}}]
+NOTES: EXTRA COST pick (character with COVERT) + destroy.
+
+### Anesthetizing Opulence  |  9540ce6d-7f45-4fd9-8f71-093a8e438d50
+tactic banker cost4 thr:gg   status=classified conf=high
+TEXT: EXTRA COST: Pick a character. -- Destroy the character. An opponent draws a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: target {selector:{type:'character',zone:'play'},count:1,id:'pick'} (either player's; faction not pickable)
+  - effects: destroy {selected 'pick'}; draw {player:'opponent', amount:1}
+NOTES: EXTRA COST pick is a hard play requirement (CR 401.3). 'An opponent draws' = draw effect optional player:'opponent'; unconditional (separate sentence).
+
+### Clandestine Resort  |  9ee4edbf-5c5a-4730-8e47-1208cacab083
+location banker cost1 thr:gg struct5   status=classified conf=high
+TEXT: All your characters gain 1 life.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous aura (no target): createModifier stat:life op:add value:1, selector {controller:'self', type:'character'}, duration whileSourceInPlay
+NOTES: Recurring 'all your characters gain 1 X' -> aura, not a one-shot.
+
+### Class Action Defender  |  727008d3-b9eb-4add-9e67-72ec4d1b6937
+character banker cost3 thr:ggg 2/3 spd3 [lawyer,mau]  status=classified conf=medium
+TEXT: When any amount of damage greater than 4 is inflicted to this card, reduce it to 0. -- When you are attacked, you may pay 2. If you do, restore this card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: conditional-damage-prevention
+SHAPES:
+  - clause1: continuous self damage-shield — while in play, any damage instance to source with amount > 4 is reduced to 0 (needs conditional-damage-prevention: DamageModifierDefinition {selector:{isCard:source}, minAmount:5, setTo:0})
+  - clause2: triggered event:'battleStarted' + condition battleRole:'defender' -> mayPay {player:'controller', costs:[payResources 2], effects:[restore {target:source}]}
+NOTES: Clause 1 needs pre-inflict prevention (see proposedCapabilities); a triggered heal cannot save it (SBA-before-trigger ordering in the battle-damage batch, CR 408.4 / RULES.md 11). Clause 2 is the documented 'when you are attacked, you may pay' pattern (battleStarted + battleRole defender -> mayPay).
+
+### Club Mau Bouncer  |  b4c2aed3-d9f8-4ac6-b4a0-8b97136f20b0
+character banker cost4 thr:gg 2/4 spd3 [mercenary,mau]  status=classified conf=high
+TEXT: When a character inflicts damage to this card, inflict 1 damage to that character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'damageDealt' + condition and(sourceIsEventCard [source is the damaged card], cardTypeIs {target:{type:'damageSource'}, cardType:'character'}) -> dealDamage {target:{type:'damageSource'}, amount:1}
+NOTES: damageDealt event card = targetId (the damaged card), so sourceIsEventCard scopes 'to this card'. Retaliation still fires even if a lethal hit destroyed the Bouncer (CR 503.1 — trigger queued at emit, resolves from discard). Battle damage from several attackers in a speed group is summed then re-emitted per contributor (RULES.md 8) so retaliation fires per contributing character.
+
+### Crooked Appraiser  |  4c23d2e0-da0c-4cd6-9a6c-23c43f83d5d8
+character banker cost2 thr:g 1/3 spd3 [mau]  status=classified conf=high
+TEXT: INSPECT -- COST: Deplete this card. Pick a location. -- EFFECT: Inflict 2 damage to the location.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'INSPECT': costs [deplete {target:source}]; targets [{selector:{type:'location',zone:'play'},count:1,id:'loc'}] (either player's location); effects [dealDamage {selected 'loc', amount:2}]
+NOTES: Location damage accumulates vs structure (CR 408.5); SBA destroys it at >= structure.
+
+### Embezzling Bookkeeper  |  56c1a7f7-7146-43d5-8bd4-2bad9e9522e7
+character banker cost3 thr:gg 4/4 spd3 [employee,mau]  status=classified conf=high
+TEXT: When this card enters play, an opponent draws a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'cardEnteredPlay' + sourceIsEventCard -> draw {player:'opponent', amount:1}
+NOTES: Plain ETB drawback.
+
+### Entry-Level Employee  |  2eb2b684-8786-4248-8daf-ca614b8286a0
+character banker cost2 thr:g 3/4 spd3 [employee]  status=classified conf=high
+TEXT: This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- INVEST -- COST: Pay 2. -- EFFECT: Remove a token from this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}
+  - continuous self modifiers: [{stat:'strength',op:'add',value:{multiply:[{counter source token}, -1]}}, {stat:'life',op:'add',value:{multiply:[{counter source token}, -1]}}]
+  - activated 'INVEST': costs [payResources 2]; effects [removeCounter {target:source, counter:'token', amount:1}]
+NOTES: Proven Seed 2 INVEST / loses-per-token cycle.
+
+### Escrow Office  |  d81cec8e-35a3-47e2-bb47-a4144a0d36d8
+location banker cost2 thr:g struct3   status=classified conf=high
+TEXT: DEPOSIT -- COST: Pay 1. -- EFFECT: Put a token on this card. -- WITHDRAW -- COST: Remove all tokens from this card. X is the number of tokens removed this way. -- EFFECT: Reduce the next numeric cost you pay this turn by X.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'DEPOSIT': costs [payResources 1]; effects [addCounter {target:source, counter:'token', amount:1}]
+  - activated 'WITHDRAW': variables {x:{counter source token}} (pre-cost); costs [removeCounter {target:source, counter:'token', amount:{variable x}}]; effects [reduceNextCost {player:'controller', amount:{variable x}}] (no cardType filter = generic 'next numeric cost you pay this turn', CR 406.5)
+NOTES: 'Remove all tokens' captured via ability variables before costs (same idiom as 'pay X where X = tokens').
+
+### Extortify  |  004d96b5-d33a-4f8c-905c-c7aa61ba1756
+tactic banker cost3 thr:gg   status=classified conf=high
+TEXT: Your faction gains 8 influence.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic effects: [modifyInfluence {player:'controller', amount:8}]
+NOTES: Direct influence gain (not damage, CR 408.3b).
+
+### Fat Pants  |  57657edf-5653-4d4f-91a1-78a2542578ec
+item banker cost3 thr:g [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- The attached character gains 1 strength and 2 life. -- HANDOFF -- COST: Pay 1. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - continuous modifiers: [{target:'attachedTo', stat:'strength', op:'add', value:1}, {target:'attachedTo', stat:'life', op:'add', value:2}]
+  - activated 'HANDOFF': costs [payResources 1, deplete {selected 'newWearer'}]; targets [{selector:{controller:'self', type:'character', conditions:[not {inBattle {selected __candidate}}]}, count:1, id:'newWearer'}]; effects [attachTo {target:source, to:{selected 'newWearer'}}]
+NOTES: Documented HANDOFF pattern; initial attach handled by attachTo:'character' card-def sibling.
+
+### First Unified Market of Abstract Secure Theoreticals  |  914713f6-1e21-4a63-bee9-aeee7a99355b
+location banker cost6 thr:gggggg struct8   status=classified conf=high
+TEXT: UNIQUE F.U.M.A.S.T. -- Reduce the numeric cost of your faction's abilities by 1, to a minimum of 1.
+META: unique=f.u.m.a.s.t. attachTo=null provides=null keywords=[]
+CAPS: ability-cost-modifier
+SHAPES:
+  - continuous ability: abilityCostModifiers {scope:'factionAbilities', delta:-1, minCost:1}
+NOTES: Named example for ability-cost-modifier (New capabilities list). UNIQUE F.U.M.A.S.T.
+
+### Furtive Investor  |  63394a45-b039-47ad-86ff-9853ceedf6df
+character banker cost4 thr:gg 3/3 spd3 [investor,mau]  status=classified conf=high
+TEXT: COVERT -- This card enters play with 2 tokens on it. -- This card loses 1 strength and 1 life for each token on it. -- At the start of your turn, you may pick a non-resource card you control. If you do, remove a token from that card.
+META: unique=null attachTo=null provides=null keywords=["covert"]
+SHAPES:
+  - static keyword: covert
+  - triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}
+  - continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}
+  - triggered turnStarted + eventPlayerIs:'controller' -> optional target {selector:{controller:'self', zone:'play', conditions:[not {cardTypeIs {selected __candidate} 'resource'}]}, count:1, optional:true, id:'pick'} -> if targetExists({selected 'pick'}) -> removeCounter {selected 'pick', counter:'token', amount:1}
+NOTES: INVEST/loses-per-token cycle + optional-pick-at-turn-start (Abecedarian Investor idiom). 'non-resource card you control' = selector controller:self, not type resource.
+
+### Hired Goons  |  b4d02b5b-bfb5-4384-addd-ba8f738b9940
+character banker cost5 thr:gg 5/4 spd3 [mercenary,mau]  status=classified conf=high
+TEXT: COVERT -- At the start of your turn, you may pay 2. If you don't, an opponent takes control of this card.
+META: unique=null attachTo=null provides=null keywords=["covert"]
+SHAPES:
+  - static keyword: covert
+  - triggered turnStarted + eventPlayerIs:'controller' -> mayPay {player:'controller', costs:[payResources 2], effects:[], elseEffects:[takeControl {target:source, controller:'opponent'}]}
+NOTES: 'If you don't' = mayPay.elseEffects. Permanent control transfer (no duration).
+
+### Inside Information  |  ce20a6a6-4cf6-4b28-96d1-8b68c1441c10
+item banker cost3 thr:gg   status=classified conf=high
+TEXT: PROFIT -- COST: Deplete this card. -- EFFECT: Draw 4 cards. An opponent takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'PROFIT': costs [deplete {target:source}]; effects [draw {player:'controller', amount:4}, takeControl {target:source, controller:'opponent'}]
+NOTES: Documented 'that player takes control of this card' pattern (Inside Information named). Permanent.
+
+### Keen Stratagem  |  210c93ab-9cc2-45a8-9e8e-0aec15e38f54
+tactic banker cost1 thr:g   status=classified conf=high
+TEXT: Search your deck for a staple resource and reveal it. Put it into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic effects: chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'deck', type:'resource', staple:true}, count:1, optional:true}} -> moveCard {selected -> hand}; then shuffleDeck {player:'controller'}
+NOTES: Deck search: emits deckSearched, reshuffle after (CR 312.1), may choose to fail (CR 312.2). Reveal is a no-op (no hidden-info model).
+
+### Key Man  |  062c99df-9e9b-4667-b615-a0e936efa356
+character banker cost1 thr:g 1/1 spd3 [executive,mau]  status=classified conf=high
+TEXT: When this card leaves play, draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'cardMoved' + condition and(sourceIsEventCard, cardMovedFromZone 'play') -> draw {player:'controller', amount:1}
+NOTES: destroyCard emits cardMoved(from:'play') before cardDestroyed, so this one trigger covers destroy / bounce / discard-from-play.
+
+### Market Oracle  |  2d521705-d7e3-4c99-a5a8-682dd96ac1c6
+character banker cost2 thr:g 1/2 spd3 [investor,mau]  status=classified conf=high
+TEXT: INVEST -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Remove a token from the card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'INVEST': costs [deplete {target:source}]; targets [{selector:{controller:'self', zone:'play', conditions:[not {cardTypeIs {selected __candidate} 'resource'}]}, count:1, id:'pick'}]; effects [removeCounter {selected 'pick', counter:'token', amount:1}]
+NOTES: Feeds the banker token cycle across your own board.
+
+### Mau Party  |  2a3fa1ac-c90a-439b-b7fa-1343702dc16f
+tactic banker cost5 thr:gggg   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only during your turn. -- Draw 5 cards. Your faction gains 2 influence.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay.condition: isActivePlayer
+  - effects: [draw {player:'controller', amount:5}, modifyInfluence {player:'controller', amount:2}]
+NOTES: 'Deploy this only during your turn' EXTRA COST = isActivePlayer (documented).
+
+### Moneychanger  |  6bf1518b-c908-4a50-86d8-371d138e13d5
+character banker cost3 thr:gg 2/2 spd3 [investor]  status=classified conf=high
+TEXT: This card loses 1 strength and 1 life for each token on it. -- EXCHANGE -- COST: Deplete this card. Put a token on this card. -- EFFECT: Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}
+  - activated 'EXCHANGE': costs [deplete {target:source}]; effects [addCounter {target:source, counter:'token', amount:1}, draw {player:'controller', amount:1}]
+NOTES: 'Put a token on this card' printed in the COST line authored as the leading EFFECT per established convention (Forbidden Bibliotheca RESEARCH); no addCounter cost primitive, no observable difference.
+
+### Motivational Speaker  |  a2816b7a-7843-44e8-b9ef-0327e17ce16d
+character banker cost4 thr:gg 0/3 spd3 [salesman]  status=classified conf=high
+TEXT: When this card blocks, all members of the blocking party gain 2 strength and 2 life this turn. (This includes this character.)
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'characterBlocked' + sourceIsEventCard -> forEach {selector:{type:'character', conditions:[sharesBattlePartyWithSource]}} -> createModifier(strength op:add 1, untilEndOfTurn) + createModifier(life op:add 1, untilEndOfTurn)... amount 2 each
+NOTES: sharesBattlePartyWithSource selects the whole blocking party incl. self. 'This turn' -> untilEndOfTurn modifiers (CR 602.1b).
+
+### Mutiny Grant  |  1dc62434-5a69-44ce-acde-488436a14de8
+tactic banker cost2 thr:gg   status=classified conf=high
+TEXT: EXTRA COST: Pick a character an opponent controls. Your faction loses X influence, where X is the numeric cost of that character. -- This turn, take control of the character. Restore it.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: takecontrol-duration
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: target {selector:{controller:'opponent', type:'character', zone:'play'}, count:1, id:'pick'}; cost loseInfluence {player:'controller', amount:{cardCost {selected 'pick'}}}
+  - effects: [takeControl {target:{selected 'pick'}, controller:'controller', duration:untilEndOfTurn}, restore {target:{selected 'pick'}}]
+NOTES: Named example for takecontrol-duration (control reverts at end of turn). 'lose X influence' EXTRA COST unpayable if faction has < X (CR 401.3b); X = cardCost of the pick.
+
+### Officious Obstructionist  |  e8b58fc9-9ab5-4476-8a49-f35db8424e8a
+character banker cost4 thr:g 2/2 spd3 [bureaucrat]  status=classified conf=high
+TEXT: STUBBORNNESS -- COST: Pay 1. -- EFFECT: This turn, this card gains 1 life.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'STUBBORNNESS': costs [payResources 1]; effects [createModifier {target:source, stat:'life', op:'add', value:1, duration:untilEndOfTurn}]; repeatable
+NOTES: No usesPerTurn cap (can be used repeatedly).
+
+### Overinsured Figurehead  |  80039582-f99b-4d7f-9f35-96c725c9d4d9
+character banker cost6 thr:gg 3/5 spd3 [executive]  status=classified conf=high
+TEXT: When this card leaves play, draw 2 cards.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'cardMoved' + condition and(sourceIsEventCard, cardMovedFromZone 'play') -> draw {player:'controller', amount:2}
+NOTES: Same 'leaves play' idiom as Key Man.
+
+### Prudent Thug  |  02c2f936-b92e-4051-badb-c9a15d0371c1
+character banker cost5 thr:gg 4/5 spd3 [mercenary,investor]  status=classified conf=high
+TEXT: When this card enters play, your faction loses 3 influence. -- This card loses 1 strength and 1 life for each token on it. -- This card can attack only once each turn. -- RESTORE -- COST: Pay 1. Put a token on this card. -- EFFECT: Restore this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> modifyInfluence {player:'controller', amount:-3}
+  - continuous self modifiers: strength & life each op:add value {multiply:[{counter source token}, -1]}
+  - continuous ability restrictions: ['attackOncePerTurn']
+  - activated 'RESTORE': costs [payResources 1]; effects [addCounter {target:source, counter:'token', amount:1}, restore {target:source}]
+NOTES: attackOncePerTurn restriction (RULES.md 12). 'Put a token' cost -> leading effect (Forbidden Bibliotheca convention). ETB 'loses 3 influence' = modifyInfluence -3 (direct, not damage).
+
+### Pugnacious Publicist  |  cb4a80c5-060f-4738-bfb6-fa94e726f169
+character banker cost3 thr:gg 1/3 spd3 [publicist]  status=classified conf=high
+TEXT: When this card enters play, all your characters gain 1 life this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> forEach {selector:{controller:'self', type:'character', zone:'play'}} -> createModifier(life op:add 1, untilEndOfTurn)
+NOTES: 'this turn' -> one-shot forEach snapshot at resolution, not an aura.
+
+### Randolph von Macovawitz Spitoon III, Ltd.  |  61a6a464-9af8-4ffd-8519-90de271c5500
+character banker cost4 thr:gggg 2/3 spd3 [mau]  status=classified conf=high
+TEXT: UNIQUE RANDOLPH -- When this card enters play, draw a card. -- PAYDAY LOAN -- COST: Pay 1. Discard a resource or destroy a resource you control. -- EFFECT: Draw a card.
+META: unique=randolph attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> draw {player:'controller', amount:1}
+  - activated 'PAYDAY LOAN': costs [payResources 1, oneOf([discard 1 (resource, from hand), destroy 1 (resource, controller:self)])]; effects [draw {player:'controller', amount:1}]
+NOTES: 'discard a resource or destroy a resource you control' is the documented oneOf cost example. UNIQUE RANDOLPH.
+
+### Real Estate Auctioneer  |  07fac91d-0244-4ce4-a97e-64659aa234ad
+character banker cost5 thr:gg 3/3 spd3 [auctioneer]  status=classified conf=high
+TEXT: LIQUIDATE -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Draw 2 cards.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'LIQUIDATE': costs [payResources 2, discard 1 (from hand), deplete {target:source}]; effects [draw {player:'controller', amount:2}]
+NOTES: Plain loot ability.
+
+### Reluctant Hiree  |  3c2c57b8-43a8-46ef-9f6d-0e105783d92d
+character banker cost3 thr:gg 4/4 spd3 [employee]  status=classified conf=high
+TEXT: This card enters play with 3 tokens on it. -- This card loses 1 strength for each token on it. -- INVEST -- COST: Pay X, where X is the number of tokens on this card. -- EFFECT: Remove a token from this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:3}
+  - continuous self modifiers: [{stat:'strength', op:'add', value:{multiply:[{counter source token}, -1]}}] (strength only)
+  - activated 'INVEST': variables {x:{counter source token}} (pre-cost); costs [payResources {variable x}]; effects [removeCounter {target:source, counter:'token', amount:1}]
+NOTES: Documented 'Pay X where X = number of tokens' = variables (pre-cost) + payResources {variable x}. Debuff is strength-only.
+
+### Revivatate  |  a0e2b30c-c763-4182-9c34-84c3d407d60d
+tactic banker cost6 thr:ggggg   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only during your turn. Pick 2 characters in your discard pile. -- Put 1 of the characters into play under your control. Put the other character into your hand.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay.condition: isActivePlayer; EXTRA COST target {selector:{controller:'self', zone:'discard', type:'character'}, count:2, id:'picks'}
+  - effects: chooserSelectsTarget {chooser:'controller', declaration:{selector:{zone:'discard', conditions:[targetInSelection {selection:'picks'}]}, count:1, id:'toPlay'}} -> putIntoPlay {selected 'toPlay', from:'discard', controller:'controller'}
+  - then forEach {selector:{controller:'self', zone:'discard', type:'character', conditions:[targetInSelection {selection:'picks'}]}} -> moveCard {each -> hand}
+NOTES: 'the other character' = the one of the 2 picks still in discard after the first is put into play (forEach over the pick selection). 'Deploy only during your turn' = isActivePlayer.
+
+### Short Term Investment  |  00255313-8ec6-4597-8cfb-f92c227061ce
+item banker cost2 thr:gg   status=classified conf=high
+TEXT: This card comes into play with 2 tokens on it. -- At the start of your turn, remove a token from this card. -- RETURN -- COST: Use this only if there are no tokens on this card. Destroy it. -- EFFECT: Draw 3 cards.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> addCounter {target:source, counter:'token', amount:2}
+  - triggered turnStarted + eventPlayerIs:'controller' -> removeCounter {target:source, counter:'token', amount:1} (mandatory)
+  - activated 'RETURN': condition counterCompare {target:source, counter:'token', operator:'=', value:0}; costs [destroy {target:source}]; effects [draw {player:'controller', amount:3}]
+NOTES: 'Use this only if no tokens' = ActivatedAbility.condition; 'Destroy it' = self-destroy cost.
+
+### Smear Campaign  |  338fa9ec-5021-4909-bfe3-0d71fcbebd3e
+item banker cost0 thr:g [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- When the attached character inflicts damage, inflict the same amount of damage to the character's controller's faction.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - continuous ability grantedAbilities: [{selector matches attachedTo, abilities:[{triggered event:'damageDealt', condition:sourceIsDamageSource, effects:[dealDamage {target:{factionOf:'controller'}, amount:{eventDamageAmount}}]}]}]
+NOTES: Established 'when the attached character inflicts damage' pattern (Form 37-Ohhhhh): grant the trigger to the host so sourceIsDamageSource fires and 'controller' = the host's controller. 'the character's controller's faction' = factionOf(controller). Attach to Character = any character (may be an opponent's).
+
+### Snooty Doorman  |  72439f0b-d9fe-4ea9-b701-e2f535669484
+character banker cost3 thr:g 2/2 spd3 [lackey]  status=classified conf=high
+TEXT: DENIED! -- COST: Use this only in response to a character being deployed. Destroy this card. -- EFFECT: Terminate the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'DENIED!': condition respondingTo {respondsTo:'card', cardType:'character'}; costs [destroy {target:source}]; effects [terminate {target:respondedToCard}]
+NOTES: 'in response to a character being deployed' = respondingTo card of type character; terminated card -> owner's discard (CR 314.1).
+
+### Subsection 5, Paragraph 12  |  8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a
+tactic banker cost2 thr:gg   status=classified conf=high
+TEXT: EXTRA COST: Your opponents cannot respond to this card. Deploy this only in response to an ability that's source was not a faction. -- Terminate the ability. It cannot be used again this turn. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: lock-ability-this-turn, responded-ability-source
+SHAPES:
+  - card-def behavior.noResponse: true ('your opponents cannot respond to this card')
+  - tactic behavior.onPlay.condition: and(respondingTo {respondsTo:'ability'}, not {cardTypeIs {target:{type:'respondedAbilitySource'}, cardType:'faction'}})
+  - effects: [terminate {target:'respondedItem'}, lockAbilityThisTurn {target:'respondedAbility'}, draw {player:'controller', amount:1}]
+NOTES: Named example for lock-ability-this-turn. 'ability whose source was not a faction' needs respondedAbilitySource (New list, Exploding Sock Puppet example) to type-check the responded-to ability's source card.
+
+### Tad Disingenuous  |  6ff3de61-5058-4ff5-91fd-a44cf03d1a0e
+character banker cost6 thr:gg 4/3 spd3 [lawyer,mau]  status=classified conf=high
+TEXT: UNDERHANDED DEAL -- COST: Discard a card. -- EFFECT: This turn, this card gains COVERT.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'UNDERHANDED DEAL': costs [discard 1 (from hand)]; effects [grantKeyword {target:source, keyword:'covert', duration:untilEndOfTurn}]
+NOTES: COVERT is granted, not a static keyword line -> metadata.keywords empty.
+
+### The Garbageman  |  4fcedeb9-466a-4f77-b3a0-6808cc8e9d31
+character banker cost2 thr:gg 1/3 spd3 [lackey,mau]  status=classified conf=high
+TEXT: This card can attack only once each turn. -- SIFT -- COST: Deplete this card. -- EFFECT: Draw a card. Discard a card. -- RUMMAGE -- COST: Pay 2. Remove 3 cards in your discard pile from the game. -- EFFECT: Restore this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous ability restrictions: ['attackOncePerTurn']
+  - activated 'SIFT': costs [deplete {target:source}]; effects [draw {player:'controller', amount:1}, chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'hand'}, count:1}} -> moveCard {selected -> discard}]
+  - activated 'RUMMAGE': costs [payResources 2, removeFromGame (3 cards, selector:{controller:'self', zone:'discard'})]; effects [restore {target:source}]
+NOTES: attackOncePerTurn (RULES.md 12). 'Discard a card' as an EFFECT = chooser picks from hand -> moveCard discard.
+
+### Writ of Reclamation  |  9c1910b5-891f-4b4c-944d-45499fb00e50
+tactic banker cost2 thr:gg   status=classified conf=medium
+TEXT: EXTRA COST: Choose a number for X that is 3 or less. Remove X cards in your discard pile from the game. Pick X other cards in your discard pile. -- Shuffle the other cards into your deck. Draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay: chooserSelectsNumber {chooser:'controller', bounds:{min:0,max:3}} -> variable x
+  - EXTRA COST: removeFromGame ({variable x} cards, selector:{controller:'self', zone:'discard'}, id:'rfg'); target {selector:{controller:'self', zone:'discard', conditions:[not {targetInSelection 'rfg'}]}, count:{variable x}, id:'others'}
+  - effects: forEach {selected 'others'} -> moveCard {each -> deck}; shuffleDeck {player:'controller'}; draw {player:'controller', amount:1}
+NOTES: X via chooserSelectsNumber (0-3, whole number CR 410.2); removeFromGame cost + target both sized by {variable x}; 'shuffle X into deck' only shuffles if >=1 added (CR 313.2). TargetDeclaration.count accepts a NumberExpression, so {variable x} is fine.
+
+### Auction House  |  71886432-9edb-44a6-b9aa-7890b3267cf3
+location rogue cost3 thr:ddd struct4   status=classified conf=high
+TEXT: At the start of each player's turn, that player reveals cards from the top of their deck until a character is revealed or no cards are left. If a character is revealed, players take turns bidding on the character (starting with the active player). Players cannot bid a number greater than the number of detached resources they control. Whichever player makes the winning bid pays that many resources and puts the character into play under their control. Shuffle all other revealed cards into their owners's deck.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: bid-auction
+SHAPES:
+  - triggered event:'turnStarted' (NO eventPlayerIs filter — 'each player's turn') -> auctionForCard {reveal:{player:<turn's player / activePlayer>, until:'character'}, bidCurrency:'detachedResources', winnerPutsIntoPlay:true}
+NOTES: Named example for bid-auction. Fires on every turnStarted regardless of player; reveal + alternating bid (start with active player) capped at each bidder's detached-resource count; winner pays that many + puts the character into play; other revealed cards shuffled back (CR 413 bidding).
+
+### Cheats McGuillicutty  |  0af6286e-db1d-44c2-9e23-38ccc3f558e9
+character rogue cost6 thr:dd 2/1 spd3 [pluck,grifter]  status=classified conf=medium
+TEXT: UNIQUE PLUCK -- The top card of your deck is revealed at all times. -- BOTTOM DEAL -- COST: Pay 1. -- EFFECT: Put the top card of your deck on the bottom. -- CHEAT -- COST: Deplete this card. -- EFFECT: Reveal the top card of your deck. You may deploy it. (You can't play resources with this ability.) -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control.
+META: unique=pluck attachTo=null provides=null keywords=[]
+SHAPES:
+  - 'top card of your deck revealed at all times' — no-op (no hidden-deck-info model; RULES.md 5)
+  - activated 'BOTTOM DEAL': costs [payResources 1]; effects [moveCard {target:{deckPosition player:'controller', from:'deck', index:0}, to:'deck', position:'bottom'}]
+  - activated 'CHEAT': costs [deplete {target:source}]; effects [deployFromZone {zone:'deck', target: top card of controller deck, free:false, optional:true}] (resources cannot be deployed by definition)
+  - activated 'CHANGE COSTUME': costs [payResources 3, moveSelected {target:source, to:'deck', shuffle:true}]; effects [chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'deck', subtype:'pluck', conditions:[not {cardNameEquals {target:source}}]}, count:1, optional:true}} -> putIntoPlay {selected, from:'deck', controller:'controller'}; shuffleDeck {player:'controller'}]
+NOTES: UNIQUE PLUCK. Concessions: 'top card revealed at all times' is unmodelled (informational only, no downside); 'shuffle this card into its deck' as a cost via moveSelected on source (fallback: leading effect — search still happens after). 'pluck card' = subtype 'pluck'. CHANGE COSTUME 'reveal / put into play' is not a deploy.
+
+### Clockman Pickpocket  |  cc55231b-da46-435a-95ef-d26fc8de31c0
+character rogue cost1 thr:d 1/1 spd3 [thief]  status=classified conf=high
+TEXT: While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, that faction's controller picks an item they control if they can. If they do, take control of it and destroy this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous ability keywords: ['cannotBeBlocked'], condition numberCompare({count {controller:'opponent', type:'item', zone:'play'}}, '>=', 1)
+  - triggered event:'damageDealt' + condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'faction'}) -> chooserSelectsTarget {chooser:'opponent', declaration:{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, optional:true, id:'it'}} -> if targetExists({selected 'it'}) -> takeControl {target:{selected 'it'}, controller:'controller'} + destroy {target:source}
+NOTES: Documented 2-player collapse: 'cannot be blocked by that player [who controls an item]' -> cannotBeBlocked gated on count(opp items) >= 1. 'that faction's controller' = opponent in 2p; that player is the chooser.
+
+### Counter Attack  |  65bd9386-5d61-415a-be45-5d50b5b369a5
+tactic rogue cost3 thr:dd   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only during an opponent's turn and not during a battle. -- Attack that player. Draw a card. (This effect only allows you to attack once. You must resolve the battle immediately and before you draw the card.)
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: initiate-attack-effect
+SHAPES:
+  - tactic behavior.onPlay.condition: and(not isActivePlayer, not battleActive)
+  - effects: [initiateAttack {attacker:<declaration: characters you control that can attack>, target:'activePlayer'}, draw {player:'controller', amount:1}]
+NOTES: Named example for initiate-attack-effect (declare + fully resolve one battle mid-effect, before the draw). 'that player' = the active player (opponent's faction). Deploy gated to opponent's turn, not in battle.
+
+### Cute Cutpurse  |  46d4519b-b2ff-4306-9489-9ce28ecc3a5b
+character rogue cost4 thr:d 3/2 spd3 [thief]  status=classified conf=high
+TEXT: While an opponent controls an item, this card cannot be blocked by that player. -- When this card inflicts damage to a faction, pick an item that faction's controller controls if you can. If you do, destroy it.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous ability keywords: ['cannotBeBlocked'], condition numberCompare({count {controller:'opponent', type:'item', zone:'play'}}, '>=', 1)
+  - triggered event:'damageDealt' + condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'faction'}) -> chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, optional:true, id:'it'}} -> if targetExists({selected 'it'}) -> destroy {target:{selected 'it'}}
+NOTES: Same cannotBeBlocked collapse as Clockman Pickpocket. 'that faction's controller' -> opponent in 2p; YOU are the chooser here.
+
+### Early Retirement  |  bc40724d-186f-4cf2-88da-ca8b8e648865
+tactic rogue cost5 thr:dd   status=classified conf=high
+TEXT: EXTRA COST: Pick a character you control. X is its strength. Destroy it. -- Draw X cards.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: target {selector:{controller:'self', type:'character', zone:'play'}, count:1, id:'pick'}; bind x = {stat {selected 'pick'} strength} FIRST; then destroy {selected 'pick'}
+  - effects: [draw {player:'controller', amount:{variable x}}]
+NOTES: Documented 'EXTRA COST: pick a char you control, X = its strength, destroy it, ... X ...' — bind X before the destroy so it survives.
+
+### Epic Turncoat Maneuver  |  613f3fc5-6ef5-49e9-aec2-2c69cd9ffcdd
+tactic rogue cost13 thr:dddddd   status=classified conf=high
+TEXT: EXTRA COST: Destroy 2 characters you control. Pick 4 or fewer characters. -- Take control of the picked characters.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: destroy (2 cards, selector:{controller:'self', type:'character', zone:'play'}, id:'sac'); target {selector:{type:'character', zone:'play'}, count:4, optional:true, id:'picks'} ('4 or fewer', either player's)
+  - effects: forEach {selected 'picks'} -> takeControl {target:each, controller:'controller'} (permanent)
+NOTES: '4 or fewer' = count 4 + optional. Picks may include chars you already control (no-op takeControl). No 'this turn' -> permanent.
+
+### Fool's Gold  |  d2ef3385-bff6-42cf-8045-e5568e59efdf
+item rogue cost2 thr:dd   status=classified conf=high
+TEXT: TRADE -- COST: Pick an item an opponent controls. Pay X, where X is its numeric cost. Destroy this card. -- EFFECT: Take control of the item.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'TRADE': targets [{selector:{controller:'opponent', type:'item', zone:'play'}, count:1, id:'pick'}]; variables {x:{cardCost {selected 'pick'}}} (pre-cost); costs [payResources {variable x}, destroy {target:source}]; effects [takeControl {target:{selected 'pick'}, controller:'controller'}]
+NOTES: X = picked item's numeric cost, captured pre-cost via ability variables; 'Destroy this card' = self-destroy cost. Permanent take control.
+
+### Forcible Depredator  |  a1716f04-f2d4-454f-917f-0b55eb9fbb73
+character rogue cost5 thr:dd 3/3 spd3 [thief]  status=classified conf=high
+TEXT: PLUNDER -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Put the top 3 cards of an opponent's deck into their discard pile.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'PLUNDER': costs [payResources 2, discard 1 (from hand), deplete {target:source}]; effects [mill {player:'opponent', count:3, to:'discard'}]
+NOTES: 'Put the top 3 cards of an opponent's deck into their discard' = mill to discard.
+
+### Fwing!  |  e3d4cdea-9072-43f9-945d-e651067608d2
+tactic rogue cost2 thr:d   status=classified conf=high
+TEXT: EXTRA COST: Pick a character. -- This turn, the character gains 1 speed. Flip a coin. If you win, the character also gains 1 strength this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: coin-flip
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: target {selector:{type:'character', zone:'play'}, count:1, id:'pick'}
+  - effects: [createModifier {selected 'pick', stat:'speed', op:'add', value:1, duration:untilEndOfTurn}, flipCoin {winEffects:[createModifier {selected 'pick', stat:'strength', op:'add', value:1, duration:untilEndOfTurn}], loseEffects:[]}]
+NOTES: Brief: Fwing! should use flipCoin for consistency.
+
+### Gang Leader  |  7c184d94-6d66-4d27-947d-87e6bb03d997
+character rogue cost3 thr:dd 2/2 spd3 [thief]  status=classified conf=high
+TEXT: When this card enters play, all your characters gain 1 speed this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> forEach {selector:{controller:'self', type:'character', zone:'play'}} -> createModifier(speed op:add 1, untilEndOfTurn)
+NOTES: One-shot ETB team speed buff (forEach snapshot, not aura).
+
+### Hollow Moose  |  9fb327c0-257b-4685-98ca-de282c1dc6d7
+item rogue cost0 thr:dd   status=classified conf=high
+TEXT: This card enters play under an opponent's control. -- At the start of your turn, your faction loses 1 influence. -- INFILTRATE -- COST: Destroy another item or character you control. Pick an opponent. -- EFFECT: That player takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: selector-is-card
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> takeControl {target:source, controller:'opponent'}
+  - triggered turnStarted + eventPlayerIs:'controller' -> modifyInfluence {player:'controller', amount:-1}
+  - activated 'INFILTRATE': costs [destroy (1 card, selector:{controller:'self', zone:'play', conditions:[or(cardTypeEquals character, cardTypeEquals item), not {isCard source}]}, id:'sac')]; effects [takeControl {target:source, controller:'opponent'}]
+NOTES: Documented 'enters play under an opponent's control' pattern (Hollow Moose named) — one-frame flicker concession. 'Destroy another item or character you control' needs selector-is-card (New list) for the self-exclusion. 'Pick an opponent' degenerates to the one opponent in 2p.
+
+### Hulking Vigilante  |  fb4fb0b3-e4ee-42f9-9a28-b184729fce40
+character rogue cost3 thr:ddddd 5/5 spd4 [outcast,vigilante]  status=classified conf=medium
+TEXT: When you control any other characters you own, destroy this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'cardEnteredPlay' (any card) -> if numberCompare({count {owner:'self', controller:'self', type:'character', zone:'play'}}, '>=', 2) -> destroy {target:source}
+NOTES: 'When you control any other characters you own' modelled as count(owned characters you control) >= 2 (avoids selector-is-card). Broad cardEnteredPlay self-check catches Vigilante's own ETB and any later owned character entering. Concession: won't re-fire if another owned character is acquired via takeControl (no P2 card creates that interaction). Effectively a state-based self-destruct (CR 204 / RULES.md 11).
+
+### Impeccable Timing  |  5d4a643f-9f1a-4d2c-815b-0c720598045f
+tactic rogue cost3 thr:d   status=classified conf=high
+TEXT: EXTRA COST: Pick a depleted character. -- If the character has 4 life or less, destroy it.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic behavior.onPlay EXTRA COST: target {selector:{type:'character', zone:'play', depleted:true}, count:1, id:'pick'}
+  - effects: [if statCompare({selected 'pick'}, 'life', '<=', 4) -> destroy {target:{selected 'pick'}}]
+NOTES: 'depleted character' = selector depleted:true (hard EXTRA COST — need a legal depleted character to play). '4 life or less' = live statCompare.
+
+### Late Addition  |  e987b8e3-7218-4978-bf82-1fe8fc39627c
+tactic rogue cost1 thr:d   status=classified conf=high
+TEXT: You may deploy a character card from your hand. Draw a card. (You still pay all the character's costs.)
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: deploy-from-hand-paying-cost
+SHAPES:
+  - tactic effects: [deployForFree {player:'controller', from:'hand', cardType:'character', count:1, free:false}, draw {player:'controller', amount:1}]
+NOTES: Named example for deploy-from-hand-paying-cost (deployForFree free:false = player still pays all the character's costs). Optional deploy, then draw regardless.
+
+### Martial Artist  |  b2ceefd9-cf5e-459b-adba-6c0f3a806c58
+character rogue cost6 thr:dd 4/3 spd4 [martial artist]  status=classified conf=high
+TEXT: Your opponents cannot pick this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous ability restrictions: ['cannotBePicked'] (activeZone play)
+NOTES: 'Your opponents cannot pick this card' = cannotBePicked restriction (RULES.md 12) — removes it from target-declaration candidate sets, not from count/forEach/random. Not vanilla.
+
+### Martial Arts Master  |  9a90a89c-c3ef-4c6c-b185-b34813a75b54
+character rogue cost4 thr:dd 1/3 spd6 [martial artist]  status=classified conf=medium
+TEXT: While this card is in a battle and there is at least one character in the opposing party, it gains X strength, where X is this card's speed minus the highest speed among characters in the opposing party.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: extremum-stat-expression
+SHAPES:
+  - continuous ability: condition and(inBattle {target:source}, numberCompare({count {type:'character', conditions:[inBattle {selected __candidate}, not {sharesBattlePartyWithSource}]}}, '>=', 1))
+  - modifiers: [{target:source, stat:'strength', op:'add', value:{add:[{stat source speed}, {multiply:[{extremumStat {selector:{type:'character', conditions:[inBattle {selected __candidate}, not sharesBattlePartyWithSource]}, stat:'speed', direction:'max'}}, -1]}]}}]
+NOTES: Named example for extremum-stat-expression ('highest speed among characters in the opposing party'). 'Opposing party' selector = inBattle AND NOT sharesBattlePartyWithSource. X (= own speed - opposing max speed) can be <= 0 -> modifier floors / no bonus.
+
+### Martial Arts Trainee  |  3142de68-bfda-45ce-b3a6-c1b085f51664
+character rogue cost3 thr:dd 2/1 spd4 [martial artist]  status=classified conf=high
+TEXT: Your opponents cannot pick this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous ability restrictions: ['cannotBePicked'] (activeZone play)
+NOTES: Same as Martial Artist — cannotBePicked restriction. Not vanilla.
+
+### Master Thief  |  bfe0fbb0-079e-4f9a-ada8-b0d18e2be880
+character rogue cost8 thr:ddd 4/3 spd4 [thief]  status=classified conf=high
+TEXT: When this card is destroyed, you may pick a non-tactic card in an opponent's discard pile. If you do, put it into play under your control.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'cardDestroyed' + sourceIsEventCard -> optional target {selector:{owner:'opponent', zone:'discard', conditions:[not {cardTypeEquals {selected __candidate} 'tactic'}]}, count:1, optional:true, id:'pick'} -> if targetExists({selected 'pick'}) -> putIntoPlay {selected 'pick', from:'discard', controller:'controller'}
+NOTES: 'non-tactic card' selector = not type tactic. Put into play (not a deploy — no cardPlayed/deploy triggers, CR 402.8).
+
+### Mendacious Brigand  |  fd6ca900-19ab-4786-b4db-7e3c7dbac204
+character rogue cost2 thr:d 2/1 spd2 [thief]  status=classified conf=medium
+TEXT: When this card is blocked, you may pick a blocking character and a character that character's controller controls that is not in a battle. If you do, remove the blocking character from the battle and add the other character to the blocking party.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered event:'attackerBlocked' + sourceIsEventCard -> optional targets [{selector:{type:'character', conditions:[inBattle {selected __candidate} role:'blocker']}, count:1, optional:true, id:'blocker'}, {selector:{controller:'opponent', type:'character', zone:'play', conditions:[not {inBattle {selected __candidate}}]}, count:1, optional:true, id:'newMember'}]
+  - effects: [if both targetExists -> removeFromBattle {target:{selected 'blocker'}} + addToBattle {target:{selected 'newMember'}, party:'blocking'}]
+NOTES: 'When this card is blocked' = attackerBlocked (sourceIsEventCard -> the attacker). 2p collapse: 'that character's controller' = the defender/opponent, so newMember selector is controller:'opponent'. Defender adds their own char to the blocking party (legal — they control it, CR 407.6). Second pick is conceptually linked to the first's controller (both are the defender in 2p).
+
+### Mercenary's Creed  |  837d5a93-213d-4e5d-af65-0a6c14c55c7c
+item rogue cost3 thr:dd [gear]  status=classified conf=medium
+TEXT: ATTACH TO CHARACTER -- BRIBE -- COST: Any player may use this ability. Pay 3. -- EFFECT: Take control of the attached character. -- BLACKMAIL -- COST: Use this only if you own this card. Pay 2. -- EFFECT: Take control of the attached character.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - activated 'BRIBE': usableBy:'anyPlayer'; costs [payResources 3]; effects [takeControl {target:'attachedTo', controller:'controller'}] ('controller' resolves to the activator)
+  - activated 'BLACKMAIL': usableBy:'controller' (default); costs [payResources 2]; effects [takeControl {target:'attachedTo', controller:'controller'}]
+NOTES: 'Any player may use this ability' = usableBy:'anyPlayer'; take-control resolves under the activator. Concession: BLACKMAIL's 'Use this only if you own this card' modelled as the implicit controller-only default — no P2 card transfers this item's control, so controller == owner always; the explicit owner-guard is not represented.
+
+### Misappropriation Machine  |  5afd2312-a6aa-4aca-bc1e-2fb4eb78183d
+item rogue cost3 thr:dd   status=classified conf=high
+TEXT: STEAL -- COST: Deplete this card. Pick a character or item in an opponent's discard pile. -- EFFECT: Put the character or item into play under your control. That card's owner takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'STEAL': costs [deplete {target:source}]; targets [{selector:{owner:'opponent', zone:'discard', conditions:[or(cardTypeEquals character, cardTypeEquals item)]}, count:1, id:'pick'}]; effects [putIntoPlay {selected 'pick', from:'discard', controller:'controller'}, takeControl {target:source, controller:{ownerOf {selected 'pick'}}}]
+NOTES: Documented 'that card's owner takes control of this card' pattern (Misappropriation Machine named); {ownerOf pick} = opponent in 2p.
+
+### Orgy Den Smoke Out  |  92083650-6785-4b9a-ba1c-542a348b22aa
+tactic rogue cost2 thr:dd   status=classified conf=high
+TEXT: An opponent discards a card at random. Put the top 2 cards of their deck into their discard pile.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic effects: [randomFromSelection {selector:{owner:'opponent', zone:'hand'}, count:1} -> moveCard {selected -> discard}; mill {player:'opponent', count:2, to:'discard'}]
+NOTES: 'discards a card at random' = randomFromSelection over opp hand -> moveCard discard; then mill 2.
+
+### Poisoned Blade  |  239caecc-f9ed-4cf3-bcd1-aed627b6bbab
+item rogue cost3 thr:d [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- When the attached character inflicts damage to a character, destroy the damaged character. -- HANDOFF -- COST: Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+META: unique=null attachTo=character provides=null keywords=[]
+SHAPES:
+  - continuous ability grantedAbilities: [{selector matches attachedTo, abilities:[{triggered event:'damageDealt', condition and(sourceIsDamageSource, cardTypeIs {target:'eventCard', cardType:'character'}), effects:[destroy {target:'eventCard'}]}]}]
+  - activated 'HANDOFF': costs [deplete {selected 'newWearer'}]; targets [{selector:{controller:'self', type:'character', conditions:[not {inBattle {selected __candidate}}]}, count:1, id:'newWearer'}]; effects [attachTo {target:source, to:{selected 'newWearer'}}]
+NOTES: 'When the attached character inflicts damage to a character' = grant trigger to host (Form 37-Ohhhhh pattern). HANDOFF cost is deplete-only (no pay). eventCard for damageDealt = the damaged character -> destroy it.
+
+### Recreant Cad  |  bad0a682-9807-466b-8d9b-3ac48a34cdb2
+character rogue cost7 thr:d 5/3 spd3 [thief]  status=classified conf=high
+TEXT: SNEAK -- COST: Use this only if an opponent has at least 10 cards in their discard pile. Pay 1. Remove 2 cards in that player's discard pile from the game. -- EFFECT: This turn, this card gains COVERT.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated 'SNEAK': condition numberCompare({count {owner:'opponent', zone:'discard'}}, '>=', 10); costs [payResources 1, removeFromGame (2 cards, selector:{owner:'opponent', zone:'discard'})]; effects [grantKeyword {target:source, keyword:'covert', duration:untilEndOfTurn}]
+NOTES: 'at least 10 cards in their discard' = ActivatedAbility.condition; 'Remove 2 cards in that player's discard from the game' = removeFromGame cost (Cad's controller chooses which 2).
+
+### Throatstabber  |  7710da84-2994-4019-957f-0fc998917104
+character rogue cost3 thr:ddd 3/2 spd4 [pirate]  status=classified conf=high
+TEXT: When this card enters play, flip a coin. If you lose, deplete this card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: coin-flip
+SHAPES:
+  - triggered cardEnteredPlay + sourceIsEventCard -> flipCoin {winEffects:[], loseEffects:[deplete {target:source}]}
+NOTES: Brief: Throatstabber should use flipCoin for consistency.
+
+### Two-Headed Coin  |  f4244678-8524-446d-8c1c-65f126c9df4a
+item rogue cost0 thr:dd   status=classified conf=high
+TEXT: If you would lose a coin flip, you may shuffle this card into its owner's deck. If you do, reflip that coin and use that result instead and draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: coin-flip
+SHAPES:
+  - ReplacementAbility replaces:{event:'coinFlip', result:'lose'}, optional:true, optionalCost:[moveSelected {target:source, to:'deck', shuffle:true}], effects:[<reflip the coin, use that result>, draw {player:'controller', amount:1}]
+NOTES: Brief: Two-Headed Coin NEEDS the coin-flip replacement hook (replaces:{event:'coinFlip', result:'lose'}). 'Shuffle this card into its owner's deck' is the optional cost; reflip + draw are the replacement effects.
+
+### Unexpected Boobysnake  |  19cf503e-f872-4199-beef-e832d1ee833c
+character rogue cost4 thr:dd 3/2 spd4 [beast]  status=classified conf=high
+TEXT: TACTICAL -- When this card enters play, if you deployed it during an opponent's turn, discard a card or destroy this card.
+META: unique=null attachTo=null provides=null keywords=["tactical"]
+SHAPES:
+  - static keyword: tactical
+  - triggered cardEnteredPlay + condition and(sourceIsEventCard, not isActivePlayer) -> chooserSelectsOption {chooser:'controller', options:[{label:'Discard a card', effects:[chooserSelectsTarget {chooser:'controller', declaration:{selector:{controller:'self', zone:'hand'}, count:1}} -> moveCard {selected -> discard}]}, {label:'Destroy this card', effects:[destroy {target:source}]}]}
+NOTES: TACTICAL keyword. 'if you deployed it during an opponent's turn' = not isActivePlayer at ETB resolution. 'discard a card or destroy this card' = player's choice (chooserSelectsOption).
+
+### Wild Boars  |  03dfc9f9-28cf-451f-a141-ace62ab3f1be
+character rogue cost4 thr:dd 2/2 spd4 [beast]  status=classified conf=high
+TEXT: While this card is the only member of an attacking party, only characters with at least X speed can block it, where X is this card's speed.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: block-eligibility-restriction
+SHAPES:
+  - continuous ability blockRestriction: {minBlockerSpeed:{stat source speed}, condition: and(inBattle {target:source, role:'attacker'}, numberCompare({count {type:'character', conditions:[inBattle {selected __candidate} role:'attacker']}}, '=', 1))}
+NOTES: Named example for block-eligibility-restriction ('only characters with at least X speed can block it, X = its speed'). 'Sole member of an attacking party' via count(attackers) == 1 (or battlePartySize ownParty == 1).
+
+### Anxious Oaf  |  5ceba10d-9cdd-4abd-9de9-13cc1cbbbe5a
+character warlord cost2 thr:r 3/1 spd3 [berserker]  status=classified conf=high
+TEXT: When an attacking or blocking party is formed including this card, it must have at least 2 members.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: party-composition-restriction
+SHAPES:
+  - continuous partyRestriction: { role:"any", minMembers: 2 } -- a forming attacking OR blocking party that includes this card must have >=2 members or the declareAttack/declareBlockers is rejected
+NOTES: Brief names this card for `party-composition-restriction`. 'formed including this card' covers both roles -> role:"any". `berserker` is a subtype, not a keyword.
+
+### Assimilation Center  |  b0760e4d-f149-4fc6-a698-8e405e825036
+location warlord cost2 thr:rr struct4   status=classified conf=high
+TEXT: RECRUIT -- COST: Pay 1. Deplete this card. -- EFFECT: Search your deck for a character and reveal it. Put it on the top of your deck.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated RECRUIT: costs [payResources 1, deplete source]; effects [chooserSelectsTarget chooser=controller, declaration {selector {owner self, zone deck, type character}, count 1, optional} -> [shuffleDeck(controller), moveCard {selected} to deck position top]]
+NOTES: Deck search (emits deckSearched). Per CR §312.1 a searched deck is shuffled; the card's own 'put it on top' then places the found character on top of the shuffled deck -> explicit shuffleDeck before the moveCard-to-top (chooserSelectsTarget does not auto-shuffle). Search is failable (CR §312.2) -> optional. Reveal is cosmetic (no hidden-info model).
+
+### Barbaric Rifleman  |  ad4fc0ee-cc07-4927-93ab-c1daeb97798c
+character warlord cost2 thr:rr 2/1 spd3 [soldier]  status=classified conf=high
+TEXT: When this card enters play, inflict 1 damage to an opponent's faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered:cardEnteredPlay + sourceIsEventCard -> dealDamage({factionOf opponent}, 1)
+NOTES: 'an opponent's faction' collapses to the one opponent in 2p. Faction damage -> influence loss (CR §408.3), and 'when damage inflicted' triggers still see it.
+
+### Battle Surge  |  1a6c1f62-30b3-46cb-a83f-4c6fc0cdc9f0
+tactic warlord cost1 thr:r   status=classified conf=high
+TEXT: This turn, all your characters gain 1 strength.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic effect: forEach {selector {controller self, type character}} -> createModifier(__candidate, strength, add, 1, untilEndOfTurn)
+NOTES: One-shot at resolution over characters you control at that instant -- not an aura, so characters deployed later this turn are unaffected. 'this turn' -> untilEndOfTurn.
+
+### Blow Up  |  efa9c2c1-5448-4733-a6c4-471f7d625c02
+tactic warlord cost4 thr:r   status=classified conf=high
+TEXT: EXTRA COST: Pick an item. -- Destroy the item. That item's controller's faction loses 3 influence.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic: targets [item: {type item} count 1]; effects [destroy {selected item}, modifyInfluence({controllerOf {selected item}}, -3)]
+NOTES: 'an item' = any item (yours or an opponent's). Text order preserved; the destroyed item retains `controllerId` in the discard pile so `controllerOf` still resolves for the influence loss. Direct 'loses 3 influence' is not damage (CR §408.3b).
+
+### Callow Liegeman  |  4cd88c6e-b5be-4383-952a-a3a7944aff55
+character warlord cost3 thr:rr 2/2 spd3 [soldier]  status=classified conf=high
+TEXT: When this card attacks in a party with more than 1 member, it gains 1 strength and 1 life this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: battle-party-size-expression
+SHAPES:
+  - triggered:characterAttacked + and(sourceIsEventCard, numberCompare(battlePartySize{side:"attacking"}, ">", 1)) -> [createModifier(source, strength, add, 1, untilEndOfTurn), createModifier(source, life, add, 1, untilEndOfTurn)]
+NOTES: Brief names this card for `battle-party-size-expression` ('in a party with more than 1 member'). characterAttacked fires once per attacker at declareAttack with the full attacking party already formed; sourceIsEventCard scopes to this card.
+
+### Deadly Striker  |  46d213bf-f9f2-4e68-93c5-07e004b72e50
+character warlord cost4 thr:rr 4/2 spd3 [dragon]  status=classified conf=high
+TEXT: When this card is destroyed, an opponent's faction loses 4 influence.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered:cardDestroyed + sourceIsEventCard -> modifyInfluence(opponent, -4)
+NOTES: Direct influence loss, not damage (CR §408.3b). 'an opponent's faction' -> the one opponent in 2p.
+
+### Dethmürderblüdgeon, the Craghammer  |  43a51ff8-16f5-4752-aa41-94d0977d219d
+item warlord cost5 thr:rr [gear]  status=classified conf=medium
+TEXT: UNIQUE DETHMÜRDERBLÜDGEON -- ATTACH TO CHARACTER -- The attached character gains 2 strength and 2 life. -- When the attached character is blocked, an opponent's faction loses 2 influence. -- When the attached character inflicts damage to a faction, you may pick a character. If you do, inflict 2 damage to it. -- If this card would be put into a discard pile from play, put it into its owner's hand instead.
+META: unique=dethmürderblüdgeon attachTo=character provides=null keywords=[]
+CAPS: selector-is-card
+SHAPES:
+  - continuous: modifiers [{target attachedTo, strength +2}, {target attachedTo, life +2}]
+  - triggered:attackerBlocked + eventCardIs("attachedTo") -> modifyInfluence(opponent, -2)
+  - continuous grantedAbilities: [{selector {type character, conditions [isCard target:"attachedTo"]}, abilities [triggered:damageDealt + and(sourceIsDamageSource, cardTypeIs(eventCard,"faction")) -> targets [c: {type character} count 1 optional] -> if targetExists({selected c}) -> dealDamage({selected c}, 2)]}]
+  - replacement: replaces {moveToZone, zone:discard} of source (condition sourceInZone play) -> moveCard(source -> hand)
+NOTES: 'When the attached character inflicts damage to a faction' has no direct condition -- getEventCardId maps a damageDealt event to its TARGET, and sourceIsDamageSource is hard-wired to the ability's own source. Composed by granting the HOST a damageDealt trigger via grantedAbilities scoped with `selector-is-card` (isCard target:attachedTo); a granted trigger's source is the recipient (host), so sourceIsDamageSource then reads 'the host dealt it' (verified: findTriggers gives granted triggers context.sourceId = host). A dedicated `damageSourceIs(target)` condition (parallel to eventCardIs) would be cleaner and this clause recurs on ~4 other P2 gear cards -- flagged, not proposed since it composes. Discard-replacement catches both destruction and a direct 'put into discard'. 'you may pick a character' -> optional target + if targetExists. UNIQUE slug lowercased with diacritics kept.
+
+### Distraction  |  61c0d007-ee61-41da-9b15-8fdd7c15720e
+tactic warlord cost0 thr:r   status=classified conf=high
+TEXT: EXTRA COST: Pick a character. -- Deplete the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic: targets [c: {type character} count 1]; effects [deplete {selected c}]
+NOTES: EXTRA COST pick + a single deplete effect. 'a character' = any character.
+
+### Elbow Dropper  |  1c35f70e-ae5e-44b0-ac2b-8c0f52b00f4a
+character warlord cost4 thr:rr 3/2 spd3 [fighter]  status=classified conf=high
+TEXT: OFF THE TOP ROPE -- COST: Deplete this card. Pick a character. -- EFFECT: This turn, the character cannot block.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated OFF THE TOP ROPE: costs [deplete source]; targets [c: {type character} count 1]; effects [grantRestriction({selected c}, "cannotBlock", untilEndOfTurn)]
+NOTES: 'This turn, the character cannot block' -> grantRestriction cannotBlock untilEndOfTurn.
+
+### Explosive Fury  |  408d18d4-f420-4222-8fcb-4d08f499f6fc
+tactic warlord cost2 thr:r   status=classified conf=high
+TEXT: EXTRA COST: Pick a character you control. X is its strength. Destroy it. Pick another character. -- Inflict X damage to the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic first-ability: targets [sac: {controller self, type character} count 1; victim: {type character} count 1]; effects [bind x = stat({selected sac}, strength), destroy {selected sac}, dealDamage({selected victim}, {variable x})]
+NOTES: Brief-listed proven shape (bind X = strength BEFORE destroy, then reuse via {variable x}). 'another character' modelled as any character -- the sacrificed pick is destroyed before damage lands so re-picking it is a self-defeating no-op (CR §402.5). Add a `selector-is-card` exclusion in victim.conditions if strictness is wanted.
+
+### Fleshripping Scenepuller  |  c8037ec2-03ca-464f-83d1-a00f45db5873
+character warlord cost4 thr:rrrr 4/4 spd3 [fighter]  status=classified conf=high
+TEXT: When this card is blocked, this turn it gains 4 strength for each member in the opposing party.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: battle-party-size-expression
+SHAPES:
+  - triggered:attackerBlocked + sourceIsEventCard -> createModifier(source, strength, add, multiply[4, battlePartySize{side:"opposingParty", of:"source"}], untilEndOfTurn)
+NOTES: Brief names this card for `battle-party-size-expression` ('for each member in the opposing party'). On an attackerBlocked event the opposing-party size = event.blockerCount. 'this turn' -> untilEndOfTurn.
+
+### Gore Engine  |  45ce54bf-af20-4972-83e5-62985455e308
+character warlord cost10 thr:rr 5/10 spd3 [warmachine]  status=classified conf=high
+TEXT: When a character is destroyed during a turn when this card damaged it, put X tokens on this card, where X is the strength of that character. -- This card gains 1 strength for each token on it. -- IMPALE -- COST: Pay 2 or remove 2 tokens from this card. Pick a character. -- EFFECT: This turn, the character must block this card if it can.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: damaged-target-this-turn
+SHAPES:
+  - triggered:cardDestroyed + damagedThisTurn(target:eventCard, by:source) -> addCounter(source, "token", printedStat(eventCard, strength))
+  - continuous self: modifiers [{target source, strength, add, counter(source, "token")}]
+  - activated IMPALE: costs [oneOf([[payResources 2],[removeCounter source "token" 2]])]; targets [c: {type character} count 1]; effects [grantRestriction({selected c}, "mustBlock", untilEndOfTurn)]
+NOTES: Brief: Gore Engine = `damaged-target-this-turn`. Token count uses printedStat -- the destroyed character is in the discard pile by trigger resolution so its live strength is not recoverable (concession). 'must block this card if it can' -> `mustBlock` restriction: forces the character into the blocking party against the attacking party that contains Gore Engine, and Gore Engine's controller then assigns its battle damage to it; does not literally pin the block to one attacker (concession). `oneOf` auto-pays the first affordable branch (payResources 2 preferred over dumping tokens) -- known engine limitation.
+
+### Infuriator  |  914fa597-fa3b-4b90-8368-2754eafbb3f7
+character warlord cost3 thr:rr 2/2 spd2 [soldier]  status=classified conf=high
+TEXT: When this card enters play, all your characters gain 1 strength this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered:cardEnteredPlay + sourceIsEventCard -> forEach {selector {controller self, type character}} -> createModifier(__candidate, strength, add, 1, untilEndOfTurn)
+NOTES: One-shot over characters you control at ETB resolution (not an aura); 'this turn' -> untilEndOfTurn.
+
+### Lieutenant General  |  8b093762-8619-4a8a-b990-80b11f352c1f
+character warlord cost4 thr:rrr 3/4 spd3 [soldier]  status=classified conf=high
+TEXT: When an attacking party is formed including this character, all other soldier characters in that party gain 1 life this turn.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: selector-is-card
+SHAPES:
+  - triggered:characterAttacked + sourceIsEventCard -> forEach {selector {type character, subtype "soldier", conditions [sharesBattlePartyWithSource(__candidate), not(isCard(__candidate, target:"source"))]}} -> createModifier(__candidate, life, add, 1, untilEndOfTurn)
+NOTES: 'all OTHER soldier characters in that party' -- sharesBattlePartyWithSource is true for source vs itself (verified impl), so `selector-is-card` (not isCard target:source) supplies the 'other' exclusion. Fires once (sourceIsEventCard) with the full attacking party already formed at declareAttack.
+
+### Morale Officer  |  bac1cee2-b00b-40f5-80d4-3aee69dc1726
+character warlord cost2 thr:r 1/1 spd3 [soldier]  status=classified conf=high
+TEXT: CONVINCE -- COST: Deplete this card. -- EFFECT: This turn, all your soldier characters gain 1 strength.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated CONVINCE: costs [deplete source]; effects [forEach {selector {controller self, type character, subtype "soldier"}} -> createModifier(__candidate, strength, add, 1, untilEndOfTurn)]
+NOTES: One-shot over your soldier characters at resolution; 'this turn' -> untilEndOfTurn.
+
+### Murderous Commander  |  84515285-34dc-4b75-95d4-51a6c072b970
+character warlord cost5 thr:rr 3/3 spd3 [soldier]  status=classified conf=high
+TEXT: CUNNING PLAN -- COST: Pay 2. Discard a card. Deplete this card. -- EFFECT: Inflict 2 damage to an opponent's faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated CUNNING PLAN: costs [payResources 2, discard {id:"d", player controller, selector {owner self, zone hand}, count 1}, deplete source]; effects [dealDamage({factionOf opponent}, 2)]
+NOTES: Faction damage -> influence loss (CR §408.3). 'an opponent's faction' -> the one opponent in 2p.
+
+### Needless Beating  |  3ea9bbe2-4b32-4f04-9e2c-7a1201b655b9
+tactic warlord cost6 thr:rr   status=classified conf=high
+TEXT: EXTRA COST: Pick an opponent. Pick a character that player controls. -- Inflict 2 damage to the character. If that player's faction has 15 influence or less, inflict 1 additional damage to the character. If that player's faction has 10 influence or less, inflict 1 damage to each character they control. If that player's faction has 5 influence or less, draw a card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic: targets [c: {controller opponent, type character} count 1]; effects [dealDamage({selected c}, 2), if(statCompare({factionOf opponent}, influence, <=, 15)) -> dealDamage({selected c}, 1), if(statCompare({factionOf opponent}, influence, <=, 10)) -> forEach {selector {controller opponent, type character}} -> dealDamage(__candidate, 1), if(statCompare({factionOf opponent}, influence, <=, 5)) -> draw(controller, 1)]
+NOTES: 'Pick an opponent' collapses to the one opponent in 2p (not a parity gap per brief). Each influence gate is checked at its point in resolution, after the prior damage->influence conversions, matching the card's sequencing.
+
+### Penetrate  |  cbe794c6-519d-4454-a695-004fb18232b1
+tactic warlord cost1 thr:rr   status=classified conf=high
+TEXT: EXTRA COST: Pick an attacking character you control. -- If the character would assign battle damage to the blocking party during this battle, assign it to the target of the attack instead.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic: targets [atk: {controller self, type character, conditions [inBattle(__candidate, role:"attacker")]} count 1]; effects [grantKeyword({selected atk}, "redirectDamage", untilEndOfTurn)]
+NOTES: Brief: Penetrate = the already-implemented `redirectDamage` keyword granted to the picked attacker for the battle. Concession: `redirectDamage` appends the attack's original target as an EXTRA assignable option ('may ... instead'), whereas Penetrate reads mandatory -- the brief accepts the 'may ... instead' match.
+
+### Pinch  |  d96fbfac-9ca9-484b-9e05-59a435d4a2bb
+tactic warlord cost0 thr:rr   status=classified conf=high
+TEXT: EXTRA COST: Pick a character. -- Inflict 1 damage to the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - tactic: targets [c: {type character} count 1]; effects [dealDamage({selected c}, 1)]
+NOTES: EXTRA COST pick + one dealDamage. 'a character' = any character.
+
+### Really Big Barduse  |  7f0cfd7d-c9a5-48ff-bafa-a5781a91b5bf
+character warlord cost6 thr:rrrrrr 5/4 spd2 [dragon]  status=classified conf=high
+TEXT: EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 5 damage divided however you want to those characters.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - behavior.onPlay: targets [picks: {type character} count 2, optional]; effects [if targetExists({selected picks}) -> distributeAmong {chooser controller, selected "picks", amount 5, effects [dealDamage(__candidate, {variable __amount})]}]
+NOTES: Non-tactic EXTRA COST (optional 0-2 picks) + ETB via behavior.onPlay. distributeAmong permits total < amount (verified: assert total <= amount), covering 'inflict up to 5 damage divided however you want'. 'if you picked characters' -> if targetExists gate (CR §402.5b).
+
+### Ruthless Platoon  |  5610a488-daad-4dd0-b7e0-b0860be16e8c
+character warlord cost3 thr:rrr 2/3 spd3 [soldier]  status=classified conf=high
+TEXT: CANNIBALIZE -- COST: Destroy a character you control. -- EFFECT: This turn, this card gains 2 strength.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated CANNIBALIZE: targets [sac: {controller self, type character} count 1]; costs [destroy {selected sac}]; effects [createModifier(source, strength, add, 2, untilEndOfTurn)]
+NOTES: 'Destroy a character you control' is a chosen non-numeric cost -> target declaration + destroy cost referencing it. 'This turn, this card gains 2 strength' -> untilEndOfTurn self modifier.
+
+### Sadistic Colonel  |  9bb9052b-c497-4c4c-a22e-e0c2f0edf534
+character warlord cost3 thr:r 3/1 spd3 [soldier]  status=classified conf=high
+TEXT: When an opponent deploys a tactic, inflict 2 damage to their faction.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered:cardPlayed + and(eventPlayerIs opponent, cardTypeIs(eventCard, "tactic")) -> dealDamage({factionOf opponent}, 2)
+NOTES: 'deploys a tactic' = cardPlayed of a tactic (tactics are always deployed, never merely 'put into play'; also fires on a tactic played as a response). Faction damage -> influence loss.
+
+### Skin Suit  |  421c7d4c-d711-4a05-9955-d3834655f5fa
+tactic warlord cost2 thr:rrrr   status=classified conf=low
+TEXT: EXTRA COST: Pick a character you control. X is its strength. Pick a character an opponent controls. Y is its strength. -- Inflict X damage to that opponent's character and Y damage to your character simultaneously. If only 1 of the characters would be destroyed by this damage, remove it from the game instead. The surviving character gains all rules text of the removed character.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: copy-rules-text
+SHAPES:
+  - tactic: targets [mine: {controller self, type character} count 1; theirs: {controller opponent, type character} count 1]; effects [bind x = stat({selected mine}, strength), bind y = stat({selected theirs}, strength), dealDamage({selected theirs}, {variable x}), dealDamage({selected mine}, {variable y})]
+  - then (concession clause): if exactly one of {mine,theirs} would die from that damage -> removeFromGame(that one) + grantAbilitiesFrom({target: the survivor, from: the removed})
+NOTES: `copy-rules-text` (grantAbilitiesFrom) covers 'the surviving character gains all rules text of the removed character'. Concessions (per brief's Skin Suit note): (a) 'simultaneously' -> two sequential dealDamage; the vocab has no simultaneous-damage-instance wrapper. (b) 'If only 1 of the characters would be destroyed by this damage, remove it from the game instead' -- there is no condition for 'would be destroyed by this damage' and no way to convert a single pending destruction into removeFromGame; left as a concession. If both or neither would die, the copy-text clause is skipped (CR §402.5b). Classified for the core.
+
+### Splattergun  |  69c99fee-c4fd-45ff-9d04-da0cc01ecd54
+item warlord cost3 thr:rr   status=classified conf=high
+TEXT: UNLOAD -- COST: Deplete this card. Pick a character or faction. -- EFFECT: Inflict 3 damage to the character or faction. That faction's or character's controller takes control of this card.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated UNLOAD: costs [deplete source]; targets [tgt: {conditions [or(cardTypeIs(__candidate,"character"), cardTypeIs(__candidate,"faction"))]} count 1]; effects [dealDamage({selected tgt}, 3), takeControl({target:"source", controller:{controllerOf {selected tgt}}})]
+NOTES: 'Pick a character or faction' is an explicit faction pick (CR §202.9 satisfied). 'or' over cardTypeIs in selector.conditions since CardSelector.type is a single positive match. 'That faction's or character's controller takes control of this card' -> takeControl to {controllerOf tgt}, permanent (no 'this turn') -- the brief's recurring 'that player takes control of this card' pattern. Faction damage -> influence loss.
+
+### Suicide Squad  |  dbbaecf5-23e2-4c78-b0de-ae8c856e8d0b
+character warlord cost4 thr:rr 3/1 spd3 [soldier]  status=classified conf=high
+TEXT: ULTIMATE SACRIFICE -- COST: X is this card's strength. Destroy this card. Pick a character. -- EFFECT: Inflict X damage to the character.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - activated ULTIMATE SACRIFICE: variables {x: stat(source, strength)} (evaluated before costs); costs [destroy source]; targets [c: {type character} count 1]; effects [dealDamage({selected c}, {variable x})]
+NOTES: ActivatedAbility.variables are evaluated before costs, so X captures this card's strength before the self-destroy cost.
+
+### Swordchucks  |  9fec08e2-6f2f-40ba-876d-6f5aacd32806
+item warlord cost4 thr:rr [gear]  status=classified conf=high
+TEXT: ATTACH TO CHARACTER -- The attached character gains 4 strength. -- When damage is inflicted to the attached character, increase the amount by 2. -- HANDOFF -- COST: Pay 3. Deplete a character you control that is not in a battle. -- EFFECT: Attach this card to the character.
+META: unique=null attachTo=character provides=null keywords=[]
+CAPS: selector-is-card
+SHAPES:
+  - continuous: modifiers [{target attachedTo, strength +4}]
+  - continuous: damageModifiers [{selector {conditions [isCard target:"attachedTo"]}, delta +2}]
+  - activated HANDOFF: costs [payResources 3, deplete {selected wearer}]; targets [wearer: {controller self, type character, conditions [not(inBattle(__candidate))]} count 1]; effects [attachTo({target:"source", to:{selected wearer}})]
+NOTES: Swordchucks is the brief's own `selector-is-card` example (a damageModifiers selector pinned to the attached character; delta +2 = 'increase the amount by 2'). HANDOFF is the brief's recurring re-attach pattern; 'not in a battle' via not(inBattle(__candidate)). Initial attach handled by the `attachTo:"character"` sibling.
+
+### Thundering Nilpha  |  a297d28b-8f81-411b-8d1f-6d39f467952d
+character warlord cost5 thr:r 4/3 spd3 [dragon]  status=classified conf=high
+TEXT: While this card is attacking a location, it gains 1 strength and cannot be blocked.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - continuous: condition and(inBattle(source, role:"attacker"), battleTargetIs(cardType:"location")); modifiers [{target source, strength +1}]; keywords [{target source, keyword "cannotBeBlocked"}]
+NOTES: Brief names Thundering Nilpha for the `cannotBeBlocked` keyword, conditional via ContinuousAbility.keywords + condition. 'attacking a location' = source is an attacker AND the battle's target is a location (battleTargetIs cardType:location). Granted, not printed static -> metadata.keywords stays [].
+
+### Torrential Bleeder  |  5d437e57-b35a-4881-a2ed-c02eefe1a57d
+character warlord cost5 thr:rr 4/4 spd3 [dragon]  status=classified conf=high
+TEXT: At the start of your turn, inflict 1 damage to all characters.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - triggered:turnStarted + eventPlayerIs(controller) -> forEach {selector {type character}} -> dealDamage(__candidate, 1)
+NOTES: 'all characters' = every character in play, both players' (includes this card). 'At the start of your turn' -> turnStarted gated by eventPlayerIs(controller).
+
+### Trip Wire  |  ebf61cdf-35d0-4bf7-9a54-e4927bfa3247
+tactic warlord cost4 thr:r   status=classified conf=high
+TEXT: EXTRA COST: Deploy this only while you are being attacked. -- Inflict up to 3 damage divided however you want to the attacking characters.
+META: unique=null attachTo=null provides=null keywords=[]
+CAPS: battle-party-size-expression
+SHAPES:
+  - tactic first-ability: condition battleRole:"defender"; targets [atk: {type character, conditions [inBattle(__candidate, role:"attacker")]} count = battlePartySize{side:"attacking"}]; effects [distributeAmong {chooser controller, selected "atk", amount 3, effects [dealDamage(__candidate, {variable __amount})]}]
+NOTES: 'Deploy this only while you are being attacked' -> battleRole:"defender" gate (brief pattern). count = attacking-party size (brief names Trip Wire for this use of `battle-party-size-expression`) force-selects every attacking character into the declaration; distributeAmong then divides up to 3 among them (total < amount allowed -> 'up to 3').
+
+### Trophy Collector  |  33e392bd-4d5d-475c-9cfe-a5dac86bfd2f
+character warlord cost1 thr:r 3/2 spd3 [soldier]  status=classified conf=high
+TEXT: EXTRA COST: Deploy this only if an opponent's faction has 10 influence or less.
+META: unique=null attachTo=null provides=null keywords=[]
+SHAPES:
+  - behavior.onPlay.condition: statCompare({factionOf opponent}, influence, <=, 10) -- EXTRA COST deploy-legality gate, no effects
+NOTES: Pure play-legality gate on a character; 'an opponent's faction' collapses to the one opponent in 2p. No ETB effects.
+
+### Wyrmfang Deathskull  |  b5fbadf6-df3d-42bd-b55a-daaa1321b076
+character warlord cost7 thr:rrrr 6/6 spd3 [dragon]  status=classified conf=high
+TEXT: UNIQUE WYRMFANG -- When you attack, the controller of the faction or location you are attacking picks any number of characters they control. Those characters must block during this battle if they can, and only those characters can block.
+META: unique=wyrmfang attachTo=null provides=null keywords=[]
+CAPS: restrict-blockers-to-chosen, block-eligibility-restriction
+SHAPES:
+  - triggered:characterAttacked + sourceIsEventCard -> restrictBlockersToChosen {chooser: opponent (controller of the attacked faction/location), declaration {selector {controller opponent, type character}, count up to count({controller opponent, type character}), optional}} -- only the chosen characters may block this battle and each must block if able
+NOTES: Brief names Wyrmfang for `restrict-blockers-to-chosen` (bundle `block-eligibility-restriction`). 'When you attack' -> this card's own characterAttacked (fires at declareAttack, before blockers). Chooser = the defending player (the one opponent in 2p, controller of the faction/location being attacked). The effect covers both halves: 'only those characters can block' and 'must block ... if they can'.

@@ -65,7 +65,25 @@ export type TargetRef =
    * responded-to card/ability picked] into its owner's hand." (Catastrophic
    * Caper). `undefined` outside a response window / if no such pick.
    */
-  | { type: "respondedToPicked"; cardType: CardType };
+  | { type: "respondedToPicked"; cardType: CardType }
+  /**
+   * The card `target` is currently attached to ("Attach to X") — the general
+   * form of `"attachedTo"`, which only resolves for `"source"`. "Inflict X
+   * damage to the character the gear card is attached to." (Scorching
+   * Runicution — `target` a picked gear item). `undefined` if `target` isn't
+   * attached to anything.
+   */
+  | { type: "attachmentHost"; target: TargetRef }
+  /**
+   * The source card of the responded-to *ability* on the response stack —
+   * the newest `kind: "ability"` item that isn't the current ability's own.
+   * Parallel to `respondedToCard` (which only sees `kind: "card"` items).
+   * "Terminate the ability. Destroy the character [whose ability it was]"
+   * (Exploding Sock Puppet!); "an ability that's source was not a faction"
+   * (Subsection 5, Paragraph 12). `undefined` outside a response window / if
+   * the newest non-self item is a card.
+   */
+  | { type: "respondedAbilitySource" };
 
 export type NumberExpression =
   | number
@@ -196,6 +214,34 @@ export type NumberExpression =
       if: Condition;
       then: NumberExpression;
       else: NumberExpression;
+    }
+  | {
+      /**
+       * The member count of a battle party in the current battle (0 with no
+       * battle). `side`:
+       * - `"attacking"` / `"blocking"` — that party outright.
+       * - `"ownParty"` — the party `of` (default `"source"`) is in.
+       * - `"opposingParty"` — the other party from the one `of` is in.
+       * "in a party with more than 1 member" (Callow Liegeman), "for each
+       * member in the opposing party" (Fleshripping Scenepuller), "the number
+       * of members in the attacking party" (Top-Secret Subterranean
+       * Goofarium, Trip Wire).
+       */
+      type: "battlePartySize";
+      side: "attacking" | "blocking" | "ownParty" | "opposingParty";
+      of?: TargetRef;
+    }
+  | {
+      /**
+       * The highest (`"max"`) / lowest (`"min"`) live `stat` over every
+       * in-play card matching `selector` — parallel to `sumStat`. `0` if
+       * nothing matches. "the highest speed among characters in the opposing
+       * party" (Martial Arts Master).
+       */
+      type: "extremumStat";
+      selector: CardSelector;
+      stat: Stat;
+      direction: "min" | "max";
     };
 
 export interface CardSelector {
@@ -243,6 +289,13 @@ export interface CardSelector {
    * Unlikely Heroes). Case-insensitive.
    */
   tradeVar?: string | string[];
+  /**
+   * Match cards whose printed `name` equals a `nameValue`
+   * (`valueKind: "cardName"`) stored on the source card under this key —
+   * "that player puts a card with the chosen name on the bottom of their
+   * deck" (Odious Diva). The `nameVar` counterpart of the literal `name`.
+   */
+  nameVar?: string;
 
   depleted?: boolean;
 
