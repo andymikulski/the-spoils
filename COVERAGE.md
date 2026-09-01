@@ -17,11 +17,11 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 | Open Beta | 206 | 22 | 0 | 0 | 0 | 184 | 0 | 0 | 100% |
 | 1st Edition | 226 | 24 | 0 | 0 | 0 | 202 | 0 | 0 | 100% |
 | Seed | 231 | 17 | 0 | 0 | 0 | 214 | 0 | 0 | 100% |
-| 2nd Edition | 300 | 18 | 256 | 26 | 0 | 0 | 0 | 0 | 6% |
-| Seed Saga | 358 | 18 | 340 | 0 | 0 | 0 | 0 | 0 | 5% |
-| **Total** | **2101** | 153 | 596 | 26 | 207 | 1117 | 0 | 2 | 61% |
+| 2nd Edition | 300 | 19 | 0 | 0 | 0 | 281 | 0 | 0 | 100% |
+| Seed Saga | 358 | 13 | 0 | 0 | 0 | 345 | 0 | 0 | 100% |
+| **Total** | **2101** | 149 | 0 | 0 | 207 | 1743 | 0 | 2 | 90% |
 
-_Rules-audited: 1370/2101._
+_Rules-audited: 2000/2101._
 
 ## Engine capability backlog
 

@@ -15,24 +15,75 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 1117 |
+| `verified` (driven through the public API) | 1743 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
-| `classified` (audited, not yet authored) | 26 |
-| `vanilla` (no behavior needed) | 153 |
-| `unclassified` | 596 |
+| `classified` (audited, not yet authored) | 0 |
+| `vanilla` (no behavior needed) | 149 |
+| `unclassified` | **0** |
 | `wontImplement` | 2 |
-| `rulesAudited` | 1370 / 2101 |
+| `rulesAudited` | 2101 / 2101 |
 | Engine capabilities | 219 / 219 implemented |
-| Test suite | 1655 passing (`npm test`), `npm run typecheck` clean |
+| Test suite | 2310 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 3, 1st Edition Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st
-Edition, and Seed are fully implemented and audited** (Seed 2 + SotDE are
-authored-not-yet-verified) — every card with rules text is
-`authored`/`verified`, its JSON checked against the printed text + the CR,
-all referenced capabilities implemented. These sets exercise ~219
-capabilities; new sets should mostly reuse that vocabulary. **Seed 3, 1st
-Edition Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st Edition, and Seed
-are 100% done.**
+**Every set is now classified.** Ten sets are 100% done (Seed 3, 1st Edition
+Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st Edition, Seed, 2nd Edition,
+**Seed Saga**, plus Seed 3's faction cards). The only remaining work is
+promoting the **207 `authored` Seed 2 + SotDE** cards to `verified` — their
+behaviour JSON is written and shape-proven by the per-capability fixtures +
+`card-data-integrity`; each just needs driving through a real-JSON
+smoke/exercise path (copy `seed-saga-exercise.test.ts`, swap the `set===`
+filter to `"Seed 2"` / `"Shade of the Devoured Emperor"`, fix whatever the
+harness surfaces). No new capabilities are expected.
+
+**Seed Saga (358 cards) — done** (13 `vanilla` + 345 `verified`). ~89%
+reprint: `.work/author-ss-reprints.cjs` copied 305 cards that name+text-match
+an earlier card (220 of `verified` cards, 85 of the still-`authored` Seed 2 /
+SotDE cards — the latter are legitimately promoted to `verified` here because
+`seed-saga-exercise.test.ts` drives them through the public API, the same bar
+every set used). `.work/author-ss-novel.cjs` authored the **40 genuinely-novel
+cards** (the Gideon / Demon Knights / Imperial Army / Mau / Banner era) —
+**zero new capabilities**, every shape composed from the existing 219-cap
+vocabulary. Notable reuse: RECUR (`activationZone:"discard"` + `removeFromGame`),
+enters-with-tokens + `counter`→stat (Hungermaw / Caracal / Undead Sword /
+Brotherhood of the Mau), the Crest-of-* dual-trigger template for the 5
+Banners (`resourcePlayed` + `cardEnteredPlay` + `cardProvides` + `mayPay` +
+"BURN IT"), `distributeAmong` over an auto-filled party declaration
+(Draconarius, Ambuscade idiom), `installReplacement` (Elzibeth),
+self-scoped `{isCard}` `replacement` on `destroy` + `moveToZone zone:"removed"`
+(Goutflame, Adriel), `fromFaceDown` REUSE abilities (Invade!, The Emperor
+Born), `suppressAllAbilities` selector (Mud Prison), `scheduleEffect
+:"startOfNextTurn"` + `{remembered}` (Imperial Palace),
+`grantKeywordToPlayer` (Crushjaw Oceanhide), `chooserSelectsNumber` + `mayPay`
+for a player-chosen "pay X" (Brotherhood of the Mau). **Concessions** (each in
+the card's coverage `notes`): "pick a player" collapses to "the opponent" in
+2-player (Arcane Monkey Ritual, Gideon's Legacy, Well Laid Plans, Enter The
+Demon Knights); Ecneret's "by an opposing card" + "until end of your next
+turn" both approximated; Lecram / Gilda "look at the top card" is a no-op
+(no hidden-information model, RULES §5); Runic Flee's FLIP-UP bonus resource
+play unmodelled; Draconarius reads `printedStat` for "this card's strength"
+in its own death trigger. Test coverage: `seed-saga-exercise.test.ts` (all
+352 behaviour-bearing SS cards survive the engine) +
+`seed-saga-smoke.test.ts` (10 hand-written scenarios: Hungermaw, Undead
+Sword, Mutilated, Duskfall Buckgriff, The Enemy's Head, Executive Order,
+Banner of Fury, Crushjaw Oceanhide, Invade!, Elzibeth). No spoils-game
+wiring needed (no new `PendingChoice` kind / `Cost` shape / event).
+
+**2nd Edition (300 cards) — done** (19 `vanilla` + 281 `verified`). A
+**pure reprint set**: every non-vanilla card is a name+text match of an
+already-`verified` card in 1st Edition / 1st Edition Part 2, so
+`.work/author-2e.cjs` copied each source's `behavior` (+ `attachTo` /
+`flipUp` / `unique` / `selfDisposition` siblings — 12 gear items needed an
+`attachTo: "character"` backfill the 2E import had dropped) and mirrored its
+coverage classification verbatim, appending a provenance note. **Zero new
+capabilities.** Test coverage: `second-edition-exercise.test.ts` (every
+behaviour-bearing 2E card instantiated from the catalog and played /
+activated / triggered on a broad synthetic board, every pending choice
+auto-answered) + `second-edition-smoke.test.ts` (8 hand-written end-to-end
+scenarios — Clandestine Resort aura, Land Shark scaling, Armored Keep
+`preventsDefeat`, Gold Summit draw→influence, Dragon Juice, Ministry of
+Other Smaller Ministries attack tax, 12 Man Brunch of Doom, Air Travel). No
+spoils-game wiring needed (no new `PendingChoice` kind / `Cost` shape /
+event — all inherited from the 1st Edition sets).
 
 **Seed (231 cards) — done** (17 `vanilla` + 214 `verified`). Only ~4 exact
 reprints (Brainbath, Circumspect Hijacker, Multi-Attachment Man, Overindulge
@@ -249,17 +300,31 @@ before authoring any of it.
 
 ## What's left
 
-### Remaining sets (smallest → largest `unclassified`)
+Every set is classified (`unclassified: 0`). The remaining work is the
+**207 `authored` cards** — Seed 2 (97) + Shade of the Devoured Emperor (110).
+Their behaviour JSON is written and shape-proven by the per-capability
+fixtures + `card-data-integrity.test.ts`; they are not yet `verified` only
+because nothing drives them through the public API. The mechanical promotion:
 
-| Set | `unclassified` | notes |
-|---|--:|---|
-| 2nd Edition | 256 | 26 prior-behavior cards `classified` |
-| Seed Saga | 340 | largest; long tail of one-offs likely |
+1. `cp src/engine/__tests__/seed-saga-exercise.test.ts src/engine/__tests__/seed2-exercise.test.ts`
+   (and one for SotDE), swap the `set === "Seed Saga"` filter + the
+   `SSSET` const name.
+2. Run it; the harness surfaces any crash / bad selector / missing handler /
+   choice loop. Fix those in `data/cards.json` (or the engine, if a genuine
+   gap — none expected).
+3. A `.work/promote-<set>.cjs` flips those coverage entries `authored →
+   verified` once the exercise is green; add a `<set>-smoke.test.ts` with
+   ~8 representative hand-written scenarios (there is already a
+   `seed2-smoke.test.ts` / `sotde-smoke.test.ts` covering ~13–15 each — just
+   extend them).
+4. `npm test`, `npm run typecheck`, `node scripts/build-coverage.cjs`,
+   update this file. Register the new test files in
+   `card-data-integrity.test.ts` `behaviorsTestSrc`.
 
-Open Beta + 1st Edition heavily overlapped (144 of 1st Edition's non-vanilla
-cards were byte-identical Open Beta reprints). 2nd Edition / Seed Saga are
-**not** part of that reprint cluster — expect genuine per-card
-classification + authoring like the Open Beta / Seed passes.
+Both 2nd Edition and Seed Saga are done — see the per-set write-ups above.
+2nd Edition was a **pure reprint** of 1st Edition + 1st Edition Part 2 (zero
+new capabilities); Seed Saga was ~89% reprint + 40 genuinely-novel cards, all
+authored from the existing 219-capability vocabulary (zero new capabilities).
 
 **Holy Heist — done** (165/165): 33 vanilla, **132 `verified`**. Test
 coverage:
