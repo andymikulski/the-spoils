@@ -113,6 +113,19 @@ export type Effect =
       /** Iterate the cards already selected under this TargetDeclaration id instead of re-querying a selector — e.g. "destroy the items" after "pick 2 or fewer items." */
       selected?: string;
       effects: Effect[];
+      /**
+       * Default (`false`) — every iteration resolves inside one deferred
+       * event batch (triggers wait until the whole loop finishes;
+       * "simultaneous" resolution — "inflict 2 damage to all characters").
+       * `true` — iterations run one at a time through the suspendable
+       * effect-frame path, so a per-iteration chooser (`chooserSelectsTarget`,
+       * `deployForFree`, …) pauses and resumes correctly, and triggers fire
+       * between iterations. "That player discards a card. You may deploy a
+       * card for free. Repeat until that player has no cards in their hand."
+       * (Degenerate Molestation — `forEach` over the opponent's hand
+       * snapshot with `sequential: true`).
+       */
+      sequential?: boolean;
     }
   | {
       /**
@@ -1044,6 +1057,70 @@ export type Effect =
        */
       type: "restrictDestruction";
       duration: Duration;
+    }
+  | {
+      /**
+       * Adds `subtype` to `target`'s subtype list for `duration` (a runtime
+       * `GameState.subtypeGrants` entry). Every subtype consumer reads it
+       * (`cardSubtypeIs`, `CardSelector.subtype` / `subtypeVar`,
+       * `distinctCount by: "subtype"`, `hasAttachment.ofSubtype`). "It gains
+       * the sarcophyle subtype" (Sarcophyle Matriculation, Vander Malagut).
+       */
+      type: "grantSubtype";
+      target: TargetRef;
+      subtype: string;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Opens a runtime window during which any card that would enter a hand
+       * (`moveCard` to `"hand"`) from ANY zone is put into `to` (that
+       * owner's zone) instead. "This turn, if a card would be put into a
+       * player's hand, put it into their discard pile instead" (Quotidian
+       * Misfire — `to: "discard"`). `who` scopes on the affected card's
+       * owner. Distinct from a `moveToZone` `ReplacementAbility`, which only
+       * fires on a card leaving *play*.
+       */
+      type: "redirectHandMoves";
+      who: "self" | "opponent" | "any";
+      to: Zone;
+      duration: Duration;
+    }
+  | {
+      /**
+       * Installs a runtime replacement (`GameState.runtimeReplacements`)
+       * consulted by the same path as a card's `ReplacementAbility`. The
+       * affected card is bound to `{ type: "selected", id: "__candidate" }`
+       * inside `effects`; `condition` (if set) is checked against that
+       * binding at replacement time. Swept when `duration` expires
+       * (`untilEndOfTurn` or an `endOfBattle` sweep). "If the character
+       * would be destroyed during this battle, take control of it instead"
+       * (Sarcophyle Matriculation) — the one-shot form of a continuous
+       * replacement ability (Vander Malagut).
+       */
+      type: "installReplacement";
+      replaces:
+        | { event: "destroy"; cardType?: CardType }
+        | { event: "moveToZone"; zone: Zone; cardType?: CardType };
+      condition?: Condition;
+      duration: Duration | { type: "endOfBattle" };
+      effects: Effect[];
+    }
+  | {
+      /**
+       * "Remove any number of tokens from cards you control. Use the tokens
+       * to generate the following effects any number of times." (Voidal
+       * Poisoning). `chooser` repeatedly picks an `option` and removes its
+       * `cost` markers of `counter` from cards matching `pool` (their choice
+       * which) to fire that option's `effects`, in any mix, until they stop
+       * or cannot afford any option. Drives a `spendCountersMenu` pending
+       * choice. RULES.md §14.
+       */
+      type: "spendCountersMenu";
+      chooser: PlayerRef;
+      pool: CardSelector;
+      counter: string;
+      options: Array<{ cost: number; label?: string; effects: Effect[] }>;
     };
 
 /**

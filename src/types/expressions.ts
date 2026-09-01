@@ -75,6 +75,15 @@ export type TargetRef =
    */
   | { type: "attachmentHost"; target: TargetRef }
   /**
+   * The most recently RESOLVED tactic card this turn
+   * (`GameState.lastDeployedTacticId`; cleared each turn). "Duplicate the
+   * last tactic deployed this turn" (Voidal Replication) — pass it as
+   * `duplicate`'s `target`, which re-resolves that tactic's effects from
+   * its definition (it is no longer on the stack). `undefined` if no tactic
+   * has resolved this turn.
+   */
+  | { type: "lastDeployedTactic" }
+  /**
    * The source card of the responded-to *ability* on the response stack —
    * the newest `kind: "ability"` item that isn't the current ability's own.
    * Parallel to `respondedToCard` (which only sees `kind: "card"` items).
@@ -207,6 +216,29 @@ export type NumberExpression =
     }
   | {
       /**
+       * The `count` of the current `cardsDrawn` triggering event — 0 outside
+       * one. Parallel to `eventDamageAmount`. "your faction gains X
+       * influence, where X is the number of cards drawn." (Gold Summit).
+       */
+      type: "eventDrawAmount";
+    }
+  | {
+      /**
+       * How many cards `player` (omitted = any player) deployed via
+       * `playCard` this turn, optionally filtered to / away from a card
+       * type. "2 other non-resource cards this turn" (633fy 31f —
+       * `notCardType: "resource"`), "an opponent deployed a character this
+       * turn" (Slingerang — `player: "opponent", cardType: "character"`), "a
+       * tactic has been deployed this turn" (Voidal Replication —
+       * `cardType: "tactic"`, no `player`).
+       */
+      type: "deploysThisTurn";
+      player?: PlayerRef;
+      cardType?: CardType;
+      notCardType?: CardType;
+    }
+  | {
+      /**
        * `then` when `if` holds, otherwise `else` — "X is 4 if you deployed
        * this card using FLIP UP, otherwise 2".
        */
@@ -327,11 +359,13 @@ export interface CardSelector {
   /**
    * Restrict to cards currently among the **top `fromTop`** of their
    * owner's deck — "reveal the top 5 cards of an opponent's deck. You may
-   * choose a revealed character." (Rosy Palmer). Only meaningful with
-   * `zone: "deck"`; a card not in a deck never matches. Pairs with a
-   * `lookAndReorder` (`to: "bottom"`) over the leftovers.
+   * choose a revealed character." (Rosy Palmer). May be a `NumberExpression`
+   * for a player-chosen depth — "reveal up to the top X cards of an
+   * opponent's deck" (Jackmove). Only meaningful with `zone: "deck"`; a card
+   * not in a deck never matches. Pairs with a `lookAndReorder`
+   * (`to: "bottom"`) over the leftovers.
    */
-  fromTop?: number;
+  fromTop?: number | NumberExpression;
 
   /** Match only staple resources (`ResourceDefinition.staple`) when `true`, only non-staples when `false`. "Search your deck for a staple resource." */
   staple?: boolean;

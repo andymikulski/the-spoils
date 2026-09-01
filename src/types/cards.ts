@@ -573,8 +573,76 @@ export interface ContinuousAbility extends AbilityBase {
   partyRestriction?: {
     role: "any" | "attacking" | "blocking";
     minMembers?: NumberExpression;
+    maxMembers?: NumberExpression;
     parity?: "even" | "odd";
+    /**
+     * `"selfParty"` (default) — bites only a forming party that includes the
+     * source (Insect Appreciator, Anxious Oaf). `"allParties"` — bites EVERY
+     * forming attacking/blocking party regardless of whether the source is a
+     * member: a location that dictates party composition (Arcana Department —
+     * even members; Hangdog Alley — `minMembers: 1, maxMembers: 1`).
+     */
+    scope?: "selfParty" | "allParties";
   };
+
+  /**
+   * "You do not lose the game because your faction has 0 influence."
+   * (Armored Keep). While the source is in play and `condition` holds, the
+   * standard "faction at <= 0 influence loses" state-based check is
+   * suppressed for the matching faction.
+   */
+  preventsDefeat?: { player: "self" | "opponent" | "any" };
+
+  /**
+   * Changes how many cards a player draws while the source is in play
+   * (`condition`, if set, must hold). Consulted in the single `drawCards`
+   * choke point. "When you draw any number of cards, increase the amount by
+   * 1" (`{ player: "self", delta: 1 }`); "While you have at least 10 cards
+   * in your hand, you cannot draw cards" (`{ player: "self", prevent: true }`
+   * gated by a hand-size `condition`) — Beatrix Winterbottom.
+   */
+  drawModifiers?: Array<{
+    player: "self" | "opponent" | "any";
+    delta?: NumberExpression;
+    prevent?: boolean;
+  }>;
+
+  /**
+   * Tunes the magnitude of influence changes to a faction while the source
+   * is in play. `direction` selects which changes ("loss" / "gain" / "any");
+   * `delta` is subtracted from the magnitude, floored so a loss can't flip
+   * to a gain (or vice versa). "When your faction loses influence, reduce
+   * the amount by 1" — Tax Attorney (`{ player: "self", direction: "loss",
+   * delta: 1 }`).
+   */
+  influenceModifiers?: Array<{
+    player: "self" | "opponent" | "any";
+    direction: "loss" | "gain" | "any";
+    delta: NumberExpression;
+    minAmount?: number;
+  }>;
+
+  /**
+   * "Each opponent must pay N to attack." (The Ministry of Other Smaller
+   * Ministries). While the source is in play, the matching player pays
+   * `amount` resources as part of declaring an attack — an unpayable tax
+   * makes the attack illegal.
+   */
+  attackTax?: {
+    player: "opponent" | "any";
+    amount: NumberExpression;
+  };
+
+  /**
+   * "You may use abilities on your opponent's cards, ... pay any numeric
+   * cost with your own resources ... the ability's effect happens as if
+   * your opponent used it." (The Billionaire). While the source is in play,
+   * its controller may activate activated abilities on cards the opponent
+   * controls: the numeric (`payResources`) portion is charged to the
+   * controller, everything else resolves with the opponent as the ability's
+   * controller.
+   */
+  canUseOpponentAbilities?: boolean;
   /**
    * "Only parties with at least N members / characters with at least N
    * speed can block this card." — enforced in `declareBlockers` against a
@@ -658,7 +726,13 @@ export interface ContinuousAbility extends AbilityBase {
    */
   playRestrictions?: Array<{
     player: "self" | "opponent" | "any";
-    kind: "flipUp" | { cardType: CardType };
+    /**
+     * `{ named }` — no player may deploy a card whose printed name equals
+     * the `nameValue` (`valueKind: "cardName"`) stored on the source under
+     * this key. "name a non-resource card. The named card cannot be
+     * deployed" (Incriminating Photograph).
+     */
+    kind: "flipUp" | { cardType: CardType } | { named: string };
     timing?: "notActivePlayer";
   }>;
 

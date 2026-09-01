@@ -203,6 +203,63 @@ export interface RuntimeCardTypeGrant {
 }
 
 /**
+ * A temporary ADDED subtype from a `grantSubtype` effect ("it gains the
+ * sarcophyle subtype" — Sarcophyle Matriculation, Vander Malagut). While
+ * active (see `durationStillActive`) the card lists `subtype` in addition
+ * to its printed subtypes, everywhere `getSubtypes` is consulted.
+ */
+export interface RuntimeSubtypeGrant {
+  id: ModifierId;
+  sourceId?: CardInstanceId;
+  targetId: CardInstanceId;
+  subtype: string;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/**
+ * A runtime "if X would happen, instead Y" installed by an
+ * `installReplacement` effect (the one-shot form of a `ReplacementAbility`).
+ * Consulted by `applyReplacement`; `condition` is evaluated with the
+ * affected card bound to `__candidate`. Swept by `durationStillActive`;
+ * `endOfBattle` entries are cleared when the current battle ends.
+ */
+export interface RuntimeReplacement {
+  id: ModifierId;
+  sourceId: CardInstanceId;
+  controllerId: PlayerId;
+  replaces:
+    | { event: "destroy"; cardType?: CardType }
+    | { event: "moveToZone"; zone: Zone; cardType?: CardType };
+  condition?: Condition;
+  effects: Effect[];
+  /**
+   * The installing ability's `context.selected` snapshot — so a `condition`
+   * / `effects` referencing the tactic's picks ("if the picked character
+   * would be destroyed") still resolve after the tactic is gone. The
+   * affected card is additionally bound to `__candidate`.
+   */
+  selected: Record<string, CardInstanceId[]>;
+  duration: Duration | { type: "endOfBattle" };
+  createdTurn: number;
+}
+
+/**
+ * A runtime "cards entering a hand go elsewhere instead" window from a
+ * `redirectHandMoves` effect (Quotidian Misfire). While active, `moveCard`
+ * to `"hand"` is rerouted to `to` for cards whose owner matches `who`
+ * (relative to `sourceControllerId`). Swept by `durationStillActive`.
+ */
+export interface RuntimeHandMoveRedirect {
+  id: ModifierId;
+  sourceControllerId: PlayerId;
+  who: "self" | "opponent" | "any";
+  to: Zone;
+  duration: Duration;
+  createdTurn: number;
+}
+
+/**
  * A temporary card-level PROVIDES grant from a `grantProvides` effect
  * ("This turn, this card gains PROVIDES: [O][O][O]"). Consulted by
  * `getResourceIcons` while `targetId` is in play; swept by
@@ -586,6 +643,9 @@ export interface GameState {
   resourceGrants: RuntimeResourceGrant[];
   provideGrants: RuntimeProvideGrant[];
   cardTypeGrants: RuntimeCardTypeGrant[];
+  subtypeGrants: RuntimeSubtypeGrant[];
+  runtimeReplacements: RuntimeReplacement[];
+  handMoveRedirects: RuntimeHandMoveRedirect[];
   damageShields: DamageShield[];
   battleDamageTransforms: BattleDamageTransform[];
   scheduledEffects: ScheduledEffect[];
@@ -773,12 +833,21 @@ export interface GameState {
   turnEventTally: Record<string, number>;
 
   /**
-   * Per-turn list of card *names* each player has deployed (via `playCard`),
-   * in order. Reset at the start of every turn. Read by the
-   * `deploySameNameThisTurn` condition ("an opponent deployed at least 2
-   * cards with the same name this turn").
+   * Per-turn list of the cards each player has deployed (via `playCard`), in
+   * order — printed `name` + `type`. Reset at the start of every turn. Read
+   * by the `deploySameNameThisTurn` condition ("an opponent deployed at
+   * least 2 cards with the same name this turn") and the `deploysThisTurn`
+   * expression ("2 other non-resource cards this turn", "an opponent
+   * deployed a character this turn").
    */
-  turnDeploys: Record<PlayerId, string[]>;
+  turnDeploys: Record<PlayerId, Array<{ name: string; type: CardType }>>;
+
+  /**
+   * The most recently RESOLVED tactic this turn (set as a tactic finishes
+   * resolving), read by the `lastDeployedTactic` TargetRef. `undefined` at
+   * the start of each turn / until a tactic resolves.
+   */
+  lastDeployedTacticId?: CardInstanceId;
 
   /**
    * Per-turn record, keyed by damage-source `CardInstanceId`: whether that

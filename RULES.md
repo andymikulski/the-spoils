@@ -1161,6 +1161,52 @@ of the Devoured Emperor additions")**
   on Floor 3* (a cancellable end-of-turn declaration + respond-to-end-of-
   turn-cost timing) are out of scope for the 2-player single-game engine.
 
+### Open Beta additions
+
+- **Influence-loss modifiers (`engine-derived`).** `ContinuousAbility.
+  influenceModifiers` tunes the magnitude of an influence change to a
+  faction, floored so a loss can't flip to a gain. It is applied to the
+  `modifyInfluence` effect and every CR §408.3 damage→influence path (via a
+  single `applyInfluenceDelta` choke), but **not** to influence paid as an
+  explicit `loseInfluence` cost — a cost is a cost, not a "would lose
+  influence" event. "When your faction loses influence, reduce the amount by
+  1" (Tax Attorney).
+- **Suppressing the 0-influence loss (`card-verified`).**
+  `ContinuousAbility.preventsDefeat` removes the matching faction from the
+  "faction at ≤ 0 influence loses" state-based check while the source is in
+  play. "You do not lose the game because your faction has 0 influence"
+  (Armored Keep). It suppresses an existing loss condition — it does not add
+  a new win/lose condition.
+- **Attack tax (`card-verified`).** `ContinuousAbility.attackTax` — the
+  matching player pays N resources as part of declaring an attack (charged
+  in `declareAttack`, before anything depletes); if unpayable the attack is
+  illegal. "Each opponent must pay 2 to attack" (The Ministry of Other
+  Smaller Ministries).
+- **Draw modifiers (`card-verified`).** `ContinuousAbility.drawModifiers`
+  changes how many cards a player draws (only for a real draw — amount > 0),
+  or prevents drawing entirely. Beatrix Winterbottom.
+- **Runtime replacements (`engine-derived`).** The `installReplacement`
+  effect registers a "would-X-instead-Y" replacement for a `duration` (incl.
+  `endOfBattle`), consulted alongside card `ReplacementAbility`s. "If the
+  character would be destroyed during this battle, take control of it
+  instead" (Sarcophyle Matriculation) — the one-shot form of Vander
+  Malagut's continuous replacement.
+- **Hand-move redirect (`card-verified`).** `redirectHandMoves` — a runtime
+  window sending any card that would enter a hand (from any zone) to another
+  zone instead. "if a card would be put into a player's hand, put it into
+  their discard pile instead" (Quotidian Misfire).
+- **Borrowing opponent abilities (`card-verified`).**
+  `ContinuousAbility.canUseOpponentAbilities` lets the controller activate
+  activated abilities on the opponent's cards: the numeric cost is paid from
+  the activator's resources, everything else (non-numeric costs, threshold,
+  effect) resolves with the opponent as the ability's controller. The
+  Billionaire. Concession: duplicating a *targeted* tactic via
+  `lastDeployedTactic` re-prompts only `chooserSelectsTarget` picks, not a
+  play-time `onPlay.targets` declaration.
+- **Parity gap `seat-swap`.** Emergency Obfuscation's full seat / side /
+  deck-ownership swap ("owner of the winning deck wins") is a game-state
+  refactor; its token-accrual + self-destruct clauses are authored.
+
 ## 13. Tokens (CR §409)
 
 **(CR §409.1)** A token is a marker placed on an in-play card; it has no

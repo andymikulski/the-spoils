@@ -29,6 +29,18 @@ export interface GameEventMap {
     to: Zone;
   };
 
+  /**
+   * An in-play card was chosen as a target of a player-or-chooser TARGET
+   * declaration (effect-/trigger-driven picks — `chooserSelectsTarget`,
+   * `selectTargets`, `autoSelectTargets`). `playerId` is the picking
+   * player. "When this card is picked, put a token on it" (Ferrous Ferret);
+   * pairs with the `mustBePicked` restriction.
+   */
+  cardPicked: {
+    cardId: CardInstanceId;
+    playerId: PlayerId;
+  };
+
   cardDestroyed: {
     cardId: CardInstanceId;
     controllerId: PlayerId;

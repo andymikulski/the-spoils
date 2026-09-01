@@ -180,5 +180,15 @@ export type GameAction =
         /** Two-Headed Coin — pay to reflip a lost coin flip, or accept the loss. */
         | { kind: "coinFlipReplace"; reflip: boolean }
         /** Wyrmfang Deathskull — the subset of candidates that may block this battle. */
-        | { kind: "chooseChosenBlockers"; cardIds: CardInstanceId[] };
+        | { kind: "chooseChosenBlockers"; cardIds: CardInstanceId[] }
+        /**
+         * Voidal Poisoning — fire menu option `optionIndex`, pulling its
+         * `cost` markers from the pool cards named in `sources` (one id per
+         * marker; repeats allowed). `optionIndex: null` stops the loop.
+         */
+        | {
+            kind: "spendCountersMenu";
+            optionIndex: number | null;
+            sources?: CardInstanceId[];
+          };
     };

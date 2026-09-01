@@ -15,21 +15,34 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 517 |
+| `verified` (driven through the public API) | 550 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
-| `classified` (audited, not yet authored) | 106 |
+| `classified` (audited, not yet authored) | 217 |
 | `vanilla` (no behavior needed) | 158 |
-| `unclassified` | 1111 |
+| `unclassified` | 967 |
 | `wontImplement` | 2 |
-| `rulesAudited` | 844 / 2101 |
-| Engine capabilities | 190 / 190 implemented |
-| Test suite | 974 passing (`npm test`), `npm run typecheck` clean |
+| `rulesAudited` | 988 / 2101 |
+| Engine capabilities | 209 / 209 implemented |
+| Test suite | 1078 passing (`npm test`), `npm run typecheck` clean |
 
 **Seed 2, Seed 3, Shade of the Devoured Emperor, Holy Heist, 1st Edition
 Part 2, and Ungodly Mess are fully implemented and audited** — every card
 with rules text is `authored`/`verified`, its JSON checked against the
 printed text + the CR, all referenced capabilities implemented. The six sets
 exercise ~190 capabilities; new sets should mostly reuse that vocabulary.
+
+**Open Beta (206 cards) — classification + engine done; authoring in
+progress.** All 206 cards are `classified` + `rulesAudited` (22 `vanilla`,
+33 `verified`, 151 `classified`-awaiting-authoring). The 19 capabilities
+this set needs are **all implemented + unit-tested** (`open-beta-caps.test.ts`,
+20 tests) — see `BEHAVIORS.md` → "Open Beta additions" and `RULES.md`
+§12 → "Open Beta additions". Slice 1 (arcanist + warlord, 33 cards) is
+authored + `verified` (`open-beta-smoke.test.ts` + `open-beta-exercise.test.ts`
+instantiate and drive every one through the public API). **Remaining: author
+slices 2–4 (banker 36 / gearsmith 37 / rogue 38)** from
+`.work/classify-ob-{2,3,4}.json` + the merged `data/card-coverage.json`
+entries; then extend the smoke/exercise tests and flip to `verified`. One
+parity gap registered: `seat-swap` (Emergency Obfuscation).
 
 **Ungodly Mess (167 cards) — done** (159 `verified` + 6 `vanilla` + 2
 `wontImplement`). Added 10 capabilities in one pass —
@@ -190,7 +203,7 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Open Beta | 144 | 40 prior-behavior cards already `classified` — smallest remaining |
+| Open Beta | 0 | fully classified; 33 `verified`, 151 `classified` awaiting authoring (slices 2–4) |
 | 1st Edition | 162 | 40 prior-behavior cards `classified`; the two precon decks draw from here |
 | Seed | 209 | |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |

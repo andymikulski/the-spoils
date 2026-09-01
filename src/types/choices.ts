@@ -12,7 +12,7 @@
 // moments instead of the engine silently guessing.
 
 import type { AbilityId, CardInstanceId, PlayerId, Zone } from "./ids.js";
-import type { TargetDeclaration } from "./expressions.js";
+import type { CardSelector, TargetDeclaration } from "./expressions.js";
 import type { Cost } from "./costs.js";
 import type { Effect, EffectOption } from "./effects.js";
 import type { ResolutionContext } from "./resolution.js";
@@ -321,6 +321,26 @@ export interface PendingAuctionBidChoice {
   maxBid: number;
 }
 
+/**
+ * "Remove any number of tokens from cards you control. Use the tokens to
+ * generate the following effects any number of times." (Voidal Poisoning —
+ * the `spendCountersMenu` effect). Each answer either picks an
+ * `optionIndex` to fire (with `sources` naming which pool cards to pull the
+ * option's `cost` markers from — one id per marker), or `optionIndex: null`
+ * to stop. Repeats until stopped or no option is affordable.
+ */
+export interface PendingSpendCountersMenuChoice {
+  kind: "spendCountersMenu";
+  id: string;
+  playerId: PlayerId;
+  pool: CardSelector;
+  counter: string;
+  options: Array<{ cost: number; label?: string; effects: Effect[] }>;
+  /** Current marker count available on each pool card. */
+  available: Record<CardInstanceId, number>;
+  context: ResolutionContext;
+}
+
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
@@ -344,4 +364,5 @@ export type PendingChoice =
   | PendingTakeFromPileChoice
   | PendingChooseChosenBlockersChoice
   | PendingCoinFlipReplaceChoice
-  | PendingAuctionBidChoice;
+  | PendingAuctionBidChoice
+  | PendingSpendCountersMenuChoice;

@@ -496,11 +496,21 @@ export type Condition =
        * this turn (`GameState.damageThisTurn[by].toCards`). "when a character
        * is destroyed during a turn when this card damaged it" (Gore Engine —
        * a `cardDestroyed` trigger gated by `{ damagedThisTurn, target:
-       * "eventCard" }`).
+       * "eventCard" }`). `by: "any"` — damaged by ANY source this turn ("if
+       * the character has received damage this turn"; Snake Eyes).
        */
       type: "damagedThisTurn";
       target: TargetRef;
-      by?: TargetRef;
+      by?: TargetRef | "any";
+    }
+  | {
+      /**
+       * True when `target` (default `"source"`) declared an attack this turn
+       * (`GameState.attacksThisTurn`). Compose with `not` for "did not
+       * attack this turn" (Reckless Challenger).
+       */
+      type: "attackedThisTurn";
+      target?: TargetRef;
     }
   | {
       /**

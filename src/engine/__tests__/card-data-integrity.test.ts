@@ -92,7 +92,9 @@ const manifest: Manifest = readJson("data/card-coverage.json");
 const behaviorsTestSrc = [
   "src/engine/__tests__/card-behaviors.test.ts",
   "src/engine/__tests__/holy-heist-newshapes.test.ts",
-  "src/engine/__tests__/first-ed-part2-smoke.test.ts"
+  "src/engine/__tests__/first-ed-part2-smoke.test.ts",
+  "src/engine/__tests__/open-beta-caps.test.ts",
+  "src/engine/__tests__/open-beta-smoke.test.ts"
 ]
   .map(rel => {
     try {
@@ -162,6 +164,9 @@ const KNOWN_TYPE_TAGS = new Set([
   "auctionForCard",
   // Ungodly Mess effects
   "preventAllDamage", "restrictDestruction",
+  // Open Beta effects / expressions / conditions
+  "grantSubtype", "redirectHandMoves", "installReplacement", "spendCountersMenu",
+  "eventDrawAmount", "deploysThisTurn", "lastDeployedTactic", "attackedThisTurn",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected",

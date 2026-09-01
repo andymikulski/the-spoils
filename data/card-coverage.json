@@ -1895,6 +1895,219 @@
       "cards": [
         "da10bbbb-0cf4-4db8-847e-9a20d7fc2af0"
       ]
+    },
+    "party-restriction-any-party": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "battle"
+      ],
+      "spec": "ContinuousAbility.partyRestriction gains scope?: 'selfParty' | 'allParties' (default 'selfParty') and maxMembers?: NumberExpression. scope:'allParties' makes the constraint bite EVERY forming attacking/blocking party regardless of whether the source is a member (a location that dictates party composition). maxMembers caps the member count ('only 1 member' = minMembers 1 + maxMembers 1). Enforced in declareAttack / declareBlockers. Arcana Department (even, all parties), Hangdog Alley (attacking parties, exactly 1).",
+      "cards": [
+        "bcac170a-c55d-4c35-a3a3-b7d167445e5b",
+        "39f985a8-fac4-4c7f-8c01-3c908c6d1103"
+      ]
+    },
+    "redirect-hand-moves": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'redirectHandMoves', who:'self'|'opponent'|'any', to:Zone, duration:Duration } + a GameState runtime window consulted in moveCard whenever a card would enter a hand (to==='hand') from ANY zone - the card goes to `to` (that owner's zone) instead. 'This turn, if a card would be put into a player's hand, put it into their discard pile instead' (Quotidian Misfire). Distinct from a moveToZone ReplacementAbility, which only fires on leaving play.",
+      "cards": [
+        "ea372d50-f915-41fc-b170-267e0e430132"
+      ]
+    },
+    "spend-counters-menu": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "choice",
+        "state"
+      ],
+      "spec": "Effect { type:'spendCountersMenu', chooser:PlayerRef, pool:CardSelector, counter:string, options:Array<{ cost:number; label?:string; effects:Effect[] }> } + a spendCountersMenu PendingChoice. The chooser removes `cost` markers of `counter` from cards matching `pool` (their choice which) to fire an option's effects, repeatable in any mix until they stop or can't afford any option. 'Remove any number of tokens from cards you control. Use the tokens to generate ... any number of times' (Voidal Poisoning). RULES.md §14.",
+      "cards": [
+        "fed9a0cc-cd8d-4633-ba92-d05a94e6acda"
+      ]
+    },
+    "last-deployed-tactic-ref": {
+      "status": "implemented",
+      "kind": [
+        "expression",
+        "state",
+        "effect"
+      ],
+      "spec": "GameState.lastDeployedTacticId records the most recently RESOLVED tactic this turn (set as a tactic finishes resolving; cleared each turn). TargetRef { type:'lastDeployedTactic' } resolves to it. `duplicate` targeting it re-resolves that tactic's effects from its definition under the current controller, choosing targets anew (the original is no longer on the stack). 'Duplicate the last tactic deployed this turn' (Voidal Replication).",
+      "cards": [
+        "b9e94612-3cbd-44ff-9aac-a553a49c0955"
+      ]
+    },
+    "deploys-this-turn-count": {
+      "status": "implemented",
+      "kind": [
+        "expression",
+        "state"
+      ],
+      "spec": "NumberExpression { type:'deploysThisTurn', player?:PlayerRef, cardType?:CardType, notCardType?:CardType } = how many cards matching the filters `player` deployed (entered play via a deploy) this turn. Omitting player counts all players. Extends the per-turn deploy tally used by deploySameNameThisTurn to also record card type + player. '2 other non-resource cards this turn' (633fy 31f), 'an opponent deployed a character this turn' (Slingerang), 'a tactic has been deployed this turn' (Voidal Replication).",
+      "cards": [
+        "3f48476b-28e1-48da-bab0-714147f8a0b3",
+        "93ebda5d-c273-4c97-a5c2-29202057b6e0",
+        "b9e94612-3cbd-44ff-9aac-a553a49c0955"
+      ]
+    },
+    "attacked-this-turn-condition": {
+      "status": "implemented",
+      "kind": [
+        "condition",
+        "state"
+      ],
+      "spec": "Condition { type:'attackedThisTurn', target?:TargetRef (default 'source') } - true when `target` declared an attack this turn (reads GameState.attacksThisTurn, already maintained for attack-limit-per-turn). Compose with `not` for 'did not attack this turn' (Reckless Challenger).",
+      "cards": [
+        "93e4cad7-05bb-4273-acdd-61af6f0f7072"
+      ]
+    },
+    "cannot-lose-at-zero-influence": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "ContinuousAbility.preventsDefeat?: { player:'self'|'opponent'|'any' } - while the source is in play (and condition holds), the standard 'a faction at <=0 influence loses the game' state-based check is suppressed for the matching faction. 'You do not lose the game because your faction has 0 influence' (Armored Keep).",
+      "cards": [
+        "43d085ab-5643-4038-8bd2-526548fd786e"
+      ]
+    },
+    "draw-count-modifier": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "ContinuousAbility.drawModifiers?: Array<{ player:'self'|'opponent'|'any'; delta?:NumberExpression; prevent?:boolean }> - consulted in drawCards: delta adjusts the number of cards drawn (floored at 0), prevent:true forces the draw to 0. 'When you draw any number of cards, increase the amount by 1' + 'While you have at least 10 cards in your hand, you cannot draw cards' (Beatrix Winterbottom).",
+      "cards": [
+        "bb64ac1b-8361-475a-8598-0dd67ce6222b"
+      ]
+    },
+    "event-draw-amount-expression": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "NumberExpression { type:'eventDrawAmount' } = the `count` of the current cardsDrawn triggering event (0 outside one). Parallel to eventDamageAmount. 'your faction gains X influence, where X is the number of cards drawn' (Gold Summit).",
+      "cards": [
+        "1a988e25-bd1f-47e0-995e-1a7a72306961"
+      ]
+    },
+    "influence-change-modifier": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "ContinuousAbility.influenceModifiers?: Array<{ player:'self'|'opponent'|'any'; direction:'loss'|'gain'|'any'; delta:NumberExpression; minAmount?:number }> - routed through a single applyInfluenceDelta helper covering the modifyInfluence effect and the CR §408.3 damage->influence path: a matching influence change has its magnitude reduced by delta (floored so a loss can't flip to a gain). 'When your faction loses influence, reduce the amount by 1' (Tax Attorney).",
+      "cards": [
+        "95c0d8b9-11b3-48e6-a8c5-58fd53ca93dd"
+      ]
+    },
+    "attack-tax": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "battle",
+        "state"
+      ],
+      "spec": "ContinuousAbility.attackTax?: { player:'opponent'|'any'; amount:NumberExpression } - while the source is in play, the matching player must pay `amount` resources when they declare an attack (charged in declareAttack; if unaffordable the attack is illegal / not offered). 'Each opponent must pay 2 to attack' (The Ministry of Other Smaller Ministries).",
+      "cards": [
+        "c8f335c2-c065-4e48-befe-ce99752073f1"
+      ]
+    },
+    "card-picked-trigger": {
+      "status": "implemented",
+      "kind": [
+        "event"
+      ],
+      "spec": "GameEvent cardPicked { cardId, playerId } - emitted for each card finalized as a target of a player-or-chooser TARGET declaration (playCard/activateAbility validation, selectTargets, chooserSelectsTarget), playerId = the picking player. 'When this card is picked, put a token on it' (Ferrous Ferret); pairs with the existing mustBePicked restriction.",
+      "cards": [
+        "f63f84a2-39e0-4358-81c9-e15a525a5ae6"
+      ]
+    },
+    "play-restriction-by-name": {
+      "status": "implemented",
+      "kind": [
+        "state"
+      ],
+      "spec": "ContinuousAbility.playRestrictions[].kind gains { named:string } - while the source is in play, no player may deploy a card whose printed name equals the nameValue (valueKind:'cardName') stored on the source under that key. 'name a non-resource card. The named card cannot be deployed' (Incriminating Photograph).",
+      "cards": [
+        "e2e4ccac-ad74-483f-ae30-520a67cada44"
+      ]
+    },
+    "selector-fromtop-expression": {
+      "status": "implemented",
+      "kind": [
+        "selector",
+        "expression"
+      ],
+      "spec": "CardSelector.fromTop accepts a NumberExpression as well as a number (evaluated when the selector runs). Enables 'reveal up to the top X cards of an opponent's deck' with a player-chosen X (Jackmove).",
+      "cards": [
+        "63358d71-4e67-40e8-811c-6d1d8ce36f3f"
+      ]
+    },
+    "install-replacement-effect": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "ability-kind",
+        "state"
+      ],
+      "spec": "Effect { type:'installReplacement', replaces:ReplacementAbility['replaces'], condition?:Condition, duration:Duration, effects:Effect[] } - registers a runtime replacement on GameState.runtimeReplacements, consulted by applyReplacement alongside card-ability replacements; the affected card binds to __candidate in effects. Swept when duration expires (untilEndOfTurn + an endOfBattle sweep). 'If the character would be destroyed during this battle, take control of it instead' (Sarcophyle Matriculation) - the one-shot form of Vander Malagut's continuous replacement.",
+      "cards": [
+        "e53172ad-eba1-453f-949d-910e4aba0bd6"
+      ]
+    },
+    "grant-subtype": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "state"
+      ],
+      "spec": "Effect { type:'grantSubtype', target:TargetRef, subtype:string, duration:Duration } + GameState.subtypeGrants, merged by a getSubtypes helper every subtype consumer reads (cardSubtypeIs, CardSelector.subtype/subtypeVar, distinctCount by:'subtype', hasAttachment.ofSubtype). 'It gains the sarcophyle subtype' (Sarcophyle Matriculation, Vander Malagut).",
+      "cards": [
+        "e53172ad-eba1-453f-949d-910e4aba0bd6",
+        "2e954d06-4902-495d-8a31-37d9ecd3ee96"
+      ]
+    },
+    "damaged-this-turn-any-source": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type:'damagedThisTurn' } gains by:'any' - true when target received damage from ANY source this turn (scans GameState.damageThisTurn). 'If the character has received damage this turn' (Snake Eyes).",
+      "cards": [
+        "3e04b4b1-a534-458f-b98b-626d045e3c17"
+      ]
+    },
+    "activate-opponents-abilities": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state"
+      ],
+      "spec": "ContinuousAbility.canUseOpponentAbilities?: boolean - while the source is in play, its controller may activate activated abilities on cards their opponent controls: getAvailableActivatedAbilities surfaces them, the numeric (payResources) cost is charged to the controller's own resources, and the ability resolves with ResolutionContext.controllerId = the opponent (so non-numeric costs + effects act 'as though your opponent used it'). 'You may use abilities on your opponent's cards ...' (The Billionaire).",
+      "cards": [
+        "2ec131a8-26eb-4dd7-914d-ced1ca9e770c"
+      ]
+    },
+    "foreach-sequential": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "choice"
+      ],
+      "spec": "Effect `forEach` gains `sequential?: boolean`. Default (false) keeps the existing batched loop (triggers deferred until the whole loop finishes). `true` runs iterations one at a time through the suspendable effect-frame path (mirrors forEachPlayer), so a per-iteration chooser pauses / resumes and triggers fire between iterations. 'That player discards a card. You may deploy a card for free. Repeat until that player has no cards in their hand' (Degenerate Molestation) = `forEach` over the opponent's hand snapshot with `sequential: true`.",
+      "cards": [
+        "f77f9b48-ebfb-4f8f-a32d-46a0309da781"
+      ]
     }
   },
   "parityGaps": {
@@ -1909,6 +2122,12 @@
       "clause": "The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and \"INFLUENCE = 15 + 10*X\" / \"repeat X-1 times\".",
       "needs": "N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.",
       "scope": "xlarge"
+    },
+    "seat-swap": {
+      "summary": "Every player swaps to controlling the opposing side (seats, hands, decks, in-play cards); the owner of the winning deck wins.",
+      "clause": "While this card is in play, each player moves 1 seat to the left. Each player is in control of that opponent's side. If the game ends, the owner of the winning deck wins the game. (Emergency Obfuscation)",
+      "needs": "A player-identity / seat model separate from deck ownership, plus a full control swap of every zone. The engine ties control to player id and player id to deck; untangling that is a game-state refactor.",
+      "scope": "large"
     }
   },
   "cards": [
@@ -24797,12 +25016,14 @@
       "name": "1337!",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "a1af9f0a19ff",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: reduceNextCost {player:controller, amount:4}; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24813,22 +25034,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "0de292e7-cc1a-481a-ad01-697f928caac1",
       "name": "3p1ph4ny 31f",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "dfd9968ae671",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> deployForFree {player:controller, maxCost:999, selector:{zone:hand, conditions:[{not:{cardTypeIs:{cardType:'tactic'}}}]}}; forEachPlayer(opponents) -> deployForFree {player:controller, maxCost:999, selector:{zone:hand, conditions:[not tactic]}}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -24838,21 +25061,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Concession: 'If you do, each opponent may do the same' — the opponent offer is made unconditionally (deployForFree binds no selection id to gate on), which is harmless (they may decline).",
+      "rulesAudited": true
     },
     {
       "id": "3f48476b-28e1-48da-bab0-714147f8a0b3",
       "name": "633fy 31f",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "1fa722e31a4a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.condition: numberCompare({type:'deploysThisTurn', player:controller, notCardType:'resource'}, '>=', 2)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24861,23 +25086,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploys-this-turn-count"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'2 other non-resource cards' — at EXTRA-COST check time this card is not yet deployed, so '>= 2'.",
+      "rulesAudited": true
     },
     {
       "id": "ff8bd2ba-4a15-4de6-9e92-cf2873d3519f",
       "name": "700160x 31f",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "d4299ac37207",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'gear', conditions:[numberCompare({cardCost __candidate}, '<=', 5)]} count 1 optional} -> if(targetExists) putIntoPlay {selected} {controller:controller}; attachTo {selected} source; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24888,21 +25117,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Gear enters play then is re-attached to this character via the attachTo effect.",
+      "rulesAudited": true
     },
     {
       "id": "936d6c91-46c0-4f03-a48e-e64e20e1194b",
       "name": "Adroit Marauder",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "3a2537626c81",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self condition numberCompare(count{owner:opponent, zone:discard}, '>=', 10) {modifiers strength +3, life +3}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24913,9 +25144,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "855cc9b5-b179-462c-85f0-e8e56f37fe59",
@@ -24949,12 +25180,15 @@
       "name": "All-Nighter",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8af176c23085",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.condition {isActivePlayer:controller}",
+          "effects: chooserSelectsTarget{chooser:controller, {controller:self, type:resource, attachedToFaction:true} count 9 optional} -> forEach detach __candidate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24965,21 +25199,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "264958e0-0bc6-44cf-b35d-2b648c292e7b",
       "name": "Ambuscade",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b071cb805c57",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.condition {battleRole:'defender'}",
+          "onPlay.targets [{c:{controller:self, type:character} count 1}, {atk:{type:character, conditions:[{inBattle:{target:__candidate, role:'attacker'}}]} count {battlePartySize:{side:'attacking'}}}]",
+          "effects: bind x = {multiply [{stat {selected c} strength}, 2]}; destroy {selected c}; distributeAmong {chooser:controller, selected:'atk', amount:{variable x}, effects:[dealDamage __candidate {variable __amount}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -24990,21 +25228,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "The 'atk' declaration count == the attacking-party size, so it auto-selects the whole party (no meaningful choice); distributeAmong then splits X among them. bind X (2*strength) before the destroy.",
+      "rulesAudited": true
     },
     {
       "id": "63f657b1-4396-4f46-b571-ad2258201ad7",
       "name": "Amortized Straw Man",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8f2849e849d7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> addCounter source token 3",
+          "continuous self: modifiers strength +{multiply [{counter source token}, -1]}, life +{same}",
+          "activated INSTALLMENT PLAN: costs [payResources 3] -> removeCounter source token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25015,21 +25257,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Proven INVEST-cycle shape.",
+      "rulesAudited": true
     },
     {
       "id": "bcac170a-c55d-4c35-a3a3-b7d167445e5b",
       "name": "Arcana Department",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "6d8ff99be5db",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous partyRestriction {role:'any', parity:'even', scope:'allParties'} -- a location that constrains EVERY forming attacking/blocking party (source is never a party member), rejected in declareAttack/declareBlockers"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25038,11 +25282,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "party-restriction-any-party"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "partyRestriction today only bites parties that include the source; a location needs an all-parties scope. Shares the cap with Hangdog Alley (rogue).",
+      "rulesAudited": true
     },
     {
       "id": "6e63449c-4363-494b-b90a-db1147b4b9a1",
@@ -25128,62 +25374,75 @@
       "name": "Armored Keep",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "f21c2ac5d52f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "continuous {preventsDefeat:{player:'self'}} -- suppress the 'faction at <=0 influence loses' state-based check for this faction while the source is in play"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
-        "unique": null,
+        "unique": "armored keep",
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "cannot-lose-at-zero-influence"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Not wontImplement: it suppresses an existing loss check (checkStateBasedActions ~L7141), it does not add a new win/lose condition.",
+      "rulesAudited": true
     },
     {
       "id": "b3c323b0-c7ea-4970-a286-92df7d2fe2f3",
       "name": "Ashes of Zenobia",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "a38807097941",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> draw 1",
+          "activated NULLIFY: costs [payResources 5] -> forEachPlayer -> chooserSelectsTarget {chooser:controller, {controller:self,type:character} count 1} -> moveCard hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "ashes of zenobia",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "NULLIFY: each player chooses which of their own characters is bounced.",
+      "rulesAudited": true
     },
     {
       "id": "b6b084f1-d30f-45eb-96bc-6bb8e78abb71",
       "name": "Basic Node",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "1ccaf348b663",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'node'} count 1 optional} -> if(targetExists) moveCard hand; shuffleDeck",
+          "triggered:cardDestroyed (sourceIsEventCard) -> forEach {selector:{subtype:'node', conditions:[{not:{isCard:{target:source}}}]}} -> destroy __candidate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25194,21 +25453,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'node card' = any card with the node subtype.",
+      "rulesAudited": true
     },
     {
       "id": "50782d20-e33e-4e94-9f96-43e6b575c4c1",
       "name": "Bask Bile",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "b56d7def22bb",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{t:{conditions:[or(cardTypeIs character, cardTypeIs faction)]} count 1}]",
+          "effects: dealDamage {selected t} 5"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25219,46 +25481,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Damage to a faction converts to influence loss (CR §408.3, already handled).",
+      "rulesAudited": true
     },
     {
       "id": "bb64ac1b-8361-475a-8598-0dd67ce6222b",
       "name": "Beatrix Winterbottom",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "33d98b452466",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "continuous {drawModifiers:[{player:'self', delta:1}]} -- every draw the controller makes draws 1 extra",
+          "continuous condition numberCompare(count{owner:self,zone:hand}, '>=', 10) {drawModifiers:[{player:'self', prevent:true}]}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
-        "unique": null,
+        "unique": "beatrix",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "draw-count-modifier"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "One capability (a ContinuousAbility.drawModifiers list, consulted in drawCards) covers both the +1 and the 'cannot draw' clauses.",
+      "rulesAudited": true
     },
     {
       "id": "a68bfa26-c188-47b6-bdc3-a39cb829f5c2",
       "name": "Befuddling Beggar",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "43ca0076c3f9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated PANHANDLE: costs [deplete source], targets [{c:{type:character} count 1}] -> chooserSelectsOption {chooser:controller, options:[{label:'+1 speed', effects:[createModifier {selected c} speed +1 EOT]}, {label:'-1 speed', effects:[createModifier {selected c} speed -1 EOT]}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25269,9 +25538,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'either gains or loses' — the ability's controller chooses.",
+      "rulesAudited": true
     },
     {
       "id": "9c05a49b-ee31-4b4f-a2da-6ab515d3cb37",
@@ -25306,12 +25575,15 @@
       "name": "Bipolar Sarcophyle",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "c953c33e7460",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> flipCoin {winEffects:[addCounter source token 1], loseEffects:[]}",
+          "continuous self: strength +{counter source token}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25322,21 +25594,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "414941d7-e041-41a5-91e1-3141a518bfc5",
       "name": "Blanching Butcher",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "99587a55dc47",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> modifyInfluence {controller, -3}",
+          "triggered:characterBlocked (sourceIsEventCard) -> createModifier strength +4 EOT; createModifier life +4 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25347,9 +25622,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "77287cd5-34b1-40b0-a3a5-9db4414743e8",
@@ -25383,25 +25658,29 @@
       "name": "Brummagem Jewelry",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "85d920dbeab1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> deplete {attachedTo}",
+          "continuous {restrictions:[{target:{attachedTo}, restriction:'cannotBeRestoredByRule'}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "e7d5d2a9-182a-4dfa-b844-8cf9d9dcc353",
@@ -25435,12 +25714,14 @@
       "name": "Card Counter",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "c51ee0c30890",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> flipCoin {winEffects:[mill {player:opponent, count:3}], loseEffects:[mill {player:opponent, count:2}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25451,21 +25732,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "530a37e6-77d0-4953-bce0-02b08d5f83b7",
       "name": "Cash Out",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8afa494e8919",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay: variables {x: player-chosen}, variableBounds x >=0, costs [payResources {multiply [{variable x}, 2]}]",
+          "effects: draw {controller} {add [{variable x}, 1]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25476,21 +25760,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "8a59c571-2e1d-4d25-8627-befb70cf925e",
       "name": "Catastrophic Betrayal",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "58a8c62e80ae",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.condition {battleRole:'attacker'}",
+          "onPlay.targets [{c:{owner:opponent, zone:discard, type:character} count 1}]",
+          "effects: putIntoPlay {selected c} {controller:controller}; addToBattle {selected c} {side:'attacking'}; deplete {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25501,9 +25789,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "b7967785-218d-4f67-a330-fcfdb0345ff9",
@@ -25537,25 +25825,30 @@
       "name": "Concealed Goon",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b2616b8b51dd",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> modifyInfluence {controller, -5}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "94d257e6-d664-4f24-8582-b468eb08eabc",
@@ -25587,12 +25880,14 @@
       "name": "Crazed Deputy",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "67d665858879",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:attackerBlocked (sourceIsEventCard) -> createModifier strength +2 untilEndOfTurn; createModifier life +2 untilEndOfTurn"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25603,9 +25898,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'When this card is blocked' = attackerBlocked event (maps to the attacker).",
+      "rulesAudited": true
     },
     {
       "id": "5a9fc075-3dd0-4832-a763-fab2dfdf8535",
@@ -25687,12 +25982,14 @@
       "name": "Defenestrate",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "a8e8e740837d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: mill {player:opponent, count:2}; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25703,21 +26000,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "ec1472c0-f3d8-4674-a145-11fef301d906",
       "name": "Defense Attorney",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "49b2de36f4f7",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self {restrictions:[{target:source, restriction:'mustBlock'}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25728,21 +26027,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'must block if it can' IS the mustBlock restriction (RULES.md §9 / combat-restrictions). Always-on; 'when you are attacked' is just when it matters.",
+      "rulesAudited": true
     },
     {
       "id": "f77f9b48-ebfb-4f8f-a32d-46a0309da781",
       "name": "Degenerate Molestation",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "d33aa63bd33d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.noResponse",
+          "onPlay.targets [{opp:{type:faction, controller:opponent} 1}] (pick an opponent -> in 2p just the one)",
+          "effects: repeatUntil { condition: numberCompare(count{owner:opponent,zone:hand}, '=', 0), maxIterations: 20, effects: [ chooserSelectsTarget{chooser:{ownerOf opp}, {owner:opponent,zone:hand} count 1} -> bind x = {cardCost {selected discarded}} -> moveCard discard -> deployForFree {player:controller, maxCost:{variable x}, selector:{zone:hand, conditions:[not resource]}} ] }"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25751,23 +26054,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "foreach-sequential"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'Repeat this card's effect until that player has no cards in their hand' = repeatUntil with a hard iteration cap. deployForFree is per-iteration optional. Concession: bind must capture X before the discard moves the card.",
+      "rulesAudited": true
     },
     {
       "id": "066b5a18-7c0f-4ffc-85dd-51a831c84d7c",
       "name": "Devastating Mockery",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b8e7a031d51c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: if({hasKeyword:{target:{selected c}, keyword:'covert'}}) suppressKeyword {selected c} covert {untilEndOfTurn}; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25778,9 +26086,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "dca4e0b3-c3fa-4907-b6c9-5fd0de2a9f97",
@@ -25812,12 +26120,14 @@
       "name": "Downsizing",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "a41417b3cdad",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: bind x = {count {type:character}}; forEach {selector:{type:character}} -> destroy __candidate; modifyInfluence {player:opponent, amount:{variable x}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25828,21 +26138,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "bind the count BEFORE destroying (forEach snapshots its set anyway). 'each opponent's faction' collapses to the one opponent in 2p.",
+      "rulesAudited": true
     },
     {
       "id": "2fcbb91a-300a-4efb-b045-1de22cb5ca2d",
       "name": "Dragon Catheter",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "56d284becfb9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {type:character, conditions:[isExtremum strength max among {type:character}]} count 1} -> addCounter token 1",
+          "continuous aura {selector:{type:character}, stat:strength, op:add, value:{counter __candidate token}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25853,9 +26166,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'highest strength, ties: you decide' = isExtremum selector, mandatory count-1 pick collapses to the extrema.",
+      "rulesAudited": true
     },
     {
       "id": "515bd953-5632-4e72-9233-53a8ed9af611",
@@ -25889,12 +26202,14 @@
       "name": "Dragon Rider",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "dace3d87c688",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self: modifiers strength +{count {controller:self, subtype:'dragon'}}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25905,21 +26220,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'dragon card you control' — any type with the dragon subtype.",
+      "rulesAudited": true
     },
     {
       "id": "e055ac0a-49d8-4bb0-914b-b039336c5e97",
       "name": "Dragon Tank",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "0d3b92b91776",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {controller:opponent,type:character} count 1 optional} -> if(targetExists) destroy {selected}; else destroy source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25930,9 +26247,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'you may pick ... Otherwise, destroy this card' = optional pick, decline/none -> self-destruct.",
+      "rulesAudited": true
     },
     {
       "id": "eed47373-168e-4ab8-86e2-c0f63d47cc7f",
@@ -25966,12 +26283,14 @@
       "name": "Dragon's Quarters",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "088455487924",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {type:character} count 1 optional} -> if(targetExists) dealDamage {selected} {add [{count {controller:self, subtype:'dragon'}}, 1]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -25982,9 +26301,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'this card inflicts' -> damage source is the location (source).",
+      "rulesAudited": true
     },
     {
       "id": "463d51ef-13f3-4c9c-a90b-a1e1d63b8e98",
@@ -26018,12 +26337,15 @@
       "name": "Ecto-Distillation",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "ea2047a2e730",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay: nameValue {chooser:controller, valueKind:'cardName', storeAs:'named'}",
+          "effects: chooserSelectsTarget{chooser:controller, {owner:self,zone:deck, nameVar:'named'} count 1 optional} -> moveCard hand; forEach {selector:{owner:self,zone:deck,nameVar:'named'}} -> moveCard discard; shuffleDeck; chooserSelectsTarget{chooser:opponent, {owner:self,zone:deck,nameVar:'named'} count 20 optional} -> forEach moveCard discard; shuffleDeck"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26034,9 +26356,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'any number of copies' modelled as a large optional count. 'reveal' is cosmetic. The opponent's optional counter-search puts the copies into the CASTER's discard (they're the deck owner).",
+      "rulesAudited": true
     },
     {
       "id": "5a5250c1-a651-43e4-ac75-f2403860446d",
@@ -26068,37 +26390,48 @@
       "name": "Emergency Obfuscation",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "5ef9c5a20d98",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "triggered:turnStarted (eventPlayerIs controller) -> addCounter source token 1",
+          "triggered:turnEnding (eventPlayerIs controller) condition {counterCompare(source, token, '>=', 2)} -> destroy source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "The 'each player moves 1 seat left / is in control of that opponent's side / owner of the winning deck wins' clause is a full seat/side/deck-ownership swap — a game-format refactor. Token-accrual + self-destruct clauses are authored.",
+      "rulesAudited": true,
+      "parityGaps": [
+        "seat-swap"
+      ]
     },
     {
       "id": "717fbb2b-0b48-4153-aadd-5a5256db61c7",
       "name": "Entrancing Harlot",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "bad4fd591022",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterAttacked (sourceIsEventCard) -> forEach {selector:{type:character, conditions:[{sharesBattlePartyWithSource:{target:__candidate}}, {not:{isCard:{target:source}}}]}} -> createModifier speed +1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26109,21 +26442,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'other members of its party' = shares source's battle party, minus source.",
+      "rulesAudited": true
     },
     {
       "id": "dba0f535-7024-4592-89cc-4419ec680978",
       "name": "Epiphanal Mechanic",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "c0f89909694e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated DEVELOPMENT: costs [deplete source] -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, type:item} count 1 optional} -> moveCard hand; shuffleDeck",
+          "activated DEPLOYMENT: costs [deplete source] -> deployForFree {player:controller, maxCost:999, selector:{zone:hand, type:item}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26134,21 +26470,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "375df0d1-3259-41c6-b70a-7fea51496abd",
       "name": "Erotic Assassin",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "ec2f540cbec5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self {restrictions:[{restriction:'cannotBeRestoredByRule'}, {restriction:'attackOncePerTurn'}]}",
+          "activated RESTORE: costs [payResources 2] -> restore source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26159,21 +26498,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "1d851c52-991f-4c24-9a1d-b56575677bfb",
       "name": "Executive Poaching",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "415cd2201f3d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "chooserSelectsTarget{chooser:controller, {controller:opponent, type:character, conditions:[isExtremum {metric:'cost', direction:'max', among:{controller:opponent, type:character}}]} count 1} -> destroy {selected}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26184,9 +26525,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Ties -> the extrema pool, caster picks.",
+      "rulesAudited": true
     },
     {
       "id": "6fefce63-dfc6-41e7-80f0-8b46c8a9a76f",
@@ -26220,12 +26561,16 @@
       "name": "Ferrous Ferret",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "bcac1d0c4497",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self {restrictions:[{restriction:'mustBePicked'}]}",
+          "triggered:cardPicked (sourceIsEventCard) -> addCounter source token 1",
+          "continuous self: strength +{counter source token}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26234,23 +26579,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "card-picked-trigger"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "mustBePicked already exists; need a cardPicked event emitted when a card is finalized as a target.",
+      "rulesAudited": true
     },
     {
       "id": "6e28ba40-77e6-471f-9872-ec49f0a8e4e8",
       "name": "Flaming Barduse",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "0e1cbfa3b032",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{picked:{type:character} count 2 optional}]",
+          "onPlay.effects: if(targetExists {selected picked}) distributeAmong {chooser:controller, selected:'picked', amount:2, effects:[dealDamage __candidate {variable __amount}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26261,21 +26611,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ETB inline in onPlay.effects so it can read the onPlay picks. 'up to 2 damage' -> distributeAmong amount 2 (chooser may assign less).",
+      "rulesAudited": true
     },
     {
       "id": "3d8b7973-4c92-433f-be56-a0cb0fd911ea",
       "name": "Forced Recruitment",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b4c4316ebe0d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated (tactic body): condition {respondingTo {respondsTo:'card', cardType:'character'}}, costs [payResources {cardCost {respondedToCard}}], effects: rememberTarget 'stolen' {respondedToCard}; terminate {scope:'respondedItem'}; putIntoPlay {remembered 'stolen'} {controller:controller}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26286,9 +26638,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Exact Patent Enforcement pattern (1st Edition Part 2), character instead of item.",
+      "rulesAudited": true
     },
     {
       "id": "ea9b719e-c8ee-4911-9dfd-dd4ecfa842ce",
@@ -26322,13 +26674,15 @@
       "name": "Free Trade Agreement",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "f231c9020092",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:turnStarted -> chooserSelectsOption {chooser:activePlayer, options:[ OPT1: [mayPay-decline draw 1 (activePlayer); forEachPlayer(opponent) mayPay-decline playResource], OPT2: [mayPay-decline playResource (activePlayer); forEachPlayer(opponent) mayPay-decline draw 1], OPT3: [forEachPlayer: chooserSelectsOption decline / draw 1, twice], OPT4: [forEachPlayer: chooserSelectsOption decline / playResource, twice] ]}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -26338,21 +26692,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'up to 2' modelled as two independent optional steps; 'may' as decline branches. All composes from existing vocab.",
+      "rulesAudited": true
     },
     {
       "id": "7efcb6ee-1e46-41c4-a123-8f75cfd95719",
       "name": "Ghostly Auditor",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "4658612e876a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self condition numberCompare(count{controller:self,type:character}, '=', 1) {keywords:[covert]}",
+          "triggered:damageDealt (and[sourceIsDamageSource, cardTypeIs {eventCard} faction]) -> draw {controller} 2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26363,21 +26720,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'only 1 character' counts this card itself -> '= 1'.",
+      "rulesAudited": true
     },
     {
       "id": "1a988e25-bd1f-47e0-995e-1a7a72306961",
       "name": "Gold Summit",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "fd9a3b19dca5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardsDrawn (eventPlayerIs controller) -> modifyInfluence {controller, amount:{type:'eventDrawAmount'}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26386,23 +26745,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "event-draw-amount-expression"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "cardsDrawn already carries `count`; just need the expression that reads it (parallel to eventDamageAmount).",
+      "rulesAudited": true
     },
     {
       "id": "3f6972bf-88bd-4b14-af92-d6356979c155",
       "name": "Grand Theft All",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "cc4484c5ec49",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "chooserSelectsTarget{chooser:controller, {owner:opponent, zone:discard, conditions:[{not:{cardTypeIs:{cardType:'tactic'}}}]} count 4 optional} -> forEach putIntoPlay __candidate {controller:controller}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26413,9 +26776,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "1b675619-bee8-41ed-8562-d4d9c763ad05",
@@ -26447,12 +26810,14 @@
       "name": "Gruesome Trophies",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "8584ea27467d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {type:character} count 1 optional} -> if(targetExists) deplete {selected}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26463,9 +26828,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "2fcbabbe-1a09-4d83-a419-8f08c8bf6f90",
@@ -26499,12 +26864,14 @@
       "name": "Hangdog Alley",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e2b604ff1ecc",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous {partyRestriction:{role:'attacking', minMembers:1, maxMembers:1, scope:'allParties'}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26513,11 +26880,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "party-restriction-any-party"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'only 1 member' = min 1 + max 1; location -> all-parties scope. Shares the cap with Arcana Department (which also needs maxMembers added).",
+      "rulesAudited": true
     },
     {
       "id": "830d3c0a-52dd-423b-a713-73a16f4ed80f",
@@ -26576,12 +26945,14 @@
       "name": "Heist Planner",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b05fc39f66a1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {owner:opponent, zone:deck} count 3 optional, distinctNames:true} -> forEach moveCard discard; shuffleDeck {opponent}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26592,34 +26963,40 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "a4396480-efb3-4382-bf85-51331246e5c7",
       "name": "Hidden Sandwich",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "5b300d272eb9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [tactical]",
+          "attachTo character",
+          "replacement {replaces:{event:'destroy', cardType:'character'}, condition:{isCard:{target:{attachedTo}}}, effects:[destroy source; setDamage {attachedTo} 0]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Replacement scoped to the attached character via isCard(attachedTo). The 'reduce damage to 0' clause is the replacement effect, so the host survives clean.",
+      "rulesAudited": true
     },
     {
       "id": "bda717f9-94fe-4684-b424-4870061d759b",
@@ -26653,12 +27030,16 @@
       "name": "Hub Node",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "03f4b37f4919",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> optional deck search {subtype:'node'} -> moveCard hand; shuffleDeck",
+          "triggered:cardDestroyed (sourceIsEventCard) -> forEach {subtype:'node', not isCard source} -> destroy",
+          "continuous self: modifiers strength +{count {subtype:'node', conditions:[{not:{isCard:{target:source}}}]}}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26669,21 +27050,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "30012fd1-7785-4090-8787-ae61fc48f2dd",
       "name": "Humiliating Torture Apparatus",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "7ae9aa405a43",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardDepleted -> modifyInfluence {player:{controllerOf eventCard}, amount:-1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26694,21 +27077,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Resources attaching to a faction on use don't emit cardDepleted (matches the printed reminder text).",
+      "rulesAudited": true
     },
     {
       "id": "a743615f-6309-4e62-be44-6531e7630e47",
       "name": "Hyperphagic Sarcophyle",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "ab8b5bafc5ba",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:damageDealt (and[sourceIsDamageSource, cardTypeIs {eventCard} faction]) -> chooserSelectsOption [decline] / [addCounter source token 1]",
+          "continuous self: strength +{counter source token}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26719,21 +27105,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'put a token on it' -> on this card (source).",
+      "rulesAudited": true
     },
     {
       "id": "97b1e279-1f9e-4787-8f3b-997293a6e928",
       "name": "Hypnotic Plafond",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "2cd1fc77383f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous {damageModifiers:[{selector:{type:faction, controller:self}, sourceSelector:{conditions:[{hasKeyword:{keyword:'covert'}}]}, battleOnly:true, delta:0, minAmount:1, setTo:0}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26744,21 +27132,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Concession: 'characters in COVERT parties' approximated as COVERT dealers (a lone COVERT attacker is a COVERT party — the common case). No 'attacking party is entirely COVERT' predicate exists.",
+      "rulesAudited": true
     },
     {
       "id": "979d3623-d758-4c61-b765-6e8b7b1eb4d5",
       "name": "I Got the Gear!",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8dd06cc51085",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'gear'} count 1 optional} -> moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26769,21 +27159,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3efac444-67eb-4131-a1a8-e884db6d79b3",
       "name": "Impulsive Abductress",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "44f0d8c92369",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated KIDNAP: costs [destroy source], targets [{c:{type:character, conditions:[{inBattle:{target:__candidate}}]} count 1}] -> destroy {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26794,22 +27186,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'attacking or blocking character' = inBattle (any role).",
+      "rulesAudited": true
     },
     {
       "id": "e2e4ccac-ad74-483f-ae30-520a67cada44",
       "name": "Incriminating Photograph",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "89bda8cde254",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> nameValue {chooser:controller, valueKind:'cardName', storeAs:'banned'}",
+          "continuous {playRestrictions:[{player:'any', kind:{named:'banned'}}]}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -26817,23 +27212,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "play-restriction-by-name"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Extend ContinuousAbility.playRestrictions[].kind to {named:string} reading a nameValue stored on the source. 'for the rest of the game' = while source in play.",
+      "rulesAudited": true
     },
     {
       "id": "f3dfbded-b1d6-4f2d-accc-70839e0edfdd",
       "name": "Index of Natural Forces",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "63c5c57743d2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated CAPITALIZE: costs [payResources 1, deplete source] -> draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26844,46 +27243,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "c46cdf47-bad8-411c-a89f-387d69c1e115",
       "name": "Insidious Ecto-Manipulator",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "b91a3e403401",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {controller:self, conditions:[not cardTypeIs resource]} count 1 optional} -> if(targetExists) addCounter token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "407c0aa1-fc27-4190-930d-cdffb0468606",
       "name": "Intermittently Sneaky Lawyer",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "63dbd3ff63f1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous self condition numberCompare(count{owner:self,zone:hand}, '>=', 6) {modifiers:[strength +1], keywords:[covert]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26894,21 +27300,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "12b9e68e-852b-44ed-b69d-eb53660dfe6a",
       "name": "Invent",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8f3a865ff262",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay: variables {x}, variableBounds x >=0, costs [payResources {multiply [{variable x}, 2]}]",
+          "effects: chooserSelectsTarget{chooser:controller, {owner:self, zone:deck} count {add [{variable x}, -1]} optional} -> forEach moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26919,21 +27328,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "X-1 clamps at 0.",
+      "rulesAudited": true
     },
     {
       "id": "8e36b4a0-419d-413d-9512-b539e37681aa",
       "name": "Irresistible Bribe",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "3480fe277723",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: bind x = {stat {selected c} strength}; destroy {selected c}; modifyInfluence {player:{ownerOf {selected c}}, amount:{variable x}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26944,22 +27356,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'that character's controller' resolved as ownerOf after the destroy (minor concession for a stolen character).",
+      "rulesAudited": true
     },
     {
       "id": "63358d71-4e67-40e8-811c-6d1d8ce36f3f",
       "name": "Jackmove",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "f2f0f33933a8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "onPlay: variables {x}, variableBounds x >=0, costs [payResources {multiply [{variable x}, 2]}]",
+          "effects: forEach {selector:{owner:opponent, zone:deck, fromTop:{variable x}}} -> [ if(or[cardTypeIs character, cardTypeIs item]) putIntoPlay __candidate {controller:controller}; if(not(or[char,item])) moveCard __candidate discard ]"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -26967,23 +27382,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "selector-fromtop-expression"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "CardSelector.fromTop must accept a NumberExpression (today number-only). Single forEach over the top-X snapshot routes each card so removals don't shift the window.",
+      "rulesAudited": true
     },
     {
       "id": "7877af1b-ff36-46fc-bf0c-766009928366",
       "name": "Jacque's Trap",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "4a7512d8b413",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated IT'S A TRAP!: targets [{c:{type:character, conditions:[{inBattle:{target:__candidate, role:'attacker'}}]} count 1}], costs [destroy source] -> destroy {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -26994,59 +27413,66 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "6c7ee5df-9a79-472e-972a-90aed116b9d4",
       "name": "Jo Ciendeilio",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e618fe1c6987",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RESEARCH: costs [deplete source] -> reduceNextCost {player:controller, amount:3}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "jo",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f06da0b2-9539-4171-b968-38dfb9ae9523",
       "name": "Jumping Screamspider",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0ca26a69d11e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "activated SCREAM: effects: suppressKeyword source covert EOT; forEach {selector:{type:character, conditions:[{inBattle:{target:__candidate}}, {not:{sharesBattlePartyWithSource:{target:__candidate}}}]}} -> createModifier __candidate speed -2 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Concession: the effect snapshots the opposing party at activation instead of a live 'while this card is in a battle' aura. SCREAM is used mid-battle so the snapshot is the same set in practice.",
+      "rulesAudited": true
     },
     {
       "id": "90a923f7-847e-4b87-9a28-eab4b3cd4340",
@@ -27081,12 +27507,15 @@
       "name": "Knobby Stave",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "a55c0d480a12",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> addCounter source token 2",
+          "activated DISRUPT: costs [removeCounter source token 2] -> chooserSelectsTarget{chooser:opponent, {owner:opponent,zone:hand} count 1} -> moveCard discard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27097,9 +27526,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3a49aa60-2843-4234-a888-464f6e556506",
@@ -27131,12 +27560,14 @@
       "name": "Limited Liability",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "15bd3b88c627",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: restrictDestruction {duration:{untilEndOfTurn}}; preventAllDamage {duration:{untilEndOfTurn}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27147,34 +27578,39 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Same as the Ungodly Mess Limited Liability instance — both capabilities already implemented.",
+      "rulesAudited": true
     },
     {
       "id": "9637226d-3115-48cd-bf92-b6946d7eafed",
       "name": "Lugubrian Octopod",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "48d1f30e4221",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "triggered:damageDealt (and[sourceIsDamageSource, cardTypeIs {eventCard} faction]) -> chooserSelectsTarget{chooser:{ownerOf eventCard}, {owner:opponent,zone:hand} count 2} -> forEach moveCard discard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'that faction's controller' = ownerOf the faction card. count 2 collapses to hand size if smaller.",
+      "rulesAudited": true
     },
     {
       "id": "a59b90bd-20f7-4ea2-ba2f-82ebaecd48d8",
@@ -27208,12 +27644,14 @@
       "name": "Lugubrious Node",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0f675768bfd6",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RECONSTRUCT: targets [{n:{owner:self, zone:discard, subtype:'node'} count 1}], costs [payResources 1, deplete source] -> moveCard {selected n} deck; shuffleDeck {ownerOf {selected n}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27224,96 +27662,111 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "CONCESSION: 'This card cannot be destroyed by the effects of node cards' is not modelled — it would need destroy-effect scoping by the source card's subtype (a one-clause corner on an uncommon item; consistent with existing per-card concessions). RECONSTRUCT is authored fully.",
+      "rulesAudited": true
     },
     {
       "id": "c2af6000-b2bc-42db-9048-66e482c2d330",
       "name": "Luteoderm Armor",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "240ae4d46231",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "continuous {target:{attachedTo}, modifiers strength +2, life +2}",
+          "activated HANDOFF: targets [{h:{controller:self, type:character, conditions:[{not:{inBattle:{target:__candidate}}}]} count 1}], costs [payResources 3, deplete {selected h}] -> attachTo source {selected h}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "7a1fea92-3899-423c-bf8c-ea859b083df0",
       "name": "Luteoderm Goliath",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "2f2b4ff8bc42",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "continuous {target:{attachedTo}, modifiers strength +11, life +11}",
+          "activated HANDOFF: targets [{h:{controller:self, type:character, conditions:[{not:{inBattle:{target:__candidate}}}]} count 1}], costs [payResources 6, deplete {selected h}] -> attachTo source {selected h}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "591b62d8-1c20-4756-9dc0-6603d7662c83",
       "name": "Luteoderm Prototype",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "293739453e0d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "continuous {target:{attachedTo}, modifiers strength +1, life +1}",
+          "triggered:cardMoved (and[{eventCardIs:{target:{attachedTo}}}, {cardMovedFromZone:'play'}]) -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck} count 1 optional} -> moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'attached character leaves play' = cardMoved from play where the event card is this item's host.",
+      "rulesAudited": true
     },
     {
       "id": "3ffd38c8-6661-4ff5-9c61-fc03031ca469",
       "name": "Mafia Lawyer",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "1cc73355b86f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> modifyInfluence {controller, -2}",
+          "triggered:cardDestroyed (and[sourceIsEventCard, battleActive]) -> modifyInfluence {controller, amount:{sumStat {selector:{type:character, conditions:[{inBattle:{target:__candidate}}, {not:{sharesBattlePartyWithSource:{target:__candidate}}}]}, stat:strength}}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27324,21 +27777,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'opposing party' selector = in the battle, not sharing source's party. 'during a battle' = battleActive at trigger time (broader than destroyedByBattleDamage, matching the printed text).",
+      "rulesAudited": true
     },
     {
       "id": "d95acacb-9666-4421-96ff-b7303886ba22",
       "name": "Magic Vault",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8ed2be66a209",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsTarget{chooser:controller, {type:faction} count 1 optional} -> if(targetExists) modifyInfluence {player:{ownerOf selected}, amount:2}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27349,9 +27804,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "7df6578a-4cbd-4460-a7fc-991c7c36eb21",
@@ -27383,12 +27838,14 @@
       "name": "Master Ritualist",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "d9237702bfcd",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated QUOTIDIAN INSTRUCTION: costs [deplete source] -> chooserSelectsTarget{chooser:controller, {owner:self,zone:deck,type:tactic} count 1 optional} -> moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27399,21 +27856,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "93b8631a-c2f2-4c9b-8c22-c5d12672a329",
       "name": "Master Scavenger",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "3eb7502a3116",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RECLAIM: targets [{cs:{owner:opponent, zone:discard} count 3}], costs [sacrificeSelected 'cs' {disposition:'removeFromGame'}] -> createModifier source strength +1 EOT; createModifier source life +1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27424,21 +27883,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "91af3988-3b58-4d90-bdd9-4f11ffa25d29",
       "name": "Mau “Consultant”",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "959b13ef241e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> draw {controller} 1; modifyInfluence {controller, -2}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27449,21 +27910,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "0b918764-9433-4dd1-96ae-6c2aa3d01d92",
       "name": "Mau Tough",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "42f56c868307",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> modifyInfluence {controller, -4}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27474,21 +27937,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "d25a15e6-3f64-484a-bc42-5121528329c7",
       "name": "Meager Research",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "7ead9fc29db3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: rememberTarget 'revealed' {deckPosition player:opponent from:top}; moveCard {remembered 'revealed'} hand; chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, conditions:[{cardTypeEquals:{target:__candidate, other:{remembered:'revealed'}}}]} count 1 optional} -> moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27499,9 +27964,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Remember the revealed top card before moving it so its type is readable for the same-type search.",
+      "rulesAudited": true
     },
     {
       "id": "d56eb93a-2971-4b24-8135-624469d9dc61",
@@ -27535,12 +28000,15 @@
       "name": "Micromajig Avalanche",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e10fb5da2eb1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay: variables {x}, variableBounds x >=0, costs [payResources {multiply [{variable x}, 2]}]",
+          "effects: createTokens {controller, count:{variable x}, token:{name:'Micromajig', cardType:'character', subtype:['majig'], strength:1, life:1, speed:3}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27551,21 +28019,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Open Beta Micromajig reminder text says 'the majig subtype'; name 'Micromajig' for name-based selectors.",
+      "rulesAudited": true
     },
     {
       "id": "040f72fb-1b6a-4b7b-aa30-904f1199fc66",
       "name": "Micromajig Factory",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0573f3435f26",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated WIND UP: costs [payResources 4] -> createTokens {controller, count:1, token:Micromajig(1/1/3, subtype majig)}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27576,21 +28046,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "497ffcb2-6a2e-40ee-a91d-1d608ecd7225",
       "name": "Micromajig Maker",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "d12bc7cd91df",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsOption [decline] / [createTokens {controller, count:1, token:Micromajig}]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27601,21 +28073,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "71148cc0-f98a-4636-a0ed-2c5c0b206cae",
       "name": "Micromajig Master",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "318854b2b46f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsOption [decline] / [createTokens {controller, count:2, token:Micromajig}]",
+          "activated TINY SACRIFICES: targets [{toks:{controller:self, name:'Micromajig'} count 3}], costs [sacrificeSelected 'toks' {disposition:'destroy'}] -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck} count 1 optional} -> moveCard hand; shuffleDeck"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27626,9 +28101,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "37093105-be92-4b4d-86bb-d994eaf0fff0",
@@ -27691,37 +28166,44 @@
       "name": "Nearby Serpent",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "6821bead730b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {type:faction} count 1} -> lookAndReorder {player:{ownerOf selected}, chooser:controller, count:5}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'any one deck' = pick a faction card, reorder that owner's top 5. Same shape as Infatuated Armchair (1st Ed Part 2).",
+      "rulesAudited": true
     },
     {
       "id": "69676be7-99c3-4e06-908b-406a76439ce2",
       "name": "Necromorph Bureaucrat",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "d802bf9d83fe",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated SUBJUGATE: costs [deplete source], targets [{cs:{type:character} count 2 optional}] -> forEach {selected:'cs'} -> deplete __candidate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27732,9 +28214,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "dab6e897-b5be-4760-95c0-20c2795a9ae3",
@@ -27793,12 +28275,16 @@
       "name": "One-Legged Hopping Pogo-Bear",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "1c513a1a0cc2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RAAR!: costs [payResources 2] -> setCardType {source, cardType:'character', grantStats:{strength:3, life:3, speed:3}, duration:{untilEndOfTurn}}",
+          "activated SCHPROING!: condition {isActivePlayer:controller}, costs [payResources 2] -> if({cardTypeIs:{target:source, cardType:'character'}}) grantKeyword source covert {untilEndOfTurn}",
+          "activated HIDE!: costs [payResources 1] -> if({cardTypeIs:{target:source, cardType:'character'}}) removeCardType source 'character'; deplete source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27809,9 +28295,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Same setCardType/removeCardType pattern as Frickin' Sweet Pogo-Bunny (SotDE).",
+      "rulesAudited": true
     },
     {
       "id": "8291e81e-f33c-4e7b-82b2-46df44112428",
@@ -27843,12 +28329,14 @@
       "name": "Paralegal Prodigy",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "074da1a6de8a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous aura {selector:{controller:self, type:character, subtype:'lawyer', conditions:[{not:{isCard:{target:source}}}]}, modifiers strength +1, life +1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27859,21 +28347,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'other' -> exclude source via isCard+not.",
+      "rulesAudited": true
     },
     {
       "id": "80e8609e-a1a2-4f0f-8d77-d455fcb1a9aa",
       "name": "Pettifogger",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "7bf91417c236",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:characterBlocked (sourceIsEventCard) -> destroy source; forEach {selector:{type:character, conditions:[{inBattle:{target:__candidate}}, {not:{sharesBattlePartyWithSource:{target:__candidate}}}]}} -> destroy __candidate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27884,21 +28374,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'members of the attacking party' = in the battle, not in source's (blocking) party.",
+      "rulesAudited": true
     },
     {
       "id": "ca14cfec-3ab4-4da6-af9b-2966b31b6716",
       "name": "Pillaging Pirate",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "7874a9dd6474",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> mill {player:opponent, count:2}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27909,9 +28401,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "4915d5ec-b028-4753-96ae-f42c84b5d8b3",
@@ -27943,37 +28435,42 @@
       "name": "Pluck",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "26847effc66d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated GRIFT: condition {isActivePlayer:controller}, costs [payResources 5, deplete source], targets [{c:{owner:opponent, zone:discard, conditions:[{not:{cardTypeIs:{cardType:'tactic'}}}]} count 1}] -> putIntoPlay {selected c} {controller:controller}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "pluck",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fc374879-4a9a-44a8-a694-15c4f51d82cc",
       "name": "Postmortem Debenture",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0ddec5b604a2",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{owner:self, zone:discard, type:character} count 1}]",
+          "effects: moveCard {selected c} hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27984,21 +28481,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5c255291-fcc3-4da2-bb84-963d3b7ca378",
       "name": "Precise Sabotage",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "2cf5c7c1fba9",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{i:{type:item} count 1}]",
+          "effects: destroy {selected i}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28009,21 +28509,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "649b8392-cacc-410d-9f4f-87902111a923",
       "name": "Pyramid Scheme",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "62c0e572649d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: flipCoin {player:controller, winEffects:[draw {controller} 3], loseEffects:[draw {controller} 2]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28034,9 +28536,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "EXTRA COST coin flip modelled as the tactic's first effect (no card hooks the flip).",
+      "rulesAudited": true
     },
     {
       "id": "c532e23b-4ef7-4d19-a7f7-5f6acaee4ff8",
@@ -28098,12 +28600,14 @@
       "name": "Quotidian Misfire",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "89142f6f5b04",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effect redirectHandMoves {who:'any', to:'discard', duration:{untilEndOfTurn}} -- a this-turn runtime window (like preventAllDamage / restrictDestruction): any card that would move to a hand from ANY zone goes to that owner's discard instead"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28112,23 +28616,27 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "redirect-hand-moves"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Today moveToZone replacements only fire on from==='play'; this needs a destination-side window for to==='hand' from any origin (incl. draw / discard-recur / bounce).",
+      "rulesAudited": true
     },
     {
       "id": "06dceb26-b7b7-49c4-b66c-9fd1b93ef09a",
       "name": "Rabid Sarume",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "5c97da26be63",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> forEach {selector:{controller:opponent, type:character}} -> dealDamage __candidate 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28139,9 +28647,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fe913bf8-b4eb-411a-a8b8-dcaf0095c90e",
@@ -28202,12 +28710,16 @@
       "name": "Rapine",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "28d4549c5a6d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{sac:{controller:self, conditions:[{or:[{cardTypeIs character},{cardTypeIs item}]}]} count 1}, {c:{type:character} count 1}]",
+          "onPlay.costs [{type:'destroy', target:{selected sac}}]",
+          "effects: takeControl {selected c} {controller:controller}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28218,9 +28730,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Permanent take-control (no 'this turn').",
+      "rulesAudited": true
     },
     {
       "id": "69d7cd35-3c28-4d48-ae5e-529de29aab92",
@@ -28254,37 +28766,45 @@
       "name": "Ravenous Wolf",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "c0c37d3f0ea1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keywords [covert, tactical]",
+          "triggered:cardEnteredPlay (and[sourceIsEventCard, {not:{isActivePlayer:controller}}]) -> chooserSelectsTarget{chooser:controller, {controller:self, name:'Deception'} count 1 optional} -> if(targetExists) destroy {selected}; else destroy source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert",
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'deployed during an opponent's turn' = not isActivePlayer(controller) at ETB. 'destroy a Deception ... or destroy this' modelled as optional pick -> keep only if a Deception is sacrificed.",
+      "rulesAudited": true
     },
     {
       "id": "93e4cad7-05bb-4273-acdd-61af6f0f7072",
       "name": "Reckless Challenger",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "39265f86e5f8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnEnding (eventPlayerIs controller) condition and[inPlaySinceTurnStart source, not {attackedThisTurn source}] -> destroy source"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28293,48 +28813,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "attacked-this-turn-condition"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "GameState.attacksThisTurn already exists (attack-limit-per-turn); just need the read-side condition.",
+      "rulesAudited": true
     },
     {
       "id": "a245b36b-d2f0-48f2-9892-331dbb3d84b1",
       "name": "Recondite Hunter",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e2822abf29b1",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword covert",
+          "triggered:characterAttacked (sourceIsEventCard) -> suppressKeyword source covert EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "8dafb23c-7d22-4580-862b-d7641f7ab338",
       "name": "Red Raven",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "1157e91e5dba",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:coinFlipped -> chooserSelectsOption [decline] / [addCounter source token 1]",
+          "continuous self: strength +{counter source token}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28345,21 +28875,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "a8907a4c-da9b-43c0-acab-f190beaa3c07",
       "name": "Red Tape",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "ee43d8ddcd0c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: createModifier {selected c} strength {op:add, value:-3, duration:{untilEndOfTurn}}; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28370,9 +28903,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "2bb93344-f467-4c54-8090-df1562fff717",
@@ -28406,12 +28939,14 @@
       "name": "Repo Man",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "455d7bdb12ed",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {type:location} count 1 optional} -> if(targetExists) destroy {selected}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28422,21 +28957,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "871550db-572a-4046-a301-b42e2e89d137",
       "name": "Research Assistant",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "a979b9105166",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated RESEARCH: costs [deplete source] -> reduceNextCost {player:controller, amount:1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28447,21 +28984,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "828a6b95-9e5f-4035-b348-6258c1937c87",
       "name": "Research Investment",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "39a8c9586007",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "forEachPlayer -> chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, type:resource, staple:true} count 3 optional} -> forEach putIntoPlay __candidate {controller:controller}; shuffleDeck {controller}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28472,21 +29011,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'put them into play' -> staples enter as face-up resources via putIntoPlay.",
+      "rulesAudited": true
     },
     {
       "id": "f8c93f53-39d6-4488-936f-5a4b4a7f028b",
       "name": "Resurrection Technician",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "4388117e0282",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {owner:self, zone:discard, type:character} count 1 optional} -> if(targetExists) moveCard {selected} hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28497,21 +29038,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "6dcca61c-61da-4e12-957a-bd2c073d1646",
       "name": "Reveille Tower",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "62a5090fd918",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous aura {selector:{controller:self, type:character}, stat:strength, op:add, value:1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28522,9 +29065,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "0f2fc8b5-c078-4ccb-b7c1-8c34b62413e4",
@@ -28558,12 +29101,15 @@
       "name": "Ritual of the Shattering Teeth",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "6b3543317035",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay: variables {x: player-chosen}, variableBounds x >=0, costs [payResources {multiply [{variable x}, 2]}]",
+          "effects: chooserSelectsTarget{chooser:controller, {owner:opponent,zone:hand} count {variable x} optional} -> forEach moveCard discard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28574,46 +29120,52 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "X+X = pay 2X. Caster looks at opponent hand and chooses (chooser:controller over an opponent-hand selector).",
+      "rulesAudited": true
     },
     {
       "id": "e43caacb-ae68-4f69-a1c3-175cc53ecfa6",
       "name": "Rocket Boots",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "c8c7a25aa604",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "continuous {target:{attachedTo}, modifiers strength +1, speed +1}",
+          "activated HANDOFF: targets [{h:{controller:self, type:character, conditions:[{not:{inBattle:{target:__candidate}}}]} count 1}], costs [payResources 3, deplete {selected h}] -> attachTo source {selected h}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "fa7f460c-f5a8-4b96-bcaf-7f130e853b73",
       "name": "Rudimentary Lathe",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "015680fad637",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous {costModifiers:[{affects:controller, delta:-1, minCost:1, selector:{type:item}}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28624,46 +29176,51 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "51827cec-b647-4048-bf85-e6f84a66ae17",
       "name": "Rudo Mangod",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "9ada667fb66b",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated PUNCH: costs [payResources 2, deplete source], targets [{c:{type:character} count 1}] -> bind x = {stat {selected c} strength}; bind y = {stat source strength}; dealDamage source {variable x}; dealDamage {selected c} {variable y}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "rudolphus",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "bind X and Y before the damage so both read pre-damage strengths.",
+      "rulesAudited": true
     },
     {
       "id": "51072a53-30d2-4f56-9bec-0e143225d209",
       "name": "Runic Cannon",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e6970f956000",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated LOAD: costs [payResources 3] -> addCounter source token 1",
+          "activated FIRE: variables {x:{counter source token}}, costs [deplete source], targets [{c:{type:character} count 1}] -> dealDamage {selected c} {variable x}; removeCounter source token {variable x}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28674,21 +29231,25 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "ability.variables evaluate before costs -> X captured before 'remove all tokens'.",
+      "rulesAudited": true
     },
     {
       "id": "f8e50a76-21e1-4d48-a150-af73c07be2fb",
       "name": "Runic Circuitry",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "8e1434af10f8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> addCounter source token 2",
+          "activated CONSTRUCT: costs [payResources 3, deplete source] -> removeCounter source token 1",
+          "activated POWER-UP: condition {counterCompare(source, token, '=', 0)}, costs [deplete source] -> reduceNextCost {controller, 3}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28699,22 +29260,26 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "e53172ad-eba1-453f-949d-910e4aba0bd6",
       "name": "Sarcophyle Matriculation",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e4bc10f1860d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "onPlay.condition {battleRole:'defender'}",
+          "onPlay.targets [{c:{controller:opponent, type:character} count 1}]",
+          "effects: installReplacement {replaces:{event:'destroy'}, condition:{isCard:{target:{selected c}}}, duration:{endOfBattle}, effects:[takeControl {selected c} {controller:controller}; setDamage {selected c} 0; grantSubtype {selected c} 'sarcophyle' {permanent}]}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -28722,23 +29287,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "install-replacement-effect",
+        "grant-subtype"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "One-shot form of Vander Malagut's continuous 'would be destroyed -> take control instead'. Needs an effect that installs a runtime replacement (GameState list consulted by applyReplacement), swept endOfBattle.",
+      "rulesAudited": true
     },
     {
       "id": "acf84206-ef48-4274-8d7d-fd3b38e6152a",
       "name": "Scavengemajig",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "149f6caeb883",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {owner:self, zone:discard, type:item} count 1 optional} -> moveCard hand",
+          "triggered:cardMoved (and[sourceIsEventCard, {cardMovedFromZone:'play'}]) -> (same optional discard-item -> hand)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28749,9 +29320,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'enters or leaves play' = two triggers.",
+      "rulesAudited": true
     },
     {
       "id": "de3dc0cc-486f-400a-86c2-07086615b78f",
@@ -28783,12 +29354,15 @@
       "name": "Scrag",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "7eafc363233a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: bind x = {stat {selected c} life}; if(numberCompare({count {owner:'opponent', zone:'discard'}}, '>=', {variable x})) destroy {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28799,21 +29373,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Concession: 'that character's controller's discard' modelled as {owner:'opponent'} (Scrag is removal — you never target your own character). Ritual of the Knob & Pull uses a controllerOf PlayerRef for a resourceIcons count; a discard count can't take a PlayerRef, hence the concession.",
+      "rulesAudited": true
     },
     {
       "id": "00c31fbb-a04b-4087-9023-60f09566fd44",
       "name": "Secret Handshake",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "d0486052437a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: createModifier {selected c} life +4 EOT; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28824,46 +29401,53 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "c59b13a2-cea4-4689-8ee8-0d27bcc19562",
       "name": "Securitymajig",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0fd43e78e297",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.keywords [canBlockCovert]",
+          "triggered:characterBlocked (sourceIsEventCard) -> createModifier strength +3 {untilEndOfTurn}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "canBlockCovert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Concession: the 'blocks a COVERT party' qualifier on the strength trigger is not checked (no 'attacking party is COVERT' condition). Securitymajig's role is COVERT blocking, so over-trigger is a rare edge (blocking a non-COVERT party).",
+      "rulesAudited": true
     },
     {
       "id": "769bc729-4357-41d8-a71a-e8b3679d2102",
       "name": "Selective Gluttony",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "9ea31945c81f",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: draw {controller} 10; chooserSelectsTarget{chooser:controller, {owner:self, zone:hand} count 9} -> forEach moveCard discard"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28874,9 +29458,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Discard 9' = pick 9 from hand -> discard (count clamps if hand smaller).",
+      "rulesAudited": true
     },
     {
       "id": "d161dd99-3bd1-4fdb-9fdd-924a70f7c0f4",
@@ -28910,12 +29494,16 @@
       "name": "Shocking Reappearance",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "186aea6851c5",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.condition {battleRole:'defender'}",
+          "onPlay.targets [{c:{owner:self, zone:discard, type:character} count 1}]",
+          "effects: putIntoPlay {selected c} {controller:controller}; addToBattle {selected c} {side:'blocking'}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28926,21 +29514,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "da97b625-3ba0-4b07-bddd-f5239b29f5a2",
       "name": "Shriever Attack",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "b62b0065e5f0",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "forEach {selector:{type:character}} -> dealDamage __candidate 2"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28951,21 +29541,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "5c02a5f8-543e-456b-8ee2-075fd1f6bff9",
       "name": "Siege Machine",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "5c87c30ccd2c",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated BATTERING RAM: targets [{r:{controller:self, type:resource} count 1}], costs [payResources 2, destroy {selected r}] -> modifyInfluence {player:opponent, amount:-1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -28976,9 +29568,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'An opponent's faction loses 1 influence' = modifyInfluence opponent -1.",
+      "rulesAudited": true
     },
     {
       "id": "e8c328cd-52e3-48b3-a18b-1b4c892af1d6",
@@ -29039,12 +29631,14 @@
       "name": "Skimping Ecto-Manipulator",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "407a4184bc9e",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated ENERGIZE: costs [deplete source], targets [{c:{controller:self, conditions:[not cardTypeIs resource]} count 1}] -> addCounter {selected c} token 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29055,9 +29649,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "1b6600af-3910-4cb2-9899-5fbe3006e6ee",
@@ -29091,12 +29685,16 @@
       "name": "Slingerang",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "44830add7e23",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> addCounter source token 3",
+          "triggered:cardEnteredPlay (and[{eventPlayerIs:'opponent'}, {cardTypeIs:{target:{eventCard}, cardType:'character'}}]) -> chooserSelectsOption [decline] / [removeCounter source token 1]",
+          "activated CHEAP SHOT: condition and[{counterCompare(source, token, '=', 0)}, numberCompare({type:'deploysThisTurn', player:opponent, cardType:'character'}, '>=', 1)], costs [destroy source], targets [{c:{type:character} count 1}] -> destroy {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29105,23 +29703,28 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "deploys-this-turn-count"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "3e04b4b1-a534-458f-b98b-626d045e3c17",
       "name": "Snake Eyes",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "bf28e14ca026",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{type:character} count 1}]",
+          "effects: if({damagedThisTurn:{target:{selected c}, by:'any'}}) destroy {selected c}; draw {controller} 1"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29130,11 +29733,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "damaged-this-turn-any-source"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'received damage this turn' = from ANY source. Extend the existing damagedThisTurn condition (currently by defaults to source) with a 'by anyone' form.",
+      "rulesAudited": true
     },
     {
       "id": "b1e3515a-37e2-4a23-85f5-52b44c292edd",
@@ -29168,12 +29773,14 @@
       "name": "Spastic Tentacles",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "aab344c7606d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> forEachPlayer -> chooserSelectsTarget{chooser:controller, {controller:self, type:resource} count 1} -> moveCard hand"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29184,9 +29791,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Each player picks one of their own resources (face-down included) and returns it to hand (face-up).",
+      "rulesAudited": true
     },
     {
       "id": "13f59198-df1c-4d96-a4f9-25dd1992f4e9",
@@ -29299,37 +29906,45 @@
       "name": "Sudden Osprey",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "4d2937d0ec4a",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "keyword tactical",
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsTarget{chooser:controller, {type:character} count 1 optional} -> if(targetExists) createModifier {selected} strength +1 EOT; createModifier {selected} life +1 EOT"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "191e0731-b609-4ab3-a62b-8d6c21ed9e2b",
       "name": "Summary Judgment",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "142835ad2724",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{c:{controller:opponent, type:character} count 1}]",
+          "effects: bind x = {stat {selected c} strength}; mayPay {player:{controllerOf {selected c}}, costs:[{type:'destroy', target:{selected c}}], effects:[], elseEffects:[draw {player:controller, amount:{variable x}}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29340,9 +29955,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "mayPay asks/charges the resolved player (the opponent); the 'cost' is destroying their own character.",
+      "rulesAudited": true
     },
     {
       "id": "a082e30f-1c66-46ff-97fa-77ca89b0076f",
@@ -29377,12 +29992,14 @@
       "name": "Swashbuckler",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "0e1ea1b9bb44",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:cardEnteredPlay (sourceIsEventCard) -> chooserSelectsOption {chooser:controller, options:[{label:'remove 4 cards in an opponent discard from the game', effects:[chooserSelectsTarget{chooser:controller, {owner:opponent, zone:discard} count 4} -> forEach removeFromGame]}, {label:'destroy this card', effects:[destroy source]}]}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29393,21 +30010,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'you may ... If you don't, destroy this card' as a forced 2-option choice; the 'remove 4' branch is unavailable if the opponent's discard has < 4 cards.",
+      "rulesAudited": true
     },
     {
       "id": "5ca25182-e910-4f21-97d0-b30298e7d4af",
       "name": "Tactician Vacation",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "65b1697fda72",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.noResponse",
+          "effects: if(respondingTo {respondsTo:'card', cardType:'tactic'}) terminate {scope:'respondedItem'}; forEachPlayer -> restrictPlay {player:controller, kind:'cardType', cardType:'tactic', duration:{untilEndOfTurn}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29418,9 +30038,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'This turn, tactics cannot be deployed' applied to every player via forEachPlayer + restrictPlay.",
+      "rulesAudited": true
     },
     {
       "id": "19131a9f-93bd-4eec-97e5-9307a2c41eca",
@@ -29454,13 +30074,15 @@
       "name": "Tax Attorney",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "ef1fd5f85eb8",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "continuous {influenceModifiers:[{player:'self', direction:'loss', delta:1, minAmount:0}]} -- any influence loss to this faction is reduced by 1 (floored so it can't flip to a gain)"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -29468,49 +30090,58 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "influence-change-modifier"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Applies to modifyInfluence losses + the CR §408.3 damage->influence path. Loss paid as an explicit cost (loseInfluence) noted as a concession if the impl can't reach it.",
+      "rulesAudited": true
     },
     {
       "id": "2ec131a8-26eb-4dd7-914d-ced1ca9e770c",
       "name": "The Billionaire",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "46ec35c1e589",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "continuous {canUseOpponentAbilities:true} -- controller may activate activated abilities on cards the opponent controls; numeric cost paid from the controller's resources, non-numeric costs + effect resolved as though the opponent used it",
+          "activated CHANGE COSTUME: costs [payResources 3], effects: moveCard source deck; shuffleDeck {controller}; chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'pluck', conditions:[{not:{cardNameEquals:{target:__candidate, other:source}}}]} count 1 optional} -> putIntoPlay {selected} {controller:controller}; shuffleDeck {controller}"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
-        "unique": null,
+        "unique": "pluck",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "activate-opponents-abilities"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "Meta-ability: ContinuousAbility.canUseOpponentAbilities surfaces the opponent's cards' activated abilities to the controller (getAvailableActivatedAbilities), numeric cost charged to the activator, resolution context.controllerId = the opponent.",
+      "rulesAudited": true
     },
     {
       "id": "c8f335c2-c065-4e48-befe-ce99752073f1",
       "name": "The Ministry of Other Smaller Ministries",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "fbe08a5486e3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
-        "newTestNeeded": false
+        "shapes": [
+          "continuous {attackTax:{player:'opponent', amount:2}} -- checked and charged in declareAttack; if the attacker can't pay, the attack is illegal"
+        ],
+        "reusesProvenShape": false,
+        "newTestNeeded": true
       },
       "metadata": {
         "unique": null,
@@ -29518,11 +30149,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "attack-tax"
+      ],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "8ef4a0a5-2d1d-4608-880a-f519921470df",
@@ -29554,12 +30187,16 @@
       "name": "Thief Doyen",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "d9b0de69c604",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{d:{owner:self, zone:hand, conditions:[{or:[{cardTypeIs character},{cardTypeIs item}]}]} count 1}]",
+          "onPlay.effects: bind x = {cardCost {selected d}}; moveCard {selected d} discard; addCounter source token {variable x}",
+          "continuous self: strength +{counter source token}, life +{same}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29570,21 +30207,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'Discard a character or item' EXTRA COST modelled as a pick + moveCard in onPlay.effects (Homewrecker idiom), binding X before the move.",
+      "rulesAudited": true
     },
     {
       "id": "e30bca98-3cba-40df-9ec3-dd6f99d78807",
       "name": "TigerKaiser",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "f9b8a7cff090",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated TIGER ROAR: costs [payResources 2, deplete source], targets [{c:{type:character} count 1}] -> createModifier {selected c} strength +3 {untilEndOfTurn}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29595,21 +30234,24 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "9592c990-445a-441d-a4f9-f9a243511fc4",
       "name": "Towering Researchmajig",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "f3207f3d1a45",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsOption [decline] / [addCounter source token 1]",
+          "activated RESEARCH: costs [removeCounter source token 1] -> reduceNextCost {controller, 1}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29620,21 +30262,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "f58d1a64-ffe6-44e6-a0fb-7fee920c215d",
       "name": "Tremor Engine",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "b6b3311c4127",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> forEachPlayer -> mill {player:controller, count:2}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29645,34 +30289,37 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Only fires at the start of the controller's turn, but hits every player's deck.",
+      "rulesAudited": true
     },
     {
       "id": "a4d88aa2-42b4-454d-9964-bb55c6927142",
       "name": "Tri-Pole Magnet",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "516228433711",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "attachTo character",
+          "activated GRAPPLE: targets [{g:{owner:self, zone:discard, subtype:'gear'} count 1}, {host:{type:character, conditions:[{isCard:{target:{attachedTo}}}]} count 1}], costs [destroy source] -> putIntoPlay {selected g} {controller:controller}; attachTo {selected g} {selected host}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
-        "attachTo": null,
+        "attachTo": "character",
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "The host character is captured as a forced target pick (isCard(attachedTo)) BEFORE the self-destroy cost, so 'the character' the new gear attaches to survives the cost.",
+      "rulesAudited": true
     },
     {
       "id": "729e403d-9a3d-436a-b9db-ca6c15d87120",
@@ -29704,25 +30351,31 @@
       "name": "Vander Malagut",
       "set": "Open Beta",
       "type": "character",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "ede977f235e3",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "continuous aura {selector:{controller:self, type:character, subtype:'sarcophyle', conditions:[{not:{isCard:{target:source}}}]}, modifiers speed +1}",
+          "replacement {replaces:{event:'destroy', cardType:'character'}, condition:{damagedThisTurn:{target:__candidate, by:source}}, effects:[takeControl __candidate {controller:controller}; setDamage __candidate 0; grantSubtype __candidate 'sarcophyle' {permanent}]}",
+          "triggered:cardDestroyed (sourceIsEventCard) -> forEach {selector:{type:character, subtype:'sarcophyle', conditions:[{not:{isCard:{target:source}}}]}} -> destroy __candidate"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
-        "unique": null,
+        "unique": "evondan",
         "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "grant-subtype"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "Replacement is the continuous card-ability form (replacement-effect + damagedThisTurn already implemented); only grantSubtype is new.",
+      "rulesAudited": true
     },
     {
       "id": "9cb2e1d3-ed72-4fe6-92b2-29629b9bc8cd",
@@ -29757,12 +30410,16 @@
       "name": "Voidal Nullification Chamber",
       "set": "Open Beta",
       "type": "location",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "85e317e20126",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "triggered:turnStarted (eventPlayerIs controller) -> chooserSelectsOption [decline] / [addCounter source token 1]",
+          "activated ENERGIZE: costs [payResources 2] -> addCounter source token 1",
+          "activated DISSOLVE: condition numberCompare({modulo:[{count {type:character}}, 2]}, '=', 0), costs [removeCounter source token 4], targets [{c:{type:character} count 1}] -> destroy {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29773,9 +30430,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "2504b869-73ac-4c01-886d-cfda98b15335",
@@ -29838,12 +30495,14 @@
       "name": "Voidal Poisoning",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "53c9bb615e1d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effect spendCountersMenu {chooser:controller, pool:{selector:{controller:self}}, counter:'token', options:[ {cost:1, label:'inflict 1 to a character', effects:[chooserSelectsTarget char -> dealDamage 1]}, {cost:2, label:'draw a card', effects:[draw 1]}, {cost:2, label:'an opponent discards a card', effects:[chooserSelectsTarget{chooser:opponent, opp hand, 1} -> moveCard discard]}, {cost:3, label:'search your deck for a card', effects:[chooserSelectsTarget{chooser:controller, {owner:self,zone:deck} 1} -> moveCard hand; shuffleDeck]} ]}"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29852,23 +30511,29 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "spend-counters-menu"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "'remove any number of tokens from cards you control ... use the tokens ... any number of times' = a repeated token-budget menu (RULES.md §14 action loop). Removing tokens from which card is the player's choice as they spend.",
+      "rulesAudited": true
     },
     {
       "id": "b9e94612-3cbd-44ff-9aac-a553a49c0955",
       "name": "Voidal Replication",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "a79667942cfa",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "behavior.noResponse",
+          "onPlay.condition: numberCompare({type:'deploysThisTurn', cardType:'tactic'}, '>=', 1) (a tactic has been deployed this turn, by anyone)",
+          "effects: duplicate {target:{lastDeployedTactic}} -- resolve the most-recently-resolved tactic's effects fresh under this card's controller"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29877,11 +30542,14 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "last-deployed-tactic-ref",
+        "deploys-this-turn-count"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "The last tactic has already resolved (not on the stack) -> 'duplicate' must resolve it from its definition, choosing targets anew. Track GameState.lastDeployedTacticId at tactic resolution.",
+      "rulesAudited": true
     },
     {
       "id": "6f59aeec-488c-416e-8316-ec9eea404f0b",
@@ -29915,12 +30583,14 @@
       "name": "Warehouse Raid",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "795d36467312",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "effects: flipCoin {winEffects:[<block>, <block>], loseEffects:[<block>]} where <block> = [ rememberTarget 'r' {random {owner:opponent, zone:hand}}; if(targetExists {remembered 'r'}) { if(cardTypeIs {remembered 'r'} item) putIntoPlay {remembered 'r'} {controller:controller}; else moveCard {remembered 'r'} discard } ]"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29931,9 +30601,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "medium",
+      "notes": "X in {1,2} -> the random-discard block is inlined once (lose) or twice (win). '{random}' TargetRef picks uniformly from the opponent's hand; items route to play.",
+      "rulesAudited": true
     },
     {
       "id": "dd59c66f-204d-4361-aab8-bc9eb9e13e9b",
@@ -29965,12 +30635,15 @@
       "name": "Yoink!",
       "set": "Open Beta",
       "type": "tactic",
-      "status": "unclassified",
+      "status": "classified",
       "textHash": "e875c891b412",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "onPlay.targets [{g:{subtype:'gear'} count 1}, {c:{type:character} count 1}]",
+          "effects: takeControl {selected g} {controller:controller}; attachTo {selected g} {selected c}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -29981,21 +30654,23 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false
+      "confidence": "high",
+      "notes": "'gear card' = an in-play card with the gear subtype.",
+      "rulesAudited": true
     },
     {
       "id": "50279c47-609a-444f-89c9-492d97711e1e",
       "name": "Zenobia's Spyglass",
       "set": "Open Beta",
       "type": "item",
-      "status": "unclassified",
+      "status": "verified",
       "textHash": "89b860e8f76d",
       "behavior": {
         "needed": true,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "shapes": [
+          "activated FORESIGHT: variables {x: player-chosen}, variableBounds x >=0, costs [payResources {variable x}] -> lookAndReorder {player:controller, count:{multiply [{variable x}, 2]}}"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -30006,9 +30681,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false
+      "rulesAudited": true
     },
     {
       "id": "38205b8d-5512-43c9-b564-2a6877420fae",

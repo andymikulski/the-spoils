@@ -34847,7 +34847,21 @@
     "threshold": "ooo",
     "structure": 5,
     "subtype": [],
-    "text": "When an attacking or blocking party is formed, it must have an even number of members."
+    "text": "When an attacking or blocking party is formed, it must have an even number of members.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "even",
+          "type": "continuous",
+          "modifiers": [],
+          "partyRestriction": {
+            "role": "any",
+            "parity": "even",
+            "scope": "allParties"
+          }
+        }
+      ]
+    }
   },
   {
     "id": "6e63449c-4363-494b-b90a-db1147b4b9a1",
@@ -35039,7 +35053,67 @@
     "cost": 7,
     "threshold": "oooo",
     "subtype": [],
-    "text": "UNIQUE ASHES OF ZENOBIA -- At the start of your turn, draw a card. -- NULLIFY -- COST: Pay 5. -- EFFECT: Each player puts a character they control into its owner's hand."
+    "text": "UNIQUE ASHES OF ZENOBIA -- At the start of your turn, draw a card. -- NULLIFY -- COST: Pay 5. -- EFFECT: Each player puts a character they control into its owner's hand.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "upkeep",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "nullify",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 5
+            }
+          ],
+          "effects": [
+            {
+              "type": "forEachPlayer",
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "c",
+                    "selector": {
+                      "controller": "self",
+                      "type": "character"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      },
+                      "to": "hand"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "unique": "ashes of zenobia"
   },
   {
     "id": "b7967785-218d-4f67-a330-fcfdb0345ff9",
@@ -35112,7 +35186,81 @@
     "cost": 10,
     "threshold": "oooo",
     "subtype": [],
-    "text": "EXTRA COST: Your opponents cannot respond to this card. Pick an opponent. -- That player discards a card. You may deploy a non-resource card with numeric cost X or less for free, where X is the numeric cost of the discarded card. (You still need to meet its threshold and satisfy its extra costs.) Repeat this card's effect until that player has no cards in their hand."
+    "text": "EXTRA COST: Your opponents cannot respond to this card. Pick an opponent. -- That player discards a card. You may deploy a non-resource card with numeric cost X or less for free, where X is the numeric cost of the discarded card. (You still need to meet its threshold and satisfy its extra costs.) Repeat this card's effect until that player has no cards in their hand.",
+    "behavior": {
+      "noResponse": true,
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "forEach",
+              "selector": {
+                "owner": "opponent",
+                "zone": "hand"
+              },
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "d",
+                    "selector": {
+                      "owner": "opponent",
+                      "zone": "hand"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "bind",
+                      "id": "x",
+                      "value": {
+                        "type": "cardCost",
+                        "target": {
+                          "type": "selected",
+                          "id": "d"
+                        }
+                      }
+                    },
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "d"
+                      },
+                      "to": "discard"
+                    },
+                    {
+                      "type": "deployForFree",
+                      "player": "controller",
+                      "maxCost": {
+                        "type": "variable",
+                        "id": "x"
+                      },
+                      "selector": {
+                        "zone": "hand",
+                        "conditions": [
+                          {
+                            "type": "not",
+                            "condition": {
+                              "type": "cardTypeIs",
+                              "cardType": "resource"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ],
+              "sequential": true
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "37f34e7c-dbb2-4393-ad6a-bac2a3571ba9",
@@ -35124,7 +35272,107 @@
     "cost": 4,
     "threshold": "ooo",
     "subtype": [],
-    "text": "EXTRA COST: Name a card. -- Search your deck for any number of copies of the card and reveal them. Put 1 into your hand and the rest into your discard pile. An opponent may search your deck for any number of copies of the card. If they do, put them into your discard pile."
+    "text": "EXTRA COST: Name a card. -- Search your deck for any number of copies of the card and reveal them. Put 1 into your hand and the rest into your discard pile. An opponent may search your deck for any number of copies of the card. If they do, put them into your discard pile.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "nameValue",
+              "chooser": "controller",
+              "valueKind": "cardName",
+              "storeAs": "named"
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "one",
+                "selector": {
+                  "owner": "self",
+                  "zone": "deck",
+                  "nameVar": "named"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "one"
+                  },
+                  "to": "hand"
+                }
+              ]
+            },
+            {
+              "type": "forEach",
+              "selector": {
+                "owner": "self",
+                "zone": "deck",
+                "nameVar": "named"
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "to": "discard"
+                }
+              ]
+            },
+            {
+              "type": "shuffleDeck",
+              "player": "controller"
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "opp",
+                "selector": {
+                  "owner": "self",
+                  "zone": "deck",
+                  "nameVar": "named"
+                },
+                "count": 20,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "forEach",
+                  "selector": {
+                    "owner": "self",
+                    "zone": "deck",
+                    "nameVar": "named"
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "shuffleDeck",
+              "player": "controller"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "ea9b719e-c8ee-4911-9dfd-dd4ecfa842ce",
@@ -35209,7 +35457,69 @@
     "subtype": [
       "ecto-manipulator"
     ],
-    "text": "COVERT -- At the start of your turn, you may pick a non-resource card you control. If you do, put a token on it."
+    "text": "COVERT -- At the start of your turn, you may pick a non-resource card you control. If you do, put a token on it.",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ],
+      "abilities": [
+        {
+          "id": "tok",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "c",
+                "selector": {
+                  "controller": "self",
+                  "conditions": [
+                    {
+                      "type": "not",
+                      "condition": {
+                        "type": "cardTypeIs",
+                        "cardType": "resource"
+                      }
+                    }
+                  ]
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "c"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      },
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "bb153366-ff1b-44f8-8e82-f005d31120a2",
@@ -35221,7 +35531,63 @@
     "cost": 0,
     "threshold": "oo",
     "subtype": [],
-    "text": "This card enters play with 2 tokens on it. -- DISRUPT -- COST: Remove 2 tokens from this card. -- EFFECT: An opponent discards a card."
+    "text": "This card enters play with 2 tokens on it. -- DISRUPT -- COST: Remove 2 tokens from this card. -- EFFECT: An opponent discards a card.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "sourceIsEventCard"
+          },
+          "effects": [
+            {
+              "type": "addCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 2
+            }
+          ]
+        },
+        {
+          "id": "disrupt",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "removeCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 2
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "opponent",
+              "declaration": {
+                "id": "h",
+                "selector": {
+                  "owner": "opponent",
+                  "zone": "hand"
+                },
+                "count": 1
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "h"
+                  },
+                  "to": "discard"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "9637226d-3115-48cd-bf92-b6946d7eafed",
@@ -35238,7 +35604,70 @@
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller discards 2 cards."
+    "text": "COVERT -- When this card inflicts damage to a faction, that faction's controller discards 2 cards.",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ],
+      "abilities": [
+        {
+          "id": "bleed",
+          "type": "triggered",
+          "event": "damageDealt",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "sourceIsDamageSource"
+              },
+              {
+                "type": "cardTypeIs",
+                "target": "eventCard",
+                "cardType": "faction"
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": {
+                "type": "ownerOf",
+                "target": "eventCard"
+              },
+              "declaration": {
+                "id": "h",
+                "selector": {
+                  "owner": "opponent",
+                  "zone": "hand"
+                },
+                "count": 2,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "forEach",
+                  "selector": {
+                    "owner": "opponent",
+                    "zone": "hand"
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ],
+                  "selected": "h"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "a59b90bd-20f7-4ea2-ba2f-82ebaecd48d8",
@@ -35289,7 +35718,48 @@
     "subtype": [
       "ritualist"
     ],
-    "text": "QUOTIDIAN INSTRUCTION -- COST: Deplete this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand."
+    "text": "QUOTIDIAN INSTRUCTION -- COST: Deplete this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "qi",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "deplete",
+              "target": "source"
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "q",
+                "selector": {
+                  "owner": "self",
+                  "zone": "deck",
+                  "type": "tactic"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": "__evt",
+                  "to": "hand"
+                },
+                {
+                  "type": "shuffleDeck",
+                  "player": "controller"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "d56eb93a-2971-4b24-8135-624469d9dc61",
@@ -35480,7 +35950,49 @@
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT -- When this card enters play, look at up to the top 5 cards of any one deck. Put them back in any order."
+    "text": "COVERT -- When this card enters play, look at up to the top 5 cards of any one deck. Put them back in any order.",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ],
+      "abilities": [
+        {
+          "id": "scry",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "sourceIsEventCard"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "f",
+                "selector": {
+                  "type": "faction"
+                },
+                "count": 1
+              },
+              "effects": [
+                {
+                  "type": "lookAndReorder",
+                  "player": {
+                    "type": "ownerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "f"
+                    }
+                  },
+                  "chooser": "controller",
+                  "count": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "91df6435-631c-414b-866a-107c7d055757",
@@ -35636,7 +36148,25 @@
     "cost": 2,
     "threshold": "oo",
     "subtype": [],
-    "text": "This turn, if a card would be put into a player's hand, put it into their discard pile instead."
+    "text": "This turn, if a card would be put into a player's hand, put it into their discard pile instead.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "redirectHandMoves",
+              "who": "any",
+              "to": "discard",
+              "duration": {
+                "type": "untilEndOfTurn"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "2bb93344-f467-4c54-8090-df1562fff717",
@@ -35782,7 +36312,76 @@
     "cost": 0,
     "threshold": "ooo",
     "subtype": [],
-    "text": "EXTRA COST: Choose a number for X. Pay X+X. -- Look at an opponent's hand and choose X or fewer cards in it. That player discards those cards."
+    "text": "EXTRA COST: Choose a number for X. Pay X+X. -- Look at an opponent's hand and choose X or fewer cards in it. That player discards those cards.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "variables": {
+            "x": 0
+          },
+          "variableBounds": {
+            "x": {
+              "min": 0
+            }
+          },
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": {
+                "type": "multiply",
+                "values": [
+                  {
+                    "type": "variable",
+                    "id": "x"
+                  },
+                  2
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "h",
+                "selector": {
+                  "owner": "opponent",
+                  "zone": "hand"
+                },
+                "count": {
+                  "type": "variable",
+                  "id": "x"
+                },
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "forEach",
+                  "selector": {
+                    "owner": "opponent",
+                    "zone": "hand"
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ],
+                  "selected": "h"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "d161dd99-3bd1-4fdb-9fdd-924a70f7c0f4",
@@ -35866,7 +36465,50 @@
     "subtype": [
       "ecto-manipulator"
     ],
-    "text": "ENERGIZE -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Put a token on the card."
+    "text": "ENERGIZE -- COST: Deplete this card. Pick a non-resource card you control. -- EFFECT: Put a token on the card.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "energize",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "deplete",
+              "target": "source"
+            }
+          ],
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "controller": "self",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "cardTypeIs",
+                      "cardType": "resource"
+                    }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "addCounter",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              },
+              "counter": "token",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "b1e3515a-37e2-4a23-85f5-52b44c292edd",
@@ -35905,7 +36547,48 @@
     "subtype": [
       "lurker"
     ],
-    "text": "When this card enters play, each player puts a resource they control into its owner's hand."
+    "text": "When this card enters play, each player puts a resource they control into its owner's hand.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "sourceIsEventCard"
+          },
+          "effects": [
+            {
+              "type": "forEachPlayer",
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "r",
+                    "selector": {
+                      "controller": "self",
+                      "type": "resource"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "to": "hand"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "13f59198-df1c-4d96-a4f9-25dd1992f4e9",
@@ -36258,7 +36941,106 @@
     "threshold": "ooo",
     "structure": 2,
     "subtype": [],
-    "text": "At the start of your turn, you may put a token on this card. -- ENERGIZE -- COST: Pay 2. -- EFFECT: Put a token on this card. -- DISSOLVE -- COST: Use this only if there are an even number of characters in play. Remove 4 tokens from this card. Pick a character. -- EFFECT: Destroy the character."
+    "text": "At the start of your turn, you may put a token on this card. -- ENERGIZE -- COST: Pay 2. -- EFFECT: Put a token on this card. -- DISSOLVE -- COST: Use this only if there are an even number of characters in play. Remove 4 tokens from this card. Pick a character. -- EFFECT: Destroy the character.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "upkeep",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsOption",
+              "chooser": "controller",
+              "options": [
+                {
+                  "label": "Decline",
+                  "effects": []
+                },
+                {
+                  "label": "Put a token on this card",
+                  "effects": [
+                    {
+                      "type": "addCounter",
+                      "target": "source",
+                      "counter": "token",
+                      "amount": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "energize",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "effects": [
+            {
+              "type": "addCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "id": "dissolve",
+          "type": "activated",
+          "condition": {
+            "type": "numberCompare",
+            "left": {
+              "type": "modulo",
+              "value": {
+                "type": "count",
+                "selector": {
+                  "type": "character"
+                }
+              },
+              "by": 2
+            },
+            "operator": "=",
+            "right": 0
+          },
+          "costs": [
+            {
+              "type": "removeCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 4
+            }
+          ],
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "type": "character"
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "destroy",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "2504b869-73ac-4c01-886d-cfda98b15335",
@@ -36428,7 +37210,123 @@
     "cost": 3,
     "threshold": "ooo",
     "subtype": [],
-    "text": "You may remove any number of tokens from cards you control. Use the tokens to generate the following effects any number of times: -- 1 TOKEN: Pick a character. Inflict 1 damage to it. -- 2 TOKENS: Draw a card. -- 2 TOKENS: An opponent discards a card. -- 3 TOKENS: Search your deck for a card and put it into your hand."
+    "text": "You may remove any number of tokens from cards you control. Use the tokens to generate the following effects any number of times: -- 1 TOKEN: Pick a character. Inflict 1 damage to it. -- 2 TOKENS: Draw a card. -- 2 TOKENS: An opponent discards a card. -- 3 TOKENS: Search your deck for a card and put it into your hand.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "spendCountersMenu",
+              "chooser": "controller",
+              "pool": {
+                "controller": "self"
+              },
+              "counter": "token",
+              "options": [
+                {
+                  "cost": 1,
+                  "label": "Inflict 1 damage to a character",
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "controller",
+                      "declaration": {
+                        "id": "c",
+                        "selector": {
+                          "type": "character"
+                        },
+                        "count": 1
+                      },
+                      "effects": [
+                        {
+                          "type": "dealDamage",
+                          "target": {
+                            "type": "selected",
+                            "id": "c"
+                          },
+                          "amount": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "cost": 2,
+                  "label": "Draw a card",
+                  "effects": [
+                    {
+                      "type": "draw",
+                      "player": "controller",
+                      "amount": 1
+                    }
+                  ]
+                },
+                {
+                  "cost": 2,
+                  "label": "An opponent discards a card",
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "h",
+                        "selector": {
+                          "owner": "opponent",
+                          "zone": "hand"
+                        },
+                        "count": 1
+                      },
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "h"
+                          },
+                          "to": "discard"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "cost": 3,
+                  "label": "Search your deck for a card",
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "controller",
+                      "declaration": {
+                        "id": "q",
+                        "selector": {
+                          "owner": "self",
+                          "zone": "deck"
+                        },
+                        "count": 1,
+                        "optional": true
+                      },
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": "__evt",
+                          "to": "hand"
+                        },
+                        {
+                          "type": "shuffleDeck",
+                          "player": "controller"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "b9e94612-3cbd-44ff-9aac-a553a49c0955",
@@ -36440,7 +37338,33 @@
     "cost": 3,
     "threshold": "ooo",
     "subtype": [],
-    "text": "EXTRA COST: Your opponents cannot respond to this card. Deploy this only if a tactic has been deployed this turn. -- Duplicate the last tactic deployed this turn."
+    "text": "EXTRA COST: Your opponents cannot respond to this card. Deploy this only if a tactic has been deployed this turn. -- Duplicate the last tactic deployed this turn.",
+    "behavior": {
+      "noResponse": true,
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "condition": {
+            "type": "numberCompare",
+            "left": {
+              "type": "deploysThisTurn",
+              "cardType": "tactic"
+            },
+            "operator": ">=",
+            "right": 1
+          },
+          "effects": [
+            {
+              "type": "duplicate",
+              "target": {
+                "type": "lastDeployedTactic"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "6f59aeec-488c-416e-8316-ec9eea404f0b",
@@ -36497,7 +37421,48 @@
     "cost": 0,
     "threshold": "o",
     "subtype": [],
-    "text": "FORESIGHT -- COST: Choose a number for X. Pay X. -- EFFECT: Look at up to the top X+X cards of your deck. Put them back in any order."
+    "text": "FORESIGHT -- COST: Choose a number for X. Pay X. -- EFFECT: Look at up to the top X+X cards of your deck. Put them back in any order.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "foresight",
+          "type": "activated",
+          "variables": {
+            "x": 0
+          },
+          "variableBounds": {
+            "x": {
+              "min": 0
+            }
+          },
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": {
+                "type": "variable",
+                "id": "x"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "type": "lookAndReorder",
+              "player": "controller",
+              "count": {
+                "type": "multiply",
+                "values": [
+                  {
+                    "type": "variable",
+                    "id": "x"
+                  },
+                  2
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "63f657b1-4396-4f46-b571-ad2258201ad7",
@@ -38397,7 +39362,48 @@
     "cost": 7,
     "threshold": "rr",
     "subtype": [],
-    "text": "EXTRA COST: Pick a character or faction. -- Inflict 5 damage to the character or faction."
+    "text": "EXTRA COST: Pick a character or faction. -- Inflict 5 damage to the character or faction.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "t",
+              "selector": {
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "cardTypeIs",
+                        "cardType": "character"
+                      },
+                      {
+                        "type": "cardTypeIs",
+                        "cardType": "faction"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "dealDamage",
+              "target": {
+                "type": "selected",
+                "id": "t"
+              },
+              "amount": 5
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "9c05a49b-ee31-4b4f-a2da-6ab515d3cb37",
@@ -38649,7 +39655,41 @@
     "subtype": [
       "tyrant"
     ],
-    "text": "When this card is blocked, it gains 2 strength and 2 life this turn."
+    "text": "When this card is blocked, it gains 2 strength and 2 life this turn.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "blk",
+          "type": "triggered",
+          "event": "attackerBlocked",
+          "condition": {
+            "type": "sourceIsEventCard"
+          },
+          "effects": [
+            {
+              "type": "createModifier",
+              "target": "source",
+              "stat": "strength",
+              "operation": "add",
+              "value": 2,
+              "duration": {
+                "type": "untilEndOfTurn"
+              }
+            },
+            {
+              "type": "createModifier",
+              "target": "source",
+              "stat": "life",
+              "operation": "add",
+              "value": 2,
+              "duration": {
+                "type": "untilEndOfTurn"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "5a9fc075-3dd0-4832-a763-fab2dfdf8535",
@@ -38678,7 +39718,79 @@
     "cost": 3,
     "threshold": "rr",
     "subtype": [],
-    "text": "At the start of your turn, put a token on the character with the highest strength. If there is a tie, you decide which character gets the token. -- All characters gain 1 strength for each token on them."
+    "text": "At the start of your turn, put a token on the character with the highest strength. If there is a tie, you decide which character gets the token. -- All characters gain 1 strength for each token on them.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tok",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "c",
+                "selector": {
+                  "type": "character",
+                  "conditions": [
+                    {
+                      "type": "isExtremum",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "metric": "strength",
+                      "direction": "max",
+                      "among": {
+                        "type": "character"
+                      }
+                    }
+                  ]
+                },
+                "count": 1
+              },
+              "effects": [
+                {
+                  "type": "addCounter",
+                  "target": {
+                    "type": "selected",
+                    "id": "c"
+                  },
+                  "counter": "token",
+                  "amount": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "aura",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "selector": {
+                "type": "character"
+              },
+              "stat": "strength",
+              "operation": "add",
+              "value": {
+                "type": "counter",
+                "target": {
+                  "type": "selected",
+                  "id": "__candidate"
+                },
+                "counter": "token"
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "515bd953-5632-4e72-9233-53a8ed9af611",
@@ -38740,7 +39852,41 @@
     "subtype": [
       "rider"
     ],
-    "text": "This card gains 1 strength and 1 life for each dragon card you control."
+    "text": "This card gains 1 strength and 1 life for each dragon card you control.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "scale",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "target": "source",
+              "stat": "strength",
+              "operation": "add",
+              "value": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "subtype": "dragon"
+                }
+              }
+            },
+            {
+              "target": "source",
+              "stat": "life",
+              "operation": "add",
+              "value": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "subtype": "dragon"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "e055ac0a-49d8-4bb0-914b-b039336c5e97",
@@ -38757,7 +39903,75 @@
     "subtype": [
       "dragon"
     ],
-    "text": "At the start of your turn, you may pick a character an opponent controls. If you do, destroy it. Otherwise, destroy this card."
+    "text": "At the start of your turn, you may pick a character an opponent controls. If you do, destroy it. Otherwise, destroy this card.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "cull",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "c",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "c"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetExists",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      }
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": "source"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "eed47373-168e-4ab8-86e2-c0f63d47cc7f",
@@ -38815,7 +40029,68 @@
     "threshold": "rrr",
     "structure": 4,
     "subtype": [],
-    "text": "At the start of your turn, you may pick a character. If you do, this card inflicts X+1 damage to it, where X is the number of dragon cards you control."
+    "text": "At the start of your turn, you may pick a character. If you do, this card inflicts X+1 damage to it, where X is the number of dragon cards you control.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "burn",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "c",
+                "selector": {
+                  "type": "character"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "c"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "dealDamage",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      },
+                      "amount": {
+                        "type": "add",
+                        "values": [
+                          {
+                            "type": "count",
+                            "selector": {
+                              "controller": "self",
+                              "subtype": "dragon"
+                            }
+                          },
+                          1
+                        ]
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "463d51ef-13f3-4c9c-a90b-a1e1d63b8e98",
@@ -38914,7 +40189,54 @@
     "subtype": [
       "dragon"
     ],
-    "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 2 damage divided however you want to those characters."
+    "text": "EXTRA COST: You may pick 2 or fewer characters. -- When this card enters play, if you picked characters as part of its cost, inflict up to 2 damage divided however you want to those characters.",
+    "behavior": {
+      "onPlay": {
+        "targets": [
+          {
+            "id": "picked",
+            "selector": {
+              "type": "character"
+            },
+            "count": 2,
+            "optional": true
+          }
+        ],
+        "effects": [
+          {
+            "type": "if",
+            "condition": {
+              "type": "targetExists",
+              "target": {
+                "type": "selected",
+                "id": "picked"
+              }
+            },
+            "effects": [
+              {
+                "type": "distributeAmong",
+                "chooser": "controller",
+                "selected": "picked",
+                "amount": 2,
+                "effects": [
+                  {
+                    "type": "dealDamage",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    },
+                    "amount": {
+                      "type": "variable",
+                      "id": "__amount"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
   },
   {
     "id": "03f31f27-dfd2-4802-acd0-340f65683e89",
@@ -38926,7 +40248,55 @@
     "cost": 6,
     "threshold": "r",
     "subtype": [],
-    "text": "At the start of your turn, you may pick a character. If you do, deplete it."
+    "text": "At the start of your turn, you may pick a character. If you do, deplete it.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "tap",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "c",
+                "selector": {
+                  "type": "character"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "c"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "deplete",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "2fcbabbe-1a09-4d83-a419-8f08c8bf6f90",
@@ -39121,7 +40491,26 @@
     "cost": 4,
     "threshold": "rrr",
     "subtype": [],
-    "text": "When a card is depleted, that card's controller's faction loses 1 influence. (Resources don't deplete when used; they attach to your faction.)"
+    "text": "When a card is depleted, that card's controller's faction loses 1 influence. (Resources don't deplete when used; they attach to your faction.)",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "toll",
+          "type": "triggered",
+          "event": "cardDepleted",
+          "effects": [
+            {
+              "type": "modifyInfluence",
+              "player": {
+                "type": "controllerOf",
+                "target": "eventCard"
+              },
+              "amount": -1
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "90a923f7-847e-4b87-9a28-eab4b3cd4340",
@@ -39254,7 +40643,38 @@
     "subtype": [
       "dragon"
     ],
-    "text": "When this card enters play, inflict 1 damage to all your opponent's characters."
+    "text": "When this card enters play, inflict 1 damage to all your opponent's characters.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "etb",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "sourceIsEventCard"
+          },
+          "effects": [
+            {
+              "type": "forEach",
+              "selector": {
+                "controller": "opponent",
+                "type": "character"
+              },
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "amount": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "52d7cbbb-e848-441e-95d5-2cb4006f5195",
@@ -39293,7 +40713,40 @@
     "subtype": [
       "fighter"
     ],
-    "text": "At the end of your turn, if this card started the turn under your control and did not attack this turn, destroy it."
+    "text": "At the end of your turn, if this card started the turn under your control and did not attack this turn, destroy it.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "cull",
+          "type": "triggered",
+          "event": "turnEnding",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "eventPlayerIs",
+                "player": "controller"
+              },
+              {
+                "type": "inPlaySinceTurnStart"
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "attackedThisTurn"
+                }
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "destroy",
+              "target": "source"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "6dcca61c-61da-4e12-957a-bd2c073d1646",
@@ -39306,7 +40759,26 @@
     "threshold": "rrrr",
     "structure": 5,
     "subtype": [],
-    "text": "All your characters gain 1 strength."
+    "text": "All your characters gain 1 strength.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "aura",
+          "type": "continuous",
+          "modifiers": [
+            {
+              "selector": {
+                "controller": "self",
+                "type": "character"
+              },
+              "stat": "strength",
+              "operation": "add",
+              "value": 1
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "51827cec-b647-4048-bf85-e6f84a66ae17",
@@ -39323,7 +40795,77 @@
     "subtype": [
       "fighter"
     ],
-    "text": "UNIQUE RUDOLPHUS -- PUNCH -- COST: Pay 2. Deplete this card. Pick a character. X is its strength. Y is this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character."
+    "text": "UNIQUE RUDOLPHUS -- PUNCH -- COST: Pay 2. Deplete this card. Pick a character. X is its strength. Y is this card's strength. -- EFFECT: Inflict X damage to this card. Inflict Y damage to the character.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "punch",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            },
+            {
+              "type": "deplete",
+              "target": "source"
+            }
+          ],
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "type": "character"
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "bind",
+              "id": "x",
+              "value": {
+                "type": "stat",
+                "target": {
+                  "type": "selected",
+                  "id": "c"
+                },
+                "stat": "strength"
+              }
+            },
+            {
+              "type": "bind",
+              "id": "y",
+              "value": {
+                "type": "stat",
+                "target": "source",
+                "stat": "strength"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": "source",
+              "amount": {
+                "type": "variable",
+                "id": "x"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              },
+              "amount": {
+                "type": "variable",
+                "id": "y"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "unique": "rudolphus"
   },
   {
     "id": "de3dc0cc-486f-400a-86c2-07086615b78f",
@@ -39352,7 +40894,33 @@
     "cost": 4,
     "threshold": "rr",
     "subtype": [],
-    "text": "Inflict 2 damage to all characters."
+    "text": "Inflict 2 damage to all characters.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "forEach",
+              "selector": {
+                "type": "character"
+              },
+              "effects": [
+                {
+                  "type": "dealDamage",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "amount": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "5c02a5f8-543e-456b-8ee2-075fd1f6bff9",
@@ -39364,7 +40932,45 @@
     "cost": 0,
     "threshold": "rrrr",
     "subtype": [],
-    "text": "BATTERING RAM -- COST: Pay 2. Destroy a resource you control. -- EFFECT: An opponent's faction loses 1 influence."
+    "text": "BATTERING RAM -- COST: Pay 2. Destroy a resource you control. -- EFFECT: An opponent's faction loses 1 influence.",
+    "behavior": {
+      "abilities": [
+        {
+          "id": "ram",
+          "type": "activated",
+          "targets": [
+            {
+              "id": "r",
+              "selector": {
+                "controller": "self",
+                "type": "resource"
+              },
+              "count": 1
+            }
+          ],
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            },
+            {
+              "type": "destroy",
+              "target": {
+                "type": "selected",
+                "id": "r"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "type": "modifyInfluence",
+              "player": "opponent",
+              "amount": -1
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "e8c328cd-52e3-48b3-a18b-1b4c892af1d6",
@@ -39609,7 +41215,46 @@
     "cost": 4,
     "threshold": "r",
     "subtype": [],
-    "text": "EXTRA COST: Your opponents cannot respond to this card. -- If you deployed this card in response to a tactic, terminate the tactic. This turn, tactics cannot be deployed."
+    "text": "EXTRA COST: Your opponents cannot respond to this card. -- If you deployed this card in response to a tactic, terminate the tactic. This turn, tactics cannot be deployed.",
+    "behavior": {
+      "noResponse": true,
+      "abilities": [
+        {
+          "id": "body",
+          "type": "activated",
+          "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "respondingTo",
+                "respondsTo": "card",
+                "cardType": "tactic"
+              },
+              "effects": [
+                {
+                  "type": "terminate",
+                  "scope": "respondedItem"
+                }
+              ]
+            },
+            {
+              "type": "forEachPlayer",
+              "effects": [
+                {
+                  "type": "restrictPlay",
+                  "player": "controller",
+                  "kind": "cardType",
+                  "cardType": "tactic",
+                  "duration": {
+                    "type": "untilEndOfTurn"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "19131a9f-93bd-4eec-97e5-9307a2c41eca",

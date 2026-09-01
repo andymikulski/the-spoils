@@ -473,6 +473,106 @@ set: FLIP UP, RECUR, staple-counting, the FEALTY / God's Blessing / Gosche's
   respond-to-end-of-turn-cost play window (turn-structure machinery no other
   card uses).
 
+## Open Beta additions
+
+Condensed index of vocabulary added for the Open Beta set (the oldest set —
+mechanically simple but full of quirky one-offs). 19 capabilities; full
+detail in `src/types/*` + `COVERAGE.md`'s capability table.
+
+**Expressions / selectors**
+- **`{ type: "eventDrawAmount" }`** — the `count` of the current `cardsDrawn`
+  event (0 outside one). Parallel to `eventDamageAmount`. Gold Summit.
+- **`{ type: "deploysThisTurn", player?, cardType?, notCardType? }`** — how
+  many cards matching the filters `player` (omitted = anyone) deployed this
+  turn. "2 other non-resource cards this turn" (633fy 31f), "an opponent
+  deployed a character this turn" (Slingerang), "a tactic has been deployed
+  this turn" (Voidal Replication).
+- **`CardSelector.fromTop` may be a `NumberExpression`** — "reveal up to the
+  top X cards of an opponent's deck" with a chosen X (Jackmove).
+- **`TargetRef { type: "lastDeployedTactic" }`** — the most recently
+  RESOLVED tactic this turn (`GameState.lastDeployedTacticId`). Pass to
+  `duplicate`, which re-resolves it from its definition (it is off the
+  stack, so it chooses targets anew). Voidal Replication.
+
+**Conditions**
+- **`{ type: "attackedThisTurn", target? }`** — `target` (default `source`)
+  declared an attack this turn. `not` → "did not attack this turn" (Reckless
+  Challenger).
+- **`damagedThisTurn` gains `by: "any"`** — damaged by ANY source this turn
+  ("if the character has received damage this turn"; Snake Eyes).
+
+**Effects**
+- **`{ type: "grantSubtype", target, subtype, duration }`** — adds a subtype
+  (`GameState.subtypeGrants`, read by `getSubtypes` → every subtype
+  consumer). Sarcophyle Matriculation, Vander Malagut.
+- **`{ type: "redirectHandMoves", who, to, duration }`** — a runtime window:
+  a card that would enter a hand from ANY zone goes to `to` (the owner's
+  zone) instead. "if a card would be put into a player's hand, put it into
+  their discard pile instead" (Quotidian Misfire). Distinct from a
+  `moveToZone` `ReplacementAbility` (fires only on leaving *play*).
+- **`{ type: "installReplacement", replaces, condition?, duration, effects }`**
+  — the one-shot form of a `ReplacementAbility`: registers a runtime
+  replacement (`GameState.runtimeReplacements`) consulted by
+  `applyReplacement`. The affected card binds to `__candidate`; the
+  installing ability's `context.selected` is snapshotted so
+  `condition`/`effects` referencing its picks still resolve. `duration`
+  accepts `{ type: "endOfBattle" }`. "if the character would be destroyed
+  during this battle, take control of it instead" (Sarcophyle Matriculation).
+- **`forEach` gains `sequential?: boolean`** — `true` runs iterations one at
+  a time through the suspendable effect-frame path (per-iteration chooser
+  pauses / resumes; triggers fire between iterations). "That player discards
+  a card. You may deploy a card for free. Repeat until ... no cards in
+  hand" (Degenerate Molestation — `forEach` over the opponent's hand
+  snapshot). Default (`false`) keeps the batched "simultaneous" loop.
+- **`{ type: "spendCountersMenu", chooser, pool, counter, options }`** —
+  `chooser` repeatedly removes `cost` markers of `counter` from `pool`
+  cards (their choice which) to fire an option's `effects`, any mix, until
+  they stop (`optionIndex: null`) or can't afford any option. Drives a
+  `spendCountersMenu` PendingChoice. Voidal Poisoning (RULES.md §14).
+
+**ContinuousAbility**
+- **`preventsDefeat: { player }`** — suppresses the "faction at ≤0 influence
+  loses" state-based check for the matching faction. "You do not lose the
+  game because your faction has 0 influence" (Armored Keep).
+- **`drawModifiers: [{ player, delta?, prevent? }]`** — consulted in
+  `drawCards` (only for a real draw, amount > 0): `delta` adjusts the count,
+  `prevent` forces it to 0. Beatrix Winterbottom ("+1 to every draw" +
+  "while ≥10 cards in hand, cannot draw").
+- **`influenceModifiers: [{ player, direction, delta, minAmount? }]`** —
+  tunes influence-change magnitude, floored so a loss can't flip to a gain.
+  Routed through `applyInfluenceDelta` (covers the `modifyInfluence` effect
+  and CR §408.3 damage→influence; NOT the `loseInfluence` cost — a cost is a
+  cost). Tax Attorney.
+- **`attackTax: { player, amount }`** — the matching player pays `amount`
+  resources when they declare an attack (charged in `declareAttack`; an
+  unpayable tax makes the attack illegal). The Ministry of Other Smaller
+  Ministries.
+- **`canUseOpponentAbilities: boolean`** — the source's controller may
+  activate activated abilities on cards the opponent controls; the numeric
+  (`payResources`) cost is charged to the activator, everything else
+  resolves with the opponent as the ability's controller
+  (`ResolutionContext.controllerId`). The Billionaire.
+- **`partyRestriction` gains `maxMembers?` and `scope: "selfParty" |
+  "allParties"`** — `"allParties"` bites every forming party regardless of
+  whether the source is a member (a location dictating party composition —
+  Arcana Department, Hangdog Alley).
+- **`playRestrictions[].kind` gains `{ named: string }`** — no player may
+  deploy a card whose name equals the `nameValue` (`valueKind: "cardName"`)
+  stored on the source under that key. Incriminating Photograph.
+
+**Events**
+- **`cardPicked { cardId, playerId }`** — an in-play card was chosen as the
+  target of a `chooserSelectsTarget` effect (NOT a triggered ability's own
+  `targets` — re-entrant `emit` there would double-resolve the trigger).
+  "When this card is picked, put a token on it" (Ferrous Ferret); pairs
+  with the `mustBePicked` restriction.
+
+**Parity gap (this set)**
+- **`seat-swap`** — Emergency Obfuscation's "each player moves 1 seat to the
+  left ... controls that opponent's side ... owner of the winning deck
+  wins" is a full seat/side/deck-ownership swap. Token-accrual + self-
+  destruct clauses are authored.
+
 ## Ability types
 
 ```ts
