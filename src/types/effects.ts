@@ -1022,6 +1022,28 @@ export type Effect =
        */
       type: "auctionForCard";
       revealFor: PlayerRef;
+    }
+  | {
+      /**
+       * Opens a runtime window during which **every** damage instance — to
+       * any card, from any source, battle or not — is reduced to 0. "This
+       * turn ... all inflicted damage is reduced to 0." (Limited Liability).
+       * Distinct from the per-source `modifyOutgoingDamage` and the per-card
+       * `preventDamage` shield.
+       */
+      type: "preventAllDamage";
+      duration: Duration;
+    }
+  | {
+      /**
+       * Opens a runtime window during which the `destroy` **effect** is a
+       * no-op — "cards in play and cards deployed can only be destroyed by
+       * costs" (Limited Liability). Destruction paid as a COST
+       * (`Cost { type: "destroy" }`), lethal-damage state-based destruction,
+       * and `removeFromGame` are unaffected.
+       */
+      type: "restrictDestruction";
+      duration: Duration;
     };
 
 /**

@@ -591,6 +591,22 @@ export interface GameState {
   scheduledEffects: ScheduledEffect[];
 
   /**
+   * Runtime "all inflicted damage is reduced to 0" windows from a
+   * `preventAllDamage` effect (Limited Liability). While any is active,
+   * every `dealDamage` / battle-damage assignment resolves to 0. Swept by
+   * `durationStillActive`.
+   */
+  damagePreventionWindows: Array<{ id: ModifierId; duration: Duration; createdTurn: number }>;
+
+  /**
+   * Runtime "cards can only be destroyed by costs" windows from a
+   * `restrictDestruction` effect (Limited Liability). While any is active,
+   * the `destroy` effect is a no-op (cost / lethal-damage / removeFromGame
+   * paths are unaffected). Swept by `durationStillActive`.
+   */
+  destructionRestrictionWindows: Array<{ id: ModifierId; duration: Duration; createdTurn: number }>;
+
+  /**
    * Durationed "take control" grants (`takeControl` effect with a
    * `duration`). When one expires (swept at the start-of-turn point), the
    * card's control reverts to `previousControllerId`. Mutiny Grant.

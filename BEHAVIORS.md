@@ -397,6 +397,82 @@ combat-heavy early set). Full detail in `src/types/*` + `COVERAGE.md`.
 - **`cardDestroyed` gains `byBattleDamage?`** — true when the lethal
   instance was battle damage (read by `destroyedByBattleDamage`).
 
+## Ungodly Mess additions
+
+Condensed index of vocabulary added for the Ungodly Mess set (a Seed-era
+set: FLIP UP, RECUR, staple-counting, the FEALTY / God's Blessing / Gosche's
+/ Thabbashite cycles). Full detail in `src/types/*` + `COVERAGE.md`.
+
+**Expressions / selectors**
+- **`{ type: "distinctCount", selector, by }`** — the number of DISTINCT
+  values of `by` (`"name"` / `"trade"` / `"subtype"` / `"type"`) among cards
+  matching `selector`. "for each different staple resource you control"
+  (`by: "name"`, `selector: { controller: "self", staple: true, type:
+  "resource" }`); "different trades among cards you control" (`by: "trade"`).
+- **`CardSelector.attachedToFaction?: boolean`** — for `type: "resource"`:
+  `true` matches resources attached to a faction (spent to pay a cost this
+  turn — "attached", RULES.md §5); `false` matches *detached* / available
+  resources. "the number of detached resources that player controls" (Flesh
+  Deliquesce — `false`); the pool for "detach up to 2 resources from their
+  faction" (`true`).
+
+**CardDefinition**
+- **`thresholdSlack: { condition, amount }`** (FEALTY) — while `condition`
+  holds (evaluated with the card in hand, controller = its holder),
+  `meetsThreshold` for this card is satisfied whenever the holder is at most
+  `amount` icons short **summed across every icon type** ("reduce this
+  card's threshold requirement by any N resource icons"). Abram Ka-darbo
+  Alkazin, Eustace Sensible Glutton, Ignatious, Jo Ciendeilio, Rudo Mangod.
+
+**ContinuousAbility**
+- **`grantedAbilities` now also grants CONTINUOUS members** — the continuous
+  / restriction / keyword / modifier members of a `grantedAbilities` block
+  are honored in the recompute, **sourced on the recipient** (so "All your
+  characters gain 1 strength" inside the granted text scopes to the
+  recipient's controller, and the aura dies with the recipient or the
+  grantor). Model the "God's Blessing of ___" quoted rules text as one
+  member per paragraph; the block selector is usually
+  `{ conditions: [{ type: "isCard", other: "attachedTo" }] }` ("the attached
+  character").
+- **`blockRestriction.blockerMustNotMatch?: CardSelector`** — a character
+  matching this selector is not a legal blocker against the source. "cannot
+  be blocked by characters with a [V] icon in its rules text" (Feckless
+  Chronicler — `conditions: [{ type: "textMentionsIcon", icon: "volition"
+  }]`); "Characters with a token on them cannot block this card" (Silencer).
+- **`voidPlay: { selector, ignoreThreshold? }`** — while the source is in
+  play and `condition` holds, its controller may deploy void-zone cards
+  matching `selector` as though from hand. The conditional/continuous form
+  of the one-shot `grantVoidPlay`. "While this card is depleted, you may
+  deploy tactics in the void ..." (Voidal Tactician — `condition:
+  { type: "cardDepleted", target: "source" }`).
+- **`playRestrictions: [{ player, kind, timing? }]`** — a standing "you may
+  not play X" while the source is in play. `kind: "flipUp"` or
+  `kind: { cardType }`; `timing: "notActivePlayer"` narrows it to "only
+  while `player` is not the active player". "Your opponents cannot use FLIP
+  UP" (Lockbox of the Aeons); "opponents may only play tactics during their
+  own turn" (Geldale, City-Fortress).
+- **`restrictReturnToHand: { player, fromZones }`** — while the source is in
+  play, a card owned by `player` cannot be moved to a hand from any zone in
+  `fromZones` (the move fizzles). "cards cannot be put into your opponents'
+  hands from the void, discard pile or play" (Lockbox of the Aeons).
+
+**Effects**
+- **`{ type: "preventAllDamage", duration }`** — opens a window during which
+  every damage instance (any card, any source, battle or not) is reduced to
+  0. "all inflicted damage is reduced to 0" (Limited Liability).
+- **`{ type: "restrictDestruction", duration }`** — opens a window during
+  which the `destroy` **effect** is inert (a `destroy` COST, lethal-damage
+  SBA and `removeFromGame` still work). "cards ... can only be destroyed by
+  costs" (Limited Liability).
+
+**wontImplement (this set)**
+- **Trickster's Globe** — a faction-damage → mill replacement (a
+  replaceable-event class no other card needs) plus "no cards in deck → lose
+  the game" (an alternate loss condition).
+- **Lost on Floor 3** — needs a cancellable end-of-turn declaration + a
+  respond-to-end-of-turn-cost play window (turn-structure machinery no other
+  card uses).
+
 ## Ability types
 
 ```ts

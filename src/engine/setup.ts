@@ -139,6 +139,8 @@ export function createTwoPlayerGame(
     blockRestrictionGrants: [],
     voidPlayGrants: [],
     scheduledEffects: [],
+    damagePreventionWindows: [],
+    destructionRestrictionWindows: [],
     abilityUsesThisTurn: {},
     attacksThisTurn: {},
     responseStack: [],

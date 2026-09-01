@@ -216,6 +216,8 @@ export class SpoilsEngine {
     this.state.abilitySuppressions ??= [];
     this.state.abilityUsesThisTurn ??= {};
     this.state.attacksThisTurn ??= {};
+    this.state.damagePreventionWindows ??= [];
+    this.state.destructionRestrictionWindows ??= [];
 
     for (const card of Object.values(this.state.cards)) {
       card.faceDown ??= false;
@@ -1043,6 +1045,13 @@ export class SpoilsEngine {
     this.state.blockRestrictionGrants = this.state.blockRestrictionGrants.filter(
       grant => this.durationStillActive(grant)
     );
+    this.state.damagePreventionWindows = this.state.damagePreventionWindows.filter(
+      w => this.durationStillActive(w)
+    );
+    this.state.destructionRestrictionWindows =
+      this.state.destructionRestrictionWindows.filter(w =>
+        this.durationStillActive(w)
+      );
     // "This turn, take control of the character." (Mutiny Grant) — when the
     // grant lapses, control snaps back to whoever held it before.
     this.state.controlGrants = this.state.controlGrants.filter(grant => {
@@ -1256,7 +1265,10 @@ export class SpoilsEngine {
       }
     }
 
-    const thresholdMet = this.meetsThreshold(playerId, definition.threshold);
+    const thresholdMet = this.meetsThreshold(playerId, definition.threshold, {
+      definition,
+      cardId
+    });
 
     const pendingReduction = this.state.costReductions.find(
       reduction =>
@@ -1512,9 +1524,18 @@ export class SpoilsEngine {
               g => g.cardId === card.id && g.playerId === playerId
             )
           : undefined;
-      if (voidGrant) {
+      // "While this card is depleted, you may deploy tactics in the void as
+      // though they were in your hand" (Voidal Tactician) — a live
+      // ContinuousAbility.voidPlay grant, not a persisted per-card entry.
+      const voidAura =
+        !voidGrant && card.zone === "void"
+          ? this.continuousVoidPlayGrantFor(card.id, playerId)
+          : undefined;
+      if (voidGrant || voidAura) {
         card.controllerId = playerId;
-        if (voidGrant.ignoreThreshold) ignoreThreshold = true;
+        if (voidGrant?.ignoreThreshold || voidAura?.ignoreThreshold) {
+          ignoreThreshold = true;
+        }
       } else {
         assert(
           card.controllerId === playerId,
@@ -1525,7 +1546,11 @@ export class SpoilsEngine {
     }
 
     assert(
-      ignoreThreshold || this.meetsThreshold(playerId, definition.threshold),
+      ignoreThreshold ||
+        this.meetsThreshold(playerId, definition.threshold, {
+          definition,
+          cardId: card.id
+        }),
       "Threshold requirements are not met."
     );
 
@@ -2000,7 +2025,7 @@ export class SpoilsEngine {
     assert(
       !this.state.playRestrictions.some(
         r => r.playerId === action.playerId && r.kind === "flipUp"
-      ),
+      ) && !this.continuousPlayRestricted(action.playerId, { kind: "flipUp" }),
       "You cannot play cards using FLIP UP right now."
     );
     assert(
@@ -2418,6 +2443,13 @@ export class SpoilsEngine {
       `You cannot play ${definition.type} cards right now.`
     );
 
+    // Standing "you may not play X" from an in-play ContinuousAbility.
+    // playRestrictions (Geldale, City-Fortress).
+    assert(
+      !this.continuousPlayRestricted(playerId, { cardType: definition.type }),
+      `You cannot play ${definition.type} cards right now.`
+    );
+
     const window = this.state.responseWindow;
 
     if (window) {
@@ -2726,6 +2758,67 @@ export class SpoilsEngine {
       }
     }
     return results;
+  }
+
+  /**
+   * `cardId`'s own continuous abilities PLUS any continuous ability granted
+   * to it — by an in-play `ContinuousAbility.grantedAbilities` block whose
+   * per-block `selector` matches it (God's Blessing of ___), or a permanent
+   * `state.abilityGrants` snapshot (Skin Suit). A granted continuous
+   * ability is resolved with `cardId` as its source, so "All your
+   * characters gain 1 strength" inside the granted text scopes to the
+   * recipient's controller. The parallel of `getGrantedTriggeredAbilities`
+   * / `getGrantedActivatedAbilities` for the continuous recompute.
+   */
+  private getEffectiveContinuousAbilities(
+    cardId: CardInstanceId
+  ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
+    const own = (this.getDefinition(cardId).behavior?.abilities ?? []).filter(
+      (a): a is Extract<AbilityDefinition, { type: "continuous" }> =>
+        a.type === "continuous"
+    );
+
+    const target = this.state.cards[cardId];
+    if (!target || target.zone !== "play" || target.faceDown) return own;
+
+    const granted: Array<Extract<AbilityDefinition, { type: "continuous" }>> = [];
+
+    for (const source of Object.values(this.state.cards)) {
+      if (source.zone !== "play" || source.faceDown) continue;
+      if (source.id === cardId) continue;
+      for (const ability of this.getDefinition(source.id).behavior?.abilities ??
+        []) {
+        if (ability.type !== "continuous" || !ability.grantedAbilities) continue;
+        if (this.abilitySuppressed(source.id, ability.id)) continue;
+        const ctx: ResolutionContext = {
+          sourceId: source.id,
+          controllerId: source.controllerId,
+          abilityId: ability.id,
+          selected: {}
+        };
+        if (
+          ability.condition &&
+          !this.evaluateCondition(ability.condition, ctx)
+        ) {
+          continue;
+        }
+        for (const block of ability.grantedAbilities) {
+          if (!this.matchesSelector(target, block.selector, ctx)) continue;
+          for (const g of block.abilities) {
+            if (g.type === "continuous") granted.push(g);
+          }
+        }
+      }
+    }
+
+    for (const grant of this.state.abilityGrants) {
+      if (grant.cardId !== cardId) continue;
+      for (const g of grant.abilities) {
+        if (g.type === "continuous") granted.push(g);
+      }
+    }
+
+    return granted.length ? [...own, ...granted] : own;
   }
 
   private processImmediateQueue(): void {
@@ -3441,7 +3534,10 @@ export class SpoilsEngine {
           context
         );
 
-        assert(cardId, "Unable to resolve stat target.");
+        // An unresolved target (a not-yet-picked declaration read from an
+        // ability's `variables`, a card that has since left play) has no
+        // stat — read as 0, like `battlePartySize` / `extremumStat`.
+        if (!cardId) return 0;
 
         return this.getStat(cardId, expression.stat);
       }
@@ -3452,7 +3548,7 @@ export class SpoilsEngine {
           context
         );
 
-        assert(cardId, "Unable to resolve counter target.");
+        if (!cardId || !this.state.cards[cardId]) return 0;
 
         return (
           this.requireCard(cardId).counters[
@@ -3492,13 +3588,13 @@ export class SpoilsEngine {
 
       case "cardCost": {
         const cardId = this.resolveTargetRef(expression.target, context);
-        assert(cardId, "Unable to resolve cardCost target.");
+        if (!cardId || !this.state.cards[cardId]) return 0;
         return this.getDefinition(cardId).cost ?? 0;
       }
 
       case "printedStat": {
         const cardId = this.resolveTargetRef(expression.target, context);
-        assert(cardId, "Unable to resolve printedStat target.");
+        if (!cardId || !this.state.cards[cardId]) return 0;
         return this.getDefinition(cardId)[expression.stat] ?? 0;
       }
 
@@ -3598,6 +3694,23 @@ export class SpoilsEngine {
         return expression.direction === "max"
           ? Math.max(...values)
           : Math.min(...values);
+      }
+
+      case "distinctCount": {
+        const seen = new Set<string>();
+        for (const card of this.queryCards(expression.selector, context)) {
+          const def = this.getDefinition(card.id);
+          if (expression.by === "subtype") {
+            for (const s of def.subtype ?? []) seen.add(s.toLowerCase());
+          } else if (expression.by === "trade") {
+            if (def.trade) seen.add(def.trade.toLowerCase());
+          } else if (expression.by === "type") {
+            seen.add(def.type);
+          } else {
+            seen.add(def.name.toLowerCase());
+          }
+        }
+        return seen.size;
       }
     }
   }
@@ -3846,6 +3959,17 @@ export class SpoilsEngine {
       !!definition.resource?.staple !== selector.staple
     ) {
       return false;
+    }
+
+    if (selector.attachedToFaction !== undefined) {
+      const host = card.attachedTo
+        ? this.state.cards[card.attachedTo]
+        : undefined;
+      const attachedToFaction =
+        !!host && this.getDefinition(host.id).type === "faction";
+      if (attachedToFaction !== selector.attachedToFaction) {
+        return false;
+      }
     }
 
     if (
@@ -5003,6 +5127,13 @@ export class SpoilsEngine {
 
         if (!targetId) return;
 
+        // "This turn, cards ... can only be destroyed by costs." (Limited
+        // Liability) — the `destroy` EFFECT is inert; the `destroy` COST,
+        // lethal-damage SBA and `removeFromGame` still work.
+        if (this.state.destructionRestrictionWindows.length > 0) {
+          return;
+        }
+
         // RULES.md §12: destroying a card no longer in play is carried out
         // "as far as possible" — i.e. it's simply already done. An earlier
         // effect in the same ability (or a batched trigger) may well have
@@ -5498,6 +5629,24 @@ export class SpoilsEngine {
           playerId: player.id,
           kind: effect.kind,
           cardType: effect.cardType,
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+        return;
+      }
+
+      case "preventAllDamage": {
+        this.state.damagePreventionWindows.push({
+          id: nextId("damagePreventionWindow"),
+          duration: effect.duration,
+          createdTurn: this.state.turn
+        });
+        return;
+      }
+
+      case "restrictDestruction": {
+        this.state.destructionRestrictionWindows.push({
+          id: nextId("destructionRestrictionWindow"),
           duration: effect.duration,
           createdTurn: this.state.turn
         });
@@ -6250,6 +6399,12 @@ export class SpoilsEngine {
     const target = this.state.cards[targetId];
     if (!target) return 0;
 
+    // "This turn ... all inflicted damage is reduced to 0." (Limited
+    // Liability) — a blanket window; drive every incoming instance to 0.
+    if (this.state.damagePreventionWindows.length > 0) {
+      return -(incomingAmount ?? 1e9);
+    }
+
     let delta = 0;
     // "When any amount of damage greater than 4 is inflicted to this card,
     // reduce it to 0." (Class Action Defender) — `{ minAmount, setTo }`
@@ -6383,14 +6538,7 @@ export class SpoilsEngine {
         continue;
       }
 
-      const definition = this.getDefinition(
-        source.id
-      );
-
-      for (const ability of definition.behavior?.abilities ?? []) {
-        if (ability.type !== "continuous") {
-          continue;
-        }
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
         if (this.abilitySuppressed(source.id, ability.id)) {
           continue;
         }
@@ -6414,7 +6562,7 @@ export class SpoilsEngine {
           continue;
         }
 
-        for (const modifier of ability.modifiers) {
+        for (const modifier of ability.modifiers ?? []) {
           const auraContext = this.continuousBindingContext(
             modifier,
             context,
@@ -6459,10 +6607,8 @@ export class SpoilsEngine {
         continue;
       }
 
-      const definition = this.getDefinition(source.id);
-
-      for (const ability of definition.behavior?.abilities ?? []) {
-        if (ability.type !== "continuous" || !ability.keywords) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+        if (!ability.keywords) {
           continue;
         }
         // A continuous ability is live only while its source sits in
@@ -6518,10 +6664,8 @@ export class SpoilsEngine {
       if (source.zone !== "play" || source.faceDown) continue;
       if (this.sourceClassIgnoredByTarget(targetId, source.id)) continue;
 
-      const definition = this.getDefinition(source.id);
-
-      for (const ability of definition.behavior?.abilities ?? []) {
-        if (ability.type !== "continuous" || !ability.suppressKeywords) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+        if (!ability.suppressKeywords) {
           continue;
         }
 
@@ -6563,10 +6707,8 @@ export class SpoilsEngine {
         continue;
       }
 
-      const definition = this.getDefinition(source.id);
-
-      for (const ability of definition.behavior?.abilities ?? []) {
-        if (ability.type !== "continuous" || !ability.restrictions) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+        if (!ability.restrictions) {
           continue;
         }
         if (this.abilitySuppressed(source.id, ability.id)) {
@@ -6600,6 +6742,148 @@ export class SpoilsEngine {
     }
 
     return results;
+  }
+
+  /**
+   * A live `ContinuousAbility.voidPlay` grant (Voidal Tactician) that lets
+   * `playerId` deploy the void-zone card `cardId` as though from hand — or
+   * `undefined`. The granting source must be in play, face-up, controlled
+   * by `playerId`, its `condition` (if any) holding, and its
+   * `voidPlay.selector` matching `cardId`.
+   */
+  private continuousVoidPlayGrantFor(
+    cardId: CardInstanceId,
+    playerId: PlayerId
+  ): { ignoreThreshold: boolean } | undefined {
+    const card = this.state.cards[cardId];
+    if (!card) return undefined;
+
+    for (const source of Object.values(this.state.cards)) {
+      if (source.zone !== "play" || source.faceDown) continue;
+      if (source.controllerId !== playerId) continue;
+
+      for (const ability of this.getDefinition(source.id).behavior?.abilities ??
+        []) {
+        if (ability.type !== "continuous" || !ability.voidPlay) continue;
+        if (this.abilitySuppressed(source.id, ability.id)) continue;
+
+        const context: ResolutionContext = {
+          sourceId: source.id,
+          controllerId: source.controllerId,
+          abilityId: ability.id,
+          selected: {}
+        };
+        if (
+          ability.condition &&
+          !this.evaluateCondition(ability.condition, context)
+        ) {
+          continue;
+        }
+        if (!this.matchesSelector(card, ability.voidPlay.selector, context)) {
+          continue;
+        }
+        return { ignoreThreshold: !!ability.voidPlay.ignoreThreshold };
+      }
+    }
+
+    return undefined;
+  }
+
+  /**
+   * True when an in-play `ContinuousAbility.playRestrictions` entry (Lockbox
+   * of the Aeons, Geldale City-Fortress) currently forbids `playerId` from
+   * the given play — `{ kind: "flipUp" }` or `{ cardType }`.
+   */
+  private continuousPlayRestricted(
+    playerId: PlayerId,
+    query: { kind: "flipUp" } | { cardType: CardType }
+  ): boolean {
+    for (const source of Object.values(this.state.cards)) {
+      if (source.zone !== "play" || source.faceDown) continue;
+
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+        if (!ability.playRestrictions) continue;
+        if (this.abilitySuppressed(source.id, ability.id)) continue;
+        if (
+          ability.condition &&
+          !this.evaluateCondition(ability.condition, {
+            sourceId: source.id,
+            controllerId: source.controllerId,
+            abilityId: ability.id,
+            selected: {}
+          })
+        ) {
+          continue;
+        }
+
+        for (const entry of ability.playRestrictions) {
+          const targeted =
+            entry.player === "any"
+              ? true
+              : entry.player === "self"
+                ? source.controllerId === playerId
+                : this.getOpponent(source.controllerId).id === playerId;
+          if (!targeted) continue;
+          if (
+            entry.timing === "notActivePlayer" &&
+            playerId === this.state.activePlayerId
+          ) {
+            continue;
+          }
+          if ("kind" in query) {
+            if (entry.kind === "flipUp") return true;
+          } else if (
+            typeof entry.kind === "object" &&
+            entry.kind.cardType === query.cardType
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * True when an in-play `ContinuousAbility.restrictReturnToHand` entry
+   * (Lockbox of the Aeons) forbids moving `cardId` to its owner's hand from
+   * `fromZone`.
+   */
+  private returnToHandRestricted(
+    cardId: CardInstanceId,
+    fromZone: Zone
+  ): boolean {
+    const card = this.state.cards[cardId];
+    if (!card) return false;
+
+    for (const source of Object.values(this.state.cards)) {
+      if (source.zone !== "play" || source.faceDown) continue;
+
+      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+        const rule = ability.restrictReturnToHand;
+        if (!rule) continue;
+        if (this.abilitySuppressed(source.id, ability.id)) continue;
+        if (
+          ability.condition &&
+          !this.evaluateCondition(ability.condition, {
+            sourceId: source.id,
+            controllerId: source.controllerId,
+            abilityId: ability.id,
+            selected: {}
+          })
+        ) {
+          continue;
+        }
+        const targeted =
+          rule.player === "any"
+            ? true
+            : rule.player === "self"
+              ? source.controllerId === card.ownerId
+              : this.getOpponent(source.controllerId).id === card.ownerId;
+        if (targeted && rule.fromZones.includes(fromZone)) return true;
+      }
+    }
+    return false;
   }
 
   /** Public: a renderer needs a card's live restriction set; same check battle legality uses. */
@@ -7701,6 +7985,12 @@ export class SpoilsEngine {
     const from = card.zone;
 
     if (from === to) {
+      return;
+    }
+
+    // "cards cannot be put into your opponents' hands from the void, discard
+    // pile or play" (Lockbox of the Aeons) — the move simply fizzles.
+    if (to === "hand" && this.returnToHandRestricted(cardId, from)) {
       return;
     }
 
@@ -9697,6 +9987,7 @@ export class SpoilsEngine {
     const checks: Array<{
       minPartySize?: NumberExpression;
       minSpeed?: NumberExpression;
+      blockerMustNotMatch?: CardSelector;
       ctx: ResolutionContext;
     }> = [];
 
@@ -9718,6 +10009,7 @@ export class SpoilsEngine {
         checks.push({
           minPartySize: ability.blockRestriction.minBlockingPartySize,
           minSpeed: ability.blockRestriction.minBlockerSpeed,
+          blockerMustNotMatch: ability.blockRestriction.blockerMustNotMatch,
           ctx
         });
       }
@@ -9753,6 +10045,19 @@ export class SpoilsEngine {
           assert(
             this.getStat(id, "speed") >= min,
             `Only characters with speed ${min} or more may block this battle.`
+          );
+        }
+      }
+      if (check.blockerMustNotMatch) {
+        for (const id of blockerIds) {
+          const c = this.state.cards[id];
+          assert(
+            !c ||
+              !this.matchesSelector(c, check.blockerMustNotMatch, {
+                ...check.ctx,
+                selected: { ...check.ctx.selected, __candidate: [id] }
+              }),
+            `'${this.getDefinition(id).name}' cannot block this battle.`
           );
         }
       }
@@ -9840,7 +10145,14 @@ export class SpoilsEngine {
 
   private meetsThreshold(
     playerId: PlayerId,
-    threshold: string | number
+    threshold: string | number,
+    /**
+     * The card being deployed — when it carries `behavior`/`thresholdSlack`
+     * (FEALTY) and its `condition` holds, the requirement is satisfied
+     * whenever the player is at most `amount` icons short in TOTAL across
+     * every icon type. Passed from `deployCard` / `getCardPlayability`.
+     */
+    slackFor?: { definition: CardDefinition; cardId: CardInstanceId }
   ): boolean {
     if (!threshold || threshold === 0 || threshold === "") {
       return true;
@@ -9854,6 +10166,20 @@ export class SpoilsEngine {
     const required = parseThreshold(threshold);
     const available = this.getThresholds(playerId);
 
+    const slack = slackFor?.definition.thresholdSlack;
+    let slackBudget = 0;
+    if (
+      slack &&
+      this.evaluateCondition(slack.condition, {
+        sourceId: slackFor!.cardId,
+        controllerId: playerId,
+        selected: {}
+      })
+    ) {
+      slackBudget = slack.amount;
+    }
+
+    let deficit = 0;
     for (const icon of [
       "rage",
       "greed",
@@ -9867,15 +10193,18 @@ export class SpoilsEngine {
       const reduction = this.state.thresholdReductions
         .filter(r => r.playerId === playerId && r.icon === icon)
         .reduce((n, r) => n + r.amount, 0);
-      if (
-        (available[icon] ?? 0) <
-        Math.max(0, (required[icon] ?? 0) - reduction)
-      ) {
-        return false;
+      const shortfall =
+        Math.max(0, (required[icon] ?? 0) - reduction) - (available[icon] ?? 0);
+      if (shortfall > 0) {
+        deficit += shortfall;
+        // Without FEALTY slack, any single-icon shortfall fails outright.
+        if (slackBudget === 0) return false;
       }
     }
 
-    return true;
+    // "reduce this card's threshold requirement by any N resource icons"
+    // (FEALTY) — a total-deficit allowance across all icon types.
+    return deficit <= slackBudget;
   }
 
   private getEventCardId(

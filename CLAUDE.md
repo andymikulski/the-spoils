@@ -178,3 +178,7 @@ shells).
 # Docs
 
 The /docs/ folder has the latest rules. RULES.md is a helper file to condense data and track implementation details.
+
+# Sub Agents
+
+Never use sub agents to parallelize work; they use too many tokens and are not an efficient value trade.

@@ -15,20 +15,40 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 358 |
+| `verified` (driven through the public API) | 517 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
-| `classified` (audited, not yet authored) | 107 |
-| `vanilla` (no behavior needed) | 157 |
-| `unclassified` | 1272 |
-| `rulesAudited` | 678 / 2101 |
-| Engine capabilities | 180 / 180 implemented |
-| Test suite | 794 passing (`npm test`), `npm run typecheck` clean |
+| `classified` (audited, not yet authored) | 106 |
+| `vanilla` (no behavior needed) | 158 |
+| `unclassified` | 1111 |
+| `wontImplement` | 2 |
+| `rulesAudited` | 844 / 2101 |
+| Engine capabilities | 190 / 190 implemented |
+| Test suite | 974 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 2, Seed 3, Shade of the Devoured Emperor, Holy Heist, and 1st Edition
-Part 2 are fully implemented and audited** — every card with rules text is
-`authored`/`verified`, its JSON checked against the printed text + the CR,
-all referenced capabilities implemented. The five sets exercise ~180
-capabilities; new sets should mostly reuse that vocabulary.
+**Seed 2, Seed 3, Shade of the Devoured Emperor, Holy Heist, 1st Edition
+Part 2, and Ungodly Mess are fully implemented and audited** — every card
+with rules text is `authored`/`verified`, its JSON checked against the
+printed text + the CR, all referenced capabilities implemented. The six sets
+exercise ~190 capabilities; new sets should mostly reuse that vocabulary.
+
+**Ungodly Mess (167 cards) — done** (159 `verified` + 6 `vanilla` + 2
+`wontImplement`). Added 10 capabilities in one pass —
+`distinctCount` expression, `CardSelector.attachedToFaction`,
+`CardDefinition.thresholdSlack` (FEALTY), granted **continuous** abilities
+in `ContinuousAbility.grantedAbilities` (God's Blessing cycle),
+`blockRestriction.blockerMustNotMatch`, `ContinuousAbility.voidPlay` /
+`playRestrictions` / `restrictReturnToHand`, `preventAllDamage` /
+`restrictDestruction` effects. Also made `stat`/`counter`/`cardCost`/
+`printedStat` read as 0 on an unresolved target (was a hard assert). See
+`BEHAVIORS.md` → "Ungodly Mess additions" and RULES.md §12. `wontImplement`:
+Trickster's Globe (faction-damage→mill replacement class + deck-out loss),
+Lost on Floor 3 (cancellable end-of-turn declaration). Test coverage:
+`ungodly-mess-caps.test.ts` (one fixture per new capability),
+`ungodly-mess-smoke.test.ts` (10 hand-written end-to-end scenarios through
+the real catalog), `ungodly-mess-exercise.test.ts` (**every** authored card
+instantiated from the catalog and played / activated / triggered on a broad
+synthetic board with every pending choice auto-answered — this is why the
+whole set is `verified`).
 
 **1st Edition Part 2 (165 cards) — done** (160 `verified` + 5 `vanilla`).
 Added 21 capabilities in one pass — `battlePartySize` / `extremumStat`
@@ -170,8 +190,7 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Ungodly Mess | 161 | 1 already classified — smallest remaining |
-| Open Beta | 144 | 40 prior-behavior cards already `classified` |
+| Open Beta | 144 | 40 prior-behavior cards already `classified` — smallest remaining |
 | 1st Edition | 162 | 40 prior-behavior cards `classified`; the two precon decks draw from here |
 | Seed | 209 | |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |

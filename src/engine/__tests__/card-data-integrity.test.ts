@@ -126,7 +126,8 @@ const EVENT_TYPES = new Set([
   "cardDestroyed", "cardDepleted", "cardRestored", "resourcePlayed",
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
   "characterAttacked", "characterBlocked", "blockingPartyFormed", "cardsDrawn",
-  "cardsDiscarded", "counterChanged", "attackerBlocked", "deckSearched"
+  "cardsDiscarded", "counterChanged", "attackerBlocked", "deckSearched",
+  "coinFlipped"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
@@ -159,6 +160,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "lockAbilityThisTurn", "flipCoin", "restrictBlockers",
   "restrictBlockersToChosen", "grantAbilitiesFrom", "initiateAttack",
   "auctionForCard",
+  // Ungodly Mess effects
+  "preventAllDamage", "restrictDestruction",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected",
@@ -185,6 +188,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "thresholdIconCount", "eventDamageAmount",
   // 1st Edition Part 2 number expressions
   "battlePartySize", "extremumStat",
+  // Ungodly Mess number expressions
+  "distinctCount",
   // target refs / player refs
   "selected", "card", "player", "ownerOf", "controllerOf", "deckPosition",
   "respondedToCard", "damageSource", "factionOf",

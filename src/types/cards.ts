@@ -217,6 +217,22 @@ export interface CardDefinition {
   };
 
   /**
+   * "FEALTY: While this card is in your hand and <condition>, reduce this
+   * card's threshold requirement by any N resource icons." While
+   * `condition` holds — evaluated with the card in hand, controller = its
+   * holder — `meetsThreshold` for THIS card is satisfied whenever the
+   * holder is at most `amount` icons short **summed across all icon
+   * types** (CR reads "by any N icons" as a pure total-deficit slack, with
+   * no per-icon choice). The "blade of questionable morality" cycle
+   * (Abram Ka-darbo Alkazin, Eustace Sensible Glutton, Ignatious Tactician
+   * Crafter, Jo Ciendeilio Iron Born, Rudo Mangod Fightful Adonis).
+   */
+  thresholdSlack?: {
+    condition: Condition;
+    amount: number;
+  };
+
+  /**
    * "While this card is in your hand you may reveal this card as you are
    * playing a resource. If you do, you may deploy this card for <cost>."
    * (Witty Worm). A hand-sourced alternative deploy taken *instead of* the
@@ -569,6 +585,16 @@ export interface ContinuousAbility extends AbilityBase {
   blockRestriction?: {
     minBlockingPartySize?: NumberExpression;
     minBlockerSpeed?: NumberExpression;
+    /**
+     * A character matching this selector is not a legal blocker against the
+     * source (checked in `declareBlockers` alongside the size / speed
+     * gates). "This character cannot be blocked by characters with a [V]
+     * icon in its rules text" (Feckless Chronicler —
+     * `conditions: [{ type: "textMentionsIcon", icon: "volition" }]`);
+     * "Characters with a token on them cannot block this card" (Silencer —
+     * `conditions: [{ type: "counterCompare", ... }]`).
+     */
+    blockerMustNotMatch?: CardSelector;
   };
   /**
    * Grants a Unique designation to every in-play card matching `selector`
@@ -602,5 +628,50 @@ export interface ContinuousAbility extends AbilityBase {
    */
   grantFlipUp?: {
     selector: CardSelector;
+  };
+
+  /**
+   * While the source is in play and `condition` holds, the source's
+   * controller may deploy cards matching `selector` (typically
+   * `{ zone: "void", type: "tactic", owner: "self" }`) as though they were
+   * in hand — the continuous / conditional form of the one-shot
+   * `grantVoidPlay` effect. "While this card is depleted, you may deploy
+   * tactics in the void as though they were in your hand without meeting
+   * their threshold" (Voidal Tactician — `condition: { type: "cardDepleted",
+   * target: "source" }`, `ignoreThreshold: true`).
+   */
+  voidPlay?: {
+    selector: CardSelector;
+    ignoreThreshold?: boolean;
+  };
+
+  /**
+   * While the source is in play and `condition` holds, a standing "you may
+   * not play X" restriction — the continuous form of the `restrictPlay`
+   * effect, consulted by `assertCanDeployAtCurrentTiming` / the `flipUp`
+   * action. `kind: "flipUp"` blocks the FLIP UP action; `kind: { cardType }`
+   * blocks deploying that card type. `timing: "notActivePlayer"` narrows it
+   * to "only while `player` is NOT the active player" ("opponents may only
+   * play tactics during their own turn"). "Your opponents cannot use FLIP
+   * UP" (Lockbox of the Aeons), "Your opponents may only play tactics
+   * during their own turn" (Geldale, City-Fortress).
+   */
+  playRestrictions?: Array<{
+    player: "self" | "opponent" | "any";
+    kind: "flipUp" | { cardType: CardType };
+    timing?: "notActivePlayer";
+  }>;
+
+  /**
+   * While the source is in play, a card owned by `player` cannot be moved
+   * to a hand from any zone in `fromZones` — the `moveCard` / `terminate`
+   * `to: "hand"` path checks it and the move simply fails (CR: an
+   * impossible move does nothing). "cards cannot be put into your
+   * opponents' hands from the void, discard pile or play" (Lockbox of the
+   * Aeons — `player: "opponent"`, `fromZones: ["void", "discard", "play"]`).
+   */
+  restrictReturnToHand?: {
+    player: "self" | "opponent" | "any";
+    fromZones: Zone[];
   };
 }

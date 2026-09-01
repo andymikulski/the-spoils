@@ -242,6 +242,20 @@ export type NumberExpression =
       selector: CardSelector;
       stat: Stat;
       direction: "min" | "max";
+    }
+  | {
+      /**
+       * The number of DISTINCT values of `by` among cards matching
+       * `selector` (in-play by default; respects `selector.zone`). "X is the
+       * number of different staple resources you control" (`by: "name"`,
+       * `selector: { controller: "self", staple: true, type: "resource" }`);
+       * "the number of different trades among cards you control"
+       * (`by: "trade"`). `by: "subtype"` counts every distinct entry across
+       * the matched cards' subtype lists.
+       */
+      type: "distinctCount";
+      selector: CardSelector;
+      by: "name" | "trade" | "subtype" | "type";
     };
 
 export interface CardSelector {
@@ -298,6 +312,17 @@ export interface CardSelector {
   nameVar?: string;
 
   depleted?: boolean;
+
+  /**
+   * Match resources by whether they are attached to a faction card:
+   * `true` — only resources whose `CardInstance.attachedTo` points at a
+   * faction (a normal face-up "attached to your faction" resource);
+   * `false` — only *detached* resources (`attachedTo` unset), e.g. "the
+   * number of detached resources that player controls" (Flesh Deliquesce)
+   * or the pool for "detach up to 2 resources from their faction". Only
+   * meaningful for `type: "resource"`.
+   */
+  attachedToFaction?: boolean;
 
   /**
    * Restrict to cards currently among the **top `fromTop`** of their

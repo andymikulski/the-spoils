@@ -1116,6 +1116,51 @@ of the Devoured Emperor additions")**
   (attach to faction) and puts the character into play; the rest reshuffle.
   `auctionBid` pending choice, `{ bid: 0 }` = pass.
 
+### Ungodly Mess additions
+
+- **Distinct counting.** `{ type: "distinctCount", selector, by }` — the
+  number of distinct `name` / `trade` / `subtype` / `type` values across the
+  matched cards. "for each different staple resource you control" (Elite
+  Acrolos Engineer); "different trades among cards you control" (Wary
+  Reunion).
+- **Resource attachment selector.** `CardSelector.attachedToFaction` filters
+  resources by whether they're attached to a faction (spent this turn) or
+  detached (available). "the number of detached resources that player
+  controls" (Flesh Deliquesce) = `count { type: "resource", attachedToFaction:
+  false }`.
+- **FEALTY threshold slack.** `CardDefinition.thresholdSlack { condition,
+  amount }` — while `condition` holds and the card is in hand, its printed
+  threshold is met whenever the holder is at most `amount` icons short in
+  **total** across all icon types ("reduce this card's threshold requirement
+  by any N resource icons"; no per-icon choice — CR treats it as a flat
+  deficit allowance). The blade-of-questionable-morality Uniques.
+- **Granted continuous text.** A `ContinuousAbility.grantedAbilities` block's
+  **continuous** members are now honored (previously only triggered /
+  activated), sourced on the recipient card — so a granted aura like "All
+  your characters gain 1 strength" scopes to the recipient's controller and
+  ends when the recipient or grantor leaves play. The "God's Blessing of
+  ___" attach-mutation cycle.
+- **Blocker exclusion.** `blockRestriction.blockerMustNotMatch` — a
+  character matching this selector is not a legal blocker against the source
+  (Feckless Chronicler, Silencer). Whole-party "cannot be blocked" stays the
+  `cannotBeBlocked` keyword.
+- **Standing play grants / restrictions.** `ContinuousAbility.voidPlay`
+  (deploy matching void cards as though from hand while `condition` holds —
+  Voidal Tactician), `playRestrictions` (standing "cannot play X" / "cannot
+  use FLIP UP", optionally only while the target is not the active player —
+  Lockbox of the Aeons, Geldale), `restrictReturnToHand` (a card owned by
+  the named player can't be moved to a hand from the listed zones — the move
+  fizzles; Lockbox of the Aeons).
+- **Blanket windows (Limited Liability).** `preventAllDamage` — every damage
+  instance is reduced to 0 for the duration. `restrictDestruction` — the
+  `destroy` *effect* is inert for the duration; a `destroy` *cost*,
+  lethal-damage state-based destruction and `removeFromGame` are unaffected
+  ("cards … can only be destroyed by costs").
+- **wontImplement.** *Trickster's Globe* (a faction-damage → mill
+  replacement class + an alternate "deck empty → lose" condition) and *Lost
+  on Floor 3* (a cancellable end-of-turn declaration + respond-to-end-of-
+  turn-cost timing) are out of scope for the 2-player single-game engine.
+
 ## 13. Tokens (CR §409)
 
 **(CR §409.1)** A token is a marker placed on an in-play card; it has no
