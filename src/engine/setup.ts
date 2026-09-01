@@ -148,6 +148,7 @@ export function createTwoPlayerGame(
     destructionRestrictionWindows: [],
     abilityUsesThisTurn: {},
     attacksThisTurn: {},
+    attackDeclarationsThisTurn: {},
     responseStack: [],
     pendingEffectFrames: [],
     turnEventTally: {},

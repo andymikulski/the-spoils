@@ -122,6 +122,17 @@ export interface PendingDeployForFreeChoice {
    * may deploy it [paying its cost]"). Default (unset) is a free deploy.
    */
   payCost?: boolean;
+  /**
+   * Set by `deployForFree.budget` (Reality Shift) — the remaining total-cost
+   * pool. After each free deploy the choice is re-issued with this reduced
+   * by the deployed card's printed cost, until it's exhausted, nothing in
+   * hand still fits, or the player declines.
+   */
+  budgetRemaining?: number;
+  /** Budget mode only — the per-card cap carried from `deployForFree.maxCost`. */
+  perCardCap?: number;
+  /** Budget mode only — the `deployForFree.selector`, for re-computing candidates. */
+  selector?: CardSelector;
 }
 
 /** "Divide N however you want among the selected cards" (see the `distributeAmong` effect). */

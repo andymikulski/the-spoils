@@ -757,6 +757,14 @@ export interface GameState {
    */
   attacksThisTurn: Record<string, number>;
 
+  /**
+   * Per-turn count of how many separate attacks each player has *declared*
+   * this turn, keyed by `PlayerId`. Reset at the start of every turn. Read
+   * by `ContinuousAbility.attackLimitPerTurn` ("players can attack only once
+   * each turn" — Narrow Passage).
+   */
+  attackDeclarationsThisTurn: Record<string, number>;
+
   /** Fully serializable response/stack state for UI, replay, or networking. */
   responseStack: StackItem[];
   responseWindow?: ResponseWindowState;

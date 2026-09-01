@@ -220,6 +220,7 @@ export class SpoilsEngine {
     this.state.abilitySuppressions ??= [];
     this.state.abilityUsesThisTurn ??= {};
     this.state.attacksThisTurn ??= {};
+    this.state.attackDeclarationsThisTurn ??= {};
     this.state.damagePreventionWindows ??= [];
     this.state.destructionRestrictionWindows ??= [];
 
@@ -1805,6 +1806,27 @@ export class SpoilsEngine {
     }
   }
 
+  /** Hand cards `playerId` could deploy via a `deployForFree` effect right now. */
+  private deployForFreeCandidates(
+    playerId: PlayerId,
+    maxCost: number,
+    selector: CardSelector | undefined,
+    context: ResolutionContext
+  ): CardInstanceId[] {
+    return Object.values(this.state.cards)
+      .filter(card => {
+        if (card.zone !== "hand" || card.controllerId !== playerId) return false;
+        if ((this.getDefinition(card.id).cost ?? 0) > maxCost) return false;
+        // The hand-zone gate is already applied; don't let the selector's
+        // in-play zone default fight it.
+        return (
+          !selector ||
+          this.matchesSelector(card, { ...selector, zone: "any" }, context)
+        );
+      })
+      .map(card => card.id);
+  }
+
   /**
    * Resolves the chosen card from a `deployForFree` effect: deploys it
    * (waiving its numeric cost) and resolves it synchronously — like any
@@ -3027,6 +3049,28 @@ export class SpoilsEngine {
     }
   }
 
+  /**
+   * Total `ContinuousAbility.searchTax` levied on `playerId` searching their
+   * own deck (0 = no tax). `searchTax` with `amount` omitted / evaluating to
+   * 0 still returns 0 here — a hard "cannot search" is authored as a large
+   * `amount` the player can't afford, or handled by the caller.
+   */
+  private searchTaxFor(playerId: PlayerId): number {
+    let tax = 0;
+    this.forEachActiveContinuous((source, ability, context) => {
+      const rule = ability.searchTax;
+      if (!rule) return;
+      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, playerId)) {
+        return;
+      }
+      tax += Math.max(
+        0,
+        rule.amount === undefined ? 0 : this.evaluateNumber(rule.amount, context)
+      );
+    });
+    return tax;
+  }
+
   /** Resolve a `"self" | "opponent" | "any"` player scope against a source. */
   private scopeMatchesPlayer(
     scope: "self" | "opponent" | "any",
@@ -3872,6 +3916,13 @@ export class SpoilsEngine {
       case "sumCounters": {
         return this.queryCards(expression.selector, context).reduce(
           (sum, card) => sum + (card.counters?.[expression.counter] ?? 0),
+          0
+        );
+      }
+
+      case "sumCost": {
+        return this.queryCards(expression.selector, context).reduce(
+          (sum, card) => sum + (this.getDefinition(card.id).cost ?? 0),
           0
         );
       }
@@ -4927,7 +4978,10 @@ export class SpoilsEngine {
             (m.scope === "self" && src.id === sourceCardId) ||
             (m.scope === "controlledCharacters" &&
               isControlledCharacter &&
-              src.controllerId === playerId);
+              src.controllerId === playerId) ||
+            (m.scope === "opponentCharacters" &&
+              this.hasCardType(sourceCardId, "character") &&
+              playerId === this.getOpponent(src.controllerId).id);
           if (!applies) continue;
           delta += this.evaluateNumber(m.delta, ctx);
           if (m.minCost !== undefined) minCost = Math.max(minCost, m.minCost);
@@ -6129,6 +6183,25 @@ export class SpoilsEngine {
 
         const chooser = this.resolvePlayerRef(effect.chooser, context);
 
+        const searchesDeck = this.selectorNamesZone(
+          effect.declaration.selector,
+          "deck"
+        );
+        const deckOwnerId = searchesDeck ? cstCandidates[0]?.ownerId : undefined;
+
+        // "Your opponents must pay N to search their deck." (Department of
+        // Rejections) — an in-play `ContinuousAbility.searchTax` on a player
+        // searching their OWN deck. Unpayable => the search does nothing.
+        if (deckOwnerId && deckOwnerId === chooser.id) {
+          const tax = this.searchTaxFor(chooser.id);
+          if (tax > 0) {
+            if (this.getAvailableResourceIds(chooser.id).length < tax) {
+              return;
+            }
+            this.payNumericCost(chooser.id, tax);
+          }
+        }
+
         this.state.pendingChoice = {
           kind: "chooserSelectsTarget",
           id: nextId("choice"),
@@ -6142,11 +6215,8 @@ export class SpoilsEngine {
         // a card from a player's own deck IS the search. The choice is now
         // outstanding, so `emit` defers the trigger (processImmediateQueue
         // bails on a pending choice); it resolves once the search completes.
-        if (this.selectorNamesZone(effect.declaration.selector, "deck")) {
-          const deckOwnerId = cstCandidates[0]?.ownerId;
-          if (deckOwnerId) {
-            this.emit({ type: "deckSearched", playerId: deckOwnerId });
-          }
+        if (deckOwnerId) {
+          this.emit({ type: "deckSearched", playerId: deckOwnerId });
         }
 
         return;
@@ -6377,28 +6447,19 @@ export class SpoilsEngine {
 
       case "deployForFree": {
         const player = this.resolvePlayerRef(effect.player, context);
-        const maxCost = this.evaluateNumber(effect.maxCost, context);
+        const perCardCap = this.evaluateNumber(effect.maxCost, context);
+        const budget =
+          effect.budget === undefined
+            ? undefined
+            : Math.max(0, this.evaluateNumber(effect.budget, context));
+        const cap = budget === undefined ? perCardCap : Math.min(perCardCap, budget);
 
-        const candidates = Object.values(this.state.cards)
-          .filter(card => {
-            if (card.zone !== "hand" || card.controllerId !== player.id) {
-              return false;
-            }
-
-            const definition = this.getDefinition(card.id);
-
-            if ((definition.cost ?? 0) > maxCost) {
-              return false;
-            }
-
-            // The hand-zone gate is already applied above; don't let the
-            // selector's in-play zone default fight it.
-            return (
-              !effect.selector ||
-              this.matchesSelector(card, { ...effect.selector, zone: "any" }, context)
-            );
-          })
-          .map(card => card.id);
+        const candidates = this.deployForFreeCandidates(
+          player.id,
+          cap,
+          effect.selector,
+          context
+        );
 
         if (candidates.length === 0) {
           return;
@@ -6410,6 +6471,9 @@ export class SpoilsEngine {
           playerId: player.id,
           candidates,
           payCost: effect.free === false,
+          budgetRemaining: budget,
+          perCardCap: budget === undefined ? undefined : perCardCap,
+          selector: budget === undefined ? undefined : effect.selector,
           context
         };
 
@@ -6621,6 +6685,17 @@ export class SpoilsEngine {
           sourceId: context.sourceId,
           abilities: structuredClone(abilities)
         });
+        return;
+      }
+
+      case "redirectAttackTarget": {
+        const battle = this.state.battle;
+        if (!battle || battle.phase === "finished") return;
+        const toId = this.resolveTargetRef(effect.to, context);
+        const toCard = toId ? this.state.cards[toId] : undefined;
+        if (!toCard || toCard.zone !== "play") return;
+        battle.target = { type: "card", cardId: toId! };
+        battle.defenderPlayerId = toCard.controllerId;
         return;
       }
 
@@ -8283,6 +8358,55 @@ export class SpoilsEngine {
           "That card is not a legal free-deploy candidate."
         );
 
+        // "Deploy any number of cards for free with total numeric cost X or
+        // less." (Reality Shift) — deploy this pick, then re-prompt with the
+        // pool reduced by its printed cost until it's spent / nothing fits /
+        // the player declines.
+        if (pending.budgetRemaining !== undefined) {
+          const printedCost = this.getDefinition(choice.cardId).cost ?? 0;
+          this.deployCard(
+            pending.playerId,
+            choice.cardId,
+            choice.selected ?? {},
+            choice.variables ?? {},
+            !(pending.payCost ?? false),
+            false,
+            undefined,
+            false
+          );
+          this.state.pendingChoice = undefined;
+          const settled = this.resolveTopOfStack();
+          // A chooser pause from the deployed card's own resolution takes
+          // priority and ends the free-deploy loop; the ability that paused
+          // on `deployForFree` resumes once that choice is answered.
+          if (this.state.pendingChoice) return;
+
+          const remaining = Math.max(0, pending.budgetRemaining - printedCost);
+          const cap = Math.min(pending.perCardCap ?? remaining, remaining);
+          const next = this.deployForFreeCandidates(
+            pending.playerId,
+            cap,
+            pending.selector,
+            pending.context
+          );
+          if (next.length > 0) {
+            this.state.pendingChoice = {
+              kind: "deployForFree",
+              id: nextId("choice"),
+              playerId: pending.playerId,
+              candidates: next,
+              payCost: pending.payCost,
+              budgetRemaining: remaining,
+              perCardCap: pending.perCardCap,
+              selector: pending.selector,
+              context: pending.context
+            };
+            return;
+          }
+          if (settled) this.resumeEffectFrames();
+          return;
+        }
+
         // Deliberately not clearing pendingChoice here: deployCardForFree
         // validates (throwing before any mutation, e.g. a missing
         // extra-cost target) before it commits — see deployCard. If it
@@ -9274,6 +9398,7 @@ export class SpoilsEngine {
     this.state.damageThisTurn = {};
     this.state.abilityUsesThisTurn = {};
     this.state.attacksThisTurn = {};
+    this.state.attackDeclarationsThisTurn = {};
 
     // The start-of-turn point (CR §602): clears character damage, ends all
     // "this turn" effects, resets attack eligibility, runs the Restore Rule.
@@ -9431,6 +9556,36 @@ export class SpoilsEngine {
 
     this.assertPartyComposition(attackerIds, "attacking");
 
+    // "Your opponents cannot attack your faction." (High Court of Demands,
+    // Theocratic Senate of Marduun) — an in-play
+    // `ContinuousAbility.preventsAttackOnFaction`.
+    if (target.type === "faction") {
+      this.forEachActiveContinuous((source, ability) => {
+        const rule = ability.preventsAttackOnFaction;
+        if (!rule) return;
+        if (
+          this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId)
+        ) {
+          throw new Error("That faction cannot be attacked.");
+        }
+      });
+    }
+
+    // "Players can attack only once each turn." (Narrow Passage) — an in-play
+    // `ContinuousAbility.attackLimitPerTurn`. The tightest limit wins.
+    let attackLimit = Infinity;
+    this.forEachActiveContinuous((_source, ability, context) => {
+      if (ability.attackLimitPerTurn === undefined) return;
+      attackLimit = Math.min(
+        attackLimit,
+        Math.max(0, this.evaluateNumber(ability.attackLimitPerTurn, context))
+      );
+    });
+    assert(
+      (this.state.attackDeclarationsThisTurn[playerId] ?? 0) < attackLimit,
+      "You have already attacked the maximum number of times this turn."
+    );
+
     // "Each opponent must pay N to attack." (The Ministry of Other Smaller
     // Ministries) — an in-play `ContinuousAbility.attackTax`. Charged before
     // anything is depleted; unaffordable => the attack is illegal.
@@ -9438,8 +9593,27 @@ export class SpoilsEngine {
     this.forEachActiveContinuous((source, ability, context) => {
       const rule = ability.attackTax;
       if (!rule) return;
-      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, playerId))
+      if (rule.player === "activePlayer") {
+        // charged to whoever is declaring the attack, regardless of source
+      } else if (
+        !this.scopeMatchesPlayer(rule.player, source.controllerId, playerId)
+      ) {
         return;
+      }
+      if (rule.requiresAttackerMatch) {
+        const matches = attackerIds.some(id => {
+          const card = this.state.cards[id];
+          return (
+            !!card &&
+            this.matchesSelector(
+              card,
+              { ...rule.requiresAttackerMatch!, zone: "any" },
+              context
+            )
+          );
+        });
+        if (!matches) return;
+      }
       attackTax += Math.max(0, this.evaluateNumber(rule.amount, context));
     });
     if (attackTax > 0) {
@@ -9449,6 +9623,9 @@ export class SpoilsEngine {
       );
       this.payNumericCost(playerId, attackTax);
     }
+
+    this.state.attackDeclarationsThisTurn[playerId] =
+      (this.state.attackDeclarationsThisTurn[playerId] ?? 0) + 1;
 
     this.beginEventBatch();
 
@@ -10085,6 +10262,31 @@ export class SpoilsEngine {
     );
   }
 
+  /**
+   * "All battle damage that could be assigned to this card must be assigned
+   * to it." (Courageous Paladin) — true while `cardId` has a live
+   * `ContinuousAbility.mustReceiveBattleDamage` and is in a battle.
+   */
+  private cardMustReceiveBattleDamage(cardId: CardInstanceId): boolean {
+    const card = this.state.cards[cardId];
+    if (!card || card.zone !== "play") return false;
+    for (const ability of this.getEffectiveContinuousAbilities(cardId)) {
+      if (!ability.mustReceiveBattleDamage) continue;
+      if (this.abilitySuppressed(cardId, ability.id)) continue;
+      const context: ResolutionContext = {
+        sourceId: cardId,
+        controllerId: card.controllerId,
+        abilityId: ability.id,
+        selected: {}
+      };
+      if (ability.condition && !this.evaluateCondition(ability.condition, context)) {
+        continue;
+      }
+      return true;
+    }
+    return false;
+  }
+
   private getLegalBattleDamageTargets(
     sourceId: CardInstanceId,
     attackerSide: boolean,
@@ -10094,12 +10296,17 @@ export class SpoilsEngine {
     | { type: "faction"; playerId: PlayerId }
   > {
     if (!attackerSide) {
-      return battle.attackingParty
-        .filter(cardId => this.isCardStillInBattle(cardId, battle))
-        .map(cardId => ({
-          type: "card" as const,
-          cardId
-        }));
+      const attackers = battle.attackingParty.filter(cardId =>
+        this.isCardStillInBattle(cardId, battle)
+      );
+      // "All battle damage that could be assigned to this card must be
+      // assigned to it." (Courageous Paladin) — a damage magnet in the party
+      // narrows the legal set to just the magnets.
+      const magnets = attackers.filter(id => this.cardMustReceiveBattleDamage(id));
+      return (magnets.length > 0 ? magnets : attackers).map(cardId => ({
+        type: "card" as const,
+        cardId
+      }));
     }
 
     const blockers = battle.blockingParty.filter(cardId =>
@@ -10107,15 +10314,19 @@ export class SpoilsEngine {
     );
 
     if (blockers.length > 0) {
-      const blockerTargets = blockers.map(cardId => ({
-        type: "card" as const,
-        cardId
-      }));
+      const magnets = blockers.filter(id => this.cardMustReceiveBattleDamage(id));
+      const blockerTargets = (magnets.length > 0 ? magnets : blockers).map(
+        cardId => ({
+          type: "card" as const,
+          cardId
+        })
+      );
 
       // "May assign its battle damage to the target of the attack instead
       // of the blocking party" — an extra option alongside the blockers,
-      // not a forced redirect.
-      if (this.hasKeyword(sourceId, "redirectDamage")) {
+      // not a forced redirect. Suppressed while a magnet is in the party
+      // (the damage "could be assigned" to it, so it "must be").
+      if (magnets.length === 0 && this.hasKeyword(sourceId, "redirectDamage")) {
         return [...blockerTargets, ...this.getAttackTargetAsBattleDamageTarget(battle)];
       }
 

@@ -188,6 +188,16 @@ export type NumberExpression =
     }
   | {
       /**
+       * Sum of printed numeric `cost` over every in-play card matching
+       * `selector` — "X is the total numeric cost of all non-resource cards
+       * you control." (Reality Shift). Parallel to `sumStat`, but `cost`
+       * is a card-definition field, not a live stat.
+       */
+      type: "sumCost";
+      selector: CardSelector;
+    }
+  | {
+      /**
        * Total number of `counter` markers across every in-play card matching
        * `selector` — parallel to `sumStat`. Bounds a player-chosen X to the
        * tokens actually available ("Remove X tokens from cards you control";

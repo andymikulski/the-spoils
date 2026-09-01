@@ -96,7 +96,9 @@ const behaviorsTestSrc = [
   "src/engine/__tests__/open-beta-caps.test.ts",
   "src/engine/__tests__/open-beta-smoke.test.ts",
   "src/engine/__tests__/first-edition-caps.test.ts",
-  "src/engine/__tests__/first-edition-smoke.test.ts"
+  "src/engine/__tests__/first-edition-smoke.test.ts",
+  "src/engine/__tests__/seed-caps.test.ts",
+  "src/engine/__tests__/seed-smoke.test.ts"
 ]
   .map(rel => {
     try {
@@ -172,6 +174,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "endOfBattle",
   // 1st Edition effects
   "restrictParty",
+  // Seed effects / expressions
+  "redirectAttackTarget", "sumCost",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected",

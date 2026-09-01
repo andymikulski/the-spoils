@@ -569,12 +569,22 @@ export type Effect =
        * hand. ... You still pay all the character's costs" — Late Addition).
        * For "deploy up to N cards" (0p3r4710n 1337 H4x0rz), list this effect
        * N times — each is an independent optional pick.
+       *
+       * `budget` — "you may deploy any number of cards for free with total
+       * numeric cost X or less" (Reality Shift). When set, the player is
+       * re-prompted after each free deploy, with a running pool that starts
+       * at `budget` and drops by each deployed card's printed cost; the
+       * loop ends when they decline, nothing in hand still fits, or a
+       * deployed card's own resolution needs a further choice. `maxCost`
+       * still caps any single card (use a large value for "no per-card
+       * cap").
        */
       type: "deployForFree";
       player: PlayerRef;
       maxCost: NumberExpression;
       selector?: CardSelector;
       free?: boolean;
+      budget?: NumberExpression;
     }
   | {
       /**
@@ -1021,6 +1031,19 @@ export type Effect =
       type: "initiateAttack";
       attackerSelection: string;
       target: PlayerRef;
+    }
+  | {
+      /**
+       * "Change the target of that attack to <card>." — while a battle is in
+       * progress, repoints `GameState.battle.target` at the in-play card
+       * `to` resolves to (typically a location the controller just put into
+       * play from their discard pile — Architectural Restitution). The
+       * battle's defending player is updated to that card's controller. No-op
+       * if there is no active battle or `to` doesn't resolve to an in-play
+       * card.
+       */
+      type: "redirectAttackTarget";
+      to: TargetRef;
     }
   | {
       /**

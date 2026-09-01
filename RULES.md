@@ -1223,6 +1223,57 @@ of the Devoured Emperor additions")**
   `applyReplacement` `from === "play"` guard), not one milled straight from
   the deck — a documented concession.
 
+### Seed additions
+
+- **`ContinuousAbility.preventsAttackOnFaction` (`card-verified`).** While
+  the source is in play, `declareAttack` against the matching faction is
+  illegal. High Court of Demands, Theocratic Senate of Marduun ("your
+  opponents cannot attack your faction").
+- **`ContinuousAbility.attackLimitPerTurn` (`card-verified`).** A per-player
+  cap on how many separate attacks may be declared in a turn
+  (`GameState.attackDeclarationsThisTurn`, reset at the start-of-turn
+  point). Narrow Passage ("players can attack only once each turn"). A
+  `runInitiatedAttack` (Counter Attack) does not count against it.
+- **`ContinuousAbility.mustReceiveBattleDamage` (`card-verified`).** A
+  battle-damage magnet: while a magnet is in a party being assigned into,
+  `getLegalBattleDamageTargets` narrows the legal set to the magnets only
+  (and drops the `redirectDamage` "assign past the blockers" option).
+  Courageous Paladin.
+- **`ContinuousAbility.searchTax` (`card-verified`).** A player pays
+  `amount` resources each time an effect would have them search their *own*
+  deck (`chooserSelectsTarget` on an owned-deck selector); an unaffordable
+  tax makes the search do nothing. Department of Rejections ("your opponents
+  must pay 2 to search their deck").
+- **`abilityCostModifiers` scope `"opponentCharacters"` (`card-verified`).**
+  Adds `delta` to the `payResources` portion of any activated ability on a
+  character the source-controller's opponent controls — including abilities
+  used while the character is out of play. Department of Rejections ("your
+  opponents must pay 2 to use a character's ability").
+- **`attackTax` — `player: "activePlayer"` + `requiresAttackerMatch`
+  (`card-verified`).** The tax is charged to whoever declares the attack
+  (regardless of the source's controller), and only when the declared party
+  contains a card matching the selector. Auspicious Tax ("the attached
+  character's controller must pay 3 to attack with it").
+- **`redirectAttackTarget` effect (`card-verified`).** Repoints
+  `GameState.battle.target` at an in-play card (and updates
+  `defenderPlayerId`). Architectural Restitution ("change the target of that
+  attack to the location").
+- **`deployForFree.budget` (`card-verified`).** "Deploy any number of cards
+  for free with total numeric cost X or less" — after each free deploy the
+  choice is re-issued with the pool reduced by the deployed card's printed
+  cost, until it's spent / nothing in hand fits / the player declines (or a
+  deployed card's own resolution needs a further choice). Reality Shift.
+- **`sumCost` expression (`card-verified`).** Sum of printed numeric `cost`
+  over every in-play card matching a selector — parallel to `sumStat`.
+  Reality Shift ("X is the total numeric cost of all non-resource cards you
+  control").
+- **Concessions.** Lucky Charm's "opponents must pay 1 to pick a character
+  you control" is not modelled (its ETB draw is authored). Titillating
+  Contortionist's "must block *this card*" is authored as a generic
+  `mustBlock` grant (the picked character must block the attacking party the
+  source is in). Runic Battery's "detach up to X resources from your
+  faction" uses the `detach` effect's existing semantics.
+
 ## 13. Tokens (CR §409)
 
 **(CR §409.1)** A token is a marker placed on an in-play card; it has no

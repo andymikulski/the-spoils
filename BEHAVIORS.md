@@ -602,6 +602,48 @@ CONCESSION: only fires for a character leaving *play*, not one milled from
 the deck), Bask Bomb (two `distributeAmong` steps with different
 `chooser`s), Bladefist Doomwing (`FIREBREATHING` X+X). See `.work/classify-fe-novel.json`.
 
+## Seed additions
+
+Seed is the oldest set — mechanically the simplest, ~95% straight authoring
+onto existing vocab. 9 capabilities:
+
+- **`ContinuousAbility.preventsAttackOnFaction: { player }`** — `declareAttack`
+  against the matching faction is illegal. High Court of Demands, Theocratic
+  Senate of Marduun.
+- **`ContinuousAbility.attackLimitPerTurn: NumberExpression`** — per-player
+  cap on attack declarations per turn (`GameState.attackDeclarationsThisTurn`).
+  Narrow Passage.
+- **`ContinuousAbility.mustReceiveBattleDamage: boolean`** — battle-damage
+  magnet; `getLegalBattleDamageTargets` narrows to the magnets in the party.
+  Courageous Paladin.
+- **`ContinuousAbility.searchTax: { player, amount? }`** — pay to search your
+  own deck; unaffordable = the search does nothing. Department of Rejections.
+- **`abilityCostModifiers` scope `"opponentCharacters"`** — +delta to
+  activated-ability `payResources` on the opponent's characters (any zone).
+  Department of Rejections.
+- **`attackTax` — `player: "activePlayer"`, `requiresAttackerMatch?: CardSelector`**
+  — charge whoever attacks, only when the party contains a matching card.
+  Auspicious Tax (attached-character attack tax).
+- **`{ type: "redirectAttackTarget", to: TargetRef }`** — repoint the
+  in-flight `battle.target` at an in-play card + update `defenderPlayerId`.
+  Architectural Restitution.
+- **`deployForFree.budget: NumberExpression`** — total-cost pool: re-prompt
+  after each free deploy until the pool is spent / nothing fits / declined.
+  Reality Shift.
+- **`{ type: "sumCost", selector }` NumberExpression** — sum of printed
+  numeric `cost` over an in-play selector (parallel to `sumStat`). Reality
+  Shift ("total numeric cost of all non-resource cards you control").
+
+Concessions: Lucky Charm's pick-tax (unmodelled; ETB draw authored),
+Titillating Contortionist's "must block *this*" (generic `mustBlock`), Runic
+Battery's "detach up to X resources" (`detach` effect). Icon-gated triggered
+abilities ("[R][R][R]: At the start of your turn, ...") are just a
+`condition: numberCompare(resourceIcons ...)` — the established Seed 2
+idiom (Dwarvish Grimalkin), no new capability. Global covert-block
+exception (53cur17y 5y573m) = grant the `canBlockCovert` keyword to a broad
+`{ type: "character", controller: "any" }` selector. Tests:
+`seed-{caps,smoke,exercise}.test.ts`.
+
 ## Ability types
 
 ```ts

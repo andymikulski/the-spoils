@@ -554,10 +554,17 @@ export interface ContinuousAbility extends AbilityBase {
    * of Abstract Secure Theoreticals). `scope`: `"factionAbilities"` (the
    * controller's faction card's abilities), `"self"` (this card's own),
    * `"controlledCharacters"` (abilities on characters the controller
-   * controls).
+   * controls), `"opponentCharacters"` (abilities on characters the
+   * source-controller's *opponent* controls — "Your opponents must pay 2 to
+   * use a character's ability", including abilities used while the character
+   * is not in play; Department of Rejections).
    */
   abilityCostModifiers?: Array<{
-    scope: "factionAbilities" | "self" | "controlledCharacters";
+    scope:
+      | "factionAbilities"
+      | "self"
+      | "controlledCharacters"
+      | "opponentCharacters";
     delta: NumberExpression;
     minCost?: number;
   }>;
@@ -630,12 +637,55 @@ export interface ContinuousAbility extends AbilityBase {
    * "Each opponent must pay N to attack." (The Ministry of Other Smaller
    * Ministries). While the source is in play, the matching player pays
    * `amount` resources as part of declaring an attack — an unpayable tax
-   * makes the attack illegal.
+   * makes the attack illegal. `player: "activePlayer"` charges whoever is
+   * declaring the attack regardless of the source's controller (a
+   * per-character tax carried by an "Attach to X" item — Auspicious Tax).
+   * With `requiresAttackerMatch`, the tax is only levied when the declared
+   * attacking party contains a card matching that selector (candidate bound
+   * to `{ type: "selected", id: "__candidate" }`).
    */
   attackTax?: {
-    player: "opponent" | "any";
+    player: "opponent" | "any" | "activePlayer";
     amount: NumberExpression;
+    requiresAttackerMatch?: CardSelector;
   };
+
+  /**
+   * "Your opponents cannot search their deck [without paying N]." — while
+   * the source is in play, the matching player pays `amount` resources each
+   * time an effect would have them search their own deck; if they can't pay,
+   * the search does nothing. `amount: 0` (or omitted) is a hard "cannot
+   * search". Department of Rejections (`player: "opponent"`, `amount: 2`).
+   */
+  searchTax?: {
+    player: "self" | "opponent" | "any";
+    amount?: NumberExpression;
+  };
+
+  /**
+   * "Your opponents cannot attack your faction." — while the source is in
+   * play and `condition` holds, a `declareAttack` whose target is the
+   * matching faction is illegal. `player` names whose faction is protected
+   * relative to the source's controller. High Court of Demands, Theocratic
+   * Senate of Marduun (`player: "self"`).
+   */
+  preventsAttackOnFaction?: { player: "self" | "opponent" | "any" };
+
+  /**
+   * "Players can attack only once each turn." — while the source is in play,
+   * no player may declare more than `attackLimitPerTurn` separate attacks in
+   * a turn (`GameState.attackDeclarationsThisTurn`). Narrow Passage
+   * (`{ type: "number", value: 1 }`).
+   */
+  attackLimitPerTurn?: NumberExpression;
+
+  /**
+   * "All battle damage that could be assigned to this card must be assigned
+   * to it." — while the source is in play, if a battle party being assigned
+   * into contains one or more cards carrying this flag, the only legal
+   * battle-damage targets in that party are those cards. Courageous Paladin.
+   */
+  mustReceiveBattleDamage?: boolean;
 
   /**
    * "You may use abilities on your opponent's cards, ... pay any numeric

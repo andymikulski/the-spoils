@@ -15,23 +15,53 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 903 |
+| `verified` (driven through the public API) | 1117 |
 | `authored` (behavior JSON written, fixture-tested by shape) | 207 |
 | `classified` (audited, not yet authored) | 26 |
-| `vanilla` (no behavior needed) | 158 |
-| `unclassified` | 805 |
+| `vanilla` (no behavior needed) | 153 |
+| `unclassified` | 596 |
 | `wontImplement` | 2 |
-| `rulesAudited` | 1150 / 2101 |
-| Engine capabilities | 210 / 210 implemented |
-| Test suite | 1411 passing (`npm test`), `npm run typecheck` clean |
+| `rulesAudited` | 1370 / 2101 |
+| Engine capabilities | 219 / 219 implemented |
+| Test suite | 1655 passing (`npm test`), `npm run typecheck` clean |
 
-**Seed 3, 1st Edition Part 2, Holy Heist, Ungodly Mess, and Open Beta are
-fully implemented and audited** (Seed 2 + SotDE are authored-not-yet-
-verified) — every card with rules text is `authored`/`verified`, its JSON
-checked against the printed text + the CR, all referenced capabilities
-implemented. These sets exercise ~210 capabilities; new sets should mostly
-reuse that vocabulary. **Seed 3, 1st Edition Part 2, Holy Heist, Ungodly
-Mess, Open Beta, and 1st Edition are 100% done.**
+**Seed 3, 1st Edition Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st
+Edition, and Seed are fully implemented and audited** (Seed 2 + SotDE are
+authored-not-yet-verified) — every card with rules text is
+`authored`/`verified`, its JSON checked against the printed text + the CR,
+all referenced capabilities implemented. These sets exercise ~219
+capabilities; new sets should mostly reuse that vocabulary. **Seed 3, 1st
+Edition Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st Edition, and Seed
+are 100% done.**
+
+**Seed (231 cards) — done** (17 `vanilla` + 214 `verified`). Only ~4 exact
+reprints (Brainbath, Circumspect Hijacker, Multi-Attachment Man, Overindulge
+from Ungodly Mess) — the rest is genuine per-card authoring, but ~95% maps
+straight onto existing vocab (Seed is the oldest, simplest set). Added 9
+capabilities in one pass — `preventsAttackOnFaction`, `attackLimitPerTurn`,
+`mustReceiveBattleDamage` (Courageous Paladin damage magnet), `searchTax`,
+`abilityCostModifiers` scope `"opponentCharacters"` (Department of
+Rejections), `attackTax` `player:"activePlayer"` + `requiresAttackerMatch`
+(Auspicious Tax per-character attack tax), `redirectAttackTarget` effect
+(Architectural Restitution), `deployForFree.budget` total-cost pool +
+`sumCost` expression (Reality Shift) — see `BEHAVIORS.md` → "Seed additions"
+and `RULES.md` §12. Icon-gated triggered abilities ("[R][R][R]: At the start
+of your turn, ...") are just a `condition: numberCompare(resourceIcons ...)`
+— the established Seed 2 idiom, no new capability. Concessions (in card
+`notes`): Lucky Charm's opponent pick-tax (unmodelled; ETB draw authored),
+Titillating Contortionist's "must block *this*" (generic `mustBlock`), Runic
+Battery's "detach up to X resources" (`detach` effect), Rune of Concealment
+(mandatory one-shot `installReplacement`, no "you may"), Scintillating
+Chamber Pot / Fiscal Intercessor (source-scoped `modifyOutgoingDamage` /
+`preventDamage` shield rather than target-scoped), Surprise! (deck search
+rather than top-of-deck "reveal until"). Test coverage:
+`seed-caps.test.ts` (one fixture per new capability), `seed-smoke.test.ts`
+(11 hand-written end-to-end scenarios through the real catalog),
+`seed-exercise.test.ts` (**every** behavior-bearing card instantiated from
+the catalog and played / activated / triggered on a broad synthetic board
+with every pending choice auto-answered — this is why the whole set is
+`verified`). No spoils-game wiring needed (no new `PendingChoice` kind,
+`Cost` shape, or event).
 
 **1st Edition (226 cards) — done** (24 `vanilla` + 202 `verified`). **144
 of 162 non-vanilla cards are exact reprints** (same name + text) of
@@ -223,14 +253,13 @@ before authoring any of it.
 
 | Set | `unclassified` | notes |
 |---|--:|---|
-| Seed | 209 | smallest remaining |
 | 2nd Edition | 256 | 26 prior-behavior cards `classified` |
 | Seed Saga | 340 | largest; long tail of one-offs likely |
 
 Open Beta + 1st Edition heavily overlapped (144 of 1st Edition's non-vanilla
-cards were byte-identical Open Beta reprints). Seed / 2nd Edition / Seed Saga
-are **not** part of that reprint cluster — expect genuine per-card
-classification + authoring like the Open Beta pass.
+cards were byte-identical Open Beta reprints). 2nd Edition / Seed Saga are
+**not** part of that reprint cluster — expect genuine per-card
+classification + authoring like the Open Beta / Seed passes.
 
 **Holy Heist — done** (165/165): 33 vanilla, **132 `verified`**. Test
 coverage:
