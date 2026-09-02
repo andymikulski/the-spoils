@@ -87,6 +87,31 @@ describe("game log — a running, toggleable record of everything that happens",
     engine.getLog().forEach((entry, i) => assert.equal(entry.seq, i + 1));
   });
 
+  test("a decline is recorded so a game reads end-to-end — 'X passes', before what it lets resolve", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "spell", def: tactic({ name: "Spark" }), owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("spell") });
+    // P2 has the open response window; they decline explicitly.
+    assert.equal(engine.state.responseWindow?.priorityPlayerId, P2);
+    engine.perform({ type: "passPriority", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    const log = engine.getLog();
+
+    const passed = log.find(e => e.marker === "priorityPassed");
+    assert.ok(passed, "the pass was logged");
+    assert.equal(passed.kind, "info");
+    assert.equal(passed.message, "Bob passes");
+    // marker-backed, like the other structural entries
+    assert.equal(Number(!!passed.event) + Number(!!passed.marker), 1);
+
+    // The decline is logged before the item it let through starts resolving.
+    const resolvedIdx = log.findIndex(e => e.marker === "stackItemResolving");
+    assert.ok(log.indexOf(passed) < resolvedIdx);
+  });
+
   test("a response nests one level deeper than what it answers; the stack unwinds LIFO in the log", () => {
     const { engine, id } = buildGame({
       cards: [

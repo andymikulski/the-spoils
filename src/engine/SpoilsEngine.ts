@@ -2723,6 +2723,16 @@ export class SpoilsEngine {
       "It is not your priority."
     );
 
+    // Log every decline so a game can be read end-to-end — a passed window
+    // is often *why* nothing happened (the app auto-passes windows the
+    // player can't act in), and that needs to be visible in the log.
+    this.recordLogMarker(
+      "priorityPassed",
+      "info",
+      `${this.logPlayerName(playerId)} passes`,
+      this.responseStack.length
+    );
+
     if (this.responseStack.length > 0) {
       window.phase = "resolving";
       return;

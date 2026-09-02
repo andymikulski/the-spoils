@@ -66,8 +66,13 @@ export interface GameLogEntry {
    * Set instead of `event` for the structural markers that aren't game
    * events but matter for reading a response chain:
    * - `responseWindowOpened` — the opponent has been handed a chance to respond.
+   * - `priorityPassed` — a player declined to respond / passed priority.
    * - `stackItemResolving` — a card / ability on the response stack is now resolving.
    * - `triggerResolving` — a triggered ability is now resolving.
    */
-  marker?: "responseWindowOpened" | "stackItemResolving" | "triggerResolving";
+  marker?:
+    | "responseWindowOpened"
+    | "priorityPassed"
+    | "stackItemResolving"
+    | "triggerResolving";
 }
