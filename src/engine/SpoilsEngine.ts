@@ -1379,6 +1379,7 @@ export class SpoilsEngine {
         if (
           (!ability.condition ||
             this.evaluateCondition(ability.condition, context)) &&
+          this.provisionalProbeTargets(ability.targets ?? [], context) &&
           this.canPayCosts(ability.costs ?? [], context)
         ) {
           result.push({
@@ -1390,6 +1391,39 @@ export class SpoilsEngine {
     }
 
     return result;
+  }
+
+  /**
+   * Read-only availability probe helper: provisionally bind each of an
+   * ability's own `targets` declarations to a plausible legal pick, so a
+   * cost that references one (`{ type: "selected", id }` — Hollow Moose
+   * INFILTRATE destroys the item/character you choose) can be simulated by
+   * `canPayCosts` instead of failing on a missing target and hiding the
+   * whole ability. Returns false only when a mandatory declaration has
+   * fewer legal candidates than it requires — the ability genuinely can't
+   * be used right now. Mutates `context.selected`; the caller passes a
+   * throwaway context.
+   */
+  private provisionalProbeTargets(
+    declarations: TargetDeclaration[],
+    context: ResolutionContext
+  ): boolean {
+    for (const declaration of declarations) {
+      if (context.selected[declaration.id]) continue;
+
+      const candidates = this.targetCandidates(declaration.selector, context);
+      const count = this.evaluateNumber(declaration.count, context);
+
+      if (!declaration.optional && candidates.length < count) {
+        return false;
+      }
+
+      context.selected[declaration.id] = candidates
+        .slice(0, count)
+        .map(candidate => candidate.id);
+    }
+
+    return true;
   }
 
   /**

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildGame,
   character,
+  item,
   P1,
   P2,
   resolvePendingResponses,
@@ -106,6 +107,114 @@ describe("RULES.md §10 — activated abilities", () => {
     assert.throws(() =>
       engine.perform({ type: "activateAbility", playerId: P2, cardId: id("caster"), abilityId: "noop" })
     );
+  });
+
+  test("getAvailableActivatedAbilities offers an ability whose cost destroys one of its own picked targets", () => {
+    // Hollow Moose INFILTRATE — "COST: Destroy another item or character you
+    // control." The destroy cost points at a `targets` declaration the player
+    // hasn't picked yet; the availability probe must still report the ability
+    // as usable when a legal sacrifice exists in play.
+    const moose = item({
+      name: "Hollow Moose",
+      behavior: {
+        abilities: [
+          {
+            id: "infiltrate",
+            type: "activated",
+            targets: [
+              {
+                id: "sac",
+                count: 1,
+                selector: {
+                  controller: "self",
+                  conditions: [
+                    {
+                      type: "or",
+                      conditions: [
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "character" },
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "item" }
+                      ]
+                    },
+                    { type: "not", condition: { type: "isCard", other: "source" } }
+                  ]
+                }
+              }
+            ],
+            costs: [{ type: "destroy", target: { type: "selected", id: "sac" } }],
+            effects: [{ type: "takeControl", target: "source", controller: "opponent" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "moose", def: moose, owner: P2, controller: P1, zone: "play" },
+        { key: "fodder", def: character({ name: "Fodder" }), owner: P1, zone: "play" }
+      ]
+    });
+
+    const offered = engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === id("moose") && a.ability.id === "infiltrate");
+    assert.equal(offered.length, 1);
+
+    // And it actually resolves once the player supplies the pick.
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("moose"),
+      abilityId: "infiltrate",
+      selected: { sac: [id("fodder")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("fodder")].zone, "discard");
+    assert.equal(engine.state.cards[id("moose")].controllerId, P2);
+  });
+
+  test("getAvailableActivatedAbilities hides that ability when no legal sacrifice exists", () => {
+    const moose = item({
+      name: "Hollow Moose",
+      behavior: {
+        abilities: [
+          {
+            id: "infiltrate",
+            type: "activated",
+            targets: [
+              {
+                id: "sac",
+                count: 1,
+                selector: {
+                  controller: "self",
+                  conditions: [
+                    {
+                      type: "or",
+                      conditions: [
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "character" },
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "item" }
+                      ]
+                    },
+                    { type: "not", condition: { type: "isCard", other: "source" } }
+                  ]
+                }
+              }
+            ],
+            costs: [{ type: "destroy", target: { type: "selected", id: "sac" } }],
+            effects: [{ type: "takeControl", target: "source", controller: "opponent" }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [{ key: "moose", def: moose, owner: P2, controller: P1, zone: "play" }]
+    });
+
+    const offered = engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === id("moose") && a.ability.id === "infiltrate");
+    assert.equal(offered.length, 0);
   });
 
   test("all costs must be payable at once — an unpayable ability leaves every cost unpaid", () => {
