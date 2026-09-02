@@ -10,7 +10,11 @@ import type {
   GameState,
   PlayerId
 } from "../types/index.js";
-import { assert, withBuiltInFactionDefaults } from "./utilities.js";
+import {
+  assert,
+  isStapleResourceDefinition,
+  withBuiltInFactionDefaults
+} from "./utilities.js";
 import { createCardInstance, createTwoPlayerGame } from "./setup.js";
 import { SpoilsEngine } from "./SpoilsEngine.js";
 import { drawRandom, shuffleInPlace } from "./rng.js";
@@ -42,22 +46,6 @@ export interface FactionGameSetupOptions {
    * defaults to `min` when omitted.
    */
   startingResourceX?: Record<PlayerId, number>;
-}
-
-const STAPLE_RESOURCE_NAMES = new Set([
-  "obsession",
-  "greed",
-  "elitism",
-  "deception",
-  "rage"
-]);
-
-function isStapleResourceDefinition(definition: CardDefinition): boolean {
-  return (
-    definition.type === "resource" &&
-    (definition.resource?.staple === true ||
-      STAPLE_RESOURCE_NAMES.has(definition.name.toLowerCase()))
-  );
 }
 
 function resolveFactionAndDeck(

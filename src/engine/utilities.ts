@@ -11,6 +11,34 @@ export function nextId(prefix: string): string {
   return `${prefix}_${nextIdCounter++}`;
 }
 
+/**
+ * The five basic ("staple") resources. Printed staples don't carry any
+ * distinguishing field in the card data, so staple-ness is recognised by
+ * name as a fallback — see {@link isStapleResourceDefinition}.
+ */
+export const STAPLE_RESOURCE_NAMES = new Set([
+  "obsession",
+  "greed",
+  "elitism",
+  "deception",
+  "rage"
+]);
+
+/**
+ * Whether a card is a staple resource: an explicit `resource.staple` flag,
+ * or (for real card data, which doesn't set that flag) one of the five
+ * {@link STAPLE_RESOURCE_NAMES}. Used by faction setup ("start with 2
+ * staple resources"), the `staple` card selector ("search your deck for a
+ * staple resource"), and the `isStaple` condition — they must all agree.
+ */
+export function isStapleResourceDefinition(definition: CardDefinition): boolean {
+  return (
+    definition.type === "resource" &&
+    (definition.resource?.staple === true ||
+      STAPLE_RESOURCE_NAMES.has(definition.name.toLowerCase()))
+  );
+}
+
 export function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);

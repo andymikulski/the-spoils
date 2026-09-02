@@ -50,7 +50,14 @@ import type {
   TriggerResolution,
   Zone
 } from "../types/index.js";
-import { assert, compare, nextId, parseThreshold, withBuiltInFactionDefaults } from "./utilities.js";
+import {
+  assert,
+  compare,
+  isStapleResourceDefinition,
+  nextId,
+  parseThreshold,
+  withBuiltInFactionDefaults
+} from "./utilities.js";
 import { drawRandom, randomSeed } from "./rng.js";
 
 /** Reserved target-declaration id for an "Attach to X" card's play-time target. */
@@ -3623,7 +3630,7 @@ export class SpoilsEngine {
       case "isStaple": {
         const cardId = this.resolveTargetRef(condition.target, context);
         if (!cardId || !this.state.cards[cardId]) return false;
-        return !!this.getDefinition(cardId).resource?.staple;
+        return isStapleResourceDefinition(this.getDefinition(cardId));
       }
 
       case "cardDepleted": {
@@ -4396,7 +4403,7 @@ export class SpoilsEngine {
 
     if (
       selector.staple !== undefined &&
-      !!definition.resource?.staple !== selector.staple
+      isStapleResourceDefinition(definition) !== selector.staple
     ) {
       return false;
     }

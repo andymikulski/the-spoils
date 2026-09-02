@@ -6415,6 +6415,53 @@ describe("Seed 2: staple-selector", () => {
     resolvePendingResponses(engine);
     assert.equal(engine.state.cards[id("stp")].zone, "hand");
   });
+
+  test("selector.staple:true matches basic resources by name when the data has no staple flag", () => {
+    // Real card data (e.g. Mau Strategist's Greed) never sets
+    // `resource.staple`; staple-ness falls back to the five basic names.
+    const searcher = character({
+      name: "Staple Searcher",
+      behavior: {
+        abilities: [
+          {
+            id: "search",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            targets: [
+              { id: "found", selector: { controller: "self", zone: "deck", type: "resource", staple: true }, count: 1, optional: true }
+            ],
+            effects: [
+              { type: "if", condition: { type: "targetExists", target: { type: "selected", id: "found" } }, effects: [{ type: "moveCard", target: { type: "selected", id: "found" }, to: "hand" }] },
+              { type: "shuffleDeck", player: "controller" }
+            ]
+          }
+        ]
+      }
+    });
+    // no `resource` field at all — exactly how real basic resources ship
+    const greed = resourceCard({ name: "Greed", id: "greed-bare", resource: undefined });
+    const custom = resourceCard({ name: "Blood Money", id: "blood-money", resource: { provides: ["greed"] } });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ss", def: searcher, owner: P1, zone: "hand" },
+        { key: "g", def: greed, owner: P1, zone: "deck" },
+        { key: "cm", def: custom, owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("ss") });
+    resolvePendingResponses(engine);
+
+    // the non-staple resource is not a legal pick; the basic one is
+    assert.throws(() =>
+      engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "selectTargets", selected: { found: [id("cm")] } } })
+    );
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "selectTargets", selected: { found: [id("g")] } } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("g")].zone, "hand");
+  });
 });
 
 // "When a player draws any number of cards, ..." (Meat of the Mountain) -
