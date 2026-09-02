@@ -10657,6 +10657,8 @@ export class SpoilsEngine {
   ): void {
     this.pruneBattleParties(battle);
 
+    // CR §609.1g: keep repeating rounds only while some battle character
+    // still has to assign. Once everyone has, the loop ends (§609.1h).
     const nextSpeed = this.getNextBattleSpeed(battle);
 
     if (nextSpeed === undefined) {
@@ -10664,6 +10666,10 @@ export class SpoilsEngine {
       return;
     }
 
+    // Provisional — the real speed level X is fixed at CR §609.1b, i.e.
+    // *after* the §609.1a response window below. `enterDamageAssignment`
+    // recomputes it so an instant-speed effect played in that window is
+    // honoured. Set here only so `getBattleView()` has something to show.
     battle.speed = nextSpeed;
     battle.attackerAssignments = [];
     battle.defenderAssignments = [];
@@ -10685,6 +10691,19 @@ export class SpoilsEngine {
     battle: BattleState
   ): void {
     this.pruneBattleParties(battle);
+
+    // CR §609.1b: find X (the speed level) now — after the §609.1a response
+    // window has closed — not when the round was set up. A tactic/ability
+    // played in that window can add or remove speed and change which
+    // characters share the top speed this round.
+    const speed = this.getNextBattleSpeed(battle);
+    if (speed === undefined) {
+      // Every remaining battle character left play during the §609.1a
+      // window; nothing is left to assign (CR §609.1g).
+      this.finishBattle(battle);
+      return;
+    }
+    battle.speed = speed;
 
     if (this.getBattleDamageSources(true, battle).length > 0) {
       battle.phase = "attackerDamageAssignment";

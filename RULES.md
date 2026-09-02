@@ -676,7 +676,13 @@ pauses (`chooserSelectsTarget`, `chooserSelectsOption`, `reorderDeck`,
      attacker's controller-of-the-target pick the *only* characters that may
      block this battle; each of them that legally can, must (Wyrmfang
      Deathskull). Stored as `BattleState.chosenBlockers`.
-6. **(CR §608.1e) Response window** — attacker then defender.
+6. **(CR §608.1e)** Once blockers are declared the battle is *resolved*
+   (§609). CR 2.5 opens **no** dedicated response window between the block
+   declaration and resolution — the first battle-resolution response
+   window is §609.1a below. **(engine-derived)** `declareBlockers` runs
+   its `characterBlocked` / `blockingPartyFormed` / `attackerBlocked`
+   triggers and then goes straight into the §609.1a window for the first
+   speed group.
 
 ### Resolving the battle (CR §609.1)
 
@@ -685,10 +691,15 @@ round:
 
 1. **(CR §609.1a)** Response window (attacker, then defender).
 2. **(CR §609.1b / §609.1c)** X = the highest speed among battle characters
-   that haven't yet assigned battle damage this battle. Every **attacker**
-   at speed X assigns damage equal to its strength, divided as the attacker
-   chooses among the blocking party — or, if no blocking-party members
-   remain, among the target (faction/location).
+   that haven't yet assigned battle damage this battle. **X is fixed here,
+   *after* the §609.1a window** — a speed change made during that window
+   still counts. **(engine-derived)** `enterDamageAssignment` computes X
+   once the window closes (not when the round was set up), so an
+   instant-speed pump/debuff played in the window moves the character
+   between speed groups as expected. Every **attacker** at speed X assigns
+   damage equal to its strength, divided as the attacker chooses among the
+   blocking party — or, if no blocking-party members remain, among the
+   target (faction/location).
 3. **(CR §609.1d)** Every **blocker** at speed X assigns damage equal to its
    strength, divided as the defender chooses among the attacking party.
 4. **(CR §609.1e)** Response window (attacker, then defender).

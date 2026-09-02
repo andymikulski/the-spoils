@@ -7,7 +7,8 @@ import {
   location,
   P1,
   P2,
-  resolvePendingResponses
+  resolvePendingResponses,
+  tactic
 } from "./support/fixtures.js";
 
 describe("RULES.md §8 — battle: attacking a location", () => {
@@ -419,5 +420,81 @@ describe("RULES.md §8 — a character removed from the battle mid-resolution", 
     // takes none.
     assert.equal(engine.state.players[P2].influence, before);
     assert.equal(engine.state.battle, undefined);
+  });
+});
+
+describe("RULES.md §8 — speed level X is fixed after the §609.1a window (CR §609.1b)", () => {
+  test("a speed pump played in the pre-damage response window moves the attacker into an earlier round", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "atk", def: character({ name: "Atk", strength: 3, life: 3, speed: 1 }), owner: P1 },
+        { key: "blk", def: character({ name: "Blk", strength: 2, life: 4, speed: 1 }), owner: P2 },
+        {
+          key: "hasten",
+          def: tactic({
+            name: "Hasten",
+            behavior: {
+              abilities: [
+                {
+                  id: "a",
+                  type: "activated",
+                  targets: [{ id: "t", selector: { type: "character" }, count: 1 }],
+                  effects: [
+                    {
+                      type: "createModifier",
+                      target: { type: "selected", id: "t" },
+                      stat: "speed",
+                      operation: "add",
+                      value: 2,
+                      duration: { type: "untilEndOfTurn" }
+                    }
+                  ]
+                }
+              ]
+            }
+          }),
+          owner: P1,
+          zone: "hand"
+        }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("atk")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("blk")] });
+
+    // §609.1a window for the first speed group is open now, priority P1.
+    // P1 pumps its attacker to speed 3 *inside* that window.
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("hasten"),
+      selected: { t: [id("atk")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.getStat(id("atk"), "speed"), 3);
+
+    // X is only fixed now (CR §609.1b): the pumped attacker is speed 3, so
+    // it — not the speed-1 blocker — assigns in this first round, alone.
+    const first = engine.getBattleView()!;
+    assert.equal(first.phase, "attackerDamageAssignment");
+    assert.deepEqual(
+      first.damageSources.map(s => s.cardId),
+      [id("atk")]
+    );
+
+    autoResolveBattle(engine);
+
+    // Round 1: Atk deals 3 to Blk (Blk survives at life 4). Round 2 (speed
+    // 1): Blk deals 2 back to Atk.
+    assert.equal(engine.state.cards[id("blk")].damage, 3);
+    assert.equal(engine.state.cards[id("atk")].damage, 2);
   });
 });
