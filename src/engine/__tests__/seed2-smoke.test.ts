@@ -411,4 +411,44 @@ describe("Seed 2 smoke: authored behavior drives the engine", () => {
     assert.equal(engine.state.cards[id("c3")].controllerId, P1);
     assert.deepEqual(engine.state.players[P2].deck, [id("c6"), id("c1"), id("c2"), id("c4"), id("c5")]);
   });
+
+  test("Embittered Cadet: a character's PROVIDES [R] counts toward threshold", () => {
+    // Metadata-only card (no `behavior` block) — the exercise pass skips it,
+    // so pin the PROVIDES-on-a-character path here.
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "cadet", def: def("Embittered Cadet"), owner: P1 },
+        { key: "cadet2", def: def("Embittered Cadet"), owner: P1 }
+      ]
+    });
+    assert.equal(engine.getThresholds(P1).rage ?? 0, 2, "two in-play Cadets each provide [R]");
+  });
+
+  test("Ass: at end of your turn an opponent hands you a character, then takes Ass", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "ass", def: def("Ass"), owner: P1 },
+        { key: "pawn", def: character({ name: "Pawn", id: "s2-ass-pawn" }), owner: P2 }
+      ]
+    });
+
+    engine.perform({ type: "endTurn", playerId: P1 });
+
+    // Two turnEnding triggers, one controller (P1) -> P1 orders them.
+    const pc = () => engine.state.pendingChoice as { kind: string; playerId: string; triggers?: { sourceId: string; abilityId: string }[] } | undefined;
+    assert.equal(pc()?.kind, "orderTriggers");
+    const borrow = pc()!.triggers!.find(t => t.abilityId === "borrowed-body");
+    assert.ok(borrow, "the borrowed-body trigger is in the batch");
+    engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "orderTriggers", next: borrow } });
+
+    // "borrowed-body" first: the opponent picks one of their own characters.
+    assert.equal(pc()?.kind, "chooserSelectsTarget");
+    assert.equal(pc()?.playerId, P2);
+    engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "chooserSelectsTarget", selected: [id("pawn")] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("pawn")].controllerId, P1, "P1 borrowed the pawn");
+    assert.equal(engine.state.cards[id("ass")].controllerId, P2, "and handed Ass to the opponent");
+    assert.equal(engine.state.activePlayerId, P2);
+  });
 });

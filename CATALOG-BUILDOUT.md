@@ -15,32 +15,56 @@ engine. The pick-up point for a future session.
 | | count |
 |---|--:|
 | Catalog total | 2101 |
-| `verified` (driven through the public API) | 1743 |
-| `authored` (behavior JSON written, fixture-tested by shape) | 207 |
+| `verified` (driven through the public API) | 1950 |
+| `authored` (behavior JSON written, fixture-tested by shape) | 0 |
 | `classified` (audited, not yet authored) | 0 |
 | `vanilla` (no behavior needed) | 149 |
 | `unclassified` | **0** |
 | `wontImplement` | 2 |
-| `rulesAudited` | 2101 / 2101 |
+| `rulesAudited` | 2000 / 2101 (the 101 gap is vanilla cards) |
 | Engine capabilities | 219 / 219 implemented |
-| Test suite | 2310 passing (`npm test`), `npm run typecheck` clean |
+| Test suite | 2547 passing (`npm test`), `npm run typecheck` clean |
 
-**Every set is now classified.** Ten sets are 100% done (Seed 3, 1st Edition
-Part 2, Holy Heist, Ungodly Mess, Open Beta, 1st Edition, Seed, 2nd Edition,
-**Seed Saga**, plus Seed 3's faction cards). The only remaining work is
-promoting the **207 `authored` Seed 2 + SotDE** cards to `verified` — their
-behaviour JSON is written and shape-proven by the per-capability fixtures +
-`card-data-integrity`; each just needs driving through a real-JSON
-smoke/exercise path (copy `seed-saga-exercise.test.ts`, swap the `set===`
-filter to `"Seed 2"` / `"Shade of the Devoured Emperor"`, fix whatever the
-harness surfaces). No new capabilities are expected.
+**Every set is 100% done.** All eleven sets are `verified` + `vanilla`
+(+ the 2 `wontImplement` in Ungodly Mess): Seed 3, Seed 2, Shade of the
+Devoured Emperor, 1st Edition Part 2, Holy Heist, Ungodly Mess, Open Beta,
+1st Edition, Seed, 2nd Edition, Seed Saga. `authored: 0` — nothing left in
+the classify → consolidate → author → verify loop. No new capabilities were
+needed for the final promotion pass.
+
+**Seed 2 (110 cards) — done** (0 `vanilla` + 110 `verified`). The FLIP UP
+era. Its behaviour JSON was authored in an earlier pass and shape-proven by
+the per-capability fixtures in `card-behaviors.test.ts` + `card-data-integrity`;
+this pass drove all 109 behaviour-bearing cards through the public API
+(`seed2-exercise.test.ts` — copy of the seed-saga exercise harness, `set ===
+"Seed 2"` filter) with every pending choice auto-answered, and extended
+`seed2-smoke.test.ts` to 15 hand-written end-to-end scenarios (added
+Embittered Cadet — the one metadata-only `resource.provides` card the
+exercise skips — and Ass, whose two same-controller `turnEnding` triggers
+exercise the `orderTriggers` choice). **Zero card-data changes, zero new
+capabilities.** Two latent bugs in the shared exercise harness surfaced and
+were fixed across all `*-exercise.test.ts`: the `orderTriggers` auto-answer
+read `pc.pending`/`pc.batch` (the field is `pc.triggers`), and the
+"threshold requirements are not met" allow-list regex was case-sensitive so
+it missed the `"Ability threshold ..."` variant.
+
+**Shade of the Devoured Emperor (130 cards) — done** (5 `vanilla` + 125
+`verified`). The Volition / Thabbash era. Same promotion: `sotde-exercise.test.ts`
+drives all 125 behaviour-bearing cards through the public API;
+`sotde-smoke.test.ts` extended to 11 hand-written scenarios (added
+Opportunistic Pirate — `onPlay.costAdjust` numeric-cost rebate). 64 entries
+keep `confidence: medium` for the concessions already recorded in their
+coverage `notes` (see the SotDE write-up further down); `medium`/`low`
+confidence `verified` cards are normal across every set. **Zero card-data
+changes, zero new capabilities.**
 
 **Seed Saga (358 cards) — done** (13 `vanilla` + 345 `verified`). ~89%
 reprint: `.work/author-ss-reprints.cjs` copied 305 cards that name+text-match
-an earlier card (220 of `verified` cards, 85 of the still-`authored` Seed 2 /
-SotDE cards — the latter are legitimately promoted to `verified` here because
-`seed-saga-exercise.test.ts` drives them through the public API, the same bar
-every set used). `.work/author-ss-novel.cjs` authored the **40 genuinely-novel
+an earlier card (220 already-`verified`, plus 85 that reprint Seed 2 / SotDE
+cards — the latter `verified` here because `seed-saga-exercise.test.ts`
+drives them through the public API, the same bar every set used). Seed 2 and
+SotDE themselves are now fully `verified` too (see their write-ups above).
+`.work/author-ss-novel.cjs` authored the **40 genuinely-novel
 cards** (the Gideon / Demon Knights / Imperial Army / Mau / Banner era) —
 **zero new capabilities**, every shape composed from the existing 219-cap
 vocabulary. Notable reuse: RECUR (`activationZone:"discard"` + `removeFromGame`),
@@ -244,11 +268,10 @@ additions) and `wontImplement` (whole card unmodellable) — a card with a
 parity gap is still `verified` for its in-scope parts and links the gap id.
 `card-data-integrity.test.ts` keeps the registry honest.
 
-**The 66 `classified` cards** (1st Edition 40, 2nd Edition 26) are
-pre-existing `behavior` blocks, audited against printed text + the CR —
-vocabulary-valid and faithful. Promoting them to `authored`/`verified` just
-needs each driven through a real-JSON smoke path (a per-set `*-exercise.test.ts`
-does this — see how Open Beta's 40 prior-pass cards were promoted).
+**`classified: 0`.** Every pre-existing `behavior` block (originally 66
+across 1st Edition / 2nd Edition, plus the Seed 2 / SotDE authoring passes)
+has been audited against printed text + the CR and driven through a real-JSON
+`*-exercise.test.ts` path, so it is `verified`.
 
 `data/cards.json` is normalized to `JSON.stringify(_, null, 2)` (LF) so it
 matches `src/data/cards.js` and edits produce clean diffs.
@@ -263,7 +286,9 @@ matches `src/data/cards.js` and edits produce clean diffs.
 | `.github/workflows/ci.yml` | on push / PR: `sync-cards` + `git diff --exit-code src/data/cards.js` → `build-coverage.cjs --check` → `npm run typecheck` → `npm test` |
 | `src/engine/__tests__/card-data-integrity.test.ts` | enforces manifest↔catalog agreement, vocabulary parse, the one-pass invariant, metadata mirroring |
 | `src/engine/__tests__/card-behaviors.test.ts` | one test per ability *shape* (see "Testing convention" in BEHAVIORS.md) |
-| `src/engine/__tests__/{seed2,seed3}-smoke.test.ts` | per-set smoke: authored JSON driven through the public API |
+| `src/engine/__tests__/<set>-smoke.test.ts` | per-set smoke: hand-written end-to-end scenarios through the public API |
+| `src/engine/__tests__/<set>-exercise.test.ts` | per-set: **every** behaviour-bearing card driven through the public API, every pending choice auto-answered — the `verified` bar |
+| `.work/promote-authored.cjs "<set>"` | flips a set's `authored` coverage entries to `verified` once its exercise + smoke are green |
 | `BEHAVIORS.md` | the authoring vocabulary index + "Coverage workflow" |
 | `RULES.md` · `docs/*.pdf` | the rules the engine is tested against — `docs/` (Comprehensive Rules + FAQ PDFs) is the source; `RULES.md` the distilled reference |
 
@@ -300,31 +325,34 @@ before authoring any of it.
 
 ## What's left
 
-Every set is classified (`unclassified: 0`). The remaining work is the
-**207 `authored` cards** — Seed 2 (97) + Shade of the Devoured Emperor (110).
-Their behaviour JSON is written and shape-proven by the per-capability
-fixtures + `card-data-integrity.test.ts`; they are not yet `verified` only
-because nothing drives them through the public API. The mechanical promotion:
+**Nothing in the classify → author → verify loop.** All 2101 cards are
+`verified` (1950) / `vanilla` (149) / `wontImplement` (2). Every set has a
+`*-exercise.test.ts` (every behaviour-bearing card driven through the public
+API) + a `*-smoke.test.ts` (hand-written scenarios) + per-capability
+fixtures in `card-behaviors.test.ts`.
 
-1. `cp src/engine/__tests__/seed-saga-exercise.test.ts src/engine/__tests__/seed2-exercise.test.ts`
-   (and one for SotDE), swap the `set === "Seed Saga"` filter + the
-   `SSSET` const name.
-2. Run it; the harness surfaces any crash / bad selector / missing handler /
-   choice loop. Fix those in `data/cards.json` (or the engine, if a genuine
-   gap — none expected).
-3. A `.work/promote-<set>.cjs` flips those coverage entries `authored →
-   verified` once the exercise is green; add a `<set>-smoke.test.ts` with
-   ~8 representative hand-written scenarios (there is already a
-   `seed2-smoke.test.ts` / `sotde-smoke.test.ts` covering ~13–15 each — just
-   extend them).
-4. `npm test`, `npm run typecheck`, `node scripts/build-coverage.cjs`,
-   update this file. Register the new test files in
-   `card-data-integrity.test.ts` `behaviorsTestSrc`.
+Residual, non-blocking:
 
-Both 2nd Edition and Seed Saga are done — see the per-set write-ups above.
-2nd Edition was a **pure reprint** of 1st Edition + 1st Edition Part 2 (zero
-new capabilities); Seed Saga was ~89% reprint + 40 genuinely-novel cards, all
-authored from the existing 219-capability vocabulary (zero new capabilities).
+- **`rulesAudited: 2000 / 2101`** — the 101 gap is `vanilla` cards whose
+  `rulesAudited` flag was never set (classifying a card `vanilla` is itself
+  the audit conclusion). Pre-existing across every set; cosmetic. Set the
+  flag in `build-coverage.cjs` or a one-off if the 2101/2101 headline
+  matters.
+- **spoils-game wiring** — the per-set "spoils-game needs wiring" notes
+  below still stand for any set shipped to the renderer (new `PendingChoice`
+  kinds / events). Nothing new was added in the Seed 2 / SotDE promotion
+  pass (no card-data or engine changes), so the existing lists are complete.
+- **`parityGaps`** — two remain, both 2-player-engine-out-of-scope:
+  `double-sided-faction` (EPIC card-flipping) and `showdown-multiplayer`.
+
+The promotion pattern, for reference (used for Seed 2 + SotDE here, and
+2nd Edition / Seed Saga before): `cp seed-saga-exercise.test.ts
+<set>-exercise.test.ts`, swap the `set === "…"` filter; run it, fix whatever
+the harness surfaces (usually nothing — for Seed 2 / SotDE it was two
+harness bugs, zero card-data changes); `.work/promote-authored.cjs "<set>"`
+flips `authored → verified`; extend `<set>-smoke.test.ts`; `npm test` +
+`npm run typecheck` + `node scripts/build-coverage.cjs`; register the new
+test files in `card-data-integrity.test.ts` `behaviorsTestSrc`.
 
 **Holy Heist — done** (165/165): 33 vanilla, **132 `verified`**. Test
 coverage:
@@ -357,11 +385,14 @@ fires — `moveToZone` replacements only trigger on *leaving* play. Open Beta
 `applyReplacement` into `finishStackItem` + `putCardIntoPlay`, with a
 recursion guard).
 
-**Shade of the Devoured Emperor — done** (130/130): 5 vanilla, 110
-`authored`, 15 `verified` (`sotde-smoke.test.ts` + per-capability fixtures in
-`card-behaviors.test.ts`). The other ~110 `authored` cards have their shape
-proven by the capability fixtures + `card-data-integrity`; promoting them to
-`verified` just needs each driven through the real-JSON smoke path.
+**Shade of the Devoured Emperor — done** (130/130): 5 vanilla, 125
+`verified`. Test coverage: per-capability fixtures in `card-behaviors.test.ts`
+(~46 capabilities added in the original authoring pass) +
+`sotde-smoke.test.ts` (11 hand-written end-to-end scenarios) +
+`sotde-exercise.test.ts` (**every** behaviour-bearing card instantiated from
+the real catalog on a broad synthetic board, then played / activated /
+triggered with every pending choice auto-answered — no crash / bad selector
+/ missing handler / choice loop; this is why the whole set is `verified`).
 
 ### spoils-game (`~/dev/spoils-game`) needs wiring for these engine surfaces
 

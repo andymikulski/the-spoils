@@ -3753,7 +3753,7 @@
       "name": "31337!",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5d0d4f9ee47e",
       "behavior": {
         "needed": true,
@@ -3784,7 +3784,7 @@
       "name": "3cc3n7r1c 73chn1c14n",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "212e49782599",
       "behavior": {
         "needed": true,
@@ -3814,7 +3814,7 @@
       "name": "3p1c D00dm4k3r",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d8059eb7e79c",
       "behavior": {
         "needed": true,
@@ -3843,7 +3843,7 @@
       "name": "4rm0r3d 31f",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e1264b41fd45",
       "behavior": {
         "needed": true,
@@ -3871,7 +3871,7 @@
       "name": "A Blazing Zero",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b6769151123b",
       "behavior": {
         "needed": true,
@@ -3902,7 +3902,7 @@
       "name": "Accidental Invention",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f3c08bbcf49b",
       "behavior": {
         "needed": true,
@@ -3996,7 +3996,7 @@
       "name": "Aroused Stiffbone",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6de5146987bf",
       "behavior": {
         "needed": true,
@@ -4025,7 +4025,7 @@
       "name": "Ascendant Madcap",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ab0a28ce89b7",
       "behavior": {
         "needed": true,
@@ -4055,7 +4055,7 @@
       "name": "Ass",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "fe1a6fdd33ff",
       "behavior": {
         "needed": true,
@@ -4084,7 +4084,7 @@
       "name": "Athalamund Mangod, The Iron Fist",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "555d649126d3",
       "behavior": {
         "needed": true,
@@ -4113,7 +4113,7 @@
       "name": "Barrier of Benevolence",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6f6c642a3551",
       "behavior": {
         "needed": true,
@@ -4142,7 +4142,7 @@
       "name": "Braggadocian Aide",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b335aed41cdc",
       "behavior": {
         "needed": true,
@@ -4175,7 +4175,7 @@
       "name": "Burly Assailment",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "13011636204f",
       "behavior": {
         "needed": true,
@@ -4211,7 +4211,7 @@
       "name": "Cantankerous Claywork",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ee14606803b2",
       "behavior": {
         "needed": true,
@@ -4242,7 +4242,7 @@
       "name": "Ceremonious Groomer",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "855782228b98",
       "behavior": {
         "needed": true,
@@ -4271,7 +4271,7 @@
       "name": "Clam Hash",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b1d68fe22567",
       "behavior": {
         "needed": true,
@@ -4303,7 +4303,7 @@
       "name": "Clay Node",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "94e880764b85",
       "behavior": {
         "needed": true,
@@ -4336,7 +4336,7 @@
       "name": "Cock Block",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f751e29443a7",
       "behavior": {
         "needed": true,
@@ -4368,7 +4368,7 @@
       "name": "Conscientious Objector",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "16accce7d49d",
       "behavior": {
         "needed": true,
@@ -4441,7 +4441,7 @@
       "name": "Crest of Deception",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f2333bd9a811",
       "behavior": {
         "needed": true,
@@ -4474,7 +4474,7 @@
       "name": "Crest of Elitism",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f0b19e5f2793",
       "behavior": {
         "needed": true,
@@ -4507,7 +4507,7 @@
       "name": "Crest of Greed",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f85dc6b2dc62",
       "behavior": {
         "needed": true,
@@ -4540,7 +4540,7 @@
       "name": "Crest of Obsession",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c5e81d4a1c69",
       "behavior": {
         "needed": true,
@@ -4606,7 +4606,7 @@
       "name": "Dark Awakening",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "950080f3feda",
       "behavior": {
         "needed": true,
@@ -4637,7 +4637,7 @@
       "name": "Delectable Boon",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a25461e89ff6",
       "behavior": {
         "needed": true,
@@ -4666,7 +4666,7 @@
       "name": "Delusive Strumpet",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4140fbd111d4",
       "behavior": {
         "needed": true,
@@ -4699,7 +4699,7 @@
       "name": "Derelict Seafarer",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2348807d9dee",
       "behavior": {
         "needed": true,
@@ -4732,7 +4732,7 @@
       "name": "Desolate",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2565b2a19025",
       "behavior": {
         "needed": true,
@@ -4763,7 +4763,7 @@
       "name": "Dowsing Cleric",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a934471acbfa",
       "behavior": {
         "needed": true,
@@ -4795,7 +4795,7 @@
       "name": "Drygulch",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "acd779c0b647",
       "behavior": {
         "needed": true,
@@ -4825,7 +4825,7 @@
       "name": "Dwarvish Grimalkin",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "97563f42bc8b",
       "behavior": {
         "needed": true,
@@ -4887,7 +4887,7 @@
       "name": "Embittered Cadet",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d17e686b88a1",
       "behavior": {
         "needed": true,
@@ -4918,7 +4918,7 @@
       "name": "Emissary of Loot",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2717571ac5b2",
       "behavior": {
         "needed": true,
@@ -4950,7 +4950,7 @@
       "name": "Enormous and Uncooperative Golem",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0b88dafed349",
       "behavior": {
         "needed": true,
@@ -4980,7 +4980,7 @@
       "name": "Epic Smackdown",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "344d9cd65e94",
       "behavior": {
         "needed": true,
@@ -5010,7 +5010,7 @@
       "name": "Epicureous Mammajamma",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "58cbdbf620f6",
       "behavior": {
         "needed": true,
@@ -5038,7 +5038,7 @@
       "name": "Fired Hand",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "288894ddd96c",
       "behavior": {
         "needed": true,
@@ -5070,7 +5070,7 @@
       "name": "Foment",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "be14ea8a2166",
       "behavior": {
         "needed": true,
@@ -5101,7 +5101,7 @@
       "name": "Framptle Tromwibbler, Lord of Bling",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "34a3246a005c",
       "behavior": {
         "needed": true,
@@ -5133,7 +5133,7 @@
       "name": "G14n7 5p0rk D3f3n53",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "963dc3631df4",
       "behavior": {
         "needed": true,
@@ -5164,7 +5164,7 @@
       "name": "Gewgawed Gimcrack",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "3ea6d294bc94",
       "behavior": {
         "needed": true,
@@ -5260,7 +5260,7 @@
       "name": "Goloam",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "750eebac2f0c",
       "behavior": {
         "needed": true,
@@ -5287,7 +5287,7 @@
       "name": "Grandiose Resurrector",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4b05db1fea3e",
       "behavior": {
         "needed": true,
@@ -5315,7 +5315,7 @@
       "name": "Gus VanBaymaven",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "8cabd6bd3742",
       "behavior": {
         "needed": true,
@@ -5343,7 +5343,7 @@
       "name": "Hextilda, the Exiled Crone",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "543e4cc5c2e9",
       "behavior": {
         "needed": true,
@@ -5370,7 +5370,7 @@
       "name": "Hidden Ruins",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "856269ba872b",
       "behavior": {
         "needed": true,
@@ -5406,7 +5406,7 @@
       "name": "Hideous Hexapede of Horror",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "92b1fb892d0f",
       "behavior": {
         "needed": true,
@@ -5438,7 +5438,7 @@
       "name": "I Drink Your Milkshake!",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "3feabc01935f",
       "behavior": {
         "needed": true,
@@ -5471,7 +5471,7 @@
       "name": "Imperial Thaumaturge",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c7a8ba8962ff",
       "behavior": {
         "needed": true,
@@ -5498,7 +5498,7 @@
       "name": "Implosive Explosion",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "3c9a7a1f7ff9",
       "behavior": {
         "needed": true,
@@ -5530,7 +5530,7 @@
       "name": "Inadequate Wand",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d5bee868a616",
       "behavior": {
         "needed": true,
@@ -5560,7 +5560,7 @@
       "name": "Lab of Luxury",
       "set": "Seed 2",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "3df57c88a33c",
       "behavior": {
         "needed": true,
@@ -5590,7 +5590,7 @@
       "name": "Lodge Dock Florist",
       "set": "Seed 2",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "64453949bbdd",
       "behavior": {
         "needed": true,
@@ -5619,7 +5619,7 @@
       "name": "Lucky Bastard",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "17f706812ec6",
       "behavior": {
         "needed": true,
@@ -5685,7 +5685,7 @@
       "name": "Meat of the Mountain",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d86d6442db8c",
       "behavior": {
         "needed": true,
@@ -5716,7 +5716,7 @@
       "name": "Melty Cheese",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "04e5fe1f0355",
       "behavior": {
         "needed": true,
@@ -5744,7 +5744,7 @@
       "name": "Midget Mine",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "417c81858ff8",
       "behavior": {
         "needed": true,
@@ -5774,7 +5774,7 @@
       "name": "Minion of Thabbash",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2db5e574846c",
       "behavior": {
         "needed": true,
@@ -5807,7 +5807,7 @@
       "name": "Miraculous Regeneration",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c7ae1e31fc3c",
       "behavior": {
         "needed": true,
@@ -5867,7 +5867,7 @@
       "name": "Muddle",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d93aa311a987",
       "behavior": {
         "needed": true,
@@ -5897,7 +5897,7 @@
       "name": "Muscle Tribe of Danger and Excellence",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "143f76c3c7c7",
       "behavior": {
         "needed": true,
@@ -5957,7 +5957,7 @@
       "name": "Nattering Stoopswaggler",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "14965710dba4",
       "behavior": {
         "needed": true,
@@ -5992,7 +5992,7 @@
       "name": "Necromantic Healer",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9e6f5bab8151",
       "behavior": {
         "needed": true,
@@ -6021,7 +6021,7 @@
       "name": "Obscene Astrologer",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "bf222e938ae3",
       "behavior": {
         "needed": true,
@@ -6050,7 +6050,7 @@
       "name": "Otter Floss",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e2b127d0ec10",
       "behavior": {
         "needed": true,
@@ -6081,7 +6081,7 @@
       "name": "Overzealous Excavation",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2ff4131d827c",
       "behavior": {
         "needed": true,
@@ -6112,7 +6112,7 @@
       "name": "Padamose, Emperor of Marduun",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "bec5e803491a",
       "behavior": {
         "needed": true,
@@ -6142,7 +6142,7 @@
       "name": "Party Clowns",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0b0361f1556b",
       "behavior": {
         "needed": true,
@@ -6173,7 +6173,7 @@
       "name": "Peculate",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0e9ad28ea6d0",
       "behavior": {
         "needed": true,
@@ -6203,7 +6203,7 @@
       "name": "Perturb",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a9376201a520",
       "behavior": {
         "needed": true,
@@ -6233,7 +6233,7 @@
       "name": "Plunging Shriever",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2bd1f93c677c",
       "behavior": {
         "needed": true,
@@ -6264,7 +6264,7 @@
       "name": "Prophetic Assistant",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "eb3ead4dbf0b",
       "behavior": {
         "needed": true,
@@ -6295,7 +6295,7 @@
       "name": "Recyclable Golem",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b96a7c25c6c7",
       "behavior": {
         "needed": true,
@@ -6328,7 +6328,7 @@
       "name": "Redonkulous",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9167f01c414b",
       "behavior": {
         "needed": true,
@@ -6358,7 +6358,7 @@
       "name": "Research Intern",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4d97909f7a43",
       "behavior": {
         "needed": true,
@@ -6386,7 +6386,7 @@
       "name": "Resistance Fighter",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e53bcb63997f",
       "behavior": {
         "needed": true,
@@ -6417,7 +6417,7 @@
       "name": "Rewarding Salvage",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e80ed3f6b3c4",
       "behavior": {
         "needed": true,
@@ -6445,7 +6445,7 @@
       "name": "Ritual of the Double Monkey",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "7b2cf263200f",
       "behavior": {
         "needed": true,
@@ -6508,7 +6508,7 @@
       "name": "Roundalicious Breasticles",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "89f316dd674e",
       "behavior": {
         "needed": true,
@@ -6537,7 +6537,7 @@
       "name": "Rusty Pickaxe",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "de3ccb212be5",
       "behavior": {
         "needed": true,
@@ -6568,7 +6568,7 @@
       "name": "Smothering Corpulence",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "016dfaa1e302",
       "behavior": {
         "needed": true,
@@ -6598,7 +6598,7 @@
       "name": "Spiky Pumpkin",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9c5da92ea4cd",
       "behavior": {
         "needed": true,
@@ -6627,7 +6627,7 @@
       "name": "Sprint",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "8fd88b9353c9",
       "behavior": {
         "needed": true,
@@ -6657,7 +6657,7 @@
       "name": "Spry Archer",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "985bfb90bee9",
       "behavior": {
         "needed": true,
@@ -6716,7 +6716,7 @@
       "name": "Swinish Elder",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "30c9d34db1f9",
       "behavior": {
         "needed": true,
@@ -6745,7 +6745,7 @@
       "name": "The Emperor Barduse",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f12b8894ba38",
       "behavior": {
         "needed": true,
@@ -6775,7 +6775,7 @@
       "name": "The Poshernacle",
       "set": "Seed 2",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "7b85fe40cc38",
       "behavior": {
         "needed": true,
@@ -6807,7 +6807,7 @@
       "name": "Thorough Sanitization",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1bfdc1678f94",
       "behavior": {
         "needed": true,
@@ -6837,7 +6837,7 @@
       "name": "Time Traveler Tourist Trap",
       "set": "Seed 2",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "bfcbf1711360",
       "behavior": {
         "needed": true,
@@ -6868,7 +6868,7 @@
       "name": "Tiny Shiny",
       "set": "Seed 2",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b62176c84d94",
       "behavior": {
         "needed": true,
@@ -6899,7 +6899,7 @@
       "name": "Titillated Mooncalf",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "451c7c29c9d3",
       "behavior": {
         "needed": true,
@@ -6929,7 +6929,7 @@
       "name": "Tumescent Guilt Bladder",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "7450a023a780",
       "behavior": {
         "needed": true,
@@ -6961,7 +6961,7 @@
       "name": "Uncontrollable Jalopy",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e745673574bc",
       "behavior": {
         "needed": true,
@@ -6990,7 +6990,7 @@
       "name": "Vast Mastabatorium",
       "set": "Seed 2",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "773a5299e738",
       "behavior": {
         "needed": true,
@@ -7021,7 +7021,7 @@
       "name": "Verrucose Brains",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1ebc3252a01a",
       "behavior": {
         "needed": true,
@@ -7051,7 +7051,7 @@
       "name": "Vorpal Sword",
       "set": "Seed 2",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "aba91695e839",
       "behavior": {
         "needed": true,
@@ -7114,7 +7114,7 @@
       "name": "Woadenworm Gloamspike, Thabbashite Prince",
       "set": "Seed 2",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a98d0aec4757",
       "behavior": {
         "needed": true,
@@ -7143,7 +7143,7 @@
       "name": "5n4p",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "10edf7fd4fe3",
       "behavior": {
         "needed": true,
@@ -7201,7 +7201,7 @@
       "name": "Abandoned Testing Complex",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e2209a9e9a76",
       "behavior": {
         "needed": true,
@@ -7228,7 +7228,7 @@
       "name": "Accumulation Majig",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ff6d4d91fc6d",
       "behavior": {
         "needed": true,
@@ -7257,7 +7257,7 @@
       "name": "Ancient and Disreputable Law Office",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "28a8bc2df056",
       "behavior": {
         "needed": true,
@@ -7314,7 +7314,7 @@
       "name": "Arcane Escrow",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c75e85a620d2",
       "behavior": {
         "needed": true,
@@ -7347,7 +7347,7 @@
       "name": "Audacious Appraisal",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6093c465abe3",
       "behavior": {
         "needed": true,
@@ -7377,7 +7377,7 @@
       "name": "Auspicious Arrival",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a43c7f41a66e",
       "behavior": {
         "needed": true,
@@ -7405,7 +7405,7 @@
       "name": "B.A.S.E. Jump",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6284b9c2f919",
       "behavior": {
         "needed": true,
@@ -7433,7 +7433,7 @@
       "name": "Backdoor Brigand",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b6adb85559df",
       "behavior": {
         "needed": true,
@@ -7463,7 +7463,7 @@
       "name": "Banana Peel",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "7ddfa6ebd4c0",
       "behavior": {
         "needed": true,
@@ -7497,7 +7497,7 @@
       "name": "Barracks of Precipitancy",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "facf5eb23941",
       "behavior": {
         "needed": true,
@@ -7527,7 +7527,7 @@
       "name": "Battle-Ready Back-Breaker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "54a23354ed35",
       "behavior": {
         "needed": true,
@@ -7554,7 +7554,7 @@
       "name": "Bloating Bask",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ab84ccd14af0",
       "behavior": {
         "needed": true,
@@ -7606,7 +7606,7 @@
       "name": "Bottlebeard Brandyshanks",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e01060148e54",
       "behavior": {
         "needed": true,
@@ -7635,7 +7635,7 @@
       "name": "Bug Bite",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9c74b3484e2d",
       "behavior": {
         "needed": true,
@@ -7663,7 +7663,7 @@
       "name": "Carnival Ringmaster",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5eaf26ea91cd",
       "behavior": {
         "needed": true,
@@ -7696,7 +7696,7 @@
       "name": "Cicibeo the Swift",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b0b8287ea7f0",
       "behavior": {
         "needed": true,
@@ -7729,7 +7729,7 @@
       "name": "Clockman City Shuffle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9f2c1c9be1ae",
       "behavior": {
         "needed": true,
@@ -7756,7 +7756,7 @@
       "name": "Clockman Junk Picker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2476ec3380c3",
       "behavior": {
         "needed": true,
@@ -7815,7 +7815,7 @@
       "name": "Concentriculation",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "bd7e364455f0",
       "behavior": {
         "needed": true,
@@ -7843,7 +7843,7 @@
       "name": "Confrontational Conflagration",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1a3225d860b8",
       "behavior": {
         "needed": true,
@@ -7876,7 +7876,7 @@
       "name": "Contiguous Defalcating Machine",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "aee38a01a306",
       "behavior": {
         "needed": true,
@@ -7905,7 +7905,7 @@
       "name": "Contractual Execution",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f7205349efb8",
       "behavior": {
         "needed": true,
@@ -7965,7 +7965,7 @@
       "name": "Draconic Luteoderm Suit",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4917b47438ec",
       "behavior": {
         "needed": true,
@@ -7998,7 +7998,7 @@
       "name": "Drill Instructor",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5452342cc9ab",
       "behavior": {
         "needed": true,
@@ -8031,7 +8031,7 @@
       "name": "Drive By Boobing",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f8cbf0ffd129",
       "behavior": {
         "needed": true,
@@ -8060,7 +8060,7 @@
       "name": "Duelist of Surfeit",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1dc206c25e0e",
       "behavior": {
         "needed": true,
@@ -8088,7 +8088,7 @@
       "name": "Elementary Elemental",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "8a9bec1135a7",
       "behavior": {
         "needed": true,
@@ -8115,7 +8115,7 @@
       "name": "Elitistmajig",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "380dac02ca6c",
       "behavior": {
         "needed": true,
@@ -8145,7 +8145,7 @@
       "name": "Elusive Wolf",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c91f3bd307d5",
       "behavior": {
         "needed": true,
@@ -8173,7 +8173,7 @@
       "name": "Enlightened Mau",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a18cf2313ed5",
       "behavior": {
         "needed": true,
@@ -8203,7 +8203,7 @@
       "name": "EPM (Extra Powerful Magnetic) Pulse",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d2f0f3d6e6a8",
       "behavior": {
         "needed": true,
@@ -8230,7 +8230,7 @@
       "name": "Eustace Padamose-Gristwalter",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d98f80781636",
       "behavior": {
         "needed": true,
@@ -8260,7 +8260,7 @@
       "name": "Expedition Endeavour",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1d299b2b5d7a",
       "behavior": {
         "needed": true,
@@ -8317,7 +8317,7 @@
       "name": "Fanatical Shriever",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "418fe83033b4",
       "behavior": {
         "needed": true,
@@ -8350,7 +8350,7 @@
       "name": "Fistfight",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c165786b0239",
       "behavior": {
         "needed": true,
@@ -8380,7 +8380,7 @@
       "name": "Flaming Cube",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "52786bd4d367",
       "behavior": {
         "needed": true,
@@ -8413,7 +8413,7 @@
       "name": "Forgotten Tentacle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c3fa5497c789",
       "behavior": {
         "needed": true,
@@ -8473,7 +8473,7 @@
       "name": "Gang Weapon Dealer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a3792c271e52",
       "behavior": {
         "needed": true,
@@ -8529,7 +8529,7 @@
       "name": "Gigantitect's Giant Giant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e5ebe48a1d32",
       "behavior": {
         "needed": true,
@@ -8560,7 +8560,7 @@
       "name": "Gloamspike-Gosche Bridge",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "baa5563b900c",
       "behavior": {
         "needed": true,
@@ -8593,7 +8593,7 @@
       "name": "Golden Charm",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "952997b45733",
       "behavior": {
         "needed": true,
@@ -8625,7 +8625,7 @@
       "name": "Goldmau Sacks Representative",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "96a42e8b60cc",
       "behavior": {
         "needed": true,
@@ -8655,7 +8655,7 @@
       "name": "Guileful Astucion",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "026271adce87",
       "behavior": {
         "needed": true,
@@ -8684,7 +8684,7 @@
       "name": "Hassan-i of Thabbash",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "dea68d0f9c1e",
       "behavior": {
         "needed": true,
@@ -8714,7 +8714,7 @@
       "name": "Homewrecker",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a96b47d0cfc3",
       "behavior": {
         "needed": true,
@@ -8743,7 +8743,7 @@
       "name": "Impressionistic Furball",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "45331da973d4",
       "behavior": {
         "needed": true,
@@ -8771,7 +8771,7 @@
       "name": "Industrious Usage",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b945a41a74a9",
       "behavior": {
         "needed": true,
@@ -8799,7 +8799,7 @@
       "name": "It's a Trap!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "f23e18c42074",
       "behavior": {
         "needed": true,
@@ -8827,7 +8827,7 @@
       "name": "Jo Ciendeilio, M07h3r 0f 1337",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "528c1bdde872",
       "behavior": {
         "needed": true,
@@ -8857,7 +8857,7 @@
       "name": "Juice Closet",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "27cfd1e5b73a",
       "behavior": {
         "needed": true,
@@ -8884,7 +8884,7 @@
       "name": "Juice Sale!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5daef199712e",
       "behavior": {
         "needed": true,
@@ -8912,7 +8912,7 @@
       "name": "Lugubrian Poacher",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1f2b9a42b490",
       "behavior": {
         "needed": true,
@@ -8939,7 +8939,7 @@
       "name": "M3CHm4n1c 31f",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b2aa0632a2b5",
       "behavior": {
         "needed": true,
@@ -8967,7 +8967,7 @@
       "name": "Man Shark",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "434f027ebd5b",
       "behavior": {
         "needed": true,
@@ -8997,7 +8997,7 @@
       "name": "Marauding Madster",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0cd1a82749a8",
       "behavior": {
         "needed": true,
@@ -9025,7 +9025,7 @@
       "name": "Martial Arts Wannabe",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6e70e5478051",
       "behavior": {
         "needed": true,
@@ -9054,7 +9054,7 @@
       "name": "Mau Strategist",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "bef5c8f24be8",
       "behavior": {
         "needed": true,
@@ -9082,7 +9082,7 @@
       "name": "Micromajig Recycling Station",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e12c1c04ccb5",
       "behavior": {
         "needed": true,
@@ -9111,7 +9111,7 @@
       "name": "Micromajigmakermachinemajig",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0cb4bd8438ac",
       "behavior": {
         "needed": true,
@@ -9141,7 +9141,7 @@
       "name": "Mittens of Muffled Thought",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e60488ab6dca",
       "behavior": {
         "needed": true,
@@ -9202,7 +9202,7 @@
       "name": "Mr. Fetch",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "202c97468f69",
       "behavior": {
         "needed": true,
@@ -9230,7 +9230,7 @@
       "name": "Murderous Kleptomaniac",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e020b460ab70",
       "behavior": {
         "needed": true,
@@ -9261,7 +9261,7 @@
       "name": "Mushroom Merchant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ab0237492871",
       "behavior": {
         "needed": true,
@@ -9317,7 +9317,7 @@
       "name": "Neuralyzer Agent",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "fc89104b876c",
       "behavior": {
         "needed": true,
@@ -9345,7 +9345,7 @@
       "name": "Numba 1 Stunna!",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "68feac206df2",
       "behavior": {
         "needed": true,
@@ -9378,7 +9378,7 @@
       "name": "Officially Offensive Overseer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "103a9cb73708",
       "behavior": {
         "needed": true,
@@ -9406,7 +9406,7 @@
       "name": "Opportunistic Pirate",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "591fbc0fc188",
       "behavior": {
         "needed": true,
@@ -9438,7 +9438,7 @@
       "name": "Parkour Hoodlum",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5986a312cef4",
       "behavior": {
         "needed": true,
@@ -9497,7 +9497,7 @@
       "name": "Pinguid Bodyguard",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e2a249f1e0a3",
       "behavior": {
         "needed": true,
@@ -9529,7 +9529,7 @@
       "name": "Purloinering Pirate",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "70b28799aec3",
       "behavior": {
         "needed": true,
@@ -9557,7 +9557,7 @@
       "name": "Pwny Bomb",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "13c8d4db2da9",
       "behavior": {
         "needed": true,
@@ -9589,7 +9589,7 @@
       "name": "Quotidian Concealer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c6adddda581c",
       "behavior": {
         "needed": true,
@@ -9617,7 +9617,7 @@
       "name": "Quotidian Transposition",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1e1a09dae6a3",
       "behavior": {
         "needed": true,
@@ -9644,7 +9644,7 @@
       "name": "R3p347 0ff3nd3r",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0d869f125d1a",
       "behavior": {
         "needed": true,
@@ -9676,7 +9676,7 @@
       "name": "Recycling Scheme Facility",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b70ce050d0b4",
       "behavior": {
         "needed": true,
@@ -9706,7 +9706,7 @@
       "name": "Reluctant Reconciliation",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "fd30fb3266f4",
       "behavior": {
         "needed": true,
@@ -9733,7 +9733,7 @@
       "name": "Remains of Foreman Pete, the Clock Man",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4067be84b071",
       "behavior": {
         "needed": true,
@@ -9762,7 +9762,7 @@
       "name": "Rocket Lawnchair",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d8eddab4c7f6",
       "behavior": {
         "needed": true,
@@ -9793,7 +9793,7 @@
       "name": "Rudo Mangod, Dragonweight Champion",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "808ef58cc236",
       "behavior": {
         "needed": true,
@@ -9821,7 +9821,7 @@
       "name": "Runic Junker",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "4feed8e5005a",
       "behavior": {
         "needed": true,
@@ -9912,7 +9912,7 @@
       "name": "Shade of the Devoured Emperor",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1330c7939d26",
       "behavior": {
         "needed": true,
@@ -9942,7 +9942,7 @@
       "name": "Sharpey Pointy Lethal Army Tool",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "efb1a3f3e714",
       "behavior": {
         "needed": true,
@@ -10027,7 +10027,7 @@
       "name": "Siluriformes Flaxenscale",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "245006c96ab1",
       "behavior": {
         "needed": true,
@@ -10089,7 +10089,7 @@
       "name": "Sneaker Attack!",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1fa58914aeaf",
       "behavior": {
         "needed": true,
@@ -10120,7 +10120,7 @@
       "name": "Sockem Bot",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6622a800333f",
       "behavior": {
         "needed": true,
@@ -10149,7 +10149,7 @@
       "name": "Sticky Stealy Hand",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ce84a8496d4a",
       "behavior": {
         "needed": true,
@@ -10180,7 +10180,7 @@
       "name": "Study Disturbance",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ffaee9ed5ceb",
       "behavior": {
         "needed": true,
@@ -10238,7 +10238,7 @@
       "name": "Super Shiny Caltrops of DOOM!",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "529c93b0375f",
       "behavior": {
         "needed": true,
@@ -10268,7 +10268,7 @@
       "name": "Surreptitious Larceny",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "6a887ae94689",
       "behavior": {
         "needed": true,
@@ -10301,7 +10301,7 @@
       "name": "Swindle",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "1d3ddaecfb2a",
       "behavior": {
         "needed": true,
@@ -10331,7 +10331,7 @@
       "name": "Tedious TriAdic Truculence",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "0a85445f660e",
       "behavior": {
         "needed": true,
@@ -10392,7 +10392,7 @@
       "name": "Thabbashite Armorer",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "a5378c4e3596",
       "behavior": {
         "needed": true,
@@ -10422,7 +10422,7 @@
       "name": "Thabbashite Assailant",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d988613c2b74",
       "behavior": {
         "needed": true,
@@ -10449,7 +10449,7 @@
       "name": "Thabbashite Chemist",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e293a8767a48",
       "behavior": {
         "needed": true,
@@ -10479,7 +10479,7 @@
       "name": "Thabbashite Financier",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "dbd3665b8321",
       "behavior": {
         "needed": true,
@@ -10539,7 +10539,7 @@
       "name": "The Lugubrian Council of Quotidian Affairs",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d48c3bd7f7a4",
       "behavior": {
         "needed": true,
@@ -10568,7 +10568,7 @@
       "name": "This, That, and the Other Thing",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "5489f2154729",
       "behavior": {
         "needed": true,
@@ -10595,7 +10595,7 @@
       "name": "Time to Retire",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2681f4d628c4",
       "behavior": {
         "needed": true,
@@ -10623,7 +10623,7 @@
       "name": "Timid Mau",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "e8b565434c54",
       "behavior": {
         "needed": true,
@@ -10652,7 +10652,7 @@
       "name": "Torchlight District",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "c726d2a1e3f8",
       "behavior": {
         "needed": true,
@@ -10712,7 +10712,7 @@
       "name": "Underhanded Hang-Out",
       "set": "Shade of the Devoured Emperor",
       "type": "location",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d05b4e07203c",
       "behavior": {
         "needed": true,
@@ -10739,7 +10739,7 @@
       "name": "Underwhelming Performance",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b5247ddb0b1d",
       "behavior": {
         "needed": true,
@@ -10768,7 +10768,7 @@
       "name": "Undevoted Gargantuan",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "b637c4a967cf",
       "behavior": {
         "needed": true,
@@ -10798,7 +10798,7 @@
       "name": "Unexpected Codicil",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "ac059e1c16fc",
       "behavior": {
         "needed": true,
@@ -10829,7 +10829,7 @@
       "name": "Ursine Assassin",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "254cbee4d303",
       "behavior": {
         "needed": true,
@@ -10857,7 +10857,7 @@
       "name": "Violating Ritual",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "d56931fd6fe9",
       "behavior": {
         "needed": true,
@@ -10884,7 +10884,7 @@
       "name": "Voidal Trinket",
       "set": "Shade of the Devoured Emperor",
       "type": "item",
-      "status": "authored",
+      "status": "verified",
       "textHash": "20cb5ae38173",
       "behavior": {
         "needed": true,
@@ -10911,7 +10911,7 @@
       "name": "Warbeast of Thabbash",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "authored",
+      "status": "verified",
       "textHash": "2b185df8b35d",
       "behavior": {
         "needed": true,
@@ -10938,7 +10938,7 @@
       "name": "Words of Glory",
       "set": "Shade of the Devoured Emperor",
       "type": "tactic",
-      "status": "authored",
+      "status": "verified",
       "textHash": "9f6c65b87fa6",
       "behavior": {
         "needed": true,

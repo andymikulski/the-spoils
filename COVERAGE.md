@@ -9,8 +9,8 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 | Set | Cards | vanilla | unclassified | classified | authored | verified | blocked | wontImpl | % done |
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|
 | Seed 3 | 43 | 5 | 0 | 0 | 0 | 38 | 0 | 0 | 100% |
-| Seed 2 | 110 | 0 | 0 | 0 | 97 | 13 | 0 | 0 | 12% |
-| Shade of the Devoured Emperor | 130 | 5 | 0 | 0 | 110 | 15 | 0 | 0 | 15% |
+| Seed 2 | 110 | 0 | 0 | 0 | 0 | 110 | 0 | 0 | 100% |
+| Shade of the Devoured Emperor | 130 | 5 | 0 | 0 | 0 | 125 | 0 | 0 | 100% |
 | 1st Edition Part 2 | 165 | 5 | 0 | 0 | 0 | 160 | 0 | 0 | 100% |
 | Holy Heist | 165 | 33 | 0 | 0 | 0 | 132 | 0 | 0 | 100% |
 | Ungodly Mess | 167 | 6 | 0 | 0 | 0 | 159 | 0 | 2 | 100% |
@@ -19,7 +19,7 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 | Seed | 231 | 17 | 0 | 0 | 0 | 214 | 0 | 0 | 100% |
 | 2nd Edition | 300 | 19 | 0 | 0 | 0 | 281 | 0 | 0 | 100% |
 | Seed Saga | 358 | 13 | 0 | 0 | 0 | 345 | 0 | 0 | 100% |
-| **Total** | **2101** | 149 | 0 | 0 | 207 | 1743 | 0 | 2 | 90% |
+| **Total** | **2101** | 149 | 0 | 0 | 0 | 1950 | 0 | 2 | 100% |
 
 _Rules-audited: 2000/2101._
 

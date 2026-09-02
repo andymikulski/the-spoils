@@ -223,4 +223,36 @@ describe("SotDE smoke: authored behavior drives the engine", () => {
     resolvePendingResponses(engine);
     assert.equal(engine.state.cards[id("map")].counters.token, 3);
   });
+
+  test("Opportunistic Pirate — removing 2 cards from an opponent's discard cuts its numeric cost", () => {
+    const dec = (i: number) => res(`Deception${i}`, "deception", "rogue");
+    const junk = (i: number): CardDefinition => ({ ...character({ name: `Junk${i}`, id: `op-junk-${i}` }) });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pir", def: def("Opportunistic Pirate"), owner: P1, zone: "hand" },
+        // 7 deception in play: 2 cover the [D][D] threshold, 5 pay the reduced cost.
+        ...Array.from({ length: 7 }, (_, i) => ({ key: `d${i}`, def: dec(i), owner: P1 })),
+        { key: "j1", def: junk(1), owner: P2, zone: "discard" },
+        { key: "j2", def: junk(2), owner: P2, zone: "discard" }
+      ]
+    });
+
+    // Printed cost 7; only 5 detachable resources would be left after the
+    // extra cost, so the deploy only succeeds because the removal rebate applies.
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("pir"),
+      selected: { rem: [id("j1"), id("j2")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("pir")].zone, "play", "deployed for 7 - 2 = 5");
+    assert.equal(engine.state.cards[id("j1")].zone, "removed");
+    assert.equal(engine.state.cards[id("j2")].zone, "removed");
+    const detached = engine.state.players[P1].play.filter(
+      cid => engine.getDefinition(cid).type === "resource" && !engine.state.cards[cid].depleted && engine.state.cards[cid].attachedTo === undefined
+    );
+    assert.equal(detached.length, 2, "5 of 7 deception spent on the reduced cost");
+  });
 });

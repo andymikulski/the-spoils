@@ -100,7 +100,11 @@ const behaviorsTestSrc = [
   "src/engine/__tests__/seed-caps.test.ts",
   "src/engine/__tests__/seed-smoke.test.ts",
   "src/engine/__tests__/second-edition-smoke.test.ts",
-  "src/engine/__tests__/seed-saga-smoke.test.ts"
+  "src/engine/__tests__/seed-saga-smoke.test.ts",
+  "src/engine/__tests__/seed2-smoke.test.ts",
+  "src/engine/__tests__/seed2-exercise.test.ts",
+  "src/engine/__tests__/sotde-smoke.test.ts",
+  "src/engine/__tests__/sotde-exercise.test.ts"
 ]
   .map(rel => {
     try {

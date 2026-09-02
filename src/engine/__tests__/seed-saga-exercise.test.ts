@@ -26,7 +26,7 @@ const SSSET = CATALOG.filter(c => c.set === "Seed Saga" && c.behavior);
 
 // Errors that just mean "this card needs a specific board/timing" — not a bug.
 const EXPECTED = [
-  /Threshold requirements are not met/,
+  /threshold requirements are not met/i,
   /Costs cannot be paid/i,
   /Not enough unattached resources/,
   /requires .*selection/i,
@@ -234,7 +234,7 @@ function settle(engine: SpoilsEngine, budget = 60): string[] {
           engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "useTargetAbility" } as any });
           break;
         case "orderTriggers":
-          engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "orderTriggers", next: (pc.pending ?? pc.batch ?? [])[0] } as any });
+          engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "orderTriggers", next: (pc.triggers ?? [])[0] } as any });
           break;
         case "uniqueSurvivor":
           engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "uniqueSurvivor", keep: (pc.groups?.[0]?.cardIds ?? [])[0] } as any });
