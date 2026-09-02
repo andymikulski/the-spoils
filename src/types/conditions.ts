@@ -124,6 +124,19 @@ export type Condition =
     }
   | {
       /**
+       * True when `target` (default the selector `__candidate`, else
+       * `"source"`) is **owned** by the resolved `player`. The ownership
+       * counterpart of `cardInPlay`'s `controlledBy` — for per-candidate
+       * scoping a `CardSelector.owner` can't express alongside other
+       * `conditions` (e.g. "a UNIQUE character in play OR a character in an
+       * *opponent's* discard pile" — A Death Fit for a King).
+       */
+      type: "targetOwnedBy";
+      target?: TargetRef;
+      player: PlayerRef;
+    }
+  | {
+      /**
        * True when `target` (default `"source"`) resolves to a token
        * permanent (`CardInstance.isToken`). Compose with `not` for
        * "non-token character" (Phantasmagoric Tollbooth).

@@ -41,6 +41,7 @@ interface CoverageEntry {
   set: string;
   type: string;
   status: string;
+  fidelity: "full" | "partial" | "stub";
   textHash: string;
   rulesAudited?: boolean;
   behavior: {
@@ -104,7 +105,8 @@ const behaviorsTestSrc = [
   "src/engine/__tests__/seed2-smoke.test.ts",
   "src/engine/__tests__/seed2-exercise.test.ts",
   "src/engine/__tests__/sotde-smoke.test.ts",
-  "src/engine/__tests__/sotde-exercise.test.ts"
+  "src/engine/__tests__/sotde-exercise.test.ts",
+  "src/engine/__tests__/fidelity-fixes.test.ts"
 ]
   .map(rel => {
     try {
@@ -201,6 +203,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "targetInZone", "battleTargetIs", "battleDamageAssigned",
   // 1st Edition Part 2 conditions
   "isCard", "damagedThisTurn", "destroyedByBattleDamage",
+  // fidelity pass
+  "targetOwnedBy", "revealFromTopUntil", "reveal",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",
@@ -310,6 +314,40 @@ describe("card-data-integrity: manifest <-> catalog", () => {
       [],
       "a wontImplement entry must carry a `notes` saying which unmodellable mechanic it needs"
     );
+  });
+
+  test("every entry has a known fidelity, in lockstep with wontImplement", () => {
+    const FIDELITIES = ["full", "partial", "stub"];
+    const bad: string[] = [];
+    for (const e of manifest.cards) {
+      if (!FIDELITIES.includes(e.fidelity)) {
+        bad.push(`${e.name}: fidelity ${JSON.stringify(e.fidelity)}`);
+        continue;
+      }
+      const isStub = e.fidelity === "stub";
+      const isWont = e.status === "wontImplement";
+      if (isStub !== isWont) bad.push(`${e.name}: fidelity 'stub' must match status 'wontImplement'`);
+      if (e.fidelity === "partial" && (!e.notes || e.notes.trim().length < 10)) {
+        bad.push(`${e.name}: a 'partial' entry must document the concession in \`notes\``);
+      }
+    }
+    assert.deepEqual(bad, [], "run: node scripts/build-coverage.cjs");
+  });
+
+  test("data/card-fidelity.json is in sync with the manifest", () => {
+    const sidecar = readJson("data/card-fidelity.json") as {
+      fidelity: Record<string, string>;
+    };
+    const drift: string[] = [];
+    for (const e of manifest.cards) {
+      if (sidecar.fidelity[e.id] !== e.fidelity) {
+        drift.push(`${e.name}: manifest ${e.fidelity} vs sidecar ${sidecar.fidelity[e.id]}`);
+      }
+    }
+    for (const id of Object.keys(sidecar.fidelity)) {
+      if (!manifest.cards.some(e => e.id === id)) drift.push(`sidecar has stale id ${id}`);
+    }
+    assert.deepEqual(drift, [], "run: node scripts/build-coverage.cjs");
   });
 });
 

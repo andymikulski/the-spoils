@@ -644,6 +644,52 @@ exception (53cur17y 5y573m) = grant the `canBlockCovert` keyword to a broad
 `{ type: "character", controller: "any" }` selector. Tests:
 `seed-{caps,smoke,exercise}.test.ts`.
 
+## Fidelity pass (hidden information / reveal)
+
+Closing the "verified ≠ faithful" gap for the reveal / look-at / hidden-info
+family. Most such text was already faithful — a "reveal" verb has no
+mechanical content in a perfect-information engine (see RULES.md §12
+"Fidelity pass"). Six additions + one bug fix, then ~15 cards re-authored:
+
+- **`ContinuousAbility.grantsReveal: { zone: "deckTop" | "hand"; of:
+  PlayerRef }`** — populates `GameFlowView.revealed` (`{ deckTop:
+  [{playerId, cardId}]; hands: [playerId] }`); renderer-facing only.
+  Cheats McGuillicutty, Odious Diva, Axeclaw Grandchest, Bottlebeard.
+  (Continuous abilities still carry `modifiers: []` even when empty.)
+- **`{ type: "reveal", of, zone: "deckTop" | "hand", count?, viewer? }`** —
+  one-shot; emits `cardsRevealed` and nothing else.
+- **`{ type: "revealFromTopUntil", player, match: Condition, bindAs,
+  onMatch: Effect[], onEmpty?, rest?: "shuffle" | "bottom" | "discard" |
+  "void" }`** — dig from the top of a deck until `match` (candidate bound to
+  the selector `__candidate`); bind the hit to `bindAs`, run `onMatch`;
+  dispose of the other revealed cards per `rest` (default `"shuffle"`).
+  Surprise!.
+- **`GameEvent cardsRevealed { cardIds, zone, ownerId, viewerId, byCardId?
+  }`** — informational.
+- **`{ type: "targetOwnedBy", target?, player }` condition** — candidate
+  (or `target`, default `__candidate`) is owned by the resolved player.
+  A Death Fit for a King ("a UNIQUE character in play OR a character in an
+  *opponent's* discard").
+- **`GameFlowView.revealed`** — new required field on the flow view.
+- **Bug fix — `moveCard` same-zone deck reposition.** "Put the top card of
+  your deck on the bottom" no-op'd (`from === to` early return); now
+  repositions within `owner.deck` when both zones are the deck. Fixes
+  Cheats McGuillicutty BOTTOM DEAL, Bottlebeard CHUG!, Flimflam Man,
+  Opportune Slotpuller, Dauntless Gambler, Rigged Tables RIG.
+
+Re-authored onto existing vocab (no engine change): Intellectual Reliquary
+(`fromTop` target + conditional `lookAndReorder` count), Gilda `peek`,
+Warmachine Smelder LIFE'S WORK (`chooserSelectsOption` deploy/hand),
+Ecto-Distillation (opponent moves exactly its picks), Eccentric Inquisition
+(`count: { type: "count" }` forces all revealed tactics), Confessions
+(already `to: "split"` — un-flagged).
+
+`fidelity: full | partial | stub` per coverage entry → generated
+`data/card-fidelity.json` → `CARD_FIDELITY` on the `"./data"` export.
+`partial` (3): Gilda SUMMONS scope; Study Disturbance / Tedious TriAdic
+Truculence pre-stack buyout timing. `stub` (2): the `wontImplement` pair.
+Tests: `fidelity-fixes.test.ts`.
+
 ## Ability types
 
 ```ts

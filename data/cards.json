@@ -710,11 +710,7 @@
               "effects": [
                 {
                   "type": "forEach",
-                  "selector": {
-                    "owner": "self",
-                    "zone": "deck",
-                    "nameVar": "named"
-                  },
+                  "selected": "opp",
                   "effects": [
                     {
                       "type": "moveCard",
@@ -14622,8 +14618,16 @@
                 "fromTop": 7,
                 "type": "tactic"
               },
-              "count": 7,
-              "optional": true
+              "count": {
+                "type": "count",
+                "selector": {
+                  "owner": "opponent",
+                  "zone": "deck",
+                  "fromTop": 7,
+                  "type": "tactic"
+                }
+              },
+              "optional": false
             }
           ],
           "effects": [
@@ -15384,6 +15388,15 @@
     "text": "Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card.",
     "behavior": {
       "abilities": [
+        {
+          "id": "odious-diva-hand-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "hand",
+            "of": "opponent"
+          }
+        },
         {
           "id": "disapprove",
           "type": "activated",
@@ -21191,6 +21204,15 @@
     "behavior": {
       "abilities": [
         {
+          "id": "cheats-topcard-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "deckTop",
+            "of": "self"
+          }
+        },
+        {
           "id": "bottomdeal",
           "type": "activated",
           "costs": [
@@ -26020,8 +26042,16 @@
                 "fromTop": 7,
                 "type": "tactic"
               },
-              "count": 7,
-              "optional": true
+              "count": {
+                "type": "count",
+                "selector": {
+                  "owner": "opponent",
+                  "zone": "deck",
+                  "fromTop": 7,
+                  "type": "tactic"
+                }
+              },
+              "optional": false
             }
           ],
           "effects": [
@@ -26157,11 +26187,7 @@
               "effects": [
                 {
                   "type": "forEach",
-                  "selector": {
-                    "owner": "self",
-                    "zone": "deck",
-                    "nameVar": "named"
-                  },
+                  "selected": "opp",
                   "effects": [
                     {
                       "type": "moveCard",
@@ -27288,6 +27314,15 @@
     "text": "Each opponent's hand is revealed at all times. -- DISAPPROVE -- COST: Pay 2. Name a card. -- EFFECT: Look at an opponent's hand. That player puts a card with the chosen name on the bottom of their deck if they can. If they do, that player draws a card.",
     "behavior": {
       "abilities": [
+        {
+          "id": "odious-diva-hand-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "hand",
+            "of": "opponent"
+          }
+        },
         {
           "id": "disapprove",
           "type": "activated",
@@ -37871,6 +37906,15 @@
     "text": "UNIQUE PLUCK -- The top card of your deck is revealed at all times. -- BOTTOM DEAL -- COST: Pay 1. -- EFFECT: Put the top card of your deck on the bottom. -- CHEAT -- COST: Deplete this card. -- EFFECT: Reveal the top card of your deck. You may deploy it. (You can't play resources with this ability.) -- CHANGE COSTUME -- COST: Pay 3. Shuffle this card into its owner's deck. -- EFFECT: Search your deck for a pluck card with a different name than this card and reveal it. Put it into play under your control.",
     "behavior": {
       "abilities": [
+        {
+          "id": "cheats-topcard-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "deckTop",
+            "of": "self"
+          }
+        },
         {
           "id": "bottomdeal",
           "type": "activated",
@@ -57874,11 +57918,7 @@
               "effects": [
                 {
                   "type": "forEach",
-                  "selector": {
-                    "owner": "self",
-                    "zone": "deck",
-                    "nameVar": "named"
-                  },
+                  "selected": "opp",
                   "effects": [
                     {
                       "type": "moveCard",
@@ -71711,12 +71751,56 @@
               "target": "source"
             }
           ],
+          "targets": [
+            {
+              "id": "pick",
+              "selector": {
+                "controller": "self",
+                "zone": "deck",
+                "type": "tactic",
+                "fromTop": 3
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
           "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "targetExists",
+                "target": {
+                  "type": "selected",
+                  "id": "pick"
+                }
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "pick"
+                  },
+                  "to": "hand"
+                }
+              ]
+            },
             {
               "type": "lookAndReorder",
               "player": "controller",
-              "count": 3,
-              "to": "bottom"
+              "to": "bottom",
+              "count": {
+                "type": "conditional",
+                "if": {
+                  "type": "targetExists",
+                  "target": {
+                    "type": "selected",
+                    "id": "pick"
+                  }
+                },
+                "then": 2,
+                "else": 3
+              }
             }
           ]
         }
@@ -82625,69 +82709,56 @@
               }
             },
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "controller",
-              "declaration": {
-                "id": "rec",
-                "selector": {
-                  "owner": "self",
-                  "zone": "deck",
-                  "type": "character",
-                  "conditions": [
-                    {
-                      "type": "numberCompare",
-                      "left": {
-                        "type": "cardCost",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
-                        }
-                      },
-                      "operator": "<=",
-                      "right": {
-                        "type": "variable",
-                        "id": "x"
-                      }
-                    }
-                  ]
-                },
-                "count": 1,
-                "optional": true
-              },
-              "effects": [
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetExists",
+              "type": "revealFromTopUntil",
+              "player": "controller",
+              "match": {
+                "type": "and",
+                "conditions": [
+                  {
+                    "type": "cardTypeIs",
                     "target": {
                       "type": "selected",
-                      "id": "rec"
-                    }
-                  },
-                  "effects": [
-                    {
-                      "type": "putIntoPlay",
-                      "target": {
-                        "type": "selected",
-                        "id": "rec"
-                      },
-                      "controller": "controller"
+                      "id": "__candidate"
                     },
-                    {
-                      "type": "addToBattle",
+                    "cardType": "character"
+                  },
+                  {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "cardCost",
                       "target": {
                         "type": "selected",
-                        "id": "rec"
-                      },
-                      "side": "blocking"
+                        "id": "__candidate"
+                      }
+                    },
+                    "operator": "<=",
+                    "right": {
+                      "type": "variable",
+                      "id": "x"
                     }
-                  ]
+                  }
+                ]
+              },
+              "bindAs": "rec",
+              "onMatch": [
+                {
+                  "type": "putIntoPlay",
+                  "target": {
+                    "type": "selected",
+                    "id": "rec"
+                  },
+                  "controller": "controller"
+                },
+                {
+                  "type": "addToBattle",
+                  "target": {
+                    "type": "selected",
+                    "id": "rec"
+                  },
+                  "side": "blocking"
                 }
-              ]
-            },
-            {
-              "type": "shuffleDeck",
-              "player": "controller"
+              ],
+              "rest": "shuffle"
             }
           ]
         }
@@ -99036,6 +99107,15 @@
     "behavior": {
       "abilities": [
         {
+          "id": "axeclaw-topcard-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "deckTop",
+            "of": "self"
+          }
+        },
+        {
           "id": "axeclaw-topcard",
           "type": "continuous",
           "modifiers": [
@@ -101543,19 +101623,45 @@
                     "type": "or",
                     "conditions": [
                       {
-                        "type": "hasUnique",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
-                        }
+                        "type": "and",
+                        "conditions": [
+                          {
+                            "type": "targetInZone",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            },
+                            "zone": "play"
+                          },
+                          {
+                            "type": "hasUnique",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            }
+                          }
+                        ]
                       },
                       {
-                        "type": "targetInZone",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
-                        },
-                        "zone": "discard"
+                        "type": "and",
+                        "conditions": [
+                          {
+                            "type": "targetInZone",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            },
+                            "zone": "discard"
+                          },
+                          {
+                            "type": "targetOwnedBy",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            },
+                            "player": "opponent"
+                          }
+                        ]
                       }
                     ]
                   }
@@ -103352,20 +103458,28 @@
             "type": "eventPlayerIs",
             "player": "controller"
           },
+          "targets": [
+            {
+              "id": "tac",
+              "selector": {
+                "controller": "self",
+                "zone": "deck",
+                "type": "tactic",
+                "fromTop": 2
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "controller",
-              "declaration": {
-                "id": "tac",
-                "selector": {
-                  "controller": "self",
-                  "zone": "deck",
-                  "type": "tactic",
-                  "fromTop": 2
-                },
-                "count": 1,
-                "optional": true
+              "type": "if",
+              "condition": {
+                "type": "targetExists",
+                "target": {
+                  "type": "selected",
+                  "id": "tac"
+                }
               },
               "effects": [
                 {
@@ -103377,6 +103491,23 @@
                   "to": "void"
                 }
               ]
+            },
+            {
+              "type": "lookAndReorder",
+              "player": "controller",
+              "to": "top",
+              "count": {
+                "type": "conditional",
+                "if": {
+                  "type": "targetExists",
+                  "target": {
+                    "type": "selected",
+                    "id": "tac"
+                  }
+                },
+                "then": 1,
+                "else": 2
+              }
             }
           ]
         },
@@ -104261,12 +104392,56 @@
               "target": "source"
             }
           ],
+          "targets": [
+            {
+              "id": "pick",
+              "selector": {
+                "controller": "self",
+                "zone": "deck",
+                "type": "tactic",
+                "fromTop": 3
+              },
+              "count": 1,
+              "optional": true
+            }
+          ],
           "effects": [
+            {
+              "type": "if",
+              "condition": {
+                "type": "targetExists",
+                "target": {
+                  "type": "selected",
+                  "id": "pick"
+                }
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "pick"
+                  },
+                  "to": "hand"
+                }
+              ]
+            },
             {
               "type": "lookAndReorder",
               "player": "controller",
-              "count": 3,
-              "to": "bottom"
+              "to": "bottom",
+              "count": {
+                "type": "conditional",
+                "if": {
+                  "type": "targetExists",
+                  "target": {
+                    "type": "selected",
+                    "id": "pick"
+                  }
+                },
+                "then": 2,
+                "else": 3
+              }
             }
           ]
         }
@@ -117597,13 +117772,37 @@
               },
               "effects": [
                 {
-                  "type": "deployFromZone",
-                  "player": "controller",
-                  "target": {
-                    "type": "selected",
-                    "id": "masterwork"
-                  },
-                  "free": true
+                  "type": "chooserSelectsOption",
+                  "chooser": "controller",
+                  "options": [
+                    {
+                      "label": "Deploy it for free",
+                      "effects": [
+                        {
+                          "type": "deployFromZone",
+                          "player": "controller",
+                          "target": {
+                            "type": "selected",
+                            "id": "masterwork"
+                          },
+                          "free": true
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Put it into your hand",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "masterwork"
+                          },
+                          "to": "hand"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -123117,69 +123316,56 @@
               }
             },
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "controller",
-              "declaration": {
-                "id": "rec",
-                "selector": {
-                  "owner": "self",
-                  "zone": "deck",
-                  "type": "character",
-                  "conditions": [
-                    {
-                      "type": "numberCompare",
-                      "left": {
-                        "type": "cardCost",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
-                        }
-                      },
-                      "operator": "<=",
-                      "right": {
-                        "type": "variable",
-                        "id": "x"
-                      }
-                    }
-                  ]
-                },
-                "count": 1,
-                "optional": true
-              },
-              "effects": [
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetExists",
+              "type": "revealFromTopUntil",
+              "player": "controller",
+              "match": {
+                "type": "and",
+                "conditions": [
+                  {
+                    "type": "cardTypeIs",
                     "target": {
                       "type": "selected",
-                      "id": "rec"
-                    }
-                  },
-                  "effects": [
-                    {
-                      "type": "putIntoPlay",
-                      "target": {
-                        "type": "selected",
-                        "id": "rec"
-                      },
-                      "controller": "controller"
+                      "id": "__candidate"
                     },
-                    {
-                      "type": "addToBattle",
+                    "cardType": "character"
+                  },
+                  {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "cardCost",
                       "target": {
                         "type": "selected",
-                        "id": "rec"
-                      },
-                      "side": "blocking"
+                        "id": "__candidate"
+                      }
+                    },
+                    "operator": "<=",
+                    "right": {
+                      "type": "variable",
+                      "id": "x"
                     }
-                  ]
+                  }
+                ]
+              },
+              "bindAs": "rec",
+              "onMatch": [
+                {
+                  "type": "putIntoPlay",
+                  "target": {
+                    "type": "selected",
+                    "id": "rec"
+                  },
+                  "controller": "controller"
+                },
+                {
+                  "type": "addToBattle",
+                  "target": {
+                    "type": "selected",
+                    "id": "rec"
+                  },
+                  "side": "blocking"
                 }
-              ]
-            },
-            {
-              "type": "shuffleDeck",
-              "player": "controller"
+              ],
+              "rest": "shuffle"
             }
           ]
         }
@@ -138205,6 +138391,15 @@
     "text": "UNIQUE PLUCK -- The top card of each opponent's deck is revealed at all times. If any of those cards are a character, this card gains 3 speed. -- CHUG! -- COST: Pay 2. Pick an opponent. -- EFFECT: Put the top card of that player's deck on the bottom of their deck.",
     "behavior": {
       "abilities": [
+        {
+          "id": "bottlebeard-topcard-public",
+          "type": "continuous",
+          "modifiers": [],
+          "grantsReveal": {
+            "zone": "deckTop",
+            "of": "opponent"
+          }
+        },
         {
           "id": "bottlebeard-scry-speed",
           "type": "continuous",

@@ -98,6 +98,22 @@ export interface GameEventMap {
     playerId: PlayerId;
   };
 
+  /**
+   * "Reveal the top card of your deck", "look at an opponent's hand" — a
+   * card was shown to a player. Informational: the engine already has
+   * perfect information, so this carries no state change; it exists for a
+   * renderer / event log to surface what was seen. `ownerId` owns the
+   * cards; `viewerId` is who is entitled to look (`"all"` when a card is
+   * revealed to everyone). `byCardId` is the card whose text caused it.
+   */
+  cardsRevealed: {
+    cardIds: CardInstanceId[];
+    zone: Zone;
+    ownerId: PlayerId;
+    viewerId: PlayerId | "all";
+    byCardId?: CardInstanceId;
+  };
+
   damageDealt: {
     sourceId?: CardInstanceId;
     targetId: CardInstanceId;

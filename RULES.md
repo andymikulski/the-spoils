@@ -394,9 +394,9 @@ deploy-cost or damage-amount modifier sourced from an ignored card type
 as part of your mulligan ... you may reveal it. If you do, draw a card at
 the start of your turn.") pairs that with a `turnStarted` trigger whose
 `triggerZone` is `"deck"`, so it fires while the card sits in the deck; the
-"you may reveal it" step is treated as automatic (there is no
-hidden-deck-info model and revealing has no downside), and "control at
-least [D]" gates the draw at trigger time rather than at game start, where
+"you may reveal it" step is treated as automatic (the engine has perfect
+information — see §12 "Fidelity pass" — and revealing has no downside), and
+"control at least [D]" gates the draw at trigger time rather than at game start, where
 it could never be true.
 
 ## 6. Turn structure
@@ -1273,6 +1273,46 @@ of the Devoured Emperor additions")**
   `mustBlock` grant (the picked character must block the attacking party the
   source is in). Runic Battery's "detach up to X resources from your
   faction" uses the `detach` effect's existing semantics.
+
+### Fidelity pass (hidden information / reveal)
+
+- **Perfect information (engine-derived).** The engine has no per-seat
+  hidden zones — the deck is an ordered list it can always read, and no
+  rule keys off whether a card has been "revealed". "Search your deck for X
+  and reveal it", "look at an opponent's hand and choose a card" etc. model
+  the *state change* (the search/choice); the "reveal" / "look" verb is
+  carried only for a renderer.
+- **`ContinuousAbility.grantsReveal` (`card-verified`).** "The top card of
+  your deck is revealed at all times" (Cheats McGuillicutty), "each
+  opponent's hand is revealed at all times" (Odious Diva), Bottlebeard,
+  Axeclaw. `{ zone: "deckTop" | "hand", of: PlayerRef }` populates
+  `GameFlowView.revealed` (`{ deckTop: [{playerId, cardId}], hands:
+  [playerId] }`) so a renderer can show the zone face-up. No rule reads it
+  (cards that buff off "the revealed top card" read `deckPosition`
+  directly).
+- **`reveal` / `cardsRevealed` (`engine-derived`).** A one-shot `reveal`
+  effect emits `cardsRevealed { cardIds, zone, ownerId, viewerId }` and
+  changes nothing else — for a renderer / event log.
+- **`revealFromTopUntil` effect (`card-verified`).** Turn cards over from
+  the top of a deck until one satisfies `match` or the deck is exhausted;
+  bind the match to `bindAs` and run `onMatch`; `rest` shuffles / bottoms /
+  discards / voids the other revealed cards. Surprise! ("Reveal cards from
+  the top of your deck until a character with numeric cost X or less is
+  revealed ... Shuffle all other revealed cards into your deck").
+- **`targetOwnedBy` condition (`card-verified`).** True when the candidate
+  (or `target`) is owned by the resolved player — for "a UNIQUE character
+  in play OR a character in an *opponent's* discard pile" (A Death Fit for a
+  King), which a single `CardSelector.owner` can't express alongside other
+  `conditions`.
+- **`moveCard` same-zone deck reposition (engine bug fix).** "Put the top
+  card of your deck on the bottom" (Cheats McGuillicutty BOTTOM DEAL,
+  Bottlebeard CHUG!, Flimflam Man, …) previously no-op'd because `moveCard`
+  early-returns when `from === to`; it now repositions within `owner.deck`
+  when both are the (ordered) deck.
+- **`CARD_FIDELITY`.** `data/card-fidelity.json` (generated) + the `"./data"`
+  export grade every card `full` / `partial` / `stub`. `partial` (3 cards:
+  Gilda SUMMONS scope, Study Disturbance / Tedious TriAdic Truculence
+  buyout timing) and `stub` (the 2 `wontImplement`) each carry a note.
 
 ## 13. Tokens (CR §409)
 

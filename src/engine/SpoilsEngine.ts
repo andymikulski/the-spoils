@@ -363,7 +363,32 @@ export class SpoilsEngine {
       winner: this.state.winner,
       pendingChoice: this.state.pendingChoice
         ? structuredClone(this.state.pendingChoice)
-        : undefined
+        : undefined,
+      revealed: this.getRevealedZones()
+    };
+  }
+
+  /**
+   * Which players' deck-top / hand is currently public via a `grantsReveal`
+   * continuous ability. Derived, renderer-facing only (RULES.md §5 — the
+   * engine has perfect information and no rule keys off it).
+   */
+  private getRevealedZones(): GameFlowView["revealed"] {
+    const deckTopFor = new Set<PlayerId>();
+    const handFor = new Set<PlayerId>();
+    this.forEachActiveContinuous((source, ability) => {
+      const rule = ability.grantsReveal;
+      if (!rule) return;
+      for (const playerId of Object.keys(this.state.players) as PlayerId[]) {
+        if (!this.scopeMatchesPlayer(rule.of, source.controllerId, playerId)) continue;
+        (rule.zone === "hand" ? handFor : deckTopFor).add(playerId);
+      }
+    });
+    return {
+      deckTop: [...deckTopFor]
+        .map(playerId => ({ playerId, cardId: this.state.players[playerId].deck[0] }))
+        .filter((e): e is { playerId: PlayerId; cardId: CardInstanceId } => !!e.cardId),
+      hands: [...handFor]
     };
   }
 
@@ -3273,6 +3298,16 @@ export class SpoilsEngine {
         return !!cardId && this.state.cards[cardId]?.zone === condition.zone;
       }
 
+      case "targetOwnedBy": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? { type: "selected", id: "__candidate" },
+          context
+        );
+        if (!cardId) return false;
+        const ownerId = this.state.cards[cardId]?.ownerId;
+        return !!ownerId && ownerId === this.resolvePlayerRef(condition.player, context).id;
+      }
+
       case "isToken": {
         const cardId = this.resolveTargetRef(
           condition.target ?? "source",
@@ -5174,6 +5209,88 @@ export class SpoilsEngine {
         try {
           for (const cardId of top) {
             this.moveCard(cardId, to);
+          }
+        } finally {
+          this.endEventBatch();
+        }
+        return;
+      }
+
+      case "reveal": {
+        const owner = this.resolvePlayerRef(effect.of, context);
+        const n =
+          effect.zone === "hand"
+            ? owner.hand.length
+            : Math.max(0, this.evaluateNumber(effect.count ?? 1, context));
+        const cardIds =
+          effect.zone === "hand" ? [...owner.hand] : owner.deck.slice(0, n);
+        if (cardIds.length === 0) return;
+        this.emit({
+          type: "cardsRevealed",
+          cardIds,
+          zone: effect.zone === "hand" ? "hand" : "deck",
+          ownerId: owner.id,
+          viewerId:
+            effect.viewer === "all"
+              ? "all"
+              : effect.viewer
+                ? this.resolvePlayerRef(effect.viewer, context).id
+                : this.resolvePlayerRef("controller", context).id,
+          byCardId: context.sourceId
+        });
+        return;
+      }
+
+      case "revealFromTopUntil": {
+        const player = this.resolvePlayerRef(effect.player, context);
+        const others: CardInstanceId[] = [];
+        const revealed: CardInstanceId[] = [];
+        let matchId: CardInstanceId | undefined;
+        while (player.deck.length > 0) {
+          const cardId = player.deck[0];
+          revealed.push(cardId);
+          const matched = this.evaluateCondition(effect.match, {
+            ...context,
+            selected: { ...context.selected, __candidate: [cardId] }
+          });
+          if (matched) {
+            matchId = cardId;
+            break;
+          }
+          others.push(player.deck.shift()!);
+        }
+
+        if (revealed.length > 0) {
+          this.emit({
+            type: "cardsRevealed",
+            cardIds: revealed,
+            zone: "deck",
+            ownerId: player.id,
+            viewerId: "all",
+            byCardId: context.sourceId
+          });
+        }
+
+        this.beginEventBatch();
+        try {
+          if (matchId) {
+            const matchCtx: ResolutionContext = {
+              ...context,
+              selected: { ...context.selected, [effect.bindAs]: [matchId] }
+            };
+            for (const sub of effect.onMatch) this.resolveEffect(sub, matchCtx);
+          } else {
+            for (const sub of effect.onEmpty ?? []) this.resolveEffect(sub, context);
+          }
+
+          const rest = effect.rest ?? "shuffle";
+          if (rest === "shuffle") {
+            for (const id of others) player.deck.push(id);
+            if (others.length > 0) this.shuffleInPlace(player.deck);
+          } else {
+            for (const id of others) {
+              this.moveCard(id, rest === "bottom" ? "deck" : rest, true, "bottom");
+            }
           }
         } finally {
           this.endEventBatch();
@@ -8644,6 +8761,19 @@ export class SpoilsEngine {
     const from = card.zone;
 
     if (from === to) {
+      // Every zone but the deck is an unordered set, so a same-zone move is
+      // a no-op. The deck is ordered: "put the top card of your deck on the
+      // bottom" (Cheats McGuillicutty, Bottlebeard, Flimflam Man, …) is a
+      // real reposition within `owner.deck`.
+      if (to === "deck") {
+        const deck = this.state.players[card.ownerId]?.deck;
+        const at = deck?.indexOf(cardId) ?? -1;
+        if (deck && at !== -1) {
+          deck.splice(at, 1);
+          if (position === "top") deck.unshift(cardId);
+          else deck.push(cardId);
+        }
+      }
       return;
     }
 

@@ -616,6 +616,46 @@ export type Effect =
     }
   | {
       /**
+       * Turn cards over from the top of `player`'s deck one at a time until
+       * one satisfies `match` (evaluated with the candidate bound to the
+       * selector `__candidate`) or the deck runs out. Emits `cardsRevealed`
+       * for every card turned over.
+       * - On a match: the card is bound to `bindAs` in `context.selected`
+       *   and `onMatch` resolves (it stays on top of the deck unless an
+       *   `onMatch` effect moves it).
+       * - `onEmpty` resolves if nothing matched.
+       * - `rest` disposes of the OTHER revealed cards (never the match):
+       *   `"shuffle"` them back (default), or move them to `"bottom"` /
+       *   `"discard"` / `"void"`.
+       * "Reveal cards from the top of your deck until a character with
+       * numeric cost X or less is revealed ... Shuffle all other revealed
+       * cards into your deck." (Surprise!).
+       */
+      type: "revealFromTopUntil";
+      player: PlayerRef;
+      match: Condition;
+      bindAs: string;
+      onMatch: Effect[];
+      onEmpty?: Effect[];
+      rest?: "shuffle" | "bottom" | "discard" | "void";
+    }
+  | {
+      /**
+       * Show `count` (default 1) cards from the top of a deck / all of a
+       * hand to `viewer` — "reveal the top card of your deck", "look at an
+       * opponent's hand". Pure information: emits `cardsRevealed` and
+       * nothing else (the engine has perfect information; this is for a
+       * renderer / log). For an ongoing "revealed at all times" use
+       * `ContinuousAbility.grantsReveal`.
+       */
+      type: "reveal";
+      of: PlayerRef;
+      zone: "deckTop" | "hand";
+      count?: NumberExpression;
+      viewer?: PlayerRef | "all";
+    }
+  | {
+      /**
        * Store `target`'s card id on `source`'s `linkedTargets[key]` — an
        * EXTRA-COST pick a later continuous ability keys off ("pick a
        * location you control; while THAT location is in play, this card

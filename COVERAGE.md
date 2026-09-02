@@ -22,6 +22,7 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 | **Total** | **2101** | 149 | 0 | 0 | 0 | 1950 | 0 | 2 | 100% |
 
 _Rules-audited: 2000/2101._
+_Fidelity to printed text: 2096 full · 3 partial · 2 stub._
 
 ## Engine capability backlog
 
@@ -279,6 +280,12 @@ _Printed clauses deliberately left unmodelled — each needs a large engine / fo
 
 - **Lost on Floor 3** (Ungodly Mess) — 'Play this only ... after you have declared the end of your turn ... in response to your opponent paying a cost at the end of your turn. Terminate your end of turn declaration.' Needs a cancellable end-of-turn declaration + a response-to-end-of-turn-cost play window — turn-structure machinery no other catalog card uses. Single rare tactic.
 - **Trickster's Globe** (Ungodly Mess) — Two out-of-scope clauses: (1) 'If you would inflict damage to an opponent's faction ... put that many cards from the top of its deck into the discard pile instead' needs a faction-damage replaceable-event class no other catalog card requires; (2) 'When a player has no cards in their deck, they lose the game' is an alternate loss condition (BEHAVIORS.md sanctions wontImplement for alternate win/lose conditions). Single uber-rare card.
+
+## Partial fidelity (3)
+
+- **Study Disturbance** (Shade of the Devoured Emperor) — restrictPlay (no characters this turn) + draw, as the elseEffects of a mayPay(player: picked). CONCESSION: the picked player's pay-2 buyout ('look at your top card, terminate this') is offered on resolution, not as a true pre-stack EXTRA COST.
+- **Tedious TriAdic Truculence** (Shade of the Devoured Emperor) — mass-destroy of 3 picked characters with 3 strength or less, as the elseEffects of a mayPay(player: opponent); the buyout branch is lookAndReorder with chooser: opponent. CONCESSION: the pay-3 buyout is offered on resolution, not as a true pre-stack EXTRA COST.
+- **Gilda, Mother of Gideon** (Seed Saga) — At start of turn: look at the top 2 (fromTop:2 tactic target); you may send a tactic to the void; the rest go back on top in a chosen order (lookAndReorder). CONCESSION: SEDUCTIVE SUMMONS may deploy any tactic in your void, not only ones this card sent there.
 
 ---
 

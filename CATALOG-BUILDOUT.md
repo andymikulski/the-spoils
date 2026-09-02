@@ -22,15 +22,30 @@ engine. The pick-up point for a future session.
 | `unclassified` | **0** |
 | `wontImplement` | 2 |
 | `rulesAudited` | 2000 / 2101 (the 101 gap is vanilla cards) |
-| Engine capabilities | 219 / 219 implemented |
-| Test suite | 2547 passing (`npm test`), `npm run typecheck` clean |
+| Fidelity to printed text | 2096 `full` · 3 `partial` · 2 `stub` |
+| Engine capabilities | 219 backlog + 6 fidelity-pass additions |
+| Test suite | 2556 passing (`npm test`), `npm run typecheck` clean |
 
 **Every set is 100% done.** All eleven sets are `verified` + `vanilla`
 (+ the 2 `wontImplement` in Ungodly Mess): Seed 3, Seed 2, Shade of the
 Devoured Emperor, 1st Edition Part 2, Holy Heist, Ungodly Mess, Open Beta,
 1st Edition, Seed, 2nd Edition, Seed Saga. `authored: 0` — nothing left in
-the classify → consolidate → author → verify loop. No new capabilities were
-needed for the final promotion pass.
+the classify → consolidate → author → verify loop.
+
+**Fidelity pass (hidden information / reveal).** `verified` means "driven
+through the public API", not "every printed clause simulated" — so every
+card now also carries `fidelity: full | partial | stub` in
+`data/card-coverage.json`, generated into `data/card-fidelity.json` and
+exported as `CARD_FIDELITY` (the `"./data"` export) for spoils-game to badge
+/ gate decks. The reveal / look-at / hidden-info family (182 cards audited,
+`.work/hidden-info-audit.txt`) was mostly already faithful; the real gaps
+got 6 engine additions (`grantsReveal` continuous → `GameFlowView.revealed`,
+`reveal` / `revealFromTopUntil` effects, `cardsRevealed` event,
+`targetOwnedBy` condition) + a `moveCard` bug fix ("top card → bottom" was a
+no-op) + ~15 cards re-authored. See RULES.md §12 / BEHAVIORS.md "Fidelity
+pass"; tests in `fidelity-fixes.test.ts`. `partial` (3): Gilda SUMMONS
+scope, Study Disturbance / Tedious TriAdic Truculence pre-stack buyout
+timing. `stub` (2): the `wontImplement` pair.
 
 **Seed 2 (110 cards) — done** (0 `vanilla` + 110 `verified`). The FLIP UP
 era. Its behaviour JSON was authored in an earlier pass and shape-proven by
@@ -338,10 +353,11 @@ Residual, non-blocking:
   the audit conclusion). Pre-existing across every set; cosmetic. Set the
   flag in `build-coverage.cjs` or a one-off if the 2101/2101 headline
   matters.
-- **spoils-game wiring** — the per-set "spoils-game needs wiring" notes
-  below still stand for any set shipped to the renderer (new `PendingChoice`
-  kinds / events). Nothing new was added in the Seed 2 / SotDE promotion
-  pass (no card-data or engine changes), so the existing lists are complete.
+- **spoils-game wiring — none.** `~/dev/spoils-game` is fully synced
+  (2026-09-01): all 24 `PendingChoice` kinds, all 13 `Cost` shapes,
+  `revealFromHand`, and modal `mode` selection are handled, all three switch
+  sites are compile-time exhaustive, and a catalog-wide sweep test locks it
+  in. See "spoils-game — fully synced" below.
 - **`parityGaps`** — two remain, both 2-player-engine-out-of-scope:
   `double-sided-faction` (EPIC card-flipping) and `showdown-multiplayer`.
 
@@ -394,50 +410,38 @@ the real catalog on a broad synthetic board, then played / activated /
 triggered with every pending choice auto-answered — no crash / bad selector
 / missing handler / choice loop; this is why the whole set is `verified`).
 
-### spoils-game (`~/dev/spoils-game`) needs wiring for these engine surfaces
+### spoils-game (`~/dev/spoils-game`) — fully synced (2026-09-01)
 
-`spoils-db` is a `file:` dep — `npm run build` here refreshes it. Do this
-before shipping a deck with Seed 2 cards to the renderer; an unhandled
-pending choice / event / action stalls the UI.
+`spoils-db` is a `file:` dep — `npm run build` here refreshes it.
 
-- `PendingChoice` kind **`useAnyAbility`** — panel case (pick a
-  `candidateCardIds` card, then route the chosen ability's targets through
-  `ActionFlow`) + `describePendingChoice`.
-- `PendingChoice` kinds **`partitionCards` / `pickPile` / `takeFromPile`**
-  (the MUSTACHE SHOWDOWN sequence) — panel case + `describePendingChoice`
-  for each.
-- `chooseDevelop` **`revealFromHand`** payload — a "reveal & deploy for N"
-  affordance in the develop-rule UI for a hand card with
-  `CardDefinition.revealFromHand`.
-- Event **`cardsDrawn`** — add to the log / status enumeration
-  (informational).
-- **Holy Heist:** `PendingChoice` kind **`pileAssignment`** (Profane
-  Proposal — partition the revealed cards into two piles) — panel case +
-  `describePendingChoice`. `reorderDeck` choice gains a **`bottom`** array
-  when its `to` is `"split"` (Ignatius Gloamspike / Confessions — a
-  top/bottom scry split). Events **`cardsDiscarded`** /
-  **`blockingPartyFormed`** — add to the log enumeration (informational).
-- **1st Edition Part 2:** three new `PendingChoice` kinds — **`auctionBid`**
-  (Auction House — `{ bid: 0 }` = pass; cap at `maxBid`), **`coinFlipReplace`**
-  (Two-Headed Coin — `{ reflip: boolean }`), **`chooseChosenBlockers`**
-  (Wyrmfang Deathskull — `{ cardIds }` ⊆ `candidates`). Each needs a
-  `decidePendingChoice` decline/safe branch (`policyBot.ts` — non-nullable
-  return, so this is a compile error until handled), a `describePendingChoice`
-  case (`statusText.ts`), and a `PendingChoicePanel.tsx` panel case (soft-lock
-  otherwise). Event **`coinFlipped`** — log enumeration (informational). No
-  new `Cost` / `GameAction` shapes (`describeCost` unaffected).
-- **Open Beta / 1st Edition — DONE in spoils-game** (2026-09-01): one new
-  `PendingChoice` kind **`spendCountersMenu`** (Voidal Poisoning) —
-  `policyBot.ts` `decidePendingChoice` (safe branch `{ optionIndex: null }`),
-  `statusText.ts` `describePendingChoice`, `PendingChoicePanel.tsx`
-  (`SpendCountersMenuChoice` — options as buttons with token cost + greedy
-  `sources` auto-pick + Stop). Plus `ActionDock.tsx` `collectAbilityRows`
-  now surfaces borrowed opponent abilities (The Billionaire). New event
-  `cardPicked` — the consumer has no event-log enumeration, nothing to
-  wire. All other capabilities (new effects / conditions / expressions /
-  `ContinuousAbility` fields) are engine-internal — no consumer surface, no
-  new `Cost` shapes. `npm run typecheck` + `npm test` green in both
-  workspaces.
+**Nothing outstanding.** All 24 engine `PendingChoice` kinds, all 13 `Cost`
+shapes, `chooseDevelop.revealFromHand`, and modal-tactic `mode` selection
+are handled end-to-end in the consumer:
+
+- `PendingChoicePanel.tsx` — a panel case for every kind (`useAnyAbility`,
+  `partitionCards`/`pickPile`/`takeFromPile`, `pileAssignment`, `auctionBid`,
+  `coinFlipReplace`, `chooseChosenBlockers`, `spendCountersMenu`, …), now
+  with a `choice satisfies never` default so a future kind is a typecheck
+  failure, not a silent soft-lock.
+- `statusText.ts` `describePendingChoice` + `policyBot.ts`
+  `decidePendingChoice` — both exhaustive over the kind union (compile-time:
+  `string` return with no `default` / non-nullable return).
+- `requirements.ts` `describeCost` — exhaustive over `Cost` (compile-time).
+- `DevelopPanel.tsx` — the "Reveal <card> → deploy for N" affordance for a
+  hand card with `CardDefinition.revealFromHand`.
+- `App.tsx` `PlayCardFlow` — picks a modal card's `mode` before deriving
+  its targets/costs/variables, passes `mode` on the `playCard` action.
+
+The consumer has **no event-log enumeration**, so the "informational event"
+notes from earlier passes (`cardsDrawn` / `cardsDiscarded` /
+`blockingPartyFormed` / `coinFlipped` / `cardPicked`) have nothing to wire.
+
+Regression lock: `packages/core/src/__tests__/requirements.test.ts` →
+"play-time derivation is total over the real card catalog" sweeps every card
+(every modal mode) through `getPlaySource` / target / cost / variable / bound
+derivation + `describeCost` over every ability cost — the consumer-side
+mirror of the per-set `*-exercise.test.ts`. `npm run typecheck` + `npm test`
+green in both workspaces (`core` 71, `web` 72).
 
 ---
 

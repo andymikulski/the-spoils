@@ -596,6 +596,20 @@ export interface GameFlowView {
   battle?: BattleView;
   winner?: GameWinner;
   pendingChoice?: PendingChoice;
+
+  /**
+   * Zones currently public because of a `grantsReveal` continuous ability
+   * ("the top card of your deck is revealed at all times" — Cheats
+   * McGuillicutty; "each opponent's hand is revealed at all times" — Odious
+   * Diva). A renderer shows these face-up; the engine itself has perfect
+   * information and keys no rule off this.
+   */
+  revealed: {
+    /** Players whose top deck card is public (and that card's id). */
+    deckTop: Array<{ playerId: PlayerId; cardId: CardInstanceId }>;
+    /** Players whose hand is public. */
+    hands: PlayerId[];
+  };
 }
 
 export interface GameState {

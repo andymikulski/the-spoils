@@ -605,6 +605,20 @@ export interface ContinuousAbility extends AbilityBase {
   preventsDefeat?: { player: "self" | "opponent" | "any" };
 
   /**
+   * "The top card of your deck is revealed at all times", "each opponent's
+   * hand is revealed at all times" — while the source is in play (and
+   * `condition` holds), the named zone of the matching player(s) is public.
+   * The engine already has perfect information, so this only populates
+   * `GameState.revealed` for a renderer / AI to consult; no rule keys off
+   * it (cards that buff off "the revealed top card" read `deckPosition`
+   * directly). Cheats McGuillicutty, Odious Diva, Bottlebeard Brandyshanks.
+   */
+  grantsReveal?: {
+    zone: "deckTop" | "hand";
+    of: "self" | "opponent" | "any";
+  };
+
+  /**
    * Changes how many cards a player draws while the source is in play
    * (`condition`, if set, must hold). Consulted in the single `drawCards`
    * choke point. "When you draw any number of cards, increase the amount by

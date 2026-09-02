@@ -36,6 +36,19 @@ const ROOT = path.resolve(__dirname, "..");
 const CARDS_PATH = path.join(ROOT, "data", "cards.json");
 const COVERAGE_PATH = path.join(ROOT, "data", "card-coverage.json");
 const COVERAGE_MD_PATH = path.join(ROOT, "COVERAGE.md");
+const FIDELITY_PATH = path.join(ROOT, "data", "card-fidelity.json");
+
+// How faithfully the engine reproduces a card's printed text.
+//   full    — every mechanically-meaningful clause is obeyed. Cosmetic-only
+//             deviations don't count (a "reveal"/"look at" verb with no
+//             downstream reference; "pick a player" collapsing to the sole
+//             opponent in the 2-player engine).
+//   partial — a documented concession changes how at least one line plays.
+//             The card still resolves and is broadly usable.
+//   stub    — the card's core function isn't modelled (⇔ status
+//             "wontImplement").
+const FIDELITIES = ["full", "partial", "stub"];
+const defaultFidelity = status => (status === "wontImplement" ? "stub" : "full");
 
 const STATUSES = [
   "unclassified",
@@ -81,6 +94,7 @@ function skeletonEntry(card) {
     set: card.set,
     type: card.type,
     status: vanilla ? "vanilla" : "unclassified",
+    fidelity: "full",
     textHash: textHashOf(card),
     behavior: {
       // Default assumption until a human classifies: a non-vanilla card
@@ -151,6 +165,12 @@ function buildManifest(cards, prev) {
       existing.type = card.type;
       // Backfill fields added to the schema after this entry was written.
       if (typeof existing.rulesAudited !== "boolean") existing.rulesAudited = false;
+      if (!FIDELITIES.includes(existing.fidelity)) {
+        existing.fidelity = defaultFidelity(existing.status);
+      }
+      // A wontImplement card is a stub by definition; keep the two in lockstep.
+      if (existing.status === "wontImplement") existing.fidelity = "stub";
+      else if (existing.fidelity === "stub") existing.fidelity = "full";
       if (acceptText.has(card.id)) existing.textHash = textHashOf(card);
       return existing;
     })
@@ -235,6 +255,13 @@ function renderCoverageMd(manifest, cards) {
   lines.push(
     `_Rules-audited: ${manifest.cards.filter(e => e.rulesAudited).length}/${allN}._`
   );
+  const fid = manifest.cards.reduce((acc, e) => {
+    acc[e.fidelity] = (acc[e.fidelity] || 0) + 1;
+    return acc;
+  }, {});
+  lines.push(
+    `_Fidelity to printed text: ${fid.full || 0} full · ${fid.partial || 0} partial · ${fid.stub || 0} stub._`
+  );
   lines.push("");
 
   lines.push("## Engine capability backlog");
@@ -301,6 +328,7 @@ function renderCoverageMd(manifest, cards) {
   };
   flag("Blocked", e => e.status === "blocked");
   flag("Won't implement", e => e.status === "wontImplement");
+  flag("Partial fidelity", e => e.fidelity === "partial");
   flag(
     "Low confidence",
     e => e.confidence === "low" && e.status !== "verified"
@@ -321,6 +349,34 @@ function stableStringify(obj) {
   return JSON.stringify(obj, null, 2) + "\n";
 }
 
+/**
+ * The lean, downstream-facing view of `fidelity`: a flat id -> level map
+ * plus a `notes` sidecar for anything below `full`. Consumed by spoils-game
+ * (`CARD_FIDELITY`) to badge / gate decks. Regenerated here; never
+ * hand-edited.
+ */
+function buildFidelity(manifest) {
+  const fidelity = {};
+  const notes = {};
+  for (const e of manifest.cards) {
+    fidelity[e.id] = e.fidelity;
+    if (e.fidelity !== "full" && e.notes) notes[e.id] = e.notes.replace(/\s+/g, " ").trim();
+  }
+  return {
+    generatedBy: "scripts/build-coverage.cjs",
+    note:
+      "How faithfully the engine reproduces each card's printed text. " +
+      "full = every mechanically-meaningful clause obeyed; partial = a " +
+      "documented concession changes a line; stub = core function unmodelled.",
+    counts: manifest.cards.reduce((acc, e) => {
+      acc[e.fidelity] = (acc[e.fidelity] || 0) + 1;
+      return acc;
+    }, {}),
+    fidelity,
+    notes
+  };
+}
+
 function main() {
   const check = process.argv.includes("--check");
   const cards = loadJson(CARDS_PATH, null);
@@ -333,6 +389,7 @@ function main() {
 
   const nextManifestStr = stableStringify(manifest);
   const nextMdStr = renderCoverageMd(manifest, cards);
+  const nextFidelityStr = stableStringify(buildFidelity(manifest));
 
   const curManifestStr = fs.existsSync(COVERAGE_PATH)
     ? fs.readFileSync(COVERAGE_PATH, "utf8")
@@ -340,8 +397,14 @@ function main() {
   const curMdStr = fs.existsSync(COVERAGE_MD_PATH)
     ? fs.readFileSync(COVERAGE_MD_PATH, "utf8")
     : "";
+  const curFidelityStr = fs.existsSync(FIDELITY_PATH)
+    ? fs.readFileSync(FIDELITY_PATH, "utf8")
+    : "";
 
-  const changed = nextManifestStr !== curManifestStr || nextMdStr !== curMdStr;
+  const changed =
+    nextManifestStr !== curManifestStr ||
+    nextMdStr !== curMdStr ||
+    nextFidelityStr !== curFidelityStr;
 
   if (pruned.length) {
     console.log(
@@ -363,6 +426,7 @@ function main() {
 
   fs.writeFileSync(COVERAGE_PATH, nextManifestStr);
   fs.writeFileSync(COVERAGE_MD_PATH, nextMdStr);
+  fs.writeFileSync(FIDELITY_PATH, nextFidelityStr);
 
   const counts = manifest.cards.reduce((acc, e) => {
     acc[e.status] = (acc[e.status] || 0) + 1;
