@@ -98,9 +98,8 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
         id: "w1",
         kind: "action",
         phase: "acceptingResponses",
-        firstPlayerId: P2,
         priorityPlayerId: P2,
-        consecutivePasses: 0,
+        pendingResponders: [],
         continuation: { type: "main" }
       }
     });

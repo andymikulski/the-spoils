@@ -7,5 +7,6 @@ export * from "./conditions.js";
 export * from "./costs.js";
 export * from "./effects.js";
 export * from "./events.js";
+export * from "./log.js";
 export * from "./resolution.js";
 export * from "./actions.js";

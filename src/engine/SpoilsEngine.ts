@@ -26,6 +26,8 @@ import type {
   GameAction,
   GameEvent,
   GameFlowView,
+  GameLogEntry,
+  GameLogKind,
   GameState,
   Keyword,
   NumberExpression,
@@ -119,6 +121,14 @@ export class SpoilsEngine {
    */
   private eventBatchDepth = 0;
 
+  /**
+   * Whether `emit()` and the flow markers append to `state.gameLog`. On by
+   * default; `setLogEnabled(false)` turns recording off (the already-recorded
+   * entries stay). Not serialized — it's an engine-run setting, not game
+   * state.
+   */
+  private logEnabled = true;
+
   /** Guards `applyReplacement` against infinite recursion (a `destroy`
    * replacement whose own effect destroys the same card, etc.). */
   private readonly replacing = new Set<CardInstanceId>();
@@ -199,6 +209,7 @@ export class SpoilsEngine {
 
     // Normalize partially-specified states (test fixtures, hand-built saves).
     this.state.responseStack ??= [];
+    this.state.gameLog ??= [];
     this.state.developsUsedThisTurn ??= 0;
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
@@ -397,6 +408,279 @@ export class SpoilsEngine {
         .filter((e): e is { playerId: PlayerId; cardId: CardInstanceId } => !!e.cardId),
       hands: [...handFor]
     };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Game log (RULES.md §12 "Fidelity pass" — informational only)
+  // ---------------------------------------------------------------------------
+
+  /** Turn the running game log (`state.gameLog`) on or off. Already-recorded entries are kept. */
+  setLogEnabled(enabled: boolean): void {
+    this.logEnabled = enabled;
+  }
+
+  /** Whether new game-log entries are currently being recorded. */
+  isLogEnabled(): boolean {
+    return this.logEnabled;
+  }
+
+  /** The running game log, oldest entry first. The live array — treat as read-only. */
+  getLog(): readonly GameLogEntry[] {
+    return this.state.gameLog;
+  }
+
+  /**
+   * The game log rendered as plain text, one line per entry, indented by
+   * `depth` so responses (and responses to responses) read as nested under
+   * what they answer. `sinceSeq` skips everything up to and including that
+   * sequence number (for tailing an in-progress game); `indent` is the
+   * per-level prefix (default two spaces).
+   */
+  formatLog(options: { sinceSeq?: number; indent?: string } = {}): string {
+    const indent = options.indent ?? "  ";
+    const sinceSeq = options.sinceSeq ?? 0;
+
+    return this.state.gameLog
+      .filter(entry => entry.seq > sinceSeq)
+      .map(entry => {
+        const prefix = entry.kind === "turn" ? "" : indent.repeat(entry.depth + 1);
+        return `${prefix}${entry.message}`;
+      })
+      .join("\n");
+  }
+
+  private recordLogEvent(event: GameEvent): void {
+    if (!this.logEnabled) return;
+
+    // The log is informational — a gap in a message must never abort a real
+    // mutation, so a describe failure degrades to a bare event tag.
+    let described: { kind: GameLogKind; message: string } | undefined;
+    try {
+      described = this.describeEvent(event);
+    } catch {
+      described = { kind: "info", message: `(${event.type})` };
+    }
+    if (!described) return;
+
+    this.state.gameLog.push({
+      seq: this.state.gameLog.length + 1,
+      turn: this.state.turn,
+      activePlayerId: this.state.activePlayerId,
+      depth: this.responseStack.length,
+      kind: described.kind,
+      message: described.message,
+      event
+    });
+  }
+
+  private recordLogMarker(
+    marker: NonNullable<GameLogEntry["marker"]>,
+    kind: GameLogKind,
+    message: string,
+    depth: number
+  ): void {
+    if (!this.logEnabled) return;
+
+    this.state.gameLog.push({
+      seq: this.state.gameLog.length + 1,
+      turn: this.state.turn,
+      activePlayerId: this.state.activePlayerId,
+      depth,
+      kind,
+      message,
+      marker
+    });
+  }
+
+  /** Player display name for a log line, falling back to the id. */
+  private logPlayerName(playerId: PlayerId): string {
+    return this.state.players[playerId]?.name || playerId;
+  }
+
+  /** Card display name for a log line, falling back to the instance id. */
+  private logCardName(cardId: CardInstanceId | undefined): string {
+    if (!cardId) return "something";
+    const card = this.state.cards[cardId];
+    if (!card) return cardId;
+    if (card.faceDown) return "a face-down card";
+    return this.definitions[card.definitionId]?.name ?? cardId;
+  }
+
+  /** "the faction" line label — "Alice's faction". */
+  private logFactionOwnerName(cardId: CardInstanceId): string {
+    const card = this.state.cards[cardId];
+    return card ? `${this.logPlayerName(card.ownerId)}'s faction` : "a faction";
+  }
+
+  /**
+   * One-line rendering + category for an emitted event. Returns `undefined`
+   * for events with no reader value (a degenerate same-zone self-move).
+   */
+  private describeEvent(event: GameEvent): { kind: GameLogKind; message: string } | undefined {
+    const responding = this.responseStack.length > 0;
+
+    switch (event.type) {
+      case "turnStarted":
+        return {
+          kind: "turn",
+          message: `— Turn ${this.state.turn}: ${this.logPlayerName(event.playerId)} —`
+        };
+
+      case "turnEnding":
+        return { kind: "turn", message: `${this.logPlayerName(event.playerId)} ends their turn` };
+
+      case "cardPlayed": {
+        const suffix = responding ? " in response" : "";
+        return {
+          kind: responding ? "response" : "action",
+          message: `${this.logPlayerName(event.playerId)} plays ${this.logCardName(event.cardId)}${suffix}`
+        };
+      }
+
+      case "abilityActivated": {
+        const def = this.state.cards[event.cardId]
+          ? this.definitions[this.state.cards[event.cardId].definitionId]
+          : undefined;
+        const ability = def?.behavior?.abilities?.find(a => a.id === event.abilityId);
+        const label = ability?.name ? `"${ability.name}"` : "an ability";
+        const suffix = responding ? " in response" : "";
+        return {
+          kind: responding ? "response" : "action",
+          message: `${this.logPlayerName(event.playerId)} activates ${label} on ${this.logCardName(event.cardId)}${suffix}`
+        };
+      }
+
+      case "cardEnteredPlay":
+        return { kind: "zone", message: `${this.logCardName(event.cardId)} enters play` };
+
+      case "cardMoved": {
+        if (event.from === event.to) return undefined;
+        // "Being Deployed" is a transient mechanical waypoint — the deploy
+        // and its resolution are already logged (`cardPlayed`,
+        // `stackItemResolving`, `cardEnteredPlay`).
+        if (event.from === "deploying" || event.to === "deploying") return undefined;
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId)} moves from ${event.from} to ${event.to}`
+        };
+      }
+
+      case "cardPicked":
+        return {
+          kind: "zone",
+          message: `${this.logPlayerName(event.playerId)} picks ${this.logCardName(event.cardId)}`
+        };
+
+      case "cardDestroyed":
+        return { kind: "zone", message: `${this.logCardName(event.cardId)} is destroyed` };
+
+      case "cardDepleted":
+        return { kind: "zone", message: `${this.logCardName(event.cardId)} is depleted` };
+
+      case "cardRestored":
+        return { kind: "zone", message: `${this.logCardName(event.cardId)} is restored` };
+
+      case "counterChanged": {
+        const count = this.state.cards[event.cardId]?.counters?.[event.counter] ?? 0;
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId)} now has ${count} ${event.counter} counter(s)`
+        };
+      }
+
+      case "resourcePlayed":
+        return {
+          kind: "resource",
+          message: `${this.logPlayerName(event.playerId)} plays ${this.logCardName(event.cardId)} as a ${
+            event.faceDown ? "face-down" : "face-up"
+          } resource`
+        };
+
+      case "cardsDrawn":
+        return {
+          kind: "draw",
+          message: `${this.logPlayerName(event.playerId)} draws ${event.count} card${
+            event.count === 1 ? "" : "s"
+          }`
+        };
+
+      case "cardsDiscarded":
+        return {
+          kind: "draw",
+          message: `${this.logPlayerName(event.playerId)} discards a card`
+        };
+
+      case "cardsRevealed": {
+        const names = event.cardIds.map(id => this.logCardName(id)).join(", ") || "no cards";
+        return {
+          kind: "draw",
+          message: `${this.logPlayerName(event.ownerId)} reveals ${names} from ${event.zone}`
+        };
+      }
+
+      case "deckSearched":
+        return { kind: "draw", message: `${this.logPlayerName(event.playerId)} searches their deck` };
+
+      case "damageDealt": {
+        const target = this.state.cards[event.targetId];
+        const targetLabel =
+          target && this.getDefinition(event.targetId).type === "faction"
+            ? this.logFactionOwnerName(event.targetId)
+            : this.logCardName(event.targetId);
+        const from = event.sourceId ? ` from ${this.logCardName(event.sourceId)}` : "";
+        return {
+          kind: "damage",
+          message: `${targetLabel} takes ${event.amount} damage${from}`
+        };
+      }
+
+      case "battleStarted": {
+        const battle = this.state.battle;
+        const targetLabel = !battle
+          ? "the opponent"
+          : battle.target.type === "faction"
+            ? this.logPlayerName(battle.target.playerId) + "'s faction"
+            : this.logCardName(battle.target.cardId);
+        const attackers = (battle?.attackingParty ?? [])
+          .map(id => this.logCardName(id))
+          .join(", ");
+        return {
+          kind: "battle",
+          message: `Battle: ${attackers || "attackers"} attack ${targetLabel}`
+        };
+      }
+
+      case "battleEnded":
+        return { kind: "battle", message: `Battle ends` };
+
+      case "characterAttacked":
+        return { kind: "battle", message: `${this.logCardName(event.cardId)} attacks` };
+
+      case "characterBlocked":
+        return { kind: "battle", message: `${this.logCardName(event.cardId)} blocks` };
+
+      case "blockingPartyFormed":
+        return {
+          kind: "battle",
+          message: `${this.logPlayerName(event.playerId)} forms a blocking party of ${event.blockerCount}`
+        };
+
+      case "attackerBlocked":
+        return {
+          kind: "battle",
+          message: `${this.logCardName(event.cardId)} is blocked by ${event.blockerCount} character(s)`
+        };
+
+      case "coinFlipped":
+        return {
+          kind: "info",
+          message: `${this.logPlayerName(event.playerId)} flips a coin and ${
+            event.won ? "wins" : "loses"
+          }`
+        };
+    }
+
+    return undefined;
   }
 
   getDefinition(cardId: CardInstanceId): CardDefinition {
@@ -1648,10 +1932,25 @@ export class SpoilsEngine {
     );
 
     // "Your opponents cannot respond to this card." (Swindle) — resolve the
-    // just-pushed stack item straight away, no response window.
+    // just-pushed stack item straight away, no response window of its own.
     if (this.getDefinition(action.cardId).behavior?.noResponse) {
       this.resolveTopOfStack();
       this.checkStateBasedActions();
+
+      // If it was itself a response, the window is still open for the item
+      // beneath it — hand priority to whoever may still respond to that
+      // (CR §607.2).
+      const w = this.state.responseWindow;
+      if (
+        w &&
+        w.phase === "acceptingResponses" &&
+        !this.state.pendingChoice &&
+        this.responseStack.length > 0
+      ) {
+        const top = this.responseStack[this.responseStack.length - 1];
+        w.priorityPlayerId = this.getOpponent(top.controllerId).id;
+        this.state.priorityPlayerId = w.priorityPlayerId;
+      }
       return;
     }
 
@@ -2401,9 +2700,16 @@ export class SpoilsEngine {
   }
 
   /**
-   * Passing never resolves hidden work immediately. Two consecutive passes
-   * switch the response window to "resolving". The renderer can animate that
-   * transition and call advanceFlow() when it is ready for the next item.
+   * The entitled player declines to respond. The Spoils has no
+   * priority-passing system (CR §607.2b): the player being responded to
+   * never gets a pass of their own, so one decline is enough.
+   *
+   * - If an item is on the response stack, it now resolves (LIFO). The
+   *   window flips to "resolving"; advanceFlow() pops it and then re-opens
+   *   the window for whoever may still respond (CR §607.2).
+   * - Otherwise this responder simply opened no chain. In a two-sided
+   *   battle response window (CR §608.1c / §609.1a) hand off to the other
+   *   side; once everyone has passed, the window closes.
    */
   private passPriority(playerId: PlayerId): void {
     const window = this.requireResponseWindow();
@@ -2417,22 +2723,34 @@ export class SpoilsEngine {
       "It is not your priority."
     );
 
-    window.consecutivePasses++;
-
-    const opponent = this.getOpponent(playerId);
-    window.priorityPlayerId = opponent.id;
-    this.state.priorityPlayerId = opponent.id;
-
-    if (window.consecutivePasses >= 2) {
+    if (this.responseStack.length > 0) {
       window.phase = "resolving";
+      return;
     }
+
+    // Empty stack: this responder is finished making top-level responses.
+    // (`priorityPlayerId === playerId` is asserted above, and an empty-stack
+    // window always tracks `pendingResponders[0]`, so this drops exactly
+    // this player.)
+    window.pendingResponders.shift();
+
+    if (window.pendingResponders.length > 0) {
+      window.priorityPlayerId = window.pendingResponders[0];
+      this.state.priorityPlayerId = window.priorityPlayerId;
+      return;
+    }
+
+    window.phase = "resolving";
   }
 
   /**
    * Advances exactly one automatic step:
    *
-   * 1. Resolve one response-stack item, OR
-   * 2. Resume the interrupted turn/battle flow once the stack is empty, OR
+   * 1. Resolve the top response-stack item, then re-open the window for
+   *    whoever may still respond (CR §607.2 / §607.2a), OR
+   * 2. Hand a two-sided battle window to its next responder / close it and
+   *    resume the interrupted turn/battle flow once nobody has anything
+   *    left to add, OR
    * 3. Clear a finished battle after the UI has had a chance to render it.
    */
   private advanceFlow(): void {
@@ -2445,15 +2763,16 @@ export class SpoilsEngine {
       );
 
       if (this.responseStack.length > 0) {
-        this.resolveTopOfStack();
+        const settled = this.resolveTopOfStack();
+        // A chooser mid-resolution parks the item; its pendingChoice's
+        // resolution path resumes the frame and then re-enters this flow.
+        if (settled && !this.state.pendingChoice) {
+          this.reopenOrCloseResponseWindow();
+        }
         return;
       }
 
-      const continuation = structuredClone(window.continuation);
-      this.state.responseWindow = undefined;
-      this.state.priorityPlayerId = this.state.activePlayerId;
-
-      this.resumeContinuation(continuation);
+      this.reopenOrCloseResponseWindow();
       return;
     }
 
@@ -2466,11 +2785,69 @@ export class SpoilsEngine {
     throw new Error("There is no automatic game-flow step to advance.");
   }
 
+  /**
+   * Run after a response-stack item finishes resolving (inline via
+   * advanceFlow, or after a chooser pause once its effect frames drain).
+   * Re-opens the response window for whoever may respond next — the opponent
+   * of the new top item's controller (CR §607.1 — never the controller
+   * themselves), or the next queued top-level responder — or closes it and
+   * resumes the interrupted flow once the stack and the responder queue are
+   * both empty.
+   */
+  private reopenOrCloseResponseWindow(): void {
+    const window = this.state.responseWindow;
+    if (!window || window.phase !== "resolving") return;
+    // Still mid-resolution somewhere up the call chain — don't act yet.
+    if (this.state.pendingChoice) return;
+    if (this.state.pendingEffectFrames.length > 0) return;
+
+    if (this.responseStack.length > 0) {
+      const top = this.responseStack[this.responseStack.length - 1];
+      window.phase = "acceptingResponses";
+      window.priorityPlayerId = this.getOpponent(top.controllerId).id;
+      this.state.priorityPlayerId = window.priorityPlayerId;
+      return;
+    }
+
+    if (window.pendingResponders.length > 0) {
+      window.phase = "acceptingResponses";
+      window.priorityPlayerId = window.pendingResponders[0];
+      this.state.priorityPlayerId = window.priorityPlayerId;
+      return;
+    }
+
+    const continuation = structuredClone(window.continuation);
+    this.state.responseWindow = undefined;
+    this.state.priorityPlayerId = this.state.activePlayerId;
+    this.resumeContinuation(continuation);
+  }
+
   /** Returns true if the popped item's effects (and any bookkeeping after them) ran to completion without pausing on a chooser effect. */
   private resolveTopOfStack(): boolean {
     const item = this.responseStack.pop();
 
     assert(item, "Response stack is empty.");
+
+    if (this.logEnabled) {
+      // Source may have left play since the item was pushed (RULES.md §10) —
+      // look everything up defensively; the log must never abort resolution.
+      const sourceDef = this.state.cards[item.sourceId]
+        ? this.definitions[this.state.cards[item.sourceId].definitionId]
+        : undefined;
+      const abilityName = sourceDef?.behavior?.abilities?.find(
+        a => a.id === item.abilityId
+      )?.name;
+      const what =
+        item.kind === "ability"
+          ? `${abilityName ? `"${abilityName}"` : "an ability"} on ${this.logCardName(item.sourceId)}`
+          : this.logCardName(item.sourceId);
+      this.recordLogMarker(
+        "stackItemResolving",
+        "resolution",
+        `${what} resolves`,
+        this.responseStack.length
+      );
+    }
 
     return this.runEffectFrame({
       effects: item.effects,
@@ -2592,6 +2969,11 @@ export class SpoilsEngine {
       const completed = this.runEffectFrame(frame);
       if (!completed) return;
     }
+
+    // A response-stack item that had paused on a chooser has now finished
+    // draining — continue the response flow (re-open the window for the next
+    // responder, or close it). A no-op outside a resolving response window.
+    this.reopenOrCloseResponseWindow();
   }
 
   private afterStackAction(actingPlayerId: PlayerId): void {
@@ -2603,23 +2985,30 @@ export class SpoilsEngine {
         "Cannot add a response while the chain is resolving."
       );
 
-      existing.consecutivePasses = 0;
+      // A fresh item is on top of the stack; only the opponent of whoever
+      // just acted may respond to it (CR §607.1). The stack itself carries
+      // the LIFO ordering — no priority hand-back to the actor.
       existing.priorityPlayerId = this.getOpponent(actingPlayerId).id;
       this.state.priorityPlayerId = existing.priorityPlayerId;
       return;
     }
 
+    // A main-phase deploy / ability: its stack item drives the whole
+    // window. Only the opponent responds and it closes once the item
+    // resolves — there is no top-level responder queue (CR §607.2b).
     this.openResponseWindow(
       "action",
       this.getOpponent(actingPlayerId).id,
-      { type: "main" }
+      { type: "main" },
+      []
     );
   }
 
   private openResponseWindow(
     kind: ResponseWindowKind,
     firstPlayerId: PlayerId,
-    continuation: ResponseContinuation
+    continuation: ResponseContinuation,
+    pendingResponders: PlayerId[]
   ): void {
     assert(
       !this.state.responseWindow,
@@ -2630,13 +3019,24 @@ export class SpoilsEngine {
       id: nextId("response"),
       kind,
       phase: "acceptingResponses",
-      firstPlayerId,
       priorityPlayerId: firstPlayerId,
-      consecutivePasses: 0,
+      pendingResponders: [...pendingResponders],
       continuation
     };
 
     this.state.priorityPlayerId = firstPlayerId;
+
+    // Only bracket the "respond to your opponent's action / turn-end"
+    // windows; the battle response points open constantly during resolution
+    // and the battle events themselves already carry the sequence.
+    if (kind === "action" || kind === "endTurn") {
+      this.recordLogMarker(
+        "responseWindowOpened",
+        "info",
+        `${this.logPlayerName(firstPlayerId)} may respond`,
+        this.responseStack.length
+      );
+    }
   }
 
   private resumeContinuation(
@@ -2810,6 +3210,8 @@ export class SpoilsEngine {
         }
       }
     }
+
+    this.recordLogEvent(event);
 
     const batchId = nextId("batch");
     const triggers = this.findTriggers(event, batchId);
@@ -3231,6 +3633,16 @@ export class SpoilsEngine {
       // processImmediateQueue — this trigger must not still be at the head
       // when that happens, or it gets resolved again and recurses forever.
       this.immediateQueue.shift();
+
+      const triggerLabel = trigger.ability.name
+        ? `"${trigger.ability.name}"`
+        : "triggered ability";
+      this.recordLogMarker(
+        "triggerResolving",
+        "trigger",
+        `${this.logCardName(trigger.sourceId)}'s ${triggerLabel} resolves`,
+        this.responseStack.length
+      );
 
       const completed = this.runEffectFrame({
         effects: trigger.ability.effects,
@@ -4688,7 +5100,9 @@ export class SpoilsEngine {
     // are checked transactionally. Pass randomOverride (not `this.random`,
     // which is bound to *this* engine's state) so a dry-run probe draws
     // from the clone's own rngState and can never advance the real game's.
-    const clone = structuredClone(this.state);
+    // Drop `gameLog` before the deep clone — the probe never appends to it
+    // and it grows unbounded over a game.
+    const clone = structuredClone({ ...this.state, gameLog: [] });
 
     try {
       const engine = new SpoilsEngine(
@@ -4735,7 +5149,7 @@ export class SpoilsEngine {
         for (const branch of cost.options) {
           let payable = true;
           try {
-            const clone = structuredClone(this.state);
+            const clone = structuredClone({ ...this.state, gameLog: [] });
             const probe = new SpoilsEngine(
               Object.values(this.definitions),
               clone,
@@ -9465,7 +9879,9 @@ export class SpoilsEngine {
       {
         type: "endTurn",
         playerId
-      }
+      },
+      // CR §607.1 — only the opponent responds to "I end my turn".
+      [this.getOpponent(playerId).id]
     );
   }
 
@@ -9636,7 +10052,9 @@ export class SpoilsEngine {
       )
       .map(cardId => ({
         cardId,
-        strength: this.getStat(cardId, "strength"),
+        // A character assigns damage equal to its strength, floored at 0
+        // (CR §410.4 — a value pushed below 0 stays at 0).
+        strength: Math.max(0, this.getStat(cardId, "strength")),
         legalTargets: this.getLegalBattleDamageTargets(
           cardId,
           attackerAssigning,
@@ -9871,14 +10289,16 @@ export class SpoilsEngine {
       battleId: battle.id
     });
 
-    // Spoils battle step: attacker may use tactics/abilities, then defender.
+    // CR §608.1c: the attacking player may use tactics/abilities as many
+    // times as they want, then the defending player may do the same.
     this.openResponseWindow(
       "battleAfterAttackers",
       battle.attackerPlayerId,
       {
         type: "battleBlocking",
         battleId: battle.id
-      }
+      },
+      [battle.attackerPlayerId, battle.defenderPlayerId]
     );
   }
 
@@ -9945,10 +10365,12 @@ export class SpoilsEngine {
 
     this.emit({ type: "battleStarted", battleId });
 
-    this.openResponseWindow("battleAfterAttackers", battle.attackerPlayerId, {
-      type: "battleBlocking",
-      battleId
-    });
+    this.openResponseWindow(
+      "battleAfterAttackers",
+      battle.attackerPlayerId,
+      { type: "battleBlocking", battleId },
+      [battle.attackerPlayerId, battle.defenderPlayerId]
+    );
   }
 
   /**
@@ -10247,14 +10669,15 @@ export class SpoilsEngine {
     battle.defenderAssignments = [];
     battle.phase = "beforeDamageResponse";
 
-    // Battle resolution step 2: attacker gets first opportunity.
+    // CR §609.1a: attacker gets first opportunity, then the defender.
     this.openResponseWindow(
       "battleBeforeDamage",
       battle.attackerPlayerId,
       {
         type: "battleAssignDamage",
         battleId: battle.id
-      }
+      },
+      [battle.attackerPlayerId, battle.defenderPlayerId]
     );
   }
 
@@ -10333,7 +10756,10 @@ export class SpoilsEngine {
         continue;
       }
 
-      const strength = this.getStat(sourceId, "strength");
+      // Strength is floored at 0 for assignment (CR §410.4): a character
+      // with 0 or negative strength assigns nothing but still counts as
+      // having assigned (CR §408.1b / §609.2).
+      const strength = Math.max(0, this.getStat(sourceId, "strength"));
       const total = sourceAssignments.reduce(
         (sum, assignment) => sum + assignment.amount,
         0
@@ -10397,7 +10823,8 @@ export class SpoilsEngine {
       {
         type: "battleInflictDamage",
         battleId: battle.id
-      }
+      },
+      [battle.attackerPlayerId, battle.defenderPlayerId]
     );
   }
 

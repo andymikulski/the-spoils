@@ -49,3 +49,18 @@ for (const player of Object.values(game.state.players)) {
 
 console.log("setup:", game.state.setup);
 console.log("flow:", game.getFlowView());
+
+// Resolve the opening mulligans (both players keep their hands) to reach the
+// start of turn 1.
+while (game.state.setup.phase === "mulligan") {
+  const order = game.state.setup.order;
+  game.perform({
+    type: "mulligan",
+    playerId: order[game.state.setup.currentIndex],
+    cardIds: []
+  });
+}
+
+// Everything that has happened so far, in order, indented by response depth.
+// Recording is on by default — game.setLogEnabled(false) turns it off.
+console.log("\ngame log:\n" + game.formatLog());

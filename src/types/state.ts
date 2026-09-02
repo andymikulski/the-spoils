@@ -18,6 +18,7 @@ import type {
   Zone
 } from "./ids.js";
 import type { ResolutionContext, StackItem } from "./resolution.js";
+import type { GameLogEntry } from "./log.js";
 import type { PendingChoice } from "./choices.js";
 import type { AbilityDefinition } from "./cards.js";
 import type { Condition } from "./conditions.js";
@@ -522,17 +523,38 @@ export interface ResponseWindowState {
 
   /**
    * acceptingResponses:
-   *   players may deploy tactics / TACTICAL cards and use abilities.
+   *   the player in `priorityPlayerId` may deploy a tactic / TACTICAL card or
+   *   use an ability as a response (CR §607.2).
    *
    * resolving:
-   *   no new responses may be added. advanceFlow() resolves one stack item
-   *   per call until the stack is empty, then resumes the interrupted flow.
+   *   the entitled player has declined. advanceFlow() resolves the item on
+   *   top of the response stack, then the window re-opens for whoever may
+   *   respond next (CR §607.2 / §607.2a) — or closes and resumes the
+   *   interrupted flow once nobody has anything left to add.
    */
   phase: "acceptingResponses" | "resolving";
 
-  firstPlayerId: PlayerId;
+  /**
+   * The one player entitled to act right now. The Spoils has no
+   * priority-passing system (CR §607.2b): while the response stack has
+   * items this is always the opponent of the top item's controller — you
+   * never respond to your own action (CR §607.1). While the stack is empty
+   * it is the head of `pendingResponders`.
+   */
   priorityPlayerId: PlayerId;
-  consecutivePasses: number;
+
+  /**
+   * Players who still get a top-level opportunity to respond once the
+   * response stack drains, in order. A single-responder `action` window is
+   * driven entirely by its stack item and leaves this empty; an `endTurn`
+   * window holds `[opponent-of-turn-ender]`; a two-sided battle response
+   * window (CR §608.1c / §609.1a — "the attacking player may deploy tactics
+   * and use abilities as many times as they want, then the defending player
+   * may do the same") holds `[attacker, defender]`. A player is shifted off
+   * once they pass with an empty stack; when it empties and the stack is
+   * empty the window closes.
+   */
+  pendingResponders: PlayerId[];
 
   continuation: ResponseContinuation;
 }
@@ -782,6 +804,16 @@ export interface GameState {
   /** Fully serializable response/stack state for UI, replay, or networking. */
   responseStack: StackItem[];
   responseWindow?: ResponseWindowState;
+
+  /**
+   * Running, human-readable log of everything that has happened, in order —
+   * every emitted event plus a couple of structural markers, each tagged
+   * with the response-stack `depth` it occurred at so a renderer can show
+   * responses (and responses to responses) nested under what they answer.
+   * Informational only; no rule reads it. Recording can be turned off with
+   * `SpoilsEngine.setLogEnabled(false)`. See `GameLogEntry`.
+   */
+  gameLog: GameLogEntry[];
 
   /** Suspended effect-list resumption points — see PendingEffectFrame. Only the top of the stack is "live." */
   pendingEffectFrames: PendingEffectFrame[];

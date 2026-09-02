@@ -150,6 +150,7 @@ export function createTwoPlayerGame(
     attacksThisTurn: {},
     attackDeclarationsThisTurn: {},
     responseStack: [],
+    gameLog: [],
     pendingEffectFrames: [],
     turnEventTally: {},
     turnDeploys: {},

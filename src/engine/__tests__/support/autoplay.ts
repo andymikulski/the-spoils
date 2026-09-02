@@ -243,8 +243,19 @@ function buildSelected(
   return context.selected;
 }
 
-function roughlyAffordable(engine: SpoilsEngine, playerId: PlayerId, definition: CardDefinition): boolean {
-  return (definition.cost ?? 0) <= engine.getAvailableResourceCount(playerId);
+/**
+ * `reserve` keeps a cushion of unspent resources on the bot's own turn so it
+ * can actually answer its opponent later (CR §607) — the engine no longer
+ * lets a player respond to their *own* action, so responses only happen when
+ * the non-acting player has resources banked.
+ */
+function roughlyAffordable(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  definition: CardDefinition,
+  reserve = 0
+): boolean {
+  return (definition.cost ?? 0) + reserve <= engine.getAvailableResourceCount(playerId);
 }
 
 function meetsThresholdRoughly(engine: SpoilsEngine, playerId: PlayerId, definition: CardDefinition): boolean {
@@ -255,11 +266,16 @@ function meetsThresholdRoughly(engine: SpoilsEngine, playerId: PlayerId, definit
   );
 }
 
-function abilityRoughlyAffordable(engine: SpoilsEngine, playerId: PlayerId, ability: ActivatedAbility): boolean {
+function abilityRoughlyAffordable(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  ability: ActivatedAbility,
+  reserve = 0
+): boolean {
   const resourceCost = (ability.costs ?? [])
     .filter(cost => cost.type === "payResources")
     .reduce((sum, cost) => sum + (typeof cost.amount === "number" ? cost.amount : 0), 0);
-  return resourceCost <= engine.getAvailableResourceCount(playerId);
+  return resourceCost + reserve <= engine.getAvailableResourceCount(playerId);
 }
 
 function isTacticalOrTactic(definition: CardDefinition): boolean {
@@ -269,14 +285,15 @@ function isTacticalOrTactic(definition: CardDefinition): boolean {
 function handCardCandidates(
   engine: SpoilsEngine,
   playerId: PlayerId,
-  filter?: (definition: CardDefinition) => boolean
+  filter?: (definition: CardDefinition) => boolean,
+  reserve = 0
 ): CardInstanceId[] {
   return engine.state.players[playerId].hand.filter(cardId => {
     const definition = engine.getDefinition(cardId);
     if (definition.type === "resource") return false;
     if (filter && !filter(definition)) return false;
     if (!meetsThresholdRoughly(engine, playerId, definition)) return false;
-    if (!roughlyAffordable(engine, playerId, definition)) return false;
+    if (!roughlyAffordable(engine, playerId, definition, reserve)) return false;
     return true;
   });
 }
@@ -286,7 +303,11 @@ interface AbilityCandidate {
   ability: ActivatedAbility;
 }
 
-function abilityCandidates(engine: SpoilsEngine, playerId: PlayerId): AbilityCandidate[] {
+function abilityCandidates(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  reserve = 0
+): AbilityCandidate[] {
   const result: AbilityCandidate[] = [];
 
   for (const cardId of engine.state.players[playerId].play) {
@@ -297,7 +318,7 @@ function abilityCandidates(engine: SpoilsEngine, playerId: PlayerId): AbilityCan
     const definition = engine.getDefinition(cardId);
     for (const ability of definition.behavior?.abilities ?? []) {
       if (ability.type !== "activated") continue;
-      if (!abilityRoughlyAffordable(engine, playerId, ability)) continue;
+      if (!abilityRoughlyAffordable(engine, playerId, ability, reserve)) continue;
       result.push({ cardId, ability });
     }
   }
@@ -703,14 +724,23 @@ function handleMain(
     return;
   }
 
-  for (const cardId of shuffled(handCardCandidates(engine, playerId), rng)) {
+  // Keep a small cushion of unspent resources and hold tactics back, so this
+  // player can still answer the opponent's turn (CR §607 — the engine no
+  // longer permits responding to your own action, so the reactive game only
+  // gets exercised when the non-acting player kept something in reserve).
+  const RESERVE = 2;
+
+  for (const cardId of shuffled(
+    handCardCandidates(engine, playerId, def => def.type !== "tactic", RESERVE),
+    rng
+  )) {
     if (tryPlayCard(engine, playerId, cardId, rng)) {
       report.cardsPlayed += 1;
       return;
     }
   }
 
-  for (const { cardId, ability } of shuffled(abilityCandidates(engine, playerId), rng)) {
+  for (const { cardId, ability } of shuffled(abilityCandidates(engine, playerId, RESERVE), rng)) {
     if (tryActivateAbility(engine, playerId, cardId, ability, rng)) {
       report.abilitiesActivated += 1;
       return;

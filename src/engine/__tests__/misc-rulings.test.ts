@@ -166,9 +166,9 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
 
   test("a playResource effect whose target left hand before it resolved (LIFO stack) no-ops instead of crashing", () => {
     // The ability locks in `selected.resource` when activated, but (RULES.md
-    // §7) it sits at the *bottom* of the response stack until both players
-    // pass — plenty of room for a second response to move that exact card
-    // out of hand first.
+    // §7) its stack item sits under the opponent's response until the chain
+    // resolves LIFO — room for the opponent to move that exact card out of
+    // P1's hand first.
     const stashAbility: ActivatedAbility = {
       id: "stash",
       type: "activated",
@@ -178,6 +178,7 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
       ]
     };
 
+    // A P2 tactic that discards a card from the opponent's (P1's) hand.
     const discarder = tactic({
       name: "Discarder",
       behavior: {
@@ -185,7 +186,7 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
           {
             id: "discard-it",
             type: "activated",
-            targets: [{ id: "target", selector: { controller: "self", zone: "hand" }, count: 1 }],
+            targets: [{ id: "target", selector: { controller: "opponent", zone: "hand" }, count: 1 }],
             effects: [{ type: "moveCard", target: { type: "selected", id: "target" }, to: "discard" }]
           }
         ]
@@ -196,7 +197,7 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
       cards: [
         { key: "caster", def: character({ name: "Caster", behavior: { abilities: [stashAbility] } }), owner: P1 },
         { key: "handCard", def: character({ name: "Hand Card" }), owner: P1, zone: "hand" },
-        { key: "discarder", def: discarder, owner: P1, zone: "hand" }
+        { key: "discarder", def: discarder, owner: P2, zone: "hand" }
       ]
     });
 
@@ -208,11 +209,12 @@ describe("RULES.md §12 — impossible instructions don't invalidate the rest", 
       selected: { resource: [id("handCard")] }
     });
 
-    engine.perform({ type: "passPriority", playerId: P2 });
-
+    // P2 responds by discarding the very card `stash` is about to play as a
+    // resource. LIFO: the discard resolves first, then `stash` finds its
+    // target already gone.
     engine.perform({
       type: "playCard",
-      playerId: P1,
+      playerId: P2,
       cardId: id("discarder"),
       selected: { target: [id("handCard")] }
     });

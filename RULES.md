@@ -536,9 +536,25 @@ player** orders them. **(CR §503.4a, FAQ)** the order is chosen one trigger
 at a time — resolve one, then decide the next — not fixed up front.
 
 **(engine-derived)** Playing a card or activating an ability pushes a
-`StackItem` onto `state.responseStack` and opens a `responseWindow` giving
-the opponent priority; when responses stop, `advanceFlow()` pops and
-resolves one stack item, then resumes the window's `continuation`.
+`StackItem` onto `state.responseStack` and opens a `responseWindow`. The
+window tracks a single `priorityPlayerId` — the one player entitled to act
+right now. **There is no priority-passing / two-pass close** (CR §607.2b):
+while the stack has items, `priorityPlayerId` is always the *opponent of the
+top item's controller* — you are never handed a pass on your own action
+(CR §607.1). A `passPriority` from that player flips the window to
+`resolving`; `advanceFlow()` pops and resolves exactly one item, then the
+window re-opens (`priorityPlayerId` recomputed for the new top item) so the
+next response can be made (CR §607.2 "once this response resolves you may
+make another"). Once the stack drains and no responder is left, the window
+closes and its `continuation` resumes. An `action` window (a main-phase
+deploy / ability) has no top-level responder queue — it is driven entirely
+by its stack item and closes the instant that item resolves, with no pass
+from the acting player. An `endTurn` window carries a one-entry queue
+(`[opponent-of-turn-ender]`); a battle response window carries
+`[attacker, defender]` (CR §608.1c / §609.1a — the attacker acts as many
+times as they want, then the defender), each shifted off when that player
+passes with an empty stack. `noResponse` (Swindle — "your opponents cannot
+respond to this card") resolves its item inline with no window of its own.
 
 **(engine-derived)** Every trigger found for one emitted event shares a
 batch. While 2+ of a batch are still waiting, the engine pauses on
@@ -690,6 +706,13 @@ left to assign to (its target was destroyed earlier in the battle, a
 targeted location's controller changed, or the assigned amount came out to
 0), it does nothing but still counts as "having assigned" for ending the
 loop — the resolution loop never repeats infinitely.
+
+**(engine-derived)** The amount a character assigns is its strength
+**floored at 0** (CR §410.4 — a value pushed below 0 stays at 0): a
+character debuffed to 0 or negative strength assigns nothing and still
+counts as having assigned. `getBattleView().damageSources[].strength` and
+the `assignBattleDamage` "must assign exactly N" check both use
+`max(0, strength)`.
 
 ### Damage (CR §408)
 
@@ -1293,6 +1316,14 @@ of the Devoured Emperor additions")**
 - **`reveal` / `cardsRevealed` (`engine-derived`).** A one-shot `reveal`
   effect emits `cardsRevealed { cardIds, zone, ownerId, viewerId }` and
   changes nothing else — for a renderer / event log.
+- **`GameState.gameLog` (`engine-derived`).** A running, ordered list of
+  `GameLogEntry` — every emitted event plus `responseWindowOpened` /
+  `stackItemResolving` / `triggerResolving` markers — each stamped with the
+  response-stack `depth` it happened at, so a renderer can indent responses
+  (and responses to responses) under what they answer and show the LIFO
+  unwind. Purely informational; no rule reads it. `emit()` appends unless
+  `SpoilsEngine.setLogEnabled(false)`; `getLog()` / `formatLog()` read it.
+  Excluded from the `canPayCosts` affordability-probe clone.
 - **`revealFromTopUntil` effect (`card-verified`).** Turn cards over from
   the top of a deck until one satisfies `match` or the deck is exhausted;
   bind the match to `bindAs` and run `onMatch`; `rest` shuffles / bottoms /
