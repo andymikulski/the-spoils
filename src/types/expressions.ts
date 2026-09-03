@@ -29,6 +29,9 @@ export type TargetRef =
    * equality with `source`.
    */
   | "eventCard"
+  /** Bare-string aliases accepted for `{ type: "respondedToCard" }` and `{ type: "respondedAbilitySource" }`. */
+  | "respondedToCard"
+  | "respondedAbilitySource"
   | { type: "selected"; id: string }
   | { type: "card"; id: CardInstanceId }
   /** A uniformly random card matching `selector` (e.g. "discard a card at random"), or nothing if none match. */

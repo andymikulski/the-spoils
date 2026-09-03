@@ -55807,8 +55807,7 @@ export default [
                     "role": "attacker"
                   },
                   {
-                    "type": "eventCardIs",
-                    "target": "source"
+                    "type": "isCard"
                   }
                 ]
               },
@@ -144607,7 +144606,9 @@ export default [
           "effects": [
             {
               "type": "terminate",
-              "target": "respondedToCard"
+              "target": {
+                "type": "respondedToCard"
+              }
             },
             {
               "type": "if",
@@ -147301,7 +147302,14 @@ export default [
                 "type": "sourceIsEventCard"
               },
               {
-                "type": "deploySameNameThisTurn"
+                "type": "numberCompare",
+                "left": {
+                  "type": "deploysThisTurn",
+                  "player": "controller",
+                  "notCardType": "character"
+                },
+                "operator": ">=",
+                "right": 1
               }
             ]
           },
@@ -147429,7 +147437,9 @@ export default [
           "effects": [
             {
               "type": "terminate",
-              "target": "respondedToCard"
+              "target": {
+                "type": "respondedToCard"
+              }
             }
           ]
         }
@@ -150488,7 +150498,9 @@ export default [
           "effects": [
             {
               "type": "terminate",
-              "target": "respondedToCard"
+              "target": {
+                "type": "respondedToCard"
+              }
             }
           ]
         }
@@ -150589,15 +150601,9 @@ export default [
           "id": "sync",
           "type": "continuous",
           "condition": {
-            "type": "isCard",
-            "target": {
-              "type": "controllerOf",
-              "target": "attachedTo"
-            },
-            "other": {
-              "type": "controllerOf",
-              "target": "source"
-            }
+            "type": "targetControlledBy",
+            "target": "attachedTo",
+            "player": "controller"
           },
           "modifiers": [
             {
@@ -150628,15 +150634,9 @@ export default [
           "condition": {
             "type": "not",
             "condition": {
-              "type": "isCard",
-              "target": {
-                "type": "controllerOf",
-                "target": "attachedTo"
-              },
-              "other": {
-                "type": "controllerOf",
-                "target": "source"
-              }
+              "type": "targetControlledBy",
+              "target": "attachedTo",
+              "player": "controller"
             }
           },
           "modifiers": [
@@ -150842,7 +150842,7 @@ export default [
           "effects": [
             {
               "type": "terminate",
-              "target": "respondedItem"
+              "scope": "respondedItem"
             },
             {
               "type": "destroy",
@@ -151487,7 +151487,8 @@ export default [
           "modifiers": [],
           "restrictions": [
             {
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePicked",
+              "target": "source"
             }
           ]
         }
@@ -153072,7 +153073,8 @@ export default [
           "modifiers": [],
           "restrictions": [
             {
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePicked",
+              "target": "source"
             }
           ]
         },
@@ -153198,12 +153200,34 @@ export default [
           ],
           "effects": [
             {
-              "type": "rememberTarget",
-              "key": "safe",
-              "target": {
-                "type": "selected",
-                "id": "c"
-              }
+              "type": "installReplacement",
+              "replaces": {
+                "event": "destroy"
+              },
+              "condition": {
+                "type": "isCard",
+                "target": {
+                  "type": "selected",
+                  "id": "__candidate"
+                },
+                "other": {
+                  "type": "selected",
+                  "id": "c"
+                }
+              },
+              "duration": {
+                "type": "untilEndOfTurn"
+              },
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "to": "hand"
+                }
+              ]
             }
           ]
         }
@@ -154866,7 +154890,8 @@ export default [
           "modifiers": [],
           "restrictions": [
             {
-              "restriction": "cannotAttack"
+              "restriction": "cannotAttack",
+              "target": "source"
             }
           ]
         },

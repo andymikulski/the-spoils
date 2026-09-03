@@ -479,11 +479,14 @@ export type Effect =
        * Resolves `effects` only if `condition` holds — the "if you do" half
        * of an optional `TargetDeclaration` ("you may pick a character. If
        * you do, ..."): gate with `{ type: "targetExists", target: {
-       * type: "selected", id: "<declarationId>" } }`.
+       * type: "selected", id: "<declarationId>" } }`. When `condition` is
+       * false and `elseEffects` is given, those resolve instead ("if the
+       * card has a [V] icon ... otherwise ..." — Single Combat).
        */
       type: "if";
       condition: Condition;
       effects: Effect[];
+      elseEffects?: Effect[];
     }
   | {
       /** "Reshuffle" (RULES.md §2) — shuffles `player`'s deck in place. */

@@ -137,6 +137,17 @@ export type Condition =
     }
   | {
       /**
+       * True when `target` (default the selector `__candidate`, else
+       * `"source"`) is **controlled** by the resolved `player` — the control
+       * counterpart of `targetOwnedBy` ("while this card is attached to a
+       * character you control ..." — Symmetrical Scimitar).
+       */
+      type: "targetControlledBy";
+      target?: TargetRef;
+      player: PlayerRef;
+    }
+  | {
+      /**
        * True when `target` (default `"source"`) resolves to a token
        * permanent (`CardInstance.isToken`). Compose with `not` for
        * "non-token character" (Phantasmagoric Tollbooth).

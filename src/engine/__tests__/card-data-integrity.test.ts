@@ -204,7 +204,7 @@ const KNOWN_TYPE_TAGS = new Set([
   // 1st Edition Part 2 conditions
   "isCard", "damagedThisTurn", "destroyedByBattleDamage",
   // fidelity pass
-  "targetOwnedBy", "revealFromTopUntil", "reveal",
+  "targetOwnedBy", "targetControlledBy", "revealFromTopUntil", "reveal",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",

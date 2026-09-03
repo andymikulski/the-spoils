@@ -136,6 +136,17 @@ export class SpoilsEngine {
    * replacement whose own effect destroys the same card, etc.). */
   private readonly replacing = new Set<CardInstanceId>();
 
+  /** Guards continuous keyword/restriction resolution against a self-
+   * referential grant — e.g. "while a player controls a COVERT character,
+   * this gains COVERT" (Torchlight Sarcophyle): evaluating the grant's
+   * condition counts COVERT characters, which re-asks whether cards (incl.
+   * the grant's own source) have COVERT, which re-evaluates the same grant.
+   * Keyed by `${sourceId}:${abilityId}` of the continuous ability whose
+   * condition/binding is currently being evaluated; a re-entrant hit skips
+   * that ability (it can't bootstrap off its own evaluation). Cross-ability
+   * chains (A's grant depends on B's *different* grant) still resolve. */
+  private readonly resolvingContinuousGrant = new Set<string>();
+
   /**
    * The player currently *causing* mutations — the controller of the effect
    * being resolved, or the player who dealt the battle damage. Read by
@@ -187,6 +198,19 @@ export class SpoilsEngine {
    * something with its owner>." (Voidal Interference). Cleared each `perform()`.
    */
   private lastTerminatedCard: CardInstanceId | undefined;
+
+  /**
+   * A permanent's `behavior.onPlay` EXTRA-COST target picks, keyed by card
+   * id, kept alive across the `cardEnteredPlay` emit so that card's *own*
+   * `cardEnteredPlay` triggered ability (a separate `behavior.abilities`
+   * entry, not `onPlay.effects`) can still read `selected["<onPlay pick id>"]`
+   * — "EXTRA COST: pick a card. When this card enters play, remove a token
+   * from it." (Abecedarian Investor). Cleared right after that emit resolves.
+   */
+  private entrySelections: Record<
+    CardInstanceId,
+    Record<string, CardInstanceId[]>
+  > = {};
 
   /**
    * Explicit override for `random`, as passed to the constructor. Threaded
@@ -3103,17 +3127,24 @@ export class SpoilsEngine {
         // play, so it is not attack-eligible unless it has AGGRO.
         card.attackEligibleTurn = undefined;
 
-        this.emit({
-          type: "cardEnteredPlay",
-          cardId: card.id,
-          playerId: card.controllerId
-        });
+        // Keep the `onPlay` EXTRA-COST picks reachable for this card's own
+        // `cardEnteredPlay` triggered ability (Abecedarian Investor).
+        this.entrySelections[card.id] = { ...item.context.selected };
+        try {
+          this.emit({
+            type: "cardEnteredPlay",
+            cardId: card.id,
+            playerId: card.controllerId
+          });
 
-        // A non-tactic's `behavior.onPlay.effects` are its inline ETB — they
-        // resolve here, with the play-time context (so the EXTRA COST picks
-        // in `item.context.selected` are available).
-        for (const effect of definition.behavior?.onPlay?.effects ?? []) {
-          this.resolveEffect(effect, item.context);
+          // A non-tactic's `behavior.onPlay.effects` are its inline ETB —
+          // they resolve here, with the play-time context (so the EXTRA COST
+          // picks in `item.context.selected` are available).
+          for (const effect of definition.behavior?.onPlay?.effects ?? []) {
+            this.resolveEffect(effect, item.context);
+          }
+        } finally {
+          delete this.entrySelections[card.id];
         }
       }
     }
@@ -3520,7 +3551,10 @@ export class SpoilsEngine {
           controllerId: card.controllerId,
           abilityId: ability.id,
           event,
-          selected: {}
+          selected:
+            eventCardId === card.id && this.entrySelections[card.id]
+              ? { ...this.entrySelections[card.id] }
+              : {}
         };
 
         if (
@@ -3984,6 +4018,19 @@ export class SpoilsEngine {
         return !!ownerId && ownerId === this.resolvePlayerRef(condition.player, context).id;
       }
 
+      case "targetControlledBy": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? { type: "selected", id: "__candidate" },
+          context
+        );
+        if (!cardId) return false;
+        const controllerId = this.state.cards[cardId]?.controllerId;
+        return (
+          !!controllerId &&
+          controllerId === this.resolvePlayerRef(condition.player, context).id
+        );
+      }
+
       case "isToken": {
         const cardId = this.resolveTargetRef(
           condition.target ?? "source",
@@ -4183,7 +4230,7 @@ export class SpoilsEngine {
       }
 
       case "deploySameNameThisTurn": {
-        const player = this.resolvePlayerRef(condition.player, context);
+        const player = this.resolvePlayerRef(condition.player ?? "controller", context);
         const names = (this.state.turnDeploys[player.id] ?? []).map(d => d.name);
         const counts = new Map<string, number>();
         let max = 0;
@@ -5148,6 +5195,23 @@ export class SpoilsEngine {
       return this.getEventCardId(context.event);
     }
 
+    // Bare-string aliases for the object TargetRefs below — some catalog
+    // entries author `"target": "respondedToCard"` rather than
+    // `{ "type": "respondedToCard" }`.
+    if (ref === "respondedToCard") {
+      return this.getRespondedToCardId(context);
+    }
+
+    if (ref === "respondedAbilitySource") {
+      for (let i = this.responseStack.length - 1; i >= 0; i--) {
+        const item = this.responseStack[i];
+        if (item.kind === "ability" && item.sourceId !== context.sourceId) {
+          return item.sourceId;
+        }
+      }
+      return this.lastTerminatedAbility?.sourceId;
+    }
+
     if (ref.type === "card") {
       return ref.id;
     }
@@ -5554,20 +5618,33 @@ export class SpoilsEngine {
       case "moveSelected": {
         const player = this.resolvePlayerRef(cost.player, context);
 
-        const legal = new Set(
-          this.queryCards(
-            {
-              ...cost.selector,
-              controller: cost.selector.controller ?? "self",
-              zone: cost.selector.zone ?? "play"
-            },
-            context
-          )
-            .filter(card => card.controllerId === player.id)
-            .map(card => card.id)
-        );
+        // `selector.name === "__self"` is the sentinel for "this card itself"
+        // — a self-discard / self-shuffle cost (Key to the City's UNLOCK
+        // POTENTIAL, Quilt of Old Banners' HAND IT DOWN) that never needs an
+        // explicit `selected` entry from the activation.
+        const isSelf = cost.selector.name === "__self";
 
-        const selected = context.selected[cost.id] ?? [];
+        const legal = isSelf
+          ? new Set(context.sourceId ? [context.sourceId] : [])
+          : new Set(
+              this.queryCards(
+                {
+                  ...cost.selector,
+                  controller: cost.selector.controller ?? "self",
+                  zone: cost.selector.zone ?? "play"
+                },
+                context
+              )
+                .filter(card => card.controllerId === player.id)
+                .map(card => card.id)
+            );
+
+        const selected =
+          context.selected[cost.id]?.length
+            ? context.selected[cost.id]
+            : isSelf && context.sourceId
+              ? [context.sourceId]
+              : context.selected[cost.id] ?? [];
         assert(
           selected.length === cost.count,
           `Move-selected cost '${cost.id}' requires selecting exactly ${cost.count} card(s).`
@@ -7029,11 +7106,11 @@ export class SpoilsEngine {
       }
 
       case "if": {
-        if (!this.evaluateCondition(effect.condition, context)) {
-          return;
-        }
+        const branch = this.evaluateCondition(effect.condition, context)
+          ? effect.effects
+          : effect.elseEffects ?? [];
 
-        for (const nested of effect.effects) {
+        for (const nested of branch) {
           this.resolveEffect(nested, context);
         }
 
@@ -7682,10 +7759,10 @@ export class SpoilsEngine {
         : undefined;
     }
 
-    if (
-      binding.target &&
-      this.resolveTargetRef(binding.target, context) === targetId
-    ) {
+    // A bare grant (no `selector`, no `target`) applies to the ability's own
+    // source — "this card gains COVERT" / "this character cannot attack".
+    const ref = binding.target ?? "source";
+    if (this.resolveTargetRef(ref, context) === targetId) {
       return context;
     }
 
@@ -8003,6 +8080,11 @@ export class SpoilsEngine {
           continue;
         }
 
+        const guardKey = `${source.id}:${ability.id}`;
+        if (this.resolvingContinuousGrant.has(guardKey)) {
+          continue;
+        }
+
         const context: ResolutionContext = {
           sourceId: source.id,
           controllerId: source.controllerId,
@@ -8012,19 +8094,24 @@ export class SpoilsEngine {
           }
         };
 
-        if (
-          ability.condition &&
-          !this.evaluateCondition(ability.condition, context)
-        ) {
-          continue;
-        }
-
-        for (const grant of ability.keywords) {
-          if (!this.continuousBindingContext(grant, context, targetId)) {
+        this.resolvingContinuousGrant.add(guardKey);
+        try {
+          if (
+            ability.condition &&
+            !this.evaluateCondition(ability.condition, context)
+          ) {
             continue;
           }
 
-          results.push(grant.keyword);
+          for (const grant of ability.keywords) {
+            if (!this.continuousBindingContext(grant, context, targetId)) {
+              continue;
+            }
+
+            results.push(grant.keyword);
+          }
+        } finally {
+          this.resolvingContinuousGrant.delete(guardKey);
         }
       }
     }
@@ -8047,6 +8134,11 @@ export class SpoilsEngine {
           continue;
         }
 
+        const guardKey = `${source.id}:${ability.id}`;
+        if (this.resolvingContinuousGrant.has(guardKey)) {
+          continue;
+        }
+
         const context: ResolutionContext = {
           sourceId: source.id,
           controllerId: source.controllerId,
@@ -8054,16 +8146,21 @@ export class SpoilsEngine {
           selected: { target: [targetId] }
         };
 
-        if (
-          ability.condition &&
-          !this.evaluateCondition(ability.condition, context)
-        ) {
-          continue;
-        }
+        this.resolvingContinuousGrant.add(guardKey);
+        try {
+          if (
+            ability.condition &&
+            !this.evaluateCondition(ability.condition, context)
+          ) {
+            continue;
+          }
 
-        for (const grant of ability.suppressKeywords) {
-          if (!this.continuousBindingContext(grant, context, targetId)) continue;
-          results.push(grant.keyword);
+          for (const grant of ability.suppressKeywords) {
+            if (!this.continuousBindingContext(grant, context, targetId)) continue;
+            results.push(grant.keyword);
+          }
+        } finally {
+          this.resolvingContinuousGrant.delete(guardKey);
         }
       }
     }
@@ -8093,6 +8190,11 @@ export class SpoilsEngine {
           continue;
         }
 
+        const guardKey = `${source.id}:${ability.id}`;
+        if (this.resolvingContinuousGrant.has(guardKey)) {
+          continue;
+        }
+
         const context: ResolutionContext = {
           sourceId: source.id,
           controllerId: source.controllerId,
@@ -8102,19 +8204,24 @@ export class SpoilsEngine {
           }
         };
 
-        if (
-          ability.condition &&
-          !this.evaluateCondition(ability.condition, context)
-        ) {
-          continue;
-        }
-
-        for (const grant of ability.restrictions) {
-          if (!this.continuousBindingContext(grant, context, targetId)) {
+        this.resolvingContinuousGrant.add(guardKey);
+        try {
+          if (
+            ability.condition &&
+            !this.evaluateCondition(ability.condition, context)
+          ) {
             continue;
           }
 
-          results.push(grant.restriction);
+          for (const grant of ability.restrictions) {
+            if (!this.continuousBindingContext(grant, context, targetId)) {
+              continue;
+            }
+
+            results.push(grant.restriction);
+          }
+        } finally {
+          this.resolvingContinuousGrant.delete(guardKey);
         }
       }
     }
