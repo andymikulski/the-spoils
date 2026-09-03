@@ -30,6 +30,18 @@ export interface GameEventMap {
   };
 
   /**
+   * A card in play was attached to another card by an `attachTo` effect
+   * (§301 — e.g. Kettinger's HANDOFF re-homing itself to a new character).
+   * `hostId` is the card it is now attached to. The attach that happens as
+   * a card *enters* play (an "Attach to X" item/tactic) is not reported
+   * here — that is already carried by `cardEnteredPlay`.
+   */
+  cardAttached: {
+    cardId: CardInstanceId;
+    hostId: CardInstanceId;
+  };
+
+  /**
    * An in-play card was chosen as a target of a player-or-chooser TARGET
    * declaration (effect-/trigger-driven picks — `chooserSelectsTarget`,
    * `selectTargets`, `autoSelectTargets`). `playerId` is the picking

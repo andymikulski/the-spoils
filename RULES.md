@@ -1345,7 +1345,15 @@ of the Devoured Emperor additions")**
   names what the decline was against (the attack, a pending stack item, a
   named battle-damage step) so the three back-to-back battle windows don't
   read as one stuck loop; declaring an empty blocking party and each
-  battle-damage assignment get their own marker. Purely informational; no
+  battle-damage assignment get their own marker. A resolved tactic's trip
+  out of the `deploying` waypoint to its owner's discard pile (or, via
+  `selfDisposition`, their hand) is logged — only the `play -> deploying`
+  open and a permanent's `deploying -> play` (already covered by
+  `cardEnteredPlay`) are suppressed as noise. An "Attach to X" card's
+  `cardEnteredPlay` line names the host it attached to; a standalone
+  `attachTo` effect that re-homes an already-in-play card (Kettinger's
+  HANDOFF) emits `cardAttached { cardId, hostId }` — informational, no
+  triggered ability keys off it yet. Purely informational; no
   rule reads it. `emit()` appends unless `SpoilsEngine.setLogEnabled(false)`;
   `getLog()` / `formatLog()` read it. Excluded from the `canPayCosts`
   affordability-probe clone.

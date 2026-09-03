@@ -4,9 +4,11 @@ import {
   autoResolveBattle,
   buildGame,
   character,
+  item,
   P1,
   P2,
   resolvePendingResponses,
+  resourceCard,
   tactic
 } from "./support/fixtures.js";
 
@@ -230,6 +232,113 @@ describe("game log — a running, toggleable record of everything that happens",
       assert.equal(entry.seq, i + 1);
       assert.equal(Number(!!entry.event) + Number(!!entry.marker), 1);
     });
+  });
+
+  test("a resolved tactic's trip to the discard pile is logged — 'resolves' alone doesn't say where the card went", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "spell", def: tactic({ name: "Spark" }), owner: P1, zone: "hand" },
+        { key: "chump", def: character({ name: "Chump" }), owner: P2 }
+      ]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("spell") });
+    resolvePendingResponses(engine);
+
+    assert.ok(engine.state.players[P1].discard.includes(id("spell")), "tactic is in discard");
+
+    const disposed = engine
+      .getLog()
+      .find(e => e.event?.type === "cardMoved" && e.message.includes("Spark"));
+    assert.ok(disposed, "the tactic's move to the discard pile was logged");
+    assert.equal(disposed.kind, "zone");
+    assert.equal(disposed.message, "Spark moves from play to discard");
+
+    // ...and after the "resolves" marker, not before it.
+    const log = engine.getLog();
+    const resolvedIdx = log.findIndex(e => e.marker === "stackItemResolving");
+    assert.ok(log.indexOf(disposed) > resolvedIdx);
+  });
+
+  test("an 'Attach to X' card's enter-play line names the host it attached to", () => {
+    const buffGear = item({
+      name: "Buff Gear",
+      attachTo: "character",
+      behavior: {
+        abilities: [
+          {
+            id: "buff",
+            type: "continuous",
+            modifiers: [{ target: "attachedTo", stat: "strength", operation: "add", value: 2 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "spider", def: character({ name: "Sneaking Spitspider", strength: 2 }), owner: P1 },
+        { key: "gear", def: buffGear, owner: P2, zone: "hand" }
+      ]
+    });
+
+    // The only legal attach target on the board is the opponent's character.
+    engine.perform({
+      type: "playCard",
+      playerId: P2,
+      cardId: id("gear"),
+      selected: { attachTo: [id("spider")] }
+    });
+    resolvePendingResponses(engine);
+
+    const entered = engine.getLog().find(e => e.event?.type === "cardEnteredPlay");
+    assert.ok(entered, "enter-play was logged");
+    assert.equal(entered.message, "Buff Gear enters play attached to Sneaking Spitspider");
+  });
+
+  test("an attachTo effect re-homing an in-play item is logged as its own line", () => {
+    const relocator = item({
+      name: "Relocator",
+      attachTo: "character",
+      behavior: {
+        abilities: [
+          {
+            id: "move-it",
+            name: "Move It",
+            type: "activated",
+            costs: [{ type: "payResources", amount: 1 }],
+            targets: [
+              { id: "dest", selector: { controller: "self", zone: "play", type: "character" }, count: 1 }
+            ],
+            effects: [{ type: "attachTo", target: "source", to: { type: "selected", id: "dest" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "a", def: character({ name: "Alpha" }), owner: P1 },
+        { key: "b", def: character({ name: "Bravo" }), owner: P1 },
+        { key: "gear", def: relocator, owner: P1, attachedToKey: "a" },
+        { key: "r1", def: resourceCard({ name: "R1" }), owner: P1 }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("gear"),
+      abilityId: "move-it",
+      selected: { dest: [id("b")] }
+    });
+    resolvePendingResponses(engine);
+
+    const attached = engine.getLog().find(e => e.event?.type === "cardAttached");
+    assert.ok(attached, "the re-attach was logged");
+    assert.equal(attached.kind, "zone");
+    assert.equal(attached.message, "Relocator attaches to Bravo");
   });
 
   test("the log is plain serializable data — it round-trips through JSON", () => {

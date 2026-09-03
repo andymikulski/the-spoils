@@ -29,6 +29,7 @@ import type {
   GameLogEntry,
   GameLogKind,
   GameState,
+  GameStateSnapshot,
   Keyword,
   NumberExpression,
   PendingChoice,
@@ -43,6 +44,8 @@ import type {
   ResponseWindowState,
   Restriction,
   RuntimeModifier,
+  SnapshotCard,
+  SnapshotPlayer,
   StackItem,
   Stat,
   TargetDeclaration,
@@ -449,6 +452,102 @@ export class SpoilsEngine {
       .join("\n");
   }
 
+  /**
+   * A complete, JSON-serializable, name-resolved picture of the game right
+   * now — every zone's contents, influence, and the response-stack / pending
+   * choice in flight. Pairs with `getLog()` for replay and debugging tools:
+   * the log says how the game got here, this says where everything stands.
+   * Informational only (no rule keys off it); it carries perfect
+   * information, opponent hands included.
+   */
+  exportState(): GameStateSnapshot {
+    // Reverse index: the cards attached to each host. Scanned across every
+    // card, not one play zone — an "Attach to X" item can sit on a card its
+    // controller does not own (gear on an opponent's character).
+    const attachmentsByHost = new Map<CardInstanceId, CardInstanceId[]>();
+    for (const card of Object.values(this.state.cards)) {
+      if (card.zone === "play" && card.attachedTo) {
+        const list = attachmentsByHost.get(card.attachedTo);
+        if (list) list.push(card.id);
+        else attachmentsByHost.set(card.attachedTo, [card.id]);
+      }
+    }
+
+    const nameOf = (cardId: CardInstanceId): string => {
+      const card = this.state.cards[cardId];
+      if (!card) return cardId;
+      return this.definitions[card.definitionId]?.name ?? cardId;
+    };
+
+    const describe = (
+      cardId: CardInstanceId,
+      zoneOwnerId: PlayerId
+    ): SnapshotCard => {
+      const card = this.requireCard(cardId);
+      const definition = this.getDefinition(cardId);
+      const snap: SnapshotCard = {
+        id: cardId,
+        definitionId: card.definitionId,
+        name: definition.name,
+        type: definition.type
+      };
+      if (card.zone !== "play") return snap;
+
+      if (card.faceDown) snap.faceDown = true;
+      if (card.depleted) snap.depleted = true;
+      if (card.damage > 0) snap.damage = card.damage;
+      if (card.counters && Object.keys(card.counters).length > 0) {
+        snap.counters = { ...card.counters };
+      }
+      if (this.hasCardType(cardId, "character")) {
+        snap.strength = this.getStat(cardId, "strength");
+        snap.life = this.getStat(cardId, "life");
+      }
+      if (card.attachedTo) {
+        snap.attachedTo = { id: card.attachedTo, name: nameOf(card.attachedTo) };
+      }
+      const attached = attachmentsByHost.get(cardId);
+      if (attached && attached.length > 0) snap.attachments = [...attached];
+      if (card.controllerId !== zoneOwnerId) snap.controllerId = card.controllerId;
+      return snap;
+    };
+
+    const players: SnapshotPlayer[] = Object.values(this.state.players).map(
+      player => ({
+        id: player.id,
+        name: player.name,
+        influence: player.influence,
+        deckCount: player.deck.length,
+        hand: player.hand.map(id => describe(id, player.id)),
+        play: player.play.map(id => describe(id, player.id)),
+        discard: player.discard.map(id => describe(id, player.id)),
+        void: player.void.map(id => describe(id, player.id)),
+        removed: player.removed.map(id => describe(id, player.id))
+      })
+    );
+
+    return {
+      turn: this.state.turn,
+      activePlayerId: this.state.activePlayerId,
+      priorityPlayerId: this.state.priorityPlayerId,
+      mode: this.getFlowView().mode,
+      ...(this.state.winner !== undefined ? { winner: this.state.winner } : {}),
+      responseStack: this.state.responseStack.map(item => ({
+        label: this.logStackItemLabel(item),
+        controllerId: item.controllerId
+      })),
+      ...(this.state.pendingChoice
+        ? {
+            pendingChoice: {
+              kind: this.state.pendingChoice.kind,
+              playerId: this.state.pendingChoice.playerId
+            }
+          }
+        : {}),
+      players
+    };
+  }
+
   private recordLogEvent(event: GameEvent): void {
     if (!this.logEnabled) return;
 
@@ -600,18 +699,36 @@ export class SpoilsEngine {
         };
       }
 
-      case "cardEnteredPlay":
-        return { kind: "zone", message: `${this.logCardName(event.cardId)} enters play` };
+      case "cardEnteredPlay": {
+        const hostId = this.state.cards[event.cardId]?.attachedTo;
+        const host =
+          hostId && this.state.cards[hostId] ? ` attached to ${this.logCardName(hostId)}` : "";
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId)} enters play${host}`
+        };
+      }
+
+      case "cardAttached":
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId)} attaches to ${this.logCardName(event.hostId)}`
+        };
 
       case "cardMoved": {
         if (event.from === event.to) return undefined;
-        // "Being Deployed" is a transient mechanical waypoint — the deploy
-        // and its resolution are already logged (`cardPlayed`,
-        // `stackItemResolving`, `cardEnteredPlay`).
-        if (event.from === "deploying" || event.to === "deploying") return undefined;
+        // The `play -> deploying` waypoint that opens a deploy is mechanical
+        // noise, and a permanent's `deploying -> play` on resolution is
+        // already carried by `cardEnteredPlay`. But a resolved tactic still
+        // leaves `deploying` for its owner's discard pile (the norm) or,
+        // via `selfDisposition`, their hand — that IS the reader-visible
+        // outcome of the tactic, so keep it (labelling the origin `play`).
+        if (event.to === "deploying") return undefined;
+        if (event.from === "deploying" && event.to === "play") return undefined;
+        const from = event.from === "deploying" ? "play" : event.from;
         return {
           kind: "zone",
-          message: `${this.logCardName(event.cardId)} moves from ${event.from} to ${event.to}`
+          message: `${this.logCardName(event.cardId)} moves from ${from} to ${event.to}`
         };
       }
 
@@ -6514,7 +6631,10 @@ export class SpoilsEngine {
         const toId = this.resolveTargetRef(effect.to, context);
         if (!targetId || !toId) return;
 
-        this.requireCard(targetId).attachedTo = toId;
+        const card = this.requireCard(targetId);
+        if (card.attachedTo === toId) return;
+        card.attachedTo = toId;
+        this.emit({ type: "cardAttached", cardId: targetId, hostId: toId });
         return;
       }
 
@@ -11832,6 +11952,7 @@ export class SpoilsEngine {
       case "cardPlayed":
       case "cardEnteredPlay":
       case "cardMoved":
+      case "cardAttached":
       case "cardDestroyed":
       case "cardDepleted":
       case "cardRestored":

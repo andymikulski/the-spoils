@@ -634,6 +634,89 @@ export interface GameFlowView {
   };
 }
 
+// -----------------------------------------------------------------------------
+// State snapshot (SpoilsEngine.exportState — replay / debugging, informational)
+// -----------------------------------------------------------------------------
+
+/**
+ * A card as it appears in a {@link GameStateSnapshot}: name-resolved, with
+ * only the status a reader needs to picture the board. Cards outside play
+ * carry just `id` / `name` / `type`; the in-play fields (`attachedTo`,
+ * `attachments`, `damage`, `depleted`, `strength`, `life`, `counters`,
+ * `faceDown`) are populated only for cards actually in play.
+ */
+export interface SnapshotCard {
+  id: CardInstanceId;
+  definitionId: CardDefinitionId;
+  /** Printed card name — given even for a face-down card (`faceDown` flags it). */
+  name: string;
+  /** Printed type; runtime-added types (`setCardType`) are not reflected. */
+  type: CardType;
+
+  /** In play and face-down (a resource, or a set-aside card). */
+  faceDown?: boolean;
+  /** In play and depleted (tapped). */
+  depleted?: boolean;
+  /** Marked damage, when non-zero. */
+  damage?: number;
+  /** Effective strength / life — only for a card that is currently a character in play. */
+  strength?: number;
+  life?: number;
+  /** Counters (tokens) on the card, when it has any. */
+  counters?: Record<string, number>;
+
+  /**
+   * The host this card is attached to — an "Attach to X" item/aura on its
+   * host, or a spent resource on its controller's faction. `name` is the
+   * host's card name (`"faction"` for a faction card with no name).
+   */
+  attachedTo?: { id: CardInstanceId; name: string };
+  /** Ids of the cards attached to this one — set on hosts that have attachments. */
+  attachments?: CardInstanceId[];
+
+  /**
+   * The card's controller, given only when it differs from the player whose
+   * zone the card is listed under (e.g. gear attached to an opponent's
+   * character stays in the gear controller's play zone).
+   */
+  controllerId?: PlayerId;
+}
+
+/** One player's zones in a {@link GameStateSnapshot}. */
+export interface SnapshotPlayer {
+  id: PlayerId;
+  name: string;
+  influence: number;
+  /** The deck is private — only its size is snapshotted. */
+  deckCount: number;
+  hand: SnapshotCard[];
+  play: SnapshotCard[];
+  discard: SnapshotCard[];
+  void: SnapshotCard[];
+  removed: SnapshotCard[];
+}
+
+/**
+ * A complete, JSON-serializable, human-readable picture of a game at one
+ * instant — every zone's contents by card name, plus turn / priority /
+ * response-stack context. Produced by `SpoilsEngine.exportState()` for
+ * replay and debugging tools; pairs with `getLog()` (the "how we got here"
+ * to this "where things stand"). Not a rules surface — nothing keys off it,
+ * and it carries perfect information (opponent hands included).
+ */
+export interface GameStateSnapshot {
+  turn: number;
+  activePlayerId: PlayerId;
+  priorityPlayerId: PlayerId;
+  /** `getFlowView().mode` at snapshot time. */
+  mode: GameFlowView["mode"];
+  winner?: GameWinner;
+  /** Outermost (first-played) response-stack item first. */
+  responseStack: Array<{ label: string; controllerId: PlayerId }>;
+  pendingChoice?: { kind: string; playerId: PlayerId };
+  players: SnapshotPlayer[];
+}
+
 export interface GameState {
   turn: number;
   activePlayerId: PlayerId;
