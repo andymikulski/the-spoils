@@ -689,7 +689,14 @@ export interface SnapshotPlayer {
   influence: number;
   /** The deck is private — only its size is snapshotted. */
   deckCount: number;
+  /**
+   * The player's faction card — carried separately from `play` (where it
+   * lives in `GameState`), with `attachments` listing any spent resources
+   * currently on it. Absent only in a game set up without faction cards.
+   */
+  faction?: SnapshotCard;
   hand: SnapshotCard[];
+  /** In-play cards, faction card excluded (see `faction`). */
   play: SnapshotCard[];
   discard: SnapshotCard[];
   void: SnapshotCard[];

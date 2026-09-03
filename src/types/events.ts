@@ -2,7 +2,15 @@
 // Events
 // -----------------------------------------------------------------------------
 
-import type { AbilityId, BattleId, CardInstanceId, PlayerId, Zone } from "./ids.js";
+import type {
+  AbilityId,
+  BattleId,
+  CardInstanceId,
+  ModifierOperation,
+  PlayerId,
+  Stat,
+  Zone
+} from "./ids.js";
 
 export interface GameEventMap {
   turnStarted: {
@@ -11,6 +19,16 @@ export interface GameEventMap {
 
   turnEnding: {
     playerId: PlayerId;
+  };
+
+  /**
+   * The game reached a result — a faction hit 0 influence (or both did, a
+   * draw). `winnerId` is the surviving player, or `"draw"`. Emitted once,
+   * the instant `GameState.winner` is set. Informational; the win itself is
+   * a state-based check, not keyed off this event.
+   */
+  gameEnded: {
+    winnerId: PlayerId | "draw";
   };
 
   cardPlayed: {
@@ -27,6 +45,33 @@ export interface GameEventMap {
     cardId: CardInstanceId;
     from: Zone;
     to: Zone;
+  };
+
+  /**
+   * A player's faction influence changed *outside* of battle damage — a
+   * `modifyInfluence` effect, or influence paid / lost as a cost. Battle
+   * damage to a faction is reported through `damageDealt` (§408.3), not
+   * here. `delta` is signed (negative = loss); `total` is the influence
+   * after the change. Informational — the win check reads `influence`
+   * directly, not this event.
+   */
+  influenceChanged: {
+    playerId: PlayerId;
+    delta: number;
+    total: number;
+  };
+
+  /**
+   * A one-shot stat modifier was applied to a card by a `createModifier`
+   * effect ("+2 strength until end of turn", "set speed to 0 this battle").
+   * Continuous-ability modifiers (auras, buffs from an attached item) are
+   * recomputed live and are *not* reported here. Informational.
+   */
+  statModified: {
+    cardId: CardInstanceId;
+    stat: Stat;
+    operation: ModifierOperation;
+    value: number;
   };
 
   /**

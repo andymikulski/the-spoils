@@ -341,6 +341,105 @@ describe("game log — a running, toggleable record of everything that happens",
     assert.equal(attached.message, "Relocator attaches to Bravo");
   });
 
+  test("a non-damage influence change is logged — 'X loses/gains N influence'", () => {
+    const burn = tactic({
+      name: "Influence Burn",
+      behavior: {
+        abilities: [
+          {
+            id: "burn",
+            type: "activated",
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      playerB: { influence: 25 },
+      cards: [{ key: "burn", def: burn, owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("burn") });
+    resolvePendingResponses(engine);
+
+    const inf = engine.getLog().find(e => e.event?.type === "influenceChanged");
+    assert.ok(inf, "the influence change was logged");
+    assert.equal(inf.message, "Bob's faction loses 3 influence (now 22)");
+  });
+
+  test("a createModifier stat change is logged — the reader can see why a stat moved", () => {
+    const debuff = tactic({
+      name: "Wither",
+      behavior: {
+        abilities: [
+          {
+            id: "wither",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [
+              {
+                type: "createModifier",
+                target: { type: "selected", id: "t" },
+                stat: "strength",
+                operation: "add",
+                value: -2,
+                duration: { type: "untilEndOfTurn" }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "wither", def: debuff, owner: P1, zone: "hand" },
+        { key: "grunt", def: character({ name: "Grunt", strength: 5 }), owner: P2 }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("wither"),
+      selected: { t: [id("grunt")] }
+    });
+    resolvePendingResponses(engine);
+
+    const mod = engine.getLog().find(e => e.event?.type === "statModified");
+    assert.ok(mod, "the stat change was logged");
+    assert.equal(mod.message, "Grunt gets -2 strength");
+  });
+
+  test("the game ending is logged — a faction at 0 influence is the whole point of the game", () => {
+    const finisher = tactic({
+      name: "Finisher",
+      behavior: {
+        abilities: [
+          {
+            id: "k",
+            type: "activated",
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -5 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      playerB: { influence: 3 },
+      cards: [{ key: "k", def: finisher, owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("k") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.winner, P1);
+    const over = engine.getLog().find(e => e.event?.type === "gameEnded");
+    assert.ok(over, "the game-over was logged");
+    assert.equal(over.message, "Game over — Alice wins");
+  });
+
   test("the log is plain serializable data — it round-trips through JSON", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "spell", def: tactic({ name: "Spark" }), owner: P1, zone: "hand" }]

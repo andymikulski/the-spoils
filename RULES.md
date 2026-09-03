@@ -1352,8 +1352,15 @@ of the Devoured Emperor additions")**
   `cardEnteredPlay`) are suppressed as noise. An "Attach to X" card's
   `cardEnteredPlay` line names the host it attached to; a standalone
   `attachTo` effect that re-homes an already-in-play card (Kettinger's
-  HANDOFF) emits `cardAttached { cardId, hostId }` — informational, no
-  triggered ability keys off it yet. Purely informational; no
+  HANDOFF) emits `cardAttached { cardId, hostId }`. A non-damage influence
+  change (`modifyInfluence` effect, influence lost/paid as a cost — but
+  *not* battle damage to a faction, which `damageDealt` already carries)
+  emits `influenceChanged { playerId, delta, total }`; a one-shot
+  `createModifier` stat change emits `statModified { cardId, stat,
+  operation, value }` (continuous-ability / attached-item buffs are
+  recomputed live and stay unlogged); the game reaching a result emits
+  `gameEnded { winnerId }`. All informational — no triggered ability keys
+  off any of them yet. Purely informational; no
   rule reads it. `emit()` appends unless `SpoilsEngine.setLogEnabled(false)`;
   `getLog()` / `formatLog()` read it. Excluded from the `canPayCosts`
   affordability-probe clone.

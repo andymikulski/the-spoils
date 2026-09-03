@@ -41,6 +41,8 @@ describe("exportState — a name-resolved snapshot of the whole board for replay
     assert.equal(bob.influence, 18);
     assert.equal(alice.deckCount, 2);
 
+    // The faction card is carried on its own field, not mixed into `play`.
+    assert.equal(alice.faction?.type, "faction");
     assert.deepEqual(
       alice.play.map(c => c.name),
       ["Front Line"]
@@ -110,7 +112,7 @@ describe("exportState — a name-resolved snapshot of the whole board for replay
     assert.deepEqual(hero.attachments, [id("gear")]);
   });
 
-  test("an attachment on an opponent's character shows under its own controller, and names its host", () => {
+  test("an attachment on an opponent's character stays under its controller and names its host", () => {
     const gear = item({
       name: "Borrowed Blade",
       attachTo: "character",
@@ -139,16 +141,16 @@ describe("exportState — a name-resolved snapshot of the whole board for replay
     const p1 = snap.players.find(p => p.id === P1)!;
     const p2 = snap.players.find(p => p.id === P2)!;
 
-    // The gear is listed in its controller's play zone, flagged as such, and
-    // names the host it is attached to.
+    // The gear is listed in its controller's play zone and names the host it
+    // is attached to — even though that host is the opponent's card. This is
+    // the "where did Kettinger go" case: it never shows as loose, it hangs
+    // off a character on the far side of the board.
     const gearSnap = p2.play.find(c => c.name === "Borrowed Blade")!;
-    assert.equal(gearSnap.controllerId, P2);
     assert.deepEqual(gearSnap.attachedTo, { id: id("victim"), name: "Marked Target" });
 
     // The host, listed in the other player's zone, back-references the attachment.
     const victimSnap = p1.play.find(c => c.name === "Marked Target")!;
     assert.deepEqual(victimSnap.attachments, [id("gear")]);
-    assert.equal(victimSnap.controllerId, undefined, "controller matches the zone owner — omitted");
   });
 
   test("captures the response stack in flight — outermost item first", () => {

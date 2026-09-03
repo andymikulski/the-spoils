@@ -518,8 +518,13 @@ export class SpoilsEngine {
         name: player.name,
         influence: player.influence,
         deckCount: player.deck.length,
+        ...(player.factionId
+          ? { faction: describe(player.factionId, player.id) }
+          : {}),
         hand: player.hand.map(id => describe(id, player.id)),
-        play: player.play.map(id => describe(id, player.id)),
+        play: player.play
+          .filter(id => id !== player.factionId)
+          .map(id => describe(id, player.id)),
         discard: player.discard.map(id => describe(id, player.id)),
         void: player.void.map(id => describe(id, player.id)),
         removed: player.removed.map(id => describe(id, player.id))
@@ -678,6 +683,15 @@ export class SpoilsEngine {
       case "turnEnding":
         return { kind: "turn", message: `${this.logPlayerName(event.playerId)} ends their turn` };
 
+      case "gameEnded":
+        return {
+          kind: "turn",
+          message:
+            event.winnerId === "draw"
+              ? `Game over — a draw`
+              : `Game over — ${this.logPlayerName(event.winnerId)} wins`
+        };
+
       case "cardPlayed": {
         const suffix = responding ? " in response" : "";
         return {
@@ -714,6 +728,29 @@ export class SpoilsEngine {
           kind: "zone",
           message: `${this.logCardName(event.cardId)} attaches to ${this.logCardName(event.hostId)}`
         };
+
+      case "influenceChanged": {
+        const faction = `${this.logPlayerName(event.playerId)}'s faction`;
+        const verb = event.delta < 0 ? "loses" : "gains";
+        return {
+          kind: "damage",
+          message: `${faction} ${verb} ${Math.abs(event.delta)} influence (now ${event.total})`
+        };
+      }
+
+      case "statModified": {
+        const sign = event.operation === "add" && event.value >= 0 ? "+" : "";
+        const change =
+          event.operation === "set"
+            ? `${event.stat} set to ${event.value}`
+            : event.operation === "multiply"
+              ? `${event.stat} ×${event.value}`
+              : `${sign}${event.value} ${event.stat}`;
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId)} gets ${change}`
+        };
+      }
 
       case "cardMoved": {
         if (event.from === event.to) return undefined;
@@ -5405,6 +5442,14 @@ export class SpoilsEngine {
         const amount = this.evaluateNumber(cost.amount, context);
         assert(amount >= 0, "Influence payment cannot be negative.");
         player.influence -= amount;
+        if (emitEvents && amount > 0) {
+          this.emit({
+            type: "influenceChanged",
+            playerId: player.id,
+            delta: -amount,
+            total: player.influence
+          });
+        }
         return;
       }
 
@@ -5864,10 +5909,20 @@ export class SpoilsEngine {
 
       case "modifyInfluence": {
         const player = this.resolvePlayerRef(effect.player, context);
+        const before = player.influence;
         this.applyInfluenceDelta(
           player.id,
           this.evaluateNumber(effect.amount, context)
         );
+        const delta = player.influence - before;
+        if (delta !== 0) {
+          this.emit({
+            type: "influenceChanged",
+            playerId: player.id,
+            delta,
+            total: player.influence
+          });
+        }
         return;
       }
 
@@ -6435,6 +6490,8 @@ export class SpoilsEngine {
 
         if (!targetId) return;
 
+        const value = this.evaluateNumber(effect.value, context);
+
         this.state.modifiers.push({
           id: nextId("modifier"),
           sourceId: context.sourceId,
@@ -6442,12 +6499,17 @@ export class SpoilsEngine {
           targetId,
           stat: effect.stat,
           operation: effect.operation,
-          value: this.evaluateNumber(
-            effect.value,
-            context
-          ),
+          value,
           duration: effect.duration,
           createdTurn: this.state.turn
+        });
+
+        this.emit({
+          type: "statModified",
+          cardId: targetId,
+          stat: effect.stat,
+          operation: effect.operation,
+          value
         });
 
         return;
@@ -8474,6 +8536,10 @@ export class SpoilsEngine {
           this.state.winner = "draw";
         } else if (losers.length === 1) {
           this.state.winner = this.getOpponent(losers[0].id).id;
+        }
+
+        if (this.state.winner) {
+          this.emit({ type: "gameEnded", winnerId: this.state.winner });
         }
       }
     }
@@ -11962,6 +12028,7 @@ export class SpoilsEngine {
       case "characterBlocked":
       case "attackerBlocked":
       case "counterChanged":
+      case "statModified":
       case "cardPicked":
         return event.cardId;
 
