@@ -7830,7 +7830,8 @@ export default [
               "delta": -1,
               "minCost": 1,
               "selector": {
-                "type": "item"
+                "type": "item",
+                "zone": "any"
               }
             }
           ]
@@ -15985,7 +15986,8 @@ export default [
             {
               "affects": "controller",
               "selector": {
-                "type": "tactic"
+                "type": "tactic",
+                "zone": "any"
               },
               "delta": -1,
               "minCost": 1
@@ -18291,7 +18293,23 @@ export default [
                   "type": "triggered",
                   "event": "damageDealt",
                   "condition": {
-                    "type": "sourceIsDamageSource"
+                    "type": "and",
+                    "conditions": [
+                      {
+                        "type": "sourceIsDamageSource"
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "isCard",
+                          "target": "eventCard",
+                          "other": {
+                            "type": "factionOf",
+                            "player": "controller"
+                          }
+                        }
+                      }
+                    ]
                   },
                   "effects": [
                     {
@@ -28572,7 +28590,8 @@ export default [
             {
               "affects": "controller",
               "selector": {
-                "type": "tactic"
+                "type": "tactic",
+                "zone": "any"
               },
               "delta": -1,
               "minCost": 1
@@ -47634,7 +47653,8 @@ export default [
               "delta": 0,
               "minCost": 3,
               "selector": {
-                "type": "tactic"
+                "type": "tactic",
+                "zone": "any"
               }
             }
           ]
@@ -64341,7 +64361,8 @@ export default [
               "delta": -1,
               "minCost": 1,
               "selector": {
-                "type": "item"
+                "type": "item",
+                "zone": "any"
               }
             }
           ]

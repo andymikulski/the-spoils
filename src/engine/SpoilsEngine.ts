@@ -181,6 +181,14 @@ export class SpoilsEngine {
     | undefined;
 
   /**
+   * The card most recently removed from the response stack by a `terminate`
+   * this action — the `kind: "card"` parallel of `lastTerminatedAbility`, so
+   * `respondedToCard` still resolves after "Terminate the card, then <do
+   * something with its owner>." (Voidal Interference). Cleared each `perform()`.
+   */
+  private lastTerminatedCard: CardInstanceId | undefined;
+
+  /**
    * Explicit override for `random`, as passed to the constructor. Threaded
    * through to `canPayCosts`'s simulate-on-a-clone probe so a test's
    * scripted sequence applies there too — `undefined` (the production
@@ -261,6 +269,7 @@ export class SpoilsEngine {
   perform(action: GameAction): void {
     this.departedLinks.clear();
     this.lastTerminatedAbility = undefined;
+    this.lastTerminatedCard = undefined;
 
     // Once the game has ended, only let already-in-flight resolution (a
     // battle finishing, a response window closing) drain to a clean stop —
@@ -1759,13 +1768,24 @@ export class SpoilsEngine {
     const card = this.requireCard(cardId);
     const definition = this.getDefinition(cardId);
 
+    // A faction card's "influence" is its owner's live influence pool (what
+    // "an opponent's faction has 10 influence or less" — Trophy Collector,
+    // Needless Beating — is asking about), not the printed CardDefinition
+    // value.
+    if (stat === "influence" && definition.type === "faction") {
+      const owner = Object.values(this.state.players).find(
+        player => player.factionId === cardId
+      );
+      if (owner) return owner.influence;
+    }
+
     let value =
       stat === "influence"
         ? definition.influence ?? 0
         : definition[stat] ?? 0;
 
     const modifiers = [
-      ...this.getContinuousModifiers(cardId),
+      ...this.getContinuousModifiers(cardId, stat),
       ...this.state.modifiers.filter(modifier => modifier.targetId === cardId)
     ].filter(modifier => modifier.stat === stat);
 
@@ -5212,7 +5232,10 @@ export class SpoilsEngine {
         return item.sourceId;
       }
     }
-    return undefined;
+    // "Terminate the card, then <act on its owner>." — it was just pulled
+    // off the stack; fall back to what `terminate` stashed (Voidal
+    // Interference), mirroring `respondedAbilitySource`.
+    return this.lastTerminatedCard;
   }
 
   /**
@@ -6269,6 +6292,7 @@ export class SpoilsEngine {
             };
           }
           if (item.kind !== "card") continue;
+          this.lastTerminatedCard = item.sourceId;
           const card = this.state.cards[item.sourceId];
           if (card && (card.zone === "deploying" || card.zone === "play")) {
             // "Terminate the card, but put it into its owner's hand instead
@@ -7869,7 +7893,8 @@ export class SpoilsEngine {
   }
 
   private getContinuousModifiers(
-    targetId: CardInstanceId
+    targetId: CardInstanceId,
+    onlyStat?: Stat
   ): RuntimeModifier[] {
     const results: RuntimeModifier[] = [];
 
@@ -7909,6 +7934,13 @@ export class SpoilsEngine {
         }
 
         for (const modifier of ability.modifiers ?? []) {
+          // Skip modifiers for other stats up front — evaluating their
+          // `value` can recurse back into `getStat` for the requested stat
+          // (Martial Arts Master's strength modifier reads its own speed).
+          if (onlyStat !== undefined && modifier.stat !== onlyStat) {
+            continue;
+          }
+
           const auraContext = this.continuousBindingContext(
             modifier,
             context,
@@ -11444,28 +11476,23 @@ export class SpoilsEngine {
           0
         );
 
-        // "This turn, reduce damage inflicted BY <card> by N." (Sockem Bot).
-        // Battle damage is inflicted by each contributing source, so the
-        // aggregate `damageDeltaFor` (which has no single source) can't apply
-        // it — fold in each contributor's outgoing modifiers here, clamped so
-        // one contributor's reduction can't drop the summed total below its
-        // own share.
-        let outgoingDelta = 0;
-        for (const contributor of group.contributors) {
-          let perSource = 0;
-          for (const mod of this.state.outgoingDamageModifiers) {
-            if (mod.sourceId === contributor.sourceId) perSource += mod.delta;
-          }
-          outgoingDelta += Math.max(perSource, -contributor.amount);
-        }
+        // When a single character deals the whole hit, thread its id into
+        // `damageDeltaFor` so both a `damageModifiers.sourceSelector` gate
+        // ("all damage to this card BY a COVERT character is reduced" —
+        // Top-Secret Subterranean Goofarium; Enlightened Mau) and a
+        // `modifyOutgoingDamage` ("reduce damage inflicted BY this card" —
+        // Sockem Bot) can see the dealer. With multiple contributors there is
+        // no single source, so a source-gated modifier is skipped.
+        const soleSource =
+          new Set(group.contributors.map(c => c.sourceId)).size === 1
+            ? group.contributors[0]?.sourceId
+            : undefined;
 
         // CR §408.2 modification applies to combat damage against a faction
         // too, before it converts to influence loss (CR §408.3).
         let final = Math.max(
           0,
-          rawSum +
-            this.damageDeltaFor(group.cardId!, true, undefined, rawSum) +
-            outgoingDelta
+          rawSum + this.damageDeltaFor(group.cardId!, true, soleSource, rawSum)
         );
 
         // `preventDamage` shields (Tiny Shiny / Delectable Boon) — only a

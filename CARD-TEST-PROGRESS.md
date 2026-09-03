@@ -9,14 +9,14 @@ asserts the concrete outcome **and** target legality. See `per-card/_harness.ts`
 
 A card is counted **done** when its set file has a `describe()` naming it.
 
-**Overall: 283 / 2101 cards.**
+**Overall: 448 / 2101 cards.**
 
 | Set | Cards | Done | Remaining | % |
 |---|--:|--:|--:|--:|
 | Seed 3 | 43 | 43 | 0 | 100% |
 | Seed 2 | 110 | 110 | 0 | 100% |
 | Shade of the Devoured Emperor | 130 | 130 | 0 | 100% |
-| 1st Edition Part 2 | 165 | 0 | 165 | 0% |
+| 1st Edition Part 2 | 165 | 165 | 0 | 100% |
 | Holy Heist | 165 | 0 | 165 | 0% |
 | Ungodly Mess | 167 | 0 | 167 | 0% |
 | Open Beta | 206 | 0 | 206 | 0% |
@@ -323,175 +323,175 @@ Test file: `src/engine/__tests__/per-card/shade-of-the-devoured-emperor.test.ts`
 - [x] Warbeast of Thabbash _(character)_
 - [x] Words of Glory _(tactic)_
 
-## 1st Edition Part 2 — 0 / 165
+## 1st Edition Part 2 — 165 / 165
 
 Test file: `src/engine/__tests__/per-card/1st-edition-part-2.test.ts`
 
-- [ ] 0p3r4710n 1337 H4x0rz _(tactic)_
-- [ ] 4p7 31f _(character)_
-- [ ] Acuminous Gigantitect _(character)_
-- [ ] Ambiguity Embiggener _(item)_
-- [ ] Ameliorate _(tactic)_
-- [ ] Anesthetizing Opulence _(tactic)_
-- [ ] Anxious Oaf _(character)_
-- [ ] Arcanology Recruitment Officer _(character)_
-- [ ] Assimilation Center _(location)_
-- [ ] Auction House _(location)_
-- [ ] Barbaric Rifleman _(character)_
-- [ ] Battle Surge _(tactic)_
-- [ ] Blow Up _(tactic)_
-- [ ] Brash Basher _(character)_
-- [ ] Callow Liegeman _(character)_
-- [ ] Cheats McGuillicutty _(character)_
-- [ ] Clandestine Resort _(location)_
-- [ ] Class Action Defender _(character)_
-- [ ] Cloaked Creeper _(character)_
-- [ ] Clockman Pickpocket _(character)_
-- [ ] Club Mau Bouncer _(character)_
-- [ ] Contriving Engineer _(character)_
-- [ ] Counter Attack _(tactic)_
-- [ ] Crooked Appraiser _(character)_
-- [ ] Cute Cutpurse _(character)_
-- [ ] Deadly Striker _(character)_
-- [ ] Deceptive Muddler _(character)_
-- [ ] Dethmürderblüdgeon, the Craghammer _(item)_
-- [ ] Dimensional Rift _(location)_
-- [ ] Discommodiousness _(tactic)_
-- [ ] Distraction _(tactic)_
-- [ ] Early Retirement _(tactic)_
-- [ ] Eccentric Inquisition _(tactic)_
-- [ ] Ectological Hazard Suit _(item)_
-- [ ] Elbow Dropper _(character)_
-- [ ] Eldridge Gosche _(character)_
-- [ ] Elite Team Registration _(tactic)_
-- [ ] Embezzling Bookkeeper _(character)_
-- [ ] Emphatic Ecto-Manipulator _(character)_
-- [ ] Entangle _(tactic)_
-- [ ] Entry-Level Employee _(character)_
-- [ ] Epic Turncoat Maneuver _(tactic)_
-- [ ] Epiphany Ball _(item)_
-- [ ] Escrow Office _(location)_
-- [ ] Exploding Sock Puppet! _(tactic)_
-- [ ] Explosive Fury _(tactic)_
-- [ ] Extortify _(tactic)_
-- [ ] Fat Pants _(item)_
-- [ ] First Unified Market of Abstract Secure Theoreticals _(location)_
-- [ ] Fleshripping Scenepuller _(character)_
-- [ ] Fool's Gold _(item)_
-- [ ] Forcible Depredator _(character)_
-- [ ] Furtive Investor _(character)_
-- [ ] Fwing! _(tactic)_
-- [ ] Gang Leader _(character)_
-- [ ] Gnat _(character)_
-- [ ] Gore Engine _(character)_
-- [ ] Guardforce Alpha Prime 31f _(character)_
-- [ ] Guardforce Alpha Prime H4x0r _(character)_
-- [ ] Guardforce Morphmajig _(character)_
-- [ ] Hasty Sarcophyle _(character)_
-- [ ] Heavy Plating _(item)_
-- [ ] Hired Goons _(character)_
-- [ ] Hollow Moose _(item)_
-- [ ] Horsemajig of the Apocalypse - Death _(character)_
-- [ ] Horsemajig of the Apocalypse - Famine _(character)_
-- [ ] Horsemajig of the Apocalypse - Pestilence _(character)_
-- [ ] Horsemajig of the Apocalypse - War _(character)_
-- [ ] Hulking Vigilante _(character)_
-- [ ] Impeccable Timing _(tactic)_
-- [ ] Infatuated Armchair _(character)_
-- [ ] Infuriator _(character)_
-- [ ] Insect Appreciator _(character)_
-- [ ] Inside Information _(item)_
-- [ ] Kaiser Wave _(tactic)_
-- [ ] Keen Stratagem _(tactic)_
-- [ ] Key Man _(character)_
-- [ ] Kinky Asp _(character)_
-- [ ] Late Addition _(tactic)_
-- [ ] LeoKaiser _(character)_
-- [ ] Lieutenant General _(character)_
-- [ ] Maladjustment _(tactic)_
-- [ ] Market Oracle _(character)_
-- [ ] Martial Artist _(character)_
-- [ ] Martial Arts Master _(character)_
-- [ ] Martial Arts Trainee _(character)_
-- [ ] Master Thief _(character)_
-- [ ] Mau Party _(tactic)_
-- [ ] Mendacious Brigand _(character)_
-- [ ] Mercenary's Creed _(item)_
-- [ ] Micromajig Shipping Container _(character)_
-- [ ] Misappropriation Machine _(item)_
-- [ ] Moneychanger _(character)_
-- [ ] Morale Officer _(character)_
-- [ ] Motivational Speaker _(character)_
-- [ ] Murderous Commander _(character)_
-- [ ] Mutiny Grant _(tactic)_
-- [ ] Needless Beating _(tactic)_
-- [ ] Obsessive Compulsion _(tactic)_
-- [ ] Odious Diva _(character)_
-- [ ] Officious Obstructionist _(character)_
-- [ ] Omnidirectional Patrolmajig _(character)_
-- [ ] Orgy Den Smoke Out _(tactic)_
-- [ ] Overinsured Figurehead _(character)_
-- [ ] PantherKaiser _(character)_
-- [ ] Patent Enforcement _(tactic)_
-- [ ] Penetrate _(tactic)_
-- [ ] Pinch _(tactic)_
-- [ ] Poisoned Blade _(item)_
-- [ ] Prudent Thug _(character)_
-- [ ] Puddle of Goo _(character)_
-- [ ] Pugnacious Publicist _(character)_
-- [ ] Quipmajig _(character)_
-- [ ] Quotidian Disappearance _(tactic)_
-- [ ] Quotidian Virtuoso _(character)_
-- [ ] Randolph von Macovawitz Spitoon III, Ltd. _(character)_
-- [ ] Real Estate Auctioneer _(character)_
-- [ ] Really Big Barduse _(character)_
-- [ ] Recollection Bazaar _(location)_
-- [ ] Recreant Cad _(character)_
-- [ ] Reluctant Hiree _(character)_
-- [ ] Revivatate _(tactic)_
-- [ ] Ritual of the Knob & Pull _(tactic)_
-- [ ] Ritual of the Ominous Urn _(tactic)_
-- [ ] Rummaging Millipede _(character)_
-- [ ] Runic Field Enhancer _(item)_
-- [ ] Ruthless Platoon _(character)_
-- [ ] Sadistic Colonel _(character)_
-- [ ] Sagacious 31f _(character)_
-- [ ] Schproingmajig _(character)_
-- [ ] Scorching Runicution _(tactic)_
-- [ ] Senior Research Assistant _(character)_
-- [ ] Short Term Investment _(item)_
-- [ ] Skin Suit _(tactic)_
-- [ ] Smear Campaign _(item)_
-- [ ] Snooty Doorman _(character)_
-- [ ] Spackle _(item)_
-- [ ] Splattergun _(item)_
-- [ ] Subsection 5, Paragraph 12 _(tactic)_
-- [ ] Suicide Squad _(character)_
-- [ ] Swordchucks _(item)_
-- [ ] T Force 5 Megabrutemajig _(character)_
-- [ ] T Force 5 Megadudemajig _(character)_
-- [ ] T Force 5 Megascoutmajig _(character)_
-- [ ] Tad Disingenuous _(character)_
-- [ ] The Deranger _(item)_
-- [ ] The Garbageman _(character)_
-- [ ] The Whatever Device _(item)_
-- [ ] Throatstabber _(character)_
-- [ ] Thundering Nilpha _(character)_
-- [ ] Top-Secret Subterranean Goofarium _(location)_
-- [ ] Torrential Bleeder _(character)_
-- [ ] Toxic Cultivator _(character)_
-- [ ] Trip Wire _(tactic)_
-- [ ] Trophy Collector _(character)_
-- [ ] Two-Headed Coin _(item)_
-- [ ] Unexpected Boobysnake _(character)_
-- [ ] Unnatural Alteration _(tactic)_
-- [ ] Unrelenting Ridicule _(tactic)_
-- [ ] Venomous Sacspider _(character)_
-- [ ] Violating Anomaly _(character)_
-- [ ] Voidal Interference _(tactic)_
-- [ ] Wild Boars _(character)_
-- [ ] Writ of Reclamation _(tactic)_
-- [ ] Wyrmfang Deathskull _(character)_
+- [x] 0p3r4710n 1337 H4x0rz _(tactic)_
+- [x] 4p7 31f _(character)_
+- [x] Acuminous Gigantitect _(character)_
+- [x] Ambiguity Embiggener _(item)_
+- [x] Ameliorate _(tactic)_
+- [x] Anesthetizing Opulence _(tactic)_
+- [x] Anxious Oaf _(character)_
+- [x] Arcanology Recruitment Officer _(character)_
+- [x] Assimilation Center _(location)_
+- [x] Auction House _(location)_
+- [x] Barbaric Rifleman _(character)_
+- [x] Battle Surge _(tactic)_
+- [x] Blow Up _(tactic)_
+- [x] Brash Basher _(character)_
+- [x] Callow Liegeman _(character)_
+- [x] Cheats McGuillicutty _(character)_
+- [x] Clandestine Resort _(location)_
+- [x] Class Action Defender _(character)_
+- [x] Cloaked Creeper _(character)_
+- [x] Clockman Pickpocket _(character)_
+- [x] Club Mau Bouncer _(character)_
+- [x] Contriving Engineer _(character)_
+- [x] Counter Attack _(tactic)_
+- [x] Crooked Appraiser _(character)_
+- [x] Cute Cutpurse _(character)_
+- [x] Deadly Striker _(character)_
+- [x] Deceptive Muddler _(character)_
+- [x] Dethmürderblüdgeon, the Craghammer _(item)_
+- [x] Dimensional Rift _(location)_
+- [x] Discommodiousness _(tactic)_
+- [x] Distraction _(tactic)_
+- [x] Early Retirement _(tactic)_
+- [x] Eccentric Inquisition _(tactic)_
+- [x] Ectological Hazard Suit _(item)_
+- [x] Elbow Dropper _(character)_
+- [x] Eldridge Gosche _(character)_
+- [x] Elite Team Registration _(tactic)_
+- [x] Embezzling Bookkeeper _(character)_
+- [x] Emphatic Ecto-Manipulator _(character)_
+- [x] Entangle _(tactic)_
+- [x] Entry-Level Employee _(character)_
+- [x] Epic Turncoat Maneuver _(tactic)_
+- [x] Epiphany Ball _(item)_
+- [x] Escrow Office _(location)_
+- [x] Exploding Sock Puppet! _(tactic)_
+- [x] Explosive Fury _(tactic)_
+- [x] Extortify _(tactic)_
+- [x] Fat Pants _(item)_
+- [x] First Unified Market of Abstract Secure Theoreticals _(location)_
+- [x] Fleshripping Scenepuller _(character)_
+- [x] Fool's Gold _(item)_
+- [x] Forcible Depredator _(character)_
+- [x] Furtive Investor _(character)_
+- [x] Fwing! _(tactic)_
+- [x] Gang Leader _(character)_
+- [x] Gnat _(character)_
+- [x] Gore Engine _(character)_
+- [x] Guardforce Alpha Prime 31f _(character)_
+- [x] Guardforce Alpha Prime H4x0r _(character)_
+- [x] Guardforce Morphmajig _(character)_
+- [x] Hasty Sarcophyle _(character)_
+- [x] Heavy Plating _(item)_
+- [x] Hired Goons _(character)_
+- [x] Hollow Moose _(item)_
+- [x] Horsemajig of the Apocalypse - Death _(character)_
+- [x] Horsemajig of the Apocalypse - Famine _(character)_
+- [x] Horsemajig of the Apocalypse - Pestilence _(character)_
+- [x] Horsemajig of the Apocalypse - War _(character)_
+- [x] Hulking Vigilante _(character)_
+- [x] Impeccable Timing _(tactic)_
+- [x] Infatuated Armchair _(character)_
+- [x] Infuriator _(character)_
+- [x] Insect Appreciator _(character)_
+- [x] Inside Information _(item)_
+- [x] Kaiser Wave _(tactic)_
+- [x] Keen Stratagem _(tactic)_
+- [x] Key Man _(character)_
+- [x] Kinky Asp _(character)_
+- [x] Late Addition _(tactic)_
+- [x] LeoKaiser _(character)_
+- [x] Lieutenant General _(character)_
+- [x] Maladjustment _(tactic)_
+- [x] Market Oracle _(character)_
+- [x] Martial Artist _(character)_
+- [x] Martial Arts Master _(character)_
+- [x] Martial Arts Trainee _(character)_
+- [x] Master Thief _(character)_
+- [x] Mau Party _(tactic)_
+- [x] Mendacious Brigand _(character)_
+- [x] Mercenary's Creed _(item)_
+- [x] Micromajig Shipping Container _(character)_
+- [x] Misappropriation Machine _(item)_
+- [x] Moneychanger _(character)_
+- [x] Morale Officer _(character)_
+- [x] Motivational Speaker _(character)_
+- [x] Murderous Commander _(character)_
+- [x] Mutiny Grant _(tactic)_
+- [x] Needless Beating _(tactic)_
+- [x] Obsessive Compulsion _(tactic)_
+- [x] Odious Diva _(character)_
+- [x] Officious Obstructionist _(character)_
+- [x] Omnidirectional Patrolmajig _(character)_
+- [x] Orgy Den Smoke Out _(tactic)_
+- [x] Overinsured Figurehead _(character)_
+- [x] PantherKaiser _(character)_
+- [x] Patent Enforcement _(tactic)_
+- [x] Penetrate _(tactic)_
+- [x] Pinch _(tactic)_
+- [x] Poisoned Blade _(item)_
+- [x] Prudent Thug _(character)_
+- [x] Puddle of Goo _(character)_
+- [x] Pugnacious Publicist _(character)_
+- [x] Quipmajig _(character)_
+- [x] Quotidian Disappearance _(tactic)_
+- [x] Quotidian Virtuoso _(character)_
+- [x] Randolph von Macovawitz Spitoon III, Ltd. _(character)_
+- [x] Real Estate Auctioneer _(character)_
+- [x] Really Big Barduse _(character)_
+- [x] Recollection Bazaar _(location)_
+- [x] Recreant Cad _(character)_
+- [x] Reluctant Hiree _(character)_
+- [x] Revivatate _(tactic)_
+- [x] Ritual of the Knob & Pull _(tactic)_
+- [x] Ritual of the Ominous Urn _(tactic)_
+- [x] Rummaging Millipede _(character)_
+- [x] Runic Field Enhancer _(item)_
+- [x] Ruthless Platoon _(character)_
+- [x] Sadistic Colonel _(character)_
+- [x] Sagacious 31f _(character)_
+- [x] Schproingmajig _(character)_
+- [x] Scorching Runicution _(tactic)_
+- [x] Senior Research Assistant _(character)_
+- [x] Short Term Investment _(item)_
+- [x] Skin Suit _(tactic)_
+- [x] Smear Campaign _(item)_
+- [x] Snooty Doorman _(character)_
+- [x] Spackle _(item)_
+- [x] Splattergun _(item)_
+- [x] Subsection 5, Paragraph 12 _(tactic)_
+- [x] Suicide Squad _(character)_
+- [x] Swordchucks _(item)_
+- [x] T Force 5 Megabrutemajig _(character)_
+- [x] T Force 5 Megadudemajig _(character)_
+- [x] T Force 5 Megascoutmajig _(character)_
+- [x] Tad Disingenuous _(character)_
+- [x] The Deranger _(item)_
+- [x] The Garbageman _(character)_
+- [x] The Whatever Device _(item)_
+- [x] Throatstabber _(character)_
+- [x] Thundering Nilpha _(character)_
+- [x] Top-Secret Subterranean Goofarium _(location)_
+- [x] Torrential Bleeder _(character)_
+- [x] Toxic Cultivator _(character)_
+- [x] Trip Wire _(tactic)_
+- [x] Trophy Collector _(character)_
+- [x] Two-Headed Coin _(item)_
+- [x] Unexpected Boobysnake _(character)_
+- [x] Unnatural Alteration _(tactic)_
+- [x] Unrelenting Ridicule _(tactic)_
+- [x] Venomous Sacspider _(character)_
+- [x] Violating Anomaly _(character)_
+- [x] Voidal Interference _(tactic)_
+- [x] Wild Boars _(character)_
+- [x] Writ of Reclamation _(tactic)_
+- [x] Wyrmfang Deathskull _(character)_
 
 ## Holy Heist — 0 / 165
 

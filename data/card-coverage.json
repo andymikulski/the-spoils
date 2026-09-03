@@ -15288,7 +15288,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Established 'when the attached character inflicts damage' pattern (Form 37-Ohhhhh): grant the trigger to the host so sourceIsDamageSource fires and 'controller' = the host's controller. 'the character's controller's faction' = factionOf(controller). Attach to Character = any character (may be an opponent's).",
+      "notes": "Established 'when the attached character inflicts damage' pattern (Form 37-Ohhhhh): grant the trigger to the host so sourceIsDamageSource fires and 'controller' = the host's controller. 'the character's controller's faction' = factionOf(controller). Attach to Character = any character (may be an opponent's). Guard added (not isCard eventCard = factionOf(controller)) so the mirror damage does not re-trigger the granted damageDealt trigger and recurse forever.",
       "rulesAudited": true,
       "parityGaps": [],
       "fidelity": "full"
