@@ -512,6 +512,56 @@ export class SpoilsEngine {
     return card ? `${this.logPlayerName(card.ownerId)}'s faction` : "a faction";
   }
 
+  /** A battle-damage target as a log label — "Bob's faction" / a card name. */
+  private logBattleTargetName(
+    target: BattleDamageAssignment["target"]
+  ): string {
+    return target.type === "faction"
+      ? `${this.logPlayerName(target.playerId)}'s faction`
+      : this.logCardName(target.cardId);
+  }
+
+  /**
+   * How a response-stack item reads in the log — `"Ability Name" on Card`
+   * for an ability, the plain card name for a card. Source may have left
+   * play since the item was pushed (RULES.md §10), so look everything up
+   * defensively; the log must never abort resolution.
+   */
+  private logStackItemLabel(item: StackItem): string {
+    const sourceDef = this.state.cards[item.sourceId]
+      ? this.definitions[this.state.cards[item.sourceId].definitionId]
+      : undefined;
+    const abilityName = sourceDef?.behavior?.abilities?.find(
+      a => a.id === item.abilityId
+    )?.name;
+    return item.kind === "ability"
+      ? `${abilityName ? `"${abilityName}"` : "an ability"} on ${this.logCardName(item.sourceId)}`
+      : this.logCardName(item.sourceId);
+  }
+
+  /**
+   * The "… — <what for>" tail on a `priorityPassed` log line. A battle opens
+   * three response windows back to back and normal play opens one per stack
+   * item; without this a reader sees a wall of identical "X passes" lines
+   * and can't tell which window each decline belonged to.
+   */
+  private passContextSuffix(window: ResponseWindowState): string {
+    switch (window.kind) {
+      case "battleAfterAttackers":
+        return " — no response to the attack";
+      case "battleBeforeDamage":
+        return " — no response before battle damage is assigned";
+      case "battleAfterDamage":
+        return " — no response before battle damage is dealt";
+      case "endTurn":
+        return " — no response to the turn ending";
+      case "action": {
+        const top = this.responseStack[this.responseStack.length - 1];
+        return top ? ` — no response to ${this.logStackItemLabel(top)}` : "";
+      }
+    }
+  }
+
   /**
    * One-line rendering + category for an emitted event. Returns `undefined`
    * for events with no reader value (a degenerate same-zone self-move).
@@ -2725,11 +2775,12 @@ export class SpoilsEngine {
 
     // Log every decline so a game can be read end-to-end — a passed window
     // is often *why* nothing happened (the app auto-passes windows the
-    // player can't act in), and that needs to be visible in the log.
+    // player can't act in), and that needs to be visible in the log. Name
+    // what was on offer so three battle windows in a row don't read alike.
     this.recordLogMarker(
       "priorityPassed",
       "info",
-      `${this.logPlayerName(playerId)} passes`,
+      `${this.logPlayerName(playerId)} passes${this.passContextSuffix(window)}`,
       this.responseStack.length
     );
 
@@ -2839,22 +2890,10 @@ export class SpoilsEngine {
     assert(item, "Response stack is empty.");
 
     if (this.logEnabled) {
-      // Source may have left play since the item was pushed (RULES.md §10) —
-      // look everything up defensively; the log must never abort resolution.
-      const sourceDef = this.state.cards[item.sourceId]
-        ? this.definitions[this.state.cards[item.sourceId].definitionId]
-        : undefined;
-      const abilityName = sourceDef?.behavior?.abilities?.find(
-        a => a.id === item.abilityId
-      )?.name;
-      const what =
-        item.kind === "ability"
-          ? `${abilityName ? `"${abilityName}"` : "an ability"} on ${this.logCardName(item.sourceId)}`
-          : this.logCardName(item.sourceId);
       this.recordLogMarker(
         "stackItemResolving",
         "resolution",
-        `${what} resolves`,
+        `${this.logStackItemLabel(item)} resolves`,
         this.responseStack.length
       );
     }
@@ -4670,6 +4709,42 @@ export class SpoilsEngine {
     }
   }
 
+  /**
+   * Whether `selector` explicitly opts into faction cards. A faction is
+   * otherwise unpickable / unmatched (CR §202.9 / §402.9): either the
+   * selector names `type: "faction"` directly, or one of its `conditions`
+   * positively allows the faction type via a `cardTypeIs` check (the
+   * "character or faction" `or`-group pattern — Bask Bile, Boorish Boar,
+   * Prime Titan). A `cardTypeIs: "faction"` sitting under a `not` doesn't
+   * count — that's an exclusion, and the faction was already dropped.
+   */
+  private selectorAdmitsFaction(selector: CardSelector): boolean {
+    if (selector.type === "faction") return true;
+
+    const positivelyNamesFaction = (
+      condition: Condition,
+      negated: boolean
+    ): boolean => {
+      switch (condition.type) {
+        case "and":
+        case "or":
+          return condition.conditions.some(c =>
+            positivelyNamesFaction(c, negated)
+          );
+        case "not":
+          return positivelyNamesFaction(condition.condition, !negated);
+        case "cardTypeIs":
+          return !negated && condition.cardType === "faction";
+        default:
+          return false;
+      }
+    };
+
+    return (selector.conditions ?? []).some(c =>
+      positivelyNamesFaction(c, false)
+    );
+  }
+
   private matchesSelector(
     card: CardInstance,
     selector: CardSelector,
@@ -4732,6 +4807,21 @@ export class SpoilsEngine {
     }
 
     const definition = this.getDefinition(card.id);
+
+    // CR §202.9 / §402.9 (RULES.md §3.6): a faction is unaffected by any
+    // effect that doesn't name factions, and can never be *picked* unless
+    // the selector explicitly admits factions — `type: "faction"` ("pick
+    // an opponent", a faction-target damage modifier, "any one deck"), or
+    // a `cardTypeIs: "faction"` in its `conditions` ("pick a character or
+    // faction" — Bask Bile, Boorish Boar). Every generic selector — "pick
+    // a non-resource card", "pick a character", a bare "pick a card" —
+    // skips the faction card.
+    if (
+      this.hasCardType(card.id, "faction") &&
+      !this.selectorAdmitsFaction(selector)
+    ) {
+      return false;
+    }
 
     if (selector.faceDown !== undefined && card.faceDown !== selector.faceDown) {
       return false;
@@ -10623,6 +10713,19 @@ export class SpoilsEngine {
 
     battle.blockingParty = [...blockerIds];
 
+    // Declaring blockers is a player action and must show in the log. A
+    // non-empty party is covered by the `blockingPartyFormed` /
+    // `characterBlocked` events below; declaring *none* emits nothing, so
+    // record that decision explicitly here.
+    if (blockerIds.length === 0) {
+      this.recordLogMarker(
+        "blockersDeclared",
+        "battle",
+        `${this.logPlayerName(playerId)} declares no blockers`,
+        this.responseStack.length
+      );
+    }
+
     this.beginEventBatch();
 
     try {
@@ -10819,6 +10922,20 @@ export class SpoilsEngine {
       assert(
         sources.includes(assignment.sourceId),
         `Source '${assignment.sourceId}' is not part of the current speed group.`
+      );
+    }
+
+    // Assigning battle damage is a player action (or an auto-assign the
+    // consumer made on their behalf) — it decides the round's outcome
+    // before the `battleAfterDamage` window, so it has to be in the log.
+    for (const assignment of assignments) {
+      this.recordLogMarker(
+        "battleDamageAssigned",
+        "battle",
+        `${this.logCardName(assignment.sourceId)} assigns ${assignment.amount} battle damage to ${this.logBattleTargetName(
+          assignment.target
+        )}`,
+        this.responseStack.length
       );
     }
 

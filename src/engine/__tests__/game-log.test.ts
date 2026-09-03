@@ -1,6 +1,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  autoResolveBattle,
   buildGame,
   character,
   P1,
@@ -103,7 +104,8 @@ describe("game log — a running, toggleable record of everything that happens",
     const passed = log.find(e => e.marker === "priorityPassed");
     assert.ok(passed, "the pass was logged");
     assert.equal(passed.kind, "info");
-    assert.equal(passed.message, "Bob passes");
+    // the decline names what was on offer, so consecutive passes don't read alike
+    assert.equal(passed.message, "Bob passes — no response to Spark");
     // marker-backed, like the other structural entries
     assert.equal(Number(!!passed.event) + Number(!!passed.marker), 1);
 
@@ -179,6 +181,55 @@ describe("game log — a running, toggleable record of everything that happens",
     // sinceSeq tails the log
     const tail = engine.formatLog({ sinceSeq: engine.getLog().length - 1 }).split("\n");
     assert.equal(tail.length, 1);
+  });
+
+  test("every battle-flow player action is logged — each pass names its window, blocks and damage assignments show", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Raider", strength: 3 }), owner: P1 }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine); // §608.1c window: P1 then P2 pass
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
+    autoResolveBattle(engine); // §609.1a + §609.1e windows, damage assignment
+
+    const log = engine.getLog();
+
+    // An unblocked one-attacker battle opens three two-sided response
+    // windows; each decline says which one it was, so six "passes" lines
+    // don't look like a stuck loop.
+    const passes = log.filter(e => e.marker === "priorityPassed").map(e => e.message);
+    assert.deepEqual(passes, [
+      "Alice passes — no response to the attack",
+      "Bob passes — no response to the attack",
+      "Alice passes — no response before battle damage is assigned",
+      "Bob passes — no response before battle damage is assigned",
+      "Alice passes — no response before battle damage is dealt",
+      "Bob passes — no response before battle damage is dealt"
+    ]);
+
+    const blockers = log.find(e => e.marker === "blockersDeclared");
+    assert.ok(blockers, "the block declaration was logged");
+    assert.equal(blockers.kind, "battle");
+    assert.equal(blockers.message, "Bob declares no blockers");
+
+    const assigned = log.find(e => e.marker === "battleDamageAssigned");
+    assert.ok(assigned, "the damage assignment was logged");
+    assert.equal(assigned.kind, "battle");
+    assert.equal(assigned.message, "Raider assigns 3 battle damage to Bob's faction");
+
+    // still marker-backed and gap-free
+    log.forEach((entry, i) => {
+      assert.equal(entry.seq, i + 1);
+      assert.equal(Number(!!entry.event) + Number(!!entry.marker), 1);
+    });
   });
 
   test("the log is plain serializable data — it round-trips through JSON", () => {

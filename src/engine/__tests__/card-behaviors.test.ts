@@ -1067,6 +1067,89 @@ describe("card behavior: Quotidian Ejector (removeCounter as a Cost)", () => {
       })
     );
   });
+
+});
+
+// CR §202.9 / §402.9 (RULES.md §3.6): a faction card is never a legal pick
+// for a generic selector; it only becomes one when the selector explicitly
+// admits factions (`type: "faction"`, or a positive `cardTypeIs: "faction"`
+// in `conditions` — the "pick a character or faction" pattern used by Bask
+// Bile / Boorish Boar / Prime Titan).
+describe("faction cards are unpickable unless the selector names factions", () => {
+  test("a generic 'pick a non-resource card' selector cannot reach a faction", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "ejector", def: quotidianEjector(), owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("ejector") });
+    resolvePendingResponses(engine);
+
+    for (const player of [P1, P2]) {
+      assert.throws(
+        () =>
+          engine.perform({
+            type: "activateAbility",
+            playerId: P1,
+            cardId: id("ejector"),
+            abilityId: "quotidian-ejector-eject",
+            selected: { target: [engine.state.players[player].factionId!] }
+          }),
+        /Illegal target/
+      );
+    }
+  });
+
+  test("a 'character or faction' selector still admits the faction card", () => {
+    const bileLike = character({
+      name: "Bile-like",
+      behavior: {
+        abilities: [
+          {
+            id: "hemorage",
+            type: "activated",
+            targets: [
+              {
+                id: "t",
+                selector: {
+                  zone: "play",
+                  conditions: [
+                    {
+                      type: "or",
+                      conditions: [
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "character" },
+                        { type: "cardTypeIs", target: { type: "selected", id: "__candidate" }, cardType: "faction" }
+                      ]
+                    }
+                  ]
+                },
+                count: 1
+              }
+            ],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [{ key: "bile", def: bileLike, owner: P1 }]
+    });
+
+    const targetFaction = engine.state.players[P2].factionId!;
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("bile"),
+      abilityId: "hemorage",
+      selected: { t: [targetFaction] }
+    });
+    resolvePendingResponses(engine);
+
+    // CR §408.3: damage to a faction is taken as influence loss.
+    assert.equal(engine.state.players[P2].influence, before - 3);
+  });
 });
 
 // `sourceIsDamageSource` — "when this card deals damage to a faction" (e.g.

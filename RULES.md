@@ -201,7 +201,15 @@ carry activated abilities, usable any time you could use an ability
   equal amount of influence (see §8 for how damage modification interacts).
 - **(CR §202.9 / §402.9)** A faction is unaffected by effects that don't
   name factions, and cannot be picked unless an effect explicitly picks a
-  faction.
+  faction. **(engine-derived)** `matchesSelector` drops any card with the
+  `faction` type unless the `CardSelector` explicitly admits factions —
+  either `type: "faction"` ("pick an opponent", "any one deck", a
+  faction-target damage modifier) or a positive `cardTypeIs: "faction"` in
+  its `conditions` (the "character or faction" `or`-group — Bask Bile,
+  Boorish Boar). So a generic pick ("a non-resource card", "a character",
+  a bare "a card") never reaches the faction card, and neither do the
+  aggregate `count` / `forEach` / aura selectors built on the same
+  matcher.
 
 **(engine-derived)** The faction card's mechanical rules text lives in
 `FactionDefinition`:
@@ -1329,12 +1337,18 @@ of the Devoured Emperor additions")**
   changes nothing else — for a renderer / event log.
 - **`GameState.gameLog` (`engine-derived`).** A running, ordered list of
   `GameLogEntry` — every emitted event plus `responseWindowOpened` /
-  `stackItemResolving` / `triggerResolving` markers — each stamped with the
-  response-stack `depth` it happened at, so a renderer can indent responses
-  (and responses to responses) under what they answer and show the LIFO
-  unwind. Purely informational; no rule reads it. `emit()` appends unless
-  `SpoilsEngine.setLogEnabled(false)`; `getLog()` / `formatLog()` read it.
-  Excluded from the `canPayCosts` affordability-probe clone.
+  `priorityPassed` / `stackItemResolving` / `triggerResolving` /
+  `blockersDeclared` / `battleDamageAssigned` markers — each stamped with
+  the response-stack `depth` it happened at, so a renderer can indent
+  responses (and responses to responses) under what they answer and show
+  the LIFO unwind. Every player action lands a line: a `priorityPassed`
+  names what the decline was against (the attack, a pending stack item, a
+  named battle-damage step) so the three back-to-back battle windows don't
+  read as one stuck loop; declaring an empty blocking party and each
+  battle-damage assignment get their own marker. Purely informational; no
+  rule reads it. `emit()` appends unless `SpoilsEngine.setLogEnabled(false)`;
+  `getLog()` / `formatLog()` read it. Excluded from the `canPayCosts`
+  affordability-probe clone.
 - **`revealFromTopUntil` effect (`card-verified`).** Turn cards over from
   the top of a deck until one satisfies `match` or the deck is exhausted;
   bind the match to `bindAs` and run `onMatch`; `rest` shuffles / bottoms /

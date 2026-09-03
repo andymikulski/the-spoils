@@ -64,15 +64,21 @@ export interface GameLogEntry {
 
   /**
    * Set instead of `event` for the structural markers that aren't game
-   * events but matter for reading a response chain:
+   * events but matter for reading a response chain or a battle:
    * - `responseWindowOpened` — the opponent has been handed a chance to respond.
-   * - `priorityPassed` — a player declined to respond / passed priority.
+   * - `priorityPassed` — a player declined to respond / passed priority; the
+   *   message names what was on offer (the attack, a pending stack item, a
+   *   battle-damage step) so consecutive declines don't read alike.
    * - `stackItemResolving` — a card / ability on the response stack is now resolving.
    * - `triggerResolving` — a triggered ability is now resolving.
+   * - `blockersDeclared` — the defender declared their blocking party (or none).
+   * - `battleDamageAssigned` — a battle character assigned its damage to a target.
    */
   marker?:
     | "responseWindowOpened"
     | "priorityPassed"
     | "stackItemResolving"
-    | "triggerResolving";
+    | "triggerResolving"
+    | "blockersDeclared"
+    | "battleDamageAssigned";
 }
