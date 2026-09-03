@@ -609,7 +609,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "resource"
+                              "cardType": "resource",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -969,7 +973,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "resource"
+                        "cardType": "resource",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -1288,7 +1296,10 @@
               "effects": [
                 {
                   "type": "moveCard",
-                  "target": "__evt",
+                  "target": {
+                    "type": "selected",
+                    "id": "q"
+                  },
                   "to": "hand"
                 },
                 {
@@ -2028,7 +2039,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "resource"
+                      "cardType": "resource",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -2873,7 +2888,10 @@
                       "effects": [
                         {
                           "type": "moveCard",
-                          "target": "__evt",
+                          "target": {
+                            "type": "selected",
+                            "id": "q"
+                          },
                           "to": "hand"
                         },
                         {
@@ -5609,7 +5627,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -5639,7 +5661,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "tactic"
+                              "cardType": "tactic",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -6532,7 +6558,11 @@
                 "conditions": [
                   {
                     "type": "hasKeyword",
-                    "keyword": "covert"
+                    "keyword": "covert",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    }
                   }
                 ]
               },
@@ -7520,8 +7550,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "toks",
-              "disposition": "destroy"
+              "disposition": "destroy",
+              "declarationId": "toks"
             }
           ],
           "effects": [
@@ -9613,7 +9643,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "tactic"
+                        "cardType": "tactic",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -10193,8 +10227,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "cs",
-              "disposition": "removeFromGame"
+              "disposition": "removeFromGame",
+              "declarationId": "cs"
             }
           ],
           "effects": [
@@ -10306,7 +10340,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -11809,11 +11847,19 @@
                     "conditions": [
                       {
                         "type": "cardTypeIs",
-                        "cardType": "character"
+                        "cardType": "character",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       },
                       {
                         "type": "cardTypeIs",
-                        "cardType": "faction"
+                        "cardType": "faction",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     ]
                   }
@@ -26034,7 +26080,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "resource"
+                              "cardType": "resource",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -26949,7 +26999,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "resource"
+                        "cardType": "resource",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -28143,7 +28197,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "resource"
+                      "cardType": "resource",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -29377,7 +29435,10 @@
                       "effects": [
                         {
                           "type": "moveCard",
-                          "target": "__evt",
+                          "target": {
+                            "type": "selected",
+                            "id": "q"
+                          },
                           "to": "hand"
                         },
                         {
@@ -33215,7 +33276,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -33245,7 +33310,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "tactic"
+                              "cardType": "tactic",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -35764,8 +35833,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "toks",
-              "disposition": "destroy"
+              "disposition": "destroy",
+              "declarationId": "toks"
             }
           ],
           "effects": [
@@ -38895,7 +38964,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "tactic"
+                        "cardType": "tactic",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -39839,8 +39912,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "cs",
-              "disposition": "removeFromGame"
+              "disposition": "removeFromGame",
+              "declarationId": "cs"
             }
           ],
           "effects": [
@@ -40213,7 +40286,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -41567,11 +41644,19 @@
                     "conditions": [
                       {
                         "type": "cardTypeIs",
-                        "cardType": "character"
+                        "cardType": "character",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       },
                       {
                         "type": "cardTypeIs",
-                        "cardType": "faction"
+                        "cardType": "faction",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     ]
                   }
@@ -57866,7 +57951,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "resource"
+                              "cardType": "resource",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -58100,7 +58189,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "resource"
+                        "cardType": "resource",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -58363,7 +58456,10 @@
               "effects": [
                 {
                   "type": "moveCard",
-                  "target": "__evt",
+                  "target": {
+                    "type": "selected",
+                    "id": "q"
+                  },
                   "to": "hand"
                 },
                 {
@@ -59103,7 +59199,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "resource"
+                      "cardType": "resource",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -59926,7 +60026,10 @@
                       "effects": [
                         {
                           "type": "moveCard",
-                          "target": "__evt",
+                          "target": {
+                            "type": "selected",
+                            "id": "q"
+                          },
                           "to": "hand"
                         },
                         {
@@ -62410,7 +62513,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -62440,7 +62547,11 @@
                             "type": "not",
                             "condition": {
                               "type": "cardTypeIs",
-                              "cardType": "tactic"
+                              "cardType": "tactic",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
                             }
                           }
                         ]
@@ -63130,7 +63241,11 @@
                 "conditions": [
                   {
                     "type": "hasKeyword",
-                    "keyword": "covert"
+                    "keyword": "covert",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    }
                   }
                 ]
               },
@@ -64050,8 +64165,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "toks",
-              "disposition": "destroy"
+              "disposition": "destroy",
+              "declarationId": "toks"
             }
           ],
           "effects": [
@@ -65805,7 +65920,11 @@
                       "type": "not",
                       "condition": {
                         "type": "cardTypeIs",
-                        "cardType": "tactic"
+                        "cardType": "tactic",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     }
                   ]
@@ -66385,8 +66504,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "cs",
-              "disposition": "removeFromGame"
+              "disposition": "removeFromGame",
+              "declarationId": "cs"
             }
           ],
           "effects": [
@@ -66498,7 +66617,11 @@
                     "type": "not",
                     "condition": {
                       "type": "cardTypeIs",
-                      "cardType": "tactic"
+                      "cardType": "tactic",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
                     }
                   }
                 ]
@@ -68001,11 +68124,19 @@
                     "conditions": [
                       {
                         "type": "cardTypeIs",
-                        "cardType": "character"
+                        "cardType": "character",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       },
                       {
                         "type": "cardTypeIs",
-                        "cardType": "faction"
+                        "cardType": "faction",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
                       }
                     ]
                   }
@@ -152931,8 +153062,8 @@
           "costs": [
             {
               "type": "sacrificeSelected",
-              "id": "rm",
-              "disposition": "removeFromGame"
+              "disposition": "removeFromGame",
+              "declarationId": "rm"
             }
           ],
           "targets": [

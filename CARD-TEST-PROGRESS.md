@@ -9,7 +9,7 @@ asserts the concrete outcome **and** target legality. See `per-card/_harness.ts`
 
 A card is counted **done** when its set file has a `describe()` naming it.
 
-**Overall: 758 / 2101 cards.**
+**Overall: 964 / 2101 cards.**
 
 | Set | Cards | Done | Remaining | % |
 |---|--:|--:|--:|--:|
@@ -19,7 +19,7 @@ A card is counted **done** when its set file has a `describe()` naming it.
 | 1st Edition Part 2 | 165 | 165 | 0 | 100% |
 | Holy Heist | 165 | 150 | 15 | 91% |
 | Ungodly Mess | 167 | 160 | 7 | 96% |
-| Open Beta | 206 | 0 | 206 | 0% |
+| Open Beta | 206 | 206 | 0 | 100% |
 | 1st Edition | 226 | 0 | 226 | 0% |
 | Seed | 231 | 0 | 231 | 0% |
 | 2nd Edition | 300 | 0 | 300 | 0% |
@@ -835,216 +835,216 @@ Test file: `src/engine/__tests__/per-card/ungodly-mess.test.ts`
 - [x] Zenobian Mechanics Explained _(tactic)_
 - [x] Zigalburgonglgr, the Stolen God _(character)_
 
-## Open Beta — 0 / 206
+## Open Beta — 206 / 206
 
 Test file: `src/engine/__tests__/per-card/open-beta.test.ts`
 
-- [ ] 12 Man Brunch of Doom _(tactic)_
-- [ ] 1337! _(tactic)_
-- [ ] 3p1ph4ny 31f _(character)_
-- [ ] 633fy 31f _(character)_
-- [ ] 700160x 31f _(character)_
-- [ ] Adroit Marauder _(character)_
-- [ ] Air Travel _(tactic)_
-- [ ] All-Nighter _(tactic)_
-- [ ] Ambuscade _(tactic)_
-- [ ] Amortized Straw Man _(character)_
-- [ ] Arcana Department _(location)_
-- [ ] Arcana Experiment _(tactic)_
-- [ ] Arcanist's Almanac _(item)_
-- [ ] Arena Quarter-Finalist _(character)_
-- [ ] Armored Keep _(location)_
-- [ ] Ashes of Zenobia _(item)_
-- [ ] Basic Node _(character)_
-- [ ] Bask Bile _(tactic)_
-- [ ] Beatrix Winterbottom _(character)_
-- [ ] Befuddling Beggar _(character)_
-- [ ] Berserker Corps _(character)_
-- [ ] Bipolar Sarcophyle _(character)_
-- [ ] Blanching Butcher _(character)_
-- [ ] Bloodcurdling Bulldozer _(character)_
-- [ ] Brummagem Jewelry _(item)_
-- [ ] Cannon Squadron _(character)_
-- [ ] Card Counter _(character)_
-- [ ] Cash Out _(tactic)_
-- [ ] Catastrophic Betrayal _(tactic)_
-- [ ] Compulsive Creeper _(character)_
-- [ ] Concealed Goon _(character)_
-- [ ] Costly Filcher _(character)_
-- [ ] Crazed Deputy _(character)_
-- [ ] Creaky Old Swordsman _(character)_
-- [ ] Dandy Day-Trader _(character)_
-- [ ] Deception _(resource)_
-- [ ] Defenestrate _(tactic)_
-- [ ] Defense Attorney _(character)_
-- [ ] Degenerate Molestation _(tactic)_
-- [ ] Devastating Mockery _(tactic)_
-- [ ] Dock Sentinel _(character)_
-- [ ] Downsizing _(tactic)_
-- [ ] Dragon Catheter _(item)_
-- [ ] Dragon Juice _(tactic)_
-- [ ] Dragon Rider _(character)_
-- [ ] Dragon Tank _(character)_
-- [ ] Dragon's Anthem _(tactic)_
-- [ ] Dragon's Quarters _(location)_
-- [ ] Dragon's Strategy _(tactic)_
-- [ ] Ecto-Distillation _(tactic)_
-- [ ] Elitism _(resource)_
-- [ ] Emergency Obfuscation _(item)_
-- [ ] Entrancing Harlot _(character)_
-- [ ] Epiphanal Mechanic _(character)_
-- [ ] Erotic Assassin _(character)_
-- [ ] Executive Poaching _(tactic)_
-- [ ] Eye Gouge _(tactic)_
-- [ ] Ferrous Ferret _(character)_
-- [ ] Flaming Barduse _(character)_
-- [ ] Forced Recruitment _(tactic)_
-- [ ] Forget _(tactic)_
-- [ ] Free Trade Agreement _(item)_
-- [ ] Ghostly Auditor _(character)_
-- [ ] Gold Summit _(location)_
-- [ ] Grand Theft All _(tactic)_
-- [ ] Greed _(resource)_
-- [ ] Gruesome Trophies _(item)_
-- [ ] Hammer Smash _(tactic)_
-- [ ] Hangdog Alley _(location)_
-- [ ] Headlong Purloiner _(character)_
-- [ ] Heirloom Incinerator _(character)_
-- [ ] Heist Planner _(character)_
-- [ ] Hidden Sandwich _(item)_
-- [ ] Hidden Sniper _(character)_
-- [ ] Hub Node _(character)_
-- [ ] Humiliating Torture Apparatus _(item)_
-- [ ] Hyperphagic Sarcophyle _(character)_
-- [ ] Hypnotic Plafond _(location)_
-- [ ] I Got the Gear! _(tactic)_
-- [ ] Impulsive Abductress _(character)_
-- [ ] Incriminating Photograph _(item)_
-- [ ] Index of Natural Forces _(item)_
-- [ ] Insidious Ecto-Manipulator _(character)_
-- [ ] Intermittently Sneaky Lawyer _(character)_
-- [ ] Invent _(tactic)_
-- [ ] Irresistible Bribe _(tactic)_
-- [ ] Jackmove _(tactic)_
-- [ ] Jacque's Trap _(item)_
-- [ ] Jo Ciendeilio _(character)_
-- [ ] Jumping Screamspider _(character)_
-- [ ] Kettinger _(item)_
-- [ ] Knobby Stave _(item)_
-- [ ] Legacy Warmachine _(character)_
-- [ ] Limited Liability _(tactic)_
-- [ ] Lugubrian Octopod _(character)_
-- [ ] Lugubrious Finger Trap _(item)_
-- [ ] Lugubrious Node _(item)_
-- [ ] Luteoderm Armor _(item)_
-- [ ] Luteoderm Goliath _(item)_
-- [ ] Luteoderm Prototype _(item)_
-- [ ] Mafia Lawyer _(character)_
-- [ ] Magic Vault _(item)_
-- [ ] Manifold Quasi-Modal Steamwork _(character)_
-- [ ] Master Ritualist _(character)_
-- [ ] Master Scavenger _(character)_
-- [ ] Mau “Consultant” _(character)_
-- [ ] Mau Tough _(character)_
-- [ ] Meager Research _(tactic)_
-- [ ] Mephitic Nullifier _(character)_
-- [ ] Micromajig Avalanche _(tactic)_
-- [ ] Micromajig Factory _(location)_
-- [ ] Micromajig Maker _(character)_
-- [ ] Micromajig Master _(character)_
-- [ ] Napiform Protuberance _(item)_
-- [ ] Nasty Butler _(character)_
-- [ ] Nearby Serpent _(character)_
-- [ ] Necromorph Bureaucrat _(character)_
-- [ ] Obsession _(resource)_
-- [ ] Ominous Oozling _(character)_
-- [ ] One-Legged Hopping Pogo-Bear _(item)_
-- [ ] Oversoon Lightfoot _(character)_
-- [ ] Paralegal Prodigy _(character)_
-- [ ] Pettifogger _(character)_
-- [ ] Pillaging Pirate _(character)_
-- [ ] Plodding Brute _(character)_
-- [ ] Pluck _(character)_
-- [ ] Postmortem Debenture _(tactic)_
-- [ ] Precise Sabotage _(tactic)_
-- [ ] Pyramid Scheme _(tactic)_
-- [ ] Quotidian Assassination _(tactic)_
-- [ ] Quotidian Ejector _(character)_
-- [ ] Quotidian Misfire _(tactic)_
-- [ ] Rabid Sarume _(character)_
-- [ ] Rage _(resource)_
-- [ ] Raging Bask _(character)_
-- [ ] Rapine _(tactic)_
-- [ ] Rate Hike _(tactic)_
-- [ ] Ravenous Wolf _(character)_
-- [ ] Reckless Challenger _(character)_
-- [ ] Recondite Hunter _(character)_
-- [ ] Red Raven _(character)_
-- [ ] Red Tape _(tactic)_
-- [ ] Remember _(tactic)_
-- [ ] Repo Man _(character)_
-- [ ] Research Assistant _(character)_
-- [ ] Research Investment _(tactic)_
-- [ ] Resurrection Technician _(character)_
-- [ ] Reveille Tower _(location)_
-- [ ] Ritual of the Screaming Cheese _(tactic)_
-- [ ] Ritual of the Shattering Teeth _(tactic)_
-- [ ] Rocket Boots _(item)_
-- [ ] Rudimentary Lathe _(item)_
-- [ ] Rudo Mangod _(character)_
-- [ ] Runic Cannon _(item)_
-- [ ] Runic Circuitry _(item)_
-- [ ] Sarcophyle Matriculation _(tactic)_
-- [ ] Scavengemajig _(character)_
-- [ ] Scout _(character)_
-- [ ] Scrag _(tactic)_
-- [ ] Secret Handshake _(tactic)_
-- [ ] Securitymajig _(character)_
-- [ ] Selective Gluttony _(tactic)_
-- [ ] Servile Centipede _(character)_
-- [ ] Shocking Reappearance _(tactic)_
-- [ ] Shriever Attack _(tactic)_
-- [ ] Siege Machine _(item)_
-- [ ] Skewer _(tactic)_
-- [ ] Skilled Negotiator _(character)_
-- [ ] Skimping Ecto-Manipulator _(character)_
-- [ ] Sleeping Guard _(character)_
-- [ ] Slingerang _(item)_
-- [ ] Snake Eyes _(tactic)_
-- [ ] Sneaking Spitspider _(character)_
-- [ ] Spastic Tentacles _(character)_
-- [ ] Spontaneous Displacement _(tactic)_
-- [ ] Stalwart Soldier _(character)_
-- [ ] Stolen Inspiration _(tactic)_
-- [ ] Strength In Numbers _(tactic)_
-- [ ] Sudden Osprey _(character)_
-- [ ] Summary Judgment _(tactic)_
-- [ ] Swarm of Gnats _(character)_
-- [ ] Swashbuckler _(character)_
-- [ ] Tactician Vacation _(tactic)_
-- [ ] Target Practice _(tactic)_
-- [ ] Tax Attorney _(character)_
-- [ ] The Billionaire _(character)_
-- [ ] The Ministry of Other Smaller Ministries _(location)_
-- [ ] The Tournament Faction _(faction)_
-- [ ] Thief Doyen _(character)_
-- [ ] TigerKaiser _(character)_
-- [ ] Towering Researchmajig _(character)_
-- [ ] Tremor Engine _(item)_
-- [ ] Tri-Pole Magnet _(item)_
-- [ ] Union Leader _(character)_
-- [ ] Vander Malagut _(character)_
-- [ ] Very Big Hat of Invisibility _(item)_
-- [ ] Voidal Nullification Chamber _(location)_
-- [ ] Voidal Observatory _(location)_
-- [ ] Voidal Perversion _(tactic)_
-- [ ] Voidal Poisoning _(tactic)_
-- [ ] Voidal Replication _(tactic)_
-- [ ] Voidal Webbing _(tactic)_
-- [ ] Warehouse Raid _(tactic)_
-- [ ] Warrior Prodigy _(character)_
-- [ ] Yoink! _(tactic)_
-- [ ] Zenobia's Spyglass _(item)_
+- [x] 12 Man Brunch of Doom _(tactic)_
+- [x] 1337! _(tactic)_
+- [x] 3p1ph4ny 31f _(character)_
+- [x] 633fy 31f _(character)_
+- [x] 700160x 31f _(character)_
+- [x] Adroit Marauder _(character)_
+- [x] Air Travel _(tactic)_
+- [x] All-Nighter _(tactic)_
+- [x] Ambuscade _(tactic)_
+- [x] Amortized Straw Man _(character)_
+- [x] Arcana Department _(location)_
+- [x] Arcana Experiment _(tactic)_
+- [x] Arcanist's Almanac _(item)_
+- [x] Arena Quarter-Finalist _(character)_
+- [x] Armored Keep _(location)_
+- [x] Ashes of Zenobia _(item)_
+- [x] Basic Node _(character)_
+- [x] Bask Bile _(tactic)_
+- [x] Beatrix Winterbottom _(character)_
+- [x] Befuddling Beggar _(character)_
+- [x] Berserker Corps _(character)_
+- [x] Bipolar Sarcophyle _(character)_
+- [x] Blanching Butcher _(character)_
+- [x] Bloodcurdling Bulldozer _(character)_
+- [x] Brummagem Jewelry _(item)_
+- [x] Cannon Squadron _(character)_
+- [x] Card Counter _(character)_
+- [x] Cash Out _(tactic)_
+- [x] Catastrophic Betrayal _(tactic)_
+- [x] Compulsive Creeper _(character)_
+- [x] Concealed Goon _(character)_
+- [x] Costly Filcher _(character)_
+- [x] Crazed Deputy _(character)_
+- [x] Creaky Old Swordsman _(character)_
+- [x] Dandy Day-Trader _(character)_
+- [x] Deception _(resource)_
+- [x] Defenestrate _(tactic)_
+- [x] Defense Attorney _(character)_
+- [x] Degenerate Molestation _(tactic)_
+- [x] Devastating Mockery _(tactic)_
+- [x] Dock Sentinel _(character)_
+- [x] Downsizing _(tactic)_
+- [x] Dragon Catheter _(item)_
+- [x] Dragon Juice _(tactic)_
+- [x] Dragon Rider _(character)_
+- [x] Dragon Tank _(character)_
+- [x] Dragon's Anthem _(tactic)_
+- [x] Dragon's Quarters _(location)_
+- [x] Dragon's Strategy _(tactic)_
+- [x] Ecto-Distillation _(tactic)_
+- [x] Elitism _(resource)_
+- [x] Emergency Obfuscation _(item)_
+- [x] Entrancing Harlot _(character)_
+- [x] Epiphanal Mechanic _(character)_
+- [x] Erotic Assassin _(character)_
+- [x] Executive Poaching _(tactic)_
+- [x] Eye Gouge _(tactic)_
+- [x] Ferrous Ferret _(character)_
+- [x] Flaming Barduse _(character)_
+- [x] Forced Recruitment _(tactic)_
+- [x] Forget _(tactic)_
+- [x] Free Trade Agreement _(item)_
+- [x] Ghostly Auditor _(character)_
+- [x] Gold Summit _(location)_
+- [x] Grand Theft All _(tactic)_
+- [x] Greed _(resource)_
+- [x] Gruesome Trophies _(item)_
+- [x] Hammer Smash _(tactic)_
+- [x] Hangdog Alley _(location)_
+- [x] Headlong Purloiner _(character)_
+- [x] Heirloom Incinerator _(character)_
+- [x] Heist Planner _(character)_
+- [x] Hidden Sandwich _(item)_
+- [x] Hidden Sniper _(character)_
+- [x] Hub Node _(character)_
+- [x] Humiliating Torture Apparatus _(item)_
+- [x] Hyperphagic Sarcophyle _(character)_
+- [x] Hypnotic Plafond _(location)_
+- [x] I Got the Gear! _(tactic)_
+- [x] Impulsive Abductress _(character)_
+- [x] Incriminating Photograph _(item)_
+- [x] Index of Natural Forces _(item)_
+- [x] Insidious Ecto-Manipulator _(character)_
+- [x] Intermittently Sneaky Lawyer _(character)_
+- [x] Invent _(tactic)_
+- [x] Irresistible Bribe _(tactic)_
+- [x] Jackmove _(tactic)_
+- [x] Jacque's Trap _(item)_
+- [x] Jo Ciendeilio _(character)_
+- [x] Jumping Screamspider _(character)_
+- [x] Kettinger _(item)_
+- [x] Knobby Stave _(item)_
+- [x] Legacy Warmachine _(character)_
+- [x] Limited Liability _(tactic)_
+- [x] Lugubrian Octopod _(character)_
+- [x] Lugubrious Finger Trap _(item)_
+- [x] Lugubrious Node _(item)_
+- [x] Luteoderm Armor _(item)_
+- [x] Luteoderm Goliath _(item)_
+- [x] Luteoderm Prototype _(item)_
+- [x] Mafia Lawyer _(character)_
+- [x] Magic Vault _(item)_
+- [x] Manifold Quasi-Modal Steamwork _(character)_
+- [x] Master Ritualist _(character)_
+- [x] Master Scavenger _(character)_
+- [x] Mau “Consultant” _(character)_
+- [x] Mau Tough _(character)_
+- [x] Meager Research _(tactic)_
+- [x] Mephitic Nullifier _(character)_
+- [x] Micromajig Avalanche _(tactic)_
+- [x] Micromajig Factory _(location)_
+- [x] Micromajig Maker _(character)_
+- [x] Micromajig Master _(character)_
+- [x] Napiform Protuberance _(item)_
+- [x] Nasty Butler _(character)_
+- [x] Nearby Serpent _(character)_
+- [x] Necromorph Bureaucrat _(character)_
+- [x] Obsession _(resource)_
+- [x] Ominous Oozling _(character)_
+- [x] One-Legged Hopping Pogo-Bear _(item)_
+- [x] Oversoon Lightfoot _(character)_
+- [x] Paralegal Prodigy _(character)_
+- [x] Pettifogger _(character)_
+- [x] Pillaging Pirate _(character)_
+- [x] Plodding Brute _(character)_
+- [x] Pluck _(character)_
+- [x] Postmortem Debenture _(tactic)_
+- [x] Precise Sabotage _(tactic)_
+- [x] Pyramid Scheme _(tactic)_
+- [x] Quotidian Assassination _(tactic)_
+- [x] Quotidian Ejector _(character)_
+- [x] Quotidian Misfire _(tactic)_
+- [x] Rabid Sarume _(character)_
+- [x] Rage _(resource)_
+- [x] Raging Bask _(character)_
+- [x] Rapine _(tactic)_
+- [x] Rate Hike _(tactic)_
+- [x] Ravenous Wolf _(character)_
+- [x] Reckless Challenger _(character)_
+- [x] Recondite Hunter _(character)_
+- [x] Red Raven _(character)_
+- [x] Red Tape _(tactic)_
+- [x] Remember _(tactic)_
+- [x] Repo Man _(character)_
+- [x] Research Assistant _(character)_
+- [x] Research Investment _(tactic)_
+- [x] Resurrection Technician _(character)_
+- [x] Reveille Tower _(location)_
+- [x] Ritual of the Screaming Cheese _(tactic)_
+- [x] Ritual of the Shattering Teeth _(tactic)_
+- [x] Rocket Boots _(item)_
+- [x] Rudimentary Lathe _(item)_
+- [x] Rudo Mangod _(character)_
+- [x] Runic Cannon _(item)_
+- [x] Runic Circuitry _(item)_
+- [x] Sarcophyle Matriculation _(tactic)_
+- [x] Scavengemajig _(character)_
+- [x] Scout _(character)_
+- [x] Scrag _(tactic)_
+- [x] Secret Handshake _(tactic)_
+- [x] Securitymajig _(character)_
+- [x] Selective Gluttony _(tactic)_
+- [x] Servile Centipede _(character)_
+- [x] Shocking Reappearance _(tactic)_
+- [x] Shriever Attack _(tactic)_
+- [x] Siege Machine _(item)_
+- [x] Skewer _(tactic)_
+- [x] Skilled Negotiator _(character)_
+- [x] Skimping Ecto-Manipulator _(character)_
+- [x] Sleeping Guard _(character)_
+- [x] Slingerang _(item)_
+- [x] Snake Eyes _(tactic)_
+- [x] Sneaking Spitspider _(character)_
+- [x] Spastic Tentacles _(character)_
+- [x] Spontaneous Displacement _(tactic)_
+- [x] Stalwart Soldier _(character)_
+- [x] Stolen Inspiration _(tactic)_
+- [x] Strength In Numbers _(tactic)_
+- [x] Sudden Osprey _(character)_
+- [x] Summary Judgment _(tactic)_
+- [x] Swarm of Gnats _(character)_
+- [x] Swashbuckler _(character)_
+- [x] Tactician Vacation _(tactic)_
+- [x] Target Practice _(tactic)_
+- [x] Tax Attorney _(character)_
+- [x] The Billionaire _(character)_
+- [x] The Ministry of Other Smaller Ministries _(location)_
+- [x] The Tournament Faction _(faction)_
+- [x] Thief Doyen _(character)_
+- [x] TigerKaiser _(character)_
+- [x] Towering Researchmajig _(character)_
+- [x] Tremor Engine _(item)_
+- [x] Tri-Pole Magnet _(item)_
+- [x] Union Leader _(character)_
+- [x] Vander Malagut _(character)_
+- [x] Very Big Hat of Invisibility _(item)_
+- [x] Voidal Nullification Chamber _(location)_
+- [x] Voidal Observatory _(location)_
+- [x] Voidal Perversion _(tactic)_
+- [x] Voidal Poisoning _(tactic)_
+- [x] Voidal Replication _(tactic)_
+- [x] Voidal Webbing _(tactic)_
+- [x] Warehouse Raid _(tactic)_
+- [x] Warrior Prodigy _(character)_
+- [x] Yoink! _(tactic)_
+- [x] Zenobia's Spyglass _(item)_
 
 ## 1st Edition — 0 / 226
 

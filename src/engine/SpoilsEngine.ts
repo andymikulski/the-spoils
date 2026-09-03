@@ -8421,6 +8421,7 @@ export class SpoilsEngine {
       "cannotBeRestored",
       "cannotBeRestoredByRule",
       "cannotBePicked",
+      "mustBePicked",
       "attackOncePerTurn",
       "cannotBeTakenControl"
     ];
@@ -9781,10 +9782,22 @@ export class SpoilsEngine {
 
     // If a target leaves play, its attachments become unattached. This is
     // sufficient for faction/resource bookkeeping; card-specific attachment
-    // departure effects can be layered on later.
+    // departure effects can be layered on later. Snapshot each detaching
+    // card's `attachedTo` into `departedLinks` first, so a "when the
+    // attached character leaves play" trigger (Luteoderm Prototype, Key to
+    // the City) can still resolve `"attachedTo"` while it processes the same
+    // `cardMoved` event emitted just below.
     if (from === "play" && to !== "play") {
       for (const other of Object.values(this.state.cards)) {
-        if (other.attachedTo === cardId) other.attachedTo = undefined;
+        if (other.attachedTo === cardId) {
+          this.departedLinks.set(other.id, {
+            attachedTo: cardId,
+            linkedTargets: other.linkedTargets
+              ? { ...other.linkedTargets }
+              : this.departedLinks.get(other.id)?.linkedTargets
+          });
+          other.attachedTo = undefined;
+        }
       }
     }
 
