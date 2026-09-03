@@ -8627,6 +8627,12 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = undefined;
         this.processImmediateQueue();
+        // This trigger may have fired reentrantly from inside an effect
+        // frame that is still parked (e.g. the tactic whose `destroy` killed
+        // the source, mid-resolution). Drain those frames and resume the
+        // response window, the same way `chooserSelectsTarget` does. Without
+        // this the window is left stuck in "resolving".
+        if (!this.state.pendingChoice) this.resumeEffectFrames();
         return;
       }
 
@@ -8732,6 +8738,11 @@ export class SpoilsEngine {
           context: pending.context
         });
         this.resumeEffectFrames();
+        // A sibling trigger from the same batch (Carnival Ringmaster's
+        // cr-join + cr-token) may still be queued — resume it, mirroring the
+        // `chooserSelectsTarget` case. Needed when the chosen option's
+        // effects didn't themselves emit anything (e.g. a "Decline" branch).
+        if (!this.state.pendingChoice) this.processImmediateQueue();
         return;
       }
 
@@ -11433,11 +11444,28 @@ export class SpoilsEngine {
           0
         );
 
+        // "This turn, reduce damage inflicted BY <card> by N." (Sockem Bot).
+        // Battle damage is inflicted by each contributing source, so the
+        // aggregate `damageDeltaFor` (which has no single source) can't apply
+        // it — fold in each contributor's outgoing modifiers here, clamped so
+        // one contributor's reduction can't drop the summed total below its
+        // own share.
+        let outgoingDelta = 0;
+        for (const contributor of group.contributors) {
+          let perSource = 0;
+          for (const mod of this.state.outgoingDamageModifiers) {
+            if (mod.sourceId === contributor.sourceId) perSource += mod.delta;
+          }
+          outgoingDelta += Math.max(perSource, -contributor.amount);
+        }
+
         // CR §408.2 modification applies to combat damage against a faction
         // too, before it converts to influence loss (CR §408.3).
         let final = Math.max(
           0,
-          rawSum + this.damageDeltaFor(group.cardId!, true, undefined, rawSum)
+          rawSum +
+            this.damageDeltaFor(group.cardId!, true, undefined, rawSum) +
+            outgoingDelta
         );
 
         // `preventDamage` shields (Tiny Shiny / Delectable Boon) — only a

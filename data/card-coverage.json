@@ -8703,25 +8703,29 @@
       "name": "Gassy Gastornis",
       "set": "Shade of the Devoured Emperor",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "52639549fdb9",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "keyword tactical"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false,
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -10798,7 +10802,7 @@
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "[V] gate on a triggered ability. 'that character's controller's faction' needs controllerOf + damageSource + thresholdIconCount. [merge: composition of tested primitives (triggered + bind + thresholdIconCount/controllerOf/damageSource — each has its own read-side fixture test); faction dealDamage->influence now handled by the engine].",
+      "notes": "[V] gate on a triggered ability. 'that character's controller's faction' needs controllerOf + damageSource + thresholdIconCount. [merge: composition of tested primitives (triggered + bind + thresholdIconCount/controllerOf/damageSource — each has its own read-side fixture test); faction dealDamage->influence now handled by the engine]. Condition guards against self-retrigger (not isCard damageSource=source): the retaliation is effect damage, and without an isBattle flag on damageDealt the authored trigger would otherwise recurse forever.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -13564,25 +13568,29 @@
       "name": "Kinky Asp",
       "set": "1st Edition Part 2",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "c90a26cf3f61",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "keyword covert"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false,
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -14544,25 +14552,29 @@
       "name": "Puddle of Goo",
       "set": "1st Edition Part 2",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "c90a26cf3f61",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "keyword covert"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false,
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -20695,25 +20707,29 @@
       "name": "TZONE! Street Dancer",
       "set": "Holy Heist",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "52639549fdb9",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "keyword tactical"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "tactical"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false,
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -37515,25 +37531,29 @@
       "name": "Sneaky Mansion",
       "set": "1st Edition",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "c90a26cf3f61",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "keyword covert"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
+      "confidence": "high",
       "notes": "",
-      "rulesAudited": false,
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -49459,11 +49479,13 @@
       "name": "Kinky Asp",
       "set": "2nd Edition",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "c90a26cf3f61",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "keyword covert"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -49471,7 +49493,9 @@
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},
@@ -52503,11 +52527,13 @@
       "name": "Sneaky Mansion",
       "set": "2nd Edition",
       "type": "character",
-      "status": "vanilla",
+      "status": "verified",
       "textHash": "c90a26cf3f61",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "keyword covert"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -52515,7 +52541,9 @@
         "unique": null,
         "attachTo": null,
         "resourceProvides": null,
-        "keywords": []
+        "keywords": [
+          "covert"
+        ]
       },
       "engineCapability": [],
       "display": {},

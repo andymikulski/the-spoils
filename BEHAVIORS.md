@@ -220,7 +220,9 @@ PROVIDES this turn; `icon` may be `{ fromNamed }`), `reduceThreshold
 "cardType" | "flipUp", cardType?, duration }`, `addToBattle { target, side }`,
 `skipRestoreRule { player, turns? }`, `skipNextRestore { target }`,
 `modifyNumericCost { target, delta, duration }`, `modifyOutgoingDamage
-{ source, delta, duration }`, `chooserSelectsNumber { chooser, storeAs,
+{ source, delta, duration }` (reduces/increases every damage instance whose
+dealer is `source`, battle damage included — folded per-contributor into the
+locked battle-damage sum), `chooserSelectsNumber { chooser, storeAs,
 min?, max?, effects }`, `alternatingPayLoop { first, opponent, cost,
 maxRounds?, onEnd }` (tallies into `context.variables["paid:"+playerId]`),
 `anyPlayerMayPay { costs, effects }`, `createTokens.effects?` (per-token

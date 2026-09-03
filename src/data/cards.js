@@ -2088,7 +2088,12 @@ export default [
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT"
+    "text": "COVERT",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ]
+    }
   },
   {
     "id": "b817ac26-bdd5-4f11-8c48-e71cb58ef421",
@@ -15271,7 +15276,12 @@ export default [
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT"
+    "text": "COVERT",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ]
+    }
   },
   {
     "id": "556c61ec-857e-4773-80fb-b180513696f4",
@@ -15463,7 +15473,12 @@ export default [
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT"
+    "text": "COVERT",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ]
+    }
   },
   {
     "id": "7c522a1a-aa18-4afa-955e-2a047ff91ecb",
@@ -26968,7 +26983,12 @@ export default [
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT"
+    "text": "COVERT",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ]
+    }
   },
   {
     "id": "de015040-fac3-40c4-a4d7-27d8b40fe814",
@@ -28165,7 +28185,12 @@ export default [
     "subtype": [
       "lurker"
     ],
-    "text": "COVERT"
+    "text": "COVERT",
+    "behavior": {
+      "keywords": [
+        "covert"
+      ]
+    }
   },
   {
     "id": "34e2b8f1-9b0f-4d38-9f54-6494a9f0c079",
@@ -53800,7 +53825,12 @@ export default [
       "outcast",
       "performer"
     ],
-    "text": "TACTICAL"
+    "text": "TACTICAL",
+    "behavior": {
+      "keywords": [
+        "tactical"
+      ]
+    }
   },
   {
     "id": "d000169f-1416-41e4-a603-3fc3bed83e46",
@@ -139237,7 +139267,12 @@ export default [
     "subtype": [
       "beast"
     ],
-    "text": "TACTICAL"
+    "text": "TACTICAL",
+    "behavior": {
+      "keywords": [
+        "tactical"
+      ]
+    }
   },
   {
     "id": "af563041-e0fc-43bd-a340-cda2eb36117b",
@@ -142863,6 +142898,16 @@ export default [
                   "type": "damageSource"
                 },
                 "cardType": "character"
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "isCard",
+                  "target": {
+                    "type": "damageSource"
+                  },
+                  "other": "source"
+                }
               }
             ]
           },

@@ -10,18 +10,18 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 |---|--:|--:|--:|--:|--:|--:|--:|--:|--:|
 | Seed 3 | 43 | 5 | 0 | 0 | 0 | 38 | 0 | 0 | 100% |
 | Seed 2 | 110 | 0 | 0 | 0 | 0 | 110 | 0 | 0 | 100% |
-| Shade of the Devoured Emperor | 130 | 5 | 0 | 0 | 0 | 125 | 0 | 0 | 100% |
-| 1st Edition Part 2 | 165 | 5 | 0 | 0 | 0 | 160 | 0 | 0 | 100% |
-| Holy Heist | 165 | 33 | 0 | 0 | 0 | 132 | 0 | 0 | 100% |
+| Shade of the Devoured Emperor | 130 | 4 | 0 | 0 | 0 | 126 | 0 | 0 | 100% |
+| 1st Edition Part 2 | 165 | 3 | 0 | 0 | 0 | 162 | 0 | 0 | 100% |
+| Holy Heist | 165 | 32 | 0 | 0 | 0 | 133 | 0 | 0 | 100% |
 | Ungodly Mess | 167 | 6 | 0 | 0 | 0 | 159 | 0 | 2 | 100% |
 | Open Beta | 206 | 22 | 0 | 0 | 0 | 184 | 0 | 0 | 100% |
-| 1st Edition | 226 | 24 | 0 | 0 | 0 | 202 | 0 | 0 | 100% |
+| 1st Edition | 226 | 23 | 0 | 0 | 0 | 203 | 0 | 0 | 100% |
 | Seed | 231 | 17 | 0 | 0 | 0 | 214 | 0 | 0 | 100% |
-| 2nd Edition | 300 | 19 | 0 | 0 | 0 | 281 | 0 | 0 | 100% |
+| 2nd Edition | 300 | 17 | 0 | 0 | 0 | 283 | 0 | 0 | 100% |
 | Seed Saga | 358 | 13 | 0 | 0 | 0 | 345 | 0 | 0 | 100% |
-| **Total** | **2101** | 149 | 0 | 0 | 0 | 1950 | 0 | 2 | 100% |
+| **Total** | **2101** | 142 | 0 | 0 | 0 | 1957 | 0 | 2 | 100% |
 
-_Rules-audited: 2000/2101._
+_Rules-audited: 2005/2101._
 _Fidelity to printed text: 2096 full · 3 partial · 2 stub._
 
 ## Engine capability backlog
