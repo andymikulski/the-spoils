@@ -9051,6 +9051,13 @@ export class SpoilsEngine {
           context: pending.context
         });
         this.resumeEffectFrames();
+        // A sibling trigger from the same "fires at once" batch (one
+        // the-gangs-all-here per Party Clowns copy) may still be queued — its
+        // ordering / resolution only continues if the immediate queue is
+        // pumped again. The chosen branch is usually the empty decline path,
+        // which emits nothing to pump it for us. Mirrors `chooserSelectsTarget`
+        // / `chooserSelectsOption`.
+        if (!this.state.pendingChoice) this.processImmediateQueue();
         return;
       }
 
@@ -9147,6 +9154,9 @@ export class SpoilsEngine {
             context: payCtx
           });
           this.resumeEffectFrames();
+          // A sibling trigger from the same batch may still be queued — see
+          // the `mayPay` case.
+          if (!this.state.pendingChoice) this.processImmediateQueue();
           return;
         }
 
@@ -9162,6 +9172,9 @@ export class SpoilsEngine {
         }
         this.state.pendingChoice = undefined;
         this.resumeEffectFrames();
+        // A sibling trigger from the same batch may still be queued — see
+        // the `mayPay` case.
+        if (!this.state.pendingChoice) this.processImmediateQueue();
         return;
       }
 

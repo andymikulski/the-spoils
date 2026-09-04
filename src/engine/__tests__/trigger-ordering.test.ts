@@ -1,7 +1,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { buildGame, character, P1, P2, resolvePendingResponses } from "./support/fixtures.js";
-import type { TriggeredAbility } from "../../engine.js";
+import { buildGame, character, P1, P2, resolvePendingResponses, resourceCard } from "./support/fixtures.js";
+import type { PendingChoice, TriggeredAbility } from "../../engine.js";
 
 const MARK_SELECTOR = { zone: "play" as const, type: "character" as const, subtype: "mark" };
 
@@ -247,5 +247,79 @@ describe("RULES.md §7 — ordering multiple triggers firing at once", () => {
 
     assert.equal(engine.state.cards[id("mark")].zone, "discard");
     assert.equal(engine.state.pendingChoice, undefined);
+  });
+
+  test("declining a `mayPay` in one batched trigger still resolves the rest (Party Clowns)", () => {
+    // Party Clowns' the-gangs-all-here: "at the start of your turn, you may
+    // pay 1 ..." — one trigger per copy in play. Picking one to resolve then
+    // *declining* its pay must not strand its unresolved siblings: the queue
+    // has to keep going and re-prompt for the next one.
+    const mayPayInfluence = (abilityId: string): TriggeredAbility => ({
+      id: abilityId,
+      type: "triggered",
+      event: "turnStarted",
+      condition: { type: "eventPlayerIs", player: "controller" },
+      effects: [
+        {
+          type: "mayPay",
+          player: "controller",
+          costs: [{ type: "payResources", amount: 1 }],
+          effects: [{ type: "modifyInfluence", player: "controller", amount: 5 }]
+        }
+      ]
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "r1", def: resourceCard({ name: "R1" }), owner: P1 },
+        { key: "r2", def: resourceCard({ name: "R2" }), owner: P1 },
+        { key: "clownA", def: character({ name: "Party Clowns A", behavior: { abilities: [mayPayInfluence("gang-a")] } }), owner: P1 },
+        { key: "clownB", def: character({ name: "Party Clowns B", behavior: { abilities: [mayPayInfluence("gang-b")] } }), owner: P1 }
+      ]
+    });
+
+    const startInfluence = engine.state.players[P1].influence;
+
+    engine.perform({ type: "endTurn", playerId: P2 });
+    resolvePendingResponses(engine);
+
+    // Both triggers fired at once — order them. (Each `pendingChoice` is read
+    // into a fresh local so `assert.equal`'s narrowing doesn't leak forward
+    // and collapse the next read to `never`.)
+    const ordering: PendingChoice | undefined = engine.state.pendingChoice;
+    assert.equal(ordering?.kind, "orderTriggers");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "orderTriggers", next: { sourceId: id("clownA"), abilityId: "gang-a" } }
+    });
+    resolvePendingResponses(engine);
+
+    // First picked trigger asks to pay — decline it.
+    const firstPay: PendingChoice | undefined = engine.state.pendingChoice;
+    assert.equal(firstPay?.kind, "mayPay");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "mayPay", pay: false }
+    });
+    resolvePendingResponses(engine);
+
+    // The lone remaining trigger must still come up (regression: it used to
+    // silently stay queued, leaving pendingChoice undefined until some later
+    // action pumped the queue).
+    const leftover: PendingChoice | undefined = engine.state.pendingChoice;
+    assert.equal(leftover?.kind, "mayPay");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "mayPay", pay: false }
+    });
+    resolvePendingResponses(engine);
+
+    const settled: PendingChoice | undefined = engine.state.pendingChoice;
+    assert.equal(settled, undefined);
+    assert.equal(engine.state.players[P1].influence, startInfluence);
   });
 });
