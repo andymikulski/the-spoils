@@ -4,11 +4,42 @@
 
 import type { ComparisonOperator } from "../types/ids.js";
 import type { CardDefinition, FactionDefinition, Threshold } from "../types/cards.js";
+import type { GameState } from "../types/state.js";
 
 let nextIdCounter = 1;
 
+/**
+ * Mints an id from a process-global counter. Used only to build a game's
+ * *initial* `CardInstance`s (`createCardInstance`, faction setup) — before a
+ * `GameState`/`SpoilsEngine` exists, ids can't yet draw from
+ * `GameState.idSeq`. Once an engine exists, its own ids are minted by
+ * `SpoilsEngine.nextId` instead, which persists its counter on `state.idSeq`
+ * so it survives save/load across process restarts (this module-global one
+ * does not).
+ */
 export function nextId(prefix: string): string {
   return `${prefix}_${nextIdCounter++}`;
+}
+
+/**
+ * The highest numeric `_<n>` suffix found anywhere in a serialized
+ * `GameState`, or 0 if none. Used to backfill `GameState.idSeq` for a state
+ * built (or saved) before that field existed — a fresh `createTwoPlayerGame`
+ * state, a hand-built test fixture, or a pre-migration save — so
+ * `SpoilsEngine.nextId` starts past every id already in play. Scans the
+ * whole serialized state (rather than enumerating each id-bearing
+ * collection by hand) so it never goes stale as new collections are added.
+ */
+export function deriveIdSeq(state: GameState): number {
+  let max = 0;
+  const pattern = /"[A-Za-z][A-Za-z0-9]*_(\d+)"/g;
+  const json = JSON.stringify(state);
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(json))) {
+    const n = Number(match[1]);
+    if (n > max) max = n;
+  }
+  return max;
 }
 
 /**

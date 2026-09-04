@@ -11,7 +11,7 @@ import type {
   PlayerState,
   Zone
 } from "../types/index.js";
-import { assert, nextId } from "./utilities.js";
+import { assert, deriveIdSeq, nextId } from "./utilities.js";
 import { randomSeed } from "./rng.js";
 
 export function createCardInstance(
@@ -116,6 +116,8 @@ export function createTwoPlayerGame(
     setup: { phase: "complete" },
     started: true,
     rngState: randomSeed(),
+    // Placeholder — set for real just below, once `cardMap` is in its final form.
+    idSeq: 0,
     players,
     cards: cardMap,
     modifiers: [],
@@ -164,6 +166,8 @@ export function createTwoPlayerGame(
   for (const cardId of players[playerA.id].play) {
     cardMap[cardId].attackEligibleTurn = 1;
   }
+
+  state.idSeq = deriveIdSeq(state);
 
   return state;
 }

@@ -1,5 +1,5 @@
 // Tiny usage example
-import { SpoilsEngine, createTwoPlayerFactionGame } from "./engine.js";
+import { SpoilsEngine, createTwoPlayerFactionGame, loadGame, saveGame } from "./engine.js";
 import {
   CARD_CATALOG,
   ARCANIST_DECK,
@@ -64,3 +64,15 @@ while (game.state.setup.phase === "mulligan") {
 // Everything that has happened so far, in order, indented by response depth.
 // Recording is on by default — game.setLogEnabled(false) turns it off.
 console.log("\ngame log:\n" + game.formatLog());
+
+// -----------------------------------------------------------------------------
+// Save / load
+// -----------------------------------------------------------------------------
+//
+// `saveGame` is plain JSON data — write it to a database/file as-is. Reload
+// it later (a different process, after a server restart) with `loadGame`
+// plus the same card catalog the game was played with.
+const save = saveGame(game);
+const savedJson = JSON.stringify(save);
+const resumed = loadGame(JSON.parse(savedJson), CARD_CATALOG);
+console.log(`\nresumed turn ${resumed.state.turn}, mode: ${resumed.getFlowView().mode}`);

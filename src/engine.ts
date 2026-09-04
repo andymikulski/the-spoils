@@ -28,3 +28,9 @@ export {
   type FactionPlayerSetup,
   type FactionGameSetupOptions
 } from "./engine/factionSetup.js";
+export {
+  saveGame,
+  loadGame,
+  getSaveSummary,
+  type GameSaveSummary
+} from "./engine/persistence.js";

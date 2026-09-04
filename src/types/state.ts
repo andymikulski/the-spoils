@@ -751,6 +751,19 @@ export interface GameState {
    */
   rngState: number;
 
+  /**
+   * Running counter this game's own runtime ids (cards, modifiers, response-
+   * stack items, pending choices, battles, ...) are minted from — one shared
+   * sequence, like the pre-existing `${prefix}_<n>` scheme, but carried on
+   * `GameState` (like `rngState`) instead of a process-global counter. That
+   * makes id minting resumable: reloading a saved game in a fresh process
+   * (a new server, after a crash) continues from exactly where it left off,
+   * so a newly-minted id (a token entering play, a fresh modifier) can never
+   * collide with one already baked into the save. See
+   * `SpoilsEngine.nextId`/`deriveIdSeq`.
+   */
+  idSeq: number;
+
   players: Record<PlayerId, PlayerState>;
   cards: Record<CardInstanceId, CardInstance>;
 

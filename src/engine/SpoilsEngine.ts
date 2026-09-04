@@ -58,8 +58,8 @@ import type {
 import {
   assert,
   compare,
+  deriveIdSeq,
   isStapleResourceDefinition,
-  nextId,
   parseThreshold,
   withBuiltInFactionDefaults
 } from "./utilities.js";
@@ -259,6 +259,7 @@ export class SpoilsEngine {
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
     this.state.rngState ??= randomSeed();
+    this.state.idSeq ??= deriveIdSeq(this.state);
     this.state.turnEventTally ??= {};
     this.state.turnDeploys ??= {};
     this.state.damageThisTurn ??= {};
@@ -290,6 +291,17 @@ export class SpoilsEngine {
     for (const card of Object.values(this.state.cards)) {
       card.faceDown ??= false;
     }
+  }
+
+  /**
+   * Mints a fresh `${prefix}_<n>` id, `n` drawn from `state.idSeq`. Backed by
+   * `GameState` (not a process-global counter) so ids minted after loading a
+   * saved game in a fresh process never collide with one already in the
+   * save — see `GameState.idSeq`.
+   */
+  private nextId(prefix: string): string {
+    this.state.idSeq += 1;
+    return `${prefix}_${this.state.idSeq}`;
   }
 
   get responseStack(): StackItem[] {
@@ -1118,7 +1130,7 @@ export class SpoilsEngine {
     playerId: PlayerId,
     token: TokenSpec
   ): CardInstanceId {
-    const defId = nextId("token-def");
+    const defId = this.nextId("token-def");
     this.definitions[defId] = {
       id: defId,
       name: token.name,
@@ -1137,7 +1149,7 @@ export class SpoilsEngine {
     };
 
     const instance: CardInstance = {
-      id: nextId("card"),
+      id: this.nextId("card"),
       definitionId: defId,
       ownerId: playerId,
       controllerId: playerId,
@@ -2448,7 +2460,7 @@ export class SpoilsEngine {
       });
 
       this.responseStack.push({
-        id: nextId("stack"),
+        id: this.nextId("stack"),
         sourceId: card.id,
         controllerId: playerId,
         kind: "card",
@@ -2817,7 +2829,7 @@ export class SpoilsEngine {
     this.processImmediateQueue();
 
     this.responseStack.push({
-      id: nextId("stack"),
+      id: this.nextId("stack"),
       sourceId: card.id,
       controllerId: abilityControllerId,
       kind: "ability",
@@ -3226,7 +3238,7 @@ export class SpoilsEngine {
         const rest = frame.effects.slice(i + 1);
         if (rest.length > 0) {
           this.state.scheduledEffects.push({
-            id: nextId("scheduled"),
+            id: this.nextId("scheduled"),
             when: "endOfBattle",
             turnScheduled: this.state.turn,
             sourceId: frame.context.sourceId,
@@ -3311,7 +3323,7 @@ export class SpoilsEngine {
     );
 
     this.state.responseWindow = {
-      id: nextId("response"),
+      id: this.nextId("response"),
       kind,
       phase: "acceptingResponses",
       priorityPlayerId: firstPlayerId,
@@ -3508,7 +3520,7 @@ export class SpoilsEngine {
 
     this.recordLogEvent(event);
 
-    const batchId = nextId("batch");
+    const batchId = this.nextId("batch");
     const triggers = this.findTriggers(event, batchId);
 
     for (const trigger of triggers) {
@@ -3899,7 +3911,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "orderTriggers",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId:
             controllerIds.size === 1
               ? [...controllerIds][0]
@@ -3922,7 +3934,7 @@ export class SpoilsEngine {
       if (unresolved.length > 0) {
         this.state.pendingChoice = {
           kind: "selectTargets",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: trigger.context.controllerId,
           sourceId: trigger.sourceId,
           abilityId: trigger.ability.id,
@@ -4928,7 +4940,7 @@ export class SpoilsEngine {
     }
     this.state.pendingChoice = {
       kind: "spendCountersMenu",
-      id: nextId("choice"),
+      id: this.nextId("choice"),
       playerId,
       pool,
       counter,
@@ -5406,7 +5418,7 @@ export class SpoilsEngine {
       const winningPile = chosenPile(winner);
       this.state.pendingChoice = {
         kind: "takeFromPile",
-        id: nextId("choice"),
+        id: this.nextId("choice"),
         playerId: winner,
         candidates: [...winningPile],
         max: Math.min(pp.winnerTakes, winningPile.length)
@@ -6244,7 +6256,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "partitionCards",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: a,
           cardIds: [...revealed[a]],
           piles: effect.piles
@@ -6270,7 +6282,7 @@ export class SpoilsEngine {
         if (!targetId || !this.state.cards[targetId]) return;
 
         this.state.cardTypeGrants.push({
-          id: nextId("cardTypeGrant"),
+          id: this.nextId("cardTypeGrant"),
           sourceId: context.sourceId,
           targetId,
           cardType: effect.cardType,
@@ -6280,7 +6292,7 @@ export class SpoilsEngine {
 
         for (const [stat, expr] of Object.entries(effect.grantStats ?? {})) {
           this.state.modifiers.push({
-            id: nextId("modifier"),
+            id: this.nextId("modifier"),
             sourceId: context.sourceId,
             sourceAbilityId: context.abilityId,
             targetId,
@@ -6356,7 +6368,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         this.state.numericCostModifiers.push({
-          id: nextId("numericCostMod"),
+          id: this.nextId("numericCostMod"),
           targetId,
           delta: this.evaluateNumber(effect.delta, context),
           duration: effect.duration,
@@ -6369,7 +6381,7 @@ export class SpoilsEngine {
         const chooser = this.resolvePlayerRef(effect.chooser, context);
         this.state.pendingChoice = {
           kind: "chooseNumber",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           storeAs: effect.storeAs,
           min: effect.min ? this.evaluateNumber(effect.min, context) : 0,
@@ -6485,7 +6497,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "deployForFree",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: player.id,
           candidates: [targetId],
           context,
@@ -6554,7 +6566,7 @@ export class SpoilsEngine {
             : undefined;
 
         this.state.damageShields.push({
-          id: nextId("shield"),
+          id: this.nextId("shield"),
           targetId,
           amount: effect.wholeInstance
             ? 1
@@ -6647,7 +6659,7 @@ export class SpoilsEngine {
         const value = this.evaluateNumber(effect.value, context);
 
         this.state.modifiers.push({
-          id: nextId("modifier"),
+          id: this.nextId("modifier"),
           sourceId: context.sourceId,
           sourceAbilityId: context.abilityId,
           targetId,
@@ -6704,7 +6716,7 @@ export class SpoilsEngine {
           );
           if (!existing) {
             this.state.controlGrants.push({
-              id: nextId("controlGrant"),
+              id: this.nextId("controlGrant"),
               cardId: targetId,
               previousControllerId: card.controllerId,
               duration: effect.duration,
@@ -6859,7 +6871,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.keywordGrants.push({
-          id: nextId("keywordGrant"),
+          id: this.nextId("keywordGrant"),
           sourceId: context.sourceId,
           targetId,
           keyword: effect.keyword,
@@ -6875,7 +6887,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.keywordSuppressions.push({
-          id: nextId("keywordSuppression"),
+          id: this.nextId("keywordSuppression"),
           sourceId: context.sourceId,
           targetId,
           keyword: effect.keyword,
@@ -6891,7 +6903,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.restrictions.push({
-          id: nextId("restriction"),
+          id: this.nextId("restriction"),
           sourceId: context.sourceId,
           targetId,
           restriction: effect.restriction,
@@ -6906,7 +6918,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId || !this.state.cards[targetId]) return;
         this.state.battleDamageTransforms.push({
-          id: nextId("bdTransform"),
+          id: this.nextId("bdTransform"),
           sourceId: context.sourceId,
           cardId: targetId,
           role: effect.role,
@@ -6925,7 +6937,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId || !this.state.cards[targetId]) return;
         this.state.abilitySuppressions.push({
-          id: nextId("abilitySuppression"),
+          id: this.nextId("abilitySuppression"),
           sourceId: context.sourceId,
           targetId,
           duration: effect.duration,
@@ -6937,7 +6949,7 @@ export class SpoilsEngine {
       case "grantKeywordToPlayer": {
         const player = this.resolvePlayerRef(effect.player, context);
         this.state.playerKeywordGrants.push({
-          id: nextId("playerKeywordGrant"),
+          id: this.nextId("playerKeywordGrant"),
           sourceId: context.sourceId,
           playerId: player.id,
           keyword: effect.keyword,
@@ -6951,7 +6963,7 @@ export class SpoilsEngine {
         const sourceId = this.resolveTargetRef(effect.source, context);
         if (!sourceId) return;
         this.state.outgoingDamageModifiers.push({
-          id: nextId("outgoingDmgMod"),
+          id: this.nextId("outgoingDmgMod"),
           sourceId,
           delta: this.evaluateNumber(effect.delta, context),
           duration: effect.duration,
@@ -6964,7 +6976,7 @@ export class SpoilsEngine {
         const player = this.resolvePlayerRef(effect.player, context);
 
         this.state.resourceGrants.push({
-          id: nextId("resourceGrant"),
+          id: this.nextId("resourceGrant"),
           playerId: player.id,
           icon: effect.icon,
           amount: this.evaluateNumber(effect.amount, context),
@@ -6986,7 +6998,7 @@ export class SpoilsEngine {
         if (!icon) return;
 
         this.state.thresholdReductions.push({
-          id: nextId("thresholdReduction"),
+          id: this.nextId("thresholdReduction"),
           playerId: player.id,
           icon,
           amount: Math.max(0, this.evaluateNumber(effect.amount, context)),
@@ -7011,7 +7023,7 @@ export class SpoilsEngine {
         if (amount <= 0) return;
 
         this.state.provideGrants.push({
-          id: nextId("provideGrant"),
+          id: this.nextId("provideGrant"),
           sourceId: context.sourceId,
           targetId,
           icon,
@@ -7034,7 +7046,7 @@ export class SpoilsEngine {
       case "restrictPlay": {
         const player = this.resolvePlayerRef(effect.player, context);
         this.state.playRestrictions.push({
-          id: nextId("playRestriction"),
+          id: this.nextId("playRestriction"),
           playerId: player.id,
           kind: effect.kind,
           cardType: effect.cardType,
@@ -7046,7 +7058,7 @@ export class SpoilsEngine {
 
       case "preventAllDamage": {
         this.state.damagePreventionWindows.push({
-          id: nextId("damagePreventionWindow"),
+          id: this.nextId("damagePreventionWindow"),
           duration: effect.duration,
           createdTurn: this.state.turn
         });
@@ -7055,7 +7067,7 @@ export class SpoilsEngine {
 
       case "restrictDestruction": {
         this.state.destructionRestrictionWindows.push({
-          id: nextId("destructionRestrictionWindow"),
+          id: this.nextId("destructionRestrictionWindow"),
           duration: effect.duration,
           createdTurn: this.state.turn
         });
@@ -7066,7 +7078,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         this.state.subtypeGrants.push({
-          id: nextId("subtypeGrant"),
+          id: this.nextId("subtypeGrant"),
           sourceId: context.sourceId,
           targetId,
           subtype: effect.subtype,
@@ -7078,7 +7090,7 @@ export class SpoilsEngine {
 
       case "redirectHandMoves": {
         this.state.handMoveRedirects.push({
-          id: nextId("handMoveRedirect"),
+          id: this.nextId("handMoveRedirect"),
           sourceControllerId: context.controllerId,
           who: effect.who,
           to: effect.to,
@@ -7090,7 +7102,7 @@ export class SpoilsEngine {
 
       case "installReplacement": {
         this.state.runtimeReplacements.push({
-          id: nextId("runtimeReplacement"),
+          id: this.nextId("runtimeReplacement"),
           sourceId: context.sourceId,
           controllerId: context.controllerId,
           replaces: effect.replaces,
@@ -7117,7 +7129,7 @@ export class SpoilsEngine {
 
       case "scheduleEffect": {
         this.state.scheduledEffects.push({
-          id: nextId("scheduled"),
+          id: this.nextId("scheduled"),
           when: effect.when,
           turnScheduled: this.state.turn,
           sourceId: context.sourceId,
@@ -7150,7 +7162,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "useAnyAbility",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           candidateCardIds: candidates,
           context
@@ -7212,7 +7224,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "chooserSelectsTarget",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           declaration: effect.declaration,
           effects: effect.effects,
@@ -7235,7 +7247,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "chooserSelectsOption",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           optionCount: effect.options.length,
           options: effect.options,
@@ -7305,7 +7317,7 @@ export class SpoilsEngine {
         const chooser = this.resolvePlayerRef(effect.chooser, context);
         this.state.pendingChoice = {
           kind: "nameValue",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           valueKind: effect.valueKind,
           sourceId: context.sourceId,
@@ -7329,7 +7341,7 @@ export class SpoilsEngine {
         }
         this.state.pendingChoice = {
           kind: "mayPay",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: player.id,
           cost: structuredClone(effect.costs),
           effects: effect.effects,
@@ -7370,7 +7382,7 @@ export class SpoilsEngine {
         if (abilities.length === 0) return;
         this.state.pendingChoice = {
           kind: "useTargetAbility",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           targetCardId: targetId,
           abilityIds: abilities.map(a => a.id),
@@ -7428,7 +7440,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "reorderDeck",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           deckOwnerId: player.id,
           cardIds,
@@ -7443,7 +7455,7 @@ export class SpoilsEngine {
         const amount = this.evaluateNumber(effect.amount, context);
 
         this.state.costReductions.push({
-          id: nextId("costReduction"),
+          id: this.nextId("costReduction"),
           playerId: player.id,
           amount,
           cardType: effect.cardType,
@@ -7475,7 +7487,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "deployForFree",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: player.id,
           candidates,
           payCost: effect.free === false,
@@ -7499,7 +7511,7 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = {
           kind: "distributeAmong",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           targets,
           amount,
@@ -7516,7 +7528,7 @@ export class SpoilsEngine {
         if (cardIds.length === 0) return;
         this.state.pendingChoice = {
           kind: "pileAssignment",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: splitter.id,
           cardIds: [...cardIds],
           pile1Effects: effect.pile1,
@@ -7533,7 +7545,7 @@ export class SpoilsEngine {
         ];
         this.state.pendingChoice = {
           kind: "anyPlayerMayPay",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: order[0],
           remaining: order.slice(1),
           cost: structuredClone(effect.costs),
@@ -7548,7 +7560,7 @@ export class SpoilsEngine {
         const b = this.resolvePlayerRef(effect.opponent, context).id;
         this.state.pendingChoice = {
           kind: "alternatingPay",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: a,
           players: [a, b],
           turnIndex: 0,
@@ -7613,7 +7625,7 @@ export class SpoilsEngine {
             };
             this.state.pendingChoice = {
               kind: "coinFlipReplace",
-              id: nextId("choice"),
+              id: this.nextId("choice"),
               playerId: flipper.id,
               cost: structuredClone(repl.cost)
             };
@@ -7633,7 +7645,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target ?? "source", context);
         if (!targetId) return;
         this.state.blockRestrictionGrants.push({
-          id: nextId("blockRestriction"),
+          id: this.nextId("blockRestriction"),
           sourceId: context.sourceId,
           targetId,
           minPartySize: effect.minPartySize,
@@ -7649,7 +7661,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target ?? "source", context);
         if (!targetId) return;
         this.state.partyRestrictionGrants.push({
-          id: nextId("partyRestriction"),
+          id: this.nextId("partyRestriction"),
           sourceId: context.sourceId,
           targetId,
           role: effect.role,
@@ -7672,7 +7684,7 @@ export class SpoilsEngine {
         ).map(card => card.id);
         this.state.pendingChoice = {
           kind: "chooseChosenBlockers",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: chooser.id,
           candidates
         };
@@ -7688,7 +7700,7 @@ export class SpoilsEngine {
         ).filter(a => a.type === "activated" || a.type === "triggered");
         if (abilities.length === 0) return;
         this.state.abilityGrants.push({
-          id: nextId("abilityGrant"),
+          id: this.nextId("abilityGrant"),
           cardId: targetId,
           sourceId: context.sourceId,
           abilities: structuredClone(abilities)
@@ -7754,7 +7766,7 @@ export class SpoilsEngine {
       if (pending.roundsLeft > 1) {
         this.state.pendingChoice = {
           ...pending,
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: pending.players[nextIndex],
           turnIndex: nextIndex,
           roundsLeft: pending.roundsLeft - 1
@@ -8693,7 +8705,7 @@ export class SpoilsEngine {
         if (conflict) {
           this.state.pendingChoice = {
             kind: "uniqueSurvivor",
-            id: nextId("choice"),
+            id: this.nextId("choice"),
             playerId: conflict.controllerId,
             unique: conflict.unique,
             candidates: conflict.cardIds
@@ -8854,7 +8866,7 @@ export class SpoilsEngine {
         const [picked] = batch.splice(pickIndex, 1);
         // Fresh, unshared batch id so the picked trigger resolves alone and
         // isn't re-detected as needing an ordering decision.
-        picked.batchId = nextId("batch");
+        picked.batchId = this.nextId("batch");
 
         // Queue head becomes: picked, then the still-unordered rest (their
         // shared batch id intact, so 2+ of them re-prompt after `picked`).
@@ -9164,7 +9176,7 @@ export class SpoilsEngine {
         if (pending.remaining.length > 0) {
           this.state.pendingChoice = {
             ...pending,
-            id: nextId("choice"),
+            id: this.nextId("choice"),
             playerId: pending.remaining[0],
             remaining: pending.remaining.slice(1)
           };
@@ -9287,7 +9299,7 @@ export class SpoilsEngine {
         // reusing the useTargetAbility resolution path.
         this.state.pendingChoice = {
           kind: "useTargetAbility",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: pending.playerId,
           targetCardId: choice.cardId,
           abilityIds: abilities.map(a => a.id),
@@ -9324,7 +9336,7 @@ export class SpoilsEngine {
         if (nextToPartition) {
           this.state.pendingChoice = {
             kind: "partitionCards",
-            id: nextId("choice"),
+            id: this.nextId("choice"),
             playerId: nextToPartition,
             cardIds: [...pp.revealed[nextToPartition]],
             piles: pending.piles
@@ -9336,7 +9348,7 @@ export class SpoilsEngine {
         const firstPicker = pp.order[0];
         this.state.pendingChoice = {
           kind: "pickPile",
-          id: nextId("choice"),
+          id: this.nextId("choice"),
           playerId: firstPicker,
           piles: pp.partitions[this.partitionOpponent(pp, firstPicker)].map(p => [...p])
         };
@@ -9360,7 +9372,7 @@ export class SpoilsEngine {
         if (nextToPick) {
           this.state.pendingChoice = {
             kind: "pickPile",
-            id: nextId("choice"),
+            id: this.nextId("choice"),
             playerId: nextToPick,
             piles: pp.partitions[this.partitionOpponent(pp, nextToPick)].map(p => [...p])
           };
@@ -9488,7 +9500,7 @@ export class SpoilsEngine {
           if (next.length > 0) {
             this.state.pendingChoice = {
               kind: "deployForFree",
-              id: nextId("choice"),
+              id: this.nextId("choice"),
               playerId: pending.playerId,
               candidates: next,
               payCost: pending.payCost,
@@ -10079,7 +10091,7 @@ export class SpoilsEngine {
           }
           this.state.pendingChoice = {
             kind: "replacementChoice",
-            id: nextId("choice"),
+            id: this.nextId("choice"),
             playerId: chooserId,
             sourceId: source.id,
             abilityId: ability.id,
@@ -10681,7 +10693,7 @@ export class SpoilsEngine {
       defenderId = targetCard.controllerId;
     }
 
-    const battleId = nextId("battle");
+    const battleId = this.nextId("battle");
 
     // "must attack if it can": any eligible, un-depleted controlled
     // character with `mustAttack` and at least one legal target has to be
@@ -10879,7 +10891,7 @@ export class SpoilsEngine {
   ): void {
     if (this.state.battle) return;
 
-    const battleId = nextId("battle");
+    const battleId = this.nextId("battle");
 
     this.beginEventBatch();
     try {
@@ -10993,7 +11005,7 @@ export class SpoilsEngine {
 
     this.state.pendingChoice = {
       kind: "auctionBid",
-      id: nextId("choice"),
+      id: this.nextId("choice"),
       playerId: order[0],
       characterId,
       highBid: 0,
@@ -11022,7 +11034,7 @@ export class SpoilsEngine {
       a.turn = other;
       this.state.pendingChoice = {
         kind: "auctionBid",
-        id: nextId("choice"),
+        id: this.nextId("choice"),
         playerId: other,
         characterId: a.characterId,
         highBid: a.highBid,
@@ -11042,7 +11054,7 @@ export class SpoilsEngine {
       a.turn = other;
       this.state.pendingChoice = {
         kind: "auctionBid",
-        id: nextId("choice"),
+        id: this.nextId("choice"),
         playerId: other,
         characterId: a.characterId,
         highBid: a.highBid,
