@@ -49866,11 +49866,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -50059,11 +50059,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -50704,11 +50704,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -50793,11 +50793,11 @@
                     "name": "Micromajig",
                     "cardType": "character",
                     "subtype": [
-                      "micromajig"
+                      "majig"
                     ],
-                    "strength": 0,
+                    "strength": 1,
                     "life": 1,
-                    "speed": 1
+                    "speed": 3
                   },
                   "effects": [
                     {
@@ -51460,11 +51460,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -51512,11 +51512,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -91416,11 +91416,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
                 "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -91936,9 +91936,12 @@
               "token": {
                 "name": "Micromajig",
                 "cardType": "character",
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3,
+                "subtype": [
+                  "majig"
+                ]
               }
             }
           ]
@@ -93297,11 +93300,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
                 "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -95419,11 +95422,11 @@
                     "name": "Micromajig",
                     "cardType": "character",
                     "subtype": [
-                      "micromajig"
+                      "majig"
                     ],
                     "strength": 1,
                     "life": 1,
-                    "speed": 1
+                    "speed": 3
                   }
                 }
               ]
@@ -95463,11 +95466,11 @@
                     "name": "Micromajig",
                     "cardType": "character",
                     "subtype": [
-                      "micromajig"
+                      "majig"
                     ],
                     "strength": 1,
                     "life": 1,
-                    "speed": 1
+                    "speed": 3
                   }
                 }
               ]
@@ -99053,9 +99056,12 @@
                   "token": {
                     "name": "Micromajig",
                     "cardType": "character",
-                    "strength": 0,
+                    "subtype": [
+                      "majig"
+                    ],
+                    "strength": 1,
                     "life": 1,
-                    "speed": 1
+                    "speed": 3
                   }
                 }
               ]
@@ -99084,9 +99090,12 @@
                       "token": {
                         "name": "Micromajig",
                         "cardType": "character",
-                        "strength": 0,
+                        "subtype": [
+                          "majig"
+                        ],
+                        "strength": 1,
                         "life": 1,
-                        "speed": 1
+                        "speed": 3
                       }
                     }
                   ],
@@ -99863,9 +99872,12 @@
                   "token": {
                     "name": "Micromajig",
                     "cardType": "character",
-                    "strength": 0,
+                    "strength": 1,
                     "life": 1,
-                    "speed": 1
+                    "speed": 3,
+                    "subtype": [
+                      "majig"
+                    ]
                   }
                 }
               ]
@@ -112839,11 +112851,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
                 "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -113804,9 +113816,12 @@
               "token": {
                 "name": "Micromajig",
                 "cardType": "character",
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3,
+                "subtype": [
+                  "majig"
+                ]
               }
             }
           ]
@@ -117755,11 +117770,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
                 "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -136084,11 +136099,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -136880,11 +136895,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -137261,11 +137276,11 @@
                         "name": "Micromajig",
                         "cardType": "character",
                         "subtype": [
-                          "micromajig"
+                          "majig"
                         ],
-                        "strength": 0,
+                        "strength": 1,
                         "life": 1,
-                        "speed": 1
+                        "speed": 3
                       },
                       "effects": [
                         {
@@ -137291,11 +137306,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
@@ -138186,11 +138201,11 @@
                 "name": "Micromajig",
                 "cardType": "character",
                 "subtype": [
-                  "micromajig"
+                  "majig"
                 ],
-                "strength": 0,
+                "strength": 1,
                 "life": 1,
-                "speed": 1
+                "speed": 3
               }
             }
           ]
