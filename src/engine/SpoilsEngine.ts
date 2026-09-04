@@ -10719,6 +10719,34 @@ export class SpoilsEngine {
 
     this.assertPartyComposition(attackerIds, "attacking");
 
+    // Validate every declared attacker before anything else is mutated (tax
+    // paid, declaration counted, characters depleted) so a declaration that
+    // includes one illegal attacker (e.g. a character with Mittens of
+    // Muffled Thought's `cannotAttack` restriction) is rejected atomically
+    // instead of partially applying — depleting the legal attackers ahead of
+    // the illegal one in the array — before throwing.
+    for (const attackerId of attackerIds) {
+      const attacker = this.requireCard(attackerId);
+      assert(attacker.controllerId === playerId, "You do not control an attacker.");
+      assert(attacker.zone === "play", "Attacker must be in play.");
+      assert(this.hasCardType(attackerId, "character"), "Only characters can attack.");
+      assert(!attacker.depleted, "Depleted characters cannot attack.");
+      assert(
+        !this.hasRestriction(attackerId, "cannotAttack"),
+        "Character cannot attack."
+      );
+      assert(
+        attacker.attackEligibleTurn === this.state.turn ||
+          this.hasKeyword(attackerId, "aggro"),
+        "Character did not start the turn in play under your control and does not have AGGRO."
+      );
+      assert(
+        !this.hasRestriction(attackerId, "attackOncePerTurn") ||
+          (this.state.attacksThisTurn[attackerId] ?? 0) < 1,
+        "This character can attack only once each turn."
+      );
+    }
+
     // "Your opponents cannot attack your faction." (High Court of Demands,
     // Theocratic Senate of Marduun) — an in-play
     // `ContinuousAbility.preventsAttackOnFaction`.
@@ -10795,26 +10823,6 @@ export class SpoilsEngine {
     try {
       for (const attackerId of attackerIds) {
         const attacker = this.requireCard(attackerId);
-        const definition = this.getDefinition(attackerId);
-
-        assert(attacker.controllerId === playerId, "You do not control an attacker.");
-        assert(attacker.zone === "play", "Attacker must be in play.");
-        assert(this.hasCardType(attackerId, "character"), "Only characters can attack.");
-        assert(!attacker.depleted, "Depleted characters cannot attack.");
-        assert(
-          !this.hasRestriction(attackerId, "cannotAttack"),
-          "Character cannot attack."
-        );
-        assert(
-          attacker.attackEligibleTurn === this.state.turn ||
-            this.hasKeyword(attackerId, "aggro"),
-          "Character did not start the turn in play under your control and does not have AGGRO."
-        );
-        assert(
-          !this.hasRestriction(attackerId, "attackOncePerTurn") ||
-            (this.state.attacksThisTurn[attackerId] ?? 0) < 1,
-          "This character can attack only once each turn."
-        );
 
         attacker.depleted = true;
         this.state.attacksThisTurn[attackerId] =

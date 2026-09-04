@@ -267,6 +267,31 @@ describe("Shade of the Devoured Emperor — Mittens of Muffled Thought", () => {
     });
     assert.ok(engine.getRestrictions(id("host")).includes("cannotAttack"));
   });
+
+  test("declaring it alongside legal attackers rejects the whole attack and depletes nobody", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "host", def: drawerChar({ name: "Host" }), owner: P1, zone: "play" },
+        { key: "m", def: def("Mittens of Muffled Thought"), owner: P1, zone: "play", attachedToKey: "host" },
+        { key: "ally1", def: character({ name: "Ally1" }), owner: P1, zone: "play" },
+        { key: "ally2", def: character({ name: "Ally2" }), owner: P1, zone: "play" }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "declareAttack",
+        playerId: P1,
+        attackerIds: [id("ally1"), id("ally2"), id("host")],
+        target: { type: "faction", playerId: P2 }
+      })
+    );
+
+    assert.equal(engine.state.cards[id("ally1")].depleted, false);
+    assert.equal(engine.state.cards[id("ally2")].depleted, false);
+    assert.equal(engine.state.cards[id("host")].depleted, false);
+    assert.equal(engine.state.battle, undefined);
+  });
 });
 
 describe("Shade of the Devoured Emperor — Monstrous Lassitude", () => {
