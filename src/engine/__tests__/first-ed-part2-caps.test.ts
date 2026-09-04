@@ -1,7 +1,7 @@
 // Unit tests for the engine capabilities added for the 1st Edition Part 2
 // set coverage pass. One test per capability primitive; card-shaped
 // end-to-end scenarios live in first-ed-part2-smoke.test.ts.
-// See CATALOG-BUILDOUT.md + COVERAGE.md's capability backlog.
+// See COVERAGE.md's capability backlog.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

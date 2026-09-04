@@ -1,7 +1,7 @@
 // Unit tests for the engine capabilities added for the Holy Heist set
 // coverage pass. One test per capability primitive (the card-shaped
 // integration lives in holy-heist-smoke.test.ts / card-behaviors.test.ts).
-// See CATALOG-BUILDOUT.md + COVERAGE.md's capability backlog.
+// See COVERAGE.md's capability backlog.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

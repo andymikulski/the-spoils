@@ -109,7 +109,7 @@ function skeletonEntry(card) {
     // Set true once the card's `text` has actually been read against
     // RULES.md and its `behavior` (if any) confirmed correct — distinct
     // from "has a behavior block". Lets a review pass be tracked separately
-    // from authoring (see CATALOG-BUILDOUT.md TODO 1).
+    // from authoring.
     rulesAudited: false,
     metadata: {
       unique: card.unique ?? null,

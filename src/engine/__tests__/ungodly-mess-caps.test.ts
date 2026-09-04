@@ -1,6 +1,6 @@
 // Unit tests for the engine capabilities added for the Ungodly Mess set
-// coverage pass. One test per capability primitive; see CATALOG-BUILDOUT.md
-// + COVERAGE.md's capability backlog.
+// coverage pass. One test per capability primitive; see COVERAGE.md's
+// capability backlog.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

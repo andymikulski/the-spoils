@@ -1,7 +1,7 @@
 // Unit tests for the engine capabilities added for the Open Beta set
 // coverage pass. One (or a few) tests per capability primitive; card-shaped
 // end-to-end scenarios live in open-beta-smoke.test.ts.
-// See CATALOG-BUILDOUT.md + COVERAGE.md's capability backlog.
+// See COVERAGE.md's capability backlog.
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";

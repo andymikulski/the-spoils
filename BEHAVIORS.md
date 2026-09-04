@@ -602,7 +602,7 @@ play→discard + `mayPay` + `putIntoPlay` self-recur), Resurrection Emporium
 (a `moveToZone` `zone: "discard"` `ReplacementAbility` → `removeFromGame` —
 CONCESSION: only fires for a character leaving *play*, not one milled from
 the deck), Bask Bomb (two `distributeAmong` steps with different
-`chooser`s), Bladefist Doomwing (`FIREBREATHING` X+X). See `.work/classify-fe-novel.json`.
+`chooser`s), Bladefist Doomwing (`FIREBREATHING` X+X).
 
 ## Seed additions
 
