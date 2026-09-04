@@ -45,6 +45,18 @@ export interface GameEventMap {
     cardId: CardInstanceId;
     from: Zone;
     to: Zone;
+    /**
+     * Whether the card was a face-down resource at the instant it moved —
+     * captured here because `moveCard` clears `CardInstance.faceDown` before
+     * this event is emitted. A card that left play *while face-down* was an
+     * anonymous Volition resource with no rules text (CR §411.1), so its
+     * printed "when this card leaves play" trigger must not fire; a face-up
+     * card flipped face-down (CR §411.4) reports `false` here and *does*
+     * fire those triggers. `findTriggers` reads this instead of the card's
+     * now-updated `faceDown`. Omitted (treated as `false`) for moves that
+     * did not originate in play.
+     */
+    faceDown?: boolean;
   };
 
   /**
@@ -108,6 +120,13 @@ export interface GameEventMap {
      * (Venomous Sacspider).
      */
     byBattleDamage?: boolean;
+    /**
+     * Whether the destroyed card was a face-down resource (CR §411.1) —
+     * captured before the discard move clears `CardInstance.faceDown`. A
+     * face-down card has no rules text, so its printed "when this card is
+     * destroyed / leaves play" trigger must not fire. See `cardMoved.faceDown`.
+     */
+    faceDown?: boolean;
   };
 
   cardDepleted: {

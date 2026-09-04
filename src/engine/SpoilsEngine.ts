@@ -180,6 +180,16 @@ export class SpoilsEngine {
   >();
 
   /**
+   * Cards whose `faceDown` flag a caller cleared *before* the `moveCard`
+   * that takes them out of play — i.e. `deployCard` flipping a face-down
+   * resource face-up to deploy it (CR §411.3). `moveCard` ORs this into the
+   * `cardMoved` event's `faceDown` snapshot so the departing resource is
+   * still recognised as having had no rules text (its "leaves play" trigger
+   * stays suppressed). Cleared at the top of every `perform()`.
+   */
+  private readonly faceDownDeparture = new Set<CardInstanceId>();
+
+  /**
    * The `{ sourceId, abilityId }` of the ability most recently removed from
    * the response stack by a `terminate` this action — a fallback so
    * `respondedAbilitySource` / `lockAbilityThisTurn "respondedAbility"` still
@@ -292,6 +302,7 @@ export class SpoilsEngine {
 
   perform(action: GameAction): void {
     this.departedLinks.clear();
+    this.faceDownDeparture.clear();
     this.lastTerminatedAbility = undefined;
     this.lastTerminatedCard = undefined;
 
@@ -634,12 +645,20 @@ export class SpoilsEngine {
     return this.state.players[playerId]?.name || playerId;
   }
 
-  /** Card display name for a log line, falling back to the instance id. */
-  private logCardName(cardId: CardInstanceId | undefined): string {
+  /**
+   * Card display name for a log line, falling back to the instance id.
+   * `forceFaceDown` keeps a card anonymous on its own leave/destroy line —
+   * `moveCard` has already cleared `faceDown` by the time that event is
+   * described, so the caller passes the snapshot from the event.
+   */
+  private logCardName(
+    cardId: CardInstanceId | undefined,
+    forceFaceDown = false
+  ): string {
     if (!cardId) return "something";
     const card = this.state.cards[cardId];
     if (!card) return cardId;
-    if (card.faceDown) return "a face-down card";
+    if (forceFaceDown || card.faceDown) return "a face-down card";
     return this.definitions[card.definitionId]?.name ?? cardId;
   }
 
@@ -798,7 +817,7 @@ export class SpoilsEngine {
         const from = event.from === "deploying" ? "play" : event.from;
         return {
           kind: "zone",
-          message: `${this.logCardName(event.cardId)} moves from ${from} to ${event.to}`
+          message: `${this.logCardName(event.cardId, event.faceDown)} moves from ${from} to ${event.to}`
         };
       }
 
@@ -809,7 +828,10 @@ export class SpoilsEngine {
         };
 
       case "cardDestroyed":
-        return { kind: "zone", message: `${this.logCardName(event.cardId)} is destroyed` };
+        return {
+          kind: "zone",
+          message: `${this.logCardName(event.cardId, event.faceDown)} is destroyed`
+        };
 
       case "cardDepleted":
         return { kind: "zone", message: `${this.logCardName(event.cardId)} is depleted` };
@@ -945,6 +967,19 @@ export class SpoilsEngine {
    * only applies to a card already in play.
    */
   getCardTypes(cardId: CardInstanceId): CardType[] {
+    // CR §411.1: every face-down card in play is *only* a resource — it has
+    // no name, no other type, and no rules text. Its real (hidden) type is
+    // irrelevant to every type-keyed rules decision until it is flipped
+    // face-up as "a completely new card" (§411.3). `matchesSelector`'s
+    // `selector.type` path already special-cases this; routing it through
+    // here covers the `cardTypeIs` condition path too (e.g. a "destroy
+    // another character or item you control" cost must not see a face-down
+    // resource as a character).
+    const card = this.state.cards[cardId];
+    if (card?.faceDown && card.zone === "play") {
+      return ["resource"];
+    }
+
     const types = new Set<CardType>([this.getDefinition(cardId).type]);
 
     // `untilEndOfTurn` / `permanent` grants apply while they sit in the
@@ -2248,7 +2283,13 @@ export class SpoilsEngine {
         "You cannot deploy that card."
       );
       if (card.faceDown && card.zone === "play") {
+        // Flip it up now so threshold / cost / target resolution below sees
+        // its real characteristics, but record that the thing about to
+        // leave play (via `moveCard` to "deploying") was a face-down
+        // resource with no rules text — its "leaves play" trigger must not
+        // fire on the way out (CR §411.3).
         card.faceDown = false;
+        this.faceDownDeparture.add(card.id);
       }
       card.controllerId = playerId;
     } else {
@@ -3536,9 +3577,21 @@ export class SpoilsEngine {
         // is in your discard pile, when ...").
         const triggerZone = ability.triggerZone ?? "play";
         if (triggerZone === "play") {
+          // For the card this very event just took out of play, `card.zone`
+          // / `card.faceDown` are already updated — consult the face-down
+          // state captured on the event. A card that left play *while
+          // face-down* was an anonymous Volition resource with no rules
+          // text (CR §411.1), so its "leaves play" trigger does not fire; a
+          // face-up card flipped face-down (CR §411.4) reports `false` and
+          // does fire it.
+          const sourceFaceDown =
+            isLeavingPlayEventSource &&
+            (event.type === "cardMoved" || event.type === "cardDestroyed")
+              ? event.faceDown === true
+              : card.faceDown;
           if (
             (card.zone !== "play" && !isLeavingPlayEventSource) ||
-            card.faceDown
+            sourceFaceDown
           ) {
             continue;
           }
@@ -9673,6 +9726,16 @@ export class SpoilsEngine {
     const card = this.requireCard(cardId);
     const from = card.zone;
 
+    // Snapshot the face-down state for the emitted `cardMoved` before the
+    // cleanup below wipes it — plus the `deployCard` case where the caller
+    // already flipped it up (CR §411.3). Only meaningful for a move that
+    // originates in play; a `cardMoved` with `from !== "play"` reports no
+    // `faceDown`.
+    const wasFaceDown =
+      from === "play" &&
+      (card.faceDown || this.faceDownDeparture.has(cardId));
+    this.faceDownDeparture.delete(cardId);
+
     if (from === to) {
       // Every zone but the deck is an unordered set, so a same-zone move is
       // a no-op. The deck is ordered: "put the top card of your deck on the
@@ -9745,7 +9808,13 @@ export class SpoilsEngine {
       }
       delete this.state.cards[cardId];
       if (emitEvents) {
-        this.emit({ type: "cardMoved", cardId, from, to });
+        this.emit({
+          type: "cardMoved",
+          cardId,
+          from,
+          to,
+          ...(wasFaceDown ? { faceDown: true } : {})
+        });
       }
       return;
     }
@@ -9853,7 +9922,8 @@ export class SpoilsEngine {
         type: "cardMoved",
         cardId,
         from,
-        to
+        to,
+        ...(wasFaceDown ? { faceDown: true } : {})
       });
 
       // "When a player discards ... cards" (Bewilderbeast) — a hand→discard
@@ -10078,6 +10148,10 @@ export class SpoilsEngine {
 
     const previousController =
       card.controllerId;
+    // Captured before `moveCard` clears it: a face-down resource has no
+    // rules text, so its "when destroyed / leaves play" trigger must not
+    // fire (CR §411.1).
+    const wasFaceDown = card.faceDown;
 
     this.moveCard(cardId, "discard", emitEvents);
 
@@ -10086,7 +10160,8 @@ export class SpoilsEngine {
         type: "cardDestroyed",
         cardId,
         controllerId: previousController,
-        byBattleDamage: byBattleDamage || undefined
+        byBattleDamage: byBattleDamage || undefined,
+        ...(wasFaceDown ? { faceDown: true } : {})
       });
     }
   }
@@ -10134,6 +10209,10 @@ export class SpoilsEngine {
     card.zone = "play";
     this.requirePlayer(card.ownerId).play.push(cardId);
 
+    // The card that left play here was face-up (its real self), so this is
+    // a genuine "leaves play" for its printed triggers (CR §411.4): the
+    // event carries no `faceDown`, even though the card is face-down
+    // immediately after.
     this.emit({ type: "cardMoved", cardId, from: "play", to: "play" });
   }
 

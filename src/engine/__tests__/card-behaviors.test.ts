@@ -1352,6 +1352,344 @@ describe("cardMovedFromZone condition", () => {
   });
 });
 
+// CR §411.1 — a face-down card in play is *only* a Volition resource: it
+// has no name, no other type, and no rules text. Its printed abilities are
+// dormant, so a "when this leaves play" trigger does not fire when it
+// leaves play face-down, and it is not seen as a character/item by a
+// type-checking selector. Flipping it face-up makes it "a completely new
+// card" (§411.3); flipping a face-up card face-down still counts as that
+// card leaving play (§411.4).
+describe("face-down cards have no characteristics (CR §411.1)", () => {
+  // Hands its controller 3 influence the instant it leaves play.
+  function gnat(overrides: Partial<CardDefinition> = {}): CardDefinition {
+    return character({
+      name: "Swarm of Gnats",
+      life: 1,
+      behavior: {
+        abilities: [
+          {
+            id: "on-leave",
+            type: "triggered",
+            event: "cardMoved",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "sourceIsEventCard" },
+                { type: "cardMovedFromZone", zone: "play" }
+              ]
+            },
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 3 }]
+          }
+        ]
+      },
+      ...overrides
+    });
+  }
+
+  test("a face-down resource's 'leaves play' trigger stays dormant when it is destroyed", () => {
+    const zap = tactic({
+      name: "Zap",
+      behavior: {
+        abilities: [
+          {
+            id: "z",
+            type: "activated",
+            targets: [
+              {
+                id: "t",
+                selector: { zone: "play", type: "resource", controller: "opponent" },
+                count: 1
+              }
+            ],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [
+        { key: "zap", def: zap, owner: P1, zone: "hand" },
+        { key: "gnat", def: gnat(), owner: P2, controller: P2, faceDown: true }
+      ]
+    });
+
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("zap"),
+      selected: { t: [id("gnat")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("gnat")].zone, "discard");
+    assert.equal(
+      engine.state.players[P2].influence,
+      before,
+      "the face-down card had no rules text — its leaves-play trigger must not fire"
+    );
+  });
+
+  test("a face-down resource is not a legal 'character or item' target", () => {
+    const grab = tactic({
+      name: "Grab",
+      behavior: {
+        abilities: [
+          {
+            id: "g",
+            type: "activated",
+            targets: [
+              {
+                id: "t",
+                selector: {
+                  controller: "self",
+                  zone: "play",
+                  conditions: [
+                    {
+                      type: "or",
+                      conditions: [
+                        {
+                          type: "cardTypeIs",
+                          target: { type: "selected", id: "__candidate" },
+                          cardType: "character"
+                        },
+                        {
+                          type: "cardTypeIs",
+                          target: { type: "selected", id: "__candidate" },
+                          cardType: "item"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                count: 1
+              }
+            ],
+            effects: [{ type: "deplete", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P2,
+      cards: [
+        { key: "grab", def: grab, owner: P2, zone: "hand" },
+        { key: "real", def: character({ name: "Real" }), owner: P2 },
+        { key: "gnat", def: gnat({ id: "gnat-facedown-def" }), owner: P2, faceDown: true }
+      ]
+    });
+
+    assert.throws(() =>
+      engine.perform({
+        type: "playCard",
+        playerId: P2,
+        cardId: id("grab"),
+        selected: { t: [id("gnat")] }
+      })
+    );
+
+    // The real, face-up character is still a fine target.
+    engine.perform({
+      type: "playCard",
+      playerId: P2,
+      cardId: id("grab"),
+      selected: { t: [id("real")] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("real")].depleted, true);
+  });
+
+  test("flipping a face-up card face-down still fires its 'leaves play' trigger (CR §411.4)", () => {
+    const quicksand = tactic({
+      name: "Quicksand",
+      behavior: {
+        abilities: [
+          {
+            id: "q",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "flipFaceDown", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [
+        { key: "qs", def: quicksand, owner: P1, zone: "hand" },
+        { key: "gnat", def: gnat(), owner: P2, controller: P2 }
+      ]
+    });
+
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("qs"),
+      selected: { t: [id("gnat")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("gnat")].faceDown, true);
+    assert.equal(
+      engine.state.players[P2].influence,
+      before + 3,
+      "the face-up card genuinely left play when it was flipped"
+    );
+  });
+
+  test("flipping a face-down resource face-up to deploy it fires only its enters-play trigger", () => {
+    const manifest = tactic({
+      name: "Manifest",
+      behavior: {
+        abilities: [
+          {
+            id: "m",
+            type: "activated",
+            targets: [
+              {
+                id: "rev",
+                selector: {
+                  controller: "self",
+                  zone: "play",
+                  type: "character",
+                  faceDown: true
+                },
+                count: 1
+              }
+            ],
+            effects: [
+              {
+                type: "deployFromZone",
+                player: "controller",
+                target: { type: "selected", id: "rev" }
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+    const gnatWithEtb = gnat({
+      id: "gnat-etb-def",
+      cost: 6,
+      behavior: {
+        abilities: [
+          {
+            id: "on-leave",
+            type: "triggered",
+            event: "cardMoved",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "sourceIsEventCard" },
+                { type: "cardMovedFromZone", zone: "play" }
+              ]
+            },
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 100 }]
+          },
+          {
+            id: "on-enter",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      activePlayerId: P1,
+      cards: [
+        { key: "man", def: manifest, owner: P1, zone: "hand" },
+        { key: "fd", def: gnatWithEtb, owner: P1, zone: "play", faceDown: true }
+      ],
+      playerA: { influence: 20 }
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("man"),
+      selected: { rev: [id("fd")] }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "deployForFree", cardId: id("fd") }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("fd")].faceDown, false);
+    assert.equal(
+      engine.state.players[P1].influence,
+      23,
+      "only the enters-play trigger fired; the dormant leaves-play trigger did not"
+    );
+  });
+
+  test("a card played as a face-down resource does not fire its 'enters play' trigger", () => {
+    const resourceFaction = factionCard({
+      name: "Resource Faction",
+      faction: {
+        startingInfluence: 25,
+        setup: { startingResources: { count: 0 }, openingHand: { goingFirst: 0, goingSecond: 0 } },
+        turn: {
+          restore: { detachResources: true, restoreNonResources: true },
+          develop: { choices: [{ type: "playResource", count: 1 }] }
+        }
+      }
+    });
+
+    const etbGnat = character({
+      name: "ETB Gnat",
+      behavior: {
+        abilities: [
+          {
+            id: "etb",
+            type: "triggered",
+            event: "cardEnteredPlay",
+            condition: { type: "sourceIsEventCard" },
+            effects: [{ type: "modifyInfluence", player: "controller", amount: 5 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      playerA: { faction: resourceFaction },
+      cards: [{ key: "gnat", def: etbGnat, owner: P1, zone: "hand" }],
+      activePlayerId: P1
+    });
+
+    const before = engine.state.players[P1].influence;
+
+    engine.perform({
+      type: "chooseDevelop",
+      playerId: P1,
+      choice: { type: "playResource", cards: [{ cardId: id("gnat"), faceDown: true }] }
+    });
+    resolvePendingResponses(engine);
+
+    const gnat = engine.state.cards[id("gnat")];
+    assert.equal(gnat.zone, "play");
+    assert.equal(gnat.faceDown, true);
+    assert.equal(
+      engine.state.players[P1].influence,
+      before,
+      "a face-down resource has no rules text — its ETB stays dormant"
+    );
+  });
+});
+
 // "When this card attacks, you may pick a character. If you do, deplete
 // it." (Bloodcurdling Bulldozer) — optional targeting + the `if` meta-effect
 // ("if you do"), plus the `characterAttacked` event itself.

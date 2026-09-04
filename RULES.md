@@ -86,11 +86,31 @@ or returned location doesn't carry old damage into a fresh stint in play.
 
 **Face-down cards and flipping.** **(CR §411.1)** Every face-down card in
 play is a resource providing one Volition icon (cards in the void are not in
-play). **(CR §411.3 / §411.4, FAQ)** Flipping a card face-up *or* face-down
-counts as the card **leaving play and a brand-new card entering play** —
-"leaves play" triggers fire on the flip, "enters play" triggers fire on the
-result, and nothing about the old object (damage, tokens, temporary rules
-text, attachments) carries over.
+play). It has **no other characteristics** — no name, no non-resource type,
+and no rules text — until it is flipped face-up. So a face-down card is not
+a "character" / "item" / "location" for a type-checking selector, condition,
+or cost ("destroy another character or item you control" can't pick a
+face-down resource; `getCardTypes` returns `["resource"]` for it), and any
+triggered ability printed on it is **dormant**: a card that leaves play
+*while face-down* (destroyed, bounced, milled, or flipped face-up to be
+deployed — §411.3) fires **no** "when this leaves play" trigger, because the
+thing that left play was an anonymous resource. Tactical is the one keyword
+that still works face-down, and only because CR §507.6b says so explicitly.
+**(CR §411.3 / §411.4, FAQ)** Flipping a card face-up *or* face-down counts
+as the card **leaving play and a brand-new card entering play** — "enters
+play" triggers fire on the result; "leaves play" triggers fire on the flip
+*only* when the card that left was face-**up** (its real self, e.g. a
+`flipFaceDown` effect on an in-play character), never for a face-down
+resource being flipped up. Nothing about the old object (damage, tokens,
+temporary rules text, attachments) carries over.
+
+**(engine-derived)** `moveCard` clears `CardInstance.faceDown` as part of
+the zone change, *before* it emits the `cardMoved` / `cardDestroyed` event,
+so the leaving-play card's live `faceDown` is already stale by the time
+`findTriggers` runs. The event therefore carries a `faceDown` snapshot
+(also set for the `deployCard` flip-up case, where the caller cleared the
+flag first); `findTriggers` reads that snapshot — not `card.faceDown` — to
+decide whether a leaving-play source's own trigger is dormant.
 
 **(engine-derived)** A card removed from the game is still tracked as a real
 `Zone` value (`PlayerState.removed`) rather than deleted from
