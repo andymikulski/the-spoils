@@ -9122,17 +9122,38 @@ export class SpoilsEngine {
         );
 
         this.state.pendingChoice = undefined;
-        this.state.pendingEffectFrames.push({
-          effects: pending.effects,
-          index: 0,
-          context: {
-            ...pending.context,
-            variables: {
-              ...pending.context.variables,
-              [pending.storeAs]: choice.value
+        if (pending.effects) {
+          // Self-contained sub-list to run with the chosen number bound.
+          this.state.pendingEffectFrames.push({
+            effects: pending.effects,
+            index: 0,
+            context: {
+              ...pending.context,
+              variables: {
+                ...pending.context.variables,
+                [pending.storeAs]: choice.value
+              }
             }
+          });
+        } else {
+          // `chooserSelectsNumber` interrupted mid-frame just to store a
+          // value ("each player draws up to 2" — Thabbashite Wizard). The
+          // rest of that frame is already parked; inject the value into
+          // every parked frame's context so the following effects
+          // (`draw amount: {variable n}`) see it. When the chooser is
+          // nested inside `forEachPlayer`, the outer ability frame is
+          // re-parked on top of the frame that actually needs the value,
+          // so a "top frame only" write would miss it.
+          for (const parked of this.state.pendingEffectFrames) {
+            parked.context = {
+              ...parked.context,
+              variables: {
+                ...parked.context.variables,
+                [pending.storeAs]: choice.value
+              }
+            };
           }
-        });
+        }
         this.resumeEffectFrames();
         return;
       }

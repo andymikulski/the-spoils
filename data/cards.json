@@ -32572,7 +32572,23 @@
                   "type": "triggered",
                   "event": "damageDealt",
                   "condition": {
-                    "type": "sourceIsDamageSource"
+                    "type": "and",
+                    "conditions": [
+                      {
+                        "type": "sourceIsDamageSource"
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "isCard",
+                          "target": "eventCard",
+                          "other": {
+                            "type": "factionOf",
+                            "player": "controller"
+                          }
+                        }
+                      }
+                    ]
                   },
                   "effects": [
                     {
@@ -72452,16 +72468,16 @@
                       "effects": [
                         {
                           "type": "draw",
-                          "player": "activePlayer",
+                          "player": "controller",
                           "amount": 1
                         },
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "b",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -72497,11 +72513,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "r",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "type": "resource",
                               "zone": "play"
                             },
@@ -72527,7 +72543,7 @@
                         },
                         {
                           "type": "chooserSelectsOption",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "options": [
                             {
                               "label": "Decline",
@@ -72538,7 +72554,7 @@
                               "effects": [
                                 {
                                   "type": "playResource",
-                                  "player": "activePlayer"
+                                  "player": "controller"
                                 }
                               ]
                             }
@@ -72556,11 +72572,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "d",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -72595,11 +72611,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "t",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -73313,14 +73329,14 @@
               "effects": [
                 {
                   "type": "chooserSelectsNumber",
-                  "chooser": "activePlayer",
+                  "chooser": "controller",
                   "storeAs": "n",
                   "min": 0,
                   "max": 2
                 },
                 {
                   "type": "draw",
-                  "player": "activePlayer",
+                  "player": "controller",
                   "amount": {
                     "type": "variable",
                     "id": "n"
@@ -79485,7 +79501,6 @@
         {
           "id": "gear-instant",
           "type": "continuous",
-          "activeZone": "hand",
           "modifiers": [],
           "keywords": [
             {
@@ -80760,7 +80775,7 @@
                   "effects": [
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "activePlayer",
+                      "chooser": "controller",
                       "options": [
                         {
                           "label": "Decline",
@@ -80771,7 +80786,7 @@
                           "effects": [
                             {
                               "type": "draw",
-                              "player": "activePlayer",
+                              "player": "controller",
                               "amount": 1
                             }
                           ]
@@ -80804,7 +80819,7 @@
                   "effects": [
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "activePlayer",
+                      "chooser": "controller",
                       "options": [
                         {
                           "label": "Decline",
@@ -80815,7 +80830,7 @@
                           "effects": [
                             {
                               "type": "playResource",
-                              "player": "activePlayer"
+                              "player": "controller"
                             }
                           ]
                         }
@@ -86080,7 +86095,20 @@
           "type": "triggered",
           "event": "damageDealt",
           "condition": {
-            "type": "sourceIsDamageSource"
+            "type": "and",
+            "conditions": [
+              {
+                "type": "sourceIsDamageSource"
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "cardTypeIs",
+                  "target": "eventCard",
+                  "cardType": "location"
+                }
+              }
+            ]
           },
           "effects": [
             {
@@ -105639,16 +105667,16 @@
                       "effects": [
                         {
                           "type": "draw",
-                          "player": "activePlayer",
+                          "player": "controller",
                           "amount": 1
                         },
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "b",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -105684,11 +105712,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "r",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "type": "resource",
                               "zone": "play"
                             },
@@ -105714,7 +105742,7 @@
                         },
                         {
                           "type": "chooserSelectsOption",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "options": [
                             {
                               "label": "Decline",
@@ -105725,7 +105753,7 @@
                               "effects": [
                                 {
                                   "type": "playResource",
-                                  "player": "activePlayer"
+                                  "player": "controller"
                                 }
                               ]
                             }
@@ -105743,11 +105771,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "d",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -105782,11 +105810,11 @@
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "activePlayer",
+                          "chooser": "controller",
                           "declaration": {
                             "id": "t",
                             "selector": {
-                              "owner": "activePlayer",
+                              "owner": "controller",
                               "zone": "hand"
                             },
                             "count": 1,
@@ -106765,14 +106793,14 @@
               "effects": [
                 {
                   "type": "chooserSelectsNumber",
-                  "chooser": "activePlayer",
+                  "chooser": "controller",
                   "storeAs": "n",
                   "min": 0,
                   "max": 2
                 },
                 {
                   "type": "draw",
-                  "player": "activePlayer",
+                  "player": "controller",
                   "amount": {
                     "type": "variable",
                     "id": "n"
@@ -118512,7 +118540,6 @@
         {
           "id": "gear-instant",
           "type": "continuous",
-          "activeZone": "hand",
           "modifiers": [],
           "keywords": [
             {
@@ -120212,7 +120239,7 @@
                   "effects": [
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "activePlayer",
+                      "chooser": "controller",
                       "options": [
                         {
                           "label": "Decline",
@@ -120223,7 +120250,7 @@
                           "effects": [
                             {
                               "type": "draw",
-                              "player": "activePlayer",
+                              "player": "controller",
                               "amount": 1
                             }
                           ]
@@ -120256,7 +120283,7 @@
                   "effects": [
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "activePlayer",
+                      "chooser": "controller",
                       "options": [
                         {
                           "label": "Decline",
@@ -120267,7 +120294,7 @@
                           "effects": [
                             {
                               "type": "playResource",
-                              "player": "activePlayer"
+                              "player": "controller"
                             }
                           ]
                         }
@@ -130340,7 +130367,20 @@
           "type": "triggered",
           "event": "damageDealt",
           "condition": {
-            "type": "sourceIsDamageSource"
+            "type": "and",
+            "conditions": [
+              {
+                "type": "sourceIsDamageSource"
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "cardTypeIs",
+                  "target": "eventCard",
+                  "cardType": "location"
+                }
+              }
+            ]
           },
           "effects": [
             {
