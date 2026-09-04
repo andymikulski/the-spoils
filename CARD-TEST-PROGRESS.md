@@ -9,7 +9,7 @@ asserts the concrete outcome **and** target legality. See `per-card/_harness.ts`
 
 A card is counted **done** when its set file has a `describe()` naming it.
 
-**Overall: 1721 / 2101 cards.**
+**Overall: 2079 / 2101 cards.**
 
 | Set | Cards | Done | Remaining | % |
 |---|--:|--:|--:|--:|
@@ -23,7 +23,7 @@ A card is counted **done** when its set file has a `describe()` naming it.
 | 1st Edition | 226 | 226 | 0 | 100% |
 | Seed | 231 | 231 | 0 | 100% |
 | 2nd Edition | 300 | 300 | 0 | 100% |
-| Seed Saga | 358 | 0 | 358 | 0% |
+| Seed Saga | 358 | 358 | 0 | 100% |
 
 ## Seed 3 — 43 / 43
 
@@ -1818,366 +1818,366 @@ Test file: `src/engine/__tests__/per-card/2nd-edition.test.ts`
 - [x] Wyrmfang Deathskull _(character)_
 - [x] Yoink! _(tactic)_
 
-## Seed Saga — 0 / 358
+## Seed Saga — 358 / 358
 
 Test file: `src/engine/__tests__/per-card/seed-saga.test.ts`
 
-- [ ] 313373 M3ch4n1c _(character)_
-- [ ] 3cc3n7r1c 73chn1c14n _(character)_
-- [ ] 3p1c D00dm4k3r _(item)_
-- [ ] 4rm0r3d 31f _(character)_
-- [ ] 53cur17y 5y573m _(location)_
-- [ ] A Blazing Zero _(tactic)_
-- [ ] A Death Fit for a King _(tactic)_
-- [ ] Accidental Invention _(tactic)_
-- [ ] Acidic Phlegm _(tactic)_
-- [ ] Adjunct Artisan _(character)_
-- [ ] Adriel, Defender of Marduun _(character)_
-- [ ] Adriel, Supreme General of the Imperial Army _(character)_
-- [ ] Affectionate Dollkeeper _(character)_
-- [ ] Agile Highwayman _(character)_
-- [ ] Alliance of Handy Weirdos _(faction)_
-- [ ] Alluring Quicksand _(tactic)_
-- [ ] Anathematize _(tactic)_
-- [ ] Arcane Monkey Ritual _(tactic)_
-- [ ] Architectural Restitution _(tactic)_
-- [ ] Aristocratic Artificer _(character)_
-- [ ] Aroused Stiffbone _(character)_
-- [ ] Arrogance _(resource)_
-- [ ] Ascendant Madcap _(character)_
-- [ ] Ashara, Gideon's Twin _(character)_
-- [ ] Assistant Mud Whisperer _(character)_
-- [ ] Athalamund Mangod, The Iron Fist _(character)_
-- [ ] Auspicious Tax _(item)_
-- [ ] Avuncular Merlion _(character)_
-- [ ] Aweless Charger _(character)_
-- [ ] B14nd P3pp3r _(item)_
-- [ ] Balking Foecrusher _(character)_
-- [ ] Balthassar Gristwalter _(character)_
-- [ ] Banner of Avarice _(item)_
-- [ ] Banner of Betrayal _(item)_
-- [ ] Banner of Compulsion _(item)_
-- [ ] Banner of Elysium _(item)_
-- [ ] Banner of Fury _(item)_
-- [ ] Barrier of Benevolence _(tactic)_
-- [ ] Because God Said So! _(tactic)_
-- [ ] Black Scourge of the Brine _(character)_
-- [ ] Blazing Shriever _(character)_
-- [ ] Boilstorm _(tactic)_
-- [ ] Booty Licker _(character)_
-- [ ] Braggadocian Aide _(character)_
-- [ ] Brainbath _(tactic)_
-- [ ] Brilliant Insight _(tactic)_
-- [ ] Burly Assailment _(tactic)_
-- [ ] Caboodling Gladhander _(character)_
-- [ ] Cantankerous Claywork _(character)_
-- [ ] Caracal Morphnus _(character)_
-- [ ] Cashier's Window _(item)_
-- [ ] Casino Kingpin _(character)_
-- [ ] Ceremonious Groomer _(character)_
-- [ ] Chain Reaction _(tactic)_
-- [ ] Chancellor of Reinstatement _(character)_
-- [ ] Circumspect Hijacker _(character)_
-- [ ] Clam Hash _(tactic)_
-- [ ] Clay Node _(character)_
-- [ ] Claywork Compendium _(item)_
-- [ ] Cloaked Weaponmaster _(character)_
-- [ ] Cock Block _(tactic)_
-- [ ] Colossal Flattener _(character)_
-- [ ] Confounding Conjurer _(character)_
-- [ ] Conscientious Objector _(character)_
-- [ ] Contrabulous Fabtraption _(item)_
-- [ ] Courageous Paladin _(character)_
-- [ ] Cowering Golem _(character)_
-- [ ] Crushing Usury _(tactic)_
-- [ ] Crushjaw Oceanhide _(character)_
-- [ ] Cryptic Athenaeum _(location)_
-- [ ] Cunning Disguise _(item)_
-- [ ] D3ck W4rd3n _(character)_
-- [ ] Dauntless Gambler _(character)_
-- [ ] Day of the Tentacle _(tactic)_
-- [ ] Dazzling Trapezist _(character)_
-- [ ] Death of the Demon Knights _(tactic)_
-- [ ] Defenders of Marduun _(faction)_
-- [ ] Defiler of Innocence _(character)_
-- [ ] Delectable Boon _(tactic)_
-- [ ] Delusive Strumpet _(character)_
-- [ ] Department of Rejections _(location)_
-- [ ] Derelict Seafarer _(character)_
-- [ ] Desolate _(tactic)_
-- [ ] Desserted Island _(tactic)_
-- [ ] Domain of Depravity _(location)_
-- [ ] Dowsing Cleric _(character)_
-- [ ] Draconarius Slitherform _(character)_
-- [ ] Dragon Archer _(character)_
-- [ ] Drill Garrison _(location)_
-- [ ] Drivey Car _(character)_
-- [ ] Drowned Catacombs _(faction)_
-- [ ] Drygulch _(tactic)_
-- [ ] Duskfall Buckgriff _(character)_
-- [ ] Dwarvish Grimalkin _(character)_
-- [ ] Dying Hero _(character)_
-- [ ] Ecneret, The Expendable One _(character)_
-- [ ] Elzibeth, Counter Imperial Countess _(character)_
-- [ ] Elzibeth, Military Sorceress _(character)_
-- [ ] Embittered Cadet _(character)_
-- [ ] Emissary of Loot _(character)_
-- [ ] Encumber _(tactic)_
-- [ ] Enduring Swordsman _(character)_
-- [ ] Enormous and Uncooperative Golem _(character)_
-- [ ] Ensorcelled Familiar _(character)_
-- [ ] Enter The Demon Knights _(tactic)_
-- [ ] Epic Smackdown _(tactic)_
-- [ ] Epicureous Mammajamma _(character)_
-- [ ] Essence of Deception _(tactic)_
-- [ ] Essence of Elitism _(tactic)_
-- [ ] Essence of Greed _(tactic)_
-- [ ] Essence of Obsession _(tactic)_
-- [ ] Essence of Rage _(tactic)_
-- [ ] Evanesce _(tactic)_
-- [ ] Executive Order #6370u7 _(item)_
-- [ ] Exploitation _(resource)_
-- [ ] Extravagant Contusion _(tactic)_
-- [ ] Fervent Beastslayer _(character)_
-- [ ] Fiendish Fez _(item)_
-- [ ] Fired Hand _(character)_
-- [ ] Fiscal Intercessor _(character)_
-- [ ] Flabbergasting Philosopher _(character)_
-- [ ] Flagitious Denunciator _(character)_
-- [ ] Flailing Knife _(item)_
-- [ ] Fleet Golem _(character)_
-- [ ] Flimflam Man _(character)_
-- [ ] Foolhardy Desperado _(character)_
-- [ ] Forbidden Knowledge _(tactic)_
-- [ ] Fountain Diver _(character)_
-- [ ] Framptle Tromwibbler, Lord of Bling _(character)_
-- [ ] Frenzied Shriever _(character)_
-- [ ] Frisky Fortunehunter _(character)_
-- [ ] G14n7 5p0rk D3f3n53 _(item)_
-- [ ] Gallant Commander _(character)_
-- [ ] Gambling Den _(location)_
-- [ ] Gewgawed Gimcrack _(item)_
-- [ ] Gideon, the Ultimate Warrior _(character)_
-- [ ] Gideon's Legacy _(item)_
-- [ ] Gilda, Mother of Gideon _(character)_
-- [ ] Godwing Thunderhoof _(character)_
-- [ ] Golemizer _(item)_
-- [ ] Goloam _(character)_
-- [ ] Goutflame Talonclaw _(character)_
-- [ ] Grandiose Resurrector _(character)_
-- [ ] Gus VanBaymaven _(character)_
-- [ ] Guttersnipe _(character)_
-- [ ] H07 P3pp3r _(item)_
-- [ ] Hall of Conventions _(location)_
-- [ ] Hall of Great Justice _(faction)_
-- [ ] Harbinger of Anguish _(character)_
-- [ ] Headhunting _(tactic)_
-- [ ] Heavy Sword _(item)_
-- [ ] Heist Training Grounds _(location)_
-- [ ] Hextilda, the Exiled Crone _(character)_
-- [ ] Hidden Dagger _(item)_
-- [ ] Hidden Ruins _(tactic)_
-- [ ] Hideous Hexapede of Horror _(character)_
-- [ ] High Court of Demands _(location)_
-- [ ] High-Priest of Thabbash _(character)_
-- [ ] Horrendous Behemoth _(character)_
-- [ ] Horrifying Brain-Monkey _(character)_
-- [ ] Hungermaw Deephate _(character)_
-- [ ] Hungry-Hungry Idol _(item)_
-- [ ] Hustler's Comeuppance _(tactic)_
-- [ ] Hypnotic Illusionist _(character)_
-- [ ] I Drink Your Milkshake! _(tactic)_
-- [ ] Idol Smasher _(character)_
-- [ ] Imperial Palace _(location)_
-- [ ] Imperial Thaumaturge _(character)_
-- [ ] Implosive Explosion _(tactic)_
-- [ ] Impressive Hero _(character)_
-- [ ] Improvised Blowtorch _(tactic)_
-- [ ] Inadequate Wand _(item)_
-- [ ] Inconspicuous Golem _(character)_
-- [ ] Inconvenient Roadblock _(tactic)_
-- [ ] Ingenious Tinker _(character)_
-- [ ] Inhibit _(tactic)_
-- [ ] Intellectual Reliquary _(item)_
-- [ ] Invade! _(tactic)_
-- [ ] Jocular Stupefaction _(tactic)_
-- [ ] Juggernauts _(character)_
-- [ ] Karmic Cake _(tactic)_
-- [ ] Lab of Luxury _(location)_
-- [ ] Lecram, Silent Advisor _(character)_
-- [ ] Legions of Chaos _(faction)_
-- [ ] Lingamite Torture Monk _(character)_
-- [ ] Living God of Thabbash _(character)_
-- [ ] Lodge Dock Florist _(location)_
-- [ ] Lordly Stables _(location)_
-- [ ] Lucky Bastard _(character)_
-- [ ] Lucky Charm _(item)_
-- [ ] Luxurious Gaming Establishment _(location)_
-- [ ] Manful Skirmish _(tactic)_
-- [ ] Manifest _(tactic)_
-- [ ] Marduun Baitings and Loan _(location)_
-- [ ] Mass Confusion _(tactic)_
-- [ ] Massive Erecting Golem _(character)_
-- [ ] Master Mud Whisperer _(character)_
-- [ ] Mau Caravan _(location)_
-- [ ] Maxwell Cockswagger _(character)_
-- [ ] Melty Cheese _(item)_
-- [ ] Mesmerizing Enchantress _(character)_
-- [ ] Midget Mine _(item)_
-- [ ] Mighty Ballista _(location)_
-- [ ] Minion of Thabbash _(character)_
-- [ ] Miraculous Regeneration _(tactic)_
-- [ ] Mirthless Altar _(location)_
-- [ ] Mistaken Identity _(tactic)_
-- [ ] Moist Cave of the Darkpump _(faction)_
-- [ ] Montgomery Blatherscythe _(character)_
-- [ ] Mountainous Golem _(character)_
-- [ ] Mr. Chesterton _(character)_
-- [ ] Mud Prison _(location)_
-- [ ] Mud Whisperer Wannabe _(character)_
-- [ ] Muddle _(tactic)_
-- [ ] Muddle Bugs _(item)_
-- [ ] Multi-Attachment Man _(character)_
-- [ ] Mundane Pupil _(character)_
-- [ ] Muscle Tribe of Danger and Excellence _(character)_
-- [ ] Mustache Aficionado _(character)_
-- [ ] Mutilated _(tactic)_
-- [ ] Mutineer's Hiatus _(tactic)_
-- [ ] Mysterious Invasion _(item)_
-- [ ] Narrow Passage _(location)_
-- [ ] Nattering Stoopswaggler _(character)_
-- [ ] Necromantic Healer _(character)_
-- [ ] Nefarious Horror _(character)_
-- [ ] Neurosis _(resource)_
-- [ ] Nimble Conscript _(character)_
-- [ ] Obscene Astrologer _(character)_
-- [ ] Obscene Communion _(item)_
-- [ ] Obscure _(tactic)_
-- [ ] Obtuse Pipesmoker _(character)_
-- [ ] Oddment Collector _(character)_
-- [ ] Opportune Slotpuller _(character)_
-- [ ] Order of the Golden String _(faction)_
-- [ ] Otter Floss _(tactic)_
-- [ ] Overindulge _(tactic)_
-- [ ] Overzealous Excavation _(tactic)_
-- [ ] P3pp3r 0f 1n54n17y _(item)_
-- [ ] Padamose, Emperor of Marduun _(character)_
-- [ ] Palm Glom _(tactic)_
-- [ ] Pant Swipe _(tactic)_
-- [ ] Party Clowns _(character)_
-- [ ] Peculate _(tactic)_
-- [ ] Perforate _(tactic)_
-- [ ] Perturb _(tactic)_
-- [ ] Perturbatious Warlock _(character)_
-- [ ] Phalludrix, the Impotenator _(item)_
-- [ ] Pilgrimage Auditor _(character)_
-- [ ] Pit Boss _(character)_
-- [ ] Plunging Shriever _(character)_
-- [ ] Portly Tradesmau _(character)_
-- [ ] Prehensile Pirate _(character)_
-- [ ] Preponderant Craftsman _(character)_
-- [ ] Proficient Battler _(character)_
-- [ ] Property Condemner _(character)_
-- [ ] Prophetic Assistant _(character)_
-- [ ] Prostitution Lobbyist _(character)_
-- [ ] Protractive Golem _(character)_
-- [ ] Purifying Priest _(character)_
-- [ ] Reality Shift _(tactic)_
-- [ ] Recyclable Golem _(character)_
-- [ ] Redonkulous _(tactic)_
-- [ ] Repurpose _(tactic)_
-- [ ] Research Intern _(character)_
-- [ ] Resistance Fighter _(character)_
-- [ ] Rewarding Salvage _(tactic)_
-- [ ] Rigged Tables _(item)_
-- [ ] Righteous Exemplar _(character)_
-- [ ] Robustical Badass _(character)_
-- [ ] Rosy Palmer, and Her Five Friends _(character)_
-- [ ] Roulette Wheel of DOOM! _(tactic)_
-- [ ] Roundalicious Breasticles _(item)_
-- [ ] Rouse _(tactic)_
-- [ ] Rumply Ruse _(tactic)_
-- [ ] Rune of Concealment _(item)_
-- [ ] Runic Armor _(item)_
-- [ ] Runic Battery _(item)_
-- [ ] Runic Flee _(tactic)_
-- [ ] Runic Reinforcement _(tactic)_
-- [ ] Runic Tattoo Artist _(character)_
-- [ ] Runic Whale _(character)_
-- [ ] Runivoltaic Accumulator _(item)_
-- [ ] Rusty Pickaxe _(item)_
-- [ ] Sequestered Hellion _(character)_
-- [ ] Seraphim Magic _(tactic)_
-- [ ] Shadowy Mugger _(character)_
-- [ ] Shrouded Demon _(character)_
-- [ ] Sin Against Nature _(character)_
-- [ ] Slick Orator _(character)_
-- [ ] Slinking Bandido _(character)_
-- [ ] Sly Bilker _(character)_
-- [ ] Smothering Corpulence _(tactic)_
-- [ ] Spiky Pumpkin _(item)_
-- [ ] Spitting Sarume _(character)_
-- [ ] Sprint _(tactic)_
-- [ ] Storm the Gates _(tactic)_
-- [ ] Strangulate _(tactic)_
-- [ ] Stupidify _(tactic)_
-- [ ] Subordinate Demotivation _(tactic)_
-- [ ] Surplus Soldier _(character)_
-- [ ] Surprise! _(tactic)_
-- [ ] Surprising Nuisance _(tactic)_
-- [ ] Swollen Ostrich _(character)_
-- [ ] Tamper _(tactic)_
-- [ ] Temple Guardian _(character)_
-- [ ] Terra Cotta Flagellator _(character)_
-- [ ] Thabbashite Haruspex _(character)_
-- [ ] Thabbashite Wizard _(character)_
-- [ ] The Abominable Hamster _(character)_
-- [ ] The Brotherhood of the Mau _(character)_
-- [ ] The Currency Bazaar _(location)_
-- [ ] The Emperor Barduse _(character)_
-- [ ] The Emperor Born _(tactic)_
-- [ ] The Enemy's Head _(item)_
-- [ ] The Poshernacle _(location)_
-- [ ] The Tournament Faction _(faction)_
-- [ ] Theocratic Senate of Marduun _(location)_
-- [ ] Thorough Sanitization _(tactic)_
-- [ ] Time Portal _(location)_
-- [ ] Time Traveler Tourist Trap _(location)_
-- [ ] Tiny Sarume _(character)_
-- [ ] Tiny Shiny _(tactic)_
-- [ ] Titillated Mooncalf _(character)_
-- [ ] Titillating Contortionist _(character)_
-- [ ] Transient Smuggler _(character)_
-- [ ] Treachery _(resource)_
-- [ ] Treasure Brokerage _(location)_
-- [ ] Trebuchet Officer _(character)_
-- [ ] Tumescent Guilt Bladder _(item)_
-- [ ] Unbearable Torture _(tactic)_
-- [ ] Unbearably Heavy Shoes of Teleportation _(item)_
-- [ ] Uncontrollable Jalopy _(character)_
-- [ ] Undead Sword _(character)_
-- [ ] Underhanded Gamer _(character)_
-- [ ] Underpaid Ancestor _(character)_
-- [ ] Unflinching Bowman _(character)_
-- [ ] Unimportant Wizard _(character)_
-- [ ] Unscrupulous Attendant _(character)_
-- [ ] Vast Mastabatorium _(location)_
-- [ ] Velocious Golem _(character)_
-- [ ] Verrucose Brains _(item)_
-- [ ] Vigilant Raider _(character)_
-- [ ] Violence _(resource)_
-- [ ] Virtuous Razer _(character)_
-- [ ] Virulent Dogmatist _(character)_
-- [ ] Vorpal Sword _(item)_
-- [ ] Walk the Plank _(tactic)_
-- [ ] Wand of Possession _(item)_
-- [ ] Wanton Wizard _(character)_
-- [ ] Warmachine Smelder _(character)_
-- [ ] Watchtower _(location)_
-- [ ] Waylay Blade _(item)_
-- [ ] Well Laid Plans _(tactic)_
-- [ ] Witty Worm _(character)_
-- [ ] Woadenworm Gloamspike, Thabbashite Prince _(character)_
-- [ ] Workshop _(location)_
-- [ ] Wrinkly Rabbit _(character)_
+- [x] 313373 M3ch4n1c _(character)_
+- [x] 3cc3n7r1c 73chn1c14n _(character)_
+- [x] 3p1c D00dm4k3r _(item)_
+- [x] 4rm0r3d 31f _(character)_
+- [x] 53cur17y 5y573m _(location)_
+- [x] A Blazing Zero _(tactic)_
+- [x] A Death Fit for a King _(tactic)_
+- [x] Accidental Invention _(tactic)_
+- [x] Acidic Phlegm _(tactic)_
+- [x] Adjunct Artisan _(character)_
+- [x] Adriel, Defender of Marduun _(character)_
+- [x] Adriel, Supreme General of the Imperial Army _(character)_
+- [x] Affectionate Dollkeeper _(character)_
+- [x] Agile Highwayman _(character)_
+- [x] Alliance of Handy Weirdos _(faction)_
+- [x] Alluring Quicksand _(tactic)_
+- [x] Anathematize _(tactic)_
+- [x] Arcane Monkey Ritual _(tactic)_
+- [x] Architectural Restitution _(tactic)_
+- [x] Aristocratic Artificer _(character)_
+- [x] Aroused Stiffbone _(character)_
+- [x] Arrogance _(resource)_
+- [x] Ascendant Madcap _(character)_
+- [x] Ashara, Gideon's Twin _(character)_
+- [x] Assistant Mud Whisperer _(character)_
+- [x] Athalamund Mangod, The Iron Fist _(character)_
+- [x] Auspicious Tax _(item)_
+- [x] Avuncular Merlion _(character)_
+- [x] Aweless Charger _(character)_
+- [x] B14nd P3pp3r _(item)_
+- [x] Balking Foecrusher _(character)_
+- [x] Balthassar Gristwalter _(character)_
+- [x] Banner of Avarice _(item)_
+- [x] Banner of Betrayal _(item)_
+- [x] Banner of Compulsion _(item)_
+- [x] Banner of Elysium _(item)_
+- [x] Banner of Fury _(item)_
+- [x] Barrier of Benevolence _(tactic)_
+- [x] Because God Said So! _(tactic)_
+- [x] Black Scourge of the Brine _(character)_
+- [x] Blazing Shriever _(character)_
+- [x] Boilstorm _(tactic)_
+- [x] Booty Licker _(character)_
+- [x] Braggadocian Aide _(character)_
+- [x] Brainbath _(tactic)_
+- [x] Brilliant Insight _(tactic)_
+- [x] Burly Assailment _(tactic)_
+- [x] Caboodling Gladhander _(character)_
+- [x] Cantankerous Claywork _(character)_
+- [x] Caracal Morphnus _(character)_
+- [x] Cashier's Window _(item)_
+- [x] Casino Kingpin _(character)_
+- [x] Ceremonious Groomer _(character)_
+- [x] Chain Reaction _(tactic)_
+- [x] Chancellor of Reinstatement _(character)_
+- [x] Circumspect Hijacker _(character)_
+- [x] Clam Hash _(tactic)_
+- [x] Clay Node _(character)_
+- [x] Claywork Compendium _(item)_
+- [x] Cloaked Weaponmaster _(character)_
+- [x] Cock Block _(tactic)_
+- [x] Colossal Flattener _(character)_
+- [x] Confounding Conjurer _(character)_
+- [x] Conscientious Objector _(character)_
+- [x] Contrabulous Fabtraption _(item)_
+- [x] Courageous Paladin _(character)_
+- [x] Cowering Golem _(character)_
+- [x] Crushing Usury _(tactic)_
+- [x] Crushjaw Oceanhide _(character)_
+- [x] Cryptic Athenaeum _(location)_
+- [x] Cunning Disguise _(item)_
+- [x] D3ck W4rd3n _(character)_
+- [x] Dauntless Gambler _(character)_
+- [x] Day of the Tentacle _(tactic)_
+- [x] Dazzling Trapezist _(character)_
+- [x] Death of the Demon Knights _(tactic)_
+- [x] Defenders of Marduun _(faction)_
+- [x] Defiler of Innocence _(character)_
+- [x] Delectable Boon _(tactic)_
+- [x] Delusive Strumpet _(character)_
+- [x] Department of Rejections _(location)_
+- [x] Derelict Seafarer _(character)_
+- [x] Desolate _(tactic)_
+- [x] Desserted Island _(tactic)_
+- [x] Domain of Depravity _(location)_
+- [x] Dowsing Cleric _(character)_
+- [x] Draconarius Slitherform _(character)_
+- [x] Dragon Archer _(character)_
+- [x] Drill Garrison _(location)_
+- [x] Drivey Car _(character)_
+- [x] Drowned Catacombs _(faction)_
+- [x] Drygulch _(tactic)_
+- [x] Duskfall Buckgriff _(character)_
+- [x] Dwarvish Grimalkin _(character)_
+- [x] Dying Hero _(character)_
+- [x] Ecneret, The Expendable One _(character)_
+- [x] Elzibeth, Counter Imperial Countess _(character)_
+- [x] Elzibeth, Military Sorceress _(character)_
+- [x] Embittered Cadet _(character)_
+- [x] Emissary of Loot _(character)_
+- [x] Encumber _(tactic)_
+- [x] Enduring Swordsman _(character)_
+- [x] Enormous and Uncooperative Golem _(character)_
+- [x] Ensorcelled Familiar _(character)_
+- [x] Enter The Demon Knights _(tactic)_
+- [x] Epic Smackdown _(tactic)_
+- [x] Epicureous Mammajamma _(character)_
+- [x] Essence of Deception _(tactic)_
+- [x] Essence of Elitism _(tactic)_
+- [x] Essence of Greed _(tactic)_
+- [x] Essence of Obsession _(tactic)_
+- [x] Essence of Rage _(tactic)_
+- [x] Evanesce _(tactic)_
+- [x] Executive Order #6370u7 _(item)_
+- [x] Exploitation _(resource)_
+- [x] Extravagant Contusion _(tactic)_
+- [x] Fervent Beastslayer _(character)_
+- [x] Fiendish Fez _(item)_
+- [x] Fired Hand _(character)_
+- [x] Fiscal Intercessor _(character)_
+- [x] Flabbergasting Philosopher _(character)_
+- [x] Flagitious Denunciator _(character)_
+- [x] Flailing Knife _(item)_
+- [x] Fleet Golem _(character)_
+- [x] Flimflam Man _(character)_
+- [x] Foolhardy Desperado _(character)_
+- [x] Forbidden Knowledge _(tactic)_
+- [x] Fountain Diver _(character)_
+- [x] Framptle Tromwibbler, Lord of Bling _(character)_
+- [x] Frenzied Shriever _(character)_
+- [x] Frisky Fortunehunter _(character)_
+- [x] G14n7 5p0rk D3f3n53 _(item)_
+- [x] Gallant Commander _(character)_
+- [x] Gambling Den _(location)_
+- [x] Gewgawed Gimcrack _(item)_
+- [x] Gideon, the Ultimate Warrior _(character)_
+- [x] Gideon's Legacy _(item)_
+- [x] Gilda, Mother of Gideon _(character)_
+- [x] Godwing Thunderhoof _(character)_
+- [x] Golemizer _(item)_
+- [x] Goloam _(character)_
+- [x] Goutflame Talonclaw _(character)_
+- [x] Grandiose Resurrector _(character)_
+- [x] Gus VanBaymaven _(character)_
+- [x] Guttersnipe _(character)_
+- [x] H07 P3pp3r _(item)_
+- [x] Hall of Conventions _(location)_
+- [x] Hall of Great Justice _(faction)_
+- [x] Harbinger of Anguish _(character)_
+- [x] Headhunting _(tactic)_
+- [x] Heavy Sword _(item)_
+- [x] Heist Training Grounds _(location)_
+- [x] Hextilda, the Exiled Crone _(character)_
+- [x] Hidden Dagger _(item)_
+- [x] Hidden Ruins _(tactic)_
+- [x] Hideous Hexapede of Horror _(character)_
+- [x] High Court of Demands _(location)_
+- [x] High-Priest of Thabbash _(character)_
+- [x] Horrendous Behemoth _(character)_
+- [x] Horrifying Brain-Monkey _(character)_
+- [x] Hungermaw Deephate _(character)_
+- [x] Hungry-Hungry Idol _(item)_
+- [x] Hustler's Comeuppance _(tactic)_
+- [x] Hypnotic Illusionist _(character)_
+- [x] I Drink Your Milkshake! _(tactic)_
+- [x] Idol Smasher _(character)_
+- [x] Imperial Palace _(location)_
+- [x] Imperial Thaumaturge _(character)_
+- [x] Implosive Explosion _(tactic)_
+- [x] Impressive Hero _(character)_
+- [x] Improvised Blowtorch _(tactic)_
+- [x] Inadequate Wand _(item)_
+- [x] Inconspicuous Golem _(character)_
+- [x] Inconvenient Roadblock _(tactic)_
+- [x] Ingenious Tinker _(character)_
+- [x] Inhibit _(tactic)_
+- [x] Intellectual Reliquary _(item)_
+- [x] Invade! _(tactic)_
+- [x] Jocular Stupefaction _(tactic)_
+- [x] Juggernauts _(character)_
+- [x] Karmic Cake _(tactic)_
+- [x] Lab of Luxury _(location)_
+- [x] Lecram, Silent Advisor _(character)_
+- [x] Legions of Chaos _(faction)_
+- [x] Lingamite Torture Monk _(character)_
+- [x] Living God of Thabbash _(character)_
+- [x] Lodge Dock Florist _(location)_
+- [x] Lordly Stables _(location)_
+- [x] Lucky Bastard _(character)_
+- [x] Lucky Charm _(item)_
+- [x] Luxurious Gaming Establishment _(location)_
+- [x] Manful Skirmish _(tactic)_
+- [x] Manifest _(tactic)_
+- [x] Marduun Baitings and Loan _(location)_
+- [x] Mass Confusion _(tactic)_
+- [x] Massive Erecting Golem _(character)_
+- [x] Master Mud Whisperer _(character)_
+- [x] Mau Caravan _(location)_
+- [x] Maxwell Cockswagger _(character)_
+- [x] Melty Cheese _(item)_
+- [x] Mesmerizing Enchantress _(character)_
+- [x] Midget Mine _(item)_
+- [x] Mighty Ballista _(location)_
+- [x] Minion of Thabbash _(character)_
+- [x] Miraculous Regeneration _(tactic)_
+- [x] Mirthless Altar _(location)_
+- [x] Mistaken Identity _(tactic)_
+- [x] Moist Cave of the Darkpump _(faction)_
+- [x] Montgomery Blatherscythe _(character)_
+- [x] Mountainous Golem _(character)_
+- [x] Mr. Chesterton _(character)_
+- [x] Mud Prison _(location)_
+- [x] Mud Whisperer Wannabe _(character)_
+- [x] Muddle _(tactic)_
+- [x] Muddle Bugs _(item)_
+- [x] Multi-Attachment Man _(character)_
+- [x] Mundane Pupil _(character)_
+- [x] Muscle Tribe of Danger and Excellence _(character)_
+- [x] Mustache Aficionado _(character)_
+- [x] Mutilated _(tactic)_
+- [x] Mutineer's Hiatus _(tactic)_
+- [x] Mysterious Invasion _(item)_
+- [x] Narrow Passage _(location)_
+- [x] Nattering Stoopswaggler _(character)_
+- [x] Necromantic Healer _(character)_
+- [x] Nefarious Horror _(character)_
+- [x] Neurosis _(resource)_
+- [x] Nimble Conscript _(character)_
+- [x] Obscene Astrologer _(character)_
+- [x] Obscene Communion _(item)_
+- [x] Obscure _(tactic)_
+- [x] Obtuse Pipesmoker _(character)_
+- [x] Oddment Collector _(character)_
+- [x] Opportune Slotpuller _(character)_
+- [x] Order of the Golden String _(faction)_
+- [x] Otter Floss _(tactic)_
+- [x] Overindulge _(tactic)_
+- [x] Overzealous Excavation _(tactic)_
+- [x] P3pp3r 0f 1n54n17y _(item)_
+- [x] Padamose, Emperor of Marduun _(character)_
+- [x] Palm Glom _(tactic)_
+- [x] Pant Swipe _(tactic)_
+- [x] Party Clowns _(character)_
+- [x] Peculate _(tactic)_
+- [x] Perforate _(tactic)_
+- [x] Perturb _(tactic)_
+- [x] Perturbatious Warlock _(character)_
+- [x] Phalludrix, the Impotenator _(item)_
+- [x] Pilgrimage Auditor _(character)_
+- [x] Pit Boss _(character)_
+- [x] Plunging Shriever _(character)_
+- [x] Portly Tradesmau _(character)_
+- [x] Prehensile Pirate _(character)_
+- [x] Preponderant Craftsman _(character)_
+- [x] Proficient Battler _(character)_
+- [x] Property Condemner _(character)_
+- [x] Prophetic Assistant _(character)_
+- [x] Prostitution Lobbyist _(character)_
+- [x] Protractive Golem _(character)_
+- [x] Purifying Priest _(character)_
+- [x] Reality Shift _(tactic)_
+- [x] Recyclable Golem _(character)_
+- [x] Redonkulous _(tactic)_
+- [x] Repurpose _(tactic)_
+- [x] Research Intern _(character)_
+- [x] Resistance Fighter _(character)_
+- [x] Rewarding Salvage _(tactic)_
+- [x] Rigged Tables _(item)_
+- [x] Righteous Exemplar _(character)_
+- [x] Robustical Badass _(character)_
+- [x] Rosy Palmer, and Her Five Friends _(character)_
+- [x] Roulette Wheel of DOOM! _(tactic)_
+- [x] Roundalicious Breasticles _(item)_
+- [x] Rouse _(tactic)_
+- [x] Rumply Ruse _(tactic)_
+- [x] Rune of Concealment _(item)_
+- [x] Runic Armor _(item)_
+- [x] Runic Battery _(item)_
+- [x] Runic Flee _(tactic)_
+- [x] Runic Reinforcement _(tactic)_
+- [x] Runic Tattoo Artist _(character)_
+- [x] Runic Whale _(character)_
+- [x] Runivoltaic Accumulator _(item)_
+- [x] Rusty Pickaxe _(item)_
+- [x] Sequestered Hellion _(character)_
+- [x] Seraphim Magic _(tactic)_
+- [x] Shadowy Mugger _(character)_
+- [x] Shrouded Demon _(character)_
+- [x] Sin Against Nature _(character)_
+- [x] Slick Orator _(character)_
+- [x] Slinking Bandido _(character)_
+- [x] Sly Bilker _(character)_
+- [x] Smothering Corpulence _(tactic)_
+- [x] Spiky Pumpkin _(item)_
+- [x] Spitting Sarume _(character)_
+- [x] Sprint _(tactic)_
+- [x] Storm the Gates _(tactic)_
+- [x] Strangulate _(tactic)_
+- [x] Stupidify _(tactic)_
+- [x] Subordinate Demotivation _(tactic)_
+- [x] Surplus Soldier _(character)_
+- [x] Surprise! _(tactic)_
+- [x] Surprising Nuisance _(tactic)_
+- [x] Swollen Ostrich _(character)_
+- [x] Tamper _(tactic)_
+- [x] Temple Guardian _(character)_
+- [x] Terra Cotta Flagellator _(character)_
+- [x] Thabbashite Haruspex _(character)_
+- [x] Thabbashite Wizard _(character)_
+- [x] The Abominable Hamster _(character)_
+- [x] The Brotherhood of the Mau _(character)_
+- [x] The Currency Bazaar _(location)_
+- [x] The Emperor Barduse _(character)_
+- [x] The Emperor Born _(tactic)_
+- [x] The Enemy's Head _(item)_
+- [x] The Poshernacle _(location)_
+- [x] The Tournament Faction _(faction)_
+- [x] Theocratic Senate of Marduun _(location)_
+- [x] Thorough Sanitization _(tactic)_
+- [x] Time Portal _(location)_
+- [x] Time Traveler Tourist Trap _(location)_
+- [x] Tiny Sarume _(character)_
+- [x] Tiny Shiny _(tactic)_
+- [x] Titillated Mooncalf _(character)_
+- [x] Titillating Contortionist _(character)_
+- [x] Transient Smuggler _(character)_
+- [x] Treachery _(resource)_
+- [x] Treasure Brokerage _(location)_
+- [x] Trebuchet Officer _(character)_
+- [x] Tumescent Guilt Bladder _(item)_
+- [x] Unbearable Torture _(tactic)_
+- [x] Unbearably Heavy Shoes of Teleportation _(item)_
+- [x] Uncontrollable Jalopy _(character)_
+- [x] Undead Sword _(character)_
+- [x] Underhanded Gamer _(character)_
+- [x] Underpaid Ancestor _(character)_
+- [x] Unflinching Bowman _(character)_
+- [x] Unimportant Wizard _(character)_
+- [x] Unscrupulous Attendant _(character)_
+- [x] Vast Mastabatorium _(location)_
+- [x] Velocious Golem _(character)_
+- [x] Verrucose Brains _(item)_
+- [x] Vigilant Raider _(character)_
+- [x] Violence _(resource)_
+- [x] Virtuous Razer _(character)_
+- [x] Virulent Dogmatist _(character)_
+- [x] Vorpal Sword _(item)_
+- [x] Walk the Plank _(tactic)_
+- [x] Wand of Possession _(item)_
+- [x] Wanton Wizard _(character)_
+- [x] Warmachine Smelder _(character)_
+- [x] Watchtower _(location)_
+- [x] Waylay Blade _(item)_
+- [x] Well Laid Plans _(tactic)_
+- [x] Witty Worm _(character)_
+- [x] Woadenworm Gloamspike, Thabbashite Prince _(character)_
+- [x] Workshop _(location)_
+- [x] Wrinkly Rabbit _(character)_
 
