@@ -437,6 +437,7 @@
         },
         {
           "id": "nullify",
+          "name": "Nullify",
           "type": "activated",
           "costs": [
             {
@@ -752,6 +753,7 @@
       "abilities": [
         {
           "id": "counterfeit",
+          "name": "Counterfeit",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -1045,6 +1047,7 @@
         },
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -1272,6 +1275,7 @@
       "abilities": [
         {
           "id": "qi",
+          "name": "Quotidian Instruction",
           "type": "activated",
           "costs": [
             {
@@ -2022,6 +2026,7 @@
       "abilities": [
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -2556,6 +2561,7 @@
         },
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -2574,6 +2580,7 @@
         },
         {
           "id": "dissolve",
+          "name": "Dissolve",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -3007,6 +3014,7 @@
       "abilities": [
         {
           "id": "foresight",
+          "name": "Foresight",
           "type": "activated",
           "variables": {
             "x": 0
@@ -3119,6 +3127,7 @@
         },
         {
           "id": "installment",
+          "name": "Installment Plan",
           "type": "activated",
           "costs": [
             {
@@ -3572,6 +3581,7 @@
         },
         {
           "id": "restore",
+          "name": "Restore",
           "type": "activated",
           "costs": [
             {
@@ -4004,6 +4014,7 @@
       "abilities": [
         {
           "id": "capitalize",
+          "name": "Capitalize",
           "type": "activated",
           "costs": [
             {
@@ -4462,6 +4473,7 @@
       "abilities": [
         {
           "id": "subjugate",
+          "name": "Subjugate",
           "type": "activated",
           "costs": [
             {
@@ -4594,6 +4606,7 @@
       "abilities": [
         {
           "id": "protect",
+          "name": "Protect",
           "type": "activated",
           "costs": [
             {
@@ -5035,6 +5048,7 @@
         },
         {
           "id": "resurrect",
+          "name": "Resurrect",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -5824,6 +5838,7 @@
       "abilities": [
         {
           "id": "redirect",
+          "name": "Redirect",
           "type": "activated",
           "targets": [
             {
@@ -6239,6 +6254,7 @@
       "abilities": [
         {
           "id": "development",
+          "name": "Development",
           "type": "activated",
           "costs": [
             {
@@ -6279,6 +6295,7 @@
         },
         {
           "id": "deployment",
+          "name": "Deployment",
           "type": "activated",
           "costs": [
             {
@@ -6732,6 +6749,7 @@
       "abilities": [
         {
           "id": "trap",
+          "name": "It's a Trap!",
           "type": "activated",
           "targets": [
             {
@@ -6791,6 +6809,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -6844,6 +6863,7 @@
       "abilities": [
         {
           "id": "reconstruct",
+          "name": "Reconstruct",
           "type": "activated",
           "targets": [
             {
@@ -6925,6 +6945,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -7010,6 +7031,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -7159,6 +7181,7 @@
       "abilities": [
         {
           "id": "deploy",
+          "name": "Deploy",
           "type": "activated",
           "costs": [
             {
@@ -7387,6 +7410,7 @@
       "abilities": [
         {
           "id": "windup",
+          "name": "Wind Up",
           "type": "activated",
           "costs": [
             {
@@ -7536,6 +7560,7 @@
         },
         {
           "id": "tiny",
+          "name": "Tiny Sacrifices",
           "type": "activated",
           "targets": [
             {
@@ -7602,6 +7627,7 @@
       "abilities": [
         {
           "id": "raar",
+          "name": "Raar!",
           "type": "activated",
           "costs": [
             {
@@ -7627,6 +7653,7 @@
         },
         {
           "id": "schproing",
+          "name": "Schproing!",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -7661,6 +7688,7 @@
         },
         {
           "id": "hide",
+          "name": "Hide!",
           "type": "activated",
           "costs": [
             {
@@ -7751,6 +7779,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -7884,6 +7913,7 @@
       "abilities": [
         {
           "id": "load",
+          "name": "Load",
           "type": "activated",
           "costs": [
             {
@@ -7902,6 +7932,7 @@
         },
         {
           "id": "fire",
+          "name": "Fire",
           "type": "activated",
           "variables": {
             "x": {
@@ -7982,6 +8013,7 @@
         },
         {
           "id": "construct",
+          "name": "Construct",
           "type": "activated",
           "costs": [
             {
@@ -8004,6 +8036,7 @@
         },
         {
           "id": "powerup",
+          "name": "Power-Up",
           "type": "activated",
           "condition": {
             "type": "counterCompare",
@@ -8268,6 +8301,7 @@
         },
         {
           "id": "cheapshot",
+          "name": "Cheap Shot",
           "type": "activated",
           "condition": {
             "type": "and",
@@ -8432,6 +8466,7 @@
         },
         {
           "id": "move",
+          "name": "Move",
           "type": "activated",
           "costs": [
             {
@@ -8483,6 +8518,7 @@
       "abilities": [
         {
           "id": "roar",
+          "name": "Tiger Roar",
           "type": "activated",
           "costs": [
             {
@@ -8632,6 +8668,7 @@
         },
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -8669,6 +8706,7 @@
       "abilities": [
         {
           "id": "grapple",
+          "name": "Grapple",
           "type": "activated",
           "targets": [
             {
@@ -8904,6 +8942,7 @@
       "abilities": [
         {
           "id": "panhandle",
+          "name": "Panhandle",
           "type": "activated",
           "costs": [
             {
@@ -9107,6 +9146,7 @@
       "abilities": [
         {
           "id": "conga",
+          "name": "Conga Line",
           "type": "activated",
           "costs": [
             {
@@ -9903,6 +9943,7 @@
       "abilities": [
         {
           "id": "kidnap",
+          "name": "Kidnap",
           "type": "activated",
           "costs": [
             {
@@ -10138,6 +10179,7 @@
       "abilities": [
         {
           "id": "scream",
+          "name": "Scream",
           "type": "activated",
           "effects": [
             {
@@ -10213,6 +10255,7 @@
       "abilities": [
         {
           "id": "reclaim",
+          "name": "Reclaim",
           "type": "activated",
           "targets": [
             {
@@ -10314,6 +10357,7 @@
       "abilities": [
         {
           "id": "grift",
+          "name": "Grift",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -10697,6 +10741,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -11153,6 +11198,7 @@
         },
         {
           "id": "costume",
+          "name": "Change Costume",
           "type": "activated",
           "costs": [
             {
@@ -12194,6 +12240,7 @@
       "abilities": [
         {
           "id": "firebreathing",
+          "name": "Firebreathing",
           "type": "activated",
           "variables": {
             "x": 0
@@ -12330,6 +12377,7 @@
       "abilities": [
         {
           "id": "cannon-squadron-fire",
+          "name": "Fire!",
           "type": "activated",
           "costs": [
             {
@@ -13590,6 +13638,7 @@
       "abilities": [
         {
           "id": "punch",
+          "name": "Punch",
           "type": "activated",
           "costs": [
             {
@@ -13727,6 +13776,7 @@
       "abilities": [
         {
           "id": "ram",
+          "name": "Battering Ram",
           "type": "activated",
           "targets": [
             {
@@ -14611,6 +14661,7 @@
       "abilities": [
         {
           "id": "teleport",
+          "name": "Teleport",
           "type": "activated",
           "costs": [
             {
@@ -14789,6 +14840,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -14945,6 +14997,7 @@
         },
         {
           "id": "eject",
+          "name": "Eject",
           "type": "activated",
           "costs": [
             {
@@ -14988,6 +15041,7 @@
         },
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -15456,6 +15510,7 @@
         },
         {
           "id": "disapprove",
+          "name": "Disapprove",
           "type": "activated",
           "costs": [
             {
@@ -15604,6 +15659,7 @@
       "abilities": [
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -15669,6 +15725,7 @@
       "abilities": [
         {
           "id": "recall",
+          "name": "Recall",
           "type": "activated",
           "targets": [
             {
@@ -15930,6 +15987,7 @@
       "abilities": [
         {
           "id": "lobotomize",
+          "name": "Lobotomize",
           "type": "activated",
           "costs": [
             {
@@ -16654,6 +16712,7 @@
       "abilities": [
         {
           "id": "inspect",
+          "name": "Inspect",
           "type": "activated",
           "costs": [
             {
@@ -16795,6 +16854,7 @@
         },
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "costs": [
             {
@@ -16830,6 +16890,7 @@
       "abilities": [
         {
           "id": "deposit",
+          "name": "Deposit",
           "type": "activated",
           "costs": [
             {
@@ -16848,6 +16909,7 @@
         },
         {
           "id": "withdraw",
+          "name": "Withdraw",
           "type": "activated",
           "variables": {
             "x": {
@@ -16943,6 +17005,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -17219,6 +17282,7 @@
       "abilities": [
         {
           "id": "profit",
+          "name": "Profit",
           "type": "activated",
           "costs": [
             {
@@ -17360,6 +17424,7 @@
       "abilities": [
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "costs": [
             {
@@ -17498,6 +17563,7 @@
         },
         {
           "id": "exchange",
+          "name": "Exchange",
           "type": "activated",
           "costs": [
             {
@@ -17679,6 +17745,7 @@
       "abilities": [
         {
           "id": "stubborn",
+          "name": "Stubbornness",
           "type": "activated",
           "costs": [
             {
@@ -17827,6 +17894,7 @@
         },
         {
           "id": "restore",
+          "name": "Restore",
           "type": "activated",
           "costs": [
             {
@@ -17938,6 +18006,7 @@
         },
         {
           "id": "payday",
+          "name": "Payday Loan",
           "type": "activated",
           "costs": [
             {
@@ -18015,6 +18084,7 @@
       "abilities": [
         {
           "id": "liquidate",
+          "name": "Liquidate",
           "type": "activated",
           "costs": [
             {
@@ -18105,6 +18175,7 @@
         },
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "variables": {
             "x": {
@@ -18278,6 +18349,7 @@
         },
         {
           "id": "return",
+          "name": "Return",
           "type": "activated",
           "condition": {
             "type": "counterCompare",
@@ -18398,6 +18470,7 @@
       "abilities": [
         {
           "id": "denied",
+          "name": "Denied!",
           "type": "activated",
           "condition": {
             "type": "respondingTo",
@@ -18498,6 +18571,7 @@
       "abilities": [
         {
           "id": "deal",
+          "name": "Underhanded Deal",
           "type": "activated",
           "costs": [
             {
@@ -18557,6 +18631,7 @@
         },
         {
           "id": "sift",
+          "name": "Sift",
           "type": "activated",
           "costs": [
             {
@@ -18596,6 +18671,7 @@
         },
         {
           "id": "rummage",
+          "name": "Rummage",
           "type": "activated",
           "targets": [
             {
@@ -18961,6 +19037,7 @@
       "abilities": [
         {
           "id": "grand",
+          "name": "Grand Design",
           "type": "activated",
           "costs": [
             {
@@ -19195,6 +19272,7 @@
       "abilities": [
         {
           "id": "insight",
+          "name": "Sudden Insight",
           "type": "activated",
           "costs": [
             {
@@ -19560,6 +19638,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -19978,6 +20057,7 @@
       "abilities": [
         {
           "id": "mega",
+          "name": "Go Mega-Neko-Kaiser!",
           "type": "activated",
           "targets": [
             {
@@ -20184,6 +20264,7 @@
       "abilities": [
         {
           "id": "shield",
+          "name": "Panther Shield",
           "type": "activated",
           "costs": [
             {
@@ -20300,6 +20381,7 @@
       "abilities": [
         {
           "id": "insult",
+          "name": "Insult",
           "type": "activated",
           "costs": [
             {
@@ -20506,6 +20588,7 @@
       "abilities": [
         {
           "id": "pumpup",
+          "name": "Pump-Up",
           "type": "activated",
           "targets": [
             {
@@ -20564,6 +20647,7 @@
         },
         {
           "id": "schproing",
+          "name": "Schproing!",
           "type": "activated",
           "targets": [
             {
@@ -20690,6 +20774,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -20723,6 +20808,7 @@
       "abilities": [
         {
           "id": "repair",
+          "name": "Repair",
           "type": "activated",
           "costs": [
             {
@@ -20993,6 +21079,7 @@
       "abilities": [
         {
           "id": "thankgod",
+          "name": "Thank God We Invented The...",
           "type": "activated",
           "variableBounds": {
             "x": {
@@ -21293,6 +21380,7 @@
         },
         {
           "id": "bottomdeal",
+          "name": "Bottom Deal",
           "type": "activated",
           "costs": [
             {
@@ -21316,6 +21404,7 @@
         },
         {
           "id": "cheat",
+          "name": "Cheat",
           "type": "activated",
           "costs": [
             {
@@ -21339,6 +21428,7 @@
         },
         {
           "id": "costume",
+          "name": "Change Costume",
           "type": "activated",
           "costs": [
             {
@@ -21776,6 +21866,7 @@
       "abilities": [
         {
           "id": "trade",
+          "name": "Trade",
           "type": "activated",
           "targets": [
             {
@@ -21837,6 +21928,7 @@
       "abilities": [
         {
           "id": "plunder",
+          "name": "Plunder",
           "type": "activated",
           "costs": [
             {
@@ -22049,6 +22141,7 @@
         },
         {
           "id": "infiltrate",
+          "name": "Infiltrate",
           "type": "activated",
           "targets": [
             {
@@ -22623,6 +22716,7 @@
       "abilities": [
         {
           "id": "bribe",
+          "name": "Bribe",
           "type": "activated",
           "usableBy": "anyPlayer",
           "costs": [
@@ -22641,6 +22735,7 @@
         },
         {
           "id": "blackmail",
+          "name": "Blackmail",
           "type": "activated",
           "costs": [
             {
@@ -22675,6 +22770,7 @@
       "abilities": [
         {
           "id": "steal",
+          "name": "Steal",
           "type": "activated",
           "costs": [
             {
@@ -22861,6 +22957,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -22928,6 +23025,7 @@
       "abilities": [
         {
           "id": "sneak",
+          "name": "Sneak",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -23251,6 +23349,7 @@
       "abilities": [
         {
           "id": "recruit",
+          "name": "Recruit",
           "type": "activated",
           "costs": [
             {
@@ -23748,6 +23847,7 @@
       "abilities": [
         {
           "id": "offtop",
+          "name": "Off the Top Rope",
           "type": "activated",
           "costs": [
             {
@@ -23959,6 +24059,7 @@
         },
         {
           "id": "impale",
+          "name": "Impale",
           "type": "activated",
           "costs": [
             {
@@ -24149,6 +24250,7 @@
       "abilities": [
         {
           "id": "convince",
+          "name": "Convince",
           "type": "activated",
           "costs": [
             {
@@ -24205,6 +24307,7 @@
       "abilities": [
         {
           "id": "plan",
+          "name": "Cunning Plan",
           "type": "activated",
           "costs": [
             {
@@ -24531,6 +24634,7 @@
       "abilities": [
         {
           "id": "cannibalize",
+          "name": "Cannibalize",
           "type": "activated",
           "targets": [
             {
@@ -24812,6 +24916,7 @@
       "abilities": [
         {
           "id": "unload",
+          "name": "Unload",
           "type": "activated",
           "costs": [
             {
@@ -24895,6 +25000,7 @@
       "abilities": [
         {
           "id": "sacrifice",
+          "name": "Ultimate Sacrifice",
           "type": "activated",
           "variables": {
             "x": {
@@ -24982,6 +25088,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -25844,6 +25951,7 @@
         },
         {
           "id": "nullify",
+          "name": "Nullify",
           "type": "activated",
           "costs": [
             {
@@ -26352,6 +26460,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -26418,6 +26527,7 @@
       "abilities": [
         {
           "id": "counterfeit",
+          "name": "Counterfeit",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -26566,6 +26676,7 @@
         },
         {
           "id": "eject",
+          "name": "Eject",
           "type": "activated",
           "costs": [
             {
@@ -26609,6 +26720,7 @@
         },
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -27417,6 +27529,7 @@
         },
         {
           "id": "disapprove",
+          "name": "Disapprove",
           "type": "activated",
           "costs": [
             {
@@ -27660,6 +27773,7 @@
       "abilities": [
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -27725,6 +27839,7 @@
       "abilities": [
         {
           "id": "recall",
+          "name": "Recall",
           "type": "activated",
           "targets": [
             {
@@ -28180,6 +28295,7 @@
       "abilities": [
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -28546,6 +28662,7 @@
       "abilities": [
         {
           "id": "lobotomize",
+          "name": "Lobotomize",
           "type": "activated",
           "costs": [
             {
@@ -29103,6 +29220,7 @@
         },
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -29121,6 +29239,7 @@
         },
         {
           "id": "dissolve",
+          "name": "Dissolve",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -30048,6 +30167,7 @@
         },
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "costs": [
             {
@@ -30103,6 +30223,7 @@
         },
         {
           "id": "restore",
+          "name": "Restore",
           "type": "activated",
           "costs": [
             {
@@ -30136,6 +30257,7 @@
       "abilities": [
         {
           "id": "deposit",
+          "name": "Deposit",
           "type": "activated",
           "costs": [
             {
@@ -30154,6 +30276,7 @@
         },
         {
           "id": "withdraw",
+          "name": "Withdraw",
           "type": "activated",
           "variables": {
             "x": {
@@ -31126,6 +31249,7 @@
       "abilities": [
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "costs": [
             {
@@ -31301,6 +31425,7 @@
         },
         {
           "id": "exchange",
+          "name": "Exchange",
           "type": "activated",
           "costs": [
             {
@@ -31564,6 +31689,7 @@
       "abilities": [
         {
           "id": "protect",
+          "name": "Protect",
           "type": "activated",
           "costs": [
             {
@@ -31798,6 +31924,7 @@
         },
         {
           "id": "restore",
+          "name": "Restore",
           "type": "activated",
           "costs": [
             {
@@ -31856,6 +31983,7 @@
         },
         {
           "id": "payday",
+          "name": "Payday Loan",
           "type": "activated",
           "costs": [
             {
@@ -31933,6 +32061,7 @@
       "abilities": [
         {
           "id": "liquidate",
+          "name": "Liquidate",
           "type": "activated",
           "costs": [
             {
@@ -32138,6 +32267,7 @@
         },
         {
           "id": "invest",
+          "name": "Invest",
           "type": "activated",
           "variables": {
             "x": {
@@ -32631,6 +32761,7 @@
       "abilities": [
         {
           "id": "denied",
+          "name": "Denied!",
           "type": "activated",
           "condition": {
             "type": "respondingTo",
@@ -32805,6 +32936,7 @@
       "abilities": [
         {
           "id": "deal",
+          "name": "Underhanded Deal",
           "type": "activated",
           "costs": [
             {
@@ -32898,6 +33030,7 @@
         },
         {
           "id": "sift",
+          "name": "Sift",
           "type": "activated",
           "costs": [
             {
@@ -32937,6 +33070,7 @@
         },
         {
           "id": "rummage",
+          "name": "Rummage",
           "type": "activated",
           "targets": [
             {
@@ -33591,6 +33725,7 @@
       "abilities": [
         {
           "id": "redirect",
+          "name": "Redirect",
           "type": "activated",
           "targets": [
             {
@@ -33777,6 +33912,7 @@
       "abilities": [
         {
           "id": "grand",
+          "name": "Grand Design",
           "type": "activated",
           "costs": [
             {
@@ -34180,6 +34316,7 @@
       "abilities": [
         {
           "id": "insight",
+          "name": "Sudden Insight",
           "type": "activated",
           "costs": [
             {
@@ -34562,6 +34699,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -35171,6 +35309,7 @@
       "abilities": [
         {
           "id": "trap",
+          "name": "It's a Trap!",
           "type": "activated",
           "targets": [
             {
@@ -35230,6 +35369,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -35376,6 +35516,7 @@
       "abilities": [
         {
           "id": "mega",
+          "name": "Go Mega-Neko-Kaiser!",
           "type": "activated",
           "targets": [
             {
@@ -35500,6 +35641,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -35835,6 +35977,7 @@
         },
         {
           "id": "tiny",
+          "name": "Tiny Sacrifices",
           "type": "activated",
           "targets": [
             {
@@ -35998,6 +36141,7 @@
       "abilities": [
         {
           "id": "raar",
+          "name": "Raar!",
           "type": "activated",
           "costs": [
             {
@@ -36023,6 +36167,7 @@
         },
         {
           "id": "schproing",
+          "name": "Schproing!",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -36057,6 +36202,7 @@
         },
         {
           "id": "hide",
+          "name": "Hide!",
           "type": "activated",
           "costs": [
             {
@@ -36109,6 +36255,7 @@
       "abilities": [
         {
           "id": "shield",
+          "name": "Panther Shield",
           "type": "activated",
           "costs": [
             {
@@ -36326,6 +36473,7 @@
       "abilities": [
         {
           "id": "load",
+          "name": "Load",
           "type": "activated",
           "costs": [
             {
@@ -36344,6 +36492,7 @@
         },
         {
           "id": "fire",
+          "name": "Fire",
           "type": "activated",
           "variables": {
             "x": {
@@ -36424,6 +36573,7 @@
         },
         {
           "id": "construct",
+          "name": "Construct",
           "type": "activated",
           "costs": [
             {
@@ -36446,6 +36596,7 @@
         },
         {
           "id": "powerup",
+          "name": "Power-Up",
           "type": "activated",
           "condition": {
             "type": "counterCompare",
@@ -36710,6 +36861,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -36801,6 +36953,7 @@
         },
         {
           "id": "cheapshot",
+          "name": "Cheap Shot",
           "type": "activated",
           "condition": {
             "type": "and",
@@ -36877,6 +37030,7 @@
         },
         {
           "id": "move",
+          "name": "Move",
           "type": "activated",
           "costs": [
             {
@@ -37148,6 +37302,7 @@
       "abilities": [
         {
           "id": "thankgod",
+          "name": "Thank God We Invented The...",
           "type": "activated",
           "variableBounds": {
             "x": {
@@ -37258,6 +37413,7 @@
       "abilities": [
         {
           "id": "roar",
+          "name": "Tiger Roar",
           "type": "activated",
           "costs": [
             {
@@ -37372,6 +37528,7 @@
       "abilities": [
         {
           "id": "grapple",
+          "name": "Grapple",
           "type": "activated",
           "targets": [
             {
@@ -37683,6 +37840,7 @@
       "abilities": [
         {
           "id": "panhandle",
+          "name": "Panhandle",
           "type": "activated",
           "costs": [
             {
@@ -37886,6 +38044,7 @@
       "abilities": [
         {
           "id": "conga",
+          "name": "Conga Line",
           "type": "activated",
           "costs": [
             {
@@ -38046,6 +38205,7 @@
         },
         {
           "id": "bottomdeal",
+          "name": "Bottom Deal",
           "type": "activated",
           "costs": [
             {
@@ -38069,6 +38229,7 @@
         },
         {
           "id": "cheat",
+          "name": "Cheat",
           "type": "activated",
           "costs": [
             {
@@ -38092,6 +38253,7 @@
         },
         {
           "id": "costume",
+          "name": "Change Costume",
           "type": "activated",
           "costs": [
             {
@@ -38736,6 +38898,7 @@
       "abilities": [
         {
           "id": "trade",
+          "name": "Trade",
           "type": "activated",
           "targets": [
             {
@@ -38854,6 +39017,7 @@
       "abilities": [
         {
           "id": "plunder",
+          "name": "Plunder",
           "type": "activated",
           "costs": [
             {
@@ -39195,6 +39359,7 @@
         },
         {
           "id": "infiltrate",
+          "name": "Infiltrate",
           "type": "activated",
           "targets": [
             {
@@ -39468,6 +39633,7 @@
       "abilities": [
         {
           "id": "kidnap",
+          "name": "Kidnap",
           "type": "activated",
           "costs": [
             {
@@ -39914,6 +40080,7 @@
       "abilities": [
         {
           "id": "reclaim",
+          "name": "Reclaim",
           "type": "activated",
           "targets": [
             {
@@ -40042,6 +40209,7 @@
       "abilities": [
         {
           "id": "bribe",
+          "name": "Bribe",
           "type": "activated",
           "usableBy": "anyPlayer",
           "costs": [
@@ -40060,6 +40228,7 @@
         },
         {
           "id": "blackmail",
+          "name": "Blackmail",
           "type": "activated",
           "costs": [
             {
@@ -40094,6 +40263,7 @@
       "abilities": [
         {
           "id": "steal",
+          "name": "Steal",
           "type": "activated",
           "costs": [
             {
@@ -40276,6 +40446,7 @@
       "abilities": [
         {
           "id": "grift",
+          "name": "Grift",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -40390,6 +40561,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "costs": [
             {
@@ -40911,6 +41083,7 @@
         },
         {
           "id": "costume",
+          "name": "Change Costume",
           "type": "activated",
           "costs": [
             {
@@ -41549,6 +41722,7 @@
       "abilities": [
         {
           "id": "recruit",
+          "name": "Recruit",
           "type": "activated",
           "costs": [
             {
@@ -41826,6 +42000,7 @@
       "abilities": [
         {
           "id": "firebreathing",
+          "name": "Firebreathing",
           "type": "activated",
           "variables": {
             "x": 0
@@ -42662,6 +42837,7 @@
       "abilities": [
         {
           "id": "offtop",
+          "name": "Off the Top Rope",
           "type": "activated",
           "costs": [
             {
@@ -42987,6 +43163,7 @@
         },
         {
           "id": "impale",
+          "name": "Impale",
           "type": "activated",
           "costs": [
             {
@@ -43326,6 +43503,7 @@
       "abilities": [
         {
           "id": "convince",
+          "name": "Convince",
           "type": "activated",
           "costs": [
             {
@@ -43382,6 +43560,7 @@
       "abilities": [
         {
           "id": "plan",
+          "name": "Cunning Plan",
           "type": "activated",
           "costs": [
             {
@@ -43894,6 +44073,7 @@
       "abilities": [
         {
           "id": "punch",
+          "name": "Punch",
           "type": "activated",
           "costs": [
             {
@@ -43981,6 +44161,7 @@
       "abilities": [
         {
           "id": "cannibalize",
+          "name": "Cannibalize",
           "type": "activated",
           "targets": [
             {
@@ -44137,6 +44318,7 @@
       "abilities": [
         {
           "id": "ram",
+          "name": "Battering Ram",
           "type": "activated",
           "targets": [
             {
@@ -44428,6 +44610,7 @@
       "abilities": [
         {
           "id": "unload",
+          "name": "Unload",
           "type": "activated",
           "costs": [
             {
@@ -44528,6 +44711,7 @@
       "abilities": [
         {
           "id": "sacrifice",
+          "name": "Ultimate Sacrifice",
           "type": "activated",
           "variables": {
             "x": {
@@ -45391,6 +45575,7 @@
         },
         {
           "id": "eldridge-rite",
+          "name": "Ready the Rite",
           "type": "activated",
           "costs": [
             {
@@ -45427,6 +45612,7 @@
         },
         {
           "id": "eldridge-tribute",
+          "name": "Tribute",
           "type": "activated",
           "costs": [
             {
@@ -45548,6 +45734,7 @@
         },
         {
           "id": "bib-research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -45598,6 +45785,7 @@
         },
         {
           "id": "bib-checkout",
+          "name": "Check Out",
           "type": "activated",
           "costs": [
             {
@@ -45829,6 +46017,7 @@
         },
         {
           "id": "hate-of-man-spread",
+          "name": "Spread the Hate",
           "type": "activated",
           "costs": [
             {
@@ -46348,6 +46537,7 @@
         },
         {
           "id": "seance-seize",
+          "name": "Seize",
           "type": "activated",
           "costs": [
             {
@@ -46410,6 +46600,7 @@
         },
         {
           "id": "seance-absorb",
+          "name": "Absorb Humour",
           "type": "activated",
           "costs": [
             {
@@ -46448,6 +46639,7 @@
       "abilities": [
         {
           "id": "swca-recycle",
+          "name": "Recycle Junk",
           "type": "activated",
           "costs": [
             {
@@ -46569,6 +46761,7 @@
         },
         {
           "id": "swca-fusion",
+          "name": "Seraphim Fusion",
           "type": "activated",
           "costs": [
             {
@@ -46635,6 +46828,7 @@
       "abilities": [
         {
           "id": "serpentine-drain",
+          "name": "Soul Drain",
           "type": "activated",
           "costs": [
             {
@@ -46651,6 +46845,7 @@
         },
         {
           "id": "serpentine-charge",
+          "name": "Soul Charge",
           "type": "activated",
           "usesPerTurn": 1,
           "costs": [
@@ -46877,6 +47072,7 @@
       "abilities": [
         {
           "id": "temple-call",
+          "name": "Call Upon the Gods",
           "type": "activated",
           "variables": {
             "x": {
@@ -46962,6 +47158,7 @@
         },
         {
           "id": "temple-volate",
+          "name": "Volate",
           "type": "activated",
           "costs": [
             {
@@ -47016,6 +47213,7 @@
       "abilities": [
         {
           "id": "uhluhtc-prevail",
+          "name": "Prevail Upon",
           "type": "activated",
           "costs": [
             {
@@ -47086,6 +47284,7 @@
         },
         {
           "id": "uhluhtc-avail",
+          "name": "Avail Anew",
           "type": "activated",
           "costs": [
             {
@@ -47989,6 +48188,7 @@
         },
         {
           "id": "dmu-extra-interest",
+          "name": "Extra Interest",
           "type": "activated",
           "costs": [
             {
@@ -48320,6 +48520,7 @@
         },
         {
           "id": "expedition-recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "ggg",
@@ -48629,6 +48830,7 @@
         },
         {
           "id": "gargoyle-no",
+          "name": "No.",
           "type": "activated",
           "costs": [
             {
@@ -48695,6 +48897,7 @@
         },
         {
           "id": "idumb-reset",
+          "name": "Reset",
           "type": "activated",
           "usableBy": "opponent",
           "costs": [
@@ -48876,6 +49079,7 @@
         },
         {
           "id": "motiv-dancer-private",
+          "name": "Private Dance",
           "type": "activated",
           "costs": [
             {
@@ -48909,6 +49113,7 @@
         },
         {
           "id": "motiv-dancer-payup",
+          "name": "Pay Up",
           "type": "activated",
           "costs": [
             {
@@ -49979,6 +50184,7 @@
       "abilities": [
         {
           "id": "wardrobe-change",
+          "name": "Wardrobe Change",
           "type": "activated",
           "costs": [
             {
@@ -50086,6 +50292,7 @@
       "abilities": [
         {
           "id": "ddd-entrapment",
+          "name": "Entrapment",
           "type": "activated",
           "costs": [
             {
@@ -50143,6 +50350,7 @@
         },
         {
           "id": "ddd-release",
+          "name": "Release",
           "type": "activated",
           "costs": [
             {
@@ -50238,6 +50446,7 @@
         },
         {
           "id": "dcc-research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -50259,6 +50468,7 @@
         },
         {
           "id": "dcc-smash-keys",
+          "name": "Smash Keys",
           "type": "activated",
           "costs": [
             {
@@ -50446,6 +50656,7 @@
         },
         {
           "id": "heavy-fists-handoff",
+          "name": "Hand Off",
           "type": "activated",
           "costs": [
             {
@@ -50653,6 +50864,7 @@
         },
         {
           "id": "improved-mm-assemble",
+          "name": "Assemble",
           "type": "activated",
           "costs": [
             {
@@ -50682,6 +50894,7 @@
         },
         {
           "id": "improved-mm-detach",
+          "name": "Detach",
           "type": "activated",
           "costs": [
             {
@@ -50985,6 +51198,7 @@
         },
         {
           "id": "prime-titan-load",
+          "name": "Micromajig Load",
           "type": "activated",
           "costs": [
             {
@@ -51014,6 +51228,7 @@
         },
         {
           "id": "prime-titan-unload",
+          "name": "Micromajig Unload",
           "type": "activated",
           "threshold": "eeeee",
           "variables": {
@@ -51147,6 +51362,7 @@
       "abilities": [
         {
           "id": "runic-load",
+          "name": "Load",
           "type": "activated",
           "costs": [
             {
@@ -51165,6 +51381,7 @@
         },
         {
           "id": "runic-gather",
+          "name": "Gather",
           "type": "activated",
           "effects": [
             {
@@ -51214,6 +51431,7 @@
         },
         {
           "id": "runic-spread",
+          "name": "Spread Out!",
           "type": "activated",
           "costs": [
             {
@@ -51769,6 +51987,7 @@
         },
         {
           "id": "visible-loaf-deflect",
+          "name": "Deflect",
           "type": "activated",
           "costs": [
             {
@@ -52114,6 +52333,7 @@
         },
         {
           "id": "chum-fusion",
+          "name": "Seraphim Fusion",
           "type": "activated",
           "costs": [
             {
@@ -52417,6 +52637,7 @@
         },
         {
           "id": "dweedle-bulge",
+          "name": "Bulge",
           "type": "activated",
           "threshold": "vvv",
           "costs": [
@@ -52527,6 +52748,7 @@
       "abilities": [
         {
           "id": "flashy-bangs-burst",
+          "name": "Burst",
           "type": "activated",
           "costs": [
             {
@@ -52696,6 +52918,7 @@
       "abilities": [
         {
           "id": "gnarling-rend",
+          "name": "Rend",
           "type": "activated",
           "usesPerTurn": 1,
           "costs": [
@@ -52782,6 +53005,7 @@
         },
         {
           "id": "triggerman-assassinate",
+          "name": "Assassinate",
           "type": "activated",
           "costs": [
             {
@@ -52827,6 +53051,7 @@
         },
         {
           "id": "triggerman-reload",
+          "name": "Reload",
           "type": "activated",
           "costs": [
             {
@@ -52963,6 +53188,7 @@
       "abilities": [
         {
           "id": "loyal-helping-paw",
+          "name": "Helping Paw",
           "type": "activated",
           "activationZone": "hand",
           "threshold": "d",
@@ -53033,6 +53259,7 @@
         },
         {
           "id": "loyal-nine-lives",
+          "name": "Nine Lives",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "d",
@@ -53181,6 +53408,7 @@
         },
         {
           "id": "sneaky-sarco-feed",
+          "name": "Feed",
           "type": "activated",
           "costs": [
             {
@@ -53293,6 +53521,7 @@
         },
         {
           "id": "slingerang-sling",
+          "name": "Sling",
           "type": "activated",
           "costs": [
             {
@@ -53326,6 +53555,7 @@
         },
         {
           "id": "slingerang-rang",
+          "name": "Rang",
           "type": "activated",
           "costs": [
             {
@@ -53755,6 +53985,7 @@
         },
         {
           "id": "thieving-casino-cashout",
+          "name": "Cash Out",
           "type": "activated",
           "costs": [
             {
@@ -54161,6 +54392,7 @@
       "abilities": [
         {
           "id": "warehouse-sentinel-recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "ddd",
@@ -54627,6 +54859,7 @@
         },
         {
           "id": "zigal-mush",
+          "name": "Turn to Mush",
           "type": "activated",
           "costs": [
             {
@@ -55261,6 +55494,7 @@
         },
         {
           "id": "ebol-equip",
+          "name": "Equip",
           "type": "activated",
           "targets": [
             {
@@ -55311,6 +55545,7 @@
         },
         {
           "id": "ebol-fusion",
+          "name": "Seraphim Fusion",
           "type": "activated",
           "condition": {
             "type": "uniqueIs",
@@ -55940,6 +56175,7 @@
       "abilities": [
         {
           "id": "for-my-brothers",
+          "name": "For My Brothers!",
           "type": "activated",
           "costs": [
             {
@@ -56298,6 +56534,7 @@
       "abilities": [
         {
           "id": "undercovert-operations",
+          "name": "Undercovert Operations",
           "type": "activated",
           "costs": [
             {
@@ -56643,6 +56880,7 @@
       "abilities": [
         {
           "id": "twisted-cannoneer-fire",
+          "name": "Fire!",
           "type": "activated",
           "condition": {
             "type": "not",
@@ -57795,6 +58033,7 @@
         },
         {
           "id": "nullify",
+          "name": "Nullify",
           "type": "activated",
           "costs": [
             {
@@ -58277,6 +58516,7 @@
         },
         {
           "id": "disrupt",
+          "name": "Disrupt",
           "type": "activated",
           "costs": [
             {
@@ -58448,6 +58688,7 @@
       "abilities": [
         {
           "id": "qi",
+          "name": "Quotidian Instruction",
           "type": "activated",
           "costs": [
             {
@@ -59198,6 +59439,7 @@
       "abilities": [
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -59710,6 +59952,7 @@
         },
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -59728,6 +59971,7 @@
         },
         {
           "id": "dissolve",
+          "name": "Dissolve",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -60161,6 +60405,7 @@
       "abilities": [
         {
           "id": "foresight",
+          "name": "Foresight",
           "type": "activated",
           "variables": {
             "x": 0
@@ -60273,6 +60518,7 @@
         },
         {
           "id": "installment",
+          "name": "Installment Plan",
           "type": "activated",
           "costs": [
             {
@@ -60726,6 +60972,7 @@
         },
         {
           "id": "restore",
+          "name": "Restore",
           "type": "activated",
           "costs": [
             {
@@ -61158,6 +61405,7 @@
       "abilities": [
         {
           "id": "capitalize",
+          "name": "Capitalize",
           "type": "activated",
           "costs": [
             {
@@ -61616,6 +61864,7 @@
       "abilities": [
         {
           "id": "subjugate",
+          "name": "Subjugate",
           "type": "activated",
           "costs": [
             {
@@ -62955,6 +63204,7 @@
       "abilities": [
         {
           "id": "development",
+          "name": "Development",
           "type": "activated",
           "costs": [
             {
@@ -62995,6 +63245,7 @@
         },
         {
           "id": "deployment",
+          "name": "Deployment",
           "type": "activated",
           "costs": [
             {
@@ -63431,6 +63682,7 @@
       "abilities": [
         {
           "id": "trap",
+          "name": "It's a Trap!",
           "type": "activated",
           "targets": [
             {
@@ -63490,6 +63742,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -63543,6 +63796,7 @@
       "abilities": [
         {
           "id": "reconstruct",
+          "name": "Reconstruct",
           "type": "activated",
           "targets": [
             {
@@ -63624,6 +63878,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -63709,6 +63964,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -64018,6 +64274,7 @@
       "abilities": [
         {
           "id": "windup",
+          "name": "Wind Up",
           "type": "activated",
           "costs": [
             {
@@ -64167,6 +64424,7 @@
         },
         {
           "id": "tiny",
+          "name": "Tiny Sacrifices",
           "type": "activated",
           "targets": [
             {
@@ -64233,6 +64491,7 @@
       "abilities": [
         {
           "id": "raar",
+          "name": "Raar!",
           "type": "activated",
           "costs": [
             {
@@ -64258,6 +64517,7 @@
         },
         {
           "id": "schproing",
+          "name": "Schproing!",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -64292,6 +64552,7 @@
         },
         {
           "id": "hide",
+          "name": "Hide!",
           "type": "activated",
           "costs": [
             {
@@ -64382,6 +64643,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -64515,6 +64777,7 @@
       "abilities": [
         {
           "id": "load",
+          "name": "Load",
           "type": "activated",
           "costs": [
             {
@@ -64533,6 +64796,7 @@
         },
         {
           "id": "fire",
+          "name": "Fire",
           "type": "activated",
           "variables": {
             "x": {
@@ -64613,6 +64877,7 @@
         },
         {
           "id": "construct",
+          "name": "Construct",
           "type": "activated",
           "costs": [
             {
@@ -64635,6 +64900,7 @@
         },
         {
           "id": "powerup",
+          "name": "Power-Up",
           "type": "activated",
           "condition": {
             "type": "counterCompare",
@@ -64899,6 +65165,7 @@
         },
         {
           "id": "cheapshot",
+          "name": "Cheap Shot",
           "type": "activated",
           "condition": {
             "type": "and",
@@ -64970,6 +65237,7 @@
       "abilities": [
         {
           "id": "roar",
+          "name": "Tiger Roar",
           "type": "activated",
           "costs": [
             {
@@ -65061,6 +65329,7 @@
         },
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -65096,6 +65365,7 @@
       "abilities": [
         {
           "id": "grapple",
+          "name": "Grapple",
           "type": "activated",
           "targets": [
             {
@@ -65331,6 +65601,7 @@
       "abilities": [
         {
           "id": "panhandle",
+          "name": "Panhandle",
           "type": "activated",
           "costs": [
             {
@@ -66196,6 +66467,7 @@
       "abilities": [
         {
           "id": "kidnap",
+          "name": "Kidnap",
           "type": "activated",
           "costs": [
             {
@@ -66431,6 +66703,7 @@
       "abilities": [
         {
           "id": "scream",
+          "name": "Scream",
           "type": "activated",
           "effects": [
             {
@@ -66506,6 +66779,7 @@
       "abilities": [
         {
           "id": "reclaim",
+          "name": "Reclaim",
           "type": "activated",
           "targets": [
             {
@@ -66607,6 +66881,7 @@
       "abilities": [
         {
           "id": "grift",
+          "name": "Grift",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",
@@ -66990,6 +67265,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -67446,6 +67722,7 @@
         },
         {
           "id": "costume",
+          "name": "Change Costume",
           "type": "activated",
           "costs": [
             {
@@ -68367,6 +68644,7 @@
       "abilities": [
         {
           "id": "cannon-squadron-fire",
+          "name": "Fire!",
           "type": "activated",
           "costs": [
             {
@@ -69570,6 +69848,7 @@
       "abilities": [
         {
           "id": "punch",
+          "name": "Punch",
           "type": "activated",
           "costs": [
             {
@@ -69707,6 +69986,7 @@
       "abilities": [
         {
           "id": "ram",
+          "name": "Battering Ram",
           "type": "activated",
           "targets": [
             {
@@ -70804,6 +71084,7 @@
       "abilities": [
         {
           "id": "corrupt",
+          "name": "Corrupt",
           "type": "activated",
           "costs": [
             {
@@ -70836,6 +71117,7 @@
         },
         {
           "id": "defile",
+          "name": "Defile",
           "type": "activated",
           "costs": [
             {
@@ -71205,6 +71487,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "ooo",
@@ -71429,6 +71712,7 @@
         },
         {
           "id": "move",
+          "name": "Move",
           "type": "activated",
           "condition": {
             "type": "not",
@@ -71489,6 +71773,7 @@
       "abilities": [
         {
           "id": "denounce",
+          "name": "Denounce",
           "type": "activated",
           "costs": [
             {
@@ -71649,6 +71934,7 @@
       "abilities": [
         {
           "id": "negate",
+          "name": "Negate",
           "type": "activated",
           "costs": [
             {
@@ -71812,6 +72098,7 @@
       "abilities": [
         {
           "id": "slobber",
+          "name": "Slobber",
           "type": "activated",
           "costs": [
             {
@@ -71937,6 +72224,7 @@
       "abilities": [
         {
           "id": "imbibe",
+          "name": "Imbibe",
           "type": "activated",
           "costs": [
             {
@@ -72024,6 +72312,7 @@
       "abilities": [
         {
           "id": "torture",
+          "name": "Torture",
           "type": "activated",
           "costs": [
             {
@@ -72054,6 +72343,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "oo",
@@ -72165,6 +72455,7 @@
         },
         {
           "id": "higher-calling",
+          "name": "Higher Calling",
           "type": "activated",
           "costs": [
             {
@@ -73433,6 +73724,7 @@
       "abilities": [
         {
           "id": "berate",
+          "name": "Berate",
           "type": "activated",
           "costs": [
             {
@@ -73516,6 +73808,7 @@
       "abilities": [
         {
           "id": "possess",
+          "name": "Possess",
           "type": "activated",
           "costs": [
             {
@@ -73891,6 +74184,7 @@
       "abilities": [
         {
           "id": "schmooze",
+          "name": "Schmooze",
           "type": "activated",
           "costs": [
             {
@@ -73999,6 +74293,7 @@
       "abilities": [
         {
           "id": "encroach",
+          "name": "Encroach",
           "type": "activated",
           "threshold": "ggggg",
           "costs": [
@@ -74129,6 +74424,7 @@
       "abilities": [
         {
           "id": "reinstate",
+          "name": "Reinstate",
           "type": "activated",
           "costs": [
             {
@@ -74237,6 +74533,7 @@
         },
         {
           "id": "retreat",
+          "name": "Retreat",
           "type": "activated",
           "costs": [
             {
@@ -74638,6 +74935,7 @@
       "abilities": [
         {
           "id": "plead",
+          "name": "Plead",
           "type": "activated",
           "costs": [
             {
@@ -74772,6 +75070,7 @@
       "abilities": [
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "g",
@@ -74929,6 +75228,7 @@
       "abilities": [
         {
           "id": "feed",
+          "name": "Feed",
           "type": "activated",
           "costs": [
             {
@@ -75278,6 +75578,7 @@
       "abilities": [
         {
           "id": "resurrect",
+          "name": "Resurrect",
           "type": "activated",
           "costs": [
             {
@@ -75435,6 +75736,7 @@
       "abilities": [
         {
           "id": "impede",
+          "name": "Impede",
           "type": "activated",
           "costs": [
             {
@@ -75652,6 +75954,7 @@
       "abilities": [
         {
           "id": "banish",
+          "name": "Banish",
           "type": "activated",
           "targets": [
             {
@@ -75696,6 +75999,7 @@
       "abilities": [
         {
           "id": "tantalize",
+          "name": "Tantalize",
           "type": "activated",
           "costs": [
             {
@@ -75765,6 +76069,7 @@
       "abilities": [
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "gg",
@@ -75860,6 +76165,7 @@
       "abilities": [
         {
           "id": "deflect",
+          "name": "Deflect",
           "type": "activated",
           "costs": [
             {
@@ -75919,6 +76225,7 @@
       "abilities": [
         {
           "id": "trade",
+          "name": "Trade",
           "type": "activated",
           "costs": [
             {
@@ -75977,6 +76284,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "g",
@@ -76358,6 +76666,7 @@
       "abilities": [
         {
           "id": "repair",
+          "name": "Repair",
           "type": "activated",
           "variables": {
             "x": 0
@@ -76482,6 +76791,7 @@
       "abilities": [
         {
           "id": "fabricate",
+          "name": "Fabricate",
           "type": "activated",
           "costs": [
             {
@@ -76521,6 +76831,7 @@
       "abilities": [
         {
           "id": "snub",
+          "name": "Snub",
           "type": "activated",
           "costs": [
             {
@@ -76726,6 +77037,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -76850,6 +77162,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -77210,6 +77523,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -77935,6 +78249,7 @@
       "abilities": [
         {
           "id": "overwhelm",
+          "name": "Overwhelm",
           "type": "activated",
           "targets": [
             {
@@ -78055,6 +78370,7 @@
         },
         {
           "id": "gather",
+          "name": "Gather",
           "type": "activated",
           "costs": [
             {
@@ -78156,6 +78472,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -78232,6 +78549,7 @@
       "abilities": [
         {
           "id": "create",
+          "name": "Create",
           "type": "activated",
           "costs": [
             {
@@ -78378,6 +78696,7 @@
       "abilities": [
         {
           "id": "protect",
+          "name": "Protect",
           "type": "activated",
           "costs": [
             {
@@ -78562,6 +78881,7 @@
         },
         {
           "id": "discharge",
+          "name": "Discharge",
           "type": "activated",
           "variables": {
             "x": {
@@ -78699,6 +79019,7 @@
       "abilities": [
         {
           "id": "mark",
+          "name": "Mark",
           "type": "activated",
           "costs": [
             {
@@ -78869,6 +79190,7 @@
         },
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -78887,6 +79209,7 @@
         },
         {
           "id": "discharge",
+          "name": "Discharge",
           "type": "activated",
           "targets": [
             {
@@ -79197,6 +79520,7 @@
       "abilities": [
         {
           "id": "construct",
+          "name": "Construct",
           "type": "activated",
           "costs": [
             {
@@ -79360,6 +79684,7 @@
       "abilities": [
         {
           "id": "claim",
+          "name": "Claim",
           "type": "activated",
           "costs": [
             {
@@ -79428,6 +79753,7 @@
       "abilities": [
         {
           "id": "cash-in",
+          "name": "Cash In",
           "type": "activated",
           "targets": [
             {
@@ -79830,6 +80156,7 @@
       "abilities": [
         {
           "id": "inspire",
+          "name": "Inspire",
           "type": "activated",
           "costs": [
             {
@@ -80891,6 +81218,7 @@
       "abilities": [
         {
           "id": "demotivate",
+          "name": "Demotivate",
           "type": "activated",
           "costs": [
             {
@@ -81224,6 +81552,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -81346,6 +81675,7 @@
       "abilities": [
         {
           "id": "hypnotize",
+          "name": "Hypnotize",
           "type": "activated",
           "costs": [
             {
@@ -81519,6 +81849,7 @@
       "abilities": [
         {
           "id": "strut",
+          "name": "Strut",
           "type": "activated",
           "costs": [
             {
@@ -81599,6 +81930,7 @@
       "abilities": [
         {
           "id": "binge",
+          "name": "Binge",
           "type": "activated",
           "costs": [
             {
@@ -81759,6 +82091,7 @@
       "abilities": [
         {
           "id": "gamble",
+          "name": "Gamble",
           "type": "activated",
           "costs": [
             {
@@ -82284,6 +82617,7 @@
       "abilities": [
         {
           "id": "size-up",
+          "name": "Size Up",
           "type": "activated",
           "costs": [
             {
@@ -82325,6 +82659,7 @@
         },
         {
           "id": "rig",
+          "name": "Rig",
           "type": "activated",
           "costs": [
             {
@@ -82375,6 +82710,7 @@
         },
         {
           "id": "walk-away",
+          "name": "Walk Away",
           "type": "activated",
           "costs": [
             {
@@ -82713,6 +83049,7 @@
       "abilities": [
         {
           "id": "size-up",
+          "name": "Size Up",
           "type": "activated",
           "costs": [
             {
@@ -83139,6 +83476,7 @@
       "abilities": [
         {
           "id": "smuggle",
+          "name": "Smuggle",
           "type": "activated",
           "costs": [
             {
@@ -83257,6 +83595,7 @@
       "abilities": [
         {
           "id": "outsmart",
+          "name": "Outsmart",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -83369,6 +83708,7 @@
       "abilities": [
         {
           "id": "bore",
+          "name": "Bore",
           "type": "activated",
           "costs": [
             {
@@ -83479,6 +83819,7 @@
         },
         {
           "id": "crush-wave",
+          "name": "Crush Wave",
           "type": "activated",
           "costs": [
             {
@@ -83532,6 +83873,7 @@
       "abilities": [
         {
           "id": "inflame",
+          "name": "Inflame",
           "type": "activated",
           "costs": [
             {
@@ -84119,6 +84461,7 @@
       "abilities": [
         {
           "id": "reanimate",
+          "name": "Reanimate",
           "type": "activated",
           "costs": [
             {
@@ -84444,6 +84787,7 @@
       "abilities": [
         {
           "id": "charge",
+          "name": "Charge!",
           "type": "activated",
           "costs": [
             {
@@ -84652,6 +84996,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -85244,6 +85589,7 @@
         },
         {
           "id": "fire",
+          "name": "Fire!",
           "type": "activated",
           "variables": {
             "x": 0
@@ -85873,6 +86219,7 @@
       "abilities": [
         {
           "id": "fire",
+          "name": "Fire!",
           "type": "activated",
           "costs": [
             {
@@ -85923,6 +86270,7 @@
       "abilities": [
         {
           "id": "shoot",
+          "name": "Shoot",
           "type": "activated",
           "costs": [
             {
@@ -85995,6 +86343,7 @@
       "abilities": [
         {
           "id": "assail",
+          "name": "Assail",
           "type": "activated",
           "costs": [
             {
@@ -102658,6 +103007,7 @@
       "abilities": [
         {
           "id": "corrupt",
+          "name": "Corrupt",
           "type": "activated",
           "costs": [
             {
@@ -102690,6 +103040,7 @@
         },
         {
           "id": "defile",
+          "name": "Defile",
           "type": "activated",
           "costs": [
             {
@@ -103122,6 +103473,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "ooo",
@@ -103489,6 +103841,7 @@
         },
         {
           "id": "move",
+          "name": "Move",
           "type": "activated",
           "condition": {
             "type": "not",
@@ -103549,6 +103902,7 @@
       "abilities": [
         {
           "id": "denounce",
+          "name": "Denounce",
           "type": "activated",
           "costs": [
             {
@@ -103734,6 +104088,7 @@
         },
         {
           "id": "summons",
+          "name": "Seductive Summons",
           "type": "activated",
           "costs": [
             {
@@ -104014,6 +104369,7 @@
       "abilities": [
         {
           "id": "negate",
+          "name": "Negate",
           "type": "activated",
           "costs": [
             {
@@ -104177,6 +104533,7 @@
       "abilities": [
         {
           "id": "slobber",
+          "name": "Slobber",
           "type": "activated",
           "costs": [
             {
@@ -104292,6 +104649,7 @@
         },
         {
           "id": "eject",
+          "name": "Eject",
           "type": "activated",
           "costs": [
             {
@@ -104602,6 +104960,7 @@
       "abilities": [
         {
           "id": "imbibe",
+          "name": "Imbibe",
           "type": "activated",
           "costs": [
             {
@@ -104689,6 +105048,7 @@
       "abilities": [
         {
           "id": "torture",
+          "name": "Torture",
           "type": "activated",
           "costs": [
             {
@@ -104719,6 +105079,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "oo",
@@ -104830,6 +105191,7 @@
         },
         {
           "id": "higher-calling",
+          "name": "Higher Calling",
           "type": "activated",
           "costs": [
             {
@@ -107335,6 +107697,7 @@
       "abilities": [
         {
           "id": "berate",
+          "name": "Berate",
           "type": "activated",
           "costs": [
             {
@@ -107418,6 +107781,7 @@
       "abilities": [
         {
           "id": "possess",
+          "name": "Possess",
           "type": "activated",
           "costs": [
             {
@@ -108013,6 +108377,7 @@
       "abilities": [
         {
           "id": "schmooze",
+          "name": "Schmooze",
           "type": "activated",
           "costs": [
             {
@@ -108121,6 +108486,7 @@
       "abilities": [
         {
           "id": "encroach",
+          "name": "Encroach",
           "type": "activated",
           "threshold": "ggggg",
           "costs": [
@@ -108313,6 +108679,7 @@
         },
         {
           "id": "morph",
+          "name": "Morph",
           "type": "activated",
           "costs": [
             {
@@ -108392,6 +108759,7 @@
       "abilities": [
         {
           "id": "reinstate",
+          "name": "Reinstate",
           "type": "activated",
           "costs": [
             {
@@ -108500,6 +108868,7 @@
         },
         {
           "id": "retreat",
+          "name": "Retreat",
           "type": "activated",
           "costs": [
             {
@@ -109630,6 +109999,7 @@
       "abilities": [
         {
           "id": "plead",
+          "name": "Plead",
           "type": "activated",
           "costs": [
             {
@@ -109764,6 +110134,7 @@
       "abilities": [
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "g",
@@ -109957,6 +110328,7 @@
       "abilities": [
         {
           "id": "seek",
+          "name": "Seek",
           "type": "activated",
           "costs": [
             {
@@ -109978,6 +110350,7 @@
         },
         {
           "id": "hide",
+          "name": "Hide",
           "type": "activated",
           "targets": [
             {
@@ -110352,6 +110725,7 @@
       "abilities": [
         {
           "id": "feed",
+          "name": "Feed",
           "type": "activated",
           "costs": [
             {
@@ -111019,6 +111393,7 @@
       "abilities": [
         {
           "id": "resurrect",
+          "name": "Resurrect",
           "type": "activated",
           "costs": [
             {
@@ -111250,6 +111625,7 @@
       "abilities": [
         {
           "id": "impede",
+          "name": "Impede",
           "type": "activated",
           "costs": [
             {
@@ -111542,6 +111918,7 @@
       "abilities": [
         {
           "id": "banish",
+          "name": "Banish",
           "type": "activated",
           "targets": [
             {
@@ -111592,6 +111969,7 @@
       "abilities": [
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "gg",
@@ -111687,6 +112065,7 @@
       "abilities": [
         {
           "id": "deflect",
+          "name": "Deflect",
           "type": "activated",
           "costs": [
             {
@@ -111907,6 +112286,7 @@
       "abilities": [
         {
           "id": "trade",
+          "name": "Trade",
           "type": "activated",
           "costs": [
             {
@@ -111965,6 +112345,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "g",
@@ -112352,6 +112733,7 @@
         },
         {
           "id": "hide",
+          "name": "Hide Among the Corpses",
           "type": "activated",
           "costs": [
             {
@@ -112560,6 +112942,7 @@
       "abilities": [
         {
           "id": "repair",
+          "name": "Repair",
           "type": "activated",
           "variables": {
             "x": 0
@@ -113010,6 +113393,7 @@
       "abilities": [
         {
           "id": "fabricate",
+          "name": "Fabricate",
           "type": "activated",
           "costs": [
             {
@@ -113049,6 +113433,7 @@
       "abilities": [
         {
           "id": "snub",
+          "name": "Snub",
           "type": "activated",
           "costs": [
             {
@@ -113254,6 +113639,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -113653,6 +114039,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -114890,6 +115277,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -115304,6 +115692,7 @@
       "abilities": [
         {
           "id": "trek",
+          "name": "Trek",
           "type": "activated",
           "costs": [
             {
@@ -116105,6 +116494,7 @@
       "abilities": [
         {
           "id": "overwhelm",
+          "name": "Overwhelm",
           "type": "activated",
           "targets": [
             {
@@ -116225,6 +116615,7 @@
         },
         {
           "id": "gather",
+          "name": "Gather",
           "type": "activated",
           "costs": [
             {
@@ -116326,6 +116717,7 @@
         },
         {
           "id": "spit",
+          "name": "Spit Out",
           "type": "activated",
           "costs": [
             {
@@ -116402,6 +116794,7 @@
       "abilities": [
         {
           "id": "create",
+          "name": "Create",
           "type": "activated",
           "costs": [
             {
@@ -116799,6 +117192,7 @@
       "abilities": [
         {
           "id": "protect",
+          "name": "Protect",
           "type": "activated",
           "costs": [
             {
@@ -116983,6 +117377,7 @@
         },
         {
           "id": "discharge",
+          "name": "Discharge",
           "type": "activated",
           "variables": {
             "x": {
@@ -117235,6 +117630,7 @@
       "abilities": [
         {
           "id": "mark",
+          "name": "Mark",
           "type": "activated",
           "costs": [
             {
@@ -117405,6 +117801,7 @@
         },
         {
           "id": "energize",
+          "name": "Energize",
           "type": "activated",
           "costs": [
             {
@@ -117423,6 +117820,7 @@
         },
         {
           "id": "discharge",
+          "name": "Discharge",
           "type": "activated",
           "targets": [
             {
@@ -117886,6 +118284,7 @@
       "abilities": [
         {
           "id": "fire",
+          "name": "In the Fire",
           "type": "activated",
           "costs": [
             {
@@ -117940,6 +118339,7 @@
         },
         {
           "id": "lifeswork",
+          "name": "Life's Work",
           "type": "activated",
           "threshold": "eeeeee",
           "costs": [
@@ -118051,6 +118451,7 @@
       "abilities": [
         {
           "id": "construct",
+          "name": "Construct",
           "type": "activated",
           "costs": [
             {
@@ -118281,6 +118682,7 @@
       "abilities": [
         {
           "id": "claim",
+          "name": "Claim",
           "type": "activated",
           "costs": [
             {
@@ -118482,6 +118884,7 @@
       "abilities": [
         {
           "id": "cash-in",
+          "name": "Cash In",
           "type": "activated",
           "targets": [
             {
@@ -118884,6 +119287,7 @@
       "abilities": [
         {
           "id": "inspire",
+          "name": "Inspire",
           "type": "activated",
           "costs": [
             {
@@ -119097,6 +119501,7 @@
       "abilities": [
         {
           "id": "sneak",
+          "name": "Sneak",
           "type": "activated",
           "costs": [
             {
@@ -120370,6 +120775,7 @@
       "abilities": [
         {
           "id": "demotivate",
+          "name": "Demotivate",
           "type": "activated",
           "costs": [
             {
@@ -120703,6 +121109,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -120825,6 +121232,7 @@
       "abilities": [
         {
           "id": "hypnotize",
+          "name": "Hypnotize",
           "type": "activated",
           "costs": [
             {
@@ -121312,6 +121720,7 @@
       "abilities": [
         {
           "id": "strut",
+          "name": "Strut",
           "type": "activated",
           "costs": [
             {
@@ -121444,6 +121853,7 @@
       "abilities": [
         {
           "id": "binge",
+          "name": "Binge",
           "type": "activated",
           "costs": [
             {
@@ -121746,6 +122156,7 @@
       "abilities": [
         {
           "id": "gamble",
+          "name": "Gamble",
           "type": "activated",
           "costs": [
             {
@@ -122499,6 +122910,7 @@
       "abilities": [
         {
           "id": "size-up",
+          "name": "Size Up",
           "type": "activated",
           "costs": [
             {
@@ -122540,6 +122952,7 @@
         },
         {
           "id": "rig",
+          "name": "Rig",
           "type": "activated",
           "costs": [
             {
@@ -122590,6 +123003,7 @@
         },
         {
           "id": "walk-away",
+          "name": "Walk Away",
           "type": "activated",
           "costs": [
             {
@@ -123176,6 +123590,7 @@
       "abilities": [
         {
           "id": "size-up",
+          "name": "Size Up",
           "type": "activated",
           "costs": [
             {
@@ -123773,6 +124188,7 @@
       "abilities": [
         {
           "id": "smuggle",
+          "name": "Smuggle",
           "type": "activated",
           "costs": [
             {
@@ -123978,6 +124394,7 @@
       "abilities": [
         {
           "id": "outsmart",
+          "name": "Outsmart",
           "type": "activated",
           "condition": {
             "type": "numberCompare",
@@ -124193,6 +124610,7 @@
         },
         {
           "id": "equip",
+          "name": "Equip",
           "type": "activated",
           "targets": [
             {
@@ -124533,6 +124951,7 @@
         },
         {
           "id": "burn",
+          "name": "Burn It",
           "type": "activated",
           "costs": [
             {
@@ -124725,6 +125144,7 @@
         },
         {
           "id": "burn",
+          "name": "Burn It",
           "type": "activated",
           "costs": [
             {
@@ -124849,6 +125269,7 @@
         },
         {
           "id": "burn",
+          "name": "Burn It",
           "type": "activated",
           "costs": [
             {
@@ -125021,6 +125442,7 @@
         },
         {
           "id": "burn",
+          "name": "Burn It",
           "type": "activated",
           "costs": [
             {
@@ -125213,6 +125635,7 @@
         },
         {
           "id": "burn",
+          "name": "Burn It",
           "type": "activated",
           "costs": [
             {
@@ -125878,6 +126301,7 @@
       "abilities": [
         {
           "id": "bore",
+          "name": "Bore",
           "type": "activated",
           "costs": [
             {
@@ -125988,6 +126412,7 @@
         },
         {
           "id": "crush-wave",
+          "name": "Crush Wave",
           "type": "activated",
           "costs": [
             {
@@ -126130,6 +126555,7 @@
       "abilities": [
         {
           "id": "inflame",
+          "name": "Inflame",
           "type": "activated",
           "costs": [
             {
@@ -127079,6 +127505,7 @@
       "abilities": [
         {
           "id": "keepemcoming",
+          "name": "Keep Em Coming",
           "type": "activated",
           "costs": [
             {
@@ -127158,6 +127585,7 @@
       "abilities": [
         {
           "id": "reanimate",
+          "name": "Reanimate",
           "type": "activated",
           "costs": [
             {
@@ -127647,6 +128075,7 @@
       "abilities": [
         {
           "id": "charge",
+          "name": "Charge!",
           "type": "activated",
           "costs": [
             {
@@ -128020,6 +128449,7 @@
         },
         {
           "id": "handoff",
+          "name": "Handoff",
           "type": "activated",
           "targets": [
             {
@@ -128802,6 +129232,7 @@
         },
         {
           "id": "fire",
+          "name": "Fire!",
           "type": "activated",
           "variables": {
             "x": 0
@@ -130177,6 +130608,7 @@
       "abilities": [
         {
           "id": "fire",
+          "name": "Fire!",
           "type": "activated",
           "costs": [
             {
@@ -130227,6 +130659,7 @@
       "abilities": [
         {
           "id": "shoot",
+          "name": "Shoot",
           "type": "activated",
           "costs": [
             {
@@ -130282,6 +130715,7 @@
       "abilities": [
         {
           "id": "assail",
+          "name": "Assail",
           "type": "activated",
           "costs": [
             {
@@ -143445,6 +143879,7 @@
       "abilities": [
         {
           "id": "research",
+          "name": "Research",
           "type": "activated",
           "costs": [
             {
@@ -143531,6 +143966,7 @@
       "abilities": [
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "o",
@@ -143739,6 +144175,7 @@
         },
         {
           "id": "slither",
+          "name": "Slither",
           "type": "activated",
           "costs": [
             {
@@ -143861,6 +144298,7 @@
         },
         {
           "id": "harness",
+          "name": "Harness",
           "type": "activated",
           "costs": [
             {
@@ -144216,6 +144654,7 @@
         },
         {
           "id": "seed",
+          "name": "Transition",
           "type": "activated",
           "costs": [
             {
@@ -144295,6 +144734,7 @@
         },
         {
           "id": "cipher",
+          "name": "Cipher",
           "type": "activated",
           "costs": [
             {
@@ -144622,6 +145062,7 @@
       "abilities": [
         {
           "id": "wish",
+          "name": "Wish",
           "type": "activated",
           "costs": [
             {
@@ -144952,6 +145393,7 @@
       "abilities": [
         {
           "id": "violate",
+          "name": "Violate",
           "type": "activated",
           "variables": {
             "x": {
@@ -145016,6 +145458,7 @@
         },
         {
           "id": "blur",
+          "name": "Blur",
           "type": "activated",
           "threshold": "ooo",
           "costs": [
@@ -146149,6 +146592,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "g",
@@ -146288,6 +146732,7 @@
       "abilities": [
         {
           "id": "show-evidence",
+          "name": "Show Evidence",
           "type": "activated",
           "usesPerTurn": 1,
           "targets": [
@@ -146328,6 +146773,7 @@
       "abilities": [
         {
           "id": "hock",
+          "name": "Hock",
           "type": "activated",
           "costs": [
             {
@@ -146366,6 +146812,7 @@
         },
         {
           "id": "weedle",
+          "name": "Weedle",
           "type": "activated",
           "threshold": "gggggg",
           "costs": [
@@ -146687,6 +147134,7 @@
         },
         {
           "id": "recur",
+          "name": "Recur",
           "type": "activated",
           "activationZone": "discard",
           "threshold": "gg",
@@ -147126,6 +147574,7 @@
         },
         {
           "id": "seed",
+          "name": "Invest",
           "type": "activated",
           "costs": [
             {
@@ -147360,6 +147809,7 @@
         },
         {
           "id": "unlock-potential",
+          "name": "Unlock Potential",
           "type": "activated",
           "activationZone": "hand",
           "threshold": "g",
@@ -147531,6 +147981,7 @@
       "abilities": [
         {
           "id": "pander",
+          "name": "Pander",
           "type": "activated",
           "costs": [
             {
@@ -147600,6 +148051,7 @@
       "abilities": [
         {
           "id": "pay-off",
+          "name": "Pay Off",
           "type": "activated",
           "condition": {
             "type": "respondingTo",
@@ -147653,6 +148105,7 @@
       "abilities": [
         {
           "id": "resist",
+          "name": "Resist",
           "type": "activated",
           "costs": [
             {
@@ -147675,6 +148128,7 @@
         },
         {
           "id": "disappear",
+          "name": "Disappear",
           "type": "activated",
           "costs": [
             {
@@ -148195,6 +148649,7 @@
         },
         {
           "id": "under-the-table",
+          "name": "Under the Table",
           "type": "activated",
           "costs": [
             {
@@ -148565,6 +149020,7 @@
       "abilities": [
         {
           "id": "snub",
+          "name": "Snub",
           "type": "activated",
           "costs": [
             {
@@ -148693,6 +149149,7 @@
         },
         {
           "id": "expand",
+          "name": "Expand",
           "type": "activated",
           "costs": [
             {
@@ -148892,6 +149349,7 @@
         },
         {
           "id": "move",
+          "name": "Move",
           "type": "activated",
           "costs": [
             {
@@ -149714,6 +150172,7 @@
         },
         {
           "id": "seed",
+          "name": "Process",
           "type": "activated",
           "costs": [
             {
@@ -150168,6 +150627,7 @@
       "abilities": [
         {
           "id": "bolster",
+          "name": "Bolster",
           "type": "activated",
           "costs": [
             {
@@ -150222,6 +150682,7 @@
         },
         {
           "id": "teamwork",
+          "name": "Teamwork",
           "type": "activated",
           "usesPerTurn": 1,
           "costs": [
@@ -151081,6 +151542,7 @@
       "abilities": [
         {
           "id": "disenchant",
+          "name": "Disenchant",
           "type": "activated",
           "costs": [
             {
@@ -151106,6 +151568,7 @@
         },
         {
           "id": "clairvoyance",
+          "name": "Clairvoyance",
           "type": "activated",
           "variableBounds": {
             "x": {
@@ -151209,6 +151672,7 @@
       "abilities": [
         {
           "id": "disenchant",
+          "name": "Disenchant",
           "type": "activated",
           "costs": [
             {
@@ -151234,6 +151698,7 @@
         },
         {
           "id": "clairvoyance",
+          "name": "Clairvoyance",
           "type": "activated",
           "variableBounds": {
             "x": {
@@ -151412,6 +151877,7 @@
       "abilities": [
         {
           "id": "make-vanish",
+          "name": "Make Vanish",
           "type": "activated",
           "costs": [
             {
@@ -151445,6 +151911,7 @@
         },
         {
           "id": "make-reappear",
+          "name": "Make Reappear",
           "type": "activated",
           "costs": [
             {
@@ -151514,6 +151981,7 @@
       "abilities": [
         {
           "id": "make-vanish",
+          "name": "Make Vanish",
           "type": "activated",
           "costs": [
             {
@@ -151547,6 +152015,7 @@
         },
         {
           "id": "make-reappear",
+          "name": "Make Reappear",
           "type": "activated",
           "costs": [
             {
@@ -151610,6 +152079,7 @@
       "abilities": [
         {
           "id": "woosh",
+          "name": "Woosh",
           "type": "activated",
           "costs": [
             {
@@ -152020,6 +152490,7 @@
       "abilities": [
         {
           "id": "grand-theft",
+          "name": "Grand Theft",
           "type": "activated",
           "costs": [
             {
@@ -152087,6 +152558,7 @@
       "abilities": [
         {
           "id": "consume-force",
+          "name": "Consume Force",
           "type": "activated",
           "costs": [
             {
@@ -152162,6 +152634,7 @@
       "abilities": [
         {
           "id": "imply",
+          "name": "Imply",
           "type": "activated",
           "costs": [
             {
@@ -152323,6 +152796,7 @@
       "abilities": [
         {
           "id": "betray",
+          "name": "Betray",
           "type": "activated",
           "costs": [
             {
@@ -152485,6 +152959,7 @@
       "abilities": [
         {
           "id": "hunker-down",
+          "name": "Hunker Down",
           "type": "activated",
           "costs": [
             {
@@ -152575,6 +153050,7 @@
         },
         {
           "id": "buy-time",
+          "name": "Buy Time",
           "type": "activated",
           "threshold": "ddd",
           "costs": [
@@ -152675,6 +153151,7 @@
         },
         {
           "id": "yoink",
+          "name": "Yoink!",
           "type": "activated",
           "costs": [
             {
@@ -153050,6 +153527,7 @@
         },
         {
           "id": "seed",
+          "name": "Experiment",
           "type": "activated",
           "costs": [
             {
@@ -153266,6 +153744,7 @@
         },
         {
           "id": "flex",
+          "name": "Flex",
           "type": "activated",
           "costs": [
             {
@@ -153976,6 +154455,7 @@
         },
         {
           "id": "hand-it-down",
+          "name": "Hand It Down",
           "type": "activated",
           "costs": [
             {
@@ -154440,6 +154920,7 @@
       "abilities": [
         {
           "id": "bleed",
+          "name": "Bleed",
           "type": "activated",
           "costs": [
             {
@@ -154730,6 +155211,7 @@
       "abilities": [
         {
           "id": "hemorage",
+          "name": "Hemorage",
           "type": "activated",
           "costs": [
             {
@@ -154987,6 +155469,7 @@
         },
         {
           "id": "convert",
+          "name": "Convert",
           "type": "activated",
           "costs": [
             {
@@ -155665,6 +156148,7 @@
       "abilities": [
         {
           "id": "get-in-there",
+          "name": "Get in There",
           "type": "activated",
           "threshold": "vvv",
           "variables": {
@@ -155829,6 +156313,7 @@
         },
         {
           "id": "seed",
+          "name": "Implant",
           "type": "activated",
           "costs": [
             {
@@ -156160,6 +156645,7 @@
       "abilities": [
         {
           "id": "push",
+          "name": "Push",
           "type": "activated",
           "costs": [
             {
@@ -156529,6 +157015,7 @@
         },
         {
           "id": "bulk-up",
+          "name": "Bulk Up",
           "type": "activated",
           "costs": [
             {
@@ -157471,6 +157958,7 @@
         },
         {
           "id": "mush",
+          "name": "Turn to Mush",
           "type": "activated",
           "costs": [
             {
@@ -157710,6 +158198,7 @@
         },
         {
           "id": "retreat",
+          "name": "Retreat",
           "type": "activated",
           "costs": [
             {
@@ -158003,6 +158492,7 @@
       "abilities": [
         {
           "id": "grift",
+          "name": "Grift",
           "type": "activated",
           "condition": {
             "type": "isActivePlayer",

@@ -564,6 +564,59 @@ describe("card-data-integrity: parity gaps", () => {
   });
 });
 
+describe("card-data-integrity: activated-ability names", () => {
+  // The printed ability keyword (SIFT, RUMMAGE, ENERGIZE) lives in
+  // `AbilityDefinition.name`. Every activated ability a player invokes off a
+  // character / item / location prints one on the physical card, and several
+  // UI/log surfaces key off it (see spoils-game/docs/ability-name-backfill.md).
+  // Tactics are out of scope — a tactic's "ability" is its inline card text
+  // with no keyword. So is any permanent whose activated ability is a bare
+  // "[icons]: <effect>" line with no printed keyword; those are the only
+  // permitted exceptions, frozen here so a new unnamed keyword ability trips
+  // this test instead of silently shipping.
+  const KEYWORDLESS_ACTIVATED = new Set<string>([
+    "Boorish Boar::boorish-boar-pump",
+    "Boorish Boar::boorish-boar-pop",
+    "Fervent Beastslayer::life",
+    "Heavy Sword::sharpen",
+    "Obtuse Pipesmoker::pump",
+    "Protractive Golem::pump",
+    "Righteous Exemplar::pump",
+    "Runic Armor::reinforce",
+    "Shrouded Demon::pump",
+    "Soulsearcher::o",
+    "Soulsearcher::g",
+    "Soulsearcher::e",
+    "Soulsearcher::d",
+    "Soulsearcher::r",
+    "The Abominable Hamster::pump",
+    // `text` prints no keyword segment for this one — id is a card-name slug,
+    // not a printed keyword (see backfill doc's "check" row).
+    "Thabbashite Penumbra::veil"
+  ]);
+
+  test("every non-tactic activated ability has a `name` (or is a frozen keywordless exception)", () => {
+    const unnamed = new Set<string>();
+    for (const c of catalog) {
+      if (c.type === "tactic") continue;
+      for (const a of c.behavior?.abilities ?? []) {
+        if (a.type !== "activated" || a.name) continue;
+        unnamed.add(`${c.name}::${a.id as string}`);
+      }
+    }
+    const missing = [...unnamed].filter(k => !KEYWORDLESS_ACTIVATED.has(k)).sort();
+    const staleException = [...KEYWORDLESS_ACTIVATED]
+      .filter(k => !unnamed.has(k))
+      .sort();
+    assert.deepEqual(
+      { missing, staleException },
+      { missing: [], staleException: [] },
+      "populate AbilityDefinition.name from the card's printed keyword, or " +
+        "add a genuinely keywordless ability to KEYWORDLESS_ACTIVATED"
+    );
+  });
+});
+
 describe("card-data-integrity: location structure", () => {
   // A location's damage capacity is `structure` (RULES.md §3); the state-based
   // check destroys it once `damage >= structure`. A location with no numeric
