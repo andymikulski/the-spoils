@@ -153,6 +153,15 @@ export interface ResourceDefinition {
   /** Explicit icon data overrides staple-name inference. */
   provides?: ResourceIcon[];
   staple?: boolean;
+  /**
+   * "This resource may only be played from your hand face-down." — the FLIP
+   * IT staple-resource cycle (Elitist Upgrade, Obsessive Concentration,
+   * Greedy Profiteering, Deceptive Domain, Raging Ferocity). `chooseDevelop`
+   * rejects a face-up `playResource` of this card; it enters as an
+   * anonymous Volition resource and only shows its printed icon(s) once its
+   * FLIP IT ability turns it face-up.
+   */
+  faceDownOnly?: boolean;
 }
 
 export interface CardStats {

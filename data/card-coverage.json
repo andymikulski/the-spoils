@@ -2529,6 +2529,20 @@
       "cards": [
         "f0a05c35-7828-49ac-8a59-131b8287e02d"
       ]
+    },
+    "flip-face-up": {
+      "status": "implemented",
+      "kind": [
+        "effect"
+      ],
+      "spec": "Effect { type:'flipFaceUp', target } — the inverse of flip-face-down: turn an in-play FACE-DOWN card face-up in place. Per RULES.md §2 (CR §411.3/§411.4) the flip is 'leaves play' + 'a brand-new card enters play', but what left was an anonymous face-down resource (dormant triggers) so NO 'leaves play' event fires — only cardEnteredPlay. The card then provides its printed icons instead of Volition. Core of the 'FLIP IT' staple-resource cycle (Elitist Upgrade, Obsessive Concentration, Greedy Profiteering, Deceptive Domain, Raging Ferocity), each a `fromFaceDown` activated ability whose EFFECT is flipFaceUp(source) + a rider. Also required `ResourceDefinition.faceDownOnly` (chooseDevelop rejects a face-up play) and surfacing `fromFaceDown` abilities through getAvailableActivatedAbilities.",
+      "cards": [
+        "91a709fd-3225-4576-a200-e4bac342bdda",
+        "a261f7b6-de13-4e76-ad41-f34ce4c4da16",
+        "9b20e73f-8eef-41a0-82d5-8942987fe044",
+        "969913a5-1444-4d50-9225-9e82a30a56a6",
+        "9192b2fa-b568-4ac1-bfd9-b9cb31d8fa42"
+      ]
     }
   },
   "parityGaps": {
@@ -17145,21 +17159,28 @@
       "textHash": "ae4041899bd6",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "activated:fromFaceDown FLIP IT",
+          "flipFaceUp"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "deception"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-up"
+      ],
       "display": {},
       "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "notes": "FLIP IT [D], pay (picked location's cost)+4: flip up, take control of the location.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -17492,21 +17513,28 @@
       "textHash": "62668a7f43ea",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "activated:fromFaceDown FLIP IT",
+          "flipFaceUp"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "elitism"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-up"
+      ],
       "display": {},
       "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "notes": "FLIP IT [E], not during a battle, pay 4: flip up, all 'majig' characters you control gain 1/1 this turn.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -18032,21 +18060,28 @@
       "textHash": "8259db5abbf9",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "activated:fromFaceDown FLIP IT",
+          "flipFaceUp"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "greed"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-up"
+      ],
       "display": {},
       "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "notes": "FLIP IT [G], lose 3 influence + pay 4: flip up, 2 random cards from discard to hand.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -19164,21 +19199,28 @@
       "textHash": "fb64d5d2e851",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "activated:fromFaceDown FLIP IT",
+          "flipFaceUp"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "obsession"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-up"
+      ],
       "display": {},
       "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "notes": "FLIP IT [O], pay 4: flip up, draw 3, put 3 from hand on the bottom.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -19609,21 +19651,28 @@
       "textHash": "93deb91c04c0",
       "behavior": {
         "needed": false,
-        "shapes": [],
+        "shapes": [
+          "activated:fromFaceDown FLIP IT",
+          "flipFaceUp"
+        ],
         "reusesProvenShape": null,
         "newTestNeeded": false
       },
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": null,
+        "resourceProvides": [
+          "rage"
+        ],
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-face-up"
+      ],
       "display": {},
       "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "notes": "FLIP IT [R], pay 4: flip up, damage the opponent's faction for (their resources - yours). 'Pick a player' collapses to the sole opponent in 2-player.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {

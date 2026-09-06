@@ -160,7 +160,7 @@ const KNOWN_TYPE_TAGS = new Set([
   "forEachPlayer", "nameValue", "mayPay", "createTokens", "useTargetAbility",
   "chooserSelectsTarget", "chooserSelectsOption", "lookAndReorder",
   "reduceNextCost", "deployForFree", "distributeAmong",
-  "flipFaceDown", "putIntoPlay", "deployFromZone", "detach", "scheduleEffect",
+  "flipFaceDown", "flipFaceUp", "putIntoPlay", "deployFromZone", "detach", "scheduleEffect",
   "preventDamage", "rememberTarget", "grantResourceIcons", "grantProvides",
   "skipRestoreRule", "skipNextRestore", "modifyNumericCost",
   "chooserSelectsNumber", "reduceThreshold", "anyPlayerMayPay",

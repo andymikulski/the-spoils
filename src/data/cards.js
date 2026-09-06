@@ -46134,7 +46134,73 @@ export default [
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [O] -- FLIP IT: [O] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 4. -- EFFECT: Put this card into play face-up. Draw 3 cards. If you do, put 3 cards from your hand on the bottom of your deck."
+    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [O] -- FLIP IT: [O] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 4. -- EFFECT: Put this card into play face-up. Draw 3 cards. If you do, put 3 cards from your hand on the bottom of your deck.",
+    "resource": {
+      "provides": [
+        "obsession"
+      ],
+      "faceDownOnly": true
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "flip-it",
+          "name": "Flip It",
+          "type": "activated",
+          "fromFaceDown": true,
+          "threshold": "o",
+          "condition": {
+            "type": "sourceIsFaceDown"
+          },
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "flipFaceUp",
+              "target": "source"
+            },
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": 3
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "bottomed",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 3
+              },
+              "effects": [
+                {
+                  "type": "forEach",
+                  "selected": "bottomed",
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "deck",
+                      "position": "bottom"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "7e7c80fc-1697-426e-b962-768196f6f2da",
@@ -48818,7 +48884,75 @@ export default [
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [G] -- FLIP IT: [G] -- COST: Use this only while this card is a face-down resource. Reveal this card. Your faction loses 3 influcence. Pay 4. -- EFFECT: Put this card into play face-up. Put 2 random cards from your discard pile into your hand."
+    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [G] -- FLIP IT: [G] -- COST: Use this only while this card is a face-down resource. Reveal this card. Your faction loses 3 influcence. Pay 4. -- EFFECT: Put this card into play face-up. Put 2 random cards from your discard pile into your hand.",
+    "resource": {
+      "provides": [
+        "greed"
+      ],
+      "faceDownOnly": true
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "flip-it",
+          "name": "Flip It",
+          "type": "activated",
+          "fromFaceDown": true,
+          "threshold": "g",
+          "condition": {
+            "type": "sourceIsFaceDown"
+          },
+          "costs": [
+            {
+              "type": "loseInfluence",
+              "amount": 3
+            },
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "targets": [
+            {
+              "id": "pool",
+              "selector": {
+                "owner": "self",
+                "zone": "discard"
+              },
+              "count": {
+                "type": "count",
+                "selector": {
+                  "owner": "self",
+                  "zone": "discard"
+                }
+              },
+              "optional": true
+            }
+          ],
+          "effects": [
+            {
+              "type": "flipFaceUp",
+              "target": "source"
+            },
+            {
+              "type": "randomFromSelection",
+              "selected": "pool",
+              "count": 2,
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "to": "hand"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "a0403283-f513-4822-9e8d-afc862ff08b3",
@@ -50445,7 +50579,87 @@ export default [
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [E] -- FLIP IT: [E] -- COST: Use this only while this card is a face-down resource and not during a battle. Reveal this card. Pay 4. -- EFFECT: Put this card into play face-up. This turn, all 'majig' characters you control gain 1 strength and 1 life."
+    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [E] -- FLIP IT: [E] -- COST: Use this only while this card is a face-down resource and not during a battle. Reveal this card. Pay 4. -- EFFECT: Put this card into play face-up. This turn, all 'majig' characters you control gain 1 strength and 1 life.",
+    "resource": {
+      "provides": [
+        "elitism"
+      ],
+      "faceDownOnly": true
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "flip-it",
+          "name": "Flip It",
+          "type": "activated",
+          "fromFaceDown": true,
+          "threshold": "e",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "sourceIsFaceDown"
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "battleActive"
+                }
+              }
+            ]
+          },
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "flipFaceUp",
+              "target": "source"
+            },
+            {
+              "type": "forEach",
+              "selector": {
+                "controller": "self",
+                "zone": "play",
+                "type": "character",
+                "subtype": "majig"
+              },
+              "effects": [
+                {
+                  "type": "createModifier",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "stat": "strength",
+                  "operation": "add",
+                  "value": 1,
+                  "duration": {
+                    "type": "untilEndOfTurn"
+                  }
+                },
+                {
+                  "type": "createModifier",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "stat": "life",
+                  "operation": "add",
+                  "value": 1,
+                  "duration": {
+                    "type": "untilEndOfTurn"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "01750977-01af-4db3-bf26-5b5822eddb76",
@@ -52479,7 +52693,69 @@ export default [
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [D] -- FLIP IT: [D] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pick a location. X is its numeric cost. Pay X+4. -- EFFECT: Put this card into play face-up. Take control of the location."
+    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [D] -- FLIP IT: [D] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pick a location. X is its numeric cost. Pay X+4. -- EFFECT: Put this card into play face-up. Take control of the location.",
+    "resource": {
+      "provides": [
+        "deception"
+      ],
+      "faceDownOnly": true
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "flip-it",
+          "name": "Flip It",
+          "type": "activated",
+          "fromFaceDown": true,
+          "threshold": "d",
+          "condition": {
+            "type": "sourceIsFaceDown"
+          },
+          "targets": [
+            {
+              "id": "loc",
+              "selector": {
+                "zone": "play",
+                "type": "location"
+              },
+              "count": 1
+            }
+          ],
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": {
+                "type": "add",
+                "values": [
+                  {
+                    "type": "cardCost",
+                    "target": {
+                      "type": "selected",
+                      "id": "loc"
+                    }
+                  },
+                  4
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "type": "flipFaceUp",
+              "target": "source"
+            },
+            {
+              "type": "takeControl",
+              "target": {
+                "type": "selected",
+                "id": "loc"
+              },
+              "controller": "controller"
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "1cb45623-65ab-4331-a189-68a57d0e9cdc",
@@ -56315,7 +56591,84 @@ export default [
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [R] -- FLIP IT: [R] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pick a player. X is number of resources that player controls. Y is the number of resources you control. Pay 4. -- EFFECT: Put this card into play face-up. Inflict X - Y damage to the picked player's faction."
+    "text": "This resource may only be played from your hand face-down. -- PROVIDES: [R] -- FLIP IT: [R] -- COST: Use this only while this card is a face-down resource. Reveal this card. Pick a player. X is number of resources that player controls. Y is the number of resources you control. Pay 4. -- EFFECT: Put this card into play face-up. Inflict X - Y damage to the picked player's faction.",
+    "resource": {
+      "provides": [
+        "rage"
+      ],
+      "faceDownOnly": true
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "flip-it",
+          "name": "Flip It",
+          "type": "activated",
+          "fromFaceDown": true,
+          "threshold": "r",
+          "condition": {
+            "type": "sourceIsFaceDown"
+          },
+          "targets": [
+            {
+              "id": "fac",
+              "selector": {
+                "owner": "opponent",
+                "zone": "play",
+                "type": "faction"
+              },
+              "count": 1
+            }
+          ],
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
+            }
+          ],
+          "effects": [
+            {
+              "type": "flipFaceUp",
+              "target": "source"
+            },
+            {
+              "type": "dealDamage",
+              "target": {
+                "type": "selected",
+                "id": "fac"
+              },
+              "amount": {
+                "type": "add",
+                "values": [
+                  {
+                    "type": "count",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "play",
+                      "type": "resource"
+                    }
+                  },
+                  {
+                    "type": "multiply",
+                    "values": [
+                      {
+                        "type": "count",
+                        "selector": {
+                          "controller": "self",
+                          "zone": "play",
+                          "type": "resource"
+                        }
+                      },
+                      -1
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
   },
   {
     "id": "b1ca8db9-a359-46d8-a656-cb5ffadd68a4",

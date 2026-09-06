@@ -7569,6 +7569,165 @@ describe("Seed 2: activate-while-facedown", () => {
   });
 });
 
+// "FLIP IT" staple-resource cycle (Holy Heist: Elitist Upgrade, Obsessive
+// Concentration, Greedy Profiteering, Deceptive Domain, Raging Ferocity) —
+// ResourceDefinition.faceDownOnly + a `fromFaceDown` activated ability whose
+// first effect is the new `flipFaceUp` (turn the source face-up in place),
+// then a rider. Fixture mirrors the shape authored onto Elitist Upgrade.
+describe("Holy Heist: FLIP IT (flipFaceUp + faceDownOnly)", () => {
+  const flipItElitistUpgrade = () =>
+    resourceCard({
+      name: "Elitist Upgrade",
+      id: "flipit-elitist-upgrade",
+      trade: "gearsmith",
+      resource: { provides: ["elitism"], faceDownOnly: true },
+      behavior: {
+        abilities: [
+          {
+            id: "flip-it",
+            name: "Flip It",
+            type: "activated",
+            fromFaceDown: true,
+            threshold: "e",
+            condition: {
+              type: "and",
+              conditions: [
+                { type: "sourceIsFaceDown" },
+                { type: "not", condition: { type: "battleActive" } }
+              ]
+            },
+            costs: [{ type: "payResources", amount: 4 }],
+            effects: [
+              { type: "flipFaceUp", target: "source" },
+              {
+                type: "forEach",
+                selector: { controller: "self", zone: "play", type: "character", subtype: "majig" },
+                effects: [
+                  {
+                    type: "createModifier",
+                    target: { type: "selected", id: "__candidate" },
+                    stat: "strength",
+                    operation: "add",
+                    value: 1,
+                    duration: { type: "untilEndOfTurn" }
+                  },
+                  {
+                    type: "createModifier",
+                    target: { type: "selected", id: "__candidate" },
+                    stat: "life",
+                    operation: "add",
+                    value: 1,
+                    duration: { type: "untilEndOfTurn" }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    });
+
+  const elitismBank = (n: number, owner: string) =>
+    Array.from({ length: n }, (_, i) => ({
+      key: `e-${owner}-${i}`,
+      def: resourceCard({
+        name: "Elitism",
+        id: `flipit-elitism-${i}`,
+        trade: "universal",
+        resource: { provides: ["elitism"], staple: true }
+      }),
+      owner,
+      zone: "play" as const
+    }));
+
+  test("a face-down FLIP IT resource surfaces its fromFaceDown ability, flips itself face-up on use, and resolves the rider", () => {
+    const majig = character({ name: "Fleet Majig", subtype: ["majig"], strength: 1, life: 1 });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "up", def: flipItElitistUpgrade(), owner: P1, zone: "play", faceDown: true },
+        { key: "mj", def: majig, owner: P1, zone: "play" },
+        ...elitismBank(5, P1)
+      ]
+    });
+
+    // While face-down it is an anonymous Volition source, not [E]: only the
+    // five banked Elitism count toward threshold.
+    assert.equal(engine.getThresholds(P1).elitism, 5);
+    assert.ok((engine.getThresholds(P1).volition ?? 0) >= 1);
+
+    // The listing surfaces the fromFaceDown ability even though the card is face-down.
+    const before = engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === id("up") && a.ability.id === "flip-it");
+    assert.equal(before.length, 1, "FLIP IT is offered while the source is face-down");
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("up"), abilityId: "flip-it" });
+    resolvePendingResponses(engine);
+
+    // Source flipped face-up in place — still a resource, still in play.
+    assert.equal(engine.state.cards[id("up")].faceDown, false, "source is face-up");
+    assert.equal(engine.state.cards[id("up")].zone, "play");
+
+    // ...and now providing [E]: the flipped card's icon is added on top of the
+    // five banked Elitism (which are only attached, not spent — threshold
+    // isn't paid from). Its Volition contribution is gone.
+    assert.equal(engine.getThresholds(P1).elitism, 6, "5 banked + the flipped card");
+
+    // Rider resolved: the majig got +1/+1 for the turn.
+    assert.equal(engine.getStat(id("mj"), "strength"), 2);
+    assert.equal(engine.getStat(id("mj"), "life"), 2);
+
+    // No longer offered — the card is face-up now, so sourceIsFaceDown fails.
+    const after = engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === id("up") && a.ability.id === "flip-it");
+    assert.equal(after.length, 0);
+  });
+
+  test("faceDownOnly forbids a face-up develop play, but allows a face-down one", () => {
+    const faction = factionCard({
+      name: "PR-Faction",
+      faction: defaultFactionDefinition({
+        turn: {
+          restore: { detachResources: true, restoreNonResources: true },
+          develop: { choices: [{ type: "playResource", count: 1 }] }
+        }
+      })
+    });
+
+    const mk = () =>
+      buildGame({
+        playerA: { faction },
+        cards: [{ key: "up", def: flipItElitistUpgrade(), owner: P1, zone: "hand" }]
+      });
+
+    const faceUp = mk();
+    assert.throws(
+      () =>
+        faceUp.engine.perform({
+          type: "chooseDevelop",
+          playerId: P1,
+          choice: { type: "playResource", cards: [{ cardId: faceUp.id("up"), faceDown: false }] }
+        }),
+      /face-down/
+    );
+
+    const faceDown = mk();
+    faceDown.engine.perform({
+      type: "chooseDevelop",
+      playerId: P1,
+      choice: { type: "playResource", cards: [{ cardId: faceDown.id("up"), faceDown: true }] }
+    });
+    resolvePendingResponses(faceDown.engine);
+    assert.equal(faceDown.engine.state.cards[faceDown.id("up")].zone, "play");
+    assert.equal(faceDown.engine.state.cards[faceDown.id("up")].faceDown, true);
+    // Face-down: an anonymous Volition source, not [E] yet.
+    assert.ok((faceDown.engine.getThresholds(P1).volition ?? 0) >= 1);
+    assert.equal(faceDown.engine.getThresholds(P1).elitism ?? 0, 0);
+  });
+});
+
 // "Duplicate the tactic. Terminate the tactic." (Muddle) - the duplicate
 // effect + terminate scope "respondedItem" + respondingTo "ability".
 describe("Seed 2: duplicate + respond-to-ability", () => {

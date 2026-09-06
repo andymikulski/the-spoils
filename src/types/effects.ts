@@ -205,6 +205,24 @@ export type Effect =
     }
   | {
       /**
+       * Flip an in-play FACE-DOWN card face-up in place — the inverse of
+       * `flipFaceDown`, and the mechanical core of the "FLIP IT"
+       * staple-resource cycle (Elitist Upgrade, Obsessive Concentration,
+       * Greedy Profiteering, Deceptive Domain, Raging Ferocity), whose
+       * "EFFECT: Put this card into play face-up" is exactly this on
+       * `{ type: "source" }`. Per RULES.md §2 (CR §411.3 / §411.4) the flip
+       * is a *leaves-play + enters-play* boundary: what left was an
+       * anonymous face-down resource (its printed triggers were dormant, so
+       * NO "leaves play" trigger fires — the asymmetry with `flipFaceDown`);
+       * what enters is the card's real self, so `cardEnteredPlay` fires and
+       * the card now provides its printed icons instead of Volition. No-op
+       * if `target` isn't a face-down card in play.
+       */
+      type: "flipFaceUp";
+      target: TargetRef;
+    }
+  | {
+      /**
        * Move a card from deck / discard / void INTO play as its real type,
        * running the normal entrance bookkeeping (`cardEnteredPlay`, the
        * attach-target requirement, attack eligibility). `faceDown: true`

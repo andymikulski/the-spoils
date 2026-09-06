@@ -1437,6 +1437,10 @@ export class SpoilsEngine {
         definition.type === "resource",
         "Only a resource card can be played face-up as a resource."
       );
+      assert(
+        !definition.resource?.faceDownOnly,
+        "This resource may only be played from your hand face-down."
+      );
     }
 
     card.faceDown = faceDown;
@@ -1928,11 +1932,16 @@ export class SpoilsEngine {
     }> = [];
 
     for (const card of Object.values(this.state.cards)) {
-      if (card.zone !== "play" || card.faceDown) continue;
+      if (card.zone !== "play") continue;
       if (this.hasRestriction(card.id, "cannotUseAbilities")) continue;
       const controlsIt = card.controllerId === playerId;
 
       for (const ability of this.getCardActivatedAbilities(card.id)) {
+        // A face-down card is an anonymous resource — only its abilities
+        // marked `fromFaceDown` are live (FLIP IT on the staple-resource
+        // cycle; Fired Hand PETTY VENGEANCE; Vorpal Sword SNICKER SNACK).
+        // Mirrors the same gate in `activateAbility`.
+        if (card.faceDown && !ability.fromFaceDown) continue;
         // A non-controlled card only offers abilities marked "both players
         // may use this" (The Knitting Coalition — INFLATIONARY FORCES) or
         // "only an opponent may use this" (iDumb De-Itemizer — RESET) —
@@ -6466,6 +6475,12 @@ export class SpoilsEngine {
         return;
       }
 
+      case "flipFaceUp": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        if (targetId) this.flipCardFaceUp(targetId);
+        return;
+      }
+
       case "putIntoPlay": {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
@@ -10243,6 +10258,30 @@ export class SpoilsEngine {
     // event carries no `faceDown`, even though the card is face-down
     // immediately after.
     this.emit({ type: "cardMoved", cardId, from: "play", to: "play" });
+  }
+
+  /**
+   * "Put <cardId> into play face-up" — flip an in-play FACE-DOWN card
+   * face-up in place (RULES.md §2, CR §411.3 / §411.4). The inverse of
+   * `flipCardFaceDown`, used by the FLIP IT staple-resource cycle. The
+   * anonymous face-down resource that "leaves play" had only dormant
+   * triggers, so — unlike the face-down direction — NO "leaves play" event
+   * is emitted; only the card's real self "entering play" is
+   * (`cardEnteredPlay`), after which `getResourceIcons` returns its printed
+   * icons rather than Volition. No-op unless it's a face-down card in play.
+   */
+  private flipCardFaceUp(cardId: CardInstanceId): void {
+    const card = this.state.cards[cardId];
+    if (!card || card.zone !== "play" || !card.faceDown) return;
+
+    card.faceDown = false;
+    card.attackEligibleTurn = undefined;
+
+    this.emit({
+      type: "cardEnteredPlay",
+      cardId,
+      playerId: card.controllerId
+    });
   }
 
   /**
