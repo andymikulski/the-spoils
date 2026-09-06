@@ -1793,43 +1793,27 @@ export default [
                       "type": "chooserSelectsTarget",
                       "chooser": "opponent",
                       "declaration": {
-                        "id": "discard1",
+                        "id": "discard",
                         "selector": {
                           "controller": "opponent",
                           "zone": "hand"
                         },
-                        "count": 1
+                        "count": 2
                       },
                       "effects": [
                         {
-                          "type": "moveCard",
-                          "target": {
-                            "type": "selected",
-                            "id": "discard1"
-                          },
-                          "to": "discard"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "discard2",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "moveCard",
-                          "target": {
-                            "type": "selected",
-                            "id": "discard2"
-                          },
-                          "to": "discard"
+                          "type": "forEach",
+                          "selected": "discard",
+                          "effects": [
+                            {
+                              "type": "moveCard",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "to": "discard"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -3839,47 +3823,29 @@ export default [
                           "type": "chooserSelectsTarget",
                           "chooser": "controller",
                           "declaration": {
-                            "id": "h1",
+                            "id": "h",
                             "selector": {
                               "owner": "self",
                               "zone": "hand"
                             },
-                            "count": 1,
+                            "count": 2,
                             "optional": true
                           },
                           "effects": [
                             {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h1"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "h2",
-                            "selector": {
-                              "owner": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h2"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
+                              "type": "forEach",
+                              "selected": "h",
+                              "effects": [
+                                {
+                                  "type": "playResource",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "faceDown": "auto",
+                                  "player": "controller"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -30607,47 +30573,29 @@ export default [
                           "type": "chooserSelectsTarget",
                           "chooser": "controller",
                           "declaration": {
-                            "id": "h1",
+                            "id": "h",
                             "selector": {
                               "owner": "self",
                               "zone": "hand"
                             },
-                            "count": 1,
+                            "count": 2,
                             "optional": true
                           },
                           "effects": [
                             {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h1"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "h2",
-                            "selector": {
-                              "owner": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h2"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
+                              "type": "forEach",
+                              "selected": "h",
+                              "effects": [
+                                {
+                                  "type": "playResource",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "faceDown": "auto",
+                                  "player": "controller"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -59206,43 +59154,27 @@ export default [
                       "type": "chooserSelectsTarget",
                       "chooser": "opponent",
                       "declaration": {
-                        "id": "discard1",
+                        "id": "discard",
                         "selector": {
                           "controller": "opponent",
                           "zone": "hand"
                         },
-                        "count": 1
+                        "count": 2
                       },
                       "effects": [
                         {
-                          "type": "moveCard",
-                          "target": {
-                            "type": "selected",
-                            "id": "discard1"
-                          },
-                          "to": "discard"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "discard2",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "moveCard",
-                          "target": {
-                            "type": "selected",
-                            "id": "discard2"
-                          },
-                          "to": "discard"
+                          "type": "forEach",
+                          "selected": "discard",
+                          "effects": [
+                            {
+                              "type": "moveCard",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "to": "discard"
+                            }
+                          ]
                         }
                       ]
                     }
@@ -61230,47 +61162,29 @@ export default [
                           "type": "chooserSelectsTarget",
                           "chooser": "controller",
                           "declaration": {
-                            "id": "h1",
+                            "id": "h",
                             "selector": {
                               "owner": "self",
                               "zone": "hand"
                             },
-                            "count": 1,
+                            "count": 2,
                             "optional": true
                           },
                           "effects": [
                             {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h1"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "h2",
-                            "selector": {
-                              "owner": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "playResource",
-                              "target": {
-                                "type": "selected",
-                                "id": "h2"
-                              },
-                              "faceDown": "auto",
-                              "player": "controller"
+                              "type": "forEach",
+                              "selected": "h",
+                              "effects": [
+                                {
+                                  "type": "playResource",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "faceDown": "auto",
+                                  "player": "controller"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -89175,43 +89089,27 @@ export default [
                   "type": "chooserSelectsTarget",
                   "chooser": "opponent",
                   "declaration": {
-                    "id": "redonk-d1",
+                    "id": "redonk-d",
                     "selector": {
                       "controller": "opponent",
                       "zone": "hand"
                     },
-                    "count": 1
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "redonk-d1"
-                      },
-                      "to": "discard"
-                    }
-                  ]
-                },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
-                  "declaration": {
-                    "id": "redonk-d2",
-                    "selector": {
-                      "controller": "opponent",
-                      "zone": "hand"
-                    },
-                    "count": 1
-                  },
-                  "effects": [
-                    {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "redonk-d2"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "redonk-d",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -106616,43 +106514,27 @@ export default [
                   "type": "chooserSelectsTarget",
                   "chooser": "opponent",
                   "declaration": {
-                    "id": "redonk-d1",
+                    "id": "redonk-d",
                     "selector": {
                       "controller": "opponent",
                       "zone": "hand"
                     },
-                    "count": 1
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "redonk-d1"
-                      },
-                      "to": "discard"
-                    }
-                  ]
-                },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
-                  "declaration": {
-                    "id": "redonk-d2",
-                    "selector": {
-                      "controller": "opponent",
-                      "zone": "hand"
-                    },
-                    "count": 1
-                  },
-                  "effects": [
-                    {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "redonk-d2"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "redonk-d",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -134030,43 +133912,28 @@ export default [
               "type": "chooserSelectsTarget",
               "chooser": "opponent",
               "declaration": {
-                "id": "disc1",
+                "id": "disc",
                 "selector": {
                   "controller": "opponent",
                   "zone": "hand"
                 },
-                "count": 1
+                "count": 2,
+                "optional": false
               },
               "effects": [
                 {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "disc1"
-                  },
-                  "to": "discard"
-                }
-              ]
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "disc2",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand"
-                },
-                "count": 1
-              },
-              "effects": [
-                {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "disc2"
-                  },
-                  "to": "discard"
+                  "type": "forEach",
+                  "selected": "disc",
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ]
                 }
               ]
             },
@@ -134287,43 +134154,27 @@ export default [
               "type": "chooserSelectsTarget",
               "chooser": "controller",
               "declaration": {
-                "id": "d1",
+                "id": "d",
                 "selector": {
                   "controller": "self",
                   "zone": "hand"
                 },
-                "count": 1
+                "count": 2
               },
               "effects": [
                 {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "d1"
-                  },
-                  "to": "discard"
-                }
-              ]
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "controller",
-              "declaration": {
-                "id": "d2",
-                "selector": {
-                  "controller": "self",
-                  "zone": "hand"
-                },
-                "count": 1
-              },
-              "effects": [
-                {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "d2"
-                  },
-                  "to": "discard"
+                  "type": "forEach",
+                  "selected": "d",
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ]
                 }
               ]
             }

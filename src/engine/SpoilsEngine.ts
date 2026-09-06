@@ -8883,7 +8883,15 @@ export class SpoilsEngine {
         const declaration = pending.declaration;
         const selection = choice.selected;
 
-        const max = this.evaluateNumber(declaration.count, pending.context);
+        const legalCandidates = this.targetCandidates(declaration.selector, pending.context);
+        const legal = new Set(legalCandidates.map(card => card.id));
+
+        const requested = this.evaluateNumber(declaration.count, pending.context);
+        // RULES.md §12: an instruction impossible to fully carry out is carried
+        // out as far as possible. A mandatory pick of N when only K < N legal
+        // candidates exist (e.g. "discard 2" with one card in hand) requires K,
+        // not an unsatisfiable N. Mirrors the clamp the UI's ActionFlow applies.
+        const max = Math.min(requested, legalCandidates.length);
         const min = declaration.optional ? 0 : max;
 
         assert(
@@ -8895,10 +8903,6 @@ export class SpoilsEngine {
         assert(
           new Set(selection).size === selection.length,
           `Target '${declaration.id}' selected the same card more than once.`
-        );
-
-        const legal = new Set(
-          this.targetCandidates(declaration.selector, pending.context).map(card => card.id)
         );
 
         for (const cardId of selection) {

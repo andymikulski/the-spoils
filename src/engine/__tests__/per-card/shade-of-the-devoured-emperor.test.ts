@@ -562,7 +562,7 @@ describe("Shade of the Devoured Emperor — Violating Ritual", () => {
     play(engine, P1, id("vr"), {});
     drain(engine, pc =>
       pc.kind === "chooserSelectsTarget"
-        ? { kind: "chooserSelectsTarget", selected: [engine.state.players[P2].hand[0]] }
+        ? { kind: "chooserSelectsTarget", selected: engine.state.players[P2].hand.slice(0, 2) }
         : declineAll(pc)
     );
     assert.equal(engine.state.players[P2].hand.length, p2Before - 2);
