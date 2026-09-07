@@ -19686,7 +19686,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -19708,7 +19708,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -19730,7 +19730,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -19779,7 +19779,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -19828,7 +19828,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -19877,7 +19877,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34778,7 +34778,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34800,7 +34800,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34822,7 +34822,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34871,7 +34871,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34920,7 +34920,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"
@@ -34969,7 +34969,7 @@ export default [
                   {
                     "type": "not",
                     "condition": {
-                      "type": "cardNameEquals",
+                      "type": "isCard",
                       "target": {
                         "type": "selected",
                         "id": "__candidate"

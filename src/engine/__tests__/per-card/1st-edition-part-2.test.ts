@@ -262,6 +262,28 @@ describe("1st Edition Part 2 — Horsemajig of the Apocalypse - Pestilence", () 
     });
     assert.equal(engine.getStat(id("steed"), "life"), 3);
   });
+
+  test("aura excludes only the source instance, not other copies of the same name", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pestA", def: def("Horsemajig of the Apocalypse - Pestilence"), owner: P1, zone: "play" },
+        { key: "pestB", def: def("Horsemajig of the Apocalypse - Pestilence"), owner: P1, zone: "play" }
+      ]
+    });
+    // Each Pestilence is an "other horsemajig character" from the other's
+    // point of view, so both get +1 life (printed 3). Neither buffs itself.
+    assert.equal(engine.getStat(id("pestA"), "life"), 4);
+    assert.equal(engine.getStat(id("pestB"), "life"), 4);
+  });
+
+  test("a lone Pestilence does not buff itself", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "pest", def: def("Horsemajig of the Apocalypse - Pestilence"), owner: P1, zone: "play" }
+      ]
+    });
+    assert.equal(engine.getStat(id("pest"), "life"), 3);
+  });
 });
 
 describe("1st Edition Part 2 — Puddle of Goo", () => {

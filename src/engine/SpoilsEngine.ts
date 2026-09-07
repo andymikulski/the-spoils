@@ -6007,8 +6007,14 @@ export class SpoilsEngine {
         if (!targetId || this.state.cards[targetId]?.zone !== "hand") return;
 
         const definition = this.getDefinition(targetId);
+        // "auto" = real resource cards face-up, everything else face-down. A
+        // `faceDownOnly` resource (the Holy Heist FLIP IT staples — Elitist
+        // Upgrade et al.) is "everything else" here: it can ONLY enter from
+        // hand face-down, so an "auto" play must flip it rather than pass
+        // faceDown:false and trip the face-up guard in `playResourceCard`
+        // (which bricks mid-resolution, after the ability's cost is paid).
         const faceDown = effect.faceDown === "auto"
-          ? definition.type !== "resource"
+          ? definition.type !== "resource" || definition.resource?.faceDownOnly === true
           : effect.faceDown;
 
         const resourcePlayer = effect.player

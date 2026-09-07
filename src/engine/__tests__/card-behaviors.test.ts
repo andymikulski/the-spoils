@@ -268,6 +268,48 @@ describe("Universal faction behavior: Tournament Faction 'Resource' ability", ()
     assert.equal(engine.state.cards[id("filler")].zone, "play");
     assert.equal(engine.state.cards[id("filler")].faceDown, true);
   });
+
+  // Regression (reported brick): picking a `faceDownOnly` resource — Elitist
+  // Upgrade and the other Holy Heist FLIP IT staples — for this ability threw
+  // "must be played face down" mid-resolution, AFTER the 4-resource cost was
+  // already spent, with no way to recover. `faceDown: "auto"` keyed only off
+  // `type === "resource"` and never consulted `faceDownOnly`.
+  test("picking a faceDownOnly resource plays it face-down instead of bricking after the cost is paid", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: factionCard({ name: "Tournament Faction", behavior: TOURNAMENT_FACTION_BEHAVIOR }) },
+      cards: [
+        { key: "r1", def: resourceCard({ name: "R1" }), owner: P1 },
+        { key: "r2", def: resourceCard({ name: "R2" }), owner: P1 },
+        { key: "r3", def: resourceCard({ name: "R3" }), owner: P1 },
+        { key: "r4", def: resourceCard({ name: "R4" }), owner: P1 },
+        {
+          key: "elitistUpgrade",
+          def: resourceCard({
+            name: "Elitist Upgrade",
+            resource: { provides: ["elitism"], faceDownOnly: true }
+          }),
+          owner: P1,
+          zone: "hand"
+        }
+      ]
+    });
+
+    assert.doesNotThrow(() =>
+      engine.perform({
+        type: "activateAbility",
+        playerId: P1,
+        cardId: id("__factionA"),
+        abilityId: "tournament-resource",
+        selected: { resource: [id("elitistUpgrade")] }
+      })
+    );
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("elitistUpgrade")].zone, "play");
+    assert.equal(engine.state.cards[id("elitistUpgrade")].faceDown, true);
+    // Face-down it is an anonymous Volition source, not [E].
+    assert.equal(engine.getThresholds(P1).elitism ?? 0, 0);
+  });
 });
 
 // "EXTRA COST: Pick a non-resource card. -- Put the card into its owner's
