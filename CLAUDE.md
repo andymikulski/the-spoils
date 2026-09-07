@@ -92,12 +92,13 @@ excludes `**/__tests__/**` so test-only helpers never end up in `build/`
   `WARLORD_DECK`). Deliberately separate from `src/engine.ts` — a consumer
   that only wants the rules engine (e.g. to run it against synthetic cards)
   never pulls in the ~1.2MB card database.
-- `src/assets.ts` — the package's `"./assets"` export: the non-per-card
-  images, currently just the shared card back (`CARD_BACK_ASSET_ID`,
-  `CARD_BACK_SIZE`, `resolveCardBackUrl`). Separate from both other entry
-  points for the same reason they're separate from each other — a renderer
-  that wants a face-down card texture shouldn't pull in the catalog, and
-  the engine shouldn't know images exist.
+- `src/assets.ts` — the package's `"./assets"` export: the renderer-agnostic
+  image conventions (`DEFAULT_ASSET_ROOT`, the reserved card-back id
+  `CARD_BACK_ASSET_ID`, `CARD_BACK_SIZE`, `resolveCardBackUrl`). Constants
+  and URL helpers only — it ships no image binaries. Separate from both
+  other entry points for the same reason they're separate from each other —
+  a renderer that wants these shouldn't pull in the catalog, and the engine
+  shouldn't know images exist.
 - `src/index.ts` — a runnable usage example, not application code, and not
   part of the package's public exports.
 - `data/cards.json` — source of truth for the real card database (2101+
@@ -106,12 +107,11 @@ excludes `**/__tests__/**` so test-only helpers never end up in `build/`
   `scripts/fix-ids.cjs` are the (mostly one-off) pipeline that produced
   `data/cards.json` and `data/assets/*.jpg` from an external source dump.
   `data/assets/` (card images, ~370MB) is not part of the published package —
-  it's a repo-local static asset, not something a library consumer imports.
-  The one exception is `data/assets/card-back.jpg`: a single small image
-  every renderer needs, so it's in `package.json`'s `files` and importable
-  as `spoils-db/card-back.jpg`. It sits alongside the card art so a
-  renderer already serving that directory resolves it at the same
-  `<root>/<id>.jpg` URL shape.
+  it's a repo-local static asset directory, not something a library consumer
+  imports. `data/assets/card-back.jpg` is no exception: it's the shared card
+  back under a reserved id (`card-back`) that no real card uses, served and
+  resolved (`<root>/<id>.jpg`) exactly like every card face. Renderers serve
+  the directory themselves.
 - `src/data/decks/*.json` / `*-ids.js` — preconstructed decklists (e.g.
   `arcanist`, `warlord`), each a list of `CardDefinitionId`s including one
   copy of the faction card.

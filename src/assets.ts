@@ -1,22 +1,23 @@
 /* assets.ts
  *
- * The package's "./assets" export: the handful of images that aren't
- * per-card art. Kept separate from ./data.ts so a consumer that only wants
- * the card back doesn't pull in the ~1.2MB card catalog, and separate from
- * ./engine.ts so the rules engine stays UI-free.
+ * The package's "./assets" export: the renderer-agnostic conventions for
+ * where card images live and how their URLs are shaped. It exports no image
+ * binaries — only the shared asset root and the ids a renderer needs to
+ * build URLs. Kept separate from ./data.ts so a consumer that only wants
+ * these constants doesn't pull in the ~1.2MB card catalog, and separate
+ * from ./engine.ts so the rules engine stays UI-free.
  *
- * Card art (`data/assets/<CardDefinitionId>.jpg`, ~370MB) is deliberately
- * not published — renderers serve that directory themselves. The card back
- * is the exception: it's one small file every renderer needs (face-down
- * cards, decks, the void, booster packs), so it ships with the package and
- * is also importable directly as `spoils-db/card-back.jpg` for bundlers
- * that turn image imports into asset URLs.
+ * Nothing under `data/assets/` (card art, ~370MB, plus the shared card
+ * back) is published — renderers serve that directory themselves. The card
+ * back is not special-cased: it's one more file in `data/assets/`, under a
+ * reserved id (`card-back`) that no real card uses, resolved at the same
+ * `<root>/<id>.jpg` URL as any card face.
  */
 
 /**
- * The card back's id under the same `<root>/<id>.jpg` URL shape card art
- * uses, so a renderer already serving `data/assets/` gets the back for free
- * (no real card id collides — those are UUIDs).
+ * The shared card back's id — the stem of `data/assets/card-back.jpg`. A
+ * renderer serving `data/assets/` resolves it at `<root>/<id>.jpg` exactly
+ * like a card face; no real card id collides (those are UUIDs).
  */
 export const CARD_BACK_ASSET_ID = "card-back";
 
@@ -31,9 +32,9 @@ export const CARD_BACK_SIZE = { width: 200, height: 277 } as const;
 export const DEFAULT_ASSET_ROOT = "/cards";
 
 /**
- * URL of the card back, given wherever the renderer serves card art from.
- * Bundler-based consumers can instead `import backUrl from
- * "spoils-db/card-back.jpg"` and skip serving anything.
+ * URL of the card back, given wherever the renderer serves `data/assets/`
+ * from. Same contract as a card face: the renderer serves the file, and a
+ * renderer that doesn't gets a URL that 404s to whatever fallback it draws.
  */
 export function resolveCardBackUrl(assetRoot: string = DEFAULT_ASSET_ROOT): string {
   return `${assetRoot}/${CARD_BACK_ASSET_ID}.jpg`;

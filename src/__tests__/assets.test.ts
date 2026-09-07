@@ -7,13 +7,15 @@ import { CARD_BACK_ASSET_ID, CARD_BACK_SIZE, resolveCardBackUrl } from "../asset
 
 const repoRoot = new URL("../../", import.meta.url);
 
-test("the card back ships with the package", () => {
+test("the card back is a repo-local asset, not special-cased like a published file", () => {
   const file = fileURLToPath(new URL(`data/assets/${CARD_BACK_ASSET_ID}.jpg`, repoRoot));
-  assert.ok(statSync(file).isFile());
+  assert.ok(statSync(file).isFile(), "card-back.jpg sits in data/assets/ alongside every card face");
 
+  // It rides the same "renderer serves data/assets/ itself" contract as card
+  // art, so the package must not carve it out as a published binary.
   const pkg = JSON.parse(readFileSync(fileURLToPath(new URL("package.json", repoRoot)), "utf8"));
-  assert.equal(pkg.exports["./card-back.jpg"], "./data/assets/card-back.jpg");
-  assert.ok(pkg.files.includes("data/assets/card-back.jpg"));
+  assert.equal(pkg.exports["./card-back.jpg"], undefined);
+  assert.equal(pkg.files.some((entry: string) => entry.includes("card-back")), false);
 });
 
 test("CARD_BACK_SIZE matches the image", () => {

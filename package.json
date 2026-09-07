@@ -21,13 +21,11 @@
       "types": "./build/src/assets.d.ts",
       "default": "./build/src/assets.js"
     },
-    "./card-back.jpg": "./data/assets/card-back.jpg",
     "./package.json": "./package.json"
   },
   "files": [
     "build/src",
-    "data/cards.json",
-    "data/assets/card-back.jpg"
+    "data/cards.json"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
