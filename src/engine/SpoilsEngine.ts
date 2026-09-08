@@ -1330,13 +1330,19 @@ export class SpoilsEngine {
     }
   }
 
-  private payNumericCost(playerId: PlayerId, amount: number): void {
+  private payNumericCost(
+    playerId: PlayerId,
+    amount: number,
+    exclude?: readonly CardInstanceId[]
+  ): void {
     assert(Number.isInteger(amount) && amount >= 0, "Numeric costs must be non-negative integers.");
 
     const player = this.requirePlayer(playerId);
     assert(player.factionId, "Player has no faction to attach resources to.");
 
-    const resources = this.getAvailableResourceIds(playerId);
+    const resources = this.getAvailableResourceIds(playerId).filter(
+      id => !exclude?.includes(id)
+    );
     assert(resources.length >= amount, "Not enough unattached resources.");
 
     for (const cardId of resources.slice(0, amount)) {
@@ -5588,6 +5594,40 @@ export class SpoilsEngine {
   // Costs
   // ---------------------------------------------------------------------------
 
+  /**
+   * True when the ability identified by `context` (its `sourceId` +
+   * `abilityId`) has a `flipFaceUp` effect aimed at its own source and that
+   * source is still a face-down resource in play — i.e. the "FLIP IT"
+   * staple-resource cycle (Elitist Upgrade, Obsessive Concentration, Greedy
+   * Profiteering, Deceptive Domain, Raging Ferocity).
+   *
+   * Such an ability's source is technically an unattached resource while its
+   * `payResources` cost ("Reveal this card. Pay N.") is paid, but it's
+   * committed to being flipped face-up by the ability's own EFFECT — it
+   * can't *also* be spent as a generic resource to fund that cost. So it's
+   * excluded from the payment pool: the "Pay N" must come from N *other*
+   * resources, and the flip is offered/legal only when the player has them.
+   * (FLIP UP sidesteps the same problem the other way — `flipUpCard` clears
+   * `faceDown` before it pays, so the card is no longer a face-down resource
+   * by the time its cost is settled.)
+   */
+  private abilityFlipsOwnSource(context: ResolutionContext): boolean {
+    const sourceId = context.sourceId;
+    if (!sourceId || !context.abilityId) return false;
+
+    const source = this.state.cards[sourceId];
+    if (!source || source.zone !== "play" || !source.faceDown) return false;
+
+    const ability = this.getCardActivatedAbilities(sourceId).find(
+      a => a.id === context.abilityId
+    );
+    return (ability?.effects ?? []).some(
+      effect =>
+        effect.type === "flipFaceUp" &&
+        this.resolveTargetRef(effect.target, context) === sourceId
+    );
+  }
+
   private canPayCosts(
     costs: Cost[],
     context: ResolutionContext
@@ -5670,12 +5710,18 @@ export class SpoilsEngine {
         );
 
         assert(amount >= 0, "Resource payment cannot be negative.");
-        assert(
-          this.getAvailableResourceCount(context.controllerId) >= amount,
-          "Not enough unattached resources."
-        );
 
-        this.payNumericCost(context.controllerId, amount);
+        // A "FLIP IT" ability can't spend the very card it's about to flip
+        // face-up to pay its own "Pay N" — see `abilityFlipsOwnSource`.
+        const exclude = this.abilityFlipsOwnSource(context)
+          ? [context.sourceId as CardInstanceId]
+          : undefined;
+        const available = this.getAvailableResourceIds(
+          context.controllerId
+        ).filter(id => !exclude?.includes(id)).length;
+        assert(available >= amount, "Not enough unattached resources.");
+
+        this.payNumericCost(context.controllerId, amount, exclude);
         return;
       }
 

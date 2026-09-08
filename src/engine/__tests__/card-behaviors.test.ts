@@ -7727,6 +7727,60 @@ describe("Holy Heist: FLIP IT (flipFaceUp + faceDownOnly)", () => {
     assert.equal(after.length, 0);
   });
 
+  test("the FLIP IT source can't pay its own 'Pay N' — the flip needs N other resources", () => {
+    // 3 banked Elitism + the face-down Elitist Upgrade itself = 4 unattached
+    // resources, but the cost is Pay 4 and the source is committed to being
+    // flipped face-up, so only the 3 banked count toward it.
+    const short = buildGame({
+      cards: [
+        { key: "up", def: flipItElitistUpgrade(), owner: P1, zone: "play", faceDown: true },
+        ...elitismBank(3, P1)
+      ]
+    });
+
+    const offered = short.engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === short.id("up") && a.ability.id === "flip-it");
+    assert.equal(offered.length, 0, "FLIP IT isn't offered — the source can't fund its own Pay 4");
+
+    assert.throws(
+      () =>
+        short.engine.perform({
+          type: "activateAbility",
+          playerId: P1,
+          cardId: short.id("up"),
+          abilityId: "flip-it"
+        }),
+      /cost/i
+    );
+    assert.equal(short.engine.state.cards[short.id("up")].faceDown, true, "still face-down — nothing happened");
+
+    // One more banked resource: now there are 4 *other* resources, so the flip
+    // is legal and every paid resource comes from the bank, not the source.
+    const ok = buildGame({
+      cards: [
+        { key: "up", def: flipItElitistUpgrade(), owner: P1, zone: "play", faceDown: true },
+        ...elitismBank(4, P1)
+      ]
+    });
+
+    const okOffered = ok.engine
+      .getAvailableActivatedAbilities(P1)
+      .filter(a => a.cardId === ok.id("up") && a.ability.id === "flip-it");
+    assert.equal(okOffered.length, 1, "FLIP IT is offered once 4 other resources are available");
+
+    ok.engine.perform({ type: "activateAbility", playerId: P1, cardId: ok.id("up"), abilityId: "flip-it" });
+    resolvePendingResponses(ok.engine);
+
+    const flipped = ok.engine.state.cards[ok.id("up")];
+    assert.equal(flipped.faceDown, false, "source flipped face-up");
+    assert.equal(flipped.attachedTo, undefined, "source was NOT spent to pay its own cost");
+    const bankAttached = [0, 1, 2, 3].filter(
+      i => ok.engine.state.cards[ok.id(`e-${P1}-${i}`)].attachedTo !== undefined
+    );
+    assert.equal(bankAttached.length, 4, "all 4 paid resources came from the bank");
+  });
+
   test("faceDownOnly forbids a face-up develop play, but allows a face-down one", () => {
     const faction = factionCard({
       name: "PR-Faction",
