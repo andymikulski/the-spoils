@@ -134,6 +134,95 @@ describe("RULES.md §4 — getCardPlayability mirrors what playCard actually acc
       engine.perform({ type: "playCard", playerId: P1, cardId: id("spareResource") })
     );
   });
+
+  // A tactic can carry a play-timing restriction of its own beyond the
+  // response-window rules ("EXTRA COST: Deploy this only on your turn" —
+  // Hasty Pursuit, modeled as an `isActivePlayer` condition). It's a timing
+  // gate, so a failing one reads as `legalTiming: false`, not a surprise at
+  // perform() time.
+  const onYourTurnOnly = () =>
+    tactic({
+      name: "On Your Turn Only",
+      cost: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "on-your-turn-only",
+            type: "activated",
+            condition: { type: "isActivePlayer", player: "controller" },
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+  test("a tactic's own 'only on your turn' condition greys it out in an opponent's response window", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "tac", def: onYourTurnOnly(), owner: P2, zone: "hand" }],
+      activePlayerId: P1,
+      responseWindow: {
+        id: "w1",
+        kind: "action",
+        phase: "acceptingResponses",
+        priorityPlayerId: P2,
+        pendingResponders: [],
+        continuation: { type: "main" }
+      }
+    });
+
+    // The response-window type check passes (it *is* a tactic) — its own
+    // "only on your turn" condition is what fails, and perform() agrees.
+    assert.equal(engine.getCardPlayability(P2, id("tac")).legalTiming, false);
+    assert.throws(() => engine.perform({ type: "playCard", playerId: P2, cardId: id("tac") }));
+  });
+
+  test("that same condition passes on the card owner's own turn", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "tac", def: onYourTurnOnly(), owner: P1, zone: "hand" }],
+      activePlayerId: P1
+    });
+
+    assert.equal(engine.getCardPlayability(P1, id("tac")).playable, true);
+  });
+
+  test("a play condition gated on a not-yet-chosen 'choose a number for X' is left to perform()", () => {
+    const pickX = tactic({
+      name: "Pick X",
+      cost: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "pick-x",
+            type: "activated",
+            condition: {
+              type: "numberCompare",
+              left: { type: "variable", id: "x" },
+              operator: ">",
+              right: 0
+            },
+            targets: [
+              {
+                id: "fodder",
+                selector: { controller: "self", zone: "discard", type: "tactic" },
+                count: { type: "variable", id: "x" }
+              }
+            ],
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [{ key: "tac", def: pickX, owner: P1, zone: "hand" }],
+      activePlayerId: P1
+    });
+
+    // X reads as 0 pre-selection, so probing "X > 0" would wrongly report
+    // the card unplayable. legalTiming stays true; perform() is still the
+    // real gate once X is chosen.
+    assert.equal(engine.getCardPlayability(P1, id("tac")).legalTiming, true);
+  });
 });
 
 describe("getPlayableHandCards", () => {

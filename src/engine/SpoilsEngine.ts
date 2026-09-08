@@ -949,6 +949,20 @@ export class SpoilsEngine {
             event.won ? "wins" : "loses"
           }`
         };
+
+      case "variableRolled": {
+        const source = this.logCardName(event.sourceId);
+        const label = event.name.toUpperCase();
+        // The 1–2 roll is the printed "flip a coin" idiom; anything else reads
+        // as a die roll over its range.
+        return {
+          kind: "info",
+          message:
+            event.min === 1 && event.max === 2
+              ? `${source} flips a coin: ${label} is ${event.value}`
+              : `${source} rolls ${label} = ${event.value} (${event.min}–${event.max})`
+        };
+      }
     }
 
     return undefined;
@@ -2044,6 +2058,37 @@ export class SpoilsEngine {
       }
     }
 
+    // A card can also carry a play-timing restriction beyond the normal
+    // phase / response-window rules — "EXTRA COST: Deploy this only on your
+    // turn" (Hasty Pursuit, modeled as an `isActivePlayer` condition),
+    // "deploy this only while you are the defender" (Ambuscade), "only if
+    // you've deployed 2+ non-resources this turn" (633fy 31f). `deployCard`
+    // rejects a failing one outright ("This card cannot be deployed right
+    // now"), so it belongs in `legalTiming` too — otherwise a UI shows the
+    // card as castable and only the dispatched play reveals it wasn't.
+    // Skipped for a modal card (which mode, hence which condition, isn't
+    // chosen yet) and for a condition gated on a not-yet-picked "choose a
+    // number for X" (Cowslaw's "X > 0"); `perform()` stays the last word on
+    // both, same as it already is for targets and extra costs.
+    if (legalTiming && !definition.behavior?.modes?.length) {
+      const playCondition = this.getTacticCondition(definition);
+      if (playCondition && !this.nodeReferencesVariable(playCondition)) {
+        try {
+          const probeContext: ResolutionContext = {
+            sourceId: cardId,
+            controllerId: playerId,
+            selected: {}
+          };
+          if (!this.evaluateCondition(playCondition, probeContext)) {
+            legalTiming = false;
+          }
+        } catch {
+          // Not evaluable as a read-only probe (needs selections/state we
+          // don't have yet) — leave the call to `perform()`.
+        }
+      }
+    }
+
     const thresholdMet = this.meetsThreshold(playerId, definition.threshold, {
       definition,
       cardId
@@ -2075,6 +2120,23 @@ export class SpoilsEngine {
   getPlayableHandCards(playerId: PlayerId): CardInstanceId[] {
     return this.requirePlayer(playerId).hand.filter(
       cardId => this.getCardPlayability(playerId, cardId).playable
+    );
+  }
+
+  /**
+   * Deep-scans a condition / number-expression sub-tree for a
+   * `{ type: "variable" }` node — a "choose a number for X" value the player
+   * supplies as part of playing the card. `getCardPlayability` uses this to
+   * leave a play-timing `condition` it can't yet evaluate read-only
+   * (Cowslaw's "X > 0") to `perform()`, rather than probe it with an
+   * unassigned X and wrongly report the card unplayable.
+   */
+  private nodeReferencesVariable(node: unknown): boolean {
+    if (!node || typeof node !== "object") return false;
+    const record = node as Record<string, unknown>;
+    if (record.type === "variable" && typeof record.id === "string") return true;
+    return Object.values(record).some(value =>
+      this.nodeReferencesVariable(value)
     );
   }
 
@@ -2645,6 +2707,25 @@ export class SpoilsEngine {
     }
 
     context.variables = { ...resolved, ...context.variables };
+
+    // Surface every `random`-typed roll ("flip a coin; X is 1 or 2") so the
+    // log / a renderer can show how it landed — using the *final* value, which
+    // is the client's pre-roll when it supplied one on the action (it has to,
+    // to size a "pick X" picker) and the value rolled just above otherwise.
+    // Logged straight, not `emit`ed: it's informational, nothing triggers off
+    // it, and this runs during play/activation validation where a re-entrant
+    // emit would be out of place.
+    for (const [id, expression] of Object.entries(rolls)) {
+      if (typeof expression === "number" || expression.type !== "random") continue;
+      this.recordLogEvent({
+        type: "variableRolled",
+        sourceId: context.sourceId,
+        name: id,
+        value: context.variables[id] ?? resolved[id],
+        min: this.evaluateNumber(expression.min, context),
+        max: this.evaluateNumber(expression.max, context)
+      });
+    }
   }
 
   /**

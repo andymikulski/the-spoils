@@ -268,6 +268,26 @@ export interface GameEventMap {
     playerId: PlayerId;
     won: boolean;
   };
+
+  /**
+   * A card resolved one of its own rolled `variables` entries (an activated
+   * ability's / tactic's `variables: { x: { type: "random", ... } }`) to a
+   * concrete number — the "Flip a coin. If you win, X is 2. Otherwise, X is
+   * 1." idiom (Hammer Smash), and any other "X is a random N–M". Fires once
+   * per `random`-typed id, whether the value was rolled here or pre-rolled by
+   * the client and supplied on the action (a renderer that sequences a
+   * "pick X" picker must settle the roll before dispatching). Informational
+   * only — no rule keys off it.
+   */
+  variableRolled: {
+    sourceId: CardInstanceId;
+    /** The variable's id in the ability/tactic `variables` map, e.g. `"x"`. */
+    name: string;
+    value: number;
+    /** Inclusive bounds of the `random` expression that produced `value`. */
+    min: number;
+    max: number;
+  };
 }
 
 export type GameEventType = keyof GameEventMap;

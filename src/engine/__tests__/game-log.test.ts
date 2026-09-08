@@ -440,6 +440,71 @@ describe("game log — a running, toggleable record of everything that happens",
     assert.equal(over.message, "Game over — Alice wins");
   });
 
+  test("a card's own rolled variable is logged — 'flip a coin; X is 1 or 2' otherwise leaves no trace", () => {
+    const gamble = tactic({
+      name: "Gamble",
+      behavior: {
+        abilities: [
+          {
+            id: "gamble",
+            type: "activated",
+            variables: { x: { type: "random", min: 1, max: 2 } },
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [{ key: "g", def: gamble, owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("g") });
+    resolvePendingResponses(engine);
+
+    const rolled = engine.getLog().find(e => e.event?.type === "variableRolled");
+    assert.ok(rolled, "the roll was logged");
+    assert.equal(rolled.kind, "info");
+    assert.match(rolled.message, /^Gamble flips a coin: X is [12]$/);
+    assert.ok(
+      rolled.event?.type === "variableRolled" &&
+        rolled.event.name === "x" &&
+        rolled.event.value >= 1 &&
+        rolled.event.value <= 2
+    );
+    // the roll is an EXTRA COST — paid as the card is played, so it lands
+    // before the card starts resolving off the stack.
+    const log = engine.getLog();
+    assert.ok(log.indexOf(rolled) < log.findIndex(e => e.marker === "stackItemResolving"));
+  });
+
+  test("a rolled variable outside the 1–2 coin range reads as a die roll over its bounds", () => {
+    const spread = tactic({
+      name: "Spread",
+      behavior: {
+        abilities: [
+          {
+            id: "spread",
+            type: "activated",
+            variables: { n: { type: "random", min: 1, max: 3 } },
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [{ key: "s", def: spread, owner: P1, zone: "hand" }]
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("s") });
+    resolvePendingResponses(engine);
+
+    const rolled = engine.getLog().find(e => e.event?.type === "variableRolled");
+    assert.ok(rolled);
+    assert.match(rolled.message, /^Spread rolls N = [123] \(1–3\)$/);
+  });
+
   test("the log is plain serializable data — it round-trips through JSON", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "spell", def: tactic({ name: "Spark" }), owner: P1, zone: "hand" }]
