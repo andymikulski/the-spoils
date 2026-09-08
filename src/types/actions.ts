@@ -52,6 +52,17 @@ export type GameAction =
       cardIds: CardInstanceId[];
     }
   | {
+      /**
+       * Answers the `chooseStartingResources` setup phase: the staple
+       * resource instances (from this player's deck) their faction starts
+       * with in play. `cardIds.length` must equal the phase's `counts` for
+       * this seat; each must be a staple resource still in the deck.
+       */
+      type: "chooseStartingResources";
+      playerId: PlayerId;
+      cardIds: CardInstanceId[];
+    }
+  | {
       type: "chooseDevelop";
       playerId: PlayerId;
       choice:

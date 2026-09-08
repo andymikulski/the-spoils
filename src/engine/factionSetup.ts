@@ -46,6 +46,15 @@ export interface FactionGameSetupOptions {
    * defaults to `min` when omitted.
    */
   startingResourceX?: Record<PlayerId, number>;
+  /**
+   * Let a player pick *which* staples their faction starts with in play,
+   * when their deck runs more than one kind (most factions — "find 2 staple
+   * resources"). Adds a `chooseStartingResources` setup phase before the
+   * mulligan; each affected seat dispatches a `chooseStartingResources`
+   * action. Off by default — setup then takes staples in deck order, as it
+   * always has.
+   */
+  chooseStartingResources?: boolean;
 }
 
 function resolveFactionAndDeck(
@@ -207,6 +216,49 @@ function drawSetupCards(state: GameState, playerId: PlayerId, count: number): vo
   }
 }
 
+/** Distinct staple-resource card definitions among the cards still in `playerId`'s deck. */
+function distinctStapleDefsInDeck(engine: SpoilsEngine, playerId: PlayerId): Set<CardDefinitionId> {
+  const seen = new Set<CardDefinitionId>();
+  for (const cardId of engine.state.players[playerId].deck) {
+    const definition = engine.getDefinition(cardId);
+    if (isStapleResourceDefinition(definition)) seen.add(definition.id);
+  }
+  return seen;
+}
+
+/**
+ * How many staples `playerId` gets to *pick* at setup — a number when their
+ * faction chooses staples freely (the flat `{ count, stapleOnly }` form, or
+ * `chosenStaples`) AND their deck runs more than one kind of staple, so the
+ * choice is real. `null` otherwise: the deck-order pick in
+ * {@link chooseStartingResources} is the only sensible outcome and no
+ * interactive phase is needed.
+ */
+function stapleChoiceCountFor(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  rule: FactionDefinition["setup"]["startingResources"],
+  chosenX: number | undefined
+): number | null {
+  let count: number;
+  if (rule.chosenStaples) {
+    const { min, max } = rule.chosenStaples;
+    count = Math.max(min, Math.min(max, Math.floor(chosenX ?? min)));
+  } else if (rule.stapleOnly && !rule.names?.length && !rule.slots?.length) {
+    count = rule.count;
+  } else {
+    return null;
+  }
+
+  if (count < 1) return null;
+  if (distinctStapleDefsInDeck(engine, playerId).size < 2) return null;
+
+  const available = engine.state.players[playerId].deck.filter(cardId =>
+    isStapleResourceDefinition(engine.getDefinition(cardId))
+  ).length;
+  return available >= count ? count : null;
+}
+
 /**
  * Creates a complete two-player game using faction-defined setup rules.
  *
@@ -272,31 +324,84 @@ export function createTwoPlayerFactionGame(
     [playerB.id, resolvedB.factionDefinition]
   ] as const;
 
-  const startingResourceCounts: Record<PlayerId, number> = {};
+  const choosers: Array<{ playerId: PlayerId; count: number }> = [];
   for (const [playerId, factionDefinition] of playerOrder) {
-    const picks = chooseStartingResources(
-      engine,
-      playerId,
-      factionDefinition.faction!.setup.startingResources,
-      options.startingResourceX?.[playerId]
-    );
+    const rule = factionDefinition.faction!.setup.startingResources;
+    const chosenX = options.startingResourceX?.[playerId];
+    const choiceCount = options.chooseStartingResources
+      ? stapleChoiceCountFor(engine, playerId, rule, chosenX)
+      : null;
 
-    for (const pick of picks) {
+    if (choiceCount !== null) {
+      // This player picks which staples they start with — deferred to the
+      // `chooseStartingResources` phase below.
+      choosers.push({ playerId, count: choiceCount });
+      continue;
+    }
+
+    // No real choice (one staple kind, or a name-pinned faction) — place the
+    // starting resources now, in deck order, exactly as setup always has.
+    for (const pick of chooseStartingResources(engine, playerId, rule, chosenX)) {
       moveSetupCardToPlay(state, playerId, pick.cardId, pick.faceDown);
     }
-    startingResourceCounts[playerId] = picks.length;
+  }
+
+  if (choosers.length === 0) {
+    finishFactionSetup(engine);
+    return engine;
+  }
+
+  // Hand off to the interactive phase: each `order` seat dispatches a
+  // `chooseStartingResources` action, and the engine calls
+  // `finishFactionSetup` once the last one is in (matchOpponentCount top-up,
+  // shuffle, opening hands, mulligan / turn 1). Nothing is shuffled or drawn
+  // until then.
+  const order = [firstPlayerId, secondPlayerId].filter(id =>
+    choosers.some(chooser => chooser.playerId === id)
+  );
+  const counts: Record<PlayerId, number> = {};
+  for (const chooser of choosers) counts[chooser.playerId] = chooser.count;
+
+  state.setup = { phase: "chooseStartingResources", order, currentIndex: 0, counts };
+
+  return engine;
+}
+
+/**
+ * The rest of faction setup once every player's starting resources are in
+ * play — MONEY FOR NOTHING's staple top-up, the deck shuffles, opening-hand
+ * draws (honouring The Knitting Coalition's STARTING DRAW override), then
+ * either the mulligan step or straight into turn 1.
+ *
+ * Called by {@link createTwoPlayerFactionGame} directly when no player has a
+ * starting-resource choice, or by the engine once the last
+ * `chooseStartingResources` action has been answered.
+ */
+export function finishFactionSetup(engine: SpoilsEngine): void {
+  const state = engine.state;
+  // Insertion order is [playerA, playerB] (see `createTwoPlayerGame`); keep to
+  // it so the RNG stream is consumed exactly as in a game with no
+  // starting-resource choice.
+  const playerIds = Object.keys(state.players) as PlayerId[];
+  const firstPlayerId = state.activePlayerId;
+  const otherThan = (playerId: PlayerId) => playerIds.find(id => id !== playerId)!;
+
+  const startingResourceCounts: Record<PlayerId, number> = {};
+  for (const playerId of playerIds) {
+    startingResourceCounts[playerId] = state.players[playerId].play.filter(
+      cardId => engine.getDefinition(cardId).type === "resource"
+    ).length;
   }
 
   // "...enough staple resources so that both players have the same number of
   // starting resources." (The Union of Unextraordinary Miners — MONEY FOR
   // NOTHING). Done before the shuffle, like every other setup placement.
-  for (const [playerId, factionDefinition] of playerOrder) {
-    if (!factionDefinition.faction!.setup.startingResources.matchOpponentCount) {
+  for (const playerId of playerIds) {
+    if (!engine.getFactionDefinition(playerId)?.setup.startingResources.matchOpponentCount) {
       continue;
     }
-    const opponentId = playerId === playerA.id ? playerB.id : playerA.id;
-    const deficit =
-      startingResourceCounts[playerId] - startingResourceCounts[opponentId];
+    const opponentId = otherThan(playerId);
+    const deficit = startingResourceCounts[playerId] - startingResourceCounts[opponentId];
     for (let i = 0; i < deficit; i++) {
       const [extra] = chooseStartingResources(engine, opponentId, {
         count: 1,
@@ -308,62 +413,34 @@ export function createTwoPlayerFactionGame(
   }
 
   const random = () => drawRandom(state);
-  shuffleInPlace(state.players[playerA.id].deck, random);
-  shuffleInPlace(state.players[playerB.id].deck, random);
-
-  const factionASetup = resolvedA.factionDefinition.faction!.setup;
-  const factionBSetup = resolvedB.factionDefinition.faction!.setup;
+  for (const playerId of playerIds) {
+    shuffleInPlace(state.players[playerId].deck, random);
+  }
 
   // "Your opponent ignores their faction's STARTING DRAW rule and uses this
   // card's rule instead." (The Knitting Coalition — HIDDEN INFLUENCE).
-  const openingHandRuleFor = (
-    ownSetup: FactionDefinition["setup"],
-    opponentFaction: FactionDefinition
-  ) =>
-    opponentFaction.overridesOpponent?.startingDraw
+  for (const playerId of playerIds) {
+    const ownFaction = engine.getFactionDefinition(playerId)!;
+    const opponentFaction = engine.getFactionDefinition(otherThan(playerId))!;
+    const handRule = opponentFaction.overridesOpponent?.startingDraw
       ? opponentFaction.setup.openingHand
-      : ownSetup.openingHand;
+      : ownFaction.setup.openingHand;
+    drawSetupCards(
+      state,
+      playerId,
+      playerId === firstPlayerId ? handRule.goingFirst : handRule.goingSecond
+    );
+  }
 
-  const handRuleA = openingHandRuleFor(
-    factionASetup,
-    resolvedB.factionDefinition.faction!
-  );
-  const handRuleB = openingHandRuleFor(
-    factionBSetup,
-    resolvedA.factionDefinition.faction!
-  );
-
-  drawSetupCards(
-    state,
-    playerA.id,
-    playerA.id === firstPlayerId
-      ? handRuleA.goingFirst
-      : handRuleA.goingSecond
-  );
-
-  drawSetupCards(
-    state,
-    playerB.id,
-    playerB.id === firstPlayerId
-      ? handRuleB.goingFirst
-      : handRuleB.goingSecond
-  );
-
-  const mulliganOrder = [firstPlayerId, secondPlayerId].filter(playerId => {
+  const mulliganOrder = [firstPlayerId, otherThan(firstPlayerId)].filter(playerId => {
     const faction = engine.getFactionDefinition(playerId);
     return (faction?.setup.mulligan?.count ?? 0) > 0;
   });
 
   if (mulliganOrder.length) {
-    state.setup = {
-      phase: "mulligan",
-      order: mulliganOrder,
-      currentIndex: 0
-    };
+    state.setup = { phase: "mulligan", order: mulliganOrder, currentIndex: 0 };
   } else {
     state.setup = { phase: "complete" };
     engine.startGameAfterSetup();
   }
-
-  return engine;
 }

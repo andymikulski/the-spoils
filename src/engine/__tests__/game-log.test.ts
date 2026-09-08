@@ -478,6 +478,62 @@ describe("game log — a running, toggleable record of everything that happens",
     assert.ok(log.indexOf(rolled) < log.findIndex(e => e.marker === "stackItemResolving"));
   });
 
+  test("a player-chosen bounded variable ('pick a number for X, X <= [O] you control') is logged with its pick and range", () => {
+    const desolate = tactic({
+      name: "Desolate",
+      behavior: {
+        abilities: [
+          {
+            id: "desolate",
+            type: "activated",
+            variableBounds: {
+              x: { max: { type: "resourceIcons", player: "controller", icon: "obsession" } }
+            },
+            effects: [
+              { type: "modifyInfluence", player: "controller", amount: { type: "variable", id: "x" } }
+            ]
+          }
+        ]
+      }
+    });
+    const obs = () =>
+      resourceCard({
+        name: "Obsession",
+        id: "o-log",
+        resource: { provides: ["obsession"], staple: true }
+      });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "des", def: desolate, owner: P1, zone: "hand" },
+        { key: "o1", def: obs(), owner: P1 },
+        { key: "o2", def: obs(), owner: P1 }
+      ],
+      playerA: { influence: 20 }
+    });
+
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("des"), variables: { x: 2 } });
+    resolvePendingResponses(engine);
+
+    const chosen = engine.getLog().find(e => e.event?.type === "variableChosen");
+    assert.ok(chosen, "the pick was logged");
+    assert.equal(chosen.kind, "info");
+    assert.equal(chosen.depth, 0);
+    assert.equal(chosen.message, "Alice picks X = 2 for Desolate (0–2)");
+    assert.ok(
+      chosen.event?.type === "variableChosen" &&
+        chosen.event.name === "x" &&
+        chosen.event.playerId === P1 &&
+        chosen.event.value === 2 &&
+        chosen.event.min === 0 &&
+        chosen.event.max === 2
+    );
+    // the pick is an EXTRA COST — settled as the card is played, so it lands
+    // before the card starts resolving off the stack.
+    const log = engine.getLog();
+    assert.ok(log.indexOf(chosen) < log.findIndex(e => e.marker === "stackItemResolving"));
+  });
+
   test("a rolled variable outside the 1–2 coin range reads as a die roll over its bounds", () => {
     const spread = tactic({
       name: "Spread",

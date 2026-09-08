@@ -561,11 +561,44 @@ export interface ResponseWindowState {
 
 export type GameSetupState =
   | {
+      /**
+       * A player whose deck runs more than one kind of staple resource picks
+       * which staples their faction starts with in play (most factions —
+       * "find 2 staple resources"). Runs before `mulligan`; the deck shuffle
+       * and opening-hand draw wait until every `order` seat has answered.
+       * Absent entirely when no player has a choice (single staple type, or a
+       * name-pinned faction) — setup goes straight to `mulligan` / `complete`.
+       */
+      phase: "chooseStartingResources";
+      order: PlayerId[];
+      currentIndex: number;
+      /** How many staples each `order` seat must pick. */
+      counts: Record<PlayerId, number>;
+    }
+  | {
       phase: "mulligan";
       order: PlayerId[];
       currentIndex: number;
     }
   | { phase: "complete" };
+
+/**
+ * What a seat in the `chooseStartingResources` setup phase is choosing from —
+ * the staple resource instances in their own deck, and how many to pick.
+ * `SpoilsEngine.getStartingResourceChoice`.
+ */
+export interface StartingResourceChoice {
+  /** Exactly this many of `candidateCardIds` must be chosen. */
+  count: number;
+  /** Every staple resource instance currently in this player's deck (repeats are distinct ids). */
+  candidateCardIds: CardInstanceId[];
+  /**
+   * Extra resources placed alongside the chosen staples, not chosen by the
+   * player — `chosenStaples.plus` ("...and 1 Deception"). Display-only here;
+   * the engine re-resolves them at placement time.
+   */
+  fixedCardIds: CardInstanceId[];
+}
 
 /** The player who won, or "draw" if both factions hit 0 influence together. */
 export type GameWinner = PlayerId | "draw";

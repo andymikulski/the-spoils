@@ -47,6 +47,7 @@ import type {
   SnapshotCard,
   SnapshotPlayer,
   StackItem,
+  StartingResourceChoice,
   Stat,
   TargetDeclaration,
   TargetRef,
@@ -64,6 +65,10 @@ import {
   withBuiltInFactionDefaults
 } from "./utilities.js";
 import { drawRandom, randomSeed } from "./rng.js";
+// Call-time-only cycle: factionSetup.ts imports SpoilsEngine for its own
+// construction path; this back-edge is used solely inside a method body, well
+// after both modules have finished evaluating.
+import { finishFactionSetup } from "./factionSetup.js";
 
 /** Reserved target-declaration id for an "Attach to X" card's play-time target. */
 const ATTACH_TARGET_ID = "attachTo";
@@ -339,6 +344,13 @@ export class SpoilsEngine {
       this.currentCause = action.playerId;
     }
 
+    if (
+      this.state.setup.phase === "chooseStartingResources" &&
+      action.type !== "chooseStartingResources"
+    ) {
+      throw new Error("Starting resources must be chosen before setup continues.");
+    }
+
     if (this.state.setup.phase === "mulligan" && action.type !== "mulligan") {
       throw new Error("Opening mulligans must be completed before play begins.");
     }
@@ -362,6 +374,10 @@ export class SpoilsEngine {
 
       case "mulligan":
         this.mulligan(action.playerId, action.cardIds);
+        return;
+
+      case "chooseStartingResources":
+        this.chooseStartingResources(action.playerId, action.cardIds);
         return;
 
       case "chooseDevelop":
@@ -414,7 +430,10 @@ export class SpoilsEngine {
       mode = "gameOver";
     } else if (this.state.pendingChoice) {
       mode = "pendingChoice";
-    } else if (this.state.setup.phase === "mulligan") {
+    } else if (
+      this.state.setup.phase === "mulligan" ||
+      this.state.setup.phase === "chooseStartingResources"
+    ) {
       mode = "setup";
     } else if (this.state.responseWindow?.phase === "acceptingResponses") {
       mode = "response";
@@ -963,6 +982,15 @@ export class SpoilsEngine {
               : `${source} rolls ${label} = ${event.value} (${event.min}–${event.max})`
         };
       }
+
+      case "variableChosen": {
+        const source = this.logCardName(event.sourceId);
+        const label = event.name.toUpperCase();
+        return {
+          kind: "info",
+          message: `${this.logPlayerName(event.playerId)} picks ${label} = ${event.value} for ${source} (${event.min}–${event.max})`
+        };
+      }
     }
 
     return undefined;
@@ -1491,6 +1519,106 @@ export class SpoilsEngine {
       type: "turnStarted",
       playerId: this.state.activePlayerId
     });
+  }
+
+  /**
+   * What `playerId` is choosing from in the `chooseStartingResources` setup
+   * phase — the staple resource instances in their own deck, and how many to
+   * pick. `null` when it isn't this seat's turn in that phase (or the phase
+   * isn't running). See {@link GameSetupState} `"chooseStartingResources"`.
+   */
+  getStartingResourceChoice(playerId: PlayerId): StartingResourceChoice | null {
+    const setup = this.state.setup;
+    if (setup.phase !== "chooseStartingResources") return null;
+    if (setup.order[setup.currentIndex] !== playerId) return null;
+
+    const player = this.requirePlayer(playerId);
+    const candidateCardIds = player.deck.filter(cardId =>
+      isStapleResourceDefinition(this.getDefinition(cardId))
+    );
+
+    // `chosenStaples.plus` — always-included extras ("...and 1 Deception"),
+    // shown alongside but not chosen. Re-resolved for real in
+    // `chooseStartingResources`; here it's a display hint.
+    const plus =
+      this.getFactionDefinition(playerId)?.setup.startingResources.chosenStaples?.plus ?? [];
+    const fixedCardIds: CardInstanceId[] = [];
+    const shown = new Set<CardInstanceId>();
+    for (const name of plus) {
+      const lower = name.toLowerCase();
+      const match = player.deck.find(
+        cardId =>
+          !shown.has(cardId) &&
+          this.getDefinition(cardId).type === "resource" &&
+          this.getDefinition(cardId).name.toLowerCase() === lower
+      );
+      if (match) {
+        shown.add(match);
+        fixedCardIds.push(match);
+      }
+    }
+
+    return { count: setup.counts[playerId] ?? 0, candidateCardIds, fixedCardIds };
+  }
+
+  private chooseStartingResources(playerId: PlayerId, cardIds: CardInstanceId[]): void {
+    const setup = this.state.setup;
+
+    assert(
+      setup.phase === "chooseStartingResources",
+      "The starting-resource step is over."
+    );
+    assert(
+      setup.order[setup.currentIndex] === playerId,
+      "It is not this player's starting-resource decision."
+    );
+
+    const player = this.requirePlayer(playerId);
+    const count = setup.counts[playerId] ?? 0;
+
+    assert(
+      cardIds.length === count,
+      `Choose exactly ${count} starting staple resource${count === 1 ? "" : "s"}.`
+    );
+    assert(new Set(cardIds).size === cardIds.length, "A starting resource was selected twice.");
+    for (const cardId of cardIds) {
+      assert(player.deck.includes(cardId), "Starting resources must be chosen from your deck.");
+      assert(
+        isStapleResourceDefinition(this.getDefinition(cardId)),
+        "Starting resources must be staple resources."
+      );
+    }
+
+    // `chosenStaples.plus` — always-included extras ("...and 1 Deception"),
+    // drawn from the deck after the player's own picks are reserved.
+    const placed = new Set<CardInstanceId>(cardIds);
+    const plus =
+      this.getFactionDefinition(playerId)?.setup.startingResources.chosenStaples?.plus ?? [];
+    for (const name of plus) {
+      const lower = name.toLowerCase();
+      const match = player.deck.find(
+        cardId =>
+          !placed.has(cardId) &&
+          this.getDefinition(cardId).type === "resource" &&
+          this.getDefinition(cardId).name.toLowerCase() === lower
+      );
+      assert(match, `Faction setup: no '${name}' left in ${playerId}'s deck for a starting resource.`);
+      placed.add(match);
+    }
+
+    for (const cardId of placed) {
+      player.deck = player.deck.filter(id => id !== cardId);
+      const card = this.requireCard(cardId);
+      card.zone = "play";
+      card.faceDown = false;
+      card.attachedTo = undefined;
+      player.play.push(cardId);
+    }
+
+    setup.currentIndex++;
+    if (setup.currentIndex >= setup.order.length) {
+      finishFactionSetup(this);
+    }
   }
 
   private mulligan(playerId: PlayerId, cardIds: CardInstanceId[]): void {
@@ -2433,7 +2561,11 @@ export class SpoilsEngine {
     // or 2" has to be settled before "pick X or fewer items" can even be
     // validated.
     this.applyVariableRolls(this.getTacticVariableRolls(definition, mode), context);
-    this.assertVariableBounds(this.getTacticVariableBounds(definition, mode), context);
+    this.assertVariableBounds(
+      this.getTacticVariableBounds(definition, mode),
+      context,
+      this.getTacticVariableRolls(definition, mode)
+    );
 
     const tacticCondition = this.getTacticCondition(definition, mode);
     assert(
@@ -2738,10 +2870,15 @@ export class SpoilsEngine {
    * "Pick a number for X, where X is <= the number of [O] you control."
    * Validates a player-chosen `variable` against its declared bounds
    * (beyond plain affordability). Throws before any mutation.
+   *
+   * `rolls` is the paired `variables` map (if any) — an id that resolves via
+   * a `random` roll there is already surfaced by `applyVariableRolls` as a
+   * `variableRolled`, so it's skipped by the `variableChosen` logging below.
    */
   private assertVariableBounds(
     bounds: Record<string, { min?: NumberExpression; max?: NumberExpression }> | undefined,
-    context: ResolutionContext
+    context: ResolutionContext,
+    rolls?: Record<string, NumberExpression>
   ): void {
     if (!bounds) return;
 
@@ -2759,6 +2896,26 @@ export class SpoilsEngine {
           `Chosen value for '${id}' is above its maximum.`
         );
       }
+    }
+
+    // Surface the player's pick the same way `applyVariableRolls` surfaces a
+    // roll — logged straight (nothing triggers off it), only after every
+    // bound above has held, so a rejected choice leaves no trace.
+    for (const [id, bound] of Object.entries(bounds)) {
+      const roll = rolls?.[id];
+      if (roll !== undefined && typeof roll !== "number" && roll.type === "random") {
+        continue;
+      }
+      const value = context.variables?.[id] ?? 0;
+      this.recordLogEvent({
+        type: "variableChosen",
+        sourceId: context.sourceId,
+        playerId: context.controllerId,
+        name: id,
+        value,
+        min: bound.min !== undefined ? this.evaluateNumber(bound.min, context) : 0,
+        max: bound.max !== undefined ? this.evaluateNumber(bound.max, context) : value
+      });
     }
   }
 
@@ -2864,7 +3021,7 @@ export class SpoilsEngine {
     };
 
     this.applyVariableRolls(ability.variables, context);
-    this.assertVariableBounds(ability.variableBounds, context);
+    this.assertVariableBounds(ability.variableBounds, context, ability.variables);
 
     if (ability.condition) {
       assert(
@@ -2994,7 +3151,11 @@ export class SpoilsEngine {
     };
 
     this.applyVariableRolls(this.getTacticVariableRolls(definition), context);
-    this.assertVariableBounds(this.getTacticVariableBounds(definition), context);
+    this.assertVariableBounds(
+      this.getTacticVariableBounds(definition),
+      context,
+      this.getTacticVariableRolls(definition)
+    );
 
     const condition = this.getTacticCondition(definition);
     assert(

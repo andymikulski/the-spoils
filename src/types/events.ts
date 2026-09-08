@@ -288,6 +288,26 @@ export interface GameEventMap {
     min: number;
     max: number;
   };
+
+  /**
+   * A player chose a value for a `variableBounds` variable — the "EXTRA COST:
+   * Pick a number for X, where X is <= the number of [O] you control" idiom
+   * (Desolate). Fires once per bounded id at play/activation time, right after
+   * the choice is validated against its bounds and before the card's response
+   * window, so the pick lands with the card that used it. The chosen-value
+   * mirror of `variableRolled`; informational only — no rule keys off it.
+   */
+  variableChosen: {
+    sourceId: CardInstanceId;
+    /** Who made the choice (the tactic's / ability's controller). */
+    playerId: PlayerId;
+    /** The variable's id in the `variableBounds` map, e.g. `"x"`. */
+    name: string;
+    value: number;
+    /** Inclusive bounds the choice was constrained to. */
+    min: number;
+    max: number;
+  };
 }
 
 export type GameEventType = keyof GameEventMap;
