@@ -57392,7 +57392,8 @@ export default [
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "stapleOnly": true,
+          "distinctStaples": true
         },
         "openingHand": {
           "goingFirst": 8,

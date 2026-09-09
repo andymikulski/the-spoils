@@ -13,6 +13,7 @@ import type {
 import {
   assert,
   isStapleResourceDefinition,
+  startingStaplesMustDiffer,
   withBuiltInFactionDefaults
 } from "./utilities.js";
 import { createCardInstance, createTwoPlayerGame } from "./setup.js";
@@ -202,6 +203,26 @@ function chooseStartingResources(
     candidates.length >= rule.count,
     `Faction setup requires ${rule.count} starting resource(s), but only ${candidates.length} were found.`
   );
+
+  if (startingStaplesMustDiffer(rule)) {
+    // "Any N different staple resources" (Unlikely Heroes — `distinctStaples`)
+    // — take distinct kinds in deck order, only repeating a kind if the deck
+    // doesn't run enough of them to fill every slot.
+    const picked: CardInstanceId[] = [];
+    const seenDefs = new Set<CardDefinitionId>();
+    for (const cardId of candidates) {
+      if (picked.length === rule.count) break;
+      const defId = engine.getDefinition(cardId).id;
+      if (seenDefs.has(defId)) continue;
+      seenDefs.add(defId);
+      picked.push(cardId);
+    }
+    for (const cardId of candidates) {
+      if (picked.length === rule.count) break;
+      if (!picked.includes(cardId)) picked.push(cardId);
+    }
+    return picked.map(cardId => ({ cardId, faceDown: false }));
+  }
 
   return candidates.slice(0, rule.count).map(cardId => ({ cardId, faceDown: false }));
 }

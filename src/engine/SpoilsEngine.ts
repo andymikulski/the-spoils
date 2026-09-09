@@ -62,6 +62,7 @@ import {
   deriveIdSeq,
   isStapleResourceDefinition,
   parseThreshold,
+  startingStaplesMustDiffer,
   withBuiltInFactionDefaults
 } from "./utilities.js";
 import { drawRandom, randomSeed } from "./rng.js";
@@ -1537,6 +1538,16 @@ export class SpoilsEngine {
       isStapleResourceDefinition(this.getDefinition(cardId))
     );
 
+    const rule = this.getFactionDefinition(playerId)?.setup.startingResources;
+    const distinctKinds = new Set(
+      candidateCardIds.map(cardId => this.getDefinition(cardId).id)
+    ).size;
+    // "Any N *different* staple resources" — only a real constraint on the
+    // pick when the deck actually runs that many kinds.
+    const distinct = Boolean(
+      rule && startingStaplesMustDiffer(rule) && distinctKinds >= (setup.counts[playerId] ?? 0)
+    );
+
     // `chosenStaples.plus` — always-included extras ("...and 1 Deception"),
     // shown alongside but not chosen. Re-resolved for real in
     // `chooseStartingResources`; here it's a display hint.
@@ -1558,7 +1569,7 @@ export class SpoilsEngine {
       }
     }
 
-    return { count: setup.counts[playerId] ?? 0, candidateCardIds, fixedCardIds };
+    return { count: setup.counts[playerId] ?? 0, candidateCardIds, fixedCardIds, distinct };
   }
 
   private chooseStartingResources(playerId: PlayerId, cardIds: CardInstanceId[]): void {
@@ -1587,6 +1598,26 @@ export class SpoilsEngine {
         isStapleResourceDefinition(this.getDefinition(cardId)),
         "Starting resources must be staple resources."
       );
+    }
+
+    // "Any N *different* staple resources" (Unlikely Heroes — the
+    // `distinctStaples` flag; the plain Tournament Faction allows repeats).
+    // Enforced only when the deck runs at least `count` kinds — a deck with
+    // just one staple kind can only ever start with repeats.
+    const rule = this.getFactionDefinition(playerId)?.setup.startingResources;
+    if (rule && startingStaplesMustDiffer(rule)) {
+      const kindsInDeck = new Set(
+        player.deck
+          .filter(id => isStapleResourceDefinition(this.getDefinition(id)))
+          .map(id => this.getDefinition(id).id)
+      ).size;
+      if (kindsInDeck >= count) {
+        const chosenKinds = new Set(cardIds.map(id => this.getDefinition(id).id));
+        assert(
+          chosenKinds.size === cardIds.length,
+          `Your ${count} starting staple resources must be different from each other.`
+        );
+      }
     }
 
     // `chosenStaples.plus` — always-included extras ("...and 1 Deception"),

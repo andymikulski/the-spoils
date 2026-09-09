@@ -42,6 +42,15 @@ export interface FactionDefinition {
       /** Tournament Faction uses staple resources. */
       stapleOnly?: boolean;
       /**
+       * The `count` starting staples must be `count` *different* kinds
+       * ("any 2 different staple resources" — Unlikely Heroes). Off by
+       * default: the plain Tournament Faction lets you begin with two of the
+       * same staple. Enforced by the `chooseStartingResources` action and
+       * honoured by the deck-order auto-pick; surfaced to a UI as
+       * `StartingResourceChoice.distinct`. Only meaningful with `stapleOnly`.
+       */
+      distinctStaples?: boolean;
+      /**
        * Per-slot starting-resource program (overrides the flat
        * `count`/`names`/`stapleOnly` when set). Each slot puts one card from
        * this player's deck into play at setup: a `"resource"` slot places a

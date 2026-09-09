@@ -70,6 +70,20 @@ export function isStapleResourceDefinition(definition: CardDefinition): boolean 
   );
 }
 
+/**
+ * Whether a faction's starting-staple rule means "any N *different* staple
+ * resources" (Unlikely Heroes — the `distinctStaples` flag). This is a
+ * per-card property, NOT the norm: the plain Tournament Faction and the
+ * other `stapleOnly` faction cards let a player begin with two of the same
+ * staple. Consulted by both the deck-order auto-pick in faction setup and
+ * the interactive `chooseStartingResources` action so they agree.
+ */
+export function startingStaplesMustDiffer(
+  rule: FactionDefinition["setup"]["startingResources"]
+): boolean {
+  return rule.distinctStaples === true && Boolean(rule.stapleOnly);
+}
+
 export function assert(condition: unknown, message: string): asserts condition {
   if (!condition) {
     throw new Error(message);

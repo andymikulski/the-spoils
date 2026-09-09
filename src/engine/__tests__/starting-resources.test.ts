@@ -43,7 +43,25 @@ const PINNED_FACTION = factionCard({
   })
 });
 
-const DEFS = [CHOOSE_FACTION, PINNED_FACTION, RAGE, GREED, FILLER];
+/**
+ * Like CHOOSE_FACTION, but "any 2 *different* staple resources" — the
+ * `distinctStaples` flag (Unlikely Heroes). The plain form above still
+ * allows two of the same.
+ */
+const DISTINCT_FACTION = factionCard({
+  id: "sr-distinct-faction",
+  name: "Distincters",
+  faction: defaultFactionDefinition({
+    startingInfluence: 10,
+    setup: {
+      startingResources: { count: 2, stapleOnly: true, distinctStaples: true },
+      openingHand: { goingFirst: 2, goingSecond: 2 },
+      mulligan: { count: 1, mode: "replaceAny" }
+    }
+  })
+});
+
+const DEFS = [CHOOSE_FACTION, PINNED_FACTION, DISTINCT_FACTION, RAGE, GREED, FILLER];
 
 /** deck = faction + `rage` Rage + `greed` Greed + filler up to `size` cards. */
 function deck(factionId: string, rage: number, greed: number, size = 14): string[] {
@@ -290,5 +308,74 @@ describe("chooseStartingResources setup phase", () => {
     assert.equal(engine.state.setup.phase, "mulligan");
     assert.equal(resourcesInPlay(engine, P1), 3);
     assert.equal(resourcesInPlay(engine, P2), 3); // topped up 2 -> 3
+  });
+
+  test("plain stapleOnly form: two of the SAME staple kind is a legal pick", () => {
+    const engine = newGame(
+      deck(CHOOSE_FACTION.id, 4, 4),
+      deck(CHOOSE_FACTION.id, 4, 4),
+      { chooseStartingResources: true }
+    );
+    const choice = engine.getStartingResourceChoice(P1)!;
+    assert.equal(choice.distinct, false);
+    const twoRage = choice.candidateCardIds
+      .filter(id => engine.getDefinition(id).name === "Rage")
+      .slice(0, 2);
+    engine.perform({ type: "chooseStartingResources", playerId: P1, cardIds: twoRage });
+    assert.equal(resourcesInPlay(engine, P1), 2);
+    assert.equal(engine.state.setup.phase, "chooseStartingResources");
+    assert.equal(engine.state.setup.currentIndex, 1);
+  });
+});
+
+describe("distinctStaples faction — 'any N different staple resources'", () => {
+  test("deck-order auto-pick takes different kinds, not two of the first", () => {
+    const engine = newGame(
+      deck(DISTINCT_FACTION.id, 4, 4),
+      deck(DISTINCT_FACTION.id, 4, 4)
+    );
+    assert.equal(engine.state.setup.phase, "mulligan");
+    const p1Res = engine.state.players[P1].play
+      .map(cid => engine.getDefinition(cid).name)
+      .filter(name => name === "Rage" || name === "Greed");
+    assert.deepEqual(p1Res, ["Rage", "Greed"]);
+  });
+
+  test("a single-kind deck falls back to two of that kind (different is impossible)", () => {
+    const engine = newGame(
+      deck(DISTINCT_FACTION.id, 6, 0),
+      deck(DISTINCT_FACTION.id, 6, 0)
+    );
+    assert.equal(resourcesInPlay(engine, P1), 2);
+    assert.deepEqual(
+      engine.state.players[P1].play
+        .map(cid => engine.getDefinition(cid).name)
+        .filter(name => name === "Rage" || name === "Greed"),
+      ["Rage", "Rage"]
+    );
+  });
+
+  test("interactive: choice.distinct is set, and two of the same kind is rejected", () => {
+    const engine = newGame(
+      deck(DISTINCT_FACTION.id, 4, 4),
+      deck(DISTINCT_FACTION.id, 4, 4),
+      { chooseStartingResources: true }
+    );
+    const choice = engine.getStartingResourceChoice(P1)!;
+    assert.equal(choice.distinct, true);
+
+    const [rage1, rage2] = choice.candidateCardIds.filter(
+      id => engine.getDefinition(id).name === "Rage"
+    );
+    assert.throws(
+      () => engine.perform({ type: "chooseStartingResources", playerId: P1, cardIds: [rage1, rage2] }),
+      /different from each other/
+    );
+
+    // One Rage + one Greed goes through.
+    const greed = choice.candidateCardIds.find(id => engine.getDefinition(id).name === "Greed")!;
+    engine.perform({ type: "chooseStartingResources", playerId: P1, cardIds: [rage1, greed] });
+    assert.equal(engine.state.setup.phase, "chooseStartingResources");
+    assert.equal(engine.state.setup.currentIndex, 1);
   });
 });

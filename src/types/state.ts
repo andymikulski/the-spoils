@@ -598,6 +598,15 @@ export interface StartingResourceChoice {
    * the engine re-resolves them at placement time.
    */
   fixedCardIds: CardInstanceId[];
+  /**
+   * The chosen staples must be `count` *different* kinds ("any 2 different
+   * staple resources" — Unlikely Heroes, the faction's `distinctStaples`
+   * flag). A UI should stop the player picking a second copy of an
+   * already-chosen kind; the engine rejects it too. `false` for the plain
+   * Tournament Faction (repeats allowed), the pinned / `chosenStaples`
+   * forms, and when the deck runs fewer than `count` kinds.
+   */
+  distinct: boolean;
 }
 
 /** The player who won, or "draw" if both factions hit 0 influence together. */
