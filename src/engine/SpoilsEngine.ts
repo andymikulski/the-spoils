@@ -944,6 +944,18 @@ export class SpoilsEngine {
       case "battleEnded":
         return { kind: "battle", message: `Battle ends` };
 
+      case "characterLeftBattle": {
+        // The card is face-down by the time this fires (that is usually why
+        // it left), but it was a public attacker/blocker an instant ago and
+        // its activation was just logged by name — so name it here too
+        // rather than the anonymous "a face-down card" `logCardName` gives.
+        const c = this.state.cards[event.cardId];
+        const name = c
+          ? this.definitions[c.definitionId]?.name ?? event.cardId
+          : event.cardId;
+        return { kind: "battle", message: `${name} leaves the battle` };
+      }
+
       case "characterAttacked":
         return { kind: "battle", message: `${this.logCardName(event.cardId)} attacks` };
 
@@ -3648,6 +3660,17 @@ export class SpoilsEngine {
 
       case "battleBlocking": {
         const battle = this.requireBattleId(continuation.battleId);
+        // Every attacker may have been removed from the battle during the
+        // §608.1c window (destroyed, control changed, or — Backdoor Brigand
+        // — turned face-down by its own ability). With no attacking party
+        // there is nothing left to block or resolve, so the battle just
+        // ends (CR §302.15) rather than prompting the defender for blockers
+        // against an empty party.
+        this.pruneBattleParties(battle);
+        if (battle.attackingParty.length === 0) {
+          this.finishBattle(battle);
+          return;
+        }
         battle.phase = "blocking";
         this.state.priorityPlayerId = battle.defenderPlayerId;
         return;
@@ -8918,18 +8941,20 @@ export class SpoilsEngine {
       if (this.state.pendingChoice) return;
 
       for (const card of Object.values(this.state.cards)) {
-        if (card.zone !== "play" || card.faceDown) {
+        if (card.zone !== "play") {
           continue;
         }
 
-        const definition = this.getDefinition(card.id);
-        const isCharacter = this.hasCardType(card.id, "character");
-        const isLocation = this.hasCardType(card.id, "location");
-
-        // CR §208.4 — a card that has lost the character type while in a
-        // battle is pulled from it immediately (whatever caused the loss:
-        // a `setCardType` grant expiring, its source leaving play).
-        if (this.state.battle && !isCharacter) {
+        // CR §208.4 / §302.15 — a card that has lost the character type
+        // while in a battle is pulled from its party immediately, whatever
+        // caused the loss: a `setCardType` grant expiring, its source
+        // leaving play, or the card being turned face-down mid-battle by its
+        // own ability (Backdoor Brigand's EXIT STAGE RIGHT). A face-down
+        // card is only a resource (CR §411.1), so this MUST run before the
+        // face-down skip below — otherwise a former attacker that flipped
+        // itself over stays in the party and goes on to assign and inflict
+        // battle damage it no longer shows.
+        if (this.state.battle && !this.hasCardType(card.id, "character")) {
           const b = this.state.battle;
           if (
             b.attackingParty.includes(card.id) ||
@@ -8937,10 +8962,23 @@ export class SpoilsEngine {
           ) {
             b.attackingParty = b.attackingParty.filter(x => x !== card.id);
             b.blockingParty = b.blockingParty.filter(x => x !== card.id);
+            this.emit({
+              type: "characterLeftBattle",
+              cardId: card.id,
+              battleId: b.id
+            });
             changed = true;
             break;
           }
         }
+
+        if (card.faceDown) {
+          continue;
+        }
+
+        const definition = this.getDefinition(card.id);
+        const isCharacter = this.hasCardType(card.id, "character");
+        const isLocation = this.hasCardType(card.id, "location");
 
         // Lethal damage: characters clear it every turn, locations carry it
         // across turns (see RULES.md §3), but both die the same way once
@@ -12083,11 +12121,13 @@ export class SpoilsEngine {
       // Apply every final amount before any triggered ability resolves.
       for (const group of groups.values()) {
         // Locking protects the source assignments, not a target that has
-        // already left play before damage is inflicted.
+        // already left play — or lost the character type, e.g. flipped
+        // face-down (CR §302.15: "battle damage already assigned to it is
+        // not inflicted") — before damage is inflicted.
         const targetCard = group.cardId
           ? this.state.cards[group.cardId]
           : undefined;
-        if (!targetCard || targetCard.zone !== "play") {
+        if (!targetCard || targetCard.zone !== "play" || targetCard.faceDown) {
           group.contributors = [];
           continue;
         }
@@ -12226,6 +12266,17 @@ export class SpoilsEngine {
     const card = this.state.cards[cardId];
 
     if (!card || card.zone !== "play") {
+      return false;
+    }
+
+    // CR §208.4 / §302.15 — a party member that has lost the character type
+    // (a `setCardType` grant lapsing, or the card flipped face-down by
+    // something like Backdoor Brigand's EXIT STAGE RIGHT) is no longer in
+    // the battle. `checkStateBasedActions` drops it from the party the
+    // instant this happens; keeping the check here too means every derived
+    // read — `pruneBattleParties`, legal-damage-target lists — stays
+    // correct even if it is consulted before that sweep runs.
+    if (!this.hasCardType(cardId, "character")) {
       return false;
     }
 

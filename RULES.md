@@ -287,7 +287,9 @@ X = number-of-opponents scaling, the Temptation Pile, the Hero deck).
   it received this turn (becoming a character again later does not restore
   it).
 - **(CR §208.4)** If a card loses the character type *during a battle*, it
-  is removed from the battle immediately (§8).
+  is removed from the battle immediately (§8) — this also covers a
+  character flipped **face-down** mid-battle (§4: a face-down card is only a
+  resource), e.g. *Backdoor Brigand*'s EXIT STAGE RIGHT.
 
 **(engine-derived)** A temporary type change is the `setCardType` effect
 ("this turn, the item is a golem character ..." — Contrabulous Fabtraption,
@@ -303,7 +305,10 @@ the start-of-turn damage-clear / attack-eligibility rules. Optional `grantStats`
 `set` stat modifiers with the same duration. When the grant ends and the
 card is no longer a character it forgets this-turn damage (§208.3, applied
 at the next start-of-turn); §208.4 removal runs through the state-based
-check so it fires whatever ended the grant.
+check so it fires whatever ended the grant — a lapsed `setCardType`, the
+grant's source leaving play, or a `flipFaceDown` on the card itself (the
+state-based check makes an exception to its "skip face-down cards" rule for
+this one removal).
 
 **(engine-derived)** The CR does not settle whether a card that *gains* the
 character type mid-turn can attack that turn (§204.3 "started the turn in
@@ -778,11 +783,19 @@ the `assignBattleDamage` "must assign exactly N" check both use
   it; for battle damage, the character that assigned it.
 - **Removed from battle (CR §302.15).** A character leaves the
   attacking/blocking party immediately if it is destroyed, if its control
-  changes (CR §407.4), or if it loses the character type (CR §208.4). Any
-  battle damage already assigned to it is **not** inflicted. **(CR §407.6)**
-  An effect that would add a character you don't control to a party you do
-  control is terminated. **(CR §407.5)** If the target of the attack is a
-  location whose controller changes mid-battle, it stops being the target.
+  changes (CR §407.4), or if it loses the character type (CR §208.4) —
+  including being turned **face-down** mid-battle (a face-down card is only
+  a resource, §4 / CR §411.1), e.g. an attacker using its own *Backdoor
+  Brigand* EXIT STAGE RIGHT "in response to its own attack". Any battle
+  damage already assigned to **or by** it is **not** inflicted; the removed
+  character never becomes a battle-damage source. If that empties the
+  attacking party the battle just ends (no blocker step against nothing).
+  A brief `characterLeftBattle` event is emitted so a log/UI can show why
+  an attacker or blocker vanished (a bare face-down flip is otherwise a
+  silent `play -> play` move). **(CR §407.6)** An effect that would add a
+  character you don't control to a party you do control is terminated.
+  **(CR §407.5)** If the target of the attack is a location whose
+  controller changes mid-battle, it stops being the target.
 
 **(engine-derived)** Per CR §609.1f + §408.2, battle damage from several
 characters to one target in a speed group is summed first, then
@@ -798,7 +811,12 @@ the final amount distributed across them.
 **(engine-derived)** "Control changes" is the `takeControl` effect — the
 only writer of `CardInstance.controllerId`; it also moves the card between
 the players' `play` arrays. `isCardStillInBattle` checks `controllerId`
-against the attacker/defender, so party pruning falls out for free.
+against the attacker/defender **and** that the card is still a character
+(`hasCardType`), so party pruning falls out for free for both a control
+change and a type loss / face-down flip. The face-down / type-loss case is
+also caught eagerly by `checkStateBasedActions` (which now inspects
+face-down cards for this one check), so the party shrinks the instant the
+flip resolves rather than at the next battle step.
 
 ## 9. Keywords (CR §507)
 

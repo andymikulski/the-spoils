@@ -23,6 +23,7 @@ import {
   killTactic,
   play,
   activate,
+  inPlay,
   resolvePendingResponses,
   P1,
   P2
@@ -311,6 +312,78 @@ describe("Seed Saga — Banner of Fury (on-provide)", () => {
       return declineAll(pc);
     });
     assert.equal(engine.getStat(id("c"), "strength"), (c.strength ?? 0) + 1);
+  });
+});
+
+describe("Seed Saga — Banner of Elysium (on-provide 'may pay 1, detach 2')", () => {
+  // Regression: the trigger's `mayPay` cost (pay 1) must be gated on the
+  // player actually having an unattached resource to pay it with. Spending
+  // your last resources to deploy the Banner leaves you unable to use its
+  // own enters-play trigger — the "pay 1" is never offered, and nothing is
+  // detached. (Reported as a bug where the pay-1 prompt showed anyway.)
+  test("spent the last 2 resources to play it -> the pay-1 prompt is withheld", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "b", def: def("Banner of Elysium"), owner: P1, zone: "hand" },
+        ...bank("elitism", 2, P1)
+      ],
+      turn: 2
+    });
+
+    assert.equal(engine.getAvailableResourceCount(P1), 2);
+    play(engine, P1, id("b"), {});
+
+    // Both staples are now attached to the faction (spent on the cost)…
+    assert.equal(engine.getAvailableResourceCount(P1), 0);
+    // …so the `mayPay` is skipped outright — no choice is left open.
+    assert.equal(engine.state.pendingChoice, undefined);
+    // Nothing was detached: the two cost resources stay attached.
+    assert.equal(
+      inPlay(engine, P1, "resource").filter(cid => engine.state.cards[cid].attachedTo).length,
+      2
+    );
+  });
+
+  test("a spare face-down (Volition) resource covers the pay-1 -> prompt is offered and detaches 2", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "b", def: def("Banner of Elysium"), owner: P1, zone: "hand" },
+        ...bank("elitism", 2, P1),
+        ...volition(1, P1) // face-down resource — still an unattached resource that can pay a cost
+      ],
+      turn: 2
+    });
+
+    assert.equal(engine.getAvailableResourceCount(P1), 3);
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("b"),
+      selected: {},
+      variables: {}
+    } as never);
+    resolvePendingResponses(engine);
+
+    // 2 staples spent on the cost, the face-down one is still available.
+    assert.equal(engine.getAvailableResourceCount(P1), 1);
+    assert.equal((engine.state.pendingChoice as { kind?: string } | undefined)?.kind, "mayPay");
+
+    drain(engine, pc => {
+      if (pc.kind === "mayPay") return { kind: "mayPay", pay: true };
+      if (pc.kind === "chooserSelectsTarget") {
+        // Detach the 2 resources spent on the Banner's cost.
+        const attached = inPlay(engine, P1, "resource").filter(cid => engine.state.cards[cid].attachedTo);
+        return { kind: "chooserSelectsTarget", selected: attached.slice(0, 2) };
+      }
+      return declineAll(pc);
+    });
+
+    // Paid 1 (the face-down), detached 2 -> net one more than the 0 they'd
+    // have been left on without a spare resource.
+    assert.equal(engine.getAvailableResourceCount(P1), 2);
   });
 });
 

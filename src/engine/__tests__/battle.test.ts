@@ -8,6 +8,7 @@ import {
   P1,
   P2,
   resolvePendingResponses,
+  resourceCard,
   tactic
 } from "./support/fixtures.js";
 
@@ -413,13 +414,88 @@ describe("RULES.md §8 — a character removed from the battle mid-resolution", 
 
     assert.equal(engine.state.cards[id("attacker")].controllerId, P2);
 
-    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
-    autoResolveBattle(engine);
+    // The lone attacker changed sides mid-window, so it is out of the
+    // attacking party (CR §407.4) and, with nothing left attacking, the
+    // battle ends on its own — the defender is never asked for blockers.
+    assert.equal(engine.state.battle?.phase, "finished");
+    engine.perform({ type: "advanceFlow" });
 
     // The erstwhile attacker defected before ever assigning damage — P2
     // takes none.
     assert.equal(engine.state.players[P2].influence, before);
     assert.equal(engine.state.battle, undefined);
+  });
+
+  test("an attacker that flips itself face-down (EXIT STAGE RIGHT) leaves the battle and assigns no damage", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        {
+          key: "brigand",
+          def: character({
+            name: "Backdoor Brigand",
+            strength: 2,
+            life: 3,
+            speed: 4,
+            behavior: {
+              abilities: [
+                {
+                  id: "exit",
+                  name: "Exit Stage Right",
+                  type: "activated",
+                  // "use this only if this card has NOT assigned damage this turn"
+                  condition: {
+                    type: "not",
+                    condition: { type: "assignedDamageThisTurn", target: "source" }
+                  },
+                  costs: [{ type: "payResources", amount: 1 }],
+                  effects: [{ type: "flipFaceDown", target: "source" }]
+                }
+              ]
+            }
+          }),
+          owner: P1
+        },
+        { key: "coin", def: resourceCard({ name: "Coin" }), owner: P1 }
+      ]
+    });
+
+    const before = engine.state.players[P2].influence;
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("brigand")],
+      target: { type: "faction", playerId: P2 }
+    });
+
+    // §608.1c window, attacker has priority first — the NPC used the
+    // attacker's own ability "in response to its own attack".
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("brigand"),
+      abilityId: "exit"
+    });
+    resolvePendingResponses(engine);
+
+    // It is a face-down resource now — no longer a character, so it is out
+    // of the attacking party the instant it flips (CR §208.4 / §302.15)...
+    assert.equal(engine.state.cards[id("brigand")].faceDown, true);
+    assert.equal(engine.state.battle?.attackingParty.includes(id("brigand")) ?? false, false);
+
+    // ...and with nothing left attacking, the battle ends before any damage
+    // step; P2's faction is untouched (the old bug: it finished the attack
+    // and resolved 2 damage it no longer showed).
+    assert.equal(engine.state.battle?.phase, "finished");
+    engine.perform({ type: "advanceFlow" });
+    assert.equal(engine.state.battle, undefined);
+    assert.equal(engine.state.players[P2].influence, before);
+
+    // The exit is visible in the log — a bare play->play `cardMoved` is
+    // otherwise suppressed, so without this line the attacker just vanishes.
+    const left = engine.getLog().find(e => e.message === "Backdoor Brigand leaves the battle");
+    assert.ok(left, "expected a 'leaves the battle' log line");
+    assert.equal(left?.kind, "battle");
   });
 });
 

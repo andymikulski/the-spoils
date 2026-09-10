@@ -210,6 +210,23 @@ export interface GameEventMap {
     battleId: BattleId;
   };
 
+  /**
+   * A member was pulled out of its attacking / blocking party mid-battle
+   * because it stopped being a character (CR §208.4 / §302.15) — a
+   * `setCardType` grant lapsing, or the card being turned face-down by an
+   * effect such as Backdoor Brigand's EXIT STAGE RIGHT. Any battle damage
+   * already assigned to or by it is not inflicted. Emitted by the
+   * state-based check the instant it happens so a log / renderer can show
+   * why an attacker or blocker vanished; the removal itself is the
+   * state-based action, not keyed off this event. Removal by destruction or
+   * a control change is already visible through `cardDestroyed` / the
+   * control-change line, so it is not re-reported here.
+   */
+  characterLeftBattle: {
+    cardId: CardInstanceId;
+    battleId: BattleId;
+  };
+
   /** "When this card attacks" — once per attacker, at declareAttack. */
   characterAttacked: {
     cardId: CardInstanceId;
