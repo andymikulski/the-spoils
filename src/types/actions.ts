@@ -123,6 +123,8 @@ export type GameAction =
       choice:
         | { kind: "uniqueSurvivor"; keep: CardInstanceId }
         | { kind: "selectTargets"; selected: Record<string, CardInstanceId[]> }
+        /** Answers a `PendingDeployTargetChoice` (Hammer Smash's "pick X or fewer" once the roll is known). */
+        | { kind: "selectDeployTargets"; selected: Record<string, CardInstanceId[]> }
         /**
          * Pick the *next* trigger to resolve out of the batch still waiting
          * (CR §503.4a — the order is decided one at a time, resolving one

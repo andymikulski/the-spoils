@@ -633,6 +633,49 @@ function handlePendingChoice(
       return;
     }
 
+    case "selectDeployTargets": {
+      // Same shape as `selectTargets`, but the count almost always depends
+      // on a roll that already happened (Hammer Smash) — `pending.variables`
+      // carries it, unlike the trigger-sourced case above.
+      const context: ResolutionContext = {
+        sourceId: pending.sourceId,
+        controllerId: pending.playerId,
+        selected: { ...pending.selected },
+        variables: { ...pending.variables }
+      };
+
+      const selected: Record<string, CardInstanceId[]> = {};
+      for (const declaration of pending.declarations) {
+        const candidates = engine.queryCards(declaration.selector, context);
+        const wanted = engine.evaluateNumber(declaration.count, context);
+        const take = declaration.optional
+          ? (Math.min(wanted, candidates.length) > 0 && rng() < 0.5 ? Math.min(wanted, candidates.length) : 0)
+          : wanted;
+        const picked = shuffled(candidates, rng).slice(0, take).map(card => card.id);
+        selected[declaration.id] = picked;
+        context.selected[declaration.id] = picked;
+      }
+
+      if (
+        tryCommit(engine, {
+          type: "resolvePendingChoice",
+          playerId: pending.playerId,
+          choice: { kind: "selectDeployTargets", selected }
+        })
+      ) {
+        return;
+      }
+
+      const decline2: Record<string, CardInstanceId[]> = {};
+      for (const declaration of pending.declarations) decline2[declaration.id] = [];
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: pending.playerId,
+        choice: { kind: "selectDeployTargets", selected: decline2 }
+      });
+      return;
+    }
+
     case "chooserSelectsTarget": {
       const candidates = engine.queryCards(pending.declaration.selector, pending.context);
       const wanted = engine.evaluateNumber(pending.declaration.count, pending.context);

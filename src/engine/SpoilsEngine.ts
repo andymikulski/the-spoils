@@ -2528,7 +2528,14 @@ export class SpoilsEngine {
      */
     ignoreThreshold = false,
     /** Chosen mode index for a modal tactic (`behavior.modes`). */
-    mode?: number
+    mode?: number,
+    /**
+     * Engine-internal only, never derived from a raw `GameAction`: set when
+     * resuming a `selectDeployTargets` pending choice, so `applyVariableRolls`
+     * reuses the roll already made (and logged) when the choice was opened
+     * instead of rolling again. See `openDeployTargetChoice`.
+     */
+    trustedVariables?: Record<string, number>
   ): void {
     const card = this.requireCard(cardId);
     const definition = this.getDefinition(card.id);
@@ -2600,15 +2607,14 @@ export class SpoilsEngine {
       variables
     };
 
+    const tacticRolls = this.getTacticVariableRolls(definition, mode);
+    const tacticBounds = this.getTacticVariableBounds(definition, mode);
+
     // Resolved before condition/targets/costs — e.g. "flip a coin; X is 1
     // or 2" has to be settled before "pick X or fewer items" can even be
     // validated.
-    this.applyVariableRolls(this.getTacticVariableRolls(definition, mode), context);
-    this.assertVariableBounds(
-      this.getTacticVariableBounds(definition, mode),
-      context,
-      this.getTacticVariableRolls(definition, mode)
-    );
+    this.applyVariableRolls(tacticRolls, tacticBounds, context, trustedVariables);
+    this.assertVariableBounds(tacticBounds, context, tacticRolls);
 
     const tacticCondition = this.getTacticCondition(definition, mode);
     assert(
@@ -2616,10 +2622,36 @@ export class SpoilsEngine {
       "This card cannot be deployed right now."
     );
 
-    this.validateTargetDeclarations(
-      this.getPlayTargetDeclarations(definition, mode),
-      context
-    );
+    const targetDeclarations = this.getPlayTargetDeclarations(definition, mode);
+
+    // "Flip a coin; if you win, X is 2, otherwise 1. Pick X or fewer
+    // items." (Hammer Smash) — the only card today whose target count
+    // depends on an unguarded random roll. A client can't size that
+    // selection correctly until the engine itself has rolled, so on the
+    // FIRST attempt (not a resumed choice — `trustedVariables` is unset)
+    // this pays no costs and instead pauses for a follow-up pick with the
+    // count already fixed. See `findRandomSizedTargetDeclarations`.
+    if (!trustedVariables) {
+      const deferred = this.findRandomSizedTargetDeclarations(targetDeclarations, tacticRolls, tacticBounds);
+      if (deferred.length > 0) {
+        const immediate = targetDeclarations.filter(d => !deferred.includes(d));
+        this.validateTargetDeclarations(immediate, context);
+        this.openDeployTargetChoice(
+          playerId,
+          cardId,
+          context,
+          deferred,
+          free,
+          fromZone,
+          costOverride,
+          ignoreThreshold,
+          mode
+        );
+        return;
+      }
+    }
+
+    this.validateTargetDeclarations(targetDeclarations, context);
 
     // Deploying for free waives only the numeric cost — any other extra
     // costs (targets, deplete, etc.) still apply, matching cards like
@@ -2872,30 +2904,59 @@ export class SpoilsEngine {
     return this.getTacticSource(definition, mode)?.variables;
   }
 
-  /** Evaluates `rolls` once and merges them into `context.variables`, without overwriting anything already explicitly supplied there. */
+  /**
+   * Evaluates `rolls` once and merges them into `context.variables`.
+   *
+   * A caller-supplied value in `context.variables` wins for everything
+   * EXCEPT an unguarded `random` roll — one with no paired entry in
+   * `bounds` (a "the game rolls" variable, e.g. a coin flip or damage
+   * variance, as opposed to a `variableBounds`-validated "player chooses a
+   * number" one). Trusting a caller's value there would let a network
+   * client fake any unguarded dice roll — see "The client-supplied
+   * `variables` exploit" in ~/dev/rotten/docs/multiplayer-architecture.md.
+   *
+   * `trustedRolls` is engine-internal only (never derived from a raw
+   * `GameAction`): the resume half of a deferred target pick (see
+   * `findRandomSizedTargetDeclarations` / `openDeployTargetChoice`) passes
+   * back the roll that was already made and logged when the choice was
+   * opened, so re-evaluating a `random` expression here doesn't consume
+   * fresh entropy and disagree with what the player already saw.
+   */
   private applyVariableRolls(
     rolls: Record<string, NumberExpression> | undefined,
-    context: ResolutionContext
+    bounds: Record<string, { min?: NumberExpression; max?: NumberExpression }> | undefined,
+    context: ResolutionContext,
+    trustedRolls?: Record<string, number>
   ): void {
     if (!rolls) {
       return;
     }
 
     const resolved: Record<string, number> = {};
+    const callerVariables = context.variables ?? {};
+    const merged: Record<string, number> = { ...callerVariables };
 
     for (const [id, expression] of Object.entries(rolls)) {
-      resolved[id] = this.evaluateNumber(expression, context);
+      const isUnguardedRandom =
+        typeof expression !== "number" &&
+        expression.type === "random" &&
+        !(bounds && Object.prototype.hasOwnProperty.call(bounds, id));
+
+      if (isUnguardedRandom && trustedRolls && Object.prototype.hasOwnProperty.call(trustedRolls, id)) {
+        resolved[id] = trustedRolls[id];
+      } else {
+        resolved[id] = this.evaluateNumber(expression, context);
+      }
+
+      merged[id] = isUnguardedRandom ? resolved[id] : (callerVariables[id] ?? resolved[id]);
     }
 
-    context.variables = { ...resolved, ...context.variables };
+    context.variables = merged;
 
     // Surface every `random`-typed roll ("flip a coin; X is 1 or 2") so the
-    // log / a renderer can show how it landed — using the *final* value, which
-    // is the client's pre-roll when it supplied one on the action (it has to,
-    // to size a "pick X" picker) and the value rolled just above otherwise.
-    // Logged straight, not `emit`ed: it's informational, nothing triggers off
-    // it, and this runs during play/activation validation where a re-entrant
-    // emit would be out of place.
+    // log / a renderer can show how it landed. Always the authoritative
+    // value now (`context.variables[id]`, per the merge above) — never a
+    // client-fabricated one.
     for (const [id, expression] of Object.entries(rolls)) {
       if (typeof expression === "number" || expression.type !== "random") continue;
       this.recordLogEvent({
@@ -2907,6 +2968,101 @@ export class SpoilsEngine {
         max: this.evaluateNumber(expression.max, context)
       });
     }
+  }
+
+  /**
+   * Which of `declarations` have a `count` that (transitively) depends on
+   * an unguarded random roll — the one shape that can't be sized correctly
+   * by a client submitting one atomic action, since the true roll isn't
+   * decided until the engine itself makes it. See `applyVariableRolls`.
+   */
+  private findRandomSizedTargetDeclarations(
+    declarations: TargetDeclaration[],
+    rolls: Record<string, NumberExpression> | undefined,
+    bounds: Record<string, { min?: NumberExpression; max?: NumberExpression }> | undefined
+  ): TargetDeclaration[] {
+    if (!rolls) return [];
+
+    const unguardedRandomIds = new Set(
+      Object.entries(rolls)
+        .filter(
+          ([id, expression]) =>
+            typeof expression !== "number" &&
+            expression.type === "random" &&
+            !(bounds && Object.prototype.hasOwnProperty.call(bounds, id))
+        )
+        .map(([id]) => id)
+    );
+
+    if (unguardedRandomIds.size === 0) return [];
+
+    return declarations.filter(declaration =>
+      this.numberExpressionReferencesAny(declaration.count, unguardedRandomIds)
+    );
+  }
+
+  /** Walks a `NumberExpression` tree for a `{type:"variable"}` reference to any id in `ids`. */
+  private numberExpressionReferencesAny(expression: NumberExpression, ids: ReadonlySet<string>): boolean {
+    if (typeof expression === "number") return false;
+
+    switch (expression.type) {
+      case "variable":
+        return ids.has(expression.id);
+      case "add":
+      case "multiply":
+        return expression.values.some(value => this.numberExpressionReferencesAny(value, ids));
+      case "divide":
+      case "modulo":
+        return (
+          this.numberExpressionReferencesAny(expression.value, ids) ||
+          this.numberExpressionReferencesAny(expression.by, ids)
+        );
+      case "conditional":
+        return (
+          this.numberExpressionReferencesAny(expression.then, ids) ||
+          this.numberExpressionReferencesAny(expression.else, ids)
+        );
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Pauses `deployCard` on a `selectDeployTargets` pending choice for
+   * `deferred` declarations (a random-sized target count — see
+   * `findRandomSizedTargetDeclarations`). Nothing has been paid or mutated
+   * yet at this point, so this is a plain early-return, not a suspend of
+   * in-progress work. `resolvePendingChoice` resumes by re-invoking
+   * `deployCard` with the same arguments, the newly-chosen selection merged
+   * in, and `context.variables` (which already holds the roll this choice
+   * was opened with) passed back as `trustedVariables` so it isn't rolled
+   * again.
+   */
+  private openDeployTargetChoice(
+    playerId: PlayerId,
+    cardId: CardInstanceId,
+    context: ResolutionContext,
+    deferred: TargetDeclaration[],
+    free: boolean,
+    fromZone: boolean,
+    costOverride: number | undefined,
+    ignoreThreshold: boolean,
+    mode: number | undefined
+  ): void {
+    this.state.pendingChoice = {
+      kind: "selectDeployTargets",
+      id: this.nextId("choice"),
+      playerId,
+      sourceId: cardId,
+      declarations: deferred,
+      selected: context.selected,
+      variables: context.variables ?? {},
+      free,
+      fromZone,
+      costOverride,
+      ignoreThreshold,
+      mode
+    };
   }
 
   /**
@@ -3063,7 +3219,7 @@ export class SpoilsEngine {
       variables: action.variables ?? {}
     };
 
-    this.applyVariableRolls(ability.variables, context);
+    this.applyVariableRolls(ability.variables, ability.variableBounds, context);
     this.assertVariableBounds(ability.variableBounds, context, ability.variables);
 
     if (ability.condition) {
@@ -3073,6 +3229,10 @@ export class SpoilsEngine {
       );
     }
 
+    // No activated (non-tactic) ability currently sizes a target's `count`
+    // off an unguarded random roll (see `findRandomSizedTargetDeclarations`
+    // — `deployCard` is the one place that needs the deferred-pick flow,
+    // for Hammer Smash). If one ever does, this needs the same treatment.
     this.validateTargetDeclarations(ability.targets ?? [], context);
 
     // "Reduce the numeric cost of your faction's abilities by 1, to a
@@ -3193,7 +3353,11 @@ export class SpoilsEngine {
       deployedViaFlipUp: true
     };
 
-    this.applyVariableRolls(this.getTacticVariableRolls(definition), context);
+    this.applyVariableRolls(
+      this.getTacticVariableRolls(definition),
+      this.getTacticVariableBounds(definition),
+      context
+    );
     this.assertVariableBounds(
       this.getTacticVariableBounds(definition),
       context,
@@ -3206,6 +3370,8 @@ export class SpoilsEngine {
       "This card cannot be flipped up right now."
     );
 
+    // No FLIP UP tactic currently sizes a target's `count` off an unguarded
+    // random roll — see the same note in `activateAbility`.
     this.validateTargetDeclarations(
       this.getPlayTargetDeclarations(definition),
       context
@@ -3216,16 +3382,29 @@ export class SpoilsEngine {
       ...this.getTacticCosts(definition)
     ];
 
-    // Committed: the card is now its real type, not a face-down resource —
-    // so it can't be spent to pay its own FLIP UP cost. Clear that before
-    // checking/paying costs; roll back if the cost is unaffordable so a
-    // failed flip-up leaves nothing mutated.
+    // (CR §507.4b) You pay the Flip Up cost before flipping, so the card
+    // *may* count toward its own cost — but only reach for it as a last
+    // resort. Check affordability with the card already excluded (real
+    // type, not a resource) first; only fall back to paying while it's
+    // still face-down (and therefore eligible via `isResource`) if other
+    // resources alone can't cover it. This keeps a normal flip (where
+    // other resources suffice) from wastefully spending the very card
+    // that's about to leave the resource pool anyway.
     card.faceDown = false;
-    if (!this.canPayCosts(costs, context)) {
+    if (this.canPayCosts(costs, context)) {
+      this.payCosts(costs, context);
+    } else {
       card.faceDown = true;
-      throw new Error("FLIP UP costs cannot be paid.");
+      assert(this.canPayCosts(costs, context), "FLIP UP costs cannot be paid.");
+      this.payCosts(costs, context);
+      card.faceDown = false;
     }
-    this.payCosts(costs, context);
+
+    // The old face-down resource has now left play and the face-up card
+    // enters play as a brand-new object (CR §411.3) — nothing about the
+    // old object carries over, including an attachment created by paying
+    // for its own flip above.
+    card.attachedTo = undefined;
 
     // Its effects — the "...and your faction loses 5 influence" / "...and
     // draw a card" rider first, then the card's own — resolve through a
@@ -9219,6 +9398,72 @@ export class SpoilsEngine {
         return;
       }
 
+      case "selectDeployTargets": {
+        assert(pending.kind === "selectDeployTargets", "This choice does not match the pending decision.");
+
+        // The same shape/context `deployCard` itself validates against —
+        // built here (not just left to `deployCard`'s own re-validation)
+        // so a bad answer throws BEFORE `pendingChoice` is cleared below,
+        // rather than destroying the choice with no way to retry it.
+        const previewContext: ResolutionContext = {
+          sourceId: pending.sourceId,
+          controllerId: pending.playerId,
+          selected: pending.selected,
+          variables: pending.variables
+        };
+
+        const mergedSelected: Record<string, CardInstanceId[]> = { ...pending.selected };
+        for (const declaration of pending.declarations) {
+          const selection = choice.selected[declaration.id];
+          assert(selection, `Missing selection for target '${declaration.id}'.`);
+
+          const max = this.evaluateNumber(declaration.count, previewContext);
+          const min = declaration.optional ? 0 : max;
+          assert(
+            selection.length >= min && selection.length <= max,
+            `Target '${declaration.id}' requires ` +
+              (min === max ? `${max}` : `${min}-${max}`) +
+              " selection(s)."
+          );
+          assert(
+            new Set(selection).size === selection.length,
+            `Target '${declaration.id}' selected the same card more than once.`
+          );
+
+          const legal = new Set(
+            this.targetCandidates(declaration.selector, previewContext).map(card => card.id)
+          );
+          for (const cardId of selection) {
+            assert(legal.has(cardId), `Illegal target '${cardId}' for '${declaration.id}'.`);
+          }
+
+          this.assertDistinctNames(declaration, selection);
+          mergedSelected[declaration.id] = selection;
+        }
+
+        this.state.pendingChoice = undefined;
+
+        // Re-runs `deployCard` in full — safe because nothing was paid or
+        // mutated before this choice was opened (see `openDeployTargetChoice`)
+        // and the engine accepts no other action while a choice is pending,
+        // so nothing about the board could have changed in between.
+        // `pending.variables` is passed as both the resolved variables and
+        // `trustedVariables`, so the roll already made isn't repeated.
+        this.deployCard(
+          pending.playerId,
+          pending.sourceId,
+          mergedSelected,
+          pending.variables,
+          pending.free,
+          pending.fromZone,
+          pending.costOverride,
+          pending.ignoreThreshold,
+          pending.mode,
+          pending.variables
+        );
+        return;
+      }
+
       case "orderTriggers": {
         assert(pending.kind === "orderTriggers", "This choice does not match the pending decision.");
 
@@ -9643,7 +9888,7 @@ export class SpoilsEngine {
               selected: choice.selected ?? {},
               variables: choice.variables ?? {}
             };
-            this.applyVariableRolls(ability.variables, ctx);
+            this.applyVariableRolls(ability.variables, ability.variableBounds, ctx);
             this.validateTargetDeclarations(ability.targets ?? [], ctx);
             this.payCosts(ability.costs ?? [], ctx);
             for (let n = 0; n < Math.max(1, pending.times); n++) {

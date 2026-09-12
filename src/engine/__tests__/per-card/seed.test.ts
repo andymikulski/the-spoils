@@ -53,6 +53,11 @@ const declineAll = (pc: { kind: string; [k: string]: unknown }) => {
       for (const d of (pc.declarations as { id: string }[] | undefined) ?? []) sel[d.id] = [];
       return { kind: "selectTargets", selected: sel };
     }
+    case "selectDeployTargets": {
+      const sel: Record<string, string[]> = {};
+      for (const d of (pc.declarations as { id: string }[] | undefined) ?? []) sel[d.id] = [];
+      return { kind: "selectDeployTargets", selected: sel };
+    }
     case "distributeAmong":
       return { kind: "distributeAmong", shares: {} };
     case "chooseNumber":

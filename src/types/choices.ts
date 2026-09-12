@@ -37,6 +37,34 @@ export interface PendingTargetChoice {
   declarations: TargetDeclaration[];
 }
 
+/**
+ * Deploying a card whose target `count` depends on an unguarded random
+ * roll ("flip a coin; X is 1 or 2. Pick X or fewer items." — Hammer
+ * Smash): the roll already happened (and is logged) by the time this
+ * opens, but the client couldn't have known it in advance to size an
+ * atomic selection. `resolvePendingChoice` re-runs `deployCard` with the
+ * answer merged in and the same roll reused, never re-rolled. See
+ * `findRandomSizedTargetDeclarations` / `openDeployTargetChoice` in
+ * `SpoilsEngine.ts`.
+ */
+export interface PendingDeployTargetChoice {
+  kind: "selectDeployTargets";
+  id: string;
+  playerId: PlayerId;
+  sourceId: CardInstanceId;
+  /** Only the declarations whose count depends on the roll — anything else on the card already validated normally. */
+  declarations: TargetDeclaration[];
+  /** Already-resolved selections for any non-deferred declarations on the same card. */
+  selected: Record<string, CardInstanceId[]>;
+  /** The already-rolled/resolved variables (including the random roll this choice exists for) — reused verbatim on resume. */
+  variables: Record<string, number>;
+  free: boolean;
+  fromZone: boolean;
+  costOverride?: number;
+  ignoreThreshold: boolean;
+  mode?: number;
+}
+
 /** Identifies one queued trigger: the card it came from and which ability. */
 export interface TriggerRef {
   sourceId: CardInstanceId;
@@ -355,6 +383,7 @@ export interface PendingSpendCountersMenuChoice {
 export type PendingChoice =
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
+  | PendingDeployTargetChoice
   | PendingTriggerOrderChoice
   | PendingChooserTargetChoice
   | PendingChooserOptionChoice

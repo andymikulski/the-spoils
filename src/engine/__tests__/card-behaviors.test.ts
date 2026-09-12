@@ -3058,6 +3058,13 @@ function hammerSmash(): CardDefinition {
   });
 }
 
+// The `x` roll a target `count` depends on can't be known by a caller
+// before the engine makes it (see "The client-supplied `variables` exploit"
+// in ~/dev/rotten/docs/multiplayer-architecture.md) — `playCard` always
+// pauses on a `selectDeployTargets` pending choice for a card shaped like
+// this, roll already made, regardless of whether `selected` was supplied
+// upfront. A client-supplied `variables.x` is ignored outright: the roll
+// stays authoritative even if a caller tries to override it.
 describe("ability-level variable rolls (Hammer Smash's coin flip)", () => {
   test("X=1 (coin flip low) allows picking only 1 item", () => {
     const { engine, id } = buildGame({
@@ -3069,20 +3076,22 @@ describe("ability-level variable rolls (Hammer Smash's coin flip)", () => {
       ]
     });
 
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("smash") });
+
+    assert.equal(engine.state.pendingChoice?.kind, "selectDeployTargets");
+
     assert.throws(() =>
       engine.perform({
-        type: "playCard",
+        type: "resolvePendingChoice",
         playerId: P1,
-        cardId: id("smash"),
-        selected: { picked: [id("item1"), id("item2")] }
+        choice: { kind: "selectDeployTargets", selected: { picked: [id("item1"), id("item2")] } }
       })
     );
 
     engine.perform({
-      type: "playCard",
+      type: "resolvePendingChoice",
       playerId: P1,
-      cardId: id("smash"),
-      selected: { picked: [id("item1")] }
+      choice: { kind: "selectDeployTargets", selected: { picked: [id("item1")] } }
     });
     resolvePendingResponses(engine);
 
@@ -3100,16 +3109,90 @@ describe("ability-level variable rolls (Hammer Smash's coin flip)", () => {
       ]
     });
 
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("smash") });
     engine.perform({
-      type: "playCard",
+      type: "resolvePendingChoice",
       playerId: P1,
-      cardId: id("smash"),
-      selected: { picked: [id("item1"), id("item2")] }
+      choice: { kind: "selectDeployTargets", selected: { picked: [id("item1"), id("item2")] } }
     });
     resolvePendingResponses(engine);
 
     assert.equal(engine.state.cards[id("item1")].zone, "discard");
     assert.equal(engine.state.cards[id("item2")].zone, "discard");
+  });
+
+  test("a client-supplied variables.x override is ignored — the engine's own roll always wins", () => {
+    const { engine, id } = buildGame({
+      random: () => 0, // the true roll: min(1) + floor(0*2) = 1
+      cards: [
+        { key: "smash", def: hammerSmash(), owner: P1, zone: "hand" },
+        { key: "item1", def: item({ name: "Item1" }), owner: P2 },
+        { key: "item2", def: item({ name: "Item2" }), owner: P2 }
+      ]
+    });
+
+    // A malicious/buggy caller claims the coin landed on 2 and tries to pick
+    // both items in one atomic call. The engine still rolls for itself (x=1
+    // here), ignores the supplied override and selection, and pauses.
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("smash"),
+      variables: { x: 2 },
+      selected: { picked: [id("item1"), id("item2")] }
+    });
+
+    assert.equal(engine.state.pendingChoice?.kind, "selectDeployTargets");
+    assert.throws(() =>
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: P1,
+        choice: { kind: "selectDeployTargets", selected: { picked: [id("item1"), id("item2")] } }
+      })
+    );
+  });
+});
+
+// Synthetic card, not an authored one: an activated ability whose effect
+// amount (not a target count) is sized by an unguarded random roll, no
+// picker involved. Exercises the `applyVariableRolls` merge fix in
+// isolation from Hammer Smash's deferred-target-choice machinery, and via
+// `activateAbility` rather than `playCard` — a second call site of the fix.
+function coinFlipZapper(): CardDefinition {
+  return character({
+    name: "Coin Flip Zapper",
+    behavior: {
+      abilities: [
+        {
+          id: "zap",
+          type: "activated",
+          variables: { x: { type: "random", min: 1, max: 6 } },
+          effects: [{ type: "modifyInfluence", player: "controller", amount: { type: "variable", id: "x" } }]
+        }
+      ]
+    }
+  });
+}
+
+describe("applyVariableRolls: a caller-supplied override cannot rig an unguarded random roll", () => {
+  test("activateAbility ignores a client-supplied variables.x — the engine's own roll always wins", () => {
+    const { engine, id } = buildGame({
+      random: () => 0, // the true roll: min(1) + floor(0*6) = 1
+      cards: [{ key: "zapper", def: coinFlipZapper(), owner: P1 }]
+    });
+
+    const before = engine.state.players[P1].influence;
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("zapper"),
+      abilityId: "zap",
+      variables: { x: 6 } // claims the roll landed on the max; the engine must ignore this
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.players[P1].influence, before + 1);
   });
 });
 
@@ -5262,6 +5345,39 @@ describe("Seed 3 Wave J: flipUp action + deployedViaFlipUp condition", () => {
     assert.throws(() =>
       engine.perform({ type: "flipUp", playerId: P1, cardId: id("pop"), selected: { picked: [] } })
     );
+  });
+
+  // (CR §507.4b) "You pay the Flip Up cost before you actually flip the
+  // card over, so you can use the card to pay for its own Flip Up cost."
+  test("a face-down card can pay for its own FLIP UP cost", () => {
+    const selfPaying = tactic({
+      name: "SelfPaying",
+      flipUp: { cost: 1, threshold: 0 },
+      behavior: {
+        abilities: [
+          {
+            id: "main",
+            type: "activated",
+            effects: [{ type: "draw", player: "controller", amount: 1 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "sp", def: selfPaying, owner: P1, faceDown: true },
+        { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
+      ]
+    });
+
+    engine.perform({ type: "flipUp", playerId: P1, cardId: id("sp"), selected: {} });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("sp")].zone, "discard");
+    assert.equal(engine.state.cards[id("sp")].faceDown, false);
+    assert.equal(engine.state.cards[id("sp")].attachedTo, undefined);
+    assert.equal(engine.state.players[P1].hand.includes(id("d1")), true);
   });
 
   // A FLIP UP whose own effect pauses on a chooser: resolution suspends on

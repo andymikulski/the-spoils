@@ -191,6 +191,12 @@ function settle(engine: SpoilsEngine, budget = 60): string[] {
           engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "selectTargets", selected: sel } });
           break;
         }
+        case "selectDeployTargets": {
+          const sel: Record<string, string[]> = {};
+          for (const d of pc.declarations ?? []) sel[d.id] = [];
+          engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "selectDeployTargets", selected: sel } });
+          break;
+        }
         case "chooserSelectsTarget":
           engine.perform({ type: "resolvePendingChoice", playerId: who, choice: { kind: "chooserSelectsTarget", selected: pc.declaration?.optional ? [] : [legal()[0]].filter(Boolean) } });
           break;

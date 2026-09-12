@@ -34,3 +34,12 @@ export {
   getSaveSummary,
   type GameSaveSummary
 } from "./engine/persistence.js";
+export {
+  redactStateFor,
+  redactFlowViewFor,
+  redactLogFor,
+  HIDDEN_DEFINITION_ID,
+  type Viewer,
+  type RedactStateOptions,
+  type RedactLogOptions
+} from "./engine/redaction.js";

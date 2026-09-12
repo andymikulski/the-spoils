@@ -57,6 +57,11 @@ const declineAll = (pc: { kind: string; [k: string]: unknown }) => {
       for (const d of (pc.declarations as { id: string }[] | undefined) ?? []) sel[d.id] = [];
       return { kind: "selectTargets", selected: sel };
     }
+    case "selectDeployTargets": {
+      const sel: Record<string, string[]> = {};
+      for (const d of (pc.declarations as { id: string }[] | undefined) ?? []) sel[d.id] = [];
+      return { kind: "selectDeployTargets", selected: sel };
+    }
     case "distributeAmong":
       return { kind: "distributeAmong", shares: {} };
     case "chooseNumber":
@@ -1161,7 +1166,18 @@ describe("Open Beta — Hammer Smash", () => {
         ...bank("rage", 6, P1)
       ]
     });
-    play(engine, P1, id("hs"), { selected: { picked: [id("i1")] } });
+    // The coin-flip roll (min 1) means at least 1 pick is always in bounds
+    // regardless of which way it landed, but the client can't know the
+    // roll in advance — `play()` opens a `selectDeployTargets` pending
+    // choice rather than accepting `selected` atomically; see
+    // docs/multiplayer-architecture.md, "The client-supplied variables exploit".
+    play(engine, P1, id("hs"));
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "selectDeployTargets", selected: { picked: [id("i1")] } }
+    } as never);
+    resolvePendingResponses(engine);
     drain(engine, declineAll);
     assert.equal(engine.state.cards[id("i1")].zone, "discard");
   });

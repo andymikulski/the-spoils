@@ -55,6 +55,8 @@ const declineAll = (pc: { kind: string; [k: string]: unknown }) => {
       return { kind: "chooserSelectsOption", index: 0 };
     case "selectTargets":
       return { kind: "selectTargets", selected: {} };
+    case "selectDeployTargets":
+      return { kind: "selectDeployTargets", selected: {} };
     case "distributeAmong":
       return { kind: "distributeAmong", shares: {} };
     case "reorderDeck":
