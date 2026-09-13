@@ -1072,9 +1072,41 @@ describe("Open Beta — Forget", () => {
         ...bank("obsession", 6, P1)
       ]
     });
-    play(engine, P1, id("fg"), { selected: { bounced: [id("mine")], discarded: [id("oh")] } });
+    play(engine, P1, id("fg"), { selected: { bounced: [id("mine")] } });
+
     assert.equal(engine.state.cards[id("mine")].zone, "hand");
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("oh")] }
+    });
+    resolvePendingResponses(engine);
+
     assert.equal(engine.state.cards[id("oh")].zone, "discard");
+  });
+
+  test("the just-bounced card is a legal discard candidate (regression)", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "fg", def: def("Forget"), owner: P1, zone: "hand" },
+        { key: "victim", def: character({ name: "Victim" }), owner: P2, zone: "play" },
+        ...bank("obsession", 6, P1)
+      ]
+    });
+    play(engine, P1, id("fg"), { selected: { bounced: [id("victim")] } });
+
+    assert.equal(engine.state.cards[id("victim")].zone, "hand");
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("victim")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("victim")].zone, "discard");
   });
 });
 

@@ -318,8 +318,11 @@ describe("Universal faction behavior: Tournament Faction 'Resource' ability", ()
 //
 // New mechanisms this shape exercises (see BEHAVIORS.md): a selector
 // excluding a card type via `conditions` + the `__candidate` binding
-// (CardSelector.type only supports a single positive match), and two
-// independent TargetDeclarations resolved together by one playCard action.
+// (CardSelector.type only supports a single positive match), and a
+// `chooserSelectsTarget` effect nested after the bounce so the discard
+// choice is queried from the opponent's hand *after* the bounced card has
+// already landed there, not up front alongside the bounce target (a card
+// bounced by this same resolution must be a legal discard candidate).
 function forgetTactic(): CardDefinition {
   return tactic({
     name: "Forget",
@@ -345,16 +348,22 @@ function forgetTactic(): CardDefinition {
                 ]
               },
               count: 1
-            },
-            {
-              id: "discarded",
-              selector: { controller: "opponent", zone: "hand" },
-              count: 1
             }
           ],
           effects: [
             { type: "moveCard", target: { type: "selected", id: "bounced" }, to: "hand" },
-            { type: "moveCard", target: { type: "selected", id: "discarded" }, to: "discard" }
+            {
+              type: "chooserSelectsTarget",
+              chooser: "controller",
+              declaration: {
+                id: "discarded",
+                selector: { controller: "opponent", zone: "hand" },
+                count: 1
+              },
+              effects: [
+                { type: "moveCard", target: { type: "selected", id: "discarded" }, to: "discard" }
+              ]
+            }
           ]
         }
       ]
@@ -362,7 +371,7 @@ function forgetTactic(): CardDefinition {
   });
 }
 
-describe("card behavior: Forget (negated selector + multiple target declarations)", () => {
+describe("card behavior: Forget (negated selector + sequential chooserSelectsTarget)", () => {
   test("the 'non-resource' selector rejects a resource as the bounce target", () => {
     const { engine, id } = buildGame({
       cards: [
@@ -377,7 +386,7 @@ describe("card behavior: Forget (negated selector + multiple target declarations
         type: "playCard",
         playerId: P1,
         cardId: id("forget"),
-        selected: { bounced: [id("onlyResource")], discarded: [id("opponentCard")] }
+        selected: { bounced: [id("onlyResource")] }
       })
     );
   });
@@ -395,14 +404,55 @@ describe("card behavior: Forget (negated selector + multiple target declarations
       type: "playCard",
       playerId: P1,
       cardId: id("forget"),
-      selected: { bounced: [id("victim")], discarded: [id("opponentCard")] }
+      selected: { bounced: [id("victim")] }
     });
     resolvePendingResponses(engine);
 
     assert.equal(engine.state.cards[id("victim")].zone, "hand");
     assert.ok(engine.state.players[P2].hand.includes(id("victim")));
+
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+    assert.equal(engine.state.pendingChoice?.playerId, P1);
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("opponentCard")] }
+    });
+    resolvePendingResponses(engine);
+
     assert.equal(engine.state.cards[id("opponentCard")].zone, "discard");
     assert.ok(engine.state.players[P2].discard.includes(id("opponentCard")));
+  });
+
+  test("the just-bounced card is itself a legal discard candidate (regression: it must land in hand before the discard choice is offered)", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "forget", def: forgetTactic(), owner: P1, zone: "hand" },
+        { key: "victim", def: character({ name: "Victim" }), owner: P2 },
+        { key: "opponentCard", def: character({ name: "Opponent Card" }), owner: P2, zone: "hand" }
+      ]
+    });
+
+    engine.perform({
+      type: "playCard",
+      playerId: P1,
+      cardId: id("forget"),
+      selected: { bounced: [id("victim")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("victim")].zone, "hand");
+    assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsTarget");
+
+    engine.perform({
+      type: "resolvePendingChoice",
+      playerId: P1,
+      choice: { kind: "chooserSelectsTarget", selected: [id("victim")] }
+    });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("victim")].zone, "discard");
+    assert.ok(engine.state.players[P2].discard.includes(id("victim")));
   });
 });
 

@@ -833,14 +833,6 @@
                 ]
               },
               "count": 1
-            },
-            {
-              "id": "discarded",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand"
-              },
-              "count": 1
             }
           ],
           "effects": [
@@ -853,12 +845,26 @@
               "to": "hand"
             },
             {
-              "type": "moveCard",
-              "target": {
-                "type": "selected",
-                "id": "discarded"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "discarded",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand"
+                },
+                "count": 1
               },
-              "to": "discard"
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "discarded"
+                  },
+                  "to": "discard"
+                }
+              ]
             }
           ]
         }
@@ -26872,14 +26878,6 @@
                 ]
               },
               "count": 1
-            },
-            {
-              "id": "discarded",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand"
-              },
-              "count": 1
             }
           ],
           "effects": [
@@ -26892,12 +26890,26 @@
               "to": "hand"
             },
             {
-              "type": "moveCard",
-              "target": {
-                "type": "selected",
-                "id": "discarded"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "discarded",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand"
+                },
+                "count": 1
               },
-              "to": "discard"
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "discarded"
+                  },
+                  "to": "discard"
+                }
+              ]
             }
           ]
         }
@@ -58672,14 +58684,6 @@
                 ]
               },
               "count": 1
-            },
-            {
-              "id": "discarded",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand"
-              },
-              "count": 1
             }
           ],
           "effects": [
@@ -58692,12 +58696,26 @@
               "to": "hand"
             },
             {
-              "type": "moveCard",
-              "target": {
-                "type": "selected",
-                "id": "discarded"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "discarded",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "hand"
+                },
+                "count": 1
               },
-              "to": "discard"
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "discarded"
+                  },
+                  "to": "discard"
+                }
+              ]
             }
           ]
         }
