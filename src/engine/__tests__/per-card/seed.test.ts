@@ -143,11 +143,15 @@ describe("Seed — vanilla characters", () => {
   }
 });
 
-describe("Seed — faction cards (tournament DRAW)", () => {
+describe("Seed — faction cards (DRAW)", () => {
   for (const name of ["Alliance of Handy Weirdos", "Drowned Catacombs"]) {
     test(`${name} — DRAW pays 3 and draws`, () => {
+      const factionDef = def(name);
+      const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+      assert.ok(drawAbility, `${name} has no printed DRAW ability`);
+
       const { engine } = buildGame({
-        playerA: { faction: def(name) },
+        playerA: { faction: factionDef },
         cards: [
           { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" },
           ...bank("rage", 4, P1)
@@ -155,7 +159,7 @@ describe("Seed — faction cards (tournament DRAW)", () => {
       });
       const facId = engine.state.players[P1].factionId!;
       const hand = engine.state.players[P1].hand.length;
-      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: "tournament-draw", selected: {}, variables: {} });
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: drawAbility!.id, selected: {}, variables: {} });
       resolvePendingResponses(engine);
       assert.equal(engine.state.players[P1].hand.length, hand + 1);
     });
@@ -1147,15 +1151,41 @@ describe("Seed — H07 P3pp3r", () => {
 
 describe("Seed — Hall of Great Justice", () => {
   test("DRAW pays 3 and draws", () => {
+    const factionDef = def("Hall of Great Justice");
+    const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+    assert.ok(drawAbility, "Hall of Great Justice has no printed DRAW ability");
+
     const { engine } = buildGame({
-      playerA: { faction: def("Hall of Great Justice") },
+      playerA: { faction: factionDef },
       cards: [{ key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }, ...bank("rage", 4, P1)]
     });
     const facId = engine.state.players[P1].factionId!;
     const hand = engine.state.players[P1].hand.length;
-    engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: "tournament-draw", selected: {}, variables: {} });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: drawAbility!.id, selected: {}, variables: {} });
     resolvePendingResponses(engine);
     assert.equal(engine.state.players[P1].hand.length, hand + 1);
+  });
+
+  test("FOR GREAT JUSTICE! destroys a character you control and inflicts its strength on another", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: def("Hall of Great Justice") },
+      cards: [
+        { key: "sac", def: character({ name: "Sac", strength: 4, life: 2 }), owner: P1, zone: "play" },
+        { key: "foe", def: character({ name: "Foe", life: 6 }), owner: P2, zone: "play" },
+        ...bank("rage", 5, P1)
+      ]
+    });
+    const facId = engine.state.players[P1].factionId!;
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: facId,
+      abilityId: "hall-for-great-justice",
+      selected: { c1: [id("sac")], c2: [id("foe")] }
+    });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("sac")].zone, "discard");
+    assert.equal(engine.state.cards[id("foe")].damage, 4);
   });
 });
 
@@ -2849,16 +2879,20 @@ describe("Seed — more staple / downside resources", () => {
   }
 });
 
-describe("Seed — more faction cards (tournament DRAW)", () => {
+describe("Seed — more faction cards (DRAW)", () => {
   for (const name of ["The Tournament Faction", "Moist Cave of the Darkpump", "Order of the Golden String"]) {
     test(`${name} — DRAW pays 3 and draws`, () => {
+      const factionDef = def(name);
+      const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+      assert.ok(drawAbility, `${name} has no printed DRAW ability`);
+
       const { engine } = buildGame({
-        playerA: { faction: def(name) },
+        playerA: { faction: factionDef },
         cards: [{ key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }, ...bank("rage", 4, P1)]
       });
       const facId = engine.state.players[P1].factionId!;
       const hand = engine.state.players[P1].hand.length;
-      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: "tournament-draw", selected: {}, variables: {} });
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: drawAbility!.id, selected: {}, variables: {} });
       resolvePendingResponses(engine);
       assert.equal(engine.state.players[P1].hand.length, hand + 1);
     });

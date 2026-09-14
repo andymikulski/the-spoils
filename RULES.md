@@ -260,16 +260,42 @@ carry activated abilities, usable any time you could use an ability
   for them). 2-player only.
 - **`setup.startingResources`** beyond the flat `{ count, names?,
   stapleOnly? }` — `slots` is a per-slot program (a `"resource"` slot puts a
-  face-up resource, an `"anyCard"` slot puts any card and turns it face-down
-  if it is not a resource — The Society of Magical Propriety's "Any 1
-  resource, Any 1 card"); `chosenStaples: { min, max, plus? }` is a
-  setup-chosen count of staples plus fixed extras (The Union of
+  face-up resource, unless its own `faceDown: true` puts it into play
+  face-down instead — The Primitive Tribes of Thabbash's "1 face-down
+  Obsession, 1 staple resource"; an `"anyCard"` slot puts any card and turns
+  it face-down if it is not a resource — The Society of Magical Propriety's
+  "Any 1 resource, Any 1 card"); `distinctStaples` requires the `count`
+  starting staples to be different kinds (Unlikely Heroes, Defenders of
+  Marduun — "Any N different staple resources"); `chosenStaples: { min, max,
+  plus? }` is a setup-chosen count of staples plus fixed extras (The Union of
   Unextraordinary Miners' MONEY FOR NOTHING — X comes from
   `FactionGameSetupOptions.startingResourceX`, clamped to `[min, max]`,
   default `min`); `matchOpponentCount` tops the **opponent** up with staples
   until both players hold the same number of starting resources. As with the
   flat form the engine picks cards in deck order — the player does not choose
   *which* staple / card.
+- **`setup.startingDrawSearch`** — an extra Starting Draw step: the first
+  card in deck order matching `selector` whose `CardDefinitionId` differs
+  from every starting resource just placed goes to hand, before the opening
+  hand is drawn (Unlikely Heroes — "you may search your deck for a staple
+  resource that is not any of your starting resources ... put it into your
+  hand"). Always taken automatically, the same "no real choice, so no
+  interactive phase" treatment the engine gives every other starting-resource
+  pick — declining a free, strictly-beneficial card is never correct.
+- **`flipUpTax`** — `{ amount, cardType? }` adds `amount` to a card's printed
+  FLIP UP cost for every flip-up deploy by this faction's controller,
+  `cardType`-scoped (The Primitive Tribes of Thabbash — "you must pay 2 to
+  deploy tactics using FLIP UP"). Parallel to `ContinuousAbility.searchTax`,
+  but for flip-up deployment instead of deck searches.
+
+Two small additions to the general ability vocabulary exist only to support
+faction cards so far: `TargetDeclaration.distinctTrades` (every selection in
+one declaration must have a distinct printed `trade` — Defenders of
+Marduun's RALLY, "3 characters that don't share a trade", parallel to
+`distinctNames`) and the `sharesTradeWithAny` condition (`target`'s trade
+equals the trade of at least one card matching `among` — Legions of Chaos'
+"a character that does not share a trade with any characters you control" is
+`not` + this).
 
 Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
 Alliance, Imperial Army, ...) additionally reference format mechanics that

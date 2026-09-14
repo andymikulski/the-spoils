@@ -887,8 +887,8 @@ describe("1st Edition Part 2 — First Unified Market of Abstract Secure Theoret
     });
     const factionId = engine.state.players[P1].factionId!;
     const handBefore = engine.state.players[P1].hand.length;
-    // tournament DRAW normally costs 3; with the FUMAST discount, 2 (which we have)
-    engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: "tournament-draw" });
+    // The Evil Alliance's DRAW normally costs 3; with the FUMAST discount, 2 (which we have)
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: "evil-draw" });
     resolvePendingResponses(engine);
     assert.equal(engine.state.players[P1].hand.length, handBefore + 1);
   });

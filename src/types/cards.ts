@@ -61,7 +61,17 @@ export interface FactionDefinition {
        * Propriety).
        */
       slots?: Array<
-        | { kind: "resource"; staple?: boolean; name?: string }
+        | {
+            kind: "resource";
+            staple?: boolean;
+            name?: string;
+            /**
+             * "1 face-down Obsession, 1 staple resource" (The Primitive
+             * Tribes of Thabbash) — put this slot's resource into play
+             * face-down (an anonymous Volition provider) instead of face-up.
+             */
+            faceDown?: boolean;
+          }
         | { kind: "anyCard" }
       >;
       /**
@@ -80,6 +90,21 @@ export interface FactionDefinition {
        * 2-player only.
        */
       matchOpponentCount?: boolean;
+    };
+
+    /**
+     * "You may search your deck for [a card matching `selector`] that is
+     * not any of your starting resources, reveal it and put it into your
+     * hand." (Unlikely Heroes) — resolved automatically once starting
+     * resources are placed, before the opening-hand draw: the first card in
+     * deck order matching `selector` whose `CardDefinitionId` differs from
+     * every starting resource just placed (a no-op if none exists). Always
+     * taken — a free, strictly-beneficial card, the same "the choice is
+     * never actually declined" treatment the engine gives The Society of
+     * Magical Propriety's optional token.
+     */
+    startingDrawSearch?: {
+      selector: CardSelector;
     };
 
     openingHand: {
@@ -141,6 +166,18 @@ export interface FactionDefinition {
    * every threshold, regardless of which resource icons they control.
    */
   meetsAllThresholds?: boolean;
+
+  /**
+   * "You must pay N more to deploy tactics using FLIP UP." (The Primitive
+   * Tribes of Thabbash) — added to a card's printed FLIP UP cost for every
+   * flip-up deploy by this faction's controller, `cardType`-scoped (omit
+   * for "every card"). Parallel to `ContinuousAbility.searchTax`, but for
+   * flip-up deployment instead of deck searches.
+   */
+  flipUpTax?: {
+    amount: NumberExpression;
+    cardType?: CardType;
+  };
 
   /**
    * While this faction card is in play it rewrites specific sub-rules of

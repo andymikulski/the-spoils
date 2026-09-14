@@ -251,16 +251,20 @@ describe("Seed Saga — reprint parity", () => {
 // Novel cards
 // =====================================================================
 
-describe("Seed Saga — faction cards (tournament DRAW)", () => {
+describe("Seed Saga — faction cards (DRAW)", () => {
   for (const name of ["Defenders of Marduun", "Legions of Chaos"]) {
     test(`${name} — DRAW pays 3 and draws`, () => {
+      const factionDef = def(name);
+      const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+      assert.ok(drawAbility, `${name} has no printed DRAW ability`);
+
       const { engine } = buildGame({
-        playerA: { faction: def(name) },
+        playerA: { faction: factionDef },
         cards: [{ key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }, ...bank("rage", 4, P1)]
       });
       const facId = engine.state.players[P1].factionId!;
       const hand = engine.state.players[P1].hand.length;
-      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: "tournament-draw", selected: {}, variables: {} });
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: facId, abilityId: drawAbility!.id, selected: {}, variables: {} });
       resolvePendingResponses(engine);
       assert.equal(engine.state.players[P1].hand.length, hand + 1);
     });

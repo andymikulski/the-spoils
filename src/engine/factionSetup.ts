@@ -8,7 +8,8 @@ import type {
   CardInstanceId,
   FactionDefinition,
   GameState,
-  PlayerId
+  PlayerId,
+  ResolutionContext
 } from "../types/index.js";
 import {
   assert,
@@ -147,7 +148,7 @@ function chooseStartingResources(
   const player = engine.state.players[playerId];
   const used = new Set<CardInstanceId>();
 
-  const takeResource = (opts: { staple?: boolean; name?: string }): StartingResourcePick => {
+  const takeResource = (opts: { staple?: boolean; name?: string; faceDown?: boolean }): StartingResourcePick => {
     const name = opts.name?.toLowerCase();
     const cardId = player.deck.find(id => {
       if (used.has(id)) return false;
@@ -162,7 +163,7 @@ function chooseStartingResources(
       `Faction setup: no matching starting resource${opts.name ? ` '${opts.name}'` : ""} for '${playerId}'.`
     );
     used.add(cardId);
-    return { cardId, faceDown: false };
+    return { cardId, faceDown: opts.faceDown ?? false };
   };
 
   const takeAnyCard = (): StartingResourcePick => {
@@ -175,7 +176,7 @@ function chooseStartingResources(
   if (rule.slots?.length) {
     return rule.slots.map(slot =>
       slot.kind === "resource"
-        ? takeResource({ staple: slot.staple, name: slot.name })
+        ? takeResource({ staple: slot.staple, name: slot.name, faceDown: slot.faceDown })
         : takeAnyCard()
     );
   }
@@ -389,6 +390,42 @@ export function createTwoPlayerFactionGame(
 }
 
 /**
+ * `FactionDefinition.setup.startingDrawSearch` — the first card in deck
+ * order matching `selector` whose `CardDefinitionId` differs from every
+ * starting resource `playerId` just placed goes to hand. No-op if the
+ * faction carries no such rule, or nothing in the deck matches.
+ */
+function applyStartingDrawSearch(engine: SpoilsEngine, playerId: PlayerId): void {
+  const search = engine.getFactionDefinition(playerId)?.setup.startingDrawSearch;
+  if (!search) return;
+
+  const state = engine.state;
+  const player = state.players[playerId];
+  const placedDefinitionIds = new Set(
+    player.play
+      .filter(cardId => engine.getDefinition(cardId).type === "resource")
+      .map(cardId => engine.getDefinition(cardId).id)
+  );
+
+  const context: ResolutionContext = {
+    sourceId: player.factionId!,
+    controllerId: playerId,
+    selected: {}
+  };
+
+  const candidateId = engine
+    .queryCards(search.selector, context)
+    .map(card => card.id)
+    .find(cardId => !placedDefinitionIds.has(engine.getDefinition(cardId).id));
+
+  if (!candidateId) return;
+
+  player.deck = player.deck.filter(id => id !== candidateId);
+  state.cards[candidateId].zone = "hand";
+  player.hand.push(candidateId);
+}
+
+/**
  * The rest of faction setup once every player's starting resources are in
  * play — MONEY FOR NOTHING's staple top-up, the deck shuffles, opening-hand
  * draws (honouring The Knitting Coalition's STARTING DRAW override), then
@@ -431,6 +468,13 @@ export function finishFactionSetup(engine: SpoilsEngine): void {
       moveSetupCardToPlay(state, opponentId, extra.cardId, false);
       startingResourceCounts[opponentId] += 1;
     }
+  }
+
+  // "You may search your deck for [a resource] that is not any of your
+  // starting resources, reveal it and put it into your hand." (Unlikely
+  // Heroes) — before the shuffle, like every other setup placement.
+  for (const playerId of playerIds) {
+    applyStartingDrawSearch(engine, playerId);
   }
 
   const random = () => drawRandom(state);

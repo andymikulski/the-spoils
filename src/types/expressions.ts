@@ -426,4 +426,10 @@ export interface TargetDeclaration {
    * `selectTargets`, `chooserSelectsTarget`).
    */
   distinctNames?: boolean;
+  /**
+   * "N characters that don't share a trade" (Defenders of Marduun — RALLY) —
+   * every selection must have a distinct printed `CardDefinition.trade`.
+   * Parallel to `distinctNames`, for trade instead of name.
+   */
+  distinctTrades?: boolean;
 }

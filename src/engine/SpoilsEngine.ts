@@ -3377,8 +3377,21 @@ export class SpoilsEngine {
       context
     );
 
+    // "You must pay 2 to deploy tactics using FLIP UP." (The Primitive
+    // Tribes of Thabbash) — a per-faction surcharge on top of the card's own
+    // printed FLIP UP cost.
+    // `definition.type` (the card's real printed type), not `hasCardType` —
+    // the card is still face-down at this point, and `getCardTypes` reports
+    // a face-down in-play card as a bare resource (CR §411.1) regardless of
+    // what it's about to be flipped up into.
+    const flipUpTax = this.getFactionDefinition(action.playerId)?.flipUpTax;
+    const flipUpTaxAmount =
+      flipUpTax && (!flipUpTax.cardType || definition.type === flipUpTax.cardType)
+        ? this.evaluateNumber(flipUpTax.amount, context)
+        : 0;
+
     const costs: Cost[] = [
-      { type: "payResources", amount: flipUp.cost },
+      { type: "payResources", amount: flipUp.cost + flipUpTaxAmount },
       ...this.getTacticCosts(definition)
     ];
 
@@ -4662,6 +4675,18 @@ export class SpoilsEngine {
         return !!cardId && this.getDefinition(cardId).trade === condition.trade;
       }
 
+      case "sharesTradeWithAny": {
+        const cardId = this.resolveTargetRef(
+          condition.target ?? { type: "selected", id: "__candidate" },
+          context
+        );
+        if (!cardId) return false;
+        const trade = this.getDefinition(cardId).trade;
+        return this.queryCards(condition.among, context).some(
+          card => card.id !== cardId && this.getDefinition(card.id).trade === trade
+        );
+      }
+
       case "hasUnique": {
         const cardId = this.resolveTargetRef(condition.target, context);
         return !!cardId && this.getEffectiveUnique(cardId) != null;
@@ -5374,6 +5399,7 @@ export class SpoilsEngine {
       }
 
       this.assertDistinctNames(declaration, selected);
+      this.assertDistinctTrades(declaration, selected);
     }
   }
 
@@ -5450,6 +5476,19 @@ export class SpoilsEngine {
     assert(
       new Set(names).size === names.length,
       `Target '${declaration.id}' requires cards with different names.`
+    );
+  }
+
+  /** "N characters that don't share a trade" — `TargetDeclaration.distinctTrades`. */
+  private assertDistinctTrades(
+    declaration: TargetDeclaration,
+    selected: readonly CardInstanceId[]
+  ): void {
+    if (!declaration.distinctTrades) return;
+    const trades = selected.map(id => this.getDefinition(id).trade);
+    assert(
+      new Set(trades).size === trades.length,
+      `Target '${declaration.id}' requires cards that don't share a trade.`
     );
   }
 
@@ -9380,6 +9419,7 @@ export class SpoilsEngine {
           }
 
           this.assertDistinctNames(declaration, selection);
+          this.assertDistinctTrades(declaration, selection);
         }
 
         trigger.context.selected = {
@@ -9438,6 +9478,7 @@ export class SpoilsEngine {
           }
 
           this.assertDistinctNames(declaration, selection);
+          this.assertDistinctTrades(declaration, selection);
           mergedSelected[declaration.id] = selection;
         }
 
@@ -9533,6 +9574,7 @@ export class SpoilsEngine {
         }
 
         this.assertDistinctNames(declaration, selection);
+        this.assertDistinctTrades(declaration, selection);
 
         pending.context.selected = {
           ...pending.context.selected,

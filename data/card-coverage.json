@@ -2543,6 +2543,51 @@
         "969913a5-1444-4d50-9225-9e82a30a56a6",
         "9192b2fa-b568-4ac1-bfd9-b9cb31d8fa42"
       ]
+    },
+    "flip-up-tax": {
+      "status": "implemented",
+      "kind": [
+        "effect",
+        "faction"
+      ],
+      "spec": "FactionDefinition.flipUpTax?: { amount: NumberExpression; cardType?: CardType } — added to a card's printed FLIP UP cost for every flip-up deploy by this faction's controller, cardType-scoped. The Primitive Tribes of Thabbash (\"you must pay 2 to deploy tactics using FLIP UP\"). Parallel to ContinuousAbility.searchTax.",
+      "cards": [
+        "94296fb0-a890-4503-8146-9c7cacc079d0"
+      ],
+      "rulesRef": "RULES.md §3.6"
+    },
+    "starting-draw-search": {
+      "status": "implemented",
+      "kind": [
+        "faction"
+      ],
+      "spec": "FactionDefinition.setup.startingDrawSearch?: { selector: CardSelector } — an extra Starting Draw step resolved automatically once starting resources are placed: the first card in deck order matching selector whose CardDefinitionId differs from every just-placed starting resource goes to hand, before the opening-hand draw. Unlikely Heroes.",
+      "cards": [
+        "710d5ee7-a234-46dc-9e78-8d49a146c6ec"
+      ],
+      "rulesRef": "RULES.md §3.6"
+    },
+    "distinct-trades-target": {
+      "status": "implemented",
+      "kind": [
+        "expression"
+      ],
+      "spec": "TargetDeclaration.distinctTrades?: boolean — every selection in one declaration must have a distinct printed CardDefinition.trade, parallel to distinctNames. Defenders of Marduun's RALLY (\"3 characters that don't share a trade\").",
+      "cards": [
+        "127ff677-bc48-408c-bd7e-0772aac3e0f7"
+      ],
+      "rulesRef": "RULES.md §3.6"
+    },
+    "shares-trade-with-any": {
+      "status": "implemented",
+      "kind": [
+        "condition"
+      ],
+      "spec": "Condition { type: \"sharesTradeWithAny\", target?, among: CardSelector } — true when target's printed trade equals the printed trade of at least one card matching among (target excluded). Legions of Chaos — \"a character that does not share a trade with any characters you control\" is not + this.",
+      "cards": [
+        "d1e103cf-9aed-466c-abdf-f856469e5ffa"
+      ],
+      "rulesRef": "RULES.md §3.6"
     }
   },
   "parityGaps": {
@@ -2686,7 +2731,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "762dd3a4aec0",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3077,7 +3122,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "698b09a34265",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3444,7 +3489,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "3c41b7c690d2",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3505,7 +3550,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "69a476fa6e28",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3567,7 +3612,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "42e4a9c02752",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3600,7 +3645,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "384e0bbf8c6b",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3631,7 +3676,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "bbdde068d8f6",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -3722,7 +3767,7 @@
       "set": "Seed 3",
       "type": "faction",
       "status": "verified",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "b4878502c22e",
       "behavior": {
         "needed": false,
         "shapes": [
@@ -18690,12 +18735,17 @@
       "name": "Lugubrian Council Expedition Division",
       "set": "Holy Heist",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "58f7951ba36d",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Obsession\" + staple) — proven shape, already used by The Society of Magical Propriety",
+          "faction.turn.startOfTurnEffects addCounter (token on source) — proven shape, already used by The Society of Magical Propriety",
+          "activated: removeCounter(4) cost + chooserSelectsTarget(deck, tactic) + moveCard(hand) — proven shape, already used by The Society of Magical Propriety's Encyclopedic Knowledge",
+          "activated: removeCounter(2) cost + chooserSelectsTarget(character) + addCounter on the chosen target"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -18706,9 +18756,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Obsession + a staple); DEVELOP RULE accrues a token each turn (turn.startOfTurnEffects); EVIL PLAN (remove 4 tokens, pay 3, search deck for a tactic into hand) and ENERGIZE WITH HUMOUR (remove 2 tokens, put a token on a chosen character) are real faction.abilities. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -20553,12 +20603,16 @@
       "name": "The Primitive Tribes of Thabbash",
       "set": "Holy Heist",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "694e84a5205e",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots — needs a per-slot faceDown flag (small schema addition; today takeResource() in factionSetup.ts always returns faceDown:false)",
+          "faction-wide optional-cost redirect of the controller's own resolved tactics away from the discard pile into a face-down resource — generalizes the existing per-card \"self-disposition\" capability (CardDefinition.behavior.selfDisposition) from a fixed marker to a payable, faction-granted choice",
+          "a cost surcharge specific to FLIP UP tactic deployment — same shape as the existing ContinuousAbility.searchTax (\"search-tax\" capability), but keyed to flip-up deployment instead of deck search"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -20567,11 +20621,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "flip-up-tax"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form with a face-down Obsession slot (new FactionDefinition.setup.startingResources.slots[].faceDown). A standing triggered ability (behavior.abilities, event cardMoved+cardMovedToZone:\"discard\") offers to pay 3 to redirect the controller's own resolved tactic into play as a face-down resource instead of the discard pile. flipUpTax:{amount:2,cardType:\"tactic\"} (new FactionDefinition.flipUpTax) surcharges FLIP UP tactic deploys. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -20580,7 +20636,7 @@
       "set": "Holy Heist",
       "type": "faction",
       "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "d13848359681",
       "behavior": {
         "needed": false,
         "shapes": [],
@@ -20880,12 +20936,16 @@
       "name": "Unlikely Heroes",
       "set": "Holy Heist",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "28a513334027",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.distinctStaples — already applied on this card (matches \"Any 2 different staple resources\")",
+          "a new setup-time step: optionally search the deck for a staple resource not among the 2 already chosen, reveal it, put it into hand — no existing FactionDefinition.setup field models an extra search step; finishFactionSetup() only knows about startingResources / openingHand / mulligan today",
+          "faction.setup.openingHand should be 7/8, not the current 8/9 (the printed 8/9 only applies going second — the printed draw counts already fold in the search: \"Then draw 7 going first, 8 going second\")"
+        ],
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -20894,11 +20954,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "starting-draw-search"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: distinctStaples was already correct; added the missing piece — STARTING DRAW searches the deck for a staple resource not among the 2 already placed, into hand, before the opening-hand draw (new FactionDefinition.setup.startingDrawSearch, resolved automatically like the engine's other \"which specific card\" setup choices). openingHand corrected to 7/8 (was the generic 8/9). Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -31616,7 +31678,7 @@
       "set": "Open Beta",
       "type": "faction",
       "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "d13848359681",
       "behavior": {
         "needed": false,
         "shapes": [],
@@ -38077,7 +38139,7 @@
       "set": "1st Edition",
       "type": "faction",
       "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "d13848359681",
       "behavior": {
         "needed": false,
         "shapes": [],
@@ -38824,12 +38886,15 @@
       "name": "Alliance of Handy Weirdos",
       "set": "Seed",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "1d05ba857850",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Elitism\" + staple) — proven shape",
+          "activated: pay 3, pick a character, createModifier +1/+1 untilEndOfTurn — proven stat-pump shape used throughout the catalog"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -38840,9 +38905,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Elitism + a staple). ENHANCE (pay 3, pick a character, +1 strength and +1 life this turn) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -40214,12 +40279,15 @@
       "name": "Drowned Catacombs",
       "set": "Seed",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "11331f3cfb50",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Deception\" + staple) — proven shape",
+          "activated: X = count of opponent's characters, pay X, pick a character with stat <= X, grantKeyword(covert) untilEndOfTurn — proven shapes (count expression, grantKeyword, statCompare selector filter)"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -40230,9 +40298,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Deception + a staple). SNEAK (X = opponent's character count, pay X, pick a character with X strength or less, it gains COVERT this turn) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -41276,12 +41344,15 @@
       "name": "Hall of Great Justice",
       "set": "Seed",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "3e12aab31c25",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Rage\" + staple) — proven shape",
+          "activated: pay 5, pick own character, remember its strength, destroy it, pick another character, dealDamage = remembered strength — proven sacrifice-for-damage shape"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -41292,9 +41363,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Rage + a staple). FOR GREAT JUSTICE! (pay 5, pick a character you control, destroy it, pick another character, inflict damage equal to the destroyed character's strength) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -42396,12 +42467,15 @@
       "name": "Moist Cave of the Darkpump",
       "set": "Seed",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "4b3e007fc7b6",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Obsession\" + staple) — proven shape",
+          "activated: pay 1, lookAndReorder top 1 card of own deck, optionally send to bottom — proven shape"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -42412,9 +42486,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Obsession + a staple). LUCUBRATE (pay 1, look at the top card of your deck, may put it on the bottom) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -42986,12 +43060,15 @@
       "name": "Order of the Golden String",
       "set": "Seed",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "3efc64b3ae58",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Greed\" + staple) — proven shape",
+          "activated: pay 4, draw 2, discard 1 — proven draw-then-discard shape"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -43002,9 +43079,9 @@
       },
       "engineCapability": [],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Greed + a staple). CONSPIRE (pay 4, draw 2 cards, discard a card) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -44678,7 +44755,7 @@
       "set": "Seed",
       "type": "faction",
       "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "d13848359681",
       "behavior": {
         "needed": false,
         "shapes": [],
@@ -54559,11 +54636,14 @@
       "name": "Alliance of Handy Weirdos",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "1d05ba857850",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Elitism\" + staple) — proven shape",
+          "activated: pay 3, pick a character, createModifier +1/+1 untilEndOfTurn — proven stat-pump shape used throughout the catalog"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -54576,7 +54656,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Seed Saga reprint of \"Alliance of Handy Weirdos\" (Seed) — vanilla, no behaviour needed.",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Elitism + a staple). ENHANCE (pay 3, pick a character, +1 strength and +1 life this turn) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -56398,12 +56478,15 @@
       "name": "Defenders of Marduun",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "a301c24be85e",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.distinctStaples — proven shape, already used by Unlikely Heroes",
+          "activated: use only outside battle, pay 5, pick 3 characters that don't share a trade, createModifier +2/+2 untilEndOfTurn on each — proven multi-target stat-pump shape"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -56412,11 +56495,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "distinct-trades-target"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES gained distinctStaples:true (\"Any 2 different staple resources\", same shape as Unlikely Heroes). RALLY (usable only outside a battle, pay 5, pick 3 characters that don't share a trade, they gain 2 strength and 2 life this turn) is a real faction.ability, using the new TargetDeclaration.distinctTrades flag. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -56821,11 +56906,14 @@
       "name": "Drowned Catacombs",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "11331f3cfb50",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Deception\" + staple) — proven shape",
+          "activated: X = count of opponent's characters, pay X, pick a character with stat <= X, grantKeyword(covert) untilEndOfTurn — proven shapes (count expression, grantKeyword, statCompare selector filter)"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -56838,7 +56926,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Seed Saga reprint of \"Drowned Catacombs\" (Seed) — vanilla, no behaviour needed.",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Deception + a staple). SNEAK (X = opponent's character count, pay X, pick a character with X strength or less, it gains COVERT this turn) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -58499,11 +58587,14 @@
       "name": "Hall of Great Justice",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "3e12aab31c25",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Rage\" + staple) — proven shape",
+          "activated: pay 5, pick own character, remember its strength, destroy it, pick another character, dealDamage = remembered strength — proven sacrifice-for-damage shape"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -58516,7 +58607,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Seed Saga reprint of \"Hall of Great Justice\" (Seed) — vanilla, no behaviour needed.",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Rage + a staple). FOR GREAT JUSTICE! (pay 5, pick a character you control, destroy it, pick another character, inflict damage equal to the destroyed character's strength) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -59557,12 +59648,15 @@
       "name": "Legions of Chaos",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "5ad1529c1f6e",
       "behavior": {
-        "needed": false,
-        "shapes": [],
-        "reusesProvenShape": null,
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources — already correct as plain \"any 2 staples\" (no distinctness required, unlike Defenders of Marduun / Unlikely Heroes)",
+          "triggered: event cardEnteredPlay (own character), mayPay(3) gate, chooserSelectsTarget(deck, character, trade-exclusion filter), moveCard(hand) — proven event + proven search shape"
+        ],
+        "reusesProvenShape": true,
         "newTestNeeded": false
       },
       "metadata": {
@@ -59571,11 +59665,13 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "shares-trade-with-any"
+      ],
       "display": {},
-      "confidence": null,
-      "notes": "",
-      "rulesAudited": false,
+      "confidence": "high",
+      "notes": "Authored 2026-09-14: base STARTING RESOURCES needed no fix (already matched \"any 2 staple resources\"). A triggered ability (behavior.abilities, event cardEnteredPlay on an own character) offers to pay 3 to search the deck for a character that shares no trade with any character controlled, into hand — the new sharesTradeWithAny condition. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
+      "rulesAudited": true,
       "fidelity": "full"
     },
     {
@@ -60260,11 +60356,14 @@
       "name": "Moist Cave of the Darkpump",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "4b3e007fc7b6",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Obsession\" + staple) — proven shape",
+          "activated: pay 1, lookAndReorder top 1 card of own deck, optionally send to bottom — proven shape"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -60277,7 +60376,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Seed Saga reprint of \"Moist Cave of the Darkpump\" (Seed) — vanilla, no behaviour needed.",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Obsession + a staple). LUCUBRATE (pay 1, look at the top card of your deck, may put it on the bottom) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -61051,11 +61150,14 @@
       "name": "Order of the Golden String",
       "set": "Seed Saga",
       "type": "faction",
-      "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "status": "verified",
+      "textHash": "3efc64b3ae58",
       "behavior": {
-        "needed": false,
-        "shapes": [],
+        "needed": true,
+        "shapes": [
+          "faction.setup.startingResources.slots (name:\"Greed\" + staple) — proven shape",
+          "activated: pay 4, draw 2, discard 1 — proven draw-then-discard shape"
+        ],
         "reusesProvenShape": true,
         "newTestNeeded": false
       },
@@ -61068,7 +61170,7 @@
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "Seed Saga reprint of \"Order of the Golden String\" (Seed) — vanilla, no behaviour needed.",
+      "notes": "Authored 2026-09-14: STARTING RESOURCES is a slots form (Greed + a staple). CONSPIRE (pay 4, draw 2 cards, discard a card) is a real faction.ability. Verified by src/engine/__tests__/faction-gap-authoring.test.ts.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -63467,7 +63569,7 @@
       "set": "Seed Saga",
       "type": "faction",
       "status": "vanilla",
-      "textHash": "da39a3ee5e6b",
+      "textHash": "d13848359681",
       "behavior": {
         "needed": false,
         "shapes": [],

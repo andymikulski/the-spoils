@@ -128,7 +128,11 @@ describe("Seed 3 — vanilla staple resources", () => {
 // Faction cards — generic tournament abilities
 // ---------------------------------------------------------------------------
 
-describe("Seed 3 — faction cards (tournament DRAW / RESOURCE abilities)", () => {
+describe("Seed 3 — faction cards (DRAW / RESOURCE abilities)", () => {
+  // "Slightly Less Evil Alliance" is excluded: it's the Showdown-only Villain
+  // companion card to The Evil Alliance and prints no STARTING
+  // RESOURCES/DRAW/RESTORE/DEVELOP section at all — only its 4 named
+  // Showdown abilities (see data/card-coverage.json notes for that card).
   const factions = [
     "The Evil Alliance",
     "The Society of Magical Propriety",
@@ -136,13 +140,16 @@ describe("Seed 3 — faction cards (tournament DRAW / RESOURCE abilities)", () =
     "The Open R&D Faction",
     "The Union of Unextraordinary Miners",
     "Imperial Army",
-    "Counter-Imperial Army",
-    "Slightly Less Evil Alliance"
+    "Counter-Imperial Army"
   ];
   for (const name of factions) {
-    test(`${name} — DRAW ability pays 3 and draws a card`, () => {
+    test(`${name} — DRAW ability draws a card`, () => {
+      const factionDef = def(name);
+      const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+      assert.ok(drawAbility, `${name} has no printed DRAW ability`);
+
       const { engine } = buildGame({
-        playerA: { faction: def(name) },
+        playerA: { faction: factionDef },
         cards: [
           ...bank("rage", 4, P1),
           { key: "d1", def: character({ name: "DeckA" }), owner: P1, zone: "deck" },
@@ -155,7 +162,7 @@ describe("Seed 3 — faction cards (tournament DRAW / RESOURCE abilities)", () =
         type: "activateAbility",
         playerId: P1,
         cardId: factionId,
-        abilityId: "tournament-draw"
+        abilityId: drawAbility!.id
       });
       resolvePendingResponses(engine);
       assert.equal(engine.state.players[P1].hand.length, before + 1);

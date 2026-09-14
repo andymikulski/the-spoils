@@ -106,7 +106,8 @@ const behaviorsTestSrc = [
   "src/engine/__tests__/seed2-exercise.test.ts",
   "src/engine/__tests__/sotde-smoke.test.ts",
   "src/engine/__tests__/sotde-exercise.test.ts",
-  "src/engine/__tests__/fidelity-fixes.test.ts"
+  "src/engine/__tests__/fidelity-fixes.test.ts",
+  "src/engine/__tests__/faction-gap-authoring.test.ts"
 ]
   .map(rel => {
     try {
@@ -189,7 +190,7 @@ const KNOWN_TYPE_TAGS = new Set([
   "loseInfluence", "moveSelected",
   // conditions
   "and", "or", "not", "sourceInZone", "sourceIsEventCard",
-  "eventCardControlledBy", "targetExists", "cardTypeIs", "cardTradeIs",
+  "eventCardControlledBy", "targetExists", "cardTypeIs", "cardTradeIs", "sharesTradeWithAny",
   "hasUnique", "hasAbility", "statCompare", "counterCompare", "numberCompare", "inBattle",
   "sourceIsDamageSource", "cardMovedFromZone", "cardMovedToZone", "battleRole", "eventPlayerIs",
   "targetInSelection", "eventOrdinal", "deploySameNameThisTurn",

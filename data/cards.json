@@ -14165,6 +14165,12 @@
         }
       }
     },
+    "trade": "Universal",
+    "rarity": "",
+    "cost": 0,
+    "threshold": 0,
+    "subtype": [],
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, pick one of the following: draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource.",
     "behavior": {
       "abilities": [
         {
@@ -14217,13 +14223,7 @@
           ]
         }
       ]
-    },
-    "trade": "Universal",
-    "rarity": "",
-    "cost": 0,
-    "threshold": 0,
-    "subtype": [],
-    "text": ""
+    }
   },
   {
     "id": "0c287282-82cf-4602-b37d-35d1bbea519c",
@@ -57334,6 +57334,12 @@
         }
       }
     },
+    "trade": "Universal",
+    "rarity": "",
+    "cost": 0,
+    "threshold": 0,
+    "subtype": [],
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, pick one of the following: draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource.",
     "behavior": {
       "abilities": [
         {
@@ -57386,13 +57392,7 @@
           ]
         }
       ]
-    },
-    "trade": "Universal",
-    "rarity": "",
-    "cost": 0,
-    "threshold": 0,
-    "subtype": [],
-    "text": ""
+    }
   },
   {
     "id": "710d5ee7-a234-46dc-9e78-8d49a146c6ec",
@@ -57400,7 +57400,7 @@
     "set": "Holy Heist",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 22,
       "setup": {
         "startingResources": {
           "count": 2,
@@ -57408,12 +57408,20 @@
           "distinctStaples": true
         },
         "openingHand": {
-          "goingFirst": 8,
-          "goingSecond": 9
+          "goingFirst": 7,
+          "goingSecond": 8
         },
         "mulligan": {
           "count": 1,
           "mode": "replaceAny"
+        },
+        "startingDrawSearch": {
+          "selector": {
+            "controller": "self",
+            "zone": "deck",
+            "type": "resource",
+            "staple": true
+          }
         }
       },
       "turn": {
@@ -57433,12 +57441,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "heroes-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -57456,7 +57462,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "heroes-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -57465,24 +57471,41 @@
               "amount": 4
             }
           ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
               },
-              "faceDown": "auto"
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -57493,7 +57516,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: Any 2 different staple resources. -- STARTING DRAW: You may search your deck for a staple resource that is not any of your starting resources, reveal it and put it into your hand. Then draw 7 going first, 8 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource."
   },
   {
     "id": "8d9ffff2-e3a6-4caf-be4f-4dc6e7241a0d",
@@ -57501,11 +57524,20 @@
     "set": "Holy Heist",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 21,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Obsession"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -57532,13 +57564,19 @@
               "count": 1
             }
           ]
-        }
-      }
-    },
-    "behavior": {
+        },
+        "startOfTurnEffects": [
+          {
+            "type": "addCounter",
+            "target": "source",
+            "counter": "token",
+            "amount": 1
+          }
+        ]
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "lugubrian-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -57556,7 +57594,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "lugubrian-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -57565,24 +57603,133 @@
               "amount": 4
             }
           ],
-          "targets": [
+          "effects": [
             {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lugubrian-evil-plan",
+          "name": "Evil Plan",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "removeCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 4
+            },
+            {
+              "type": "payResources",
+              "amount": 3
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "t",
+                "selector": {
+                  "controller": "self",
+                  "zone": "deck",
+                  "type": "tactic"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "t"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "t"
+                      },
+                      "to": "hand"
+                    }
+                  ]
+                },
+                {
+                  "type": "shuffleDeck",
+                  "player": "controller"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lugubrian-energize",
+          "name": "Energize With Humour",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "removeCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 2
+            }
+          ],
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "type": "character"
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "addCounter",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c"
               },
-              "faceDown": "auto"
+              "counter": "token",
+              "amount": 1
             }
           ]
         }
@@ -57593,7 +57740,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Obsession, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn put a token on this card then, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- EVIL PLAN -- COST: Remove 4 tokens from this card. Pay 3. -- EFFECT: Search your deck for a tactic, reveal it and put it into your hand. -- ENERGIZE WITH HUMOUR -- COST: Remove 2 tokens from this card. Pick a character. -- EFFECT: Put a token on that character."
   },
   {
     "id": "94296fb0-a890-4503-8146-9c7cacc079d0",
@@ -57601,11 +57748,21 @@
     "set": "Holy Heist",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 24,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Obsession",
+              "faceDown": true
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -57633,12 +57790,14 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
+      "flipUpTax": {
+        "amount": 2,
+        "cardType": "tactic"
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "primitive-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -57656,7 +57815,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "primitive-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -57665,24 +57824,91 @@
               "amount": 4
             }
           ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
               },
-              "faceDown": "auto"
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "primitive-tactic-redirect",
+          "type": "triggered",
+          "event": "cardMoved",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "cardMovedToZone",
+                "zone": "discard"
+              },
+              {
+                "type": "cardTypeIs",
+                "target": "eventCard",
+                "cardType": "tactic"
+              },
+              {
+                "type": "eventCardControlledBy",
+                "player": "controller"
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 3
+                }
+              ],
+              "effects": [
+                {
+                  "type": "putIntoPlay",
+                  "target": "eventCard",
+                  "controller": {
+                    "type": "ownerOf",
+                    "target": "eventCard"
+                  },
+                  "faceDown": true
+                }
+              ]
             }
           ]
         }
@@ -57693,7 +57919,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 face-down Obsession, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- If you deployed a tactic and it would go to a discard pile, you may pay 3. If you do, put that tactic into play under its owner's control as a face-down resource instead of into their discard pile. Attached it to their faction. -- You must pay 2 to deploy tactics using FLIP UP."
   },
   {
     "id": "698dad90-2af1-4eaf-89b1-de5232b7234c",
@@ -70689,6 +70915,12 @@
         }
       }
     },
+    "trade": "Universal",
+    "rarity": "",
+    "cost": 0,
+    "threshold": 0,
+    "subtype": [],
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, pick one of the following: draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource.",
     "behavior": {
       "abilities": [
         {
@@ -70741,13 +70973,7 @@
           ]
         }
       ]
-    },
-    "trade": "Universal",
-    "rarity": "",
-    "cost": 0,
-    "threshold": 0,
-    "subtype": [],
-    "text": ""
+    }
   },
   {
     "id": "dab6e897-b5be-4760-95c0-20c2795a9ae3",
@@ -86871,6 +87097,12 @@
         }
       }
     },
+    "trade": "Universal",
+    "rarity": "",
+    "cost": 0,
+    "threshold": 0,
+    "subtype": [],
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, pick one of the following: draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource.",
     "behavior": {
       "abilities": [
         {
@@ -86923,13 +87155,7 @@
           ]
         }
       ]
-    },
-    "trade": "Universal",
-    "rarity": "",
-    "cost": 0,
-    "threshold": 0,
-    "subtype": [],
-    "text": ""
+    }
   },
   {
     "id": "531708e9-3e7d-4027-92f9-e48fb15b60b4",
@@ -86937,11 +87163,20 @@
     "set": "Seed",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Obsession"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -86969,12 +87204,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "moistcave-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -86992,7 +87225,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "moistcave-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -87001,24 +87234,60 @@
               "amount": 4
             }
           ],
-          "targets": [
+          "effects": [
             {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "moistcave-lucubrate",
+          "name": "Lucubrate",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
+              "type": "lookAndReorder",
+              "player": "controller",
+              "count": 1,
+              "to": "bottom"
             }
           ]
         }
@@ -87029,7 +87298,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Obsession, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- LUCUBRATE -- COST: Pay 1. -- EFFECT: Look at the top card of your deck. You may put that card on the bottom."
   },
   {
     "id": "ab1299d1-ad28-478d-b28e-10763f63d464",
@@ -87037,11 +87306,20 @@
     "set": "Seed",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Greed"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -87069,12 +87347,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "golden-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -87092,7 +87368,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "golden-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -87101,24 +87377,81 @@
               "amount": 4
             }
           ],
-          "targets": [
+          "effects": [
             {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "golden-conspire",
+          "name": "Conspire",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
             }
           ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
+              "type": "draw",
+              "player": "controller",
+              "amount": 2
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "d",
+                "selector": {
+                  "owner": "self",
+                  "zone": "hand"
+                },
+                "count": 1
               },
-              "faceDown": "auto"
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "d"
+                  },
+                  "to": "discard"
+                }
+              ]
             }
           ]
         }
@@ -87129,7 +87462,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Greed, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- CONSPIRE -- COST: Pay 4. -- EFFECT: Draw 2 cards. Discard a card."
   },
   {
     "id": "0cca365d-3cc2-4b48-9f41-ab663ea0b25a",
@@ -87137,11 +87470,20 @@
     "set": "Seed",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Elitism"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -87169,12 +87511,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "alliance-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -87192,7 +87532,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "alliance-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -87201,24 +87541,85 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alliance-enhance",
+          "name": "Enhance",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c",
               "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character"
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "createModifier",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c"
               },
-              "faceDown": "auto"
+              "stat": "strength",
+              "operation": "add",
+              "value": 1,
+              "duration": "untilEndOfTurn"
+            },
+            {
+              "type": "createModifier",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              },
+              "stat": "life",
+              "operation": "add",
+              "value": 1,
+              "duration": "untilEndOfTurn"
             }
           ]
         }
@@ -87229,7 +87630,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Elitism, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- \"ENHANCE\" -- COST: Pay 3. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
     "id": "9d0ed925-fc2d-4745-82c0-68f90bf5d576",
@@ -87237,11 +87638,20 @@
     "set": "Seed",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Deception"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -87269,12 +87679,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "catacombs-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -87292,7 +87700,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "catacombs-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -87301,24 +87709,96 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "catacombs-sneak",
+          "name": "Sneak",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              }
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c",
               "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "statCompare",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    },
+                    "stat": "strength",
+                    "operator": "<=",
+                    "value": {
+                      "type": "count",
+                      "selector": {
+                        "controller": "opponent",
+                        "type": "character"
+                      }
+                    }
+                  }
+                ]
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "grantKeyword",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c"
               },
-              "faceDown": "auto"
+              "keyword": "covert",
+              "duration": "untilEndOfTurn"
             }
           ]
         }
@@ -87329,7 +87809,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Deception, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- SNEAK -- COST: X is the number of characters your opponent controls. Pay X. Pick a character with X strength or less. -- EFFECT: This turn, the character gains COVERT."
   },
   {
     "id": "0e3786c7-c515-4958-8b04-e6b1fb5ee388",
@@ -87337,11 +87817,20 @@
     "set": "Seed",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Rage"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -87369,12 +87858,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "hall-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -87392,7 +87879,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "hall-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -87401,24 +87888,113 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hall-for-great-justice",
+          "name": "For Great Justice!",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 5
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c1",
               "selector": {
                 "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character"
+              },
+              "count": 1
+            },
+            {
+              "id": "c2",
+              "selector": {
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "isCard",
+                      "other": {
+                        "type": "selected",
+                        "id": "c1"
+                      }
+                    }
+                  }
+                ]
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "bind",
+              "id": "x",
+              "value": {
+                "type": "stat",
+                "target": {
+                  "type": "selected",
+                  "id": "c1"
+                },
+                "stat": "strength"
+              }
+            },
+            {
+              "type": "destroy",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c1"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": {
+                "type": "selected",
+                "id": "c2"
               },
-              "faceDown": "auto"
+              "amount": {
+                "type": "variable",
+                "id": "x"
+              }
             }
           ]
         }
@@ -87429,7 +88005,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Rage, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- FOR GREAT JUSTICE! -- COST: Pay 5. Pick a character you control. X is its strength. Destroy it. Pick another character. -- EFFECT: Inflict X damage to the character."
   },
   {
     "id": "be2adbc2-409e-4e46-81d7-0c6f584fe47b",
@@ -101171,65 +101747,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "INFLUENCE = 15+(10*X). X is the number of opponents you have at the start of the game. (You start with 15 + 10 times X influence.) -- STARTING RESOURCES: Any 1+X staple resources. -- STARTING DRAW: 7 going first, 8 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. Repeat this X-1 times. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 3. -- EFFECT: Play a resource. -- ENTICEMENT -- COST: Use this only during your turn, and only once per turn. -- EFFECT: Draw X-1 cards. Play a resource. Put the top card of the Hero deck into the Temptation Pile. -- DARING GAMBIT -- If a Hero inflicts at least 7 damage to another Hero this turn, the damaging Hero claims the entire Temptation Pile. -- OMNIPOTENCE -- You automatically meet all thresholds, even if you don't control the proper resource icons. -- (See the included Showdown rules card for more details.)"
   },
   {
     "id": "ce1ccf05-7a09-4363-b3b2-67d3d28b1973",
@@ -101410,65 +101933,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "This card cannot be used in tournament play. (But please, play with it for fun!) -- STARTING RESOURCES: Any 1 resource, Any 1 card (if it's not a resource, put it into play face-down). -- STARTING DRAW: 10 going first, 9 going second. -- MINIMUM DECK SIZE: 300 cards. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. You may put a token on this card. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 3. -- EFFECT: Play a resource. -- ENCYCLOPEDIC KNOWLEDGE -- COST: Remove 3 tokens from this card. -- EFFECT: Search your deck for a tactic and reveal it. Put it into your hand."
   },
   {
     "id": "c58d0e3c-4f76-4665-aca4-2ba01a42d863",
@@ -101587,65 +102057,12 @@
         "suppressDevelop": true
       }
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "This card cannot be used in tournament play. (But please, play with it for fun!) -- STARTING RESOURCES: 2 Greed. -- STARTING DRAW: 3 going first, 4 going second. -- HIDDEN INFLUENCE: Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead. -- DEVELOP RULE - PULLING STRINGS: Your opponent ignores their faction's DEVELOP RULE. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- INFLATIONARY FORCES - DRAW -- COST: Both players may use this ability. Pay 2. -- EFFECT: Draw a card. -- INFLATIONARY FORCES - RESOURCE -- COST: Both players may use this ability. Pay 2. -- EFFECT: Play a resource."
   },
   {
     "id": "ebef8b79-0dcb-401f-81e9-eafd9235fd7d",
@@ -101755,65 +102172,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "This card cannot be used in tournament play. (But please, play with it for fun!) -- STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- RESEARCH & DEVELOPMENT: Before the game begins, both players create the rules text for an ability. This card has that ability and both players can use it. (go nuts)"
   },
   {
     "id": "71038369-24cc-48d9-a58c-e658edc01944",
@@ -101931,65 +102295,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "This card cannot be used in tournament play. (But please, play with it for fun!) -- STARTING RESOURCES - MONEY FOR NOTHING: Before the game begins, choose a number for X that is greater than 0 and less than 11. You start with X staple resources and 1 Deception. Your opponent starts with their usual resources plus enough staple resources so that both players have the same number of starting resources. -- STARTING DRAW: 5 going first, 6 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- \"OVERTIME\": At the start of your turn, draw a card or play a resource. -- COST: Pay 4. -- EFFECT: Draw a card. -- COST: Pay 5. -- EFFECT: Play a resource."
   },
   {
     "id": "2ce14e80-b0c6-4a3a-999b-c240b4fff9d5",
@@ -102101,65 +102412,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 2 Rage. -- STARTING DRAW: 3 going first, 3 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards. (But don't detach your resources.) -- DEVELOP RULE: At the start of your turn, reduce the numeric cost of the next character you play this turn by 2. -- DRAW -- COST: Pay 1. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 2. -- EFFECT: Play a resource. -- INTERNAL CONFLICT: At the end of your turn, flip a coin. If you win, turn this card over. (Only the face-up side is active.) -- This card (either side) cannot be used in tournament play. (But please, play with it for fun!)"
   },
   {
     "id": "78571459-b948-4558-823e-e463e5fc5526",
@@ -102272,65 +102530,12 @@
         }
       ]
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "(Other side starts face-up.) -- RESTORE RULE: At the start of your turn, detach all resources from your faction. (But don't restore your depleted cards.) -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- CONSTANT IN-FIGHTING: At the end of your turn, flip a coin. If you win, turn this card over. (Only the face-up side is active.) -- This card (either side) cannot be used in tournament play. (But please, play with it for fun!)"
   },
   {
     "id": "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb",
@@ -102372,65 +102577,12 @@
         }
       }
     },
-    "behavior": {
-      "abilities": [
-        {
-          "id": "tournament-draw",
-          "name": "Draw",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 3
-            }
-          ],
-          "effects": [
-            {
-              "type": "draw",
-              "player": "controller",
-              "amount": 1
-            }
-          ]
-        },
-        {
-          "id": "tournament-resource",
-          "name": "Resource",
-          "type": "activated",
-          "costs": [
-            {
-              "type": "payResources",
-              "amount": 4
-            }
-          ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
-          "effects": [
-            {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
-            }
-          ]
-        }
-      ]
-    },
     "trade": "Universal",
     "rarity": "",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "All Heroes can use abilities on this card. -- GIVE IN TO TEMPTATION -- COST: Use this only during your turn and only once per turn. Pay 2. Pick a character another Hero controls. -- EFFECT: The Villain takes control of the character. Claim one card in the Temptation Pile. -- SPRING FORTH MY BURLY PROTECTOR! -- COST: Pay 6. -- EFFECT: Reveal the top card of the Hero deck and claim it. -- TEAMWORK -- COST: Pay 2. Pick a card you control. Choose another player. -- EFFECT: The player takes control of the card. -- YOUR TRUE COLORS ARE REVEALED: At the start of the Villain's turn, put a token on this card. If there are 7 tokens on this card, all Heroes turn their Allegiance cards face-up. -- (See the included Showdown rules card for more details.)"
   },
   {
     "id": "605554df-72a7-4b72-91cc-f6983165d620",
@@ -131317,6 +131469,12 @@
         }
       }
     },
+    "trade": "Universal",
+    "rarity": "",
+    "cost": 0,
+    "threshold": 0,
+    "subtype": [],
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, pick one of the following: draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource.",
     "behavior": {
       "abilities": [
         {
@@ -131369,13 +131527,7 @@
           ]
         }
       ]
-    },
-    "trade": "Universal",
-    "rarity": "",
-    "cost": 0,
-    "threshold": 0,
-    "subtype": [],
-    "text": ""
+    }
   },
   {
     "id": "aa757749-49bf-46f0-a6ca-1cb12ddd47ac",
@@ -131383,11 +131535,20 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Obsession"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131415,12 +131576,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "moistcave-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131438,7 +131597,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "moistcave-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131447,24 +131606,60 @@
               "amount": 4
             }
           ],
-          "targets": [
+          "effects": [
             {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "moistcave-lucubrate",
+          "name": "Lucubrate",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
+              "type": "lookAndReorder",
+              "player": "controller",
+              "count": 1,
+              "to": "bottom"
             }
           ]
         }
@@ -131475,7 +131670,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Obsession, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- LUCUBRATE -- COST: Pay 1. -- EFFECT: Look at the top card of your deck. You may put that card on the bottom."
   },
   {
     "id": "d04aa14e-518a-4773-9492-7bd45444cc62",
@@ -131483,11 +131678,20 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Greed"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131515,12 +131719,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "golden-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131538,7 +131740,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "golden-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131547,24 +131749,81 @@
               "amount": 4
             }
           ],
-          "targets": [
+          "effects": [
             {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "golden-conspire",
+          "name": "Conspire",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 4
             }
           ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
+              "type": "draw",
+              "player": "controller",
+              "amount": 2
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "d",
+                "selector": {
+                  "owner": "self",
+                  "zone": "hand"
+                },
+                "count": 1
               },
-              "faceDown": "auto"
+              "effects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "d"
+                  },
+                  "to": "discard"
+                }
+              ]
             }
           ]
         }
@@ -131575,7 +131834,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Greed, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- CONSPIRE -- COST: Pay 4. -- EFFECT: Draw 2 cards. Discard a card."
   },
   {
     "id": "d9b1f68c-fd39-49fe-9991-e5052e54be5b",
@@ -131583,11 +131842,20 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Elitism"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131615,12 +131883,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "alliance-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131638,7 +131904,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "alliance-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131647,24 +131913,85 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "alliance-enhance",
+          "name": "Enhance",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 3
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c",
               "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character"
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "createModifier",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c"
               },
-              "faceDown": "auto"
+              "stat": "strength",
+              "operation": "add",
+              "value": 1,
+              "duration": "untilEndOfTurn"
+            },
+            {
+              "type": "createModifier",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              },
+              "stat": "life",
+              "operation": "add",
+              "value": 1,
+              "duration": "untilEndOfTurn"
             }
           ]
         }
@@ -131675,7 +132002,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Elitism, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- \"ENHANCE\" -- COST: Pay 3. Pick a character. -- EFFECT: This turn, the character gains 1 strength and 1 life."
   },
   {
     "id": "a896049a-e01d-4cd6-a9e6-aa04bcf6534c",
@@ -131683,11 +132010,20 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Deception"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131715,12 +132051,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "catacombs-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131738,7 +132072,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "catacombs-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131747,24 +132081,96 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "catacombs-sneak",
+          "name": "Sneak",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              }
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c",
               "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "statCompare",
+                    "target": {
+                      "type": "selected",
+                      "id": "__candidate"
+                    },
+                    "stat": "strength",
+                    "operator": "<=",
+                    "value": {
+                      "type": "count",
+                      "selector": {
+                        "controller": "opponent",
+                        "type": "character"
+                      }
+                    }
+                  }
+                ]
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "grantKeyword",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c"
               },
-              "faceDown": "auto"
+              "keyword": "covert",
+              "duration": "untilEndOfTurn"
             }
           ]
         }
@@ -131775,7 +132181,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Deception, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- SNEAK -- COST: X is the number of characters your opponent controls. Pay X. Pick a character with X strength or less. -- EFFECT: This turn, the character gains COVERT."
   },
   {
     "id": "4f6d9ed9-0a48-4ca7-b32f-f995b87b7213",
@@ -131783,11 +132189,20 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "slots": [
+            {
+              "kind": "resource",
+              "name": "Rage"
+            },
+            {
+              "kind": "resource",
+              "staple": true
+            }
+          ]
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131815,12 +132230,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "hall-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131838,7 +132251,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "hall-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131847,24 +132260,113 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "hall-for-great-justice",
+          "name": "For Great Justice!",
+          "type": "activated",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 5
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c1",
               "selector": {
                 "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character"
+              },
+              "count": 1
+            },
+            {
+              "id": "c2",
+              "selector": {
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "isCard",
+                      "other": {
+                        "type": "selected",
+                        "id": "c1"
+                      }
+                    }
+                  }
+                ]
+              },
+              "count": 1
             }
           ],
           "effects": [
             {
-              "type": "playResource",
+              "type": "bind",
+              "id": "x",
+              "value": {
+                "type": "stat",
+                "target": {
+                  "type": "selected",
+                  "id": "c1"
+                },
+                "stat": "strength"
+              }
+            },
+            {
+              "type": "destroy",
               "target": {
                 "type": "selected",
-                "id": "resource"
+                "id": "c1"
+              }
+            },
+            {
+              "type": "dealDamage",
+              "target": {
+                "type": "selected",
+                "id": "c2"
               },
-              "faceDown": "auto"
+              "amount": {
+                "type": "variable",
+                "id": "x"
+              }
             }
           ]
         }
@@ -131875,7 +132377,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: 1 Rage, 1 staple resource. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- FOR GREAT JUSTICE! -- COST: Pay 5. Pick a character you control. X is its strength. Destroy it. Pick another character. -- EFFECT: Inflict X damage to the character."
   },
   {
     "id": "127ff677-bc48-408c-bd7e-0772aac3e0f7",
@@ -131883,11 +132385,12 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 20,
       "setup": {
         "startingResources": {
           "count": 2,
-          "stapleOnly": true
+          "stapleOnly": true,
+          "distinctStaples": true
         },
         "openingHand": {
           "goingFirst": 8,
@@ -131915,12 +132418,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "defenders-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -131938,7 +132439,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "defenders-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -131947,24 +132448,99 @@
               "amount": 4
             }
           ],
+          "effects": [
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "defenders-rally",
+          "name": "Rally",
+          "type": "activated",
+          "condition": {
+            "type": "not",
+            "condition": {
+              "type": "battleActive"
+            }
+          },
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 5
+            }
+          ],
           "targets": [
             {
-              "id": "resource",
-              "count": 1,
+              "id": "c",
               "selector": {
                 "controller": "self",
-                "zone": "hand"
-              }
+                "type": "character"
+              },
+              "count": 3,
+              "distinctTrades": true
             }
           ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
-              },
-              "faceDown": "auto"
+              "type": "forEach",
+              "selected": "c",
+              "effects": [
+                {
+                  "type": "createModifier",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "stat": "strength",
+                  "operation": "add",
+                  "value": 2,
+                  "duration": "untilEndOfTurn"
+                },
+                {
+                  "type": "createModifier",
+                  "target": {
+                    "type": "selected",
+                    "id": "__candidate"
+                  },
+                  "stat": "life",
+                  "operation": "add",
+                  "value": 2,
+                  "duration": "untilEndOfTurn"
+                }
+              ]
             }
           ]
         }
@@ -131975,7 +132551,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: Any 2 different staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- RALLY -- COST: Use this only not during a battle. Pay 5. Pick 3 characters you control that don't share a trade. -- EFFECT: This turn, the characters gain 2 strength and 2 life."
   },
   {
     "id": "d1e103cf-9aed-466c-abdf-f856469e5ffa",
@@ -131983,7 +132559,7 @@
     "set": "Seed Saga",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 21,
       "setup": {
         "startingResources": {
           "count": 2,
@@ -132015,12 +132591,10 @@
             }
           ]
         }
-      }
-    },
-    "behavior": {
+      },
       "abilities": [
         {
-          "id": "tournament-draw",
+          "id": "legions-draw",
           "name": "Draw",
           "type": "activated",
           "costs": [
@@ -132038,7 +132612,7 @@
           ]
         },
         {
-          "id": "tournament-resource",
+          "id": "legions-resource",
           "name": "Resource",
           "type": "activated",
           "costs": [
@@ -132047,24 +132621,130 @@
               "amount": 4
             }
           ],
-          "targets": [
-            {
-              "id": "resource",
-              "count": 1,
-              "selector": {
-                "controller": "self",
-                "zone": "hand"
-              }
-            }
-          ],
           "effects": [
             {
-              "type": "playResource",
-              "target": {
-                "type": "selected",
-                "id": "resource"
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": true
               },
-              "faceDown": "auto"
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "legions-search",
+          "type": "triggered",
+          "event": "cardEnteredPlay",
+          "condition": {
+            "type": "and",
+            "conditions": [
+              {
+                "type": "eventCardControlledBy",
+                "player": "controller"
+              },
+              {
+                "type": "cardTypeIs",
+                "target": "eventCard",
+                "cardType": "character"
+              }
+            ]
+          },
+          "effects": [
+            {
+              "type": "mayPay",
+              "player": "controller",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 3
+                }
+              ],
+              "effects": [
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "c",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "deck",
+                      "type": "character",
+                      "conditions": [
+                        {
+                          "type": "not",
+                          "condition": {
+                            "type": "sharesTradeWithAny",
+                            "among": {
+                              "controller": "self",
+                              "type": "character"
+                            }
+                          }
+                        }
+                      ]
+                    },
+                    "count": 1,
+                    "optional": true
+                  },
+                  "effects": [
+                    {
+                      "type": "if",
+                      "condition": {
+                        "type": "targetExists",
+                        "target": {
+                          "type": "selected",
+                          "id": "c"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "c"
+                          },
+                          "to": "hand"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "shuffleDeck",
+                      "player": "controller"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -132075,7 +132755,7 @@
     "cost": 0,
     "threshold": 0,
     "subtype": [],
-    "text": ""
+    "text": "STARTING RESOURCES: Any 2 staple resources. -- STARTING DRAW: 8 going first, 9 going second. -- RESTORE RULE: At the start of your turn, restore all your depleted cards and detach all resources from your faction. -- DEVELOP RULE: At the start of your turn, draw a card or play a resource. -- DRAW -- COST: Pay 3. -- EFFECT: Draw a card. -- RESOURCE -- COST: Pay 4. -- EFFECT: Play a resource. -- When a character enters play under your control, you may pay 3. If you do, search your deck for a character that does not share a trade with any characters you control, reveal it and put it into your hand."
   },
   {
     "id": "72661539-2086-49b7-a58d-b66a2ba45a30",

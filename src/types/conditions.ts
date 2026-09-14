@@ -198,6 +198,19 @@ export type Condition =
     }
   | {
       /**
+       * True when `target`'s printed `trade` equals the printed `trade` of
+       * at least one card matching `among` (the target itself excluded) —
+       * "does not share a trade with any characters you control" (Legions
+       * of Chaos) is `not` + this, `among` scoped to the controller's
+       * in-play characters. `target` defaults to the selector candidate
+       * (`{ type: "selected", id: "__candidate" }`).
+       */
+      type: "sharesTradeWithAny";
+      target?: TargetRef;
+      among: CardSelector;
+    }
+  | {
+      /**
        * True when `target`'s definition carries a Unique designation
        * (`CardDefinition.unique` is set) — "a character with the UNIQUE
        * keyword in its rules text".

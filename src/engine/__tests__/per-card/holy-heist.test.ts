@@ -155,7 +155,7 @@ describe("Holy Heist — Micromajig token", () => {
   });
 });
 
-describe("Holy Heist — faction cards (tournament DRAW ability)", () => {
+describe("Holy Heist — faction cards (DRAW ability)", () => {
   for (const name of [
     "The Tournament Faction",
     "Unlikely Heroes",
@@ -163,8 +163,12 @@ describe("Holy Heist — faction cards (tournament DRAW ability)", () => {
     "The Primitive Tribes of Thabbash"
   ]) {
     test(`${name} — DRAW pays 3 and draws a card`, () => {
+      const factionDef = def(name);
+      const drawAbility = [...(factionDef.faction?.abilities ?? []), ...(factionDef.behavior?.abilities ?? [])].find(a => a.type === "activated" && a.name === "Draw");
+      assert.ok(drawAbility, `${name} has no printed DRAW ability`);
+
       const { engine } = buildGame({
-        playerA: { faction: def(name) },
+        playerA: { faction: factionDef },
         cards: [
           ...bank("rage", 4, P1),
           { key: "d1", def: character({ name: "D1" }), owner: P1, zone: "deck" }
@@ -172,7 +176,7 @@ describe("Holy Heist — faction cards (tournament DRAW ability)", () => {
       });
       const factionId = engine.state.players[P1].factionId!;
       const before = engine.state.players[P1].hand.length;
-      engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: "tournament-draw" });
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: factionId, abilityId: drawAbility!.id });
       resolvePendingResponses(engine);
       assert.equal(engine.state.players[P1].hand.length, before + 1);
     });
