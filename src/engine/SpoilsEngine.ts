@@ -642,6 +642,25 @@ export class SpoilsEngine {
     }
     if (!described) return;
 
+    // A destroy's own zone move (`cardMoved`, emitted immediately before
+    // this by `destroyCard`'s `moveCard` call) reads as a near-duplicate of
+    // "is destroyed" — fold the pair into one line instead of two
+    // back-to-back entries that say the same thing.
+    if (event.type === "cardDestroyed") {
+      const prior = this.state.gameLog[this.state.gameLog.length - 1];
+      if (
+        prior?.event?.type === "cardMoved" &&
+        prior.event.cardId === event.cardId &&
+        prior.depth === this.responseStack.length
+      ) {
+        this.state.gameLog.pop();
+        described = {
+          kind: described.kind,
+          message: `${this.logCardName(event.cardId, event.faceDown)} is destroyed and moves to ${prior.event.to}`
+        };
+      }
+    }
+
     this.state.gameLog.push({
       seq: this.state.gameLog.length + 1,
       turn: this.state.turn,
@@ -2166,6 +2185,7 @@ export class SpoilsEngine {
           (!ability.condition ||
             this.evaluateCondition(ability.condition, context)) &&
           this.provisionalProbeTargets(ability.targets ?? [], context) &&
+          this.provisionalProbeDiscardCosts(ability.costs ?? [], context) &&
           this.canPayCosts(ability.costs ?? [], context)
         ) {
           result.push({
@@ -2206,6 +2226,46 @@ export class SpoilsEngine {
 
       context.selected[declaration.id] = candidates
         .slice(0, count)
+        .map(candidate => candidate.id);
+    }
+
+    return true;
+  }
+
+  /**
+   * Read-only availability probe helper, sibling to `provisionalProbeTargets`:
+   * a `discard` cost carries its own `selector`/`count` rather than pointing
+   * at an ability `targets` declaration (see `Cost` in
+   * src/types/costs.ts), so nothing else fills `context.selected[cost.id]`
+   * before `canPayCosts` simulates it — without this, `payCost`'s "requires
+   * selecting exactly N card(s)" assert always fails and the ability never
+   * shows as available (Tad Disingenuous UNDERHANDED DEAL: "discard a card"
+   * with a legal card in hand). Mirrors the selector defaults `payCost`
+   * itself applies. Mutates `context.selected`; the caller passes a
+   * throwaway context.
+   */
+  private provisionalProbeDiscardCosts(
+    costs: Cost[],
+    context: ResolutionContext
+  ): boolean {
+    for (const cost of costs) {
+      if (cost.type !== "discard") continue;
+      if (context.selected[cost.id]?.length) continue;
+
+      const player = this.resolvePlayerRef(cost.player, context);
+      const candidates = this.queryCards(
+        {
+          ...cost.selector,
+          controller: cost.selector.controller ?? "self",
+          zone: cost.selector.zone ?? "hand"
+        },
+        context
+      ).filter(card => card.controllerId === player.id);
+
+      if (candidates.length < cost.count) return false;
+
+      context.selected[cost.id] = candidates
+        .slice(0, cost.count)
         .map(candidate => candidate.id);
     }
 

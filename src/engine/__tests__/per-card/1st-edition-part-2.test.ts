@@ -1280,6 +1280,29 @@ describe("1st Edition Part 2 — Tad Disingenuous", () => {
     activate(engine, P1, id("td"), "deal", { selected: { d: [id("spare")] } });
     assert.ok(engine.getKeywords(id("td")).includes("covert"));
   });
+
+  test("UNDERHANDED DEAL is offered by getAvailableActivatedAbilities when a card is in hand, hidden when not", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "td", def: def("Tad Disingenuous"), owner: P1, zone: "play" },
+        { key: "spare", def: character({ name: "Spare" }), owner: P1, zone: "hand" }
+      ]
+    });
+    assert.ok(
+      engine
+        .getAvailableActivatedAbilities(P1)
+        .some(a => a.cardId === id("td") && a.ability.id === "deal")
+    );
+
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("td"), abilityId: "deal", selected: { d: [id("spare")] } });
+
+    assert.ok(
+      !engine
+        .getAvailableActivatedAbilities(P1)
+        .some(a => a.cardId === id("td") && a.ability.id === "deal")
+    );
+  });
 });
 
 describe("1st Edition Part 2 — The Garbageman", () => {
