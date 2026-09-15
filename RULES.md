@@ -297,11 +297,25 @@ equals the trade of at least one card matching `among` — Legions of Chaos'
 "a character that does not share a trade with any characters you control" is
 `not` + this).
 
+**Double-sided faction cards** — Imperial Army and Counter-Imperial Army are
+the same physical card printed on two sides (INTERNAL CONFLICT / CONSTANT
+IN-FIGHTING: "At the end of your turn, flip a coin. If you win, turn this
+card over. (Only the face-up side is active.)"). `FactionDefinition.flipsTo`
+names the other side's `CardDefinitionId`; the `flipFactionCard` effect
+(wrapped in the existing `flipCoin` effect, run from
+`turn.endOfTurnEffects`) reassigns the in-play `CardInstance.definitionId`
+to it — the same card object, its other face now active. Every faction
+lookup (`getFactionDefinition`, abilities, thresholds, restore/develop
+rules) reads through `getDefinition`, so the new side governs immediately
+with no further bookkeeping. Both sides' `CardDefinition`s must be
+registered with the engine for the flip to take effect (loading the full
+catalog, as every real consumer does, guarantees this).
+
 Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
-Alliance, Imperial Army, ...) additionally reference format mechanics that
-are **out of scope for a two-player engine** and are left unmodelled:
-double-sided card-flipping (INTERNAL CONFLICT) and Showdown multiplayer (the
-X = number-of-opponents scaling, the Temptation Pile, the Hero deck).
+Alliance, Imperial Army, ...) additionally reference Showdown multiplayer
+format mechanics that are **out of scope for a two-player engine** and are
+left unmodelled: the X = number-of-opponents scaling, the Temptation Pile,
+the Hero deck.
 
 ### 3.7 Changing card types (CR §208)
 

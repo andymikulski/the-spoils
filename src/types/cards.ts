@@ -149,6 +149,16 @@ export interface FactionDefinition {
      * Magical Propriety — accrue a token.
      */
     startOfTurnEffects?: Effect[];
+
+    /**
+     * Effects run automatically at the end of this faction's controller's
+     * turn — before scheduled `endOfTurn` effects and the opponent's
+     * end-turn response window. `source` is the faction card. Imperial
+     * Army / Counter-Imperial Army — INTERNAL CONFLICT / CONSTANT
+     * IN-FIGHTING: "flip a coin. If you win, turn this card over."
+     * (`flipCoin` wrapping a `flipFactionCard`).
+     */
+    endOfTurnEffects?: Effect[];
   };
 
   /**
@@ -160,6 +170,16 @@ export interface FactionDefinition {
    * Knitting Coalition's "Both players may use this ability").
    */
   abilities?: ActivatedAbility[];
+
+  /**
+   * "Turn this card over" — the OTHER side of a double-sided faction card
+   * (Imperial Army <-> Counter-Imperial Army). Read by the `flipFactionCard`
+   * effect, which reassigns the in-play faction `CardInstance.definitionId`
+   * to this id — the same physical card, its other face now active. Both
+   * sides' `CardDefinition`s must be registered with the engine (loading the
+   * full catalog, as every real consumer does, guarantees this).
+   */
+  flipsTo?: CardDefinitionId;
 
   /**
    * OMNIPOTENCE (The Evil Alliance) — the controller automatically meets

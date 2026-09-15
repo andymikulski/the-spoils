@@ -7047,6 +7047,19 @@ export class SpoilsEngine {
         return;
       }
 
+      case "flipFactionCard": {
+        const targetId = this.resolveTargetRef(effect.target, context);
+        const card = targetId ? this.state.cards[targetId] : undefined;
+        if (!card || card.zone !== "play") return;
+
+        const definition = this.getDefinition(card.id);
+        const flipsTo = definition.faction?.flipsTo;
+        if (!flipsTo || !this.definitions[flipsTo]) return;
+
+        card.definitionId = flipsTo;
+        return;
+      }
+
       case "putIntoPlay": {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
@@ -11126,6 +11139,23 @@ export class SpoilsEngine {
       type: "turnEnding",
       playerId
     });
+
+    // Faction "at the end of your turn ..." automatic effects (Imperial
+    // Army / Counter-Imperial Army's coin-flip side swap), resolved with the
+    // faction card as `source`, before scheduled effects and the opponent's
+    // end-of-turn response window.
+    const player = this.requirePlayer(playerId);
+    const endOfTurnEffects = this.getFactionDefinition(playerId)?.turn.endOfTurnEffects ?? [];
+    if (endOfTurnEffects.length > 0 && player.factionId) {
+      const context: ResolutionContext = {
+        sourceId: player.factionId,
+        controllerId: playerId,
+        selected: {}
+      };
+      for (const effect of endOfTurnEffects) {
+        this.resolveEffect(effect, context);
+      }
+    }
 
     // "At the end of the turn, ..." delayed effects resolve as part of the
     // turn ending, before the opponent's end-of-turn response window.

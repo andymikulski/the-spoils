@@ -223,6 +223,23 @@ export type Effect =
     }
   | {
       /**
+       * "Turn this card over" — the double-sided-faction-card flip (Imperial
+       * Army <-> Counter-Imperial Army). Unlike `flipFaceDown`/`flipFaceUp`
+       * (which model a face-down RESOURCE), this is the same in-play card
+       * object becoming its OTHER printed side: reassigns `target`'s
+       * `CardInstance.definitionId` to `FactionDefinition.flipsTo` off its
+       * CURRENT definition. Every live faction lookup (`getFactionDefinition`,
+       * abilities, thresholds, restore/develop rules) reads through
+       * `getDefinition`, so the new side takes over immediately with no
+       * further bookkeeping. No-op if `target` isn't in play, isn't a
+       * faction, its current side has no `flipsTo`, or the flip target isn't
+       * a registered `CardDefinition` (the consumer didn't load it).
+       */
+      type: "flipFactionCard";
+      target: TargetRef;
+    }
+  | {
+      /**
        * Move a card from deck / discard / void INTO play as its real type,
        * running the normal entrance bookkeeping (`cardEnteredPlay`, the
        * attach-target requirement, attack eligibility). `faceDown: true`

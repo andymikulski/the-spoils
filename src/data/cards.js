@@ -102341,6 +102341,18 @@ export default [
             "amount": 2,
             "cardType": "character"
           }
+        ],
+        "endOfTurnEffects": [
+          {
+            "type": "flipCoin",
+            "winEffects": [
+              {
+                "type": "flipFactionCard",
+                "target": "source"
+              }
+            ],
+            "loseEffects": []
+          }
         ]
       },
       "abilities": [
@@ -102410,7 +102422,8 @@ export default [
             }
           ]
         }
-      ]
+      ],
+      "flipsTo": "78571459-b948-4558-823e-e463e5fc5526"
     },
     "trade": "Universal",
     "rarity": "",
@@ -102459,7 +102472,19 @@ export default [
               "count": 1
             }
           ]
-        }
+        },
+        "endOfTurnEffects": [
+          {
+            "type": "flipCoin",
+            "winEffects": [
+              {
+                "type": "flipFactionCard",
+                "target": "source"
+              }
+            ],
+            "loseEffects": []
+          }
+        ]
       },
       "abilities": [
         {
@@ -102528,7 +102553,8 @@ export default [
             }
           ]
         }
-      ]
+      ],
+      "flipsTo": "2ce14e80-b0c6-4a3a-999b-c240b4fff9d5"
     },
     "trade": "Universal",
     "rarity": "",

@@ -111,6 +111,7 @@ _Fidelity to printed text: 2096 full · 3 partial · 2 stub._
 | `distinct-count-expression` | implemented | expression | 13 | NumberExpression { type:'distinctCount', selector: CardSelector, by:'name'|'trade'|'subtype'|'type' } = the number of DISTINCT values of `by` among cards matching `selector` (in-play by default; respects selector.zone). 'for each different staple resource you control' (Elite Acrolos Engineer, Zenobia's Intervention, Whistleblower Policy — by:name), 'different trades among cards you control' (Wary Reunion — by:trade), 'different staple resources that player controls' (Thabbashite Penumbra, Flesh Deliquesce, Wasted Wickedness). Also composes the FEALTY threshold-slack condition. |
 | `distinct-names-target` | implemented | expression, choice | 2 | TargetDeclaration.distinctNames — every selection must have a distinct printed name. Enforced in playCard/activateAbility, selectTargets and chooserSelectsTarget. Cheats ('4 cards with different names'), Profane Proposal ('5 cards with different names'). |
 | `distinct-trades-target` | implemented | expression | 1 | TargetDeclaration.distinctTrades?: boolean — every selection in one declaration must have a distinct printed CardDefinition.trade, parallel to distinctNames. Defenders of Marduun's RALLY ("3 characters that don't share a trade"). |
+| `double-sided-faction-flip` | implemented | effect, faction | 2 | FactionDefinition.flipsTo?: CardDefinitionId (the other side of a double-sided faction card) + Effect { type: "flipFactionCard", target } (reassigns the in-play CardInstance.definitionId to flipsTo — every live faction lookup reads through getDefinition, so the new side takes over immediately) + FactionDefinition.turn.endOfTurnEffects?: Effect[] (run in endTurn(), mirroring turn.startOfTurnEffects). Imperial Army / Counter-Imperial Army: turn.endOfTurnEffects is a flipCoin wrapping flipFactionCard. |
 | `draw-count-modifier` | implemented | ability, state | 2 | ContinuousAbility.drawModifiers?: Array<{ player:'self'|'opponent'|'any'; delta?:NumberExpression; prevent?:boolean }> - consulted in drawCards: delta adjusts the number of cards drawn (floored at 0), prevent:true forces the draw to 0. 'When you draw any number of cards, increase the amount by 1' + 'While you have at least 10 cards in your hand, you cannot draw cards' (Beatrix Winterbottom). |
 | `duplicate-stack-card` | implemented | effect | 1 | Effect { type:'duplicate', target } — instantiate a transient copy of the targeted tactic/card on the response stack (same definitionId, owner = original owner, a fresh CardInstance in a 'deploying' zone), resolve its effects under the current controller, then the copy ceases to exist (like a token). 'Duplicate the tactic. Terminate the tactic.' (Muddle). |
 | `duration-until-next-turn` | implemented | ids | 1 | Duration { type:'untilStartOfNextTurn' } — survives the opponent's intervening turn, swept at the start of the source controller's next turn (createdTurn <= turn-2). Unstable Modification's per-turn modal choice. |
@@ -259,15 +260,8 @@ _Printed clauses deliberately left unmodelled — each needs a large engine / fo
 
 | Gap | Scope | Cards | Summary |
 |---|---|--:|---|
-| `double-sided-faction` | large | 2 | EPIC faction cards have two sides and flip between them mid-game. |
 | `seat-swap` | large | 2 | Every player swaps to controlling the opposing side (seats, hands, decks, in-play cards); the owner of the winning deck wins. |
 | `showdown-multiplayer` | xlarge | 2 | The multiplayer "Showdown" format — 1 Villain vs. N Heroes, shared Temptation Pile, a separate Hero deck, Allegiance cards, and faction values that scale with X = the number of opponents. |
-
-### `double-sided-faction`
-
-- **Clause:** INTERNAL CONFLICT / CONSTANT IN-FIGHTING — "At the end of your turn, flip a coin. If you win, turn this card over. (Only the face-up side is active.)"
-- **Needs:** A double-sided CardDefinition model + an engine action that swaps the in-play faction card's active FactionDefinition to its reverse. Touches setup, getFactionDefinition, and every restore/develop/threshold path.
-- **Cards:** Counter-Imperial Army (Seed 3), Imperial Army (Seed 3)
 
 ### `seat-swap`
 
