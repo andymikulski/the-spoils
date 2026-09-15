@@ -5,6 +5,7 @@
 import type {
   AbilityId,
   BattleId,
+  CardDefinitionId,
   CardInstanceId,
   ModifierOperation,
   PlayerId,
@@ -284,6 +285,22 @@ export interface GameEventMap {
   coinFlipped: {
     playerId: PlayerId;
     won: boolean;
+  };
+
+  /**
+   * A `flipFactionCard` effect actually turned a double-sided faction card
+   * over (Imperial Army / Counter-Imperial Army's "INTERNAL CONFLICT" —
+   * RULES.md §3.6). Distinct from `coinFlipped`: the toss can happen without
+   * a flip (a loss, or a card with no `flipsTo`), but this only fires on the
+   * actual identity swap, which is the part worth calling out on its own —
+   * it changes which `FactionDefinition` governs the controller for the rest
+   * of the game.
+   */
+  factionCardFlipped: {
+    playerId: PlayerId;
+    cardId: CardInstanceId;
+    fromDefinitionId: CardDefinitionId;
+    toDefinitionId: CardDefinitionId;
   };
 
   /**

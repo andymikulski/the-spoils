@@ -142,6 +142,11 @@ describe("Imperial Army <-> Counter-Imperial Army: real catalog data end-to-end"
       "Counter-Imperial Army reverts to the generic draw/play-resource develop rule"
     );
 
+    const flipEntry = engine.getLog().find(e => e.event?.type === "factionCardFlipped");
+    assert.ok(flipEntry, "the flip itself is logged, not just the coin toss");
+    assert.equal(flipEntry.kind, "trigger");
+    assert.match(flipEntry.message, /Imperial Army becomes Counter-Imperial Army/);
+
     // The opponent's turn passes with nothing to flip; Imperial Army's
     // controller ends their next turn from the Counter-Imperial Army side
     // and flips back.

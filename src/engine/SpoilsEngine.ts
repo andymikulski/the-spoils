@@ -1001,6 +1001,15 @@ export class SpoilsEngine {
           }`
         };
 
+      case "factionCardFlipped": {
+        const fromName = this.definitions[event.fromDefinitionId]?.name ?? event.fromDefinitionId;
+        const toName = this.definitions[event.toDefinitionId]?.name ?? event.toDefinitionId;
+        return {
+          kind: "trigger",
+          message: `${this.logPlayerName(event.playerId)}'s faction card turns over: ${fromName} becomes ${toName}`
+        };
+      }
+
       case "variableRolled": {
         const source = this.logCardName(event.sourceId);
         const label = event.name.toUpperCase();
@@ -7117,6 +7126,13 @@ export class SpoilsEngine {
         if (!flipsTo || !this.definitions[flipsTo]) return;
 
         card.definitionId = flipsTo;
+        this.emit({
+          type: "factionCardFlipped",
+          playerId: context.controllerId,
+          cardId: card.id,
+          fromDefinitionId: definition.id,
+          toDefinitionId: flipsTo
+        });
         return;
       }
 
