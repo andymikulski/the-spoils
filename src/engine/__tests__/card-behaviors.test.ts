@@ -9359,6 +9359,45 @@ describe("SotDE restriction/battle vocabulary", () => {
     assert.equal(g2.engine.state.cards[g2.id("shy")].damage, 1, "swept up by the 'all characters' effect");
   });
 
+  test("cannotBePickedByOpponents — its controller can pick it, an opponent cannot", () => {
+    const shy = character({
+      name: "Shy",
+      behavior: {
+        abilities: [
+          { id: "hide", type: "continuous", modifiers: [], restrictions: [{ target: "source", restriction: "cannotBePickedByOpponents" }] }
+        ]
+      }
+    });
+    const foe = buildGame({
+      cards: [
+        { key: "shy", def: shy, owner: P1 },
+        { key: "bolt", def: bolt(), owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    assert.throws(
+      () => foe.engine.perform({ type: "playCard", playerId: P2, cardId: foe.id("bolt"), selected: { t: [foe.id("shy")] } }),
+      /Illegal target/
+    );
+
+    const own = buildGame({
+      cards: [
+        { key: "shy", def: shy, owner: P1 },
+        { key: "bolt", def: bolt(), owner: P1, zone: "hand" }
+      ]
+    });
+    own.engine.perform({ type: "playCard", playerId: P1, cardId: own.id("bolt"), selected: { t: [own.id("shy")] } });
+    resolvePendingResponses(own.engine);
+    assert.equal(own.engine.state.cards[own.id("shy")].damage, 1);
+
+    // The public candidate query a renderer uses agrees with the engine's verdict.
+    const selector = { zone: "play" as const, type: "character" as const };
+    const ctx = (controllerId: typeof P1) => ({ sourceId: own.id("bolt"), controllerId, selected: {} });
+    assert.deepEqual(own.engine.targetCandidates(selector, ctx(P1)).map(c => c.id), [own.id("shy")]);
+    assert.deepEqual(own.engine.targetCandidates(selector, ctx(P2)).map(c => c.id), []);
+    assert.deepEqual(own.engine.targetCandidates(selector, ctx(P1), P2).map(c => c.id), [], "picker override");
+  });
+
   test("attackOncePerTurn restriction — a second attack the same turn is rejected", () => {
     const roller = character({
       name: "Skullcrush Steamroller",

@@ -2440,16 +2440,31 @@ export class SpoilsEngine {
    * declaration; `forEach` / `count` / aura / random selectors keep using
    * `queryCards` directly (RULES.md §12: "cannot be picked" only blocks
    * choosing it, not being swept up by an "all X" effect).
+   *
+   * `pickerId` is the player actually making the pick (defaults to the
+   * ability's controller; differs for a `chooserSelectsTarget` whose chooser
+   * is someone else) — `cannotBePickedByOpponents` is judged against it.
+   *
+   * Public: this is the exact check the engine applies to a submitted
+   * selection, so a renderer can offer (and grey out) precisely what would
+   * be accepted instead of re-deriving the pick rules.
    */
-  private targetCandidates(
+  targetCandidates(
     selector: CardSelector,
-    context: ResolutionContext
+    context: ResolutionContext,
+    pickerId: PlayerId = context.controllerId
   ): CardInstance[] {
     const pickingSourceTypes = this.state.cards[context.sourceId]
       ? this.getCardTypes(context.sourceId)
       : [];
     const eligible = this.queryCards(selector, context).filter(card => {
       if (this.hasRestriction(card.id, "cannotBePicked")) return false;
+      if (
+        card.controllerId !== pickerId &&
+        this.hasRestriction(card.id, "cannotBePickedByOpponents")
+      ) {
+        return false;
+      }
       // "this card cannot be picked by <cardType>s" (Parkour Hoodlum) —
       // scoped on the card/ability doing the picking.
       for (const type of this.ignoredSourceTypesFor(card.id)) {
@@ -7863,15 +7878,15 @@ export class SpoilsEngine {
         // legal candidate at all, e.g. an empty hand to discard from) is
         // carried out as far as possible, not left as an unanswerable
         // pendingChoice requiring a selection that can't exist.
+        const chooser = this.resolvePlayerRef(effect.chooser, context);
         const cstCandidates = this.targetCandidates(
           effect.declaration.selector,
-          context
+          context,
+          chooser.id
         );
         if (cstCandidates.length === 0) {
           return;
         }
-
-        const chooser = this.resolvePlayerRef(effect.chooser, context);
 
         const searchesDeck = this.selectorNamesZone(
           effect.declaration.selector,
@@ -9156,6 +9171,7 @@ export class SpoilsEngine {
       "cannotBeRestored",
       "cannotBeRestoredByRule",
       "cannotBePicked",
+      "cannotBePickedByOpponents",
       "mustBePicked",
       "attackOncePerTurn",
       "cannotBeTakenControl"
@@ -9636,7 +9652,11 @@ export class SpoilsEngine {
         const declaration = pending.declaration;
         const selection = choice.selected;
 
-        const legalCandidates = this.targetCandidates(declaration.selector, pending.context);
+        const legalCandidates = this.targetCandidates(
+          declaration.selector,
+          pending.context,
+          pending.playerId
+        );
         const legal = new Set(legalCandidates.map(card => card.id));
 
         const requested = this.evaluateNumber(declaration.count, pending.context);

@@ -72,6 +72,12 @@ export type Restriction =
    * more characters than any opponent, this card cannot be picked").
    */
   | "cannotBePicked"
+  /**
+   * "Your opponents cannot pick this card." — like `cannotBePicked`, but only
+   * for a picker who isn't the card's controller; its own controller can
+   * still pick it. Martial Artist, Martial Arts Trainee, Camouflaged Urchin.
+   */
+  | "cannotBePickedByOpponents"
   /** "This card can attack only once each turn." — `declareAttack` rejects a character that already attacked this turn while it has this restriction. Granted statically or as a continuous aura. */
   | "attackOncePerTurn"
   /**

@@ -22340,7 +22340,7 @@ export default [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePickedByOpponents"
             }
           ]
         }
@@ -22486,7 +22486,7 @@ export default [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePickedByOpponents"
             }
           ]
         }
@@ -39867,7 +39867,7 @@ export default [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePickedByOpponents"
             }
           ]
         }
@@ -40013,7 +40013,7 @@ export default [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePicked"
+              "restriction": "cannotBePickedByOpponents"
             }
           ]
         }
@@ -153072,7 +153072,7 @@ export default [
           "modifiers": [],
           "restrictions": [
             {
-              "restriction": "cannotBePicked",
+              "restriction": "cannotBePickedByOpponents",
               "target": "source"
             }
           ]
@@ -154666,7 +154666,7 @@ export default [
           "modifiers": [],
           "restrictions": [
             {
-              "restriction": "cannotBePicked",
+              "restriction": "cannotBePickedByOpponents",
               "target": "source"
             }
           ]

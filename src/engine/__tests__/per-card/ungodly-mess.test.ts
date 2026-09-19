@@ -364,14 +364,14 @@ describe("Ungodly Mess — Camouflaged Urchin", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "cu", def: def("Camouflaged Urchin"), owner: P1, zone: "play", depleted: true }]
     });
-    assert.ok(engine.getRestrictions(id("cu")).includes("cannotBePicked"));
+    assert.ok(engine.getRestrictions(id("cu")).includes("cannotBePickedByOpponents"));
   });
 
   test("while restored, it can be picked", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "cu", def: def("Camouflaged Urchin"), owner: P1, zone: "play" }]
     });
-    assert.equal(engine.getRestrictions(id("cu")).includes("cannotBePicked"), false);
+    assert.equal(engine.getRestrictions(id("cu")).includes("cannotBePickedByOpponents"), false);
   });
 });
 
@@ -1605,7 +1605,7 @@ describe("Ungodly Mess — Omahkapi'si Pi'kssii", () => {
         ...Array.from({ length: 10 }, (_, i) => ({ key: `g${i}`, def: character({ name: `G${i}` }), owner: P2, zone: "discard" as const }))
       ]
     });
-    assert.ok(engine.getRestrictions(id("op")).includes("cannotBePicked"));
+    assert.ok(engine.getRestrictions(id("op")).includes("cannotBePickedByOpponents"));
   });
 
   test("FLEX removes an opponent's discard card and grants +2 strength this turn", () => {

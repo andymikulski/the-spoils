@@ -2173,7 +2173,8 @@ describe("1st Edition Part 2 — Martial Artist", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "ma", def: def("Martial Artist"), owner: P1, zone: "play" }]
     });
-    assert.ok(engine.getRestrictions(id("ma")).includes("cannotBePicked"));
+    assert.ok(engine.getRestrictions(id("ma")).includes("cannotBePickedByOpponents"));
+    assert.equal(engine.getRestrictions(id("ma")).includes("cannotBePicked"), false);
   });
 });
 
@@ -2201,7 +2202,52 @@ describe("1st Edition Part 2 — Martial Arts Trainee", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "mat", def: def("Martial Arts Trainee"), owner: P1, zone: "play" }]
     });
-    assert.ok(engine.getRestrictions(id("mat")).includes("cannotBePicked"));
+    assert.ok(engine.getRestrictions(id("mat")).includes("cannotBePickedByOpponents"));
+    assert.equal(engine.getRestrictions(id("mat")).includes("cannotBePicked"), false);
+  });
+
+  test("an opponent's effect cannot pick it", () => {
+    const { engine, id } = buildGame({
+      playerB: { faction: developFaction() },
+      cards: [
+        { key: "mat", def: def("Martial Arts Trainee"), owner: P1, zone: "play" },
+        { key: "kill", def: killTactic(), owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    assert.throws(
+      () => play(engine, P2, id("kill"), { selected: { t: [id("mat")] } }),
+      /Illegal target/
+    );
+    assert.equal(engine.state.cards[id("mat")].zone, "play");
+  });
+
+  test("its own controller can pick it", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "mat", def: def("Martial Arts Trainee"), owner: P1, zone: "play" },
+        { key: "kill", def: killTactic(), owner: P1, zone: "hand" }
+      ]
+    });
+    play(engine, P1, id("kill"), { selected: { t: [id("mat")] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[id("mat")].zone, "discard");
+  });
+
+  test("its controller can sacrifice it to Rapine's 'sac' declaration", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "rp", def: cardDef("Open Beta", "Rapine"), owner: P1, zone: "hand" },
+        { key: "mat", def: def("Martial Arts Trainee"), owner: P1, zone: "play" },
+        { key: "oc", def: character({ name: "OC" }), owner: P2, zone: "play" },
+        ...bank("deception", 6, P1)
+      ]
+    });
+    play(engine, P1, id("rp"), { selected: { sac: [id("mat")], c: [id("oc")] } });
+    assert.equal(engine.state.cards[id("mat")].zone, "discard");
+    assert.equal(engine.state.cards[id("oc")].controllerId, P1);
   });
 });
 
