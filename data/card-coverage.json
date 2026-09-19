@@ -1280,9 +1280,11 @@
       "kind": [
         "engine"
       ],
-      "spec": "behavior.onPlay gains costAdjust?:NumberExpression evaluated in the play context and added (usually negative) to the numeric cost actually paid, floored at 0 — 'reduce this card's numeric cost by the number of cards removed [as an extra cost].' Opportunistic Pirate.",
+      "spec": "A card can reduce (or adjust) its own numeric cost via costAdjust?:NumberExpression, evaluated in the play context and added (usually negative) to the numeric cost actually paid, floored at 0 — 'reduce this card's numeric cost by the number of cards removed [as an extra cost].' Non-tactics declare it on behavior.onPlay (Opportunistic Pirate, Night-basking Basilisk, Fantastic Über Kool Creator Majig); a tactic declares it on its play source — the first activated ability, or a mode (Moment of Annihilation, Haunting Execution). getCardPlayability applies the best case (every legal pick size is swept) so a card whose reduction is still to be chosen is offered when it could be afforded; deployCard re-checks the real cost.",
       "cards": [
-        "81f3e9be-87fd-4626-9206-c54b6d7be32e"
+        "81f3e9be-87fd-4626-9206-c54b6d7be32e",
+        "c35705f0-9e26-4e6d-a682-0ff4d029166f",
+        "f7cab292-794f-408f-ab81-99fb8000955e"
       ]
     },
     "attacker-blocked-trigger": {
@@ -23581,7 +23583,7 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "behavior.onPlay: costAdjust {conditional: if (count {character zone:discard owner:self} >= 4) then -3 else 0}; target [character]; effects [destroy picked]",
+          "activated body (tactic play source): costAdjust {conditional: if (count {character zone:discard owner:self} >= 4) then -3 else 0}; target [character]; effects [destroy picked]",
           "activated RECUR: activationZone discard, threshold 'g', costs [payResources 2, removeFromGame source], targets [{character zone:discard owner:self}], effects [moveCard picked -> hand]"
         ],
         "reusesProvenShape": true,
@@ -24123,7 +24125,7 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "behavior.onPlay: costs [optional remove up to 3 {non-character card zone:discard owner:opponent} from game via sacrificeSelected/removeSelected]; costAdjust {multiply:[{selectionCount removed}, -1]}; target [character]; effects [if statCompare picked life <= 4 -> destroy picked]"
+          "activated body (tactic play source): targets [optional up to 3 {non-character card zone:discard owner:opponent} (rm), {character} (c)]; costs [sacrificeSelected rm -> removeFromGame]; costAdjust {multiply:[{selectionCount rm}, -1]}; effects [if statCompare picked life <= 4 -> destroy picked]"
         ],
         "reusesProvenShape": true,
         "newTestNeeded": false

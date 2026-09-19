@@ -1217,6 +1217,7 @@ export class SpoilsEngine {
     token: TokenSpec
   ): CardInstanceId {
     const defId = this.nextId("token-def");
+    this.grantingDefinitionIds = undefined;
     this.definitions[defId] = {
       id: defId,
       name: token.name,
@@ -2350,20 +2351,16 @@ export class SpoilsEngine {
           reduction.cardType === definition.type)
     );
 
-    // Best-case "EXTRA COST: reduce this card's numeric cost by..." adjust
-    // (Opportunistic Pirate, Night-basking Basilisk, Fantastic Über Kool
-    // Creator Majig) — see `getBestCaseOnPlayCostAdjust`. Optimistic because
-    // the actual reduction (for a selection-based one) isn't locked in until
-    // the player makes that selection; `deployCard` re-evaluates for real
-    // once it has one.
-    const onPlayAdjust = definition.behavior?.onPlay?.costAdjust
-      ? this.getBestCaseOnPlayCostAdjust(definition, playerId, cardId)
-      : 0;
+    // Best-case "EXTRA COST: reduce this card's numeric cost by..." adjust —
+    // see `getBestCaseCostAdjust`. Optimistic because a selection-based
+    // reduction isn't locked in until the player makes that selection;
+    // `deployCard` re-evaluates for real once it has one.
+    const costAdjust = this.getBestCaseCostAdjust(definition, playerId, cardId);
 
     const numericCost = this.applyCostModifiers(
       playerId,
       cardId,
-      Math.max(0, (definition.cost ?? 0) - (pendingReduction?.amount ?? 0) + onPlayAdjust)
+      Math.max(0, (definition.cost ?? 0) - (pendingReduction?.amount ?? 0) + costAdjust)
     );
     const availableResources = this.getAvailableResourceCount(playerId);
 
@@ -2377,50 +2374,110 @@ export class SpoilsEngine {
   }
 
   /**
-   * Optimistic lower bound for `definition.behavior.onPlay.costAdjust` — used
-   * only to decide *playability*, never to actually pay a cost. Two shapes
-   * exist today: an automatic board-state adjust (Night-basking Basilisk's
-   * "if you control [O]x6", Fantastic Über Kool Creator Majig's "by the
-   * number of [E] you control") that needs no selection and is evaluated for
-   * real; and a selection-based one (Opportunistic Pirate's "reduce by the
-   * number of cards removed") whose actual value depends on a pick the
-   * player hasn't made yet. For the latter, this substitutes the largest
-   * selection the declared target could legally have right now (capped by
-   * both its `count` and the number of matching candidates) so a card isn't
-   * shown as unaffordable when a big enough discount is actually available —
-   * `deployCard` is still the last word once a real selection exists.
+   * The lowest `costAdjust` (see `getPlayCostAdjust`) the player could end up
+   * with for this card right now — used only to decide *playability*, never
+   * to actually pay a cost. A modal card takes the best of its modes.
+   *
+   * Two shapes: an automatic board-state adjust ("if you control [O]x6",
+   * "by the number of [E] you control", "if you have 4+ characters in your
+   * discard pile") is simply evaluated; a pick-based one ("by the number of
+   * cards removed") depends on how many cards the player chooses, so every
+   * pick size each referenced (`selectionCount`) declaration could legally
+   * take — 0..N for an optional one, where N is its own printed `count`
+   * capped by how many candidates exist — is tried and the cheapest outcome
+   * wins. Nothing here assumes bigger picks are cheaper, or that the adjust
+   * is negative. An adjust that depends on *which* cards are picked rather
+   * than how many isn't modeled (no card has one).
    */
-  private getBestCaseOnPlayCostAdjust(
+  private getBestCaseCostAdjust(
     definition: CardDefinition,
     playerId: PlayerId,
     cardId: CardInstanceId
   ): number {
-    const costAdjust = definition.behavior?.onPlay?.costAdjust;
-    if (!costAdjust) return 0;
+    const modeCount = definition.behavior?.modes?.length ?? 0;
+    const modes: Array<number | undefined> =
+      modeCount > 0 ? [...Array(modeCount).keys()] : [undefined];
 
+    let best: number | undefined;
+    for (const mode of modes) {
+      const adjust = this.getPlayCostAdjust(definition, mode);
+      const value = adjust
+        ? this.getBestCaseModeCostAdjust(adjust, definition, mode, playerId, cardId)
+        : 0;
+      best = best === undefined ? value : Math.min(best, value);
+    }
+    return best ?? 0;
+  }
+
+  private getBestCaseModeCostAdjust(
+    adjust: NumberExpression,
+    definition: CardDefinition,
+    mode: number | undefined,
+    playerId: PlayerId,
+    cardId: CardInstanceId
+  ): number {
     const context: ResolutionContext = {
       sourceId: cardId,
       controllerId: playerId,
       selected: {}
     };
 
-    for (const target of definition.behavior?.onPlay?.targets ?? []) {
+    const referenced = new Set<string>();
+    this.collectSelectionCountIds(adjust, referenced);
+
+    const axes: Array<{
+      id: string;
+      candidates: CardInstanceId[];
+      min: number;
+      max: number;
+    }> = [];
+    for (const declaration of this.getPlayTargetDeclarations(definition, mode)) {
+      if (!referenced.has(declaration.id)) continue;
       try {
-        const candidates = this.targetCandidates(target.selector, context, playerId);
-        const maxCount = Math.max(0, this.evaluateNumber(target.count, context));
-        context.selected[target.id] = candidates
-          .slice(0, Math.min(maxCount, candidates.length))
-          .map(candidate => candidate.id);
+        const candidates = this.targetCandidates(
+          declaration.selector,
+          context,
+          playerId
+        ).map(candidate => candidate.id);
+        const wanted = Math.max(0, this.evaluateNumber(declaration.count, context));
+        const max = Math.min(wanted, candidates.length);
+        axes.push({ id: declaration.id, candidates, min: declaration.optional ? 0 : max, max });
       } catch {
-        // Selector/count not evaluable yet without further selections —
-        // leave this declaration unselected (the conservative case).
+        // Selector/count needs a not-yet-made pick — leave it unselected.
       }
     }
 
-    try {
-      return Math.min(0, this.evaluateNumber(costAdjust, context));
-    } catch {
-      return 0;
+    let best: number | undefined;
+    const sweep = (axis: number): void => {
+      if (axis === axes.length) {
+        try {
+          const value = this.evaluateNumber(adjust, context);
+          best = best === undefined ? value : Math.min(best, value);
+        } catch {
+          // Not evaluable as a read-only probe — this combination doesn't count.
+        }
+        return;
+      }
+      const { id, candidates, min, max } = axes[axis];
+      for (let size = min; size <= max; size++) {
+        context.selected[id] = candidates.slice(0, size);
+        sweep(axis + 1);
+      }
+    };
+    sweep(0);
+
+    return best ?? 0;
+  }
+
+  /** Deep-scans an expression for `{ type: "selectionCount", id }` nodes, adding each `id`. */
+  private collectSelectionCountIds(node: unknown, into: Set<string>): void {
+    if (!node || typeof node !== "object") return;
+    const record = node as Record<string, unknown>;
+    if (record.type === "selectionCount" && typeof record.id === "string") {
+      into.add(record.id);
+    }
+    for (const value of Object.values(record)) {
+      this.collectSelectionCountIds(value, into);
     }
   }
 
@@ -2822,11 +2879,12 @@ export class SpoilsEngine {
           );
 
     // "reduce this card's numeric cost by the number of cards removed [as an
-    // EXTRA COST]" (Opportunistic Pirate) — evaluated in the play context so
-    // it can read the EXTRA-COST selections.
+    // EXTRA COST]" (Opportunistic Pirate, Moment of Annihilation) — evaluated
+    // in the play context so it can read the EXTRA-COST selections.
+    const playCostAdjust = this.getPlayCostAdjust(definition, mode);
     const onPlayAdjust =
-      !free && costOverride === undefined && definition.behavior?.onPlay?.costAdjust
-        ? this.evaluateNumber(definition.behavior.onPlay.costAdjust, context)
+      !free && costOverride === undefined && playCostAdjust
+        ? this.evaluateNumber(playCostAdjust, context)
         : 0;
 
     const numericCost = free
@@ -2985,6 +3043,7 @@ export class SpoilsEngine {
   ): {
     condition?: Condition;
     costs?: Cost[];
+    costAdjust?: NumberExpression;
     targets?: TargetDeclaration[];
     variables?: Record<string, NumberExpression>;
     variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }>;
@@ -2999,6 +3058,20 @@ export class SpoilsEngine {
     return definition.behavior?.abilities?.find(
       ability => ability.type === "activated"
     ) as ActivatedAbility | undefined;
+  }
+
+  /**
+   * The card's own "reduce this card's numeric cost by..." expression, wherever
+   * its type keeps it: a tactic's play source (first activated ability, or
+   * the chosen mode) or a non-tactic's `behavior.onPlay`.
+   */
+  private getPlayCostAdjust(
+    definition: CardDefinition,
+    mode?: number
+  ): NumberExpression | undefined {
+    return definition.type === "tactic"
+      ? this.getTacticSource(definition, mode)?.costAdjust
+      : definition.behavior?.onPlay?.costAdjust;
   }
 
   private getPlayTargetDeclarations(
@@ -4410,25 +4483,107 @@ export class SpoilsEngine {
    * recipient's controller. The parallel of `getGrantedTriggeredAbilities`
    * / `getGrantedActivatedAbilities` for the continuous recompute.
    */
-  private getEffectiveContinuousAbilities(
-    cardId: CardInstanceId
+  /**
+   * A definition's continuous abilities, memoized per definition object. The
+   * returned array is shared — callers only iterate it.
+   */
+  private readonly continuousAbilityCache = new WeakMap<
+    CardDefinition,
+    Array<Extract<AbilityDefinition, { type: "continuous" }>>
+  >();
+
+  private continuousAbilitiesOf(
+    definition: CardDefinition
   ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
-    const own = (this.getDefinition(cardId).behavior?.abilities ?? []).filter(
-      (a): a is Extract<AbilityDefinition, { type: "continuous" }> =>
-        a.type === "continuous"
-    );
+    let own = this.continuousAbilityCache.get(definition);
+    if (!own) {
+      own = (definition.behavior?.abilities ?? []).filter(
+        (a): a is Extract<AbilityDefinition, { type: "continuous" }> =>
+          a.type === "continuous"
+      );
+      this.continuousAbilityCache.set(definition, own);
+    }
+    return own;
+  }
+
+  /**
+   * A definition's continuous abilities that carry a `grantedAbilities`
+   * block, memoized per definition object (definitions never change under a
+   * live engine, and keying on the object stays correct if one is swapped).
+   */
+  private readonly grantingAbilityCache = new WeakMap<
+    CardDefinition,
+    Array<Extract<AbilityDefinition, { type: "continuous" }>>
+  >();
+
+  private grantingAbilitiesOf(
+    definition: CardDefinition
+  ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
+    let granting = this.grantingAbilityCache.get(definition);
+    if (!granting) {
+      granting = (definition.behavior?.abilities ?? []).filter(
+        (a): a is Extract<AbilityDefinition, { type: "continuous" }> =>
+          a.type === "continuous" && !!a.grantedAbilities
+      );
+      this.grantingAbilityCache.set(definition, granting);
+    }
+    return granting;
+  }
+
+  /**
+   * Face-up in-play cards that print an ability which grants abilities to
+   * other cards — almost always none. Pass the result to every
+   * {@link getEffectiveContinuousAbilities} call in one read-only sweep over
+   * the board: recomputing it per source made a single `getStat` cost
+   * O(cards^2), which dominated the whole engine's runtime on wide boards.
+   */
+  private grantingSources(): CardInstance[] {
+    const ids = this.grantingDefinitionSet();
+    // No definition in this game grants anything (true of nearly every game):
+    // nothing on the board can either, so skip the walk over every card.
+    if (ids.size === 0) return [];
+    const out: CardInstance[] = [];
+    for (const source of Object.values(this.state.cards)) {
+      if (source.zone !== "play" || source.faceDown) continue;
+      if (ids.has(source.definitionId)) out.push(source);
+    }
+    return out;
+  }
+
+  /**
+   * Ids of the definitions that print a `grantedAbilities` block. Built once
+   * (definitions are fixed after construction) and dropped whenever a token
+   * definition is minted, the one place `definitions` grows at runtime.
+   */
+  private grantingDefinitionIds: Set<CardDefinitionId> | undefined;
+
+  private grantingDefinitionSet(): Set<CardDefinitionId> {
+    if (!this.grantingDefinitionIds) {
+      const ids = new Set<CardDefinitionId>();
+      for (const [id, definition] of Object.entries(this.definitions)) {
+        if (this.grantingAbilitiesOf(definition).length > 0) ids.add(id);
+      }
+      this.grantingDefinitionIds = ids;
+    }
+    return this.grantingDefinitionIds;
+  }
+
+  private getEffectiveContinuousAbilities(
+    cardId: CardInstanceId,
+    granters?: CardInstance[]
+  ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
+    const own = this.continuousAbilitiesOf(this.getDefinition(cardId));
 
     const target = this.state.cards[cardId];
     if (!target || target.zone !== "play" || target.faceDown) return own;
 
     const granted: Array<Extract<AbilityDefinition, { type: "continuous" }>> = [];
 
-    for (const source of Object.values(this.state.cards)) {
-      if (source.zone !== "play" || source.faceDown) continue;
+    for (const source of granters ?? this.grantingSources()) {
       if (source.id === cardId) continue;
-      for (const ability of this.getDefinition(source.id).behavior?.abilities ??
-        []) {
-        if (ability.type !== "continuous" || !ability.grantedAbilities) continue;
+      for (const ability of this.grantingAbilitiesOf(
+        this.getDefinition(source.id)
+      )) {
         if (this.abilitySuppressed(source.id, ability.id)) continue;
         const ctx: ResolutionContext = {
           sourceId: source.id,
@@ -4442,7 +4597,7 @@ export class SpoilsEngine {
         ) {
           continue;
         }
-        for (const block of ability.grantedAbilities) {
+        for (const block of ability.grantedAbilities ?? []) {
           if (!this.matchesSelector(target, block.selector, ctx)) continue;
           for (const g of block.abilities) {
             if (g.type === "continuous") granted.push(g);
@@ -8795,6 +8950,7 @@ export class SpoilsEngine {
   ): RuntimeModifier[] {
     const results: RuntimeModifier[] = [];
 
+    const granters = this.grantingSources();
     for (const source of Object.values(
       this.state.cards
     )) {
@@ -8806,7 +8962,7 @@ export class SpoilsEngine {
         continue;
       }
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         if (this.abilitySuppressed(source.id, ability.id)) {
           continue;
         }
@@ -8877,12 +9033,13 @@ export class SpoilsEngine {
   ): Keyword[] {
     const results: Keyword[] = [];
 
+    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (this.sourceClassIgnoredByTarget(targetId, source.id)) {
         continue;
       }
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         if (!ability.keywords) {
           continue;
         }
@@ -8945,11 +9102,12 @@ export class SpoilsEngine {
   ): Keyword[] {
     const results: Keyword[] = [];
 
+    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
       if (this.sourceClassIgnoredByTarget(targetId, source.id)) continue;
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         if (!ability.suppressKeywords) {
           continue;
         }
@@ -8994,6 +9152,7 @@ export class SpoilsEngine {
   ): Restriction[] {
     const results: Restriction[] = [];
 
+    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) {
         continue;
@@ -9002,7 +9161,7 @@ export class SpoilsEngine {
         continue;
       }
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         if (!ability.restrictions) {
           continue;
         }
@@ -9104,10 +9263,11 @@ export class SpoilsEngine {
     playerId: PlayerId,
     query: { kind: "flipUp" } | { cardType: CardType } | { name: string }
   ): boolean {
+    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         if (!ability.playRestrictions) continue;
         if (this.abilitySuppressed(source.id, ability.id)) continue;
         if (
@@ -9188,10 +9348,11 @@ export class SpoilsEngine {
     const card = this.state.cards[cardId];
     if (!card) return false;
 
+    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
 
-      for (const ability of this.getEffectiveContinuousAbilities(source.id)) {
+      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
         const rule = ability.restrictReturnToHand;
         if (!rule) continue;
         if (this.abilitySuppressed(source.id, ability.id)) continue;

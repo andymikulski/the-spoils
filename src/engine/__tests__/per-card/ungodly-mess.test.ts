@@ -1317,6 +1317,39 @@ describe("Ungodly Mess — Haunting Execution", () => {
     play(engine, P1, id("he"), { selected: { c: [id("oc")] } });
     assert.equal(engine.state.cards[id("oc")].zone, "discard");
   });
+
+  test("costs 3 less with 4+ characters in your discard pile", () => {
+    const setup = (discardedCharacters: number) =>
+      buildGame({
+        playerA: { faction: developFaction() },
+        cards: [
+          { key: "he", def: def("Haunting Execution"), owner: P1, zone: "hand" },
+          { key: "oc", def: character({ name: "OC" }), owner: P2, zone: "play" },
+          ...Array.from({ length: discardedCharacters }, (_, i) => ({
+            key: `dead${i}`,
+            def: character({ name: `Dead ${i}` }),
+            owner: P1,
+            zone: "discard" as const
+          })),
+          ...bank("greed", 3, P1)
+        ]
+      });
+
+    // Printed cost 6, only 3 resources: castable only because of the discount.
+    const discounted = setup(4);
+    const playability = discounted.engine.getCardPlayability(P1, discounted.id("he"));
+    assert.equal(playability.numericCost, 3);
+    assert.equal(playability.playable, true);
+    play(discounted.engine, P1, discounted.id("he"), { selected: { c: [discounted.id("oc")] } });
+    assert.equal(discounted.engine.state.cards[discounted.id("oc")].zone, "discard");
+    assert.equal(discounted.engine.getAvailableResourceCount(P1), 0);
+
+    // One character short of the condition: full price, out of reach.
+    const full = setup(3);
+    const fullPlayability = full.engine.getCardPlayability(P1, full.id("he"));
+    assert.equal(fullPlayability.numericCost, 6);
+    assert.equal(fullPlayability.playable, false);
+  });
 });
 
 describe("Ungodly Mess — Headshot", () => {
@@ -1569,6 +1602,52 @@ describe("Ungodly Mess — Moment of Annihilation", () => {
     play(engine, P1, id("moa"), { selected: { rm: [], c: [id("frail")] } });
     drain(engine, declineAll);
     assert.equal(engine.state.cards[id("frail")].zone, "discard");
+  });
+
+  test("EXTRA COST: each non-character card removed from an opponent's discard pile takes 1 off its cost", () => {
+    const setup = (removable: number) =>
+      buildGame({
+        playerA: { faction: developFaction() },
+        cards: [
+          { key: "moa", def: def("Moment of Annihilation"), owner: P1, zone: "hand" },
+          { key: "frail", def: character({ name: "Frail", life: 3 }), owner: P2, zone: "play" },
+          ...Array.from({ length: removable }, (_, i) => ({
+            key: `junk${i}`,
+            def: item({ name: `Junk ${i}` }),
+            owner: P2,
+            zone: "discard" as const
+          })),
+          // A character in the discard pile isn't removable, so it never helps.
+          { key: "deadChar", def: character({ name: "Dead Char" }), owner: P2, zone: "discard" },
+          ...bank("deception", 2, P1)
+        ]
+      });
+
+    // Printed cost 5, only 2 resources: the best case is removing all 3 (cost 2).
+    const { engine, id } = setup(3);
+    const playability = engine.getCardPlayability(P1, id("moa"));
+    assert.equal(playability.numericCost, 2);
+    assert.equal(playability.playable, true);
+
+    // Removing too few leaves a cost the player can't pay.
+    assert.throws(
+      () => play(engine, P1, id("moa"), { selected: { rm: [id("junk0")], c: [id("frail")] } }),
+      /costs 4 resources, but only 2 are available/
+    );
+    assert.equal(engine.state.cards[id("moa")].zone, "hand");
+
+    play(engine, P1, id("moa"), { selected: { rm: [id("junk0"), id("junk1"), id("junk2")], c: [id("frail")] } });
+    drain(engine, declineAll);
+    assert.equal(engine.state.cards[id("frail")].zone, "discard");
+    assert.equal(engine.state.cards[id("junk0")].zone, "removed");
+    assert.equal(engine.state.cards[id("deadChar")].zone, "discard");
+    assert.equal(engine.getAvailableResourceCount(P1), 0);
+
+    // Only 2 removable cards: best case is 3, out of reach with 2 resources.
+    const short = setup(2);
+    const shortPlayability = short.engine.getCardPlayability(P1, short.id("moa"));
+    assert.equal(shortPlayability.numericCost, 3);
+    assert.equal(shortPlayability.playable, false);
   });
 });
 

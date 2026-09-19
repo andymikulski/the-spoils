@@ -148608,6 +148608,24 @@
         {
           "id": "body",
           "type": "activated",
+          "costAdjust": {
+            "type": "conditional",
+            "if": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "owner": "self",
+                  "zone": "discard",
+                  "type": "character"
+                }
+              },
+              "operator": ">=",
+              "right": 4
+            },
+            "then": -3,
+            "else": 0
+          },
           "targets": [
             {
               "id": "c",
@@ -154528,6 +154546,16 @@
               "declarationId": "rm"
             }
           ],
+          "costAdjust": {
+            "type": "multiply",
+            "values": [
+              {
+                "type": "selectionCount",
+                "id": "rm"
+              },
+              -1
+            ]
+          },
           "targets": [
             {
               "id": "rm",

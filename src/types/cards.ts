@@ -359,7 +359,9 @@ export interface CardDefinition {
        * evaluated in the play context, floored at 0 — "reduce this card's
        * numeric cost by the number of cards removed [as an EXTRA COST]"
        * (Opportunistic Pirate: `{ type: "multiply", values: [{ type:
-       * "selectionCount", id: "removed" }, -1] }`).
+       * "selectionCount", id: "removed" }, -1] }`). A TACTIC declares the
+       * same thing on its play source instead (`ActivatedAbility.costAdjust`
+       * / `modes[].costAdjust`).
        */
       costAdjust?: NumberExpression;
     };
@@ -401,6 +403,8 @@ export interface CardDefinition {
       label?: string;
       condition?: Condition;
       costs?: Cost[];
+      /** This mode's own "reduce this card's numeric cost by..." — see `onPlay.costAdjust`. */
+      costAdjust?: NumberExpression;
       targets?: TargetDeclaration[];
       variables?: Record<string, NumberExpression>;
       variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }>;
@@ -447,6 +451,16 @@ export interface ActivatedAbility extends AbilityBase {
   threshold?: string | number;
   condition?: Condition;
   costs?: Cost[];
+  /**
+   * Only meaningful on a TACTIC's play source (its first activated ability),
+   * where it is the tactic's own "EXTRA COST: ... reduce this card's numeric
+   * cost by..." — added (usually negative) to the numeric cost paid when the
+   * card is deployed, evaluated in the play context so it can read that
+   * play's picks (`selectionCount`). Same semantics as
+   * `behavior.onPlay.costAdjust` on a non-tactic; ignored when the ability
+   * is merely activated. Moment of Annihilation, Haunting Execution.
+   */
+  costAdjust?: NumberExpression;
   targets?: TargetDeclaration[];
   effects: Effect[];
   /**
