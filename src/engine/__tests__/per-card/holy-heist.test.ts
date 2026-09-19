@@ -371,9 +371,20 @@ describe("Holy Heist — Night-basking Basilisk", () => {
       cards: [{ key: "nb", def: def("Night-basking Basilisk"), owner: P1, zone: "hand" }, ...bank("obsession", 6, P1)]
     });
     // base cost 6, -4 => 2 payable from 6 obsession
+    assert.equal(engine.getCardPlayability(P1, id("nb")).numericCost, 2);
     play(engine, P1, id("nb"), {});
     assert.equal(engine.state.cards[id("nb")].zone, "play");
     assert.ok(engine.getKeywords(id("nb")).includes("covert"));
+  });
+
+  test("getCardPlayability keeps the full cost when [O]x6 isn't met", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [{ key: "nb", def: def("Night-basking Basilisk"), owner: P1, zone: "hand" }, ...bank("obsession", 5, P1)]
+    });
+    const playability = engine.getCardPlayability(P1, id("nb"));
+    assert.equal(playability.numericCost, 6);
+    assert.equal(playability.playable, false);
   });
 });
 

@@ -957,6 +957,19 @@ describe("Ungodly Mess — Fantastic Über Kool Creator Majig", () => {
     drain(engine, declineAll);
     assert.equal(engine.state.cards[id("fm")].zone, "play");
   });
+
+  test("getCardPlayability applies the [E] reduction (cost 10, only 6 resources)", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "fm", def: def("Fantastic Über Kool Creator Majig"), owner: P1, zone: "hand" },
+        ...bank("elitism", 6, P1)
+      ]
+    });
+    const playability = engine.getCardPlayability(P1, id("fm"));
+    assert.equal(playability.numericCost, 4);
+    assert.equal(playability.playable, true);
+  });
 });
 
 describe("Ungodly Mess — Feckless Chronicler", () => {

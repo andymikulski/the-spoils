@@ -1775,6 +1775,58 @@ describe("Shade of the Devoured Emperor — Opportunistic Pirate", () => {
     assert.equal(engine.state.cards[id("g1")].zone, "removed");
     assert.equal(engine.state.cards[id("g2")].zone, "removed");
   });
+
+  test("getCardPlayability accounts for the best-case reduction, not just the printed cost", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "op", def: def("Opportunistic Pirate"), owner: P1, zone: "hand" },
+        { key: "g1", def: character({ name: "G1" }), owner: P2, zone: "discard" },
+        { key: "g2", def: character({ name: "G2" }), owner: P2, zone: "discard" },
+        { key: "g3", def: character({ name: "G3" }), owner: P2, zone: "discard" },
+        { key: "g4", def: character({ name: "G4" }), owner: P2, zone: "discard" },
+        // Only 6 resources against a printed cost of 7 — unplayable at face
+        // value, but the 4-card discard removal can cut the cost to 3.
+        ...bank("deception", 6, P1)
+      ]
+    });
+
+    const playability = engine.getCardPlayability(P1, id("op"));
+    assert.equal(playability.playable, true);
+    assert.equal(playability.numericCost, 3);
+
+    play(engine, P1, id("op"), {
+      selected: { rem: [id("g1"), id("g2"), id("g3"), id("g4")] }
+    });
+    assert.equal(engine.state.cards[id("op")].zone, "play");
+    assert.equal(engine.getAvailableResourceCount(P1), 3);
+  });
+
+  test("a selection that doesn't cut the cost far enough is rejected, naming the shortfall", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "op", def: def("Opportunistic Pirate"), owner: P1, zone: "hand" },
+        { key: "g1", def: character({ name: "G1" }), owner: P2, zone: "discard" },
+        { key: "g2", def: character({ name: "G2" }), owner: P2, zone: "discard" },
+        { key: "g3", def: character({ name: "G3" }), owner: P2, zone: "discard" },
+        { key: "g4", def: character({ name: "G4" }), owner: P2, zone: "discard" },
+        ...bank("deception", 4, P1)
+      ]
+    });
+
+    // 4 resources: removing 1 card leaves a cost of 6.
+    assert.throws(
+      () => play(engine, P1, id("op"), { selected: { rem: [id("g1")] } }),
+      /costs 6 resources, but only 4 are available/
+    );
+    assert.equal(engine.state.cards[id("op")].zone, "hand");
+    assert.equal(engine.state.cards[id("g1")].zone, "discard");
+
+    // Removing 3 leaves a cost of 4 — exactly affordable.
+    play(engine, P1, id("op"), { selected: { rem: [id("g1"), id("g2"), id("g3")] } });
+    assert.equal(engine.state.cards[id("op")].zone, "play");
+  });
 });
 
 describe("Shade of the Devoured Emperor — Parkour Hoodlum", () => {

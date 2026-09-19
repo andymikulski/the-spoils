@@ -234,6 +234,44 @@ describe("game log — a running, toggleable record of everything that happens",
     });
   });
 
+  test("a pass made while a response sits on the stack names that item, not the battle window it's nested in", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "attacker", def: character({ name: "Raider", strength: 3 }), owner: P1 },
+        { key: "bravo", def: tactic({ name: "Bravo" }), owner: P2, zone: "hand" },
+        { key: "charlie", def: tactic({ name: "Charlie" }), owner: P1, zone: "hand" }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("attacker")],
+      target: { type: "faction", playerId: P2 }
+    });
+    // §608.1c window: the attacker declines at the top level, the defender
+    // responds, the attacker responds to that, and both then decline in turn.
+    engine.perform({ type: "passPriority", playerId: P1 });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("bravo") });
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("charlie") });
+    engine.perform({ type: "passPriority", playerId: P2 }); // to Charlie
+    engine.perform({ type: "advanceFlow" });
+    engine.perform({ type: "passPriority", playerId: P1 }); // to Bravo — a second chance to respond to it
+    engine.perform({ type: "advanceFlow" });
+    engine.perform({ type: "passPriority", playerId: P2 }); // top level again, empty stack
+
+    const passes = engine
+      .getLog()
+      .filter(e => e.marker === "priorityPassed")
+      .map(e => e.message);
+    assert.deepEqual(passes, [
+      "Alice passes — no response to the attack",
+      "Bob passes — no response to Charlie",
+      "Alice passes — no response to Bravo",
+      "Bob passes — no response to the attack"
+    ]);
+  });
+
   test("a resolved tactic's trip to the discard pile is logged — 'resolves' alone doesn't say where the card went", () => {
     const { engine, id } = buildGame({
       cards: [

@@ -750,9 +750,14 @@ export class SpoilsEngine {
    * The "… — <what for>" tail on a `priorityPassed` log line. A battle opens
    * three response windows back to back and normal play opens one per stack
    * item; without this a reader sees a wall of identical "X passes" lines
-   * and can't tell which window each decline belonged to.
+   * and can't tell which window each decline belonged to. A pass made while
+   * a response is on the stack is a decline of *that* item, whatever window
+   * it sits in — "the attack" only names the empty-stack, top-level pass.
    */
   private passContextSuffix(window: ResponseWindowState): string {
+    const top = this.responseStack[this.responseStack.length - 1];
+    if (top) return ` — no response to ${this.logStackItemLabel(top)}`;
+
     switch (window.kind) {
       case "battleAfterAttackers":
         return " — no response to the attack";
@@ -762,10 +767,8 @@ export class SpoilsEngine {
         return " — no response before battle damage is dealt";
       case "endTurn":
         return " — no response to the turn ending";
-      case "action": {
-        const top = this.responseStack[this.responseStack.length - 1];
-        return top ? ` — no response to ${this.logStackItemLabel(top)}` : "";
-      }
+      case "action":
+        return "";
     }
   }
 
@@ -2346,10 +2349,21 @@ export class SpoilsEngine {
         (reduction.cardType === undefined ||
           reduction.cardType === definition.type)
     );
+
+    // Best-case "EXTRA COST: reduce this card's numeric cost by..." adjust
+    // (Opportunistic Pirate, Night-basking Basilisk, Fantastic Über Kool
+    // Creator Majig) — see `getBestCaseOnPlayCostAdjust`. Optimistic because
+    // the actual reduction (for a selection-based one) isn't locked in until
+    // the player makes that selection; `deployCard` re-evaluates for real
+    // once it has one.
+    const onPlayAdjust = definition.behavior?.onPlay?.costAdjust
+      ? this.getBestCaseOnPlayCostAdjust(definition, playerId, cardId)
+      : 0;
+
     const numericCost = this.applyCostModifiers(
       playerId,
       cardId,
-      Math.max(0, (definition.cost ?? 0) - (pendingReduction?.amount ?? 0))
+      Math.max(0, (definition.cost ?? 0) - (pendingReduction?.amount ?? 0) + onPlayAdjust)
     );
     const availableResources = this.getAvailableResourceCount(playerId);
 
@@ -2360,6 +2374,54 @@ export class SpoilsEngine {
       numericCost,
       availableResources
     };
+  }
+
+  /**
+   * Optimistic lower bound for `definition.behavior.onPlay.costAdjust` — used
+   * only to decide *playability*, never to actually pay a cost. Two shapes
+   * exist today: an automatic board-state adjust (Night-basking Basilisk's
+   * "if you control [O]x6", Fantastic Über Kool Creator Majig's "by the
+   * number of [E] you control") that needs no selection and is evaluated for
+   * real; and a selection-based one (Opportunistic Pirate's "reduce by the
+   * number of cards removed") whose actual value depends on a pick the
+   * player hasn't made yet. For the latter, this substitutes the largest
+   * selection the declared target could legally have right now (capped by
+   * both its `count` and the number of matching candidates) so a card isn't
+   * shown as unaffordable when a big enough discount is actually available —
+   * `deployCard` is still the last word once a real selection exists.
+   */
+  private getBestCaseOnPlayCostAdjust(
+    definition: CardDefinition,
+    playerId: PlayerId,
+    cardId: CardInstanceId
+  ): number {
+    const costAdjust = definition.behavior?.onPlay?.costAdjust;
+    if (!costAdjust) return 0;
+
+    const context: ResolutionContext = {
+      sourceId: cardId,
+      controllerId: playerId,
+      selected: {}
+    };
+
+    for (const target of definition.behavior?.onPlay?.targets ?? []) {
+      try {
+        const candidates = this.targetCandidates(target.selector, context, playerId);
+        const maxCount = Math.max(0, this.evaluateNumber(target.count, context));
+        context.selected[target.id] = candidates
+          .slice(0, Math.min(maxCount, candidates.length))
+          .map(candidate => candidate.id);
+      } catch {
+        // Selector/count not evaluable yet without further selections —
+        // leave this declaration unselected (the conservative case).
+      }
+    }
+
+    try {
+      return Math.min(0, this.evaluateNumber(costAdjust, context));
+    } catch {
+      return 0;
+    }
   }
 
   /** Convenience filter over `getCardPlayability` — every card in `playerId`'s hand that's currently deployable. */
@@ -2785,6 +2847,14 @@ export class SpoilsEngine {
       ...extraCosts
     ];
 
+    // Name the shortfall when it's the numeric cost — with a selection-based
+    // reduction (Opportunistic Pirate) "how many did you pick" decides it, so
+    // a bare "Costs cannot be paid." leaves the player guessing.
+    const availableResources = this.getAvailableResourceCount(playerId);
+    assert(
+      availableResources >= numericCost,
+      `Costs cannot be paid: this play costs ${numericCost} resource${numericCost === 1 ? "" : "s"}, but only ${availableResources} ${availableResources === 1 ? "is" : "are"} available.`
+    );
     assert(this.canPayCosts(costs, context), "Costs cannot be paid.");
 
     if (pendingReduction) {

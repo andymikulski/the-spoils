@@ -627,7 +627,13 @@ export interface CardPlayability {
   legalTiming: boolean;
   /** False if the card's printed threshold isn't currently met. */
   thresholdMet: boolean;
-  /** The card's printed numeric cost, after any pending "reduce next cost" effect. */
+  /**
+   * The card's printed numeric cost, after any pending "reduce next cost"
+   * effect and — for a card whose own "EXTRA COST: reduce this card's
+   * numeric cost by..." depends on a selection not made yet (Opportunistic
+   * Pirate) — the best case for that reduction. `deployCard` re-evaluates
+   * for real once an actual selection exists.
+   */
   numericCost: number;
   /** Currently unattached resources available to pay with. */
   availableResources: number;
