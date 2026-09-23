@@ -8,6 +8,8 @@ import type {
   ActivatedAbility,
   BattleDamageAssignment,
   BattleId,
+  BattleRound,
+  BattleSide,
   BattleState,
   BattleView,
   CardDefinition,
@@ -6906,6 +6908,14 @@ export class SpoilsEngine {
         const targetId = this.redirectTargetFor(rawTargetId) ?? rawTargetId;
 
         const target = this.requireCard(targetId);
+
+        // The target left play (e.g. bounced by a response) before this
+        // effect resolved — same "no longer there, no damage lands" rule
+        // battle damage already enforces (CR §302.15). Without this, damage
+        // marked here would stick on a card that's supposed to be undamaged
+        // outside of play (see the zone-leave reset below).
+        if (target.zone !== "play") return;
+
         const base = this.evaluateNumber(effect.amount, context);
         const raw = Math.max(
           0,
@@ -8171,7 +8181,9 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         const card = this.state.cards[targetId];
-        if (card) card.damage = Math.max(0, this.evaluateNumber(effect.amount, context));
+        if (card && card.zone === "play") {
+          card.damage = Math.max(0, this.evaluateNumber(effect.amount, context));
+        }
         return;
       }
 
@@ -8179,7 +8191,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         const card = this.state.cards[targetId];
-        if (card) {
+        if (card && card.zone === "play") {
           card.damage = Math.max(
             0,
             (card.damage ?? 0) - Math.max(0, this.evaluateNumber(effect.amount, context))
@@ -8220,6 +8232,7 @@ export class SpoilsEngine {
             : battle.defenderPlayerId;
         if (card.controllerId !== sideOwner) return;
         if (!side.includes(targetId)) side.push(targetId);
+        this.recordBattleParticipants(battle, [targetId], effect.side === "attacking" ? "attacking" : "blocking");
         return;
       }
 
@@ -11692,8 +11705,12 @@ export class SpoilsEngine {
       speed: battle.speed,
       attackerPlayerId: battle.attackerPlayerId,
       defenderPlayerId: battle.defenderPlayerId,
+      target: structuredClone(battle.target),
       attackingParty: [...battle.attackingParty],
       blockingParty: [...battle.blockingParty],
+      participants: structuredClone(battle.participants),
+      assignedDamageBy: [...battle.assignedDamageBy],
+      rounds: structuredClone(battle.rounds),
       actingPlayerId,
       damageSources,
       lockedAssignments: [
@@ -11894,6 +11911,8 @@ export class SpoilsEngine {
       target,
       attackingParty: [...attackerIds],
       blockingParty: [],
+      participants: attackerIds.map(cardId => ({ cardId, side: "attacking" as const })),
+      rounds: [],
       phase: "afterAttackersResponse",
       assignedDamageBy: [],
       attackerAssignments: [],
@@ -11973,6 +11992,8 @@ export class SpoilsEngine {
       target: { type: "faction", playerId: defenderId },
       attackingParty: [...attackerIds],
       blockingParty: [],
+      participants: attackerIds.map(cardId => ({ cardId, side: "attacking" as const })),
+      rounds: [],
       phase: "afterAttackersResponse",
       assignedDamageBy: [],
       attackerAssignments: [],
@@ -12244,6 +12265,7 @@ export class SpoilsEngine {
     this.assertBlockRestrictions(battle, blockerIds);
 
     battle.blockingParty = [...blockerIds];
+    this.recordBattleParticipants(battle, blockerIds, "blocking");
 
     // Declaring blockers is a player action and must show in the log. A
     // non-empty party is covered by the `blockingPartyFormed` /
@@ -12722,6 +12744,17 @@ export class SpoilsEngine {
       ...battle.defenderAssignments
     ];
 
+    // The transforms below and the per-source redistribution rewrite these
+    // entries in place — keep the as-assigned version for the round record.
+    const round: BattleRound = {
+      speed: battle.speed ?? 0,
+      assignedBy: battle.assignedDamageBy.filter(
+        id => !battle.rounds.some(r => r.assignedBy.includes(id))
+      ),
+      assigned: structuredClone(assignments),
+      inflicted: []
+    };
+
     this.applyBattleDamageTransforms(assignments);
 
     // CR §609.1f: damage from several characters to the same thing this
@@ -12825,6 +12858,16 @@ export class SpoilsEngine {
           remaining -= share;
         });
 
+        for (const contributor of group.contributors) {
+          if (contributor.amount > 0) {
+            round.inflicted.push({
+              sourceId: contributor.sourceId,
+              target: structuredClone(group.target),
+              amount: contributor.amount
+            });
+          }
+        }
+
         if (group.target.type === "faction") {
           // A faction takes no damage markers; it loses influence equal to
           // the final adjusted amount (CR §408.3 / §202.4).
@@ -12849,6 +12892,13 @@ export class SpoilsEngine {
             if (!rc || rc.zone !== "play") continue;
             rc.damage += r.amount;
             const cause = group.contributors[0];
+            if (cause && r.amount > 0) {
+              round.inflicted.push({
+                sourceId: cause.sourceId,
+                target: { type: "card", cardId: r.cardId },
+                amount: r.amount
+              });
+            }
             this.emit({
               type: "damageDealt",
               sourceId: cause?.sourceId,
@@ -12885,10 +12935,23 @@ export class SpoilsEngine {
       this.endEventBatch();
     }
 
+    battle.rounds.push(round);
     this.pruneBattleParties(battle);
     battle.speed = undefined;
     battle.attackerAssignments = [];
     battle.defenderAssignments = [];
+  }
+
+  private recordBattleParticipants(
+    battle: BattleState,
+    cardIds: CardInstanceId[],
+    side: BattleSide
+  ): void {
+    for (const cardId of cardIds) {
+      if (!battle.participants.some(p => p.cardId === cardId && p.side === side)) {
+        battle.participants.push({ cardId, side });
+      }
+    }
   }
 
   private pruneBattleParties(

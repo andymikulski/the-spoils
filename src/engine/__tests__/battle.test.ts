@@ -218,6 +218,74 @@ describe("RULES.md §8 — battle: speed groups", () => {
   });
 });
 
+describe("RULES.md §8 — battle record (participants + completed rounds)", () => {
+  test("keeps every round's assignments and the characters that left the battle", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "fast", def: character({ name: "Fast", strength: 5, speed: 3, life: 5 }), owner: P1 },
+        { key: "slow", def: character({ name: "Slow", strength: 2, speed: 1, life: 5 }), owner: P1 },
+        { key: "frail", def: character({ name: "Frail", strength: 4, speed: 1, life: 3 }), owner: P2 },
+        { key: "sturdy", def: character({ name: "Sturdy", strength: 1, speed: 1, life: 6 }), owner: P2 }
+      ]
+    });
+
+    engine.perform({
+      type: "declareAttack",
+      playerId: P1,
+      attackerIds: [id("fast"), id("slow")],
+      target: { type: "faction", playerId: P2 }
+    });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [id("frail"), id("sturdy")] });
+
+    // Stop on the `finished` phase — the record goes with the battle once the flow advances past it.
+    let guard = 0;
+    while (engine.state.battle && engine.state.battle.phase !== "finished") {
+      assert.ok(++guard < 100);
+      if (engine.state.responseWindow) {
+        resolvePendingResponses(engine);
+        continue;
+      }
+      const view = engine.getBattleView()!;
+      engine.perform({
+        type: "assignBattleDamage",
+        playerId: view.actingPlayerId!,
+        assignments: view.damageSources.map(source => ({
+          sourceId: source.cardId,
+          target: source.legalTargets[0],
+          amount: source.strength
+        }))
+      });
+    }
+
+    const view = engine.getBattleView()!;
+    assert.deepEqual(view.target, { type: "faction", playerId: P2 });
+    assert.deepEqual(view.participants, [
+      { cardId: id("fast"), side: "attacking" },
+      { cardId: id("slow"), side: "attacking" },
+      { cardId: id("frail"), side: "blocking" },
+      { cardId: id("sturdy"), side: "blocking" }
+    ]);
+    // Frail died in the speed-3 round: gone from the party, still a participant.
+    assert.deepEqual(view.blockingParty, [id("sturdy")]);
+
+    assert.equal(view.rounds.length, 2);
+    assert.equal(view.rounds[0].speed, 3);
+    assert.deepEqual(view.rounds[0].assignedBy, [id("fast")]);
+    assert.deepEqual(view.rounds[0].inflicted, [
+      { sourceId: id("fast"), target: { type: "card", cardId: id("frail") }, amount: 5 }
+    ]);
+
+    assert.equal(view.rounds[1].speed, 1);
+    assert.deepEqual([...view.rounds[1].assignedBy].sort(), [id("slow"), id("sturdy")].sort());
+    assert.deepEqual(view.rounds[1].inflicted, [
+      { sourceId: id("slow"), target: { type: "card", cardId: id("sturdy") }, amount: 2 },
+      { sourceId: id("sturdy"), target: { type: "card", cardId: id("fast") }, amount: 1 }
+    ]);
+    assert.deepEqual([...view.assignedDamageBy].sort(), [id("fast"), id("slow"), id("sturdy")].sort());
+  });
+});
+
 describe("RULES.md §6/§9 — attack eligibility and Aggro", () => {
   test("a character that just entered play cannot attack without Aggro", () => {
     const { engine, id } = buildGame({

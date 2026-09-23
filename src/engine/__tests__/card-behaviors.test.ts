@@ -1160,6 +1160,59 @@ describe("card behavior: Quotidian Ejector (removeCounter as a Cost)", () => {
     );
   });
 
+  // Reported bug: ejecting the Ejector in response to a targeted `dealDamage`
+  // ability left it sitting in hand with damage still marked (e.g. shown as
+  // "0/1" life) until it was replayed. `dealDamage`'s target is fixed at
+  // activation time (`context.selected`) but the effect itself doesn't
+  // resolve until responses finish — if the target bails out of play via a
+  // response in between, the effect must fizzle against it instead of
+  // marking damage on a card no longer in play.
+  test("EJECT in response to a targeted dealDamage effect leaves no damage behind", () => {
+    const zapper = character({
+      name: "Zapper",
+      behavior: {
+        abilities: [
+          {
+            id: "zap",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 3 }]
+          }
+        ]
+      }
+    });
+
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "zapper", def: zapper, owner: P1 },
+        { key: "ejector", def: quotidianEjector(), owner: P2, counters: { token: 2 } }
+      ]
+    });
+
+    engine.perform({
+      type: "activateAbility",
+      playerId: P1,
+      cardId: id("zapper"),
+      abilityId: "zap",
+      selected: { t: [id("ejector")] }
+    });
+
+    // P2 has priority to respond and bails the targeted Ejector out before
+    // the 3 damage lands.
+    engine.perform({
+      type: "activateAbility",
+      playerId: P2,
+      cardId: id("ejector"),
+      abilityId: "quotidian-ejector-eject",
+      selected: { target: [id("ejector")] }
+    });
+
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("ejector")].zone, "hand");
+    assert.equal(engine.state.cards[id("ejector")].damage, 0);
+  });
+
 });
 
 // CR §202.9 / §402.9 (RULES.md §3.6): a faction card is never a legal pick

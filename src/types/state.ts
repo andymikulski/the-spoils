@@ -435,6 +435,39 @@ export interface BattleDamageAssignment {
   amount: number;
 }
 
+export type BattleSide = "attacking" | "blocking";
+
+/** A character that has been part of a battle party, at any point in the battle. */
+export interface BattleParticipant {
+  cardId: CardInstanceId;
+  side: BattleSide;
+}
+
+/**
+ * One completed round of battle damage — a single speed level (CR §609.1),
+ * from both sides' assignments through the damage actually landing.
+ */
+export interface BattleRound {
+  speed: number;
+
+  /**
+   * Every character that assigned battle damage this round, both sides —
+   * including ones that assigned 0 (CR §408.1b) or had no legal target.
+   */
+  assignedBy: CardInstanceId[];
+
+  /** The assignments as the players locked them in (CR §609.1c–e). */
+  assigned: BattleDamageAssignment[];
+
+  /**
+   * What was actually inflicted (CR §609.1f), after battle-damage
+   * transforms, damage modifiers and prevention; zero amounts are dropped.
+   * Damage a prevention shield redirected appears as an entry against the
+   * card that took it. A faction entry's amount is the influence it lost.
+   */
+  inflicted: BattleDamageAssignment[];
+}
+
 export type BattlePhase =
   | "afterAttackersResponse"
   | "blocking"
@@ -453,8 +486,19 @@ export interface BattleState {
     | { type: "faction"; playerId: PlayerId }
     | { type: "card"; cardId: CardInstanceId };
 
+  /** Current party members. A character that leaves the battle is dropped. */
   attackingParty: CardInstanceId[];
   blockingParty: CardInstanceId[];
+
+  /**
+   * Every character that has joined either party this battle, in join order —
+   * including ones that have since left it (destroyed, bounced, removed from
+   * battle). `attackingParty` / `blockingParty` hold who is still in.
+   */
+  participants: BattleParticipant[];
+
+  /** Completed damage rounds, in order. The round in progress isn't here yet. */
+  rounds: BattleRound[];
 
   phase: BattlePhase;
 
@@ -486,8 +530,19 @@ export interface BattleView {
   attackerPlayerId: PlayerId;
   defenderPlayerId: PlayerId;
 
+  target: BattleState["target"];
+
   attackingParty: CardInstanceId[];
   blockingParty: CardInstanceId[];
+
+  /** See `BattleState.participants`. */
+  participants: BattleParticipant[];
+
+  /** Characters that have already assigned battle damage this battle. */
+  assignedDamageBy: CardInstanceId[];
+
+  /** See `BattleState.rounds`. */
+  rounds: BattleRound[];
 
   actingPlayerId?: PlayerId;
 
