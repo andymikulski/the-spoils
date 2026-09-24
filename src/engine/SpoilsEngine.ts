@@ -188,6 +188,21 @@ export class SpoilsEngine {
   >();
 
   /**
+   * Last-known information for token instances that have ceased to exist.
+   * A token leaving play is deleted from `state.cards` outright (see
+   * `moveCard`), but the `cardDestroyed` / `cardMoved` event about it is
+   * emitted *after* that — so a trigger whose condition inspects the event
+   * card ("when a character an opponent controls is destroyed": Octo-Ba-Ba,
+   * the Devourer) would otherwise read a card that is no longer there and
+   * throw, stalling the battle mid-resolution. Only `getDefinition` and the
+   * `eventCardControlledBy` condition consult it (reads of what the token
+   * *was*); nothing else treats a departed token as present. Kept for the
+   * whole game rather than per-`perform()`, since a queued trigger can
+   * resolve in a later action.
+   */
+  private readonly departedTokens = new Map<CardInstanceId, CardInstance>();
+
+  /**
    * Cards whose `faceDown` flag a caller cleared *before* the `moveCard`
    * that takes them out of play — i.e. `deployCard` flipping a face-down
    * resource face-up to deploy it (CR §411.3). `moveCard` ORs this into the
@@ -1043,7 +1058,8 @@ export class SpoilsEngine {
   }
 
   getDefinition(cardId: CardInstanceId): CardDefinition {
-    const card = this.requireCard(cardId);
+    const card = this.state.cards[cardId] ?? this.departedTokens.get(cardId);
+    assert(card, `Card '${cardId}' not found.`);
     const definition = this.definitions[card.definitionId];
 
     assert(
@@ -4954,7 +4970,10 @@ export class SpoilsEngine {
           return false;
         }
 
-        const eventCard = this.state.cards[eventCardId];
+        // A destroyed token no longer exists — judge it by who controlled
+        // it when it left play (see `departedTokens`).
+        const eventCard =
+          this.state.cards[eventCardId] ?? this.departedTokens.get(eventCardId);
 
         if (!eventCard) {
           return false;
@@ -9887,6 +9906,13 @@ export class SpoilsEngine {
 
         this.state.pendingChoice = undefined;
         this.processImmediateQueue();
+        // The ordering prompt can be raised from inside another trigger's
+        // effect frame (its `processImmediateQueue` found the rest of the
+        // batch), which parks that frame's remainder. Resume it once the
+        // queue has drained, exactly as the chooser choices do — otherwise a
+        // finished frame is left parked and `reopenOrCloseResponseWindow`
+        // never closes the window (the game stalls on an empty stack).
+        if (!this.state.pendingChoice) this.resumeEffectFrames();
         return;
       }
 
@@ -10849,6 +10875,7 @@ export class SpoilsEngine {
 
     // A token permanent leaving play ceases to exist outright.
     if (card.isToken && from === "play" && to !== "play") {
+      this.departedTokens.set(cardId, { ...card, zone: to });
       this.removeFromAllPlayerZones(cardId);
       for (const other of Object.values(this.state.cards)) {
         if (other.attachedTo === cardId) other.attachedTo = undefined;

@@ -75,6 +75,60 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
     };
   }
 
+  test("Octo-Ba-Ba feeds on a destroyed opposing token (a token ceases to exist before the trigger checks it)", () => {
+    // Regression: a token leaving play is deleted outright, and the
+    // `cardDestroyed` event reaches Octo-Ba-Ba's "a character an opponent
+    // controls" condition afterwards — which used to throw "Card not found"
+    // and leave a battle stuck in `afterDamageResponse`.
+    const maker = tactic({
+      name: "Token Maker",
+      id: "octo-token-maker",
+      behavior: {
+        abilities: [
+          {
+            id: "make",
+            type: "activated",
+            effects: [
+              { type: "createTokens", controller: "controller", count: 1, token: { name: "Micromajig", cardType: "character", subtype: ["majig"], strength: 1, life: 1, speed: 3 } }
+            ]
+          }
+        ]
+      }
+    });
+    const bolt = tactic({
+      name: "Token Bolt",
+      id: "octo-token-bolt",
+      behavior: {
+        abilities: [
+          {
+            id: "bolt",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character", controller: "self" }, count: 1 }],
+            effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 1 }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "octo", def: def("Octo-Ba-Ba, the Devourer"), owner: P1 },
+        { key: "maker", def: maker, owner: P2, zone: "hand" },
+        { key: "bolt", def: bolt, owner: P2, zone: "hand" }
+      ],
+      activePlayerId: P2
+    });
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("maker") });
+    resolvePendingResponses(engine);
+    const token = engine.state.players[P2].play.find(cardId => engine.getDefinition(cardId).name === "Micromajig");
+    assert.ok(token, "the token entered play");
+
+    engine.perform({ type: "playCard", playerId: P2, cardId: id("bolt"), selected: { t: [token] } });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[token], undefined, "the token ceased to exist");
+    assert.equal(engine.state.cards[id("octo")].counters.token, 1, "Octo-Ba-Ba's trigger saw the token die");
+  });
+
   test("Octo-Ba-Ba DEVOUR: spend a token to inflict 3 damage; feeds on the kill", () => {
     const { engine, id } = buildGame({
       cards: [
