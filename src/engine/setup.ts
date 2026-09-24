@@ -14,13 +14,22 @@ import type {
 import { assert, deriveIdSeq, nextId } from "./utilities.js";
 import { randomSeed } from "./rng.js";
 
+/**
+ * A fresh `CardInstance`. `id` defaults to the process-global counter
+ * (`nextId`), which is only unique — not reproducible: the same card gets a
+ * different id depending on how many instances this process minted before
+ * it. Anything that must rebuild the *same* game later (saved/resumed games,
+ * networked peers, replays — every `GameAction` names cards by instance id)
+ * passes its own per-game ids instead; see `createTwoPlayerFactionGame`.
+ */
 export function createCardInstance(
   definitionId: CardDefinitionId,
   ownerId: PlayerId,
-  zone: Zone = "deck"
+  zone: Zone = "deck",
+  id: CardInstanceId = nextId("card")
 ): CardInstance {
   return {
-    id: nextId("card"),
+    id,
     definitionId,
     ownerId,
     controllerId: ownerId,

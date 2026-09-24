@@ -313,11 +313,19 @@ export function createTwoPlayerFactionGame(
   const resolvedA = resolveFactionAndDeck(definitions, playerA);
   const resolvedB = resolveFactionAndDeck(definitions, playerB);
 
-  const factionA = createCardInstance(resolvedA.factionDefinition.id, playerA.id, "play");
-  const factionB = createCardInstance(resolvedB.factionDefinition.id, playerB.id, "play");
+  // Instance ids are numbered per game (`card_1`, `card_2`, ...), never from
+  // the process-global counter: the same decks + seed must always yield the
+  // same ids, or a recorded action log ("mulligan card_37") stops matching
+  // the moment the game is rebuilt anywhere else — a page reload, the other
+  // peer of a networked match, the server's authoritative copy, a replay.
+  let instanceSeq = 0;
+  const mintCardId = (): CardInstanceId => `card_${++instanceSeq}`;
 
-  const cardsA = resolvedA.deckDefinitionIds.map(id => createCardInstance(id, playerA.id, "deck"));
-  const cardsB = resolvedB.deckDefinitionIds.map(id => createCardInstance(id, playerB.id, "deck"));
+  const factionA = createCardInstance(resolvedA.factionDefinition.id, playerA.id, "play", mintCardId());
+  const factionB = createCardInstance(resolvedB.factionDefinition.id, playerB.id, "play", mintCardId());
+
+  const cardsA = resolvedA.deckDefinitionIds.map(id => createCardInstance(id, playerA.id, "deck", mintCardId()));
+  const cardsB = resolvedB.deckDefinitionIds.map(id => createCardInstance(id, playerB.id, "deck", mintCardId()));
 
   const state = createTwoPlayerGame(
     { id: playerA.id, name: playerA.name, influence: 0 },
