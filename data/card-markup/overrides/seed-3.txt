@@ -1,0 +1,23 @@
+# Hand-corrected markup for cards first seen in set "seed-3" (see CARD-MARKUP-PROGRESS.md).
+# Entries: "=== <exact card name>" then that card's markup. Comments only above the first entry.
+=== The Evil Alliance
+<rule><term>INFLUENCE</term> = 15+(10*X). X is the number of opponents you have at the start of the game. <reminder>You start with 15 + 10 times X influence.</reminder></rule>
+<rule name="STARTING RESOURCES">Any 1+X staple resources.</rule>
+<rule name="STARTING DRAW">7 going first, 8 going second.</rule>
+<rule name="RESTORE RULE">At the start of your turn, restore all your depleted cards and detach all resources from your faction.</rule>
+<rule name="DEVELOP RULE">At the start of your turn, draw a card or play a resource. Repeat this X-1 times.</rule>
+<ability name="DRAW">
+  <cost>Pay 3.</cost>
+  <effect>Draw a card.</effect>
+</ability>
+<ability name="RESOURCE">
+  <cost>Pay 3.</cost>
+  <effect>Play a resource.</effect>
+</ability>
+<ability name="ENTICEMENT">
+  <cost>Use this only during your turn, and only once per turn.</cost>
+  <effect>Draw X-1 cards. Play a resource. Put the top card of the Hero deck into the Temptation Pile.</effect>
+</ability>
+<rule name="DARING GAMBIT">If a Hero inflicts at least 7 damage to another Hero this turn, the damaging Hero claims the entire Temptation Pile.</rule>
+<rule name="OMNIPOTENCE">You automatically meet all thresholds, even if you don't control the proper resource icons.</rule>
+<rule><reminder>See the included Showdown rules card for more details.</reminder></rule>

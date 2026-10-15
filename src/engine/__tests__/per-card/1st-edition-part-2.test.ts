@@ -1422,6 +1422,7 @@ describe("1st Edition Part 2 — Contriving Engineer", () => {
         : declineAll(pc)
     );
     assert.equal(engine.state.cards[id("elit")].zone, "play");
+    assert.equal(engine.state.cards[id("elit")].attachedTo, engine.state.players[P1].factionId);
   });
 });
 

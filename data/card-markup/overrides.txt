@@ -1,0 +1,8 @@
+# Hand-corrected card markup, keyed by card name — see CARD-MARKUP-PROGRESS.md.
+#
+# Each entry is "=== <exact card name>" followed by that card's markup (pretty
+# or compact; whitespace between blocks is ignored). An entry replaces the
+# heuristic conversion for every printing of the card; `ref` attributes may be
+# left off (they're linked per printing). Apply with
+# `npm run card-markup -- convert "<set>"` (add --force for reviewed cards).
+# Comment lines are only allowed up here, before the first entry.

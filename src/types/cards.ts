@@ -255,7 +255,15 @@ export interface CardDefinition {
   structure?: number;
 
   subtype: string[];
+  /** Printed rules text, " -- "-separated. Archival: kept verbatim, never regenerated from `markup`. */
   text: string;
+  /**
+   * `text` as structured markup (keyword lines, named abilities with their
+   * COST/EFFECT parts, reminder text, inline keyword references, ...) —
+   * parse with `parseCardText` from the "./card-text" export. Absent on
+   * cards with no rules text.
+   */
+  markup?: string;
 
   /** Present only on faction cards. */
   faction?: FactionDefinition;

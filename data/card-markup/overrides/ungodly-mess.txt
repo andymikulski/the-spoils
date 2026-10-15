@@ -1,0 +1,23 @@
+# Hand-corrected markup for cards first seen in set "ungodly-mess" (see CARD-MARKUP-PROGRESS.md).
+# Entries: "=== <exact card name>" then that card's markup. Comments only above the first entry.
+
+=== Corrosive Waste Dispenser
+<rule>This card enters play with 4 tokens on it.</rule>
+<rule>When this card has no tokens on it, flip it face-down under its owner's control.</rule>
+<ability name="CONVERT">
+  <cost>Remove a token from this card. Destroy a non-"<subtype>micromajig</subtype>" character you control.</cost>
+  <effect>Each opponent destroys a character they control.</effect>
+</ability>
+
+=== Headshot
+<extra-cost>Pick a character.</extra-cost>
+<rule>Inflict 1 damage to that character. If it is destroyed by that damage, you may pick another character and -- inflict 1 damage to it. If it is destroyed by that damage, you may pick another character and inflict 1 -- damage to it. If it is destroyed by that damage, you may pick another character and inflict 1 damage to it.</rule>
+<flip-up>4 [R]</flip-up>
+
+=== Voidal Tactician
+<rule>When this card inflicts damage to a faction, you may pay 1. If you do, search that faction's deck for a tactic, reveal it and put it into the void.</rule>
+<rule>While this card is depleted, you may deploy tactics in the void as though they were in your hand without -- meeting their threshold.</rule>
+
+=== Wasted Wickedness
+<extra-cost>Pick a player. X is the number of different staple resources that player controls. Pay X -- +X.</extra-cost>
+<rule>That player puts X non-resource cards they control into their owners' hands.</rule>

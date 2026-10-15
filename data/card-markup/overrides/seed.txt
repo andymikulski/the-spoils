@@ -1,0 +1,2 @@
+# Hand-corrected markup for cards first seen in set "seed" (see CARD-MARKUP-PROGRESS.md).
+# Entries: "=== <exact card name>" then that card's markup. Comments only above the first entry.

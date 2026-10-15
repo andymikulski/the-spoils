@@ -21,6 +21,10 @@
       "types": "./build/src/assets.d.ts",
       "default": "./build/src/assets.js"
     },
+    "./card-text": {
+      "types": "./build/src/cardText.d.ts",
+      "default": "./build/src/cardText.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -32,7 +36,8 @@
     "prepare": "npm run build",
     "test": "node scripts/run-tests.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
-    "sync-cards": "node scripts/sync-cards.cjs"
+    "sync-cards": "node scripts/sync-cards.cjs",
+    "card-markup": "node --import tsx scripts/card-markup/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
