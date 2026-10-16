@@ -35,6 +35,9 @@ export type Cost =
        * from your hand and shuffle it into your deck"; "put a resource you
        * control into its owner's hand" — Uhluhtc Niudla). Chosen via
        * `context.selected[id]`, legality-checked up front, all-or-nothing.
+       * `reveal: true` shows the chosen cards to everyone (a
+       * `cardsRevealed` event from the zone they leave) as the cost is paid
+       * — "Reveal a resource from your hand and shuffle it into your deck".
        */
       type: "moveSelected";
       id: string;
@@ -43,6 +46,15 @@ export type Cost =
       count: number;
       to: Zone;
       position?: "top" | "bottom";
+      reveal?: boolean;
+      /**
+       * Whose hand or deck receives the cards when `to` is `"hand"` or
+       * `"deck"`. Omitted: each card's owner. "Shuffle this card into YOUR
+       * deck" (Two-Headed Coin) sets it, so a coin you control but don't own
+       * goes into your deck (`CardInstance.heldBy`). Ignored for every other
+       * zone.
+       */
+      toPlayer?: PlayerRef;
       shuffle?: boolean;
     }
   | {

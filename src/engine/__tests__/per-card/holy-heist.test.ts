@@ -2052,15 +2052,86 @@ describe("Holy Heist — Blitz of Destruction", () => {
 });
 
 describe("Holy Heist — Boorish Boar", () => {
-  test("[R][R] gains 1 strength and loses 1 life permanently", () => {
-    const d = def("Boorish Boar");
+  // CR 201.5d / 405.4: both icon-led paragraphs are static conditions, not abilities.
+  const d = def("Boorish Boar");
+  const playRageFromHand = (engine: ReturnType<typeof buildGame>["engine"], cardId: string) => {
+    engine.perform({
+      type: "chooseDevelop",
+      playerId: P1,
+      choice: { type: "playResource", cards: [{ cardId, faceDown: false }] }
+    } as never);
+    resolvePendingResponses(engine);
+  };
+
+  test("[R][R]: gains 1 strength and loses 1 life only while its controller meets the threshold", () => {
+    const base = buildGame({ cards: [{ key: "bb", def: d, owner: P1, zone: "play" }, ...bank("rage", 1, P1)] });
+    assert.equal(base.engine.getStat(base.id("bb"), "strength"), d.strength);
+    assert.equal(base.engine.getStat(base.id("bb"), "life"), d.life);
+
+    const met = buildGame({ cards: [{ key: "bb", def: d, owner: P1, zone: "play" }, ...bank("rage", 2, P1)] });
+    assert.equal(met.engine.getStat(met.id("bb"), "strength"), (d.strength ?? 0) + 1);
+    assert.equal(met.engine.getStat(met.id("bb"), "life"), (d.life ?? 0) - 1);
+    assert.equal(met.engine.state.cards[met.id("bb")].zone, "play");
+  });
+
+  test("it is not an ability: nothing to activate, and trying changes nothing", () => {
+    assert.deepEqual(
+      (d.behavior?.abilities ?? []).filter(a => a.type === "activated"),
+      []
+    );
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
-      cards: [{ key: "bb", def: d, owner: P1, zone: "play" }, ...bank("rage", 4, P1)]
+      cards: [{ key: "bb", def: d, owner: P1, zone: "play" }, ...bank("rage", 2, P1)]
     });
-    activate(engine, P1, id("bb"), "boorish-boar-pump");
+    for (const abilityId of ["boorish-boar-pump", "boorish-boar-pop"]) {
+      assert.throws(() => activate(engine, P1, id("bb"), abilityId));
+    }
     assert.equal(engine.getStat(id("bb"), "strength"), (d.strength ?? 0) + 1);
     assert.equal(engine.getStat(id("bb"), "life"), (d.life ?? 0) - 1);
+    assert.equal(engine.state.cards[id("bb")].zone, "play");
+  });
+
+  test("only its controller's [R] icons count", () => {
+    const { engine, id } = buildGame({
+      cards: [{ key: "bb", def: d, owner: P1, zone: "play" }, ...bank("rage", 5, P2)]
+    });
+    assert.equal(engine.getStat(id("bb"), "strength"), d.strength);
+    assert.equal(engine.getStat(id("bb"), "life"), d.life);
+    assert.equal(engine.state.cards[id("bb")].zone, "play");
+  });
+
+  test("[R][R][R]: destroys it the moment its controller meets the threshold, then its death trigger runs", () => {
+    const hand = bank("rage", 1, P1)[0];
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "bb", def: d, owner: P1, zone: "play" },
+        { key: "oc", def: character({ name: "OC", life: 5 }), owner: P2, zone: "play" },
+        ...bank("rage", 2, P1),
+        { ...hand, zone: "hand" as const }
+      ]
+    });
+    assert.equal(engine.state.cards[id("bb")].zone, "play");
+    playRageFromHand(engine, id(hand.key));
+    assert.equal(engine.state.cards[id("bb")].zone, "discard");
+    // "When this card is destroyed, you may pick up to 2 characters and/or factions ..." is offered.
+    assert.equal(engine.state.pendingChoice?.kind, "selectTargets");
+    drain(engine, pc => {
+      if (pc.kind === "selectTargets") return { kind: "selectTargets", selected: { victims: [id("oc")] } };
+      if (pc.kind === "distributeAmong") return { kind: "distributeAmong", shares: { [id("oc")]: 2 } };
+      return declineAll(pc);
+    });
+    assert.equal(engine.state.cards[id("oc")].damage, 2);
+  });
+
+  test("[R][R][R]: deployed while already meeting the threshold, it is destroyed on entering play", () => {
+    const { engine, id } = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [{ key: "bb", def: d, owner: P1, zone: "hand" }, ...bank("rage", 6, P1)]
+    });
+    play(engine, P1, id("bb"));
+    drain(engine, declineAll);
+    assert.equal(engine.state.cards[id("bb")].zone, "discard");
   });
 });
 

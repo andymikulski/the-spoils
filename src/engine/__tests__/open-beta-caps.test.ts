@@ -1162,6 +1162,149 @@ describe("capability: canUseOpponentAbilities", () => {
   });
 });
 
+describe("capability: canUseOpponentAbilities - who pays", () => {
+  type Mode = boolean | "asOpponent";
+  const borrower = (mode: Mode, name = "The Billionaire") =>
+    character({
+      name,
+      behavior: { abilities: [{ id: "borrow", type: "continuous", modifiers: [], canUseOpponentAbilities: mode }] }
+    });
+  const machine = (overrides: Partial<Extract<import("../../engine.js").AbilityDefinition, { type: "activated" }>> = {}) =>
+    character({
+      name: "Opp Machine",
+      behavior: {
+        abilities: [
+          {
+            id: "go",
+            type: "activated",
+            costs: [{ type: "payResources", amount: 1 }],
+            effects: [{ type: "draw", player: "controller", amount: 1 }],
+            ...overrides
+          }
+        ]
+      }
+    });
+  const pool = (owner: typeof P1 | typeof P2, count: number) =>
+    Array.from({ length: count }, (_, i) => ({
+      key: `res-${owner}-${i}`,
+      def: resourceCard({ name: `Res ${owner} ${i}` }),
+      owner,
+      zone: "play" as const
+    }));
+  const game = (
+    modes: Mode[],
+    { mine, theirs, machineDef = machine() }: { mine: number; theirs: number; machineDef?: ReturnType<typeof machine> }
+  ) =>
+    buildGame({
+      cards: [
+        ...modes.map((mode, i) => ({ key: `b${i}`, def: borrower(mode, `Borrower ${i}`), owner: P1 })),
+        { key: "o", def: machineDef, owner: P2, zone: "play" as const },
+        ...pool(P1, mine),
+        ...pool(P2, theirs),
+        ...Array.from({ length: 2 }, (_, i) => ({
+          key: `p2c${i}`,
+          def: character({ name: `P2C${i}` }),
+          owner: P2,
+          zone: "deck" as const
+        }))
+      ]
+    });
+  type Built = Pick<ReturnType<typeof buildGame>, "engine" | "id">;
+  const offered = ({ engine, id }: Built) =>
+    engine.getAvailableActivatedAbilities(P1).some(a => a.cardId === id("o") && a.ability.id === "go");
+  const use = ({ engine, id }: Built, selected?: Record<string, string[]>) => {
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("o"), abilityId: "go", selected });
+    resolvePendingResponses(engine);
+  };
+
+  describe("true: the borrower pays the numeric cost with their own resources", () => {
+    test("offered only while the borrower can pay it", () => {
+      assert.equal(offered(game([true], { mine: 0, theirs: 1 })), false);
+      assert.equal(offered(game([true], { mine: 1, theirs: 0 })), true);
+    });
+
+    test("the borrower's resource is spent, the opponent's is not, and the effect is the opponent's", () => {
+      const built = game([true], { mine: 1, theirs: 1 });
+      const p2Hand = built.engine.state.players[P2].hand.length;
+      use(built);
+      assert.equal(built.engine.getAvailableResourceCount(P1), 0);
+      assert.equal(built.engine.getAvailableResourceCount(P2), 1);
+      assert.equal(built.engine.state.players[P2].hand.length, p2Hand + 1);
+    });
+
+    test("activation is refused when the borrower cannot pay", () => {
+      const built = game([true], { mine: 0, theirs: 1 });
+      assert.throws(() => use(built));
+      assert.equal(built.engine.getAvailableResourceCount(P2), 1);
+    });
+  });
+
+  describe('"asOpponent": every cost is paid as the opponent, numeric included', () => {
+    test("offered only while the opponent can pay it, whatever the borrower holds", () => {
+      assert.equal(offered(game(["asOpponent"], { mine: 1, theirs: 0 })), false);
+      assert.equal(offered(game(["asOpponent"], { mine: 0, theirs: 1 })), true);
+    });
+
+    test("the opponent's resource is spent, the borrower's is not, and the effect is the opponent's", () => {
+      const built = game(["asOpponent"], { mine: 1, theirs: 1 });
+      const p1Hand = built.engine.state.players[P1].hand.length;
+      const p2Hand = built.engine.state.players[P2].hand.length;
+      use(built);
+      assert.equal(built.engine.getAvailableResourceCount(P1), 1);
+      assert.equal(built.engine.getAvailableResourceCount(P2), 0);
+      assert.equal(built.engine.state.players[P1].hand.length, p1Hand);
+      assert.equal(built.engine.state.players[P2].hand.length, p2Hand + 1);
+    });
+
+    test("activation is refused when the opponent cannot pay, even if the borrower could", () => {
+      const built = game(["asOpponent"], { mine: 1, theirs: 0 });
+      assert.throws(() => use(built));
+      assert.equal(built.engine.getAvailableResourceCount(P1), 1);
+    });
+
+    test("a discard cost comes out of the opponent's hand, not the borrower's", () => {
+      const discardCost = machine({
+        costs: [{ type: "discard", id: "d", player: "controller", selector: { zone: "hand" }, count: 1 }]
+      });
+      const make = () =>
+        buildGame({
+          cards: [
+            { key: "b", def: borrower("asOpponent"), owner: P1 },
+            { key: "o", def: discardCost, owner: P2, zone: "play" },
+            { key: "mine", def: tactic({ name: "My Card" }), owner: P1, zone: "hand" },
+            { key: "theirs", def: tactic({ name: "Their Card" }), owner: P2, zone: "hand" },
+            { key: "p2c", def: character({ name: "P2C" }), owner: P2, zone: "deck" }
+          ]
+        });
+      const bad = make();
+      assert.throws(() => use(bad, { d: [bad.id("mine")] }));
+
+      const good = make();
+      use(good, { d: [good.id("theirs")] });
+      assert.equal(good.engine.state.cards[good.id("theirs")].zone, "discard");
+      assert.equal(good.engine.state.cards[good.id("mine")].zone, "hand");
+    });
+  });
+
+  test('when live sources disagree, the "own resources" reading wins whatever the order', () => {
+    // Under "asOpponent" alone this is unaffordable (the opponent has nothing).
+    assert.equal(offered(game(["asOpponent", true], { mine: 1, theirs: 0 })), true);
+    assert.equal(offered(game([true, "asOpponent"], { mine: 1, theirs: 0 })), true);
+    assert.equal(offered(game([true, "asOpponent"], { mine: 0, theirs: 1 })), false);
+  });
+
+  test("an ability only an opponent may use is used by the borrower as themselves, in the listing too", () => {
+    // The borrower pays; the card's controller has nothing to pay with.
+    const reset = machine({ usableBy: "opponent" });
+    for (const mode of [true, "asOpponent"] as const) {
+      const built = game([mode], { mine: 1, theirs: 0, machineDef: reset });
+      assert.equal(offered(built), true, String(mode));
+      use(built);
+      assert.equal(built.engine.getAvailableResourceCount(P1), 0, String(mode));
+    }
+  });
+});
+
 // helper: resolve a definition's first instance id by card name
 function engineId(engine: import("../../engine.js").SpoilsEngine, name: string): string {
   for (const [cid, card] of Object.entries(engine.state.cards)) {

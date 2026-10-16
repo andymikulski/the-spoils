@@ -23,6 +23,7 @@ import {
   resolvePendingResponses,
   autoResolveBattle
 } from "../support/fixtures.js";
+import { readFileSync } from "node:fs";
 import cardsJson from "../../../data/cards.js";
 import type {
   CardDefinition,
@@ -74,6 +75,25 @@ export function developFaction(overrides: Partial<CardDefinition> = {}): CardDef
     },
     ...overrides
   });
+}
+
+/**
+ * Each printing plays exactly as printed on its own card (CARD-AUDIT-PROGRESS.md),
+ * so reprints may differ. A printing's printed rules text is its entry in
+ * data/card-audit/corrections.json (by printing id), else its catalog `text`.
+ */
+const PRINTED_CORRECTIONS: Record<string, { text: string }> = JSON.parse(
+  readFileSync(new URL("../../../../data/card-audit/corrections.json", import.meta.url), "utf8")
+);
+
+export function printedRules(card: CardDefinition): string {
+  return PRINTED_CORRECTIONS[card.id]?.text ?? card.text;
+}
+
+/** True when two printings print the same rules words (case, punctuation and separators ignored). */
+export function samePrintedRules(a: CardDefinition, b: CardDefinition): boolean {
+  const words = (card: CardDefinition) => printedRules(card).toLowerCase().replace(/[^a-z0-9[\]]+/g, " ").trim();
+  return words(a) === words(b);
 }
 
 /** Look up a real catalog card by set + name; returns a deep clone (safe to mutate). */

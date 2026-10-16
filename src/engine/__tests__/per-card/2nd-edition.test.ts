@@ -8,9 +8,11 @@ import {
   character,
   resolvePendingResponses,
   autoResolveBattle,
+  samePrintedRules,
   P1,
   P2
 } from "./_harness.js";
+import type { CardDefinition } from "../../../engine.js";
 
 // 2nd Edition is entirely reprints of Open Beta / 1st Edition / 1st Edition
 // Part 2. Each card is parity-checked: its behavior JSON must byte-match a
@@ -128,9 +130,9 @@ describe("2nd Edition — reprint parity", () => {
   const priorBySet = ["Open Beta", "1st Edition", "1st Edition Part 2"].flatMap(s =>
     setCards(s).map(c => [c.name, c] as const)
   );
-  const prior = new Map<string, unknown[]>();
+  const prior = new Map<string, CardDefinition[]>();
   for (const [name, c] of priorBySet) {
-    (prior.get(name) ?? prior.set(name, []).get(name)!).push(c.behavior ?? null);
+    (prior.get(name) ?? prior.set(name, []).get(name)!).push(c);
   }
 
   const cards = setCards(SET);
@@ -143,11 +145,16 @@ describe("2nd Edition — reprint parity", () => {
     test(`${c.name} — behavior matches a prior-set print; instantiates cleanly`, () => {
       const priors = prior.get(c.name);
       assert.ok(priors && priors.length > 0, `${c.name}: no Open Beta / 1st Edition / 1st Edition Part 2 print found`);
-      const mine = JSON.stringify(c.behavior ?? null);
-      assert.ok(
-        priors!.some(b => JSON.stringify(b) === mine),
-        `${c.name}: 2nd Edition behavior diverged from every prior print`
-      );
+      // Only prints with the same printed rules must share behavior; a 2nd
+      // Edition rewording plays as printed (printed-variants.test.ts).
+      const samePrinted = priors!.filter(p => samePrintedRules(p, c));
+      if (samePrinted.length) {
+        const mine = JSON.stringify(c.behavior ?? null);
+        assert.ok(
+          samePrinted.some(p => JSON.stringify(p.behavior ?? null) === mine),
+          `${c.name}: 2nd Edition behavior diverged from every prior print with the same printed rules`
+        );
+      }
 
       if (c.type === "character" || c.type === "location") {
         const { engine, id } = buildGame({

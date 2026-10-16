@@ -23,6 +23,7 @@ import {
   activate,
   resolvePendingResponses,
   autoResolveBattle,
+  samePrintedRules,
   P1,
   P2
 } from "./_harness.js";
@@ -173,11 +174,15 @@ describe("1st Edition — Open Beta reprint parity", () => {
   for (const feCard of shared) {
     test(`${feCard.name} — behavior matches the Open Beta reprint; printed stats instantiate`, () => {
       const obCard = cardDef("Open Beta", feCard.name);
-      assert.deepEqual(
-        feCard.behavior ?? null,
-        obCard.behavior ?? null,
-        `${feCard.name}: 1st Edition behavior diverged from the Open Beta reprint`
-      );
+      // Printings with different printed rules play differently on purpose;
+      // those are covered in printed-variants.test.ts.
+      if (samePrintedRules(feCard, obCard)) {
+        assert.deepEqual(
+          feCard.behavior ?? null,
+          obCard.behavior ?? null,
+          `${feCard.name}: 1st Edition behavior diverged from the Open Beta reprint`
+        );
+      }
 
       if (feCard.type === "character" || feCard.type === "location") {
         const { engine, id } = buildGame({
@@ -508,14 +513,18 @@ describe("1st Edition — Carnival King", () => {
 });
 
 describe("1st Edition — Face in the Crowd", () => {
-  test("cannot be blocked while an opponent controls 4+ characters", () => {
+  test("cannot be blocked while your opponent controls 4+ characters and it attacks alone (as printed in this set)", () => {
     const d = def("Face in the Crowd");
     const { engine, id } = buildGame({
       cards: [
         { key: "fc", def: d, owner: P1, zone: "play" },
         ...Array.from({ length: 4 }, (_, i) => ({ key: `o${i}`, def: character({ name: `O${i}` }), owner: P2, zone: "play" as const }))
-      ]
+      ],
+      turn: 2
     });
+    assert.ok(!engine.getKeywords(id("fc")).includes("cannotBeBlocked"));
+    engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("fc")], target: { type: "faction", playerId: P2 } });
+    resolvePendingResponses(engine);
     assert.ok(engine.getKeywords(id("fc")).includes("cannotBeBlocked"));
   });
 

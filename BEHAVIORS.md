@@ -424,7 +424,7 @@ set: FLIP UP, RECUR, staple-counting, the FEALTY / God's Blessing / Gosche's
   `meetsThreshold` for this card is satisfied whenever the holder is at most
   `amount` icons short **summed across every icon type** ("reduce this
   card's threshold requirement by any N resource icons"). Abram Ka-darbo
-  Alkazin, Eustace Sensible Glutton, Ignatious, Jo Ciendeilio, Rudo Mangod.
+  Alakazin, Eustace Sensible Glutton, Ignatious, Jo Ciendeilio, Rudo Mangod.
 
 **ContinuousAbility**
 - **`grantedAbilities` now also grants CONTINUOUS members** — the continuous
@@ -457,6 +457,12 @@ set: FLIP UP, RECUR, staple-counting, the FEALTY / God's Blessing / Gosche's
   play, a card owned by `player` cannot be moved to a hand from any zone in
   `fromZones` (the move fizzles). "cards cannot be put into your opponents'
   hands from the void, discard pile or play" (Lockbox of the Aeons).
+- **`destroysSource: true`** — while `condition` holds, the source card is
+  destroyed by the state-based check (also on entering play with it already
+  true). The "[R][R][R]: Destroy this card." threshold paragraph (Boorish
+  Boar — `condition` is `meetsThreshold`). A threshold paragraph (CR
+  §201.5d / §405.4) is always a gated continuous / triggered ability (or a
+  `modes[]` entry), never a cost-free activated one.
 
 **Effects**
 - **`{ type: "preventAllDamage", duration }`** — opens a window during which
@@ -549,11 +555,13 @@ detail in `src/types/*` + `COVERAGE.md`'s capability table.
   resources when they declare an attack (charged in `declareAttack`; an
   unpayable tax makes the attack illegal). The Ministry of Other Smaller
   Ministries.
-- **`canUseOpponentAbilities: boolean`** — the source's controller may
-  activate activated abilities on cards the opponent controls; the numeric
-  (`payResources`) cost is charged to the activator, everything else
-  resolves with the opponent as the ability's controller
-  (`ResolutionContext.controllerId`). The Billionaire.
+- **`canUseOpponentAbilities: boolean | "asOpponent"`** — the source's
+  controller may activate activated abilities on cards the opponent
+  controls; everything resolves with the opponent as the ability's controller
+  (`ResolutionContext.controllerId`). `true`: the numeric (`payResources`)
+  cost is charged to the activator (The Billionaire, 2nd Edition).
+  `"asOpponent"`: every cost, numeric included, is paid by the opponent
+  (The Billionaire, 1st Edition and Open Beta).
 - **`partyRestriction` gains `maxMembers?` and `scope: "selfParty" |
   "allParties"`** — `"allParties"` bites every forming party regardless of
   whether the source is a member (a location dictating party composition —
@@ -569,11 +577,15 @@ detail in `src/types/*` + `COVERAGE.md`'s capability table.
   "When this card is picked, put a token on it" (Ferrous Ferret); pairs
   with the `mustBePicked` restriction.
 
-**Parity gap (this set)**
-- **`seat-swap`** — Emergency Obfuscation's "each player moves 1 seat to the
-  left ... controls that opponent's side ... owner of the winning deck
-  wins" is a full seat/side/deck-ownership swap. Token-accrual + self-
-  destruct clauses are authored.
+**ContinuousAbility (seat swap)**
+- **`swapsSides: true`** — while an odd number of live sources are in play,
+  the players switch seats: control of every card in play (both factions
+  included) passes to the other player and they exchange `factionId` /
+  `influence`. Hands, decks and discard piles stay with their owners; the
+  faction's owner loses at 0 influence. `GameState.seatSwap` holds the
+  exchanged cards so lifting it can undo exactly that; `seatsSwapped` event;
+  `GameFlowView.seatsSwapped`. Emergency Obfuscation (RULES.md §12 "Seat
+  swap").
 
 ## 1st Edition additions
 
@@ -640,8 +652,9 @@ Concessions: Lucky Charm's pick-tax (unmodelled; ETB draw authored),
 Titillating Contortionist's "must block *this*" (generic `mustBlock`), Runic
 Battery's "detach up to X resources" (`detach` effect). Icon-gated triggered
 abilities ("[R][R][R]: At the start of your turn, ...") are just a
-`condition: numberCompare(resourceIcons ...)` — the established Seed 2
-idiom (Dwarvish Grimalkin), no new capability. Global covert-block
+`condition: meetsThreshold("rrr")` — the established Seed 2 idiom (Dwarvish
+Grimalkin; it was a `numberCompare(resourceIcons ...)` until OMNIPOTENCE
+needed a threshold-aware gate, see `meetsThreshold`). Global covert-block
 exception (53cur17y 5y573m) = grant the `canBlockCovert` keyword to a broad
 `{ type: "character", controller: "any" }` selector. Tests:
 `seed-{caps,smoke,exercise}.test.ts`.
@@ -660,14 +673,33 @@ mechanical content in a perfect-information engine (see RULES.md §12
   (Continuous abilities still carry `modifiers: []` even when empty.)
 - **`{ type: "reveal", of, zone: "deckTop" | "hand", count?, viewer? }`** —
   one-shot; emits `cardsRevealed` and nothing else.
+- **`{ type: "revealCards", selected?: <declaration id>, selector?:
+  CardSelector, target?: TargetRef, viewer? }`** — the "...and reveal it" of a
+  search; emits `cardsRevealed` (viewer defaults to everyone) for the picked
+  cards, one event per owner + zone. Insert it right before the effect that
+  consumes the pick, and only on printings whose printed text says "reveal"
+  (`data/card-audit/deferred/search-reveal.md`, and
+  `data/card-audit/deferred/other-reveals.md` for the non-search reveals).
+  `target` names one card ("reveal this card" from the hand).
+- **`moveSelected.reveal: true`** (cost) — the chosen cards are revealed from
+  the zone they leave as the cost is paid (Uhluhtc Niudla AVAIL ANEW).
+- Engine-emitted reveals needing no card data: a `fromFaceDown` ability
+  being used (the face-down source), a `revealFromHand` deploy, Auction
+  House's turned-over cards, Mustache Showdown's chosen piles.
 - **`{ type: "revealFromTopUntil", player, match: Condition, bindAs,
   onMatch: Effect[], onEmpty?, rest?: "shuffle" | "bottom" | "discard" |
   "void" }`** — dig from the top of a deck until `match` (candidate bound to
   the selector `__candidate`); bind the hit to `bindAs`, run `onMatch`;
   dispose of the other revealed cards per `rest` (default `"shuffle"`).
   Surprise!.
-- **`GameEvent cardsRevealed { cardIds, zone, ownerId, viewerId, byCardId?
-  }`** — informational.
+- **`GameEvent cardsRevealed { cardIds, zone, ownerId, viewerId, byCardId?,
+  knownToRevealer? }`** — informational. `knownToRevealer: true` means the
+  player who caused the reveal already knew every card in it (a search or
+  cost pick, their own hand or face-down resource); absent means they learn
+  the cards from it (the top of a deck, an opponent's hand).
+- **`GameEvent cardsMulliganed { playerId, cardIds }`** — a player's opening
+  mulligan put `cardIds` on the bottom of their deck, before the replacements
+  are drawn. Community Chest's `triggerZone: "deck"` reveal keys off it.
 - **`{ type: "targetOwnedBy", target?, player }` condition** — candidate
   (or `target`, default `__candidate`) is owned by the resolved player.
   A Death Fit for a King ("a UNIQUE character in play OR a character in an
@@ -854,7 +886,7 @@ simulates on a cloned state) — no partial payment.
 `battleRole`, `eventPlayerIs`, `targetInSelection`, `eventOrdinal`,
 `deploySameNameThisTurn`, `respondingTo`, `respondedToPicked`,
 `deployedViaFlipUp`, `cardNameEquals`, `bottomedInMulligan`, `cardProvides`,
-`isStaple`, `cardDepleted`, `cardTypeEquals`.
+`isStaple`, `cardDepleted`, `cardTypeEquals`, `meetsThreshold`.
 
 - **`cardProvides`** — `{ target, icon, min }` — true when `target`'s
   current resource icons (`getResourceIcons` — face-up printed icons, a
@@ -908,6 +940,17 @@ simulates on a cloned state) — no partial payment.
   `NumberExpression`s, for anything not anchored to one card (most commonly
   a `count` selector): `{ "type": "numberCompare", "left": { "type":
   "count", "selector": {...} }, "operator": ">=", "right": 1 }`.
+- **`meetsThreshold`** — `{ threshold, player? }` (`player` defaults to
+  `"controller"`), true while that player MEETS `threshold` (icon-letter
+  shorthand, `"rrr"`, `"oovv"`): the gate of a paragraph that begins with
+  threshold icons ("[R][R][R]: This card gains 3 life.", CR §405.4). Met by
+  holding at least that many of every icon (`getThresholds`) OR by the
+  player's faction having `meetsAllThresholds` (OMNIPOTENCE). Never use a
+  `numberCompare(resourceIcons ...)` for a printed threshold paragraph: that
+  reads real icons only and stays off for OMNIPOTENCE. `reduceThreshold` and
+  FEALTY slack are deploy-only and do not apply. The catalog guard in
+  `omnipotence-thresholds.test.ts` ties each printing's `meetsThreshold`
+  gates to its printed leading-icon paragraphs.
 - **`inBattle`** — `{ target, role? }`, true while `target` is in the
   current battle's `attackingParty`/`blockingParty`. Omit `role` to match
   either side; combine with `not` for "not currently in a battle."
@@ -1257,8 +1300,11 @@ to touch when just authoring card data.)
   stat. "Loses life equal to its printed life minus 2."
 - **`resourceIcons`** — `{ player, icon }`, how many of a given resource
   `icon` (`rage`/`greed`/`deception`/`elitism`/`obsession`/`volition`)
-  `player` controls in play (`getThresholds`). Also the idiom for "while you
-  control at least [X][X]" — `numberCompare` it against a literal.
+  `player` controls in play (`getThresholds`). The REAL count: OMNIPOTENCE
+  does not inflate it. Right for "X is the number of [O] you control" and
+  an inline "if you control at least [X][X]" (`numberCompare` it against a
+  literal); a printed threshold paragraph uses the `meetsThreshold`
+  condition instead.
 
 - **`variable`** — `{ id }`, a player-chosen number ("choose a number for
   X"), read from `ResolutionContext.variables[id]`. The player supplies
@@ -1518,7 +1564,8 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
   §3.6). Same shape as any activated ability; `usableBy: "anyPlayer"` opens
   it to the opponent too.
 - **`meetsAllThresholds`** — the controller auto-satisfies every threshold
-  (The Evil Alliance — OMNIPOTENCE).
+  (The Evil Alliance — OMNIPOTENCE): card / ability / FLIP UP thresholds and
+  the `meetsThreshold` condition that gates threshold paragraphs.
 - **`turn.startOfTurnEffects`** — `Effect[]` run automatically at the start
   of the faction's controller's turn (source = the faction card). Imperial
   Army's develop rule is `[{ "type": "reduceNextCost", "player":

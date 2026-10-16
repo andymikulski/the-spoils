@@ -2,9 +2,9 @@ export default {
   "generatedBy": "scripts/build-coverage.cjs",
   "note": "How faithfully the engine reproduces each card's printed text. full = every mechanically-meaningful clause obeyed; partial = a documented concession changes a line; stub = core function unmodelled.",
   "counts": {
-    "full": 2096,
-    "partial": 3,
-    "stub": 2
+    "full": 2098,
+    "stub": 2,
+    "partial": 1
   },
   "fidelity": {
     "9bc47884-f956-41d4-8a57-e6c3e377b8d9": "full",
@@ -263,12 +263,12 @@ export default {
     "b324c5df-afe7-4ed3-8f10-7f0a7488bdfb": "full",
     "a981c172-6c40-43d4-b941-0a336e4924fb": "full",
     "3d8bb343-be8d-48d8-b3f2-523a3564ffeb": "full",
-    "9107d563-b481-4bb2-8878-64589951e341": "partial",
+    "9107d563-b481-4bb2-8878-64589951e341": "full",
     "fd095fbd-7566-4b39-832e-0f40a0181289": "full",
     "43b9dddc-f557-4efa-86f9-6ce9ca46a277": "full",
     "d2d83970-7b96-41ba-affd-ac69466455e4": "full",
     "f84cac2d-0eb2-4fc8-af31-9a6754c889d6": "full",
-    "5379e1b4-5ccc-457d-8490-82d85615143e": "partial",
+    "5379e1b4-5ccc-457d-8490-82d85615143e": "full",
     "f83b3af9-a7cb-4945-9632-bdfab77a111a": "full",
     "18d50b0d-08aa-4c7a-a37f-bacfd8585be0": "full",
     "f474ddf4-9fa8-44f2-b74c-9eebe554f125": "full",
@@ -2110,8 +2110,6 @@ export default {
     "bfb8ec6b-b33e-4e25-9d65-7b64f5a43c87": "full"
   },
   "notes": {
-    "9107d563-b481-4bb2-8878-64589951e341": "restrictPlay (no characters this turn) + draw, as the elseEffects of a mayPay(player: picked). CONCESSION: the picked player's pay-2 buyout ('look at your top card, terminate this') is offered on resolution, not as a true pre-stack EXTRA COST.",
-    "5379e1b4-5ccc-457d-8490-82d85615143e": "mass-destroy of 3 picked characters with 3 strength or less, as the elseEffects of a mayPay(player: opponent); the buyout branch is lookAndReorder with chooser: opponent. CONCESSION: the pay-3 buyout is offered on resolution, not as a true pre-stack EXTRA COST.",
     "62ddcc7c-6229-43a5-b656-2c1fd2593b05": "'Play this only ... after you have declared the end of your turn ... in response to your opponent paying a cost at the end of your turn. Terminate your end of turn declaration.' Needs a cancellable end-of-turn declaration + a response-to-end-of-turn-cost play window — turn-structure machinery no other catalog card uses. Single rare tactic.",
     "c47c8579-7fdc-49e7-b934-f3e86c37dc13": "Two out-of-scope clauses: (1) 'If you would inflict damage to an opponent's faction ... put that many cards from the top of its deck into the discard pile instead' needs a faction-damage replaceable-event class no other catalog card requires; (2) 'When a player has no cards in their deck, they lose the game' is an alternate loss condition (BEHAVIORS.md sanctions wontImplement for alternate win/lose conditions). Single uber-rare card.",
     "6b78870c-5993-46f0-b782-47154a18a681": "At start of turn: look at the top 2 (fromTop:2 tactic target); you may send a tactic to the void; the rest go back on top in a chosen order (lookAndReorder). CONCESSION: SEDUCTIVE SUMMONS may deploy any tactic in your void, not only ones this card sent there."

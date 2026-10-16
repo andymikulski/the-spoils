@@ -428,6 +428,18 @@ function applyStartingDrawSearch(engine: SpoilsEngine, playerId: PlayerId): void
 
   if (!candidateId) return;
 
+  if (search.reveal) {
+    engine.emit({
+      type: "cardsRevealed",
+      cardIds: [candidateId],
+      zone: "deck",
+      ownerId: playerId,
+      viewerId: "all",
+      byCardId: player.factionId,
+      knownToRevealer: true
+    });
+  }
+
   player.deck = player.deck.filter(id => id !== candidateId);
   state.cards[candidateId].zone = "hand";
   player.hand.push(candidateId);

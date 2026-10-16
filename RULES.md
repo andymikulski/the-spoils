@@ -127,6 +127,43 @@ span zones — a `deployForFree` targeting a hand card, a `CostModifier`
 matching a card being deployed, a chooser picking among a prior deck search —
 carry an explicit `zone: "any"` to opt out of the In-Play default.
 
+**Whose hand or deck.** **(CR §301.4a / §305.1)** A card put into a hand or
+deck goes to its **owner's** by default, and discard / void / out-of-game are
+always the owner's; **(CR §407.7–§407.8)** ownership never changes. **(card-verified)**
+A few printings instead say "put the resource into **your** hand" / "shuffle
+this card into **your** deck" (Maladjustment and Recollection Bazaar, 1st
+Edition Part 2; Foment; Two-Headed Coin) — the controller of the effect, which
+only differs for a card you control but don't own. **(engine-derived)**
+`moveCard.toPlayer` / `moveSelected.toPlayer` name the receiving player; the
+card sits in *that* player's `hand` / `deck` array, they control it
+(`controllerId`), and `CardInstance.heldBy` records the holder (absent = the
+owner). Consequences, all implemented in `moveCard` / `matchesSelector`:
+`owner: "self" | "opponent"` on a card in a hand or deck means its **holder**
+(so "a card in your hand" finds it and the holder can deploy or play it);
+discarding it puts it in its **owner's** discard pile; any later move out of
+the hand/deck clears `heldBy`, and a move with no `toPlayer` goes to the
+owner's hand/deck; a same-zone move with no `toPlayer` stays put (a deck move
+repositions within the holder's deck); a replacement window or restriction on
+"a player's hand" (Quotidian Misfire, Lockbox of the Aeons) is judged against
+the **receiving** player, not the owner. A search or `fromTop` count over a
+deck reads the holder's deck. Ownership-based conditions (`targetOwnedBy`)
+still read the true owner.
+
+**Control ends when a card leaves play.** **(CR §407.3)** A player who takes
+control of a card keeps it only until it leaves play. **(engine-derived)**
+`moveCard` therefore hands a card that ends up in a hand, deck, discard pile,
+the void or out of the game to whoever holds it (`heldBy`, else the owner):
+`controllerId` is never a stale thief there. A stolen character bounced to its
+owner's hand is the owner's to deploy, and `controller: "self"` selectors on
+"your discard pile" find it for the owner. The release happens *after* the
+move's `cardMoved` is emitted, so the card's own "leaves play" triggers (and a
+watcher's `eventCardControlledBy`) still see the controller it had in play;
+`cardDestroyed` is emitted after the move and carries that controller in its
+`controllerId`, which `findTriggers` and `eventCardControlledBy` read. A card
+in `deploying` keeps whoever is deploying it. `takeControl` only affects a card
+in play (a card in any other zone is left alone), and a timed grant is dropped
+when its card leaves play.
+
 ## 3. Card types
 
 **(CR §201.4e)** The six types are Resource, Tactic, Character, Location,
@@ -242,7 +279,9 @@ carry activated abilities, usable any time you could use an ability
   the opponent too and resolves under whoever activates it.
 - **`meetsAllThresholds`** — OMNIPOTENCE (The Evil Alliance): the
   controller automatically satisfies every threshold regardless of which
-  resource icons they control (`meetsThreshold` short-circuits).
+  resource icons they control: the deploy / ability / FLIP UP threshold
+  check short-circuits, and so does the `meetsThreshold` condition that
+  gates a threshold paragraph (§4).
 - **`turn.startOfTurnEffects`** — effects run automatically at the start of
   the faction's controller's turn, after the core start-of-turn rules and
   the Restore Rule, with the faction card as `source` — Imperial Army's
@@ -397,7 +436,36 @@ deploy-cost or damage-amount modifier sourced from an ignored card type
     use the ability unless you meet it.
   - **(CR §405.4 / §201.5d)** A *paragraph* of rules text may begin with
     threshold icons; it is active only while its controller currently meets
-    that threshold, and turns off the instant they stop.
+    that threshold, and turns off the instant they stop. It is a static
+    condition, **not** an ability you activate: it is authored as a
+    `continuous` ability whose `condition` is `{ type: "meetsThreshold",
+    threshold: "<printed icon letters>" }` (a triggered ability's
+    `condition` for "[icons]: When ..." paragraphs; a modal tactic's
+    `modes[].condition` for one paragraph per mode). A mixed threshold
+    ("[O][O][V][V]") is one condition (`"oovv"`). A bonus therefore applies
+    once however many extra icons you control and can never be repeated for
+    free (*Fervent Beastslayer*'s "[R]x5: This card gains 3 life" is +3
+    life while you control five [R], not +3 per use).
+  - **(OMNIPOTENCE, engine-derived)** `meetsThreshold` is true for a
+    controller whose faction has `meetsAllThresholds` (The Evil Alliance:
+    "You automatically meet all thresholds"), so their threshold paragraphs
+    are on with no icons, and a "[R][R][R]: Destroy this card." paragraph
+    destroys the card the moment it is in play. The player is the paragraph's
+    **controller** (a card under another player's control uses that player's
+    faction). Reading `getThresholds` for a *count* is the other idiom and
+    never sees OMNIPOTENCE: "X is the number of [O] you control" and an
+    inline "if you control [V][V][V], ..." (*Religious Rejection*, *Ritual of
+    the Double Monkey*, *Unscrupuls of Victory*) are `numberCompare` /
+    amounts over `resourceIcons`, which read the real icons. Those inline
+    checks are not printed thresholds (CR §405 gives a threshold to a card,
+    an ability, or a paragraph), so OMNIPOTENCE does not satisfy them. A
+    FLIP UP / ability / card threshold already goes through the deploy
+    check, which honors OMNIPOTENCE; `reduceThreshold` and FEALTY slack
+    apply to deploying a card only, never to a standing paragraph.
+    "[icons]: Destroy this card." (*Boorish Boar*) is
+    `ContinuousAbility.destroysSource`: a state-based check, so the card is
+    destroyed the moment the condition holds — including on entering play,
+    and right after a Develop Rule resource play.
 - **Volition (CR §405.5, card-verified):** the sixth icon, provided by every
   face-down resource. This is why `"v"` threshold requirements appear only
   on `Universal`-trade cards in the real data (e.g. *Zigalburgonglgr, the
@@ -465,12 +533,16 @@ deploy-cost or damage-amount modifier sourced from an ignored card type
 `GameState.mulligan` and read by the `bottomedInMulligan` condition.
 *Community Chest* ("... choose to put this card on the bottom of your deck
 as part of your mulligan ... you may reveal it. If you do, draw a card at
-the start of your turn.") pairs that with a `turnStarted` trigger whose
-`triggerZone` is `"deck"`, so it fires while the card sits in the deck; the
-"you may reveal it" step is treated as automatic (the engine has perfect
-information — see §12 "Fidelity pass" — and revealing has no downside), and
-"control at least [D]" gates the draw at trigger time rather than at game start, where
-it could never be true.
+the start of your turn.") carries two `triggerZone: "deck"` triggers. The
+reveal fires on the `cardsMulliganed` event a mulligan emits once its cards
+are on the bottom of the deck (before the replacements are drawn): if the
+card was bottomed and its controller then controls at least [D] — their
+starting resources are already face-up — it emits `cardsRevealed` to
+everyone. The "you may reveal it" step is treated as automatic (the engine
+has perfect information — see §12 "Fidelity pass" — and revealing has no
+downside). The draw is a `turnStarted` trigger, and "control at least [D]"
+gates it at trigger time rather than only at game start; it does not check
+that the reveal happened.
 
 ## 6. Turn structure
 
@@ -849,7 +921,8 @@ contributing character still emits its own `damageDealt` (CR §408.7), with
 the final amount distributed across them.
 
 **(engine-derived)** "Control changes" is the `takeControl` effect — the
-only writer of `CardInstance.controllerId`; it also moves the card between
+only thing that gives a card in play a different controller (a card leaving
+play is released to its holder, §2); it also moves the card between
 the players' `play` arrays. `isCardStillInBattle` checks `controllerId`
 against the attacker/defender **and** that the card is still a character
 (`hasCardType`), so party pruning falls out for free for both a control
@@ -1034,6 +1107,9 @@ damage.
 immediately" rule rather than as one batched pass, but the effect is the
 same: after every effect or resolution, in a loop until nothing changes —
 
+- The seats are swapped while an odd number of `swapsSides` sources are in
+  play, and swapped back when that stops being true (§12 "Seat swap"). This
+  runs first, before anything below is judged against who controls what.
 - Any character whose damage this turn is ≥ its life is destroyed (CR
   §408.4).
 - Any location whose damage markers are ≥ its structure is destroyed (CR
@@ -1050,7 +1126,8 @@ same: after every effect or resolution, in a loop until nothing changes —
   replacements.
 - Any faction at 0 influence loses the game for its owner immediately — a
   draw if more than one loses at once (CR §102.1 / §102.2). Checked last,
-  after all destruction above settles.
+  after all destruction above settles. The owner is read from the faction
+  card, not from the player currently holding it (a seat swap, §12).
 
 **(engine-derived)** The whole check is skipped while a `pendingChoice` is
 outstanding — the engine is frozen awaiting input, and an *optional
@@ -1317,15 +1394,59 @@ of the Devoured Emperor additions")**
   their discard pile instead" (Quotidian Misfire).
 - **Borrowing opponent abilities (`card-verified`).**
   `ContinuousAbility.canUseOpponentAbilities` lets the controller activate
-  activated abilities on the opponent's cards: the numeric cost is paid from
-  the activator's resources, everything else (non-numeric costs, threshold,
-  effect) resolves with the opponent as the ability's controller. The
-  Billionaire. Concession: duplicating a *targeted* tactic via
+  activated abilities on the opponent's cards. The effect, the threshold and
+  every non-numeric cost resolve with the opponent as the ability's
+  controller. Who pays the numeric (`payResources`) cost is per printing, as
+  The Billionaire prints it. `true` (2nd Edition: "you must pay any numeric
+  cost with your own resources. Any additional costs must be satisfied as
+  though your opponent is using the ability"): the activator's resources.
+  `"asOpponent"` (1st Edition and Open Beta: "as though you were your
+  opponent. (The effect still happens to your opponent.)"): every cost,
+  numeric included, is paid as the opponent, out of the opponent's resources
+  and cards, matching CR §401.2a ("satisfy a cost as though you were your
+  opponent"). Either way `getAvailableActivatedAbilities` lists the ability
+  only when its costs can be paid by whoever pays them. CR §401.2a's limit
+  ("only with the knowledge you currently have", e.g. a discard cost needs the
+  opponent's hand revealed) is not enforced: the engine has perfect
+  information (§5), so a client picks costs only from what the player may see.
+  When live sources disagree, `true` wins. Concession: duplicating a *targeted* tactic via
   `lastDeployedTactic` re-prompts only `chooserSelectsTarget` picks, not a
   play-time `onPlay.targets` declaration.
-- **Parity gap `seat-swap`.** Emergency Obfuscation's full seat / side /
-  deck-ownership swap ("owner of the winning deck wins") is a game-state
-  refactor; its token-accrual + self-destruct clauses are authored.
+- **Seat swap (`engine-derived`).** The CR defines neither "seat" nor
+  "side", so this is the engine's reading of Emergency Obfuscation (TACTICAL
+  item): "While this card is in play, both players switch seats. Both
+  players are in control of their opponent's side. If the game ends, the
+  owner of the winning deck wins the game."
+  - A *side* is a faction plus every card in play under one player's
+    control (resources included). `ContinuousAbility.swapsSides` is checked
+    with the state-based actions (§11), so it takes hold the moment the
+    source enters play and ends the moment it leaves: while an **odd**
+    number of live sources are in play (`GameState.seatSwap`, the
+    `seatsSwapped` event, `GameFlowView.seatsSwapped`), control of every
+    card in play — both factions and the source itself — has passed to the
+    other player; two sources cancel. A card that "cannot be taken control
+    of" (Gigantitect's Giant Giant) keeps its controller.
+  - The players also exchange `factionId` / `influence`, so "your faction"
+    is the faction you hold: its develop / restore / start-of-turn rules
+    are the ones that apply to you, resources you pay are attached to it,
+    and "your opponent's faction" is the one the other player holds.
+  - Ownership never changes (CR §407.8). Hands, decks, discard piles, the
+    void and the removed zone stay with their owners (CR §305.1, §403,
+    §407.7): each player still plays cards from their own hand, draws from
+    their own deck, and discards to their own pile. The turn, priority and
+    who may act are by player and unaffected; "your turn" on a card is its
+    controller's turn (CR §407.2), so the source's own token clock runs on
+    the *other* player's turns once it has swapped sides.
+  - A control change takes a character out of a battle (CR §407.4), so a
+    swap in the middle of one empties both parties.
+  - A faction at 0 influence still loses the game for its **owner** (CR
+    §102.1; §11 victory check) — "the owner of the winning deck wins". An
+    attack therefore always lands on the faction the *attacker* owns.
+  - A card that enters play while swapped is controlled by whoever plays it
+    (CR §204.2a, §407.1) and is not part of the exchange; lifting the swap
+    returns only the cards it exchanged that are still in play under the
+    controller it gave them, and a later permanent "take control" wins over
+    it (CR §407.3a).
 
 ### 1st Edition additions
 
@@ -1412,7 +1533,45 @@ of the Devoured Emperor additions")**
   directly).
 - **`reveal` / `cardsRevealed` (`engine-derived`).** A one-shot `reveal`
   effect emits `cardsRevealed { cardIds, zone, ownerId, viewerId }` and
-  changes nothing else — for a renderer / event log.
+  changes nothing else — for a renderer / event log. `ownerId` is the holder
+  of the zone the cards are shown from (`heldBy ?? ownerId` for a hand or
+  deck), so a card held in a non-owner's hand or deck is revealed from that
+  player's zone; a reveal spanning several holders emits one event each.
+- **Search-and-reveal (`engine-derived`).** "Search your deck for X, reveal
+  it, and put it into your hand" carries a `revealCards` effect between the
+  pick and the move (`selected: <declaration id>`, or `selector` for "all
+  copies"), so `cardsRevealed` reaches the opponent before the card
+  disappears into a hidden zone. It is per printing: only a printing whose
+  *printed* text (`corrections.json` text, else the card's `text`) says
+  "reveal" carries it — a reprint that drops the word does not.
+  `FactionDefinition.setup.startingDrawSearch.reveal` does the same for
+  Unlikely Heroes' STARTING DRAW search.
+- **Other reveals (`engine-derived`).** Every reveal the printed text names
+  emits `cardsRevealed`, again per printing: "reveal the top N cards of a
+  deck" and "reveals their hand" carry a `reveal` effect placed where the
+  text reveals (after a "choose a card type" decision, after a shuffle); "look
+  at the top N, choose X and reveal it" and "reveals a face-down resource"
+  carry a `revealCards` for the pick; `moveSelected.reveal` reveals a cost
+  pick. A reveal printed as a COST on an ability or tactic whose pick is a
+  target declaration (Manifest, Gang Weapon Dealer ...) is emitted as the
+  first effect, i.e. at resolution. The engine emits the rest without card
+  data: using a `fromFaceDown` ability reveals the face-down source ("Reveal
+  this card" - FLIP IT, REUSE ...), a `revealFromHand` deploy reveals the
+  card from the hand (Witty Worm), Auction House reveals the cards it turns
+  over and Mustache Showdown the two chosen piles; Community Chest reveals
+  itself off the mulligan's `cardsMulliganed` event. Gap: Slightly Less Evil
+  Alliance's Showdown text. `data/card-audit/deferred/other-reveals.md`.
+- **`cardsRevealed.knownToRevealer` (`engine-derived`).** Set when the player
+  who caused the reveal (the controller of `byCardId`) already knew every
+  card in the event: a search or cost pick (anything but another player's
+  face-down card in play), their own hand, their own face-down resource, the
+  pile they split in Mustache Showdown, the starting-draw search. Absent
+  when they learn the cards from the reveal: the top of a deck (their own or
+  an opponent's), the cards Auction House or `revealFromTopUntil` turn over,
+  an opponent's hand, an opponent's face-down resource, the opponent's
+  Showdown pile. A renderer shows a public reveal to everyone, and to the
+  revealer unless the flag is set.
+  `data/card-audit/deferred/reveal-followups.md`.
 - **`GameState.gameLog` (`engine-derived`).** A running, ordered list of
   `GameLogEntry` — every emitted event plus `responseWindowOpened` /
   `priorityPassed` / `stackItemResolving` / `triggerResolving` /

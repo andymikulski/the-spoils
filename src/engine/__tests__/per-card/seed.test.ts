@@ -24,6 +24,7 @@ import {
   P1,
   P2
 } from "./_harness.js";
+import type { StapleIcon } from "./_harness.js";
 
 const SET = "Seed";
 const def = (name: string) => cardDef(SET, name);
@@ -78,6 +79,127 @@ const declineAll = (pc: { kind: string; [k: string]: unknown }) => {
       return { kind: pc.kind };
   }
 };
+
+// =====================================================================
+// Threshold paragraphs (CR 201.5d / 405.4)
+// =====================================================================
+
+type StatBonus = Partial<Record<"strength" | "life" | "speed", number>>;
+type Placements = NonNullable<NonNullable<Parameters<typeof buildGame>[0]>["cards"]>;
+
+/**
+ * A paragraph that begins with threshold icons is a static condition, not an
+ * ability: its bonus is on exactly while the controller meets the threshold,
+ * never stacks with extra icons, and there is nothing to activate. Runs for
+ * every printing of the card (Seed and Seed Saga) against that printing's own
+ * data.
+ */
+function thresholdParagraphSuite(opts: {
+  name: string;
+  icon: StapleIcon;
+  n: number;
+  /** What the threshold paragraph adds. */
+  bonus: StatBonus;
+  /** The card is an attachment: stats are read on its host, and `always` is the printed unconditional bonus. */
+  attached?: { always: StatBonus };
+  /** Ids of the activated abilities this card used to model the paragraph with. */
+  formerAbilityIds: string[];
+}): void {
+  const { name, icon, n, bonus, attached, formerAbilityIds } = opts;
+  const stats = ["strength", "life", "speed"] as const;
+
+  const smash = tactic({
+    name: "Smash",
+    cost: 0,
+    behavior: {
+      abilities: [
+        {
+          id: "s",
+          type: "activated",
+          targets: [{ id: "t", selector: { zone: "play", type: "resource" }, count: 1 }],
+          effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+        }
+      ]
+    }
+  });
+
+  for (const set of ["Seed", "Seed Saga"]) {
+    const d = cardDef(set, name);
+    const hostDef = character({ name: "Host", strength: 2, life: 2, speed: 2 });
+    const baseOf = (stat: (typeof stats)[number]) =>
+      (attached ? (hostDef[stat] ?? 0) + (attached.always[stat] ?? 0) : (d[stat] ?? 0));
+
+    /** P1 controls `mine` face-up `icon` resources in play (plus the card); P2 controls `theirs`. */
+    const board = (mine: number, theirs = 0, extra: Placements = []) => {
+      const res = bank(icon, mine, P1);
+      const game = buildGame({
+        playerA: { faction: developFaction() },
+        cards: [
+          ...(attached
+            ? [
+                { key: "host", def: hostDef, owner: P1, zone: "play" as const },
+                { key: "card", def: d, owner: P1, zone: "play" as const, attachedToKey: "host" }
+              ]
+            : [{ key: "card", def: d, owner: P1, zone: "play" as const }]),
+          ...res,
+          ...bank(icon, theirs, P2),
+          ...extra
+        ]
+      });
+      const subject = game.id(attached ? "host" : "card");
+      const read = (stat: (typeof stats)[number]) => game.engine.getStat(subject, stat);
+      return { ...game, res, read };
+    };
+    const expectStats = (read: (stat: (typeof stats)[number]) => number, on: boolean) => {
+      for (const stat of stats) {
+        assert.equal(read(stat), baseOf(stat) + (on ? (bonus[stat] ?? 0) : 0), `${name} (${set}) ${stat}`);
+      }
+    };
+
+    describe(`${name} (${set}) — [${icon}]x${n} paragraph is a static condition`, () => {
+      test("the bonus applies only while the controller meets the threshold", () => {
+        expectStats(board(n - 1).read, false);
+        expectStats(board(n).read, true);
+      });
+
+      test("icons beyond the threshold do not stack the bonus", () => {
+        expectStats(board(n + 4).read, true);
+      });
+
+      test("only the controller's icons count", () => {
+        expectStats(board(n - 1, n + 2).read, false);
+      });
+
+      test("it is not an ability: nothing to activate, and trying changes nothing", () => {
+        assert.deepEqual(
+          (d.behavior?.abilities ?? []).filter(a => a.type === "activated" && formerAbilityIds.includes(a.id)),
+          []
+        );
+        const { engine, id, read } = board(n);
+        for (const abilityId of formerAbilityIds) {
+          assert.throws(() => activate(engine, P1, id("card"), abilityId));
+        }
+        expectStats(read, true);
+      });
+
+      test("it turns on as the threshold is met and off the instant it is lost", () => {
+        const inHand = { ...bank(icon, 1, P1)[0], zone: "hand" as const };
+        const { engine, id, res, read } = board(n - 1, 0, [inHand, { key: "smash", def: smash, owner: P1, zone: "hand" }]);
+        expectStats(read, false);
+        engine.perform({
+          type: "chooseDevelop",
+          playerId: P1,
+          choice: { type: "playResource", cards: [{ cardId: id(inHand.key), faceDown: false }] }
+        } as never);
+        resolvePendingResponses(engine);
+        expectStats(read, true);
+        play(engine, P1, id("smash"), { selected: { t: [id(res[0].key)] } });
+        assert.equal(engine.state.cards[id(res[0].key)].zone, "discard");
+        expectStats(read, false);
+      });
+    });
+  }
+}
 
 // =====================================================================
 // Parametrized — resources, vanilla characters, faction cards
@@ -912,15 +1034,7 @@ describe("Seed — Extravagant Contusion", () => {
 });
 
 describe("Seed — Fervent Beastslayer", () => {
-  test("[R]x5 grants +3 life permanently", () => {
-    const d = def("Fervent Beastslayer");
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "fb", def: d, owner: P1, zone: "play" }, ...bank("rage", 5, P1)]
-    });
-    activate(engine, P1, id("fb"), "life");
-    assert.equal(engine.getStat(id("fb"), "life"), (d.life ?? 0) + 3);
-  });
+  thresholdParagraphSuite({ name: "Fervent Beastslayer", icon: "rage", n: 5, bonus: { life: 3 }, formerAbilityIds: ["life"] });
 });
 
 describe("Seed — Fiendish Fez", () => {
@@ -1226,19 +1340,13 @@ describe("Seed — Headhunting", () => {
 });
 
 describe("Seed — Heavy Sword", () => {
-  test("grants +2 strength; [R]x4 adds a further +2", () => {
-    const host = character({ name: "Host", strength: 2 });
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [
-        { key: "host", def: host, owner: P1, zone: "play" },
-        { key: "hs", def: def("Heavy Sword"), owner: P1, zone: "play", attachedToKey: "host" },
-        ...bank("rage", 4, P1)
-      ]
-    });
-    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 2);
-    activate(engine, P1, id("hs"), "sharpen");
-    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 4);
+  thresholdParagraphSuite({
+    name: "Heavy Sword",
+    icon: "rage",
+    n: 4,
+    bonus: { strength: 2 },
+    attached: { always: { strength: 2 } },
+    formerAbilityIds: ["sharpen"]
   });
 });
 
@@ -1920,15 +2028,12 @@ describe("Seed — Obscure", () => {
 });
 
 describe("Seed — Obtuse Pipesmoker", () => {
-  test("[D]x5 grants +1/+1/+1 permanently", () => {
-    const d = def("Obtuse Pipesmoker");
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "op", def: d, owner: P1, zone: "play" }, ...bank("deception", 5, P1)]
-    });
-    activate(engine, P1, id("op"), "pump");
-    assert.equal(engine.getStat(id("op"), "strength"), (d.strength ?? 0) + 1);
-    assert.equal(engine.getStat(id("op"), "speed"), (d.speed ?? 0) + 1);
+  thresholdParagraphSuite({
+    name: "Obtuse Pipesmoker",
+    icon: "deception",
+    n: 5,
+    bonus: { strength: 1, life: 1, speed: 1 },
+    formerAbilityIds: ["pump"]
   });
 });
 
@@ -2112,15 +2217,12 @@ describe("Seed — Property Condemner", () => {
 });
 
 describe("Seed — Protractive Golem", () => {
-  test("[E]x6 grants +3/+3 and -1 speed permanently", () => {
-    const d = def("Protractive Golem");
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "pg", def: d, owner: P1, zone: "play" }, ...bank("elitism", 6, P1)]
-    });
-    activate(engine, P1, id("pg"), "pump");
-    assert.equal(engine.getStat(id("pg"), "strength"), (d.strength ?? 0) + 3);
-    assert.equal(engine.getStat(id("pg"), "speed"), (d.speed ?? 0) - 1);
+  thresholdParagraphSuite({
+    name: "Protractive Golem",
+    icon: "elitism",
+    n: 6,
+    bonus: { strength: 3, life: 3, speed: -1 },
+    formerAbilityIds: ["pump"]
   });
 });
 
@@ -2173,15 +2275,12 @@ describe("Seed — Rigged Tables", () => {
 });
 
 describe("Seed — Righteous Exemplar", () => {
-  test("[R]x5 grants +1/+1 permanently", () => {
-    const d = def("Righteous Exemplar");
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "re", def: d, owner: P1, zone: "play" }, ...bank("rage", 5, P1)]
-    });
-    activate(engine, P1, id("re"), "pump");
-    assert.equal(engine.getStat(id("re"), "strength"), (d.strength ?? 0) + 1);
-    assert.equal(engine.getStat(id("re"), "life"), (d.life ?? 0) + 1);
+  thresholdParagraphSuite({
+    name: "Righteous Exemplar",
+    icon: "rage",
+    n: 5,
+    bonus: { strength: 1, life: 1 },
+    formerAbilityIds: ["pump"]
   });
 });
 
@@ -2236,19 +2335,13 @@ describe("Seed — Rune of Concealment", () => {
 });
 
 describe("Seed — Runic Armor", () => {
-  test("grants +1/+2; [E]x5 adds +2/+1", () => {
-    const host = character({ name: "Host", strength: 2, life: 2 });
-    const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [
-        { key: "host", def: host, owner: P1, zone: "play" },
-        { key: "ra", def: def("Runic Armor"), owner: P1, zone: "play", attachedToKey: "host" },
-        ...bank("elitism", 5, P1)
-      ]
-    });
-    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 1);
-    activate(engine, P1, id("ra"), "reinforce");
-    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 3);
+  thresholdParagraphSuite({
+    name: "Runic Armor",
+    icon: "elitism",
+    n: 5,
+    bonus: { strength: 2, life: 1 },
+    attached: { always: { strength: 1, life: 2 } },
+    formerAbilityIds: ["reinforce"]
   });
 });
 
@@ -2373,16 +2466,14 @@ describe("Seed — Shadowy Mugger", () => {
 });
 
 describe("Seed — Shrouded Demon", () => {
-  test("is COVERT; [O]x3 grants +2 life permanently", () => {
-    const d = def("Shrouded Demon");
+  test("is COVERT whatever its controller's icons", () => {
     const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "sd", def: d, owner: P1, zone: "play" }, ...bank("obsession", 3, P1)]
+      cards: [{ key: "sd", def: def("Shrouded Demon"), owner: P1, zone: "play" }]
     });
     assert.ok(engine.getKeywords(id("sd")).includes("covert"));
-    activate(engine, P1, id("sd"), "pump");
-    assert.equal(engine.getStat(id("sd"), "life"), (d.life ?? 0) + 2);
   });
+
+  thresholdParagraphSuite({ name: "Shrouded Demon", icon: "obsession", n: 3, bonus: { life: 2 }, formerAbilityIds: ["pump"] });
 });
 
 describe("Seed — Sin Against Nature", () => {
@@ -2624,16 +2715,14 @@ describe("Seed — Thabbashite Wizard", () => {
 });
 
 describe("Seed — The Abominable Hamster", () => {
-  test("is COVERT; [O]x5 grants +2 strength permanently", () => {
-    const d = def("The Abominable Hamster");
+  test("is COVERT whatever its controller's icons", () => {
     const { engine, id } = buildGame({
-      playerA: { faction: developFaction() },
-      cards: [{ key: "h", def: d, owner: P1, zone: "play" }, ...bank("obsession", 5, P1)]
+      cards: [{ key: "h", def: def("The Abominable Hamster"), owner: P1, zone: "play" }]
     });
     assert.ok(engine.getKeywords(id("h")).includes("covert"));
-    activate(engine, P1, id("h"), "pump");
-    assert.equal(engine.getStat(id("h"), "strength"), (d.strength ?? 0) + 2);
   });
+
+  thresholdParagraphSuite({ name: "The Abominable Hamster", icon: "obsession", n: 5, bonus: { strength: 2 }, formerAbilityIds: ["pump"] });
 });
 
 describe("Seed — The Currency Bazaar", () => {

@@ -142,7 +142,7 @@ const EVENT_TYPES = new Set([
   "damageDealt", "abilityActivated", "battleStarted", "battleEnded",
   "characterAttacked", "characterBlocked", "blockingPartyFormed", "cardsDrawn",
   "cardsDiscarded", "counterChanged", "attackerBlocked", "deckSearched",
-  "coinFlipped", "cardPicked"
+  "coinFlipped", "cardPicked", "cardAttached", "cardsMulliganed"
 ]);
 const KEYWORDS = new Set([
   "tactical", "aggro", "covert", "redirectDamage", "cannotBeBlocked",
@@ -206,6 +206,10 @@ const KNOWN_TYPE_TAGS = new Set([
   "isCard", "damagedThisTurn", "destroyedByBattleDamage",
   // fidelity pass
   "targetOwnedBy", "targetControlledBy", "revealFromTopUntil", "reveal",
+  // search-and-reveal
+  "revealCards",
+  // threshold paragraphs (OMNIPOTENCE-aware)
+  "meetsThreshold", "deployedAsResponse",
   // number expressions
   "stat", "counter", "count", "add", "multiply", "variable", "random",
   "cardCost", "printedStat", "resourceIcons", "divide", "modulo",
@@ -571,26 +575,12 @@ describe("card-data-integrity: activated-ability names", () => {
   // character / item / location prints one on the physical card, and several
   // UI/log surfaces key off it (see spoils-game/docs/ability-name-backfill.md).
   // Tactics are out of scope — a tactic's "ability" is its inline card text
-  // with no keyword. So is any permanent whose activated ability is a bare
-  // "[icons]: <effect>" line with no printed keyword; those are the only
-  // permitted exceptions, frozen here so a new unnamed keyword ability trips
-  // this test instead of silently shipping.
+  // with no keyword. The only permitted exceptions are frozen here so a new
+  // unnamed keyword ability trips this test instead of silently shipping. (A
+  // bare "[icons]: <effect>" line is NOT such an exception: a paragraph that
+  // begins with threshold icons is a static condition — CR §201.5d / §405.4 —
+  // modeled as a continuous ability, never an activated one.)
   const KEYWORDLESS_ACTIVATED = new Set<string>([
-    "Boorish Boar::boorish-boar-pump",
-    "Boorish Boar::boorish-boar-pop",
-    "Fervent Beastslayer::life",
-    "Heavy Sword::sharpen",
-    "Obtuse Pipesmoker::pump",
-    "Protractive Golem::pump",
-    "Righteous Exemplar::pump",
-    "Runic Armor::reinforce",
-    "Shrouded Demon::pump",
-    "Soulsearcher::o",
-    "Soulsearcher::g",
-    "Soulsearcher::e",
-    "Soulsearcher::d",
-    "Soulsearcher::r",
-    "The Abominable Hamster::pump",
     // `text` prints no keyword segment for this one — id is a card-name slug,
     // not a printed keyword (see backfill doc's "check" row).
     "Thabbashite Penumbra::veil"
@@ -615,6 +605,34 @@ describe("card-data-integrity: activated-ability names", () => {
       "populate AbilityDefinition.name from the card's printed keyword, or " +
         "add a genuinely keywordless ability to KEYWORDLESS_ACTIVATED"
     );
+  });
+});
+
+describe("card-data-integrity: threshold paragraphs are not abilities", () => {
+  // CR §201.5d / §405.4: a paragraph that begins with threshold icons
+  // ("[R][R][R]: This card gains 3 life.") is a static condition that is active
+  // only while its controller meets the threshold. Modeling it as a cost-free
+  // activated ability lets it be used over and over, so a printing whose rules
+  // text has such a paragraph must not carry an unnamed, cost-free activated
+  // ability. A named ability with its own printed COST/EFFECT is unaffected.
+  const corrections: Record<string, { text?: string }> = readJson(
+    "data/card-audit/corrections.json"
+  );
+  const iconLed = /^(\[[ODGERV]\]\s*)+:/;
+
+  test("no printing with an icon-led paragraph has a free, unnamed activated ability", () => {
+    const offenders: string[] = [];
+    for (const c of catalog) {
+      if (c.type === "tactic") continue;
+      const printed = corrections[c.id]?.text ?? c.text ?? "";
+      if (!printed.split(" -- ").some(paragraph => iconLed.test(paragraph))) continue;
+      for (const a of c.behavior?.abilities ?? []) {
+        if (a.type !== "activated" || a.name) continue;
+        if (((a.costs as unknown[] | undefined) ?? []).length > 0) continue;
+        offenders.push(`${c.name} (${c.set})::${a.id as string}`);
+      }
+    }
+    assert.deepEqual(offenders, []);
   });
 });
 

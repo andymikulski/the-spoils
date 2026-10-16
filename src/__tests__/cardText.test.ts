@@ -148,15 +148,25 @@ describe("normalizeCardTextForComparison", () => {
 });
 
 describe("catalog markup", () => {
-  const cards: CardDefinition[] = JSON.parse(
-    readFileSync(fileURLToPath(new URL("../../data/cards.json", import.meta.url)), "utf8")
-  );
+  const readData = <T>(path: string): T => JSON.parse(readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8"));
+  const cards = readData<CardDefinition[]>("../../data/cards.json");
+  /** Corrected rules text, by printing id, for printings whose archival `text` doesn't match their card (CARD-AUDIT-PROGRESS.md). */
+  const corrections = readData<Record<string, { text: string; reason: string }>>("../../data/card-audit/corrections.json");
+  const rulesText = (card: CardDefinition) => corrections[card.id]?.text ?? card.text;
 
-  test("every card's markup parses, round-trips to its archival text, and refs its own abilities", () => {
+  test("every correction is keyed by a real printing id and gives a reason", () => {
+    const ids = new Set(cards.map((card) => card.id));
+    for (const [id, correction] of Object.entries(corrections)) {
+      assert.ok(ids.has(id), `${id} is not a printing id`);
+      assert.ok(correction.reason.trim(), `${id} has no reason`);
+    }
+  });
+
+  test("every card's markup parses, round-trips to its rules text, and refs its own abilities", () => {
     const problems: string[] = [];
     for (const card of cards) {
       if (card.markup === undefined) continue;
-      if (!card.text.trim()) {
+      if (!rulesText(card).trim()) {
         problems.push(`${card.name} (${card.set}): markup on a card with no text`);
         continue;
       }
@@ -167,7 +177,7 @@ describe("catalog markup", () => {
         problems.push(`${card.name} (${card.set}): ${(error as Error).message}`);
         continue;
       }
-      if (normalizeCardTextForComparison(cardTextToPlain(blocks)) !== normalizeCardTextForComparison(card.text)) {
+      if (normalizeCardTextForComparison(cardTextToPlain(blocks)) !== normalizeCardTextForComparison(rulesText(card))) {
         problems.push(`${card.name} (${card.set}): markup does not round-trip to text`);
       }
       const ids = new Set((card.behavior?.abilities ?? []).map((ability) => ability.id));

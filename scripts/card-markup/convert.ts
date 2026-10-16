@@ -1,7 +1,11 @@
-// Heuristic converter from a card's archival " -- "-separated `text` to
+// Heuristic converter from a card's " -- "-separated rules text to
 // structured markup (src/cardText.ts), plus ability-ref linking and the
 // round-trip check every generated or hand-written markup must pass.
 // Migration tooling — see CARD-MARKUP-PROGRESS.md.
+
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import type { CardDefinition, ResourceIcon } from "../../src/types/index.js";
 import {
@@ -15,6 +19,70 @@ import {
   type CardTextInline
 } from "../../src/cardText.js";
 
+const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "..", "data");
+const CORRECTIONS_PATH = join(DATA_DIR, "card-audit", "corrections.json");
+const OVERRIDES_PATH = join(DATA_DIR, "card-markup", "overrides.txt");
+/** Per-set override files (`<set slug>.txt`), same format as overrides.txt. */
+const OVERRIDES_DIR = join(DATA_DIR, "card-markup", "overrides");
+
+/**
+ * Override files: hand-corrected markup. Lines before the first "=== " are
+ * comments; each "=== <key>" starts an entry whose markup is everything up to
+ * the next "=== " (whitespace between blocks is ignored by the parser, so
+ * entries can be pretty-printed). The key is a printing id (that printing
+ * only) or a card name (every printing it round-trips for).
+ */
+function parseOverrideFile(path: string, into: Map<string, string>, sources: Map<string, string>): void {
+  let current: string | undefined;
+  let lines: string[] = [];
+  const flush = () => {
+    if (current === undefined) return;
+    if (sources.has(current)) throw new Error(`Override for "${current}" is in both ${sources.get(current)} and ${path}`);
+    into.set(current, lines.join("\n").trim());
+    sources.set(current, path);
+  };
+  for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
+    if (line.startsWith("=== ")) {
+      flush();
+      current = line.slice(4).trim();
+      lines = [];
+    } else if (current !== undefined) lines.push(line);
+  }
+  flush();
+}
+
+/** overrides.txt plus every per-set file in overrides/; a key may appear in only one of them. */
+export function loadMarkupOverrides(): Map<string, string> {
+  const overrides = new Map<string, string>();
+  const sources = new Map<string, string>();
+  if (existsSync(OVERRIDES_PATH)) parseOverrideFile(OVERRIDES_PATH, overrides, sources);
+  if (existsSync(OVERRIDES_DIR)) {
+    for (const file of readdirSync(OVERRIDES_DIR).filter((name) => name.endsWith(".txt")).sort()) {
+      parseOverrideFile(join(OVERRIDES_DIR, file), overrides, sources);
+    }
+  }
+  return overrides;
+}
+
+/** The override for one printing: its id entry, else its name entry. */
+export function overrideFor(overrides: Map<string, string>, card: CardDefinition): string | undefined {
+  return overrides.get(card.id) ?? overrides.get(card.name);
+}
+
+/** A printing's corrected rules text, for printings whose archival `text` doesn't match their card (CARD-AUDIT-PROGRESS.md). */
+export interface TextCorrection {
+  text: string;
+  reason: string;
+}
+
+let corrections: Record<string, TextCorrection> | undefined;
+
+/** The printing's rules text: its entry (by printing id) in data/card-audit/corrections.json when it has one, otherwise the archival `text`. */
+export function rulesText(card: CardDefinition): string {
+  corrections ??= existsSync(CORRECTIONS_PATH) ? (JSON.parse(readFileSync(CORRECTIONS_PATH, "utf8")) as Record<string, TextCorrection>) : {};
+  return corrections[card.id]?.text ?? card.text;
+}
+
 export interface ConvertContext {
   cardNames: Set<string>;
   /** An unquoted card name after "named " ("a card named Deception"), longest name first. */
@@ -27,7 +95,7 @@ export interface CardConversion {
   markup: string;
   /** Things a reviewer should look at; the markup is still valid. */
   flags: string[];
-  /** The markup is wrong (doesn't parse, or doesn't round-trip to `text`). */
+  /** The markup is wrong (doesn't parse, or doesn't round-trip to the rules text). */
   errors: string[];
 }
 
@@ -440,7 +508,7 @@ export function linkAbilityRefs(blocks: CardTextBlock[], card: CardDefinition, f
 // Whole-card conversion + verification
 // -----------------------------------------------------------------------------
 
-/** Errors for markup that doesn't parse or doesn't round-trip to the card's `text`. */
+/** Errors for markup that doesn't parse or doesn't round-trip to the card's rules text (`rulesText`). */
 export function verifyMarkup(markup: string, card: CardDefinition): string[] {
   let blocks: CardTextBlock[];
   try {
@@ -449,7 +517,7 @@ export function verifyMarkup(markup: string, card: CardDefinition): string[] {
     return [`parse error: ${(error as Error).message}`];
   }
   const errors: string[] = [];
-  const expected = normalizeCardTextForComparison(card.text);
+  const expected = normalizeCardTextForComparison(rulesText(card));
   const actual = normalizeCardTextForComparison(cardTextToPlain(blocks));
   if (actual !== expected) {
     let at = 0;
@@ -467,11 +535,11 @@ export function verifyMarkup(markup: string, card: CardDefinition): string[] {
 
 /**
  * Markup for one card: the hand-written `override` when there is one,
- * otherwise the heuristic conversion of `text`; refs linked for this exact
+ * otherwise the heuristic conversion of its rules text; refs linked for this exact
  * printing either way. `null` for cards with no rules text.
  */
 export function convertCard(card: CardDefinition, ctx: ConvertContext, override?: string): CardConversion | null {
-  if (!card.text.trim()) return null;
+  if (!rulesText(card).trim()) return null;
   const flags: string[] = [];
   let blocks: CardTextBlock[];
   if (override !== undefined) {
@@ -481,7 +549,7 @@ export function convertCard(card: CardDefinition, ctx: ConvertContext, override?
       return { markup: override, flags, errors: [`override parse error: ${(error as Error).message}`] };
     }
   } else {
-    const converted = convertText(card.text, ctx);
+    const converted = convertText(rulesText(card), ctx);
     blocks = converted.blocks;
     flags.push(...converted.flags);
   }

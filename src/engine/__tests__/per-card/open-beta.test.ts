@@ -1349,7 +1349,7 @@ describe("Open Beta — Hyperphagic Sarcophyle", () => {
 });
 
 describe("Open Beta — Hypnotic Plafond", () => {
-  test("reduces battle damage to your faction by COVERT-party characters to 0", () => {
+  test("a COVERT party cannot attack your faction (as printed in this set)", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
       cards: [
@@ -1359,13 +1359,9 @@ describe("Open Beta — Hypnotic Plafond", () => {
       turn: 2,
       activePlayerId: P2
     });
-    const inf = engine.state.players[P1].influence;
-    engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [id("sneak")], target: { type: "faction", playerId: P1 } });
-    resolvePendingResponses(engine);
-    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [] });
-    autoResolveBattle(engine);
-    resolvePendingResponses(engine);
-    assert.equal(engine.state.players[P1].influence, inf);
+    assert.throws(() =>
+      engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [id("sneak")], target: { type: "faction", playerId: P1 } })
+    );
   });
 });
 
@@ -1575,7 +1571,7 @@ describe("Open Beta — Jumping Screamspider", () => {
 });
 
 describe("Open Beta — Kettinger", () => {
-  test("grants +2 strength; HANDOFF re-attaches it", () => {
+  test("grants +3 strength (as printed in this set); HANDOFF re-attaches it", () => {
     const host = character({ name: "Host", strength: 2 });
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
@@ -1586,7 +1582,7 @@ describe("Open Beta — Kettinger", () => {
         ...bank("rage", 6, P1)
       ]
     });
-    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 2);
+    assert.equal(engine.getStat(id("host"), "strength"), (host.strength ?? 0) + 3);
     activate(engine, P1, id("k"), "kettinger-handoff", { selected: { newWearer: [id("host2")] } });
     assert.equal(engine.state.cards[id("k")].attachedTo, id("host2"));
   });
@@ -2530,7 +2526,7 @@ describe("Open Beta — Sarcophyle Matriculation", () => {
 });
 
 describe("Open Beta — Scavengemajig", () => {
-  test("ETB may return an item from your discard to hand", () => {
+  test("ETB may put an item from your discard pile into play under your control (as printed in this set)", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
       cards: [
@@ -2543,7 +2539,8 @@ describe("Open Beta — Scavengemajig", () => {
     drain(engine, pc =>
       pc.kind === "chooserSelectsTarget" ? { kind: "chooserSelectsTarget", selected: [id("tool")] } : declineAll(pc)
     );
-    assert.equal(engine.state.cards[id("tool")].zone, "hand");
+    assert.equal(engine.state.cards[id("tool")].zone, "play");
+    assert.equal(engine.state.cards[id("tool")].controllerId, P1);
   });
 });
 
@@ -2630,12 +2627,13 @@ describe("Open Beta — Servile Centipede", () => {
 });
 
 describe("Open Beta — Shocking Reappearance", () => {
-  test("reanimates a discard character into your blocking party", () => {
+  test("once you are blocking, reanimates a discard character into your blocking party (as printed in this set)", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
       cards: [
         { key: "sr", def: def("Shocking Reappearance"), owner: P1, zone: "hand" },
         { key: "corpse", def: character({ name: "Corpse" }), owner: P1, zone: "discard" },
+        { key: "blk", def: character({ name: "Blk", life: 5 }), owner: P1, zone: "play" },
         { key: "atk", def: character({ name: "Atk", strength: 2, life: 5, speed: 3 }), owner: P2, zone: "play" },
         ...bank("greed", 8, P1)
       ],
@@ -2644,6 +2642,13 @@ describe("Open Beta — Shocking Reappearance", () => {
     });
     engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [id("atk")], target: { type: "faction", playerId: P1 } });
     engine.perform({ type: "passPriority", playerId: P2 });
+    // Not blocking yet: "Play this only when you are blocking."
+    assert.throws(() => engine.perform({ type: "playCard", playerId: P1, cardId: id("sr"), selected: { c: [id("corpse")] } } as never));
+    resolvePendingResponses(engine);
+    engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [id("blk")] });
+    while (engine.state.responseWindow && engine.state.responseWindow.priorityPlayerId !== P1) {
+      engine.perform({ type: "passPriority", playerId: engine.state.responseWindow.priorityPlayerId });
+    }
     engine.perform({ type: "playCard", playerId: P1, cardId: id("sr"), selected: { c: [id("corpse")] } } as never);
     resolvePendingResponses(engine);
     assert.equal(engine.state.cards[id("corpse")].zone, "play");

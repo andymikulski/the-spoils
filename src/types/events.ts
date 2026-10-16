@@ -32,6 +32,17 @@ export interface GameEventMap {
     winnerId: PlayerId | "draw";
   };
 
+  /**
+   * The players switched seats (`swapped: true` — control of every card in
+   * play and of both factions passed to the opposing player) or switched
+   * back (`swapped: false`). Fired when `ContinuousAbility.swapsSides` takes
+   * or loses effect (Emergency Obfuscation). Informational; no rule keys off
+   * it.
+   */
+  seatsSwapped: {
+    swapped: boolean;
+  };
+
   cardPlayed: {
     cardId: CardInstanceId;
     playerId: PlayerId;
@@ -179,9 +190,21 @@ export interface GameEventMap {
    * "Reveal the top card of your deck", "look at an opponent's hand" — a
    * card was shown to a player. Informational: the engine already has
    * perfect information, so this carries no state change; it exists for a
-   * renderer / event log to surface what was seen. `ownerId` owns the
-   * cards; `viewerId` is who is entitled to look (`"all"` when a card is
-   * revealed to everyone). `byCardId` is the card whose text caused it.
+   * renderer / event log to surface what was seen. `ownerId` is the player
+   * whose `zone` the cards are shown from: their hand or deck holder, which
+   * differs from the cards' owner only for a card held in another player's
+   * hand or deck (`CardInstance.heldBy`); `viewerId` is who is entitled to
+   * look (`"all"` when a card is revealed to everyone). `byCardId` is the
+   * card whose text caused it.
+   *
+   * `knownToRevealer` is set when the player who caused the reveal (the
+   * controller of `byCardId`) already knew every one of `cardIds` before it
+   * happened: they picked the cards in a search or from their own hand, or
+   * turned over a face-down resource of theirs. Absent means the revealer
+   * learns the cards from this reveal — the top of a deck (their own or an
+   * opponent's), an opponent's hand, an opponent's unseen pile. A renderer
+   * uses it to skip the "show the revealer" moment only when it would tell
+   * them nothing.
    */
   cardsRevealed: {
     cardIds: CardInstanceId[];
@@ -189,6 +212,19 @@ export interface GameEventMap {
     ownerId: PlayerId;
     viewerId: PlayerId | "all";
     byCardId?: CardInstanceId;
+    knownToRevealer?: boolean;
+  };
+
+  /**
+   * A player set cards aside to the bottom of their deck in the opening
+   * mulligan, before the replacements are drawn. `GameState.mulligan`
+   * already lists them. Community Chest's "put this card on the bottom of
+   * your deck as part of your mulligan ... you may reveal it" triggers off
+   * this while the card sits in the deck.
+   */
+  cardsMulliganed: {
+    playerId: PlayerId;
+    cardIds: CardInstanceId[];
   };
 
   damageDealt: {

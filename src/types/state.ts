@@ -35,6 +35,25 @@ export interface CardInstance {
 
   zone: Zone;
 
+  /**
+   * The player whose hand or deck holds this card when that is NOT its owner
+   * — only ever set while `zone` is `"hand"` or `"deck"`, and only by a
+   * `moveCard` effect / `moveSelected` cost with a `toPlayer` ("Put the
+   * resource into YOUR hand", "shuffle this card into YOUR deck"). The card
+   * sits in that player's `hand`/`deck` array and that player controls it;
+   * ownership never changes (CR §407.8), so every other zone (discard, void,
+   * removed) still belongs to `ownerId`. Absent means the owner holds it.
+   */
+  heldBy?: PlayerId;
+
+  /**
+   * Set while in play when the card was deployed into an open response
+   * window as a non-tactic — i.e. using "you may play this card whenever
+   * you could play a tactic" (TACTICAL). Read by the `deployedAsResponse`
+   * condition.
+   */
+  deployedAsResponse?: boolean;
+
   depleted: boolean;
   damage: number;
 
@@ -138,6 +157,9 @@ export interface RuntimeKeywordGrant {
   keyword: Keyword;
 
   duration: Duration;
+  /** Only counts while this holds (the effect's `condition`), evaluated as `controllerId`'s effect from `sourceId`. */
+  condition?: Condition;
+  controllerId?: PlayerId;
   createdTurn: number;
 }
 
@@ -332,6 +354,8 @@ export interface DamageShield {
   redirectToId?: CardInstanceId;
   /** "Reduce the next damage instance to 0" — absorbs one whole instance, ignoring `amount`, then is spent (Visible Loaf). */
   wholeInstance?: boolean;
+  /** Kept across turns until spent (the effect's `persistent`). */
+  persistent?: boolean;
   createdTurn: number;
 }
 
@@ -386,6 +410,8 @@ export interface RuntimeThresholdReduction {
   playerId: PlayerId;
   icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
   amount: number;
+  /** Kept across turns until a play consumes it (the effect's `persistent`). */
+  persistent?: boolean;
   createdTurn: number;
 }
 
@@ -723,6 +749,14 @@ export interface GameFlowView {
   pendingChoice?: PendingChoice;
 
   /**
+   * True while a seat swap is in effect (`GameState.seatSwap`, Emergency
+   * Obfuscation): each player's `play` zone and faction are the opponent's
+   * side. A renderer can label the board accordingly; cards still report
+   * their real `ownerId`.
+   */
+  seatsSwapped: boolean;
+
+  /**
    * Zones currently public because of a `grantsReveal` continuous ability
    * ("the top card of your deck is revealed at all times" — Cheats
    * McGuillicutty; "each opponent's hand is revealed at all times" — Odious
@@ -824,7 +858,28 @@ export interface GameStateSnapshot {
   /** Outermost (first-played) response-stack item first. */
   responseStack: Array<{ label: string; controllerId: PlayerId }>;
   pendingChoice?: { kind: string; playerId: PlayerId };
+  /** Present (and true) only while a seat swap is in effect — see `GameState.seatSwap`. */
+  seatsSwapped?: true;
   players: SnapshotPlayer[];
+}
+
+/**
+ * The bookkeeping for a seat swap (Emergency Obfuscation). "Seats" are the
+ * engine's players; a player's *side* is the faction they control plus every
+ * card in play under their control. Entering the swap hands each in-play card
+ * to the opposing player and exchanges the players' `factionId` / `influence`,
+ * so every "your faction", "your characters", "your resources" lookup follows
+ * control. Ownership never changes (CR §407.8); hands, decks, discard piles,
+ * voids and the removed zone are untouched.
+ */
+export interface SeatSwapState {
+  /**
+   * Every card that was in play when the seats swapped, with the controller it
+   * had just before. Lifting the swap returns each one that is still in play
+   * and still under the controller the swap gave it; a card that entered play
+   * later was never part of the exchange and keeps whoever controls it.
+   */
+  exchanged: Array<{ cardId: CardInstanceId; previousControllerId: PlayerId }>;
 }
 
 export interface GameState {
@@ -920,6 +975,15 @@ export interface GameState {
     duration: Duration;
     createdTurn: number;
   }>;
+
+  /**
+   * Present exactly while the seats are swapped (an odd number of live
+   * `ContinuousAbility.swapsSides` sources are in play — Emergency
+   * Obfuscation). `checkStateBasedActions` applies and lifts the swap, so it
+   * takes effect the moment the card enters play and ends the moment it
+   * leaves. Absent otherwise.
+   */
+  seatSwap?: SeatSwapState;
 
   /**
    * Ability bodies granted to a card by a `grantAbilitiesFrom` effect

@@ -187,17 +187,21 @@ describe("Ungodly Mess smoke: authored behavior drives the engine", () => {
     assert.equal(engine.getAvailableResourceCount(P1), 2);
   });
 
-  test("Soulsearcher — an icon-gated ability with no resource cost", () => {
+  test("Soulsearcher — an icon-led paragraph is a static condition, not an ability", () => {
+    const soulsearcher = def("Soulsearcher");
     const { engine, id } = buildGame({
       cards: [
-        { key: "ss", def: def("Soulsearcher"), owner: P1, zone: "play" },
+        { key: "ss", def: soulsearcher, owner: P1, zone: "play" },
         { key: "r", def: rage(), owner: P1, zone: "play" }
       ],
       activePlayerId: P1
     });
-    const before = engine.getStat(id("ss"), "strength");
-    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("ss"), abilityId: "r" });
-    drainToStack(engine);
-    assert.equal(engine.getStat(id("ss"), "strength"), before + 2);
+    // "[R]: This card gains 2 strength." holds while the controller has an [R] icon...
+    assert.equal(engine.getStat(id("ss"), "strength"), (soulsearcher.strength ?? 0) + 2);
+    // ...and there is nothing to activate, so it cannot be repeated.
+    assert.throws(() =>
+      engine.perform({ type: "activateAbility", playerId: P1, cardId: id("ss"), abilityId: "r" })
+    );
+    assert.equal(engine.getStat(id("ss"), "strength"), (soulsearcher.strength ?? 0) + 2);
   });
 });

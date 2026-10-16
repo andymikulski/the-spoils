@@ -1,2 +1,7 @@
 # Hand-corrected markup for cards first seen in set "seed-2" (see CARD-MARKUP-PROGRESS.md).
 # Entries: "=== <exact card name>" then that card's markup. Comments only above the first entry.
+=== 4c9c9c1f-d3e1-4ebe-9ff1-8d2295cb79b0
+<ability name='GAZE UPON THE "STARS"' ref="gaze">
+  <cost>Deplete this card.</cost>
+  <effect>You may play a tactic with numeric cost X or less for free, where X is either 5 or the number of [O] you control, whichever is lower.</effect>
+</ability>

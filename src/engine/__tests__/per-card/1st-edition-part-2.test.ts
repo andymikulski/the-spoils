@@ -1928,13 +1928,17 @@ describe("1st Edition Part 2 — Cheats McGuillicutty", () => {
 });
 
 describe("1st Edition Part 2 — Clockman Pickpocket", () => {
-  test("cannot be blocked while an opponent controls an item", () => {
+  test("cannot be blocked while your opponent controls an item and it attacks alone (as printed in this set)", () => {
     const { engine, id } = buildGame({
       cards: [
         { key: "cp", def: def("Clockman Pickpocket"), owner: P1, zone: "play" },
         { key: "it", def: item({ name: "It" }), owner: P2, zone: "play" }
-      ]
+      ],
+      turn: 2
     });
+    assert.ok(!engine.getKeywords(id("cp")).includes("cannotBeBlocked"));
+    engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("cp")], target: { type: "faction", playerId: P2 } });
+    resolvePendingResponses(engine);
     assert.ok(engine.getKeywords(id("cp")).includes("cannotBeBlocked"));
   });
 });
@@ -1961,13 +1965,17 @@ describe("1st Edition Part 2 — Counter Attack", () => {
 });
 
 describe("1st Edition Part 2 — Cute Cutpurse", () => {
-  test("cannot be blocked while an opponent controls an item", () => {
+  test("cannot be blocked while your opponent controls an item and it attacks alone (as printed in this set)", () => {
     const { engine, id } = buildGame({
       cards: [
         { key: "cc", def: def("Cute Cutpurse"), owner: P1, zone: "play" },
         { key: "it", def: item({ name: "It" }), owner: P2, zone: "play" }
-      ]
+      ],
+      turn: 2
     });
+    assert.ok(!engine.getKeywords(id("cc")).includes("cannotBeBlocked"));
+    engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [id("cc")], target: { type: "faction", playerId: P2 } });
+    resolvePendingResponses(engine);
     assert.ok(engine.getKeywords(id("cc")).includes("cannotBeBlocked"));
   });
 });

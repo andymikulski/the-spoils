@@ -11059,3 +11059,79 @@ describe("card behavior: Profane Proposal (distinctNames + separateIntoPiles)", 
     );
   });
 });
+
+// "You may play this card whenever you could play a tactic. While this card is
+// in play, both players switch seats. Both players are in control of their
+// opponent's side. ... At the start of your turn, you must put a token on this
+// card. At the end of your turn, if there are at least 2 tokens on this card,
+// destroy it." (Open Beta / 1st Edition) — the seat swap is
+// `ContinuousAbility.swapsSides`; the token clock is the usual upkeep/expire
+// pair. Engine rules for the swap itself are in seat-swap.test.ts.
+function emergencyObfuscation(): CardDefinition {
+  return item({
+    name: "Emergency Obfuscation",
+    cost: 0,
+    behavior: {
+      keywords: ["tactical"],
+      abilities: [
+        { id: "swap", type: "continuous", modifiers: [], swapsSides: true },
+        {
+          id: "upkeep",
+          type: "triggered",
+          event: "turnStarted",
+          condition: { type: "eventPlayerIs", player: "controller" },
+          effects: [{ type: "addCounter", target: "source", counter: "token", amount: 1 }]
+        },
+        {
+          id: "expire",
+          type: "triggered",
+          event: "turnEnding",
+          condition: {
+            type: "and",
+            conditions: [
+              { type: "eventPlayerIs", player: "controller" },
+              { type: "counterCompare", target: "source", counter: "token", operator: ">=", value: 2 }
+            ]
+          },
+          effects: [{ type: "destroy", target: "source" }]
+        }
+      ]
+    }
+  });
+}
+
+describe("card behavior: Emergency Obfuscation (seat swap with a two-token clock)", () => {
+  test("the sides swap on entering play and swap back when the clock destroys it", () => {
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "eo", def: emergencyObfuscation(), owner: P1, zone: "hand" },
+        { key: "hero", def: character({ name: "Hero" }), owner: P1 },
+        { key: "guard", def: character({ name: "Guard" }), owner: P2 }
+      ]
+    });
+    const endTurn = (who: string): void => {
+      engine.perform({ type: "endTurn", playerId: who });
+      resolvePendingResponses(engine);
+    };
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("eo") });
+    resolvePendingResponses(engine);
+
+    assert.equal(engine.state.cards[id("hero")].controllerId, P2);
+    assert.equal(engine.state.cards[id("guard")].controllerId, P1);
+    // It is part of the side it was played to, so the opposing player now owns the clock.
+    assert.equal(engine.state.cards[id("eo")].controllerId, P2);
+
+    endTurn(P1);
+    assert.equal(engine.state.cards[id("eo")].counters.token, 1);
+    endTurn(P2);
+    assert.equal(engine.state.cards[id("eo")].zone, "play");
+    endTurn(P1);
+    assert.equal(engine.state.cards[id("eo")].counters.token, 2);
+    endTurn(P2);
+
+    assert.equal(engine.state.cards[id("eo")].zone, "discard");
+    assert.equal(engine.state.seatSwap, undefined);
+    assert.equal(engine.state.cards[id("hero")].controllerId, P1);
+    assert.equal(engine.state.cards[id("guard")].controllerId, P2);
+  });
+});

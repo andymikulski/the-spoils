@@ -1482,7 +1482,7 @@ describe("Seed 2 — Fired Hand", () => {
 });
 
 describe("Seed 2 — I Drink Your Milkshake!", () => {
-  test("digs a card out of an opponent's deck into the void", () => {
+  test("digs a card out of an opponent's deck and removes it from the game (as printed in this set)", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
       cards: [
@@ -1493,7 +1493,7 @@ describe("Seed 2 — I Drink Your Milkshake!", () => {
     });
     play(engine, P1, id("ms"), { selected: { dig: [id("od")] } });
     drain(engine, declineAll);
-    assert.equal(engine.state.cards[id("od")].zone, "void");
+    assert.equal(engine.state.cards[id("od")].zone, "removed");
   });
 });
 

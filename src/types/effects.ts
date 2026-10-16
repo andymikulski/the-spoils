@@ -26,6 +26,12 @@ export type Effect =
       target: TargetRef;
       faceDown: boolean | "auto";
       player?: PlayerRef;
+      /**
+       * "Put a resource into play" — the same placement, but it isn't
+       * *playing* a resource, so no `resourcePlayed` event ("when you play a
+       * resource" triggers don't fire). Makeshift Contrivance, 1st Edition.
+       */
+      putIntoPlay?: boolean;
     }
   | {
       type: "dealDamage";
@@ -46,6 +52,15 @@ export type Effect =
        * `"bottom"` (default `"bottom"`). Ignored for every other zone.
        */
       position?: "top" | "bottom";
+      /**
+       * Whose hand or deck receives the card when `to` is `"hand"` or
+       * `"deck"`. Omitted: the card's owner ("put it into its owner's hand",
+       * CR §301.4a). Set it for printings that say "your hand" / "your deck"
+       * — the card goes to that player's hand/deck and that player controls
+       * it, even when someone else owns it (`CardInstance.heldBy`). Ignored
+       * for every other zone, which always belongs to the owner.
+       */
+      toPlayer?: PlayerRef;
     }
   | {
       type: "destroy";
@@ -329,6 +344,13 @@ export type Effect =
       player: PlayerRef;
       icon: ResourceIcon | { fromNamed: string };
       amount: NumberExpression;
+      /**
+       * Survives turn boundaries until a play consumes it. For printings
+       * with no "this turn" ("Reduce the threshold requirement of the next
+       * card you play" — Clockman Skydocks). Default: lapses at the start of
+       * the next turn.
+       */
+      persistent?: boolean;
     }
   | {
       /**
@@ -366,6 +388,13 @@ export type Effect =
        * ignored when set.
        */
       wholeInstance?: boolean;
+      /**
+       * Survives turn boundaries until spent. For printings with no "this
+       * turn" ("The next 1 damage that would be inflicted to the character is
+       * inflicted to this card instead" — A Series of Tubes, 1st Edition).
+       * Default: lapses at the start of the next turn.
+       */
+      persistent?: boolean;
     }
   | {
       /**
@@ -409,6 +438,13 @@ export type Effect =
       target: TargetRef;
       keyword: Keyword;
       duration: Duration;
+      /**
+       * The keyword only counts while this holds, evaluated from the
+       * granting card's point of view whenever the keyword is checked —
+       * "This turn, while this card is the only member of an attacking party
+       * it cannot be blocked." (Schproingmajig, 1st Edition Part 2).
+       */
+      condition?: Condition;
     }
   | {
       /** Same shape as `grantKeyword`, for boolean combat restrictions (e.g. "this turn, the character cannot attack"). */
@@ -690,6 +726,32 @@ export type Effect =
       of: PlayerRef;
       zone: "deckTop" | "hand";
       count?: NumberExpression;
+      viewer?: PlayerRef | "all";
+    }
+  | {
+      /**
+       * Show specific cards to `viewer` — the "...and reveal it" half of
+       * "search your deck for a tactic, reveal it, and put it into your
+       * hand". Names the cards the way `forEach` does: `selected` is the id
+       * of a `TargetDeclaration` (the cards that pick chose), or `selector`
+       * matches cards directly ("reveal all copies of the named card"), and
+       * `target` names one card ("reveal this card" — a hand card's own
+       * trigger, Thabbashite Desert Creature).
+       * Place it right after the pick and before the effect that moves the
+       * card, so the card is shown from the zone it was found in. `viewer`
+       * defaults to `"all"` (a printed "reveal" is public); name a player to
+       * show it to that player only.
+       *
+       * Emits `cardsRevealed` (one event per owner + zone among the cards)
+       * and nothing else. Nothing to show (a declined "you may search")
+       * emits nothing. Which printings carry this effect follows each
+       * printing's own printed text — a reprint that drops "reveal it" does
+       * not get it.
+       */
+      type: "revealCards";
+      selected?: string;
+      selector?: CardSelector;
+      target?: TargetRef;
       viewer?: PlayerRef | "all";
     }
   | {

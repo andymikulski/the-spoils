@@ -99,9 +99,9 @@ describe("Seed Saga smoke: novel authored behaviour drives the engine", () => {
     assert.equal(engine.state.players[P1].hand.length, hb - 1 + 1);
   });
 
-  test("Duskfall Buckgriff — SNEAK pays 1 to gain COVERT this turn", () => {
+  test("Duskfall Buckgrif — SNEAK pays 1 to gain COVERT this turn", () => {
     const { engine, id } = buildGame({
-      cards: [{ key: "d", def: def("Duskfall Buckgriff"), owner: P1, zone: "play" }, ...bank("deception", 3, P1)]
+      cards: [{ key: "d", def: def("Duskfall Buckgrif"), owner: P1, zone: "play" }, ...bank("deception", 3, P1)]
     });
     assert.ok(!engine.getKeywords(id("d")).includes("covert"));
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("d"), abilityId: "sneak" });

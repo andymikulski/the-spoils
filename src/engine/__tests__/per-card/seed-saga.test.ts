@@ -25,9 +25,11 @@ import {
   activate,
   inPlay,
   resolvePendingResponses,
+  samePrintedRules,
   P1,
   P2
 } from "./_harness.js";
+import type { CardDefinition } from "../../../engine.js";
 
 const SET = "Seed Saga";
 const def = (name: string) => cardDef(SET, name);
@@ -102,7 +104,7 @@ const PARITY = [
   "Balthassar Gristwalter", "Barrier of Benevolence", "Because God Said So!",
   "Black Scourge of the Brine", "Blazing Shriever", "Boilstorm",
   "Booty Licker", "Braggadocian Aide", "Brainbath",
-  "Brilliant Insight", "Burly Assailment", "Caboodling Gladhander",
+  "Brilliant Insight", "Burly Assailment",
   "Cantankerous Claywork", "Cashier's Window", "Casino Kingpin",
   "Ceremonious Groomer", "Chain Reaction", "Chancellor of Reinstatement",
   "Circumspect Hijacker", "Clam Hash", "Clay Node",
@@ -145,7 +147,7 @@ const PARITY = [
   "Lingamite Torture Monk", "Living God of Thabbash", "Lodge Dock Florist",
   "Lordly Stables", "Lucky Bastard", "Lucky Charm",
   "Luxurious Gaming Establishment", "Manful Skirmish", "Manifest",
-  "Marduun Baitings and Loan", "Mass Confusion", "Massive Erecting Golem",
+  "Marduun Baitings and Loan", "Massive Erecting Golem",
   "Master Mud Whisperer", "Maxwell Cockswagger", "Melty Cheese",
   "Mesmerizing Enchantress", "Midget Mine", "Mighty Ballista",
   "Minion of Thabbash", "Miraculous Regeneration", "Mirthless Altar",
@@ -166,7 +168,7 @@ const PARITY = [
   "Portly Tradesmau", "Prehensile Pirate", "Preponderant Craftsman",
   "Proficient Battler", "Property Condemner", "Prophetic Assistant",
   "Prostitution Lobbyist", "Protractive Golem", "Purifying Priest",
-  "Reality Shift", "Recyclable Golem", "Redonkulous",
+  "Reality Shift", "Recyclable Golem",
   "Repurpose", "Research Intern", "Resistance Fighter",
   "Rewarding Salvage", "Rigged Tables", "Righteous Exemplar",
   "Robustical Badass", "Rosy Palmer, and Her Five Friends", "Roulette Wheel of DOOM!",
@@ -176,7 +178,7 @@ const PARITY = [
   "Runivoltaic Accumulator", "Rusty Pickaxe", "Sequestered Hellion",
   "Seraphim Magic", "Shadowy Mugger", "Shrouded Demon",
   "Sin Against Nature", "Slick Orator", "Slinking Bandido",
-  "Sly Bilker", "Smothering Corpulence", "Spiky Pumpkin",
+  "Sly Bilker", "Spiky Pumpkin",
   "Spitting Sarume", "Sprint", "Strangulate",
   "Stupidify", "Subordinate Demotivation", "Surplus Soldier",
   "Surprise!", "Surprising Nuisance", "Swollen Ostrich",
@@ -203,37 +205,35 @@ describe("Seed Saga — reprint parity", () => {
     "Seed 3", "Seed 2", "Shade of the Devoured Emperor", "1st Edition Part 2",
     "Holy Heist", "Ungodly Mess", "Open Beta", "1st Edition", "Seed", "2nd Edition"
   ];
-  const prior = new Map<string, string[]>();
+  const prior = new Map<string, CardDefinition[]>();
   for (const s of PRIOR_SETS) {
     for (const c of setCards(s)) {
-      const j = JSON.stringify(c.behavior ?? null);
       const arr = prior.get(c.name) ?? prior.set(c.name, []).get(c.name)!;
-      arr.push(j);
+      arr.push(c);
     }
   }
 
   const cards = setCards(SET);
 
-  test("PARITY list matches the actual reprint subset", () => {
-    const reprints = cards
-      .filter(c => {
-        const priors = prior.get(c.name);
-        return priors && priors.includes(JSON.stringify(c.behavior ?? null));
-      })
-      .map(c => c.name)
-      .sort();
-    assert.deepEqual([...PARITY].sort(), reprints);
+  test("every PARITY name is a Seed Saga reprint of a prior-set card", () => {
+    const names = new Set(cards.map(c => c.name));
+    assert.deepEqual(PARITY.filter(name => !names.has(name) || !prior.has(name)), []);
   });
 
   for (const name of PARITY) {
-    test(`${name} — behavior matches a prior-set print; instantiates cleanly`, () => {
+    test(`${name} — behavior matches a prior-set print with the same printed rules; instantiates cleanly`, () => {
       const c = def(name);
       const priors = prior.get(name);
       assert.ok(priors && priors.length > 0, `${name}: no prior print found`);
-      assert.ok(
-        priors!.includes(JSON.stringify(c.behavior ?? null)),
-        `${name}: Seed Saga behavior diverged from every prior print`
-      );
+      // Printings with different printed rules play differently on purpose
+      // (printed-variants.test.ts); only same-text prints must match.
+      const samePrinted = priors!.filter(p => samePrintedRules(p, c));
+      if (samePrinted.length) {
+        assert.ok(
+          samePrinted.some(p => JSON.stringify(p.behavior ?? null) === JSON.stringify(c.behavior ?? null)),
+          `${name}: Seed Saga behavior diverged from every prior print with the same printed rules`
+        );
+      }
 
       if (c.type === "character" || c.type === "location") {
         const { engine, id } = buildGame({ cards: [{ key: "c", def: c, owner: P1, zone: "play" }] });
@@ -547,11 +547,11 @@ describe("Seed Saga — Ashara, Gideon's Twin", () => {
   });
 });
 
-describe("Seed Saga — Duskfall Buckgriff", () => {
+describe("Seed Saga — Duskfall Buckgrif", () => {
   test("is TACTICAL; SNEAK pays 1 for COVERT this turn", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
-      cards: [{ key: "b", def: def("Duskfall Buckgriff"), owner: P1, zone: "play" }, ...bank("deception", 4, P1)]
+      cards: [{ key: "b", def: def("Duskfall Buckgrif"), owner: P1, zone: "play" }, ...bank("deception", 4, P1)]
     });
     assert.ok(engine.getKeywords(id("b")).includes("tactical"));
     activate(engine, P1, id("b"), "sneak");

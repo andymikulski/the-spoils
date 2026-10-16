@@ -390,6 +390,17 @@ export type Condition =
     }
   | {
       /**
+       * True while `target` (default `"source"`) is in play having been
+       * deployed into a response window as a non-tactic — it used "you may
+       * play this card whenever you could play a tactic". "You may play this
+       * card whenever you could play a tactic. If you do, …" (Ravenous Wolf,
+       * Unexpected Boobysnake — older printings).
+       */
+      type: "deployedAsResponse";
+      target?: TargetRef;
+    }
+  | {
+      /**
        * True when `target` and `other` both resolve to a card and those
        * two cards share the same printed `name` — "search your deck for a
        * card with the same name" (bind `target` to `{ type: "selected",
@@ -559,4 +570,28 @@ export type Condition =
        */
       type: "destroyedByBattleDamage";
       target?: TargetRef;
+    }
+  | {
+      /**
+       * True while `player` (default `"controller"`) MEETS `threshold` — the
+       * CR §405.4 / §201.5d gate of a paragraph that begins with threshold
+       * icons ("[R][R][R]: This card gains 3 life."). `threshold` uses the
+       * same icon-letter shorthand as `CardDefinition.threshold` (`r` rage,
+       * `g` greed, `d` deception, `e` elitism, `o` obsession, `v` volition;
+       * `"oovv"` needs two of each), so a mixed-icon paragraph is ONE
+       * condition.
+       *
+       * Met when the player controls at least that many of every icon
+       * (`getThresholds`) OR their faction has `meetsAllThresholds`
+       * (OMNIPOTENCE — The Evil Alliance automatically meets every
+       * threshold). Unlike `numberCompare` over `resourceIcons`, which only
+       * ever counts real icons, this is the form for "the paragraph is active
+       * while you meet its threshold". Use `resourceIcons` for "X is the
+       * number of [O] you control" and for an inline "if you control [V][V]"
+       * that is not a printed threshold. Printed-threshold reductions and
+       * FEALTY slack apply only to deploying a card, never to this.
+       */
+      type: "meetsThreshold";
+      player?: PlayerRef;
+      threshold: string;
     };

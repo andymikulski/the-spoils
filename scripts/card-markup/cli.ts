@@ -21,7 +21,7 @@ import { fileURLToPath } from "node:url";
 
 import type { CardDefinition } from "../../src/types/index.js";
 import { parseCardText, serializeCardText } from "../../src/cardText.js";
-import { buildContext, convertCard, linkAbilityRefs, verifyMarkup, type ConvertContext } from "./convert.js";
+import { buildContext, convertCard, linkAbilityRefs, loadMarkupOverrides, overrideFor, rulesText, verifyMarkup, type ConvertContext } from "./convert.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const CARDS_PATH = join(ROOT, "data", "cards.json");
@@ -109,43 +109,7 @@ function saveCards(cards: CardDefinition[]): void {
   if (sync.status !== 0) throw new Error("sync-cards failed");
 }
 
-/**
- * Override files: hand-corrected markup keyed by card name. Lines before the
- * first "=== " are comments; each "=== <card name>" starts an entry whose
- * markup is everything up to the next "=== " (whitespace between blocks is
- * ignored by the parser, so entries can be pretty-printed).
- */
-function parseOverrideFile(path: string, into: Map<string, string>, sources: Map<string, string>): void {
-  let current: string | undefined;
-  let lines: string[] = [];
-  const flush = () => {
-    if (current === undefined) return;
-    if (sources.has(current)) throw new Error(`Override for "${current}" is in both ${sources.get(current)} and ${path}`);
-    into.set(current, lines.join("\n").trim());
-    sources.set(current, path);
-  };
-  for (const line of readFileSync(path, "utf8").split(/\r?\n/)) {
-    if (line.startsWith("=== ")) {
-      flush();
-      current = line.slice(4).trim();
-      lines = [];
-    } else if (current !== undefined) lines.push(line);
-  }
-  flush();
-}
-
-/** overrides.txt plus every per-set file in overrides/; a card may be overridden in only one of them. */
-function loadOverrides(): Map<string, string> {
-  const overrides = new Map<string, string>();
-  const sources = new Map<string, string>();
-  if (existsSync(OVERRIDES_PATH)) parseOverrideFile(OVERRIDES_PATH, overrides, sources);
-  if (existsSync(OVERRIDES_DIR)) {
-    for (const file of readdirSync(OVERRIDES_DIR).filter((name) => name.endsWith(".txt")).sort()) {
-      parseOverrideFile(join(OVERRIDES_DIR, file), overrides, sources);
-    }
-  }
-  return overrides;
-}
+const loadOverrides = loadMarkupOverrides;
 
 type Reviewed = Record<string, string>;
 
@@ -182,7 +146,7 @@ function setMarkup(card: CardDefinition, markup: string | undefined): CardDefini
 
 /** Unique card names in a set (cards with rules text only), alphabetical — the index space for --range. */
 function setNames(cards: CardDefinition[], set: string): string[] {
-  return [...new Set(cards.filter((card) => card.set === set && card.text.trim()).map((card) => card.name))].sort((a, b) =>
+  return [...new Set(cards.filter((card) => card.set === set && rulesText(card).trim()).map((card) => card.name))].sort((a, b) =>
     a.localeCompare(b)
   );
 }
@@ -251,7 +215,8 @@ function cmdConvert(cards: CardDefinition[], set: string, force: boolean): void 
   const overrides = loadOverrides();
   const reviewed = loadReviewed();
   const reviewedMarkup = new Map<string, string>();
-  for (const card of cards) if (card.markup && card.name in reviewed && !reviewedMarkup.has(card.name)) reviewedMarkup.set(card.name, card.markup);
+  const copyKey = (card: CardDefinition) => `${card.name}\u0000${rulesText(card)}`;
+  for (const card of cards) if (card.markup && card.name in reviewed && !reviewedMarkup.has(copyKey(card))) reviewedMarkup.set(copyKey(card), card.markup);
 
   const flagged = new Map<string, string[]>();
   const errors = new Map<string, string[]>();
@@ -259,17 +224,17 @@ function cmdConvert(cards: CardDefinition[], set: string, force: boolean): void 
   let written = 0;
   const next = cards.map((card) => {
     if (card.set !== set) return card;
-    if (!card.text.trim()) return setMarkup(card, undefined);
+    if (!rulesText(card).trim()) return setMarkup(card, undefined);
     if (card.name in reviewed && !force) {
       if (card.markup) return card;
-      const source = reviewedMarkup.get(card.name);
+      const source = reviewedMarkup.get(copyKey(card));
       if (!source) return card;
       const copied = copyMarkup(source, card);
       if (copied.flags.length) flagged.set(card.name, copied.flags);
       written++;
       return setMarkup(card, copied.markup);
     }
-    const conversion = convertCard(card, ctx, overrides.get(card.name))!;
+    const conversion = convertCard(card, ctx, overrideFor(overrides, card))!;
     if (conversion.errors.length) {
       errors.set(card.name, conversion.errors);
       return card;
@@ -304,14 +269,14 @@ function cmdShow(cards: CardDefinition[], set: string, args: ReturnType<typeof p
     const card = cards.find((candidate) => candidate.set === set && candidate.name === name)!;
     const isReviewed = name in reviewed;
     if (args.flags.has("unreviewed") && isReviewed) continue;
-    const conversion = convertCard(card, ctx, overrides.get(name));
+    const conversion = convertCard(card, ctx, overrideFor(overrides, card));
     const errors = card.markup ? verifyMarkup(card.markup, card) : ["not converted"];
     const flags = isReviewed ? [] : (conversion?.flags ?? []);
     if (args.flags.has("flagged") && !flags.length && !errors.length) continue;
     const abilities = (card.behavior?.abilities ?? []).map((ability) => `${ability.id}:${ability.type}${ability.name ? `:${ability.name}` : ""}`);
-    const tags = [card.type, isReviewed ? "reviewed" : "unreviewed", overrides.has(name) && "override"].filter(Boolean).join(", ");
+    const tags = [card.type, isReviewed ? "reviewed" : "unreviewed", (overrides.has(name) || overrides.has(card.id)) && "override"].filter(Boolean).join(", ");
     console.log(`\n[${index}] ${name} (${tags})${abilities.length ? `  abilities: ${abilities.join(" ")}` : ""}`);
-    console.log(`  text: ${card.text}`);
+    console.log(`  text: ${rulesText(card)}`);
     if (card.markup) {
       for (const line of serializeCardText(parseCardText(card.markup), { pretty: true }).split("\n")) console.log(`  | ${line}`);
     }
@@ -350,10 +315,10 @@ function cmdCheck(cards: CardDefinition[]): number {
   const awaitingCopy = new Set<string>();
   for (const card of cards) {
     if (!card.markup) {
-      if (card.name in reviewed && card.text.trim()) awaitingCopy.add(card.set);
+      if (card.name in reviewed && rulesText(card).trim()) awaitingCopy.add(card.set);
       continue;
     }
-    if (!card.text.trim()) {
+    if (!rulesText(card).trim()) {
       console.log(`!! ${card.name} (${card.set}): markup on a card with no text`);
       errorCount++;
     }
@@ -364,8 +329,14 @@ function cmdCheck(cards: CardDefinition[]): number {
   }
   const stripRefs = (markup: string) => markup.replace(/ ref="[^"]*"/g, "");
   for (const [name, printings] of byName) {
-    const variants = new Set(printings.filter((card) => card.markup).map((card) => stripRefs(card.markup!)));
-    if (variants.size > 1) console.log(`  drift: ${name} has ${variants.size} different markups across printings`);
+    const byText = new Map<string, Set<string>>();
+    for (const card of printings.filter((candidate) => candidate.markup)) {
+      const key = rulesText(card);
+      byText.set(key, (byText.get(key) ?? new Set()).add(stripRefs(card.markup!)));
+    }
+    for (const variants of byText.values()) {
+      if (variants.size > 1) console.log(`  drift: ${name} has ${variants.size} different markups across printings with the same rules text`);
+    }
   }
   const withMarkup = cards.filter((card) => card.markup).length;
   if (awaitingCopy.size) console.log(`  reprints of reviewed cards still unconverted in: ${[...awaitingCopy].join(", ")} (convert copies them)`);
@@ -382,7 +353,7 @@ function cmdProgress(cards: CardDefinition[]): void {
   let totalReviewed = 0;
   for (const set of SET_ORDER) {
     const printings = cards.filter((card) => card.set === set);
-    const withText = printings.filter((card) => card.text.trim());
+    const withText = printings.filter((card) => rulesText(card).trim());
     const names = setNames(cards, set);
     const fresh = names.filter((name) => !seen.has(name));
     names.forEach((name) => seen.add(name));

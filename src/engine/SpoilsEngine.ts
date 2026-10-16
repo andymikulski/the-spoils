@@ -46,6 +46,7 @@ import type {
   ResponseWindowState,
   Restriction,
   RuntimeModifier,
+  SeatSwapState,
   SnapshotCard,
   SnapshotPlayer,
   StackItem,
@@ -165,6 +166,9 @@ export class SpoilsEngine {
    */
   private currentCause: PlayerId | undefined;
 
+  /** The card whose effect is driving `currentCause`, when there is one. Read for `replaces.bySource`. */
+  private currentCauseSourceId: CardInstanceId | undefined;
+
   /**
    * Per-card "who last dealt it damage" — set while battle damage is
    * applied (which happens outside `resolveEffect`, so the `currentCause`
@@ -186,6 +190,15 @@ export class SpoilsEngine {
     CardInstanceId,
     { attachedTo?: CardInstanceId; linkedTargets?: Record<string, CardInstanceId> }
   >();
+
+  /**
+   * Last-known stats of cards that left play, captured the instant they
+   * left (CR last-known information). Read only by a `stat` expression
+   * targeting the event card while that card is out of play — "a character
+   * with less strength than that character had" (Gosche's Restoration
+   * Fortress), whose self-buffs no longer apply once it has left.
+   */
+  private readonly lastKnownStats = new Map<CardInstanceId, Record<"strength" | "life" | "speed" | "structure", number>>();
 
   /**
    * Last-known information for token instances that have ceased to exist.
@@ -360,6 +373,7 @@ export class SpoilsEngine {
     // resolution and battle damage refine it as they go.
     if ("playerId" in action && action.playerId) {
       this.currentCause = action.playerId;
+      this.currentCauseSourceId = undefined;
     }
 
     if (
@@ -478,6 +492,7 @@ export class SpoilsEngine {
       pendingChoice: this.state.pendingChoice
         ? structuredClone(this.state.pendingChoice)
         : undefined,
+      seatsSwapped: this.state.seatSwap !== undefined,
       revealed: this.getRevealedZones()
     };
   }
@@ -630,6 +645,7 @@ export class SpoilsEngine {
       priorityPlayerId: this.state.priorityPlayerId,
       mode: this.getFlowView().mode,
       ...(this.state.winner !== undefined ? { winner: this.state.winner } : {}),
+      ...(this.state.seatSwap ? { seatsSwapped: true as const } : {}),
       responseStack: this.state.responseStack.map(item => ({
         label: this.logStackItemLabel(item),
         controllerId: item.controllerId
@@ -940,6 +956,14 @@ export class SpoilsEngine {
           message: `${this.logPlayerName(event.playerId)} discards a card`
         };
 
+      case "cardsMulliganed":
+        return {
+          kind: "draw",
+          message: `${this.logPlayerName(event.playerId)} puts ${event.cardIds.length} card${
+            event.cardIds.length === 1 ? "" : "s"
+          } on the bottom of their deck in the mulligan`
+        };
+
       case "cardsRevealed": {
         const names = event.cardIds.map(id => this.logCardName(id)).join(", ") || "no cards";
         return {
@@ -1019,6 +1043,14 @@ export class SpoilsEngine {
           message: `${this.logPlayerName(event.playerId)} flips a coin and ${
             event.won ? "wins" : "loses"
           }`
+        };
+
+      case "seatsSwapped":
+        return {
+          kind: "info",
+          message: event.swapped
+            ? "The players switch seats — each controls the other's side"
+            : "The players switch back to their own sides"
         };
 
       case "factionCardFlipped": {
@@ -1289,6 +1321,24 @@ export class SpoilsEngine {
     return this.getDefinition(faction.id).faction;
   }
 
+  /**
+   * The player whose `factionId` / `influence` pool `factionCard` sits in —
+   * the player who controls it. That is its owner, except while a seat swap
+   * (`GameState.seatSwap`) has the players holding each other's factions.
+   */
+  private factionHolderId(factionCard: CardInstance): PlayerId {
+    const holder = Object.values(this.state.players).find(
+      player => player.factionId === factionCard.id
+    );
+    return holder?.id ?? factionCard.ownerId;
+  }
+
+  /** The owner of the faction `player` currently holds (CR §102.1: who loses at 0 influence). */
+  private factionOwnerId(player: PlayerState): PlayerId {
+    const faction = player.factionId ? this.state.cards[player.factionId] : undefined;
+    return faction?.ownerId ?? player.id;
+  }
+
   isResource(cardId: CardInstanceId): boolean {
     const card = this.requireCard(cardId);
     return card.zone === "play" &&
@@ -1535,12 +1585,16 @@ export class SpoilsEngine {
   private playResourceCard(
     playerId: PlayerId,
     cardId: CardInstanceId,
-    faceDown: boolean
+    faceDown: boolean,
+    emitPlayed = true
   ): void {
     const card = this.requireCard(cardId);
     const definition = this.getDefinition(cardId);
 
-    assert(card.ownerId === playerId, "That card is not in this player's hand.");
+    assert(
+      this.zoneHolderId(card) === playerId,
+      "That card is not in this player's hand."
+    );
     assert(card.zone === "hand", "A resource must be played from hand.");
 
     if (!faceDown) {
@@ -1556,8 +1610,12 @@ export class SpoilsEngine {
 
     card.faceDown = faceDown;
     card.attachedTo = undefined;
+    // It enters play under the player who played it (a card held in a
+    // non-owner's hand is theirs to play).
+    card.controllerId = playerId;
     this.moveCard(cardId, "play");
 
+    if (!emitPlayed) return;
     this.emit({
       type: "resourcePlayed",
       cardId,
@@ -1754,6 +1812,9 @@ export class SpoilsEngine {
     // of your deck as part of your mulligan").
     if (cardIds.length) {
       (this.state.mulligan[playerId] ??= []).push(...cardIds);
+      // Before the replacements are drawn: a card that reacts to being
+      // bottomed (Community Chest's reveal) sees the deck as it was set aside.
+      this.emit({ type: "cardsMulliganed", playerId, cardIds: [...cardIds] });
     }
 
     this.drawCards(playerId, cardIds.length);
@@ -1857,6 +1918,15 @@ export class SpoilsEngine {
         "Threshold requirements for the reveal deploy are not met."
       );
 
+      // "...you may reveal this card as you are playing a resource."
+      this.emitReveal(
+        [revealed.id],
+        "all",
+        revealed.id,
+        undefined,
+        this.pickedByRevealer(playerId)
+      );
+
       this.state.developsUsedThisTurn += 1;
 
       this.deployCard(
@@ -1895,6 +1965,11 @@ export class SpoilsEngine {
 
     this.state.developsUsedThisTurn += 1;
     this.state.priorityPlayerId = playerId;
+
+    // A resource entering play can switch a threshold paragraph on (Boorish
+    // Boar's [R][R][R] destroys it), so settle the board now rather than at
+    // the next action.
+    this.checkStateBasedActions();
   }
 
   /**
@@ -2006,8 +2081,8 @@ export class SpoilsEngine {
       return false;
     });
     this.state.costReductions = [];
-    this.state.thresholdReductions = [];
-    this.state.damageShields = [];
+    this.state.thresholdReductions = this.state.thresholdReductions.filter(reduction => reduction.persistent);
+    this.state.damageShields = this.state.damageShields.filter(shield => shield.persistent);
 
     // CR §602.1c — start-of-turn attack eligibility is a core rule, not a
     // faction ability.
@@ -2144,18 +2219,67 @@ export class SpoilsEngine {
   }
 
   /**
-   * True when `playerId` controls an in-play card whose
-   * `ContinuousAbility.canUseOpponentAbilities` is live (The Billionaire) —
-   * they may activate activated abilities on cards their opponent controls.
+   * How `playerId` may borrow their opponent's activated abilities
+   * (`ContinuousAbility.canUseOpponentAbilities`, The Billionaire), from the
+   * in-play sources they control: `"ownNumeric"` (the activator pays the
+   * numeric cost), `"asOpponent"` (the opponent pays every cost), or
+   * `undefined` when no live source grants it. `"ownNumeric"` wins when
+   * live sources disagree.
    */
-  private playerCanUseOpponentAbilities(playerId: PlayerId): boolean {
-    let can = false;
+  private opponentAbilityBorrowMode(
+    playerId: PlayerId
+  ): "ownNumeric" | "asOpponent" | undefined {
+    let mode: "ownNumeric" | "asOpponent" | undefined;
     this.forEachActiveContinuous((source, ability) => {
-      if (ability.canUseOpponentAbilities && source.controllerId === playerId) {
-        can = true;
+      if (!ability.canUseOpponentAbilities || source.controllerId !== playerId) {
+        return;
+      }
+      if (ability.canUseOpponentAbilities === "asOpponent") {
+        mode ??= "asOpponent";
+      } else {
+        mode = "ownNumeric";
       }
     });
-    return can;
+    return mode;
+  }
+
+  /**
+   * The borrow mode `playerId` uses `ability` on `card` under, or
+   * `undefined` when it isn't a borrowed use: their own card, or one marked
+   * for both players / only an opponent (`usableBy`), which the activator
+   * uses as themselves.
+   */
+  private borrowedAbilityMode(
+    playerId: PlayerId,
+    card: CardInstance,
+    ability: ActivatedAbility
+  ): "ownNumeric" | "asOpponent" | undefined {
+    if (
+      card.controllerId === playerId ||
+      ability.usableBy === "anyPlayer" ||
+      ability.usableBy === "opponent"
+    ) {
+      return undefined;
+    }
+    return this.opponentAbilityBorrowMode(playerId);
+  }
+
+  /**
+   * Splits a borrowed ability's costs for `"ownNumeric"` mode: the numeric
+   * (`payResources`) total the activator pays, and the remaining costs the
+   * opponent satisfies.
+   */
+  private splitBorrowedNumericCost(
+    costs: Cost[],
+    context: ResolutionContext
+  ): { numeric: number; rest: Cost[] } {
+    const numeric = costs
+      .filter(
+        (c): c is Extract<Cost, { type: "payResources" }> =>
+          c.type === "payResources"
+      )
+      .reduce((sum, c) => sum + this.evaluateNumber(c.amount, context), 0);
+    return { numeric, rest: costs.filter(c => c.type !== "payResources") };
   }
 
   getAvailableActivatedAbilities(
@@ -2164,8 +2288,6 @@ export class SpoilsEngine {
     if (!this.canUseAbilityAtCurrentTiming(playerId)) {
       return [];
     }
-
-    const borrowsOpponentAbilities = this.playerCanUseOpponentAbilities(playerId);
 
     const result: Array<{
       cardId: CardInstanceId;
@@ -2187,11 +2309,12 @@ export class SpoilsEngine {
         // may use this" (The Knitting Coalition — INFLATIONARY FORCES) or
         // "only an opponent may use this" (iDumb De-Itemizer — RESET) —
         // unless the player borrows opponent abilities (The Billionaire).
+        const borrowMode = this.borrowedAbilityMode(playerId, card, ability);
         if (
           !controlsIt &&
           ability.usableBy !== "anyPlayer" &&
           ability.usableBy !== "opponent" &&
-          !borrowsOpponentAbilities
+          !borrowMode
         ) {
           continue;
         }
@@ -2199,11 +2322,9 @@ export class SpoilsEngine {
         if (controlsIt && ability.usableBy === "opponent") continue;
 
         // A borrowed opponent ability resolves "as if your opponent used
-        // it" — condition / non-numeric costs are checked as that opponent.
-        const asPlayerId =
-          !controlsIt && borrowsOpponentAbilities && ability.usableBy !== "anyPlayer"
-            ? card.controllerId
-            : playerId;
+        // it" — condition / costs are checked as that opponent, except the
+        // numeric cost in "ownNumeric" mode, which the borrower pays.
+        const asPlayerId = borrowMode ? card.controllerId : playerId;
 
         const context: ResolutionContext = {
           sourceId: card.id,
@@ -2212,12 +2333,22 @@ export class SpoilsEngine {
           selected: {}
         };
 
+        let costs = ability.costs ?? [];
+        let numericAffordable = true;
+        if (borrowMode === "ownNumeric") {
+          const split = this.splitBorrowedNumericCost(costs, context);
+          numericAffordable =
+            this.getAvailableResourceIds(playerId).length >= split.numeric;
+          costs = split.rest;
+        }
+
         if (
+          numericAffordable &&
           (!ability.condition ||
             this.evaluateCondition(ability.condition, context)) &&
           this.provisionalProbeTargets(ability.targets ?? [], context) &&
-          this.provisionalProbeDiscardCosts(ability.costs ?? [], context) &&
-          this.canPayCosts(ability.costs ?? [], context)
+          this.provisionalProbeDiscardCosts(costs, context) &&
+          this.canPayCosts(costs, context)
         ) {
           result.push({
             cardId: card.id,
@@ -2941,6 +3072,10 @@ export class SpoilsEngine {
 
     this.payCosts(costs, context);
 
+    if (definition.type !== "tactic") {
+      card.deployedAsResponse = this.state.responseWindow !== undefined;
+    }
+
     // "reduce the threshold requirement of the NEXT card you deploy" —
     // consumed now (its threshold gate was already checked above).
     this.state.thresholdReductions = this.state.thresholdReductions.filter(
@@ -3023,16 +3158,29 @@ export class SpoilsEngine {
     ignoreThreshold = false,
     payCost = false
   ): void {
-    this.deployCard(
-      playerId,
-      cardId,
-      selected,
-      variables,
-      !payCost,
-      fromZone,
-      undefined,
-      ignoreThreshold
-    );
+    // An engine-offered candidate the deployer doesn't own or control — an
+    // opponent's card parked out of play ("you may deploy it for free" — I
+    // Drink Your Milkshake!) — is deployed under the deployer's control.
+    const card = this.requireCard(cardId);
+    const previousController = card.controllerId;
+    if (fromZone && card.zone !== "play" && card.ownerId !== playerId && card.controllerId !== playerId) {
+      card.controllerId = playerId;
+    }
+    try {
+      this.deployCard(
+        playerId,
+        cardId,
+        selected,
+        variables,
+        !payCost,
+        fromZone,
+        undefined,
+        ignoreThreshold
+      );
+    } catch (error) {
+      card.controllerId = previousController;
+      throw error;
+    }
 
     // Only reached once deployCard has committed (it throws before
     // mutating anything on a validation failure) — this IS the "deployed
@@ -3389,14 +3537,13 @@ export class SpoilsEngine {
     assert(ability, "Activated ability not found.");
 
     // The Billionaire — "You may use abilities on your opponent's cards ...
-    // the ability's effect happens as if your opponent used it." The numeric
-    // cost is paid from the activator's resources; everything else resolves
-    // with the opponent as the ability's controller.
-    const borrowed =
-      card.controllerId !== action.playerId &&
-      ability.usableBy !== "anyPlayer" &&
-      ability.usableBy !== "opponent" &&
-      this.playerCanUseOpponentAbilities(action.playerId);
+    // the ability's effect happens as if your opponent used it." The
+    // opponent is the ability's controller. 2nd Edition ("ownNumeric") pays
+    // the numeric cost from the activator's resources; 1st Edition / Open
+    // Beta ("asOpponent": "as though you were your opponent") pays every
+    // cost as the opponent.
+    const borrowMode = this.borrowedAbilityMode(action.playerId, card, ability);
+    const borrowed = borrowMode !== undefined;
     const abilityControllerId = borrowed ? card.controllerId : action.playerId;
 
     assert(
@@ -3490,26 +3637,17 @@ export class SpoilsEngine {
       context
     );
 
-    // A borrowed ability (The Billionaire): the numeric cost is paid from
-    // the ACTIVATOR's resources; the rest is satisfied as the opponent.
-    if (borrowed) {
-      const numeric = effectiveCosts
-        .filter(c => c.type === "payResources")
-        .reduce(
-          (sum, c) =>
-            sum +
-            this.evaluateNumber(
-              (c as Extract<Cost, { type: "payResources" }>).amount,
-              context
-            ),
-          0
-        );
+    // A borrowed ability in "ownNumeric" mode (The Billionaire, 2nd Edition):
+    // the numeric cost is paid from the ACTIVATOR's resources; the rest is
+    // satisfied as the opponent.
+    if (borrowMode === "ownNumeric") {
+      const split = this.splitBorrowedNumericCost(effectiveCosts, context);
       assert(
-        this.getAvailableResourceIds(action.playerId).length >= numeric,
+        this.getAvailableResourceIds(action.playerId).length >= split.numeric,
         "Ability costs cannot be paid."
       );
-      this.payNumericCost(action.playerId, numeric);
-      effectiveCosts = effectiveCosts.filter(c => c.type !== "payResources");
+      this.payNumericCost(action.playerId, split.numeric);
+      effectiveCosts = split.rest;
     }
 
     assert(
@@ -3518,6 +3656,18 @@ export class SpoilsEngine {
     );
 
     this.payCosts(effectiveCosts, context);
+
+    // "Reveal this card" — using an ability from a face-down resource (FLIP
+    // IT, REUSE, ...) shows that resource as part of paying for it.
+    if (ability.fromFaceDown && card.faceDown) {
+      this.emitReveal(
+        [card.id],
+        "all",
+        card.id,
+        undefined,
+        this.pickedByRevealer(action.playerId)
+      );
+    }
 
     if (ability.usesPerTurn !== undefined) {
       const key = `${card.id}:${ability.id}`;
@@ -4260,8 +4410,9 @@ export class SpoilsEngine {
       }
       const victim = this.state.cards[event.targetId];
       if (victim && this.getDefinition(event.targetId).type === "faction") {
-        if (!rec.toFactionOf.includes(victim.ownerId)) {
-          rec.toFactionOf.push(victim.ownerId);
+        const holderId = this.factionHolderId(victim);
+        if (!rec.toFactionOf.includes(holderId)) {
+          rec.toFactionOf.push(holderId);
         }
       }
     }
@@ -4361,7 +4512,7 @@ export class SpoilsEngine {
 
         const context: ResolutionContext = {
           sourceId: card.id,
-          controllerId: card.controllerId,
+          controllerId: this.controllerAtEvent(event, card),
           abilityId: ability.id,
           event,
           selected:
@@ -4980,7 +5131,7 @@ export class SpoilsEngine {
         }
 
         return (
-          eventCard.controllerId ===
+          this.controllerAtEvent(context.event, eventCard) ===
           this.resolvePlayerRef(condition.player, context).id
         );
       }
@@ -5181,6 +5332,12 @@ export class SpoilsEngine {
 
       case "deployedViaFlipUp": {
         return context.deployedViaFlipUp === true;
+      }
+
+      case "deployedAsResponse": {
+        const cardId = this.resolveTargetRef(condition.target ?? "source", context);
+        const card = cardId ? this.state.cards[cardId] : undefined;
+        return card?.zone === "play" && card.deployedAsResponse === true;
       }
 
       case "cardNameEquals": {
@@ -5459,6 +5616,12 @@ export class SpoilsEngine {
           (targetId === undefined || context.event.cardId === targetId)
         );
       }
+
+      case "meetsThreshold":
+        return this.meetsParagraphThreshold(
+          this.resolvePlayerRef(condition.player ?? "controller", context).id,
+          condition.threshold
+        );
     }
   }
 
@@ -5481,6 +5644,17 @@ export class SpoilsEngine {
         // ability's `variables`, a card that has since left play) has no
         // stat — read as 0, like `battlePartySize` / `extremumStat`.
         if (!cardId) return 0;
+
+        // The event card has left play: use what it had (last-known information).
+        const lastKnown = this.lastKnownStats.get(cardId);
+        if (
+          expression.target === "eventCard" &&
+          lastKnown &&
+          this.state.cards[cardId]?.zone !== "play" &&
+          expression.stat in lastKnown
+        ) {
+          return lastKnown[expression.stat as keyof typeof lastKnown];
+        }
 
         return this.getStat(cardId, expression.stat);
       }
@@ -5917,17 +6091,20 @@ export class SpoilsEngine {
     if (selector.owner) {
       const self = context.controllerId;
       const opponent = this.getOpponent(self).id;
+      // "A card in your hand/deck" is the holder's, which is the owner unless
+      // a `toPlayer` put someone else's card there.
+      const ownerId = this.zoneHolderId(card);
 
       if (
         selector.owner === "self" &&
-        card.ownerId !== self
+        ownerId !== self
       ) {
         return false;
       }
 
       if (
         selector.owner === "opponent" &&
-        card.ownerId !== opponent
+        ownerId !== opponent
       ) {
         return false;
       }
@@ -6049,7 +6226,7 @@ export class SpoilsEngine {
     }
 
     if (selector.fromTop !== undefined) {
-      const deck = this.state.players[card.ownerId]?.deck ?? [];
+      const deck = this.state.players[this.zoneHolderId(card)]?.deck ?? [];
       const index = deck.indexOf(card.id);
       const depth =
         typeof selector.fromTop === "number"
@@ -6242,6 +6419,63 @@ export class SpoilsEngine {
     return undefined;
   }
 
+  /**
+   * Emits `cardsRevealed` for `cardIds`, one event per zone holder + zone
+   * so a reveal spanning two decks stays legible. The event's `ownerId` is
+   * the holder of the zone the cards are shown from (`zoneHolderId`): a card
+   * sitting in a non-owner's hand or deck is revealed from that player's
+   * zone. `shownFrom` names where the cards were shown from when that
+   * differs from where they sit now (Auction House sets revealed cards aside
+   * while the bidding runs). `knownToRevealer` says which of the cards the
+   * revealing player already knew; an event is marked `knownToRevealer` only
+   * when every card in it qualifies.
+   */
+  private emitReveal(
+    cardIds: CardInstanceId[],
+    viewerId: PlayerId | "all",
+    byCardId?: CardInstanceId,
+    shownFrom?: { zone: Zone; holderId: PlayerId },
+    knownToRevealer?: (card: CardInstance) => boolean
+  ): void {
+    const groups = new Map<string, { ownerId: PlayerId; zone: Zone; cardIds: CardInstanceId[] }>();
+    for (const cardId of cardIds) {
+      const card = this.state.cards[cardId];
+      if (!card) continue;
+      const zone = shownFrom?.zone ?? card.zone;
+      const holderId = shownFrom?.holderId ?? this.zoneHolderId(card);
+      const key = `${holderId}:${zone}`;
+      const group = groups.get(key) ?? { ownerId: holderId, zone, cardIds: [] };
+      group.cardIds.push(cardId);
+      groups.set(key, group);
+    }
+    for (const group of groups.values()) {
+      const known =
+        knownToRevealer !== undefined &&
+        group.cardIds.every(cardId => knownToRevealer(this.state.cards[cardId]));
+      this.emit({
+        type: "cardsRevealed",
+        cardIds: group.cardIds,
+        zone: group.zone,
+        ownerId: group.ownerId,
+        viewerId,
+        byCardId,
+        ...(known ? { knownToRevealer: true } : {})
+      });
+    }
+  }
+
+  /**
+   * For a reveal of cards `playerId` picked or paid with — a search result,
+   * a card from their own hand, their own face-down resource: they could
+   * already see every card but another player's face-down card in play.
+   */
+  private pickedByRevealer(playerId: PlayerId): (card: CardInstance) => boolean {
+    return card =>
+      !(card.zone === "play" && card.faceDown) ||
+      card.ownerId === playerId ||
+      card.controllerId === playerId;
+  }
+
   /** The other player in an in-flight MUSTACHE SHOWDOWN. */
   private partitionOpponent(
     pp: NonNullable<GameState["pendingPartition"]>,
@@ -6271,6 +6505,18 @@ export class SpoilsEngine {
     const [a, b] = pp.order;
     const costA = totalCost(chosenPile(a));
     const costB = totalCost(chosenPile(b));
+
+    // "Reveal the chosen piles."
+    for (const owner of pp.order) {
+      // A pile is known to the player who split it, not to the one who picked it.
+      this.emitReveal(
+        chosenPile(owner),
+        "all",
+        pp.sourceId,
+        undefined,
+        card => card.ownerId === pp.controllerId
+      );
+    }
 
     if (costA !== costB) {
       const winner = costA > costB ? a : b;
@@ -6624,11 +6870,38 @@ export class SpoilsEngine {
           );
         }
 
+        const toPlayerId = cost.toPlayer
+          ? this.resolvePlayerRef(cost.toPlayer, context).id
+          : undefined;
+        if (cost.reveal && emitEvents) {
+          this.emitReveal(
+            selected,
+            "all",
+            context.sourceId,
+            undefined,
+            this.pickedByRevealer(context.controllerId)
+          );
+        }
         for (const cardId of selected) {
-          this.moveCard(cardId, cost.to, emitEvents, cost.position ?? "bottom", true);
+          this.moveCard(
+            cardId,
+            cost.to,
+            emitEvents,
+            cost.position ?? "bottom",
+            true,
+            toPlayerId
+          );
         }
         if (cost.shuffle && cost.to === "deck") {
-          this.shuffleInPlace(this.requirePlayer(player.id).deck);
+          // Reshuffle the deck(s) the cards actually went into.
+          const decks = new Set<PlayerId>();
+          for (const cardId of selected) {
+            const moved = this.state.cards[cardId];
+            if (moved?.zone === "deck") decks.add(this.zoneHolderId(moved));
+          }
+          for (const deckOwnerId of decks) {
+            this.shuffleInPlace(this.requirePlayer(deckOwnerId).deck);
+          }
         }
 
         return;
@@ -6668,7 +6941,7 @@ export class SpoilsEngine {
         );
         // CR §408.3 — a faction loses influence instead of taking markers.
         if (this.getDefinition(targetId).type === "faction") {
-          this.applyInfluenceDelta(card.ownerId, -amount);
+          this.applyInfluenceDelta(this.factionHolderId(card), -amount);
         } else {
           card.damage += amount;
         }
@@ -6814,18 +7087,23 @@ export class SpoilsEngine {
     });
   }
 
+  /**
+   * Hands an in-play card to `newControllerId`. Control only exists in play
+   * (CR §407.3): outside it the holder controls a card
+   * (`releaseControlOutsidePlay`), so this does nothing for any other zone.
+   */
   private reassignControl(
     cardId: CardInstanceId,
     newControllerId: PlayerId
   ): void {
     const card = this.state.cards[cardId];
-    if (!card || card.controllerId === newControllerId) return;
-
-    if (card.zone === "play") {
-      const oldController = this.requirePlayer(card.controllerId);
-      oldController.play = oldController.play.filter(id => id !== cardId);
-      this.requirePlayer(newControllerId).play.push(cardId);
+    if (!card || card.zone !== "play" || card.controllerId === newControllerId) {
+      return;
     }
+
+    const oldController = this.requirePlayer(card.controllerId);
+    oldController.play = oldController.play.filter(id => id !== cardId);
+    this.requirePlayer(newControllerId).play.push(cardId);
 
     card.controllerId = newControllerId;
   }
@@ -6843,6 +7121,7 @@ export class SpoilsEngine {
     // check that immediately follows in `runEffectFrame`). Read by
     // `applyReplacement` for `replaces.by` ("by an opposing card or effect").
     this.currentCause = context.controllerId;
+    this.currentCauseSourceId = context.sourceId;
 
     // "Any effects from <cardType> do not affect this card." (Parkour
     // Hoodlum) — a single-target mutation whose origin is a card of an
@@ -6910,7 +7189,7 @@ export class SpoilsEngine {
         const resourcePlayer = effect.player
           ? this.resolvePlayerRef(effect.player, context).id
           : context.controllerId;
-        this.playResourceCard(resourcePlayer, targetId, faceDown);
+        this.playResourceCard(resourcePlayer, targetId, faceDown, !effect.putIntoPlay);
         return;
       }
 
@@ -6949,7 +7228,7 @@ export class SpoilsEngine {
         // faction carries no damage markers.
         if (this.getDefinition(targetId).type === "faction") {
           if (amount > 0) {
-            this.applyInfluenceDelta(target.ownerId, -amount);
+            this.applyInfluenceDelta(this.factionHolderId(target), -amount);
             this.emit({
               type: "damageDealt",
               sourceId: context.sourceId,
@@ -7030,6 +7309,10 @@ export class SpoilsEngine {
         const cardIds =
           effect.zone === "hand" ? [...owner.hand] : owner.deck.slice(0, n);
         if (cardIds.length === 0) return;
+        // The revealer already knows their own hand; the top of any deck and
+        // an opponent's hand are news to them.
+        const knownToRevealer =
+          effect.zone === "hand" && owner.id === context.controllerId;
         this.emit({
           type: "cardsRevealed",
           cardIds,
@@ -7041,8 +7324,37 @@ export class SpoilsEngine {
               : effect.viewer
                 ? this.resolvePlayerRef(effect.viewer, context).id
                 : this.resolvePlayerRef("controller", context).id,
-          byCardId: context.sourceId
+          byCardId: context.sourceId,
+          ...(knownToRevealer ? { knownToRevealer: true } : {})
         });
+        return;
+      }
+
+      case "revealCards": {
+        // "...search your deck for X and reveal it" — show the cards from
+        // wherever they sit right now (the deck, for a search). One event per
+        // owner + zone so a reveal spanning two decks stays legible.
+        const viewerId =
+          effect.viewer === undefined || effect.viewer === "all"
+            ? "all"
+            : this.resolvePlayerRef(effect.viewer, context).id;
+        const targetId = effect.target
+          ? this.resolveTargetRef(effect.target, context)
+          : undefined;
+        const cardIds = effect.selected
+          ? context.selected[effect.selected] ?? []
+          : effect.selector
+            ? this.queryCards(effect.selector, context).map(card => card.id)
+            : targetId
+              ? [targetId]
+              : [];
+        this.emitReveal(
+          cardIds,
+          viewerId,
+          context.sourceId,
+          undefined,
+          this.pickedByRevealer(context.controllerId)
+        );
         return;
       }
 
@@ -7369,7 +7681,17 @@ export class SpoilsEngine {
 
         if (!targetId) return;
 
-        this.moveCard(targetId, effect.to, true, effect.position);
+        const toPlayerId = effect.toPlayer
+          ? this.resolvePlayerRef(effect.toPlayer, context).id
+          : undefined;
+        this.moveCard(
+          targetId,
+          effect.to,
+          true,
+          effect.position,
+          false,
+          toPlayerId
+        );
         return;
       }
 
@@ -7513,6 +7835,7 @@ export class SpoilsEngine {
           mode: effect.mode,
           redirectToId,
           wholeInstance: effect.wholeInstance,
+          ...(effect.persistent ? { persistent: true } : {}),
           createdTurn: this.state.turn
         });
         return;
@@ -7631,7 +7954,8 @@ export class SpoilsEngine {
         const card = this.requireCard(targetId);
         const newController = this.resolvePlayerRef(effect.controller, context);
 
-        if (card.controllerId === newController.id) {
+        // Only a card in play can be taken (CR §407.3).
+        if (card.zone !== "play" || card.controllerId === newController.id) {
           return;
         }
 
@@ -7668,6 +7992,18 @@ export class SpoilsEngine {
         // (see moveCard) — that bookkeeping has to move with it, or
         // getAvailableResourceIds/getThresholds/attack-eligibility loops
         // (all of which iterate a specific player's `play`) go stale.
+        // A permanent grab is the most recent effect to set this card's
+        // control (CR §407.3a), so the seat swap no longer decides where the
+        // card goes when it is lifted. A durationed grab reverts to the
+        // swapped-to controller, which lifting the swap still knows how to undo.
+        if (
+          this.state.seatSwap &&
+          (!effect.duration || effect.duration.type === "permanent")
+        ) {
+          this.state.seatSwap.exchanged = this.state.seatSwap.exchanged.filter(
+            e => e.cardId !== targetId
+          );
+        }
         this.reassignControl(targetId, newController.id);
         return;
       }
@@ -7815,6 +8151,7 @@ export class SpoilsEngine {
           targetId,
           keyword: effect.keyword,
           duration: effect.duration,
+          ...(effect.condition ? { condition: effect.condition, controllerId: context.controllerId } : {}),
           createdTurn: this.state.turn
         });
 
@@ -7941,6 +8278,7 @@ export class SpoilsEngine {
           playerId: player.id,
           icon,
           amount: Math.max(0, this.evaluateNumber(effect.amount, context)),
+          ...(effect.persistent ? { persistent: true } : {}),
           createdTurn: this.state.turn
         });
         return;
@@ -8146,7 +8484,10 @@ export class SpoilsEngine {
           effect.declaration.selector,
           "deck"
         );
-        const deckOwnerId = searchesDeck ? cstCandidates[0]?.ownerId : undefined;
+        const deckOwnerId =
+          searchesDeck && cstCandidates[0]
+            ? this.zoneHolderId(cstCandidates[0])
+            : undefined;
 
         // "Your opponents must pay N to search their deck." (Department of
         // Rejections) — an in-play `ContinuousAbility.searchTax` on a player
@@ -9354,14 +9695,15 @@ export class SpoilsEngine {
    * active `redirectHandMoves` window (Quotidian Misfire — `"discard"`), or
    * `undefined` if none applies. The most-recently-installed window wins.
    */
-  private handMoveRedirectFor(cardId: CardInstanceId): Zone | undefined {
+  private handMoveRedirectFor(
+    cardId: CardInstanceId,
+    handOwnerId: PlayerId
+  ): Zone | undefined {
     const card = this.state.cards[cardId];
     if (!card) return undefined;
     let redirect: Zone | undefined;
     for (const w of this.state.handMoveRedirects) {
-      if (
-        this.scopeMatchesPlayer(w.who, w.sourceControllerId, card.ownerId)
-      ) {
+      if (this.scopeMatchesPlayer(w.who, w.sourceControllerId, handOwnerId)) {
         redirect = w.to;
       }
     }
@@ -9370,12 +9712,14 @@ export class SpoilsEngine {
 
   /**
    * True when an in-play `ContinuousAbility.restrictReturnToHand` entry
-   * (Lockbox of the Aeons) forbids moving `cardId` to its owner's hand from
-   * `fromZone`.
+   * (Lockbox of the Aeons) forbids moving `cardId` into `handOwnerId`'s hand
+   * from `fromZone` — whose hand receives it is the card's owner unless a
+   * `toPlayer` put it into someone else's.
    */
   private returnToHandRestricted(
     cardId: CardInstanceId,
-    fromZone: Zone
+    fromZone: Zone,
+    handOwnerId: PlayerId
   ): boolean {
     const card = this.state.cards[cardId];
     if (!card) return false;
@@ -9403,8 +9747,8 @@ export class SpoilsEngine {
           rule.player === "any"
             ? true
             : rule.player === "self"
-              ? source.controllerId === card.ownerId
-              : this.getOpponent(source.controllerId).id === card.ownerId;
+              ? source.controllerId === handOwnerId
+              : this.getOpponent(source.controllerId).id === handOwnerId;
         if (targeted && rule.fromZones.includes(fromZone)) return true;
       }
     }
@@ -9513,6 +9857,131 @@ export class SpoilsEngine {
   // State-based actions
   // ---------------------------------------------------------------------------
 
+  /**
+   * Whether any card that could be a seat-swap source is in play. A cheap
+   * pre-filter so the full continuous-ability scan in `seatSwapWanted` only
+   * runs when a printed `swapsSides` ability (or a granted one) is on the
+   * table, or a swap is already in effect and may need lifting.
+   */
+  private mayHaveSeatSwapSource(): boolean {
+    if (this.state.seatSwap || this.state.abilityGrants.length > 0) return true;
+    for (const card of Object.values(this.state.cards)) {
+      if (card.zone !== "play" || card.faceDown) continue;
+      if (
+        this.continuousAbilitiesOf(this.getDefinition(card.id)).some(
+          ability => ability.swapsSides
+        )
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * True when the seats should currently be swapped: an odd number of live
+   * `swapsSides` abilities are in play. Two swaps cancel — the players are
+   * back in their own seats.
+   */
+  private seatSwapWanted(): boolean {
+    let sources = 0;
+    this.forEachActiveContinuous((_source, ability) => {
+      if (ability.swapsSides) sources += 1;
+    });
+    return sources % 2 === 1;
+  }
+
+  /**
+   * Brings `GameState.seatSwap` in line with `seatSwapWanted()` — applying the
+   * swap when the first source enters play, lifting it when the last one
+   * leaves. Returns whether anything changed.
+   */
+  private syncSeatSwap(): boolean {
+    if (!this.mayHaveSeatSwapSource()) return false;
+    const wanted = this.seatSwapWanted();
+    const swapped = this.state.seatSwap !== undefined;
+    if (wanted === swapped) return false;
+    if (wanted) this.applySeatSwap();
+    else this.liftSeatSwap();
+    return true;
+  }
+
+  /**
+   * The players switch seats (RULES.md §12 "Seat swap"): every card in play,
+   * both factions included, passes to the opposing player, and the players
+   * exchange their `factionId` / `influence` so "your faction" follows
+   * control. A card that "cannot be taken control of" keeps its controller.
+   */
+  private applySeatSwap(): void {
+    const exchanged: SeatSwapState["exchanged"] = [];
+    for (const card of Object.values(this.state.cards)) {
+      if (card.zone !== "play") continue;
+      if (this.hasRestriction(card.id, "cannotBeTakenControl")) continue;
+      exchanged.push({ cardId: card.id, previousControllerId: card.controllerId });
+    }
+    for (const { cardId, previousControllerId } of exchanged) {
+      this.reassignControl(cardId, this.getOpponent(previousControllerId).id);
+    }
+    this.exchangeFactionSeats();
+    this.state.seatSwap = { exchanged };
+    this.emit({ type: "seatsSwapped", swapped: true });
+  }
+
+  /**
+   * The players switch back. Each exchanged card still in play and still
+   * under the controller the swap gave it returns to its previous controller;
+   * a card whose control something else changed since (a later "take
+   * control", CR §407.3a) or that entered play after the swap is left alone.
+   */
+  private liftSeatSwap(): void {
+    const swap = this.state.seatSwap;
+    this.state.seatSwap = undefined;
+    if (!swap) return;
+    for (const { cardId, previousControllerId } of swap.exchanged) {
+      const card = this.state.cards[cardId];
+      if (!card || card.zone !== "play") continue;
+      if (card.controllerId === this.getOpponent(previousControllerId).id) {
+        this.reassignControl(cardId, previousControllerId);
+      }
+    }
+    this.exchangeFactionSeats();
+    this.emit({ type: "seatsSwapped", swapped: false });
+  }
+
+  /** Swap which faction (and influence pool) each of the two players holds. */
+  private exchangeFactionSeats(): void {
+    const [first, second] = Object.values(this.state.players);
+    [first.factionId, second.factionId] = [second.factionId, first.factionId];
+    [first.influence, second.influence] = [second.influence, first.influence];
+  }
+
+  /**
+   * True when one of the card's own live `destroysSource` continuous
+   * abilities currently holds (its `condition` is met and nothing has
+   * suppressed it).
+   */
+  private hasActiveSelfDestruct(card: CardInstance): boolean {
+    for (const ability of this.continuousAbilitiesOf(
+      this.getDefinition(card.id)
+    )) {
+      if (!ability.destroysSource) continue;
+      if (this.abilitySuppressed(card.id, ability.id)) continue;
+      const context: ResolutionContext = {
+        sourceId: card.id,
+        controllerId: card.controllerId,
+        abilityId: ability.id,
+        selected: {}
+      };
+      if (
+        !ability.condition ||
+        this.evaluateCondition(ability.condition, context)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   private checkStateBasedActions(): void {
     let changed = true;
 
@@ -9525,6 +9994,14 @@ export class SpoilsEngine {
       // keep re-triggering the replacement (or anything else) here; every
       // `resolvePendingChoice` branch re-runs this check once it's settled.
       if (this.state.pendingChoice) return;
+
+      // The seats swap (or swap back) the moment a `swapsSides` source enters
+      // (or leaves) play, before anything below is judged against who controls
+      // what.
+      if (this.syncSeatSwap()) {
+        changed = true;
+        continue;
+      }
 
       for (const card of Object.values(this.state.cards)) {
         if (card.zone !== "play") {
@@ -9583,9 +10060,25 @@ export class SpoilsEngine {
             // non-battle `dealDamage` leaves `currentCause` set from its
             // effect's controller.
             const battleCause = this.lethalDamageCause.get(card.id);
-            if (battleCause) this.currentCause = battleCause;
+            if (battleCause) {
+              this.currentCause = battleCause;
+              this.currentCauseSourceId = undefined;
+            }
             this.destroyCard(card.id, true, false, battleCause !== undefined);
             this.lethalDamageCause.delete(card.id);
+            changed = true;
+            break;
+          }
+        }
+
+        // A threshold paragraph that says "Destroy this card" (CR §405.4 —
+        // Boorish Boar's [R][R][R]) destroys the card the moment it is
+        // active. A replacement that keeps the card in play must not
+        // re-trigger this pass forever, so only a card that actually left
+        // (or a choice the replacement opened) counts as a change.
+        if (this.hasActiveSelfDestruct(card)) {
+          this.destroyCard(card.id);
+          if (this.state.pendingChoice || card.zone !== "play") {
             changed = true;
             break;
           }
@@ -9697,14 +10190,18 @@ export class SpoilsEngine {
           }
         });
 
-        const losers = Object.values(this.state.players).filter(
-          player => player.influence <= 0 && !shielded.has(player.id)
-        );
+        // The loser is the faction's *owner* (CR §102.1), which differs from
+        // the player holding it while the seats are swapped — "the owner of
+        // the winning deck wins the game" (Emergency Obfuscation).
+        const losers = Object.values(this.state.players)
+          .filter(player => player.influence <= 0)
+          .map(player => this.factionOwnerId(player))
+          .filter(loserId => !shielded.has(loserId));
 
         if (losers.length >= 2) {
           this.state.winner = "draw";
         } else if (losers.length === 1) {
-          this.state.winner = this.getOpponent(losers[0].id).id;
+          this.state.winner = this.getOpponent(losers[0]).id;
         }
 
         if (this.state.winner) {
@@ -10789,15 +11286,37 @@ export class SpoilsEngine {
   // Zones / destruction
   // ---------------------------------------------------------------------------
 
+  /**
+   * The player whose hand or deck holds `card` while it is in one — its
+   * owner, unless a `toPlayer` put it into someone else's (`heldBy`). For
+   * every other zone this is just the owner.
+   */
+  private zoneHolderId(card: CardInstance): PlayerId {
+    return (card.zone === "hand" || card.zone === "deck") && card.heldBy
+      ? card.heldBy
+      : card.ownerId;
+  }
+
+  /**
+   * Moves `cardId` to zone `to`. A hand or deck destination is the card's
+   * OWNER's unless `toPlayerId` names another player ("Put the resource into
+   * your hand"): the card then sits in that player's array, is controlled by
+   * them and records `heldBy` (CR §407.7–407.8: ownership never changes, so
+   * discard/void/removed stay with the owner).
+   */
   private moveCard(
     cardId: CardInstanceId,
     to: Zone,
     emitEvents = true,
     position: "top" | "bottom" = "bottom",
-    skipReplacement = false
+    skipReplacement = false,
+    toPlayerId?: PlayerId
   ): void {
     const card = this.requireCard(cardId);
     const from = card.zone;
+    const intoPlayerZone = to === "hand" || to === "deck";
+    const fromHolderId = this.zoneHolderId(card);
+    const toHolderId = toPlayerId ?? card.ownerId;
 
     // Snapshot the face-down state for the emitted `cardMoved` before the
     // cleanup below wipes it — plus the `deployCard` case where the caller
@@ -10809,13 +11328,28 @@ export class SpoilsEngine {
       (card.faceDown || this.faceDownDeparture.has(cardId));
     this.faceDownDeparture.delete(cardId);
 
-    if (from === to) {
+    if (from === "play" && to !== "play") {
+      delete card.deployedAsResponse;
+      this.lastKnownStats.set(cardId, {
+        strength: this.getStat(cardId, "strength"),
+        life: this.getStat(cardId, "life"),
+        speed: this.getStat(cardId, "speed"),
+        structure: this.getStat(cardId, "structure")
+      });
+    }
+
+    if (
+      from === to &&
+      (toPlayerId === undefined || !intoPlayerZone || toPlayerId === fromHolderId)
+    ) {
       // Every zone but the deck is an unordered set, so a same-zone move is
       // a no-op. The deck is ordered: "put the top card of your deck on the
       // bottom" (Cheats McGuillicutty, Bottlebeard, Flimflam Man, …) is a
-      // real reposition within `owner.deck`.
+      // real reposition within the holder's deck. (Only an explicit
+      // `toPlayer` naming a DIFFERENT player's hand/deck is a real move,
+      // handled below.)
       if (to === "deck") {
-        const deck = this.state.players[card.ownerId]?.deck;
+        const deck = this.state.players[fromHolderId]?.deck;
         const at = deck?.indexOf(cardId) ?? -1;
         if (deck && at !== -1) {
           deck.splice(at, 1);
@@ -10828,7 +11362,7 @@ export class SpoilsEngine {
 
     // "cards cannot be put into your opponents' hands from the void, discard
     // pile or play" (Lockbox of the Aeons) — the move simply fizzles.
-    if (to === "hand" && this.returnToHandRestricted(cardId, from)) {
+    if (to === "hand" && this.returnToHandRestricted(cardId, from, toHolderId)) {
       return;
     }
 
@@ -10836,9 +11370,9 @@ export class SpoilsEngine {
     // their discard pile instead." (Quotidian Misfire) — a `redirectHandMoves`
     // window. Applies to a card entering a hand from ANY zone.
     if (to === "hand" && !skipReplacement) {
-      const redirect = this.handMoveRedirectFor(cardId);
+      const redirect = this.handMoveRedirectFor(cardId, toHolderId);
       if (redirect && redirect !== "hand") {
-        this.moveCard(cardId, redirect, emitEvents, position, true);
+        this.moveCard(cardId, redirect, emitEvents, position, true, toPlayerId);
         return;
       }
     }
@@ -10857,7 +11391,14 @@ export class SpoilsEngine {
     if (from === "play" && to !== "play") {
       const redirected = this.redirectTargetFor(cardId);
       if (redirected) {
-        this.moveCard(redirected, to, emitEvents, position, skipReplacement);
+        this.moveCard(
+          redirected,
+          to,
+          emitEvents,
+          position,
+          skipReplacement,
+          toPlayerId
+        );
         return;
       }
     }
@@ -10897,6 +11438,19 @@ export class SpoilsEngine {
 
     card.zone = to;
 
+    // `heldBy` is only for a hand/deck that isn't the owner's; any other move
+    // (including back to the owner) clears it.
+    card.heldBy =
+      intoPlayerZone && toHolderId !== card.ownerId ? toHolderId : undefined;
+    // A card in a hand or deck is controlled by whoever holds it. Moving out
+    // of play by default keeps the last controller until the move's events
+    // have been emitted (its own "leaves play" triggers read it; see
+    // `releaseControlOutsidePlay`), so only a move from elsewhere, or one that
+    // names the receiving player, resets it here.
+    if (intoPlayerZone && (from !== "play" || toPlayerId !== undefined)) {
+      card.controllerId = toHolderId;
+    }
+
     if (to !== "play") {
       card.faceDown = false;
       // Depletion and damage are play-zone concepts (a "tapped" or damaged
@@ -10930,6 +11484,11 @@ export class SpoilsEngine {
       this.state.controlGrants = this.state.controlGrants.filter(
         g => g.cardId !== cardId
       );
+      if (this.state.seatSwap) {
+        this.state.seatSwap.exchanged = this.state.seatSwap.exchanged.filter(
+          e => e.cardId !== cardId
+        );
+      }
       this.state.blockRestrictionGrants = this.state.blockRestrictionGrants.filter(
         g => g.targetId !== cardId && g.sourceId !== cardId
       );
@@ -10970,12 +11529,9 @@ export class SpoilsEngine {
       card.controllerId
     );
 
-    const zoneOwner =
-      to === "deck" ||
-      to === "hand" ||
-      to === "discard" ||
-      to === "void" ||
-      to === "removed"
+    const zoneOwner = intoPlayerZone
+      ? this.requirePlayer(toHolderId)
+      : to === "discard" || to === "void" || to === "removed"
         ? owner
         : controller;
 
@@ -11004,7 +11560,7 @@ export class SpoilsEngine {
       // move is a discard. Emitted once per card (a multi-card discard =
       // several events); a "+X for each discarded" trigger sums correctly.
       if (from === "hand" && to === "discard") {
-        this.emit({ type: "cardsDiscarded", playerId: card.ownerId, count: 1 });
+        this.emit({ type: "cardsDiscarded", playerId: fromHolderId, count: 1 });
       }
     }
 
@@ -11015,6 +11571,21 @@ export class SpoilsEngine {
         g => g.cardId !== cardId
       );
     }
+
+    this.releaseControlOutsidePlay(card);
+  }
+
+  /**
+   * CR §407.3: a taken card stays under its new controller only until it
+   * leaves play, so a card sitting in a hand, deck, discard pile, the void or
+   * out of the game is controlled by whoever holds it (see `zoneHolderId`).
+   * Run once the move's events have been emitted — the card's own "leaves
+   * play" triggers read the controller it had in play when they are found.
+   * `play` and `deploying` keep whoever is playing it.
+   */
+  private releaseControlOutsidePlay(card: CardInstance): void {
+    if (card.zone === "play" || card.zone === "deploying") return;
+    card.controllerId = this.zoneHolderId(card);
   }
 
   /**
@@ -11088,6 +11659,20 @@ export class SpoilsEngine {
           const sameController = affected.controllerId === source.controllerId;
           if (rel === "self" && !sameController) continue;
           if (rel === "opponent" && sameController) continue;
+        }
+
+        if (r.event === "destroy" && r.bySource) {
+          const causeCard = this.currentCauseSourceId ? this.state.cards[this.currentCauseSourceId] : undefined;
+          if (
+            !causeCard ||
+            !this.matchesSelector(causeCard, r.bySource, {
+              sourceId: source.id,
+              controllerId: source.controllerId,
+              selected: { __candidate: [causeCard.id] }
+            })
+          ) {
+            continue;
+          }
         }
 
         // `by` scopes to *who initiated* the event ("destroyed by an
@@ -11336,6 +11921,7 @@ export class SpoilsEngine {
 
     this.removeFromAllPlayerZones(cardId);
     card.zone = "play";
+    card.heldBy = undefined;
     card.controllerId = controllerId;
     card.faceDown = faceDown;
     card.attachedTo = undefined;
@@ -11845,12 +12431,19 @@ export class SpoilsEngine {
     // Theocratic Senate of Marduun) — an in-play
     // `ContinuousAbility.preventsAttackOnFaction`.
     if (target.type === "faction") {
-      this.forEachActiveContinuous((source, ability) => {
+      this.forEachActiveContinuous((source, ability, context) => {
         const rule = ability.preventsAttackOnFaction;
         if (!rule) return;
-        if (
-          this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId)
-        ) {
+        if (!this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId)) return;
+        const partyMatches =
+          !rule.partyAllMatch ||
+          attackerIds.every(attackerId =>
+            this.matchesSelector(this.requireCard(attackerId), rule.partyAllMatch!, {
+              ...context,
+              selected: { ...context.selected, __candidate: [attackerId] }
+            })
+          );
+        if (partyMatches) {
           throw new Error("That faction cannot be attacked.");
         }
       });
@@ -12079,6 +12672,13 @@ export class SpoilsEngine {
         break;
       }
     }
+
+    // The cards were turned over from the top of the deck, even though they
+    // are held aside now.
+    this.emitReveal(revealed, "all", context.sourceId, {
+      zone: "deck",
+      holderId: deckOwnerId
+    });
 
     if (!characterId) {
       // "Shuffle all other revealed cards into their owner's deck."
@@ -13404,6 +14004,33 @@ export class SpoilsEngine {
   // Helpers
   // ---------------------------------------------------------------------------
 
+  /**
+   * OMNIPOTENCE (The Evil Alliance): `playerId` automatically meets every
+   * threshold, whatever resource icons they control.
+   */
+  private hasOmnipotence(playerId: PlayerId): boolean {
+    return !!this.getFactionDefinition(playerId)?.meetsAllThresholds;
+  }
+
+  /**
+   * Whether `playerId` currently meets `threshold` as a standing condition
+   * (CR §405.4 — a threshold paragraph is active only while its controller
+   * meets it): OMNIPOTENCE, or at least the required count of every icon.
+   * The `meetsThreshold` condition reads this. Deploy-only adjustments
+   * (`reduceThreshold`, FEALTY slack) belong to the deploy check below, not
+   * to this.
+   */
+  private meetsParagraphThreshold(playerId: PlayerId, threshold: string): boolean {
+    if (!threshold) return true;
+    if (this.hasOmnipotence(playerId)) return true;
+
+    const required = parseThreshold(threshold);
+    const available = this.getThresholds(playerId);
+    return (Object.keys(required) as ResourceIcon[]).every(
+      icon => (available[icon] ?? 0) >= (required[icon] ?? 0)
+    );
+  }
+
   private meetsThreshold(
     playerId: PlayerId,
     threshold: string | number,
@@ -13420,7 +14047,7 @@ export class SpoilsEngine {
     }
 
     // OMNIPOTENCE (The Evil Alliance) — meet every threshold regardless of icons.
-    if (this.getFactionDefinition(playerId)?.meetsAllThresholds) {
+    if (this.hasOmnipotence(playerId)) {
       return true;
     }
 
@@ -13501,6 +14128,20 @@ export class SpoilsEngine {
     }
   }
 
+  /**
+   * Who controlled `card` when `event` happened. `cardDestroyed` is emitted
+   * after the destroyed card has moved to its owner's discard pile, where its
+   * controller is no longer the one it had (`releaseControlOutsidePlay`), so
+   * the event carries the controller the card had in play.
+   */
+  private controllerAtEvent(
+    event: GameEvent | undefined,
+    card: CardInstance
+  ): PlayerId {
+    return event?.type === "cardDestroyed" && event.cardId === card.id
+      ? event.controllerId
+      : card.controllerId;
+  }
 
   private definitionHasKeyword(
     definition: CardDefinition,
@@ -13541,7 +14182,15 @@ export class SpoilsEngine {
 
     if (
       this.state.keywordGrants.some(
-        grant => grant.targetId === cardId && grant.keyword === keyword
+        grant =>
+          grant.targetId === cardId &&
+          grant.keyword === keyword &&
+          (!grant.condition ||
+            this.evaluateCondition(grant.condition, {
+              sourceId: grant.sourceId ?? cardId,
+              controllerId: grant.controllerId ?? this.state.cards[cardId]?.controllerId ?? this.state.activePlayerId,
+              selected: { __candidate: [cardId] }
+            }))
       )
     ) {
       return true;

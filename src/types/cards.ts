@@ -102,9 +102,13 @@ export interface FactionDefinition {
      * taken — a free, strictly-beneficial card, the same "the choice is
      * never actually declined" treatment the engine gives The Society of
      * Magical Propriety's optional token.
+     *
+     * `reveal` — the printed text says "reveal it": the found card is shown
+     * to everyone (a `cardsRevealed` event) before it goes to hand.
      */
     startingDrawSearch?: {
       selector: CardSelector;
+      reveal?: boolean;
     };
 
     openingHand: {
@@ -264,6 +268,14 @@ export interface CardDefinition {
    * cards with no rules text.
    */
   markup?: string;
+  /** The descriptive line printed under this printing's name (CR 201.1a). */
+  subtitle?: string;
+  /**
+   * This printing's italic descriptive text (CR 201.5e). Not rules text.
+   * Paragraphs and attribution lines are separated by "
+".
+   */
+  flavorText?: string;
 
   /** Present only on faction cards. */
   faction?: FactionDefinition;
@@ -307,7 +319,7 @@ export interface CardDefinition {
    * holder is at most `amount` icons short **summed across all icon
    * types** (CR reads "by any N icons" as a pure total-deficit slack, with
    * no per-icon choice). The "blade of questionable morality" cycle
-   * (Abram Ka-darbo Alkazin, Eustace Sensible Glutton, Ignatious Tactician
+   * (Abram Ka-darbo Alakazin, Eustace Sensible Glutton, Ignatious Tactician
    * Crafter, Jo Ciendeilio Iron Born, Rudo Mangod Fightful Adonis).
    */
   thresholdSlack?: {
@@ -558,6 +570,14 @@ export interface ReplacementAbility extends AbilityBase {
         controlledBy?: "self" | "opponent" | "any";
         /** Who initiated it — relative to the source controller (default `"any"`). */
         by?: "self" | "opponent" | "any";
+        /**
+         * Only a destruction by an effect whose source card matches this
+         * selector (candidate bound to `{ type: "selected", id:
+         * "__candidate" }`) — "This card cannot be destroyed by other "node"
+         * cards." (Lugubrious Node). Never matches a destruction with no
+         * originating card (battle damage, a bare state-based check).
+         */
+        bySource?: CardSelector;
       }
     | {
         /**
@@ -780,7 +800,17 @@ export interface ContinuousAbility extends AbilityBase {
    * relative to the source's controller. High Court of Demands, Theocratic
    * Senate of Marduun (`player: "self"`).
    */
-  preventsAttackOnFaction?: { player: "self" | "opponent" | "any" };
+  preventsAttackOnFaction?: {
+    player: "self" | "opponent" | "any";
+    /**
+     * Only attacking parties whose every member matches this selector are
+     * stopped (candidate bound to `{ type: "selected", id: "__candidate" }`).
+     * "COVERT parties cannot attack your faction." (Hypnotic Plafond, 1st
+     * Edition / Open Beta; a covert party is one whose members all have
+     * COVERT, CR 507.3a).
+     */
+    partyAllMatch?: CardSelector;
+  };
 
   /**
    * "Players can attack only once each turn." — while the source is in play,
@@ -799,15 +829,22 @@ export interface ContinuousAbility extends AbilityBase {
   mustReceiveBattleDamage?: boolean;
 
   /**
-   * "You may use abilities on your opponent's cards, ... pay any numeric
-   * cost with your own resources ... the ability's effect happens as if
-   * your opponent used it." (The Billionaire). While the source is in play,
-   * its controller may activate activated abilities on cards the opponent
-   * controls: the numeric (`payResources`) portion is charged to the
-   * controller, everything else resolves with the opponent as the ability's
-   * controller.
+   * "You may use abilities on your opponent's cards" (The Billionaire).
+   * While the source is in play, its controller may activate activated
+   * abilities on cards the opponent controls. The effect always resolves
+   * with the opponent as the ability's controller; the two printings differ
+   * on who pays for it:
+   * - `true` — "you must pay any numeric cost with your own resources. Any
+   *   additional costs must be satisfied as though your opponent is using
+   *   the ability" (2nd Edition): the numeric (`payResources`) portion is
+   *   charged to the activator, every other cost is the opponent's.
+   * - `"asOpponent"` — "as though you were your opponent. (The effect still
+   *   happens to your opponent.)" (1st Edition, Open Beta): every cost,
+   *   numeric included, is paid by the opponent, out of the opponent's
+   *   resources and cards.
+   * When several live sources disagree, `true` wins.
    */
-  canUseOpponentAbilities?: boolean;
+  canUseOpponentAbilities?: boolean | "asOpponent";
   /**
    * "Only parties with at least N members / characters with at least N
    * speed can block this card." — enforced in `declareBlockers` against a
@@ -913,4 +950,27 @@ export interface ContinuousAbility extends AbilityBase {
     player: "self" | "opponent" | "any";
     fromZones: Zone[];
   };
+
+  /**
+   * While `condition` holds, the source card is destroyed — a state-based
+   * check, not an activated ability or a trigger: it happens the moment
+   * `condition` becomes true, including when the card enters play with it
+   * already true. A threshold paragraph that reads "Destroy this card" (CR
+   * §405.4 / §201.5d) is this field gated on that threshold ("[R][R][R]:
+   * Destroy this card." — Boorish Boar). Read from the card's own printed
+   * abilities only.
+   */
+  destroysSource?: boolean;
+
+  /**
+   * While the source is in play (and `condition` holds), the two players
+   * switch seats and each is in control of the other's side: control of every
+   * card in play — both factions included — passes to the other player
+   * (`GameState.seatSwap`; RULES.md §12 "Seat swap"). Hands, decks, discard
+   * piles, voids and the removed-from-game zone stay with their owners, and a
+   * faction at 0 influence still costs its *owner* the game (CR §102.1), so
+   * "the owner of the winning deck wins". An odd number of live sources leaves
+   * the seats swapped; an even number cancels out. Emergency Obfuscation.
+   */
+  swapsSides?: boolean;
 }

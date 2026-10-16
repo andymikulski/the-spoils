@@ -91,12 +91,12 @@ const declineAll = (pc: { kind: string; [k: string]: unknown }) => {
 // A – C
 // =====================================================================
 
-describe("Ungodly Mess — Abram Ka-darbo Alkazin", () => {
+describe("Ungodly Mess — Abram Ka-darbo Alakazin", () => {
   test("MAKE VANISH depletes it and pays 5 to void a chosen character", () => {
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
       cards: [
-        { key: "abram", def: def("Abram Ka-darbo Alkazin"), owner: P1, zone: "play" },
+        { key: "abram", def: def("Abram Ka-darbo Alakazin"), owner: P1, zone: "play" },
         { key: "victim", def: character({ name: "Victim" }), owner: P2, zone: "play" },
         ...bank("deception", 8, P1)
       ]
@@ -2246,14 +2246,124 @@ describe("Ungodly Mess — Smokin' Hottie", () => {
 });
 
 describe("Ungodly Mess — Soulsearcher", () => {
-  test("[R] grants +2 strength this turn", () => {
-    const d = def("Soulsearcher");
+  // CR 201.5d / 405.4: each icon-led paragraph is a static condition that is on exactly
+  // while its controller meets that one-icon threshold. None of them is an ability.
+  const d = def("Soulsearcher");
+  const PARAGRAPHS = [
+    { icon: "obsession", id: "o", keyword: "covert" },
+    { icon: "greed", id: "g", stat: "life", value: 2 },
+    { icon: "elitism", id: "e", keyword: "aggro" },
+    { icon: "deception", id: "d", stat: "speed", value: 1 },
+    { icon: "rage", id: "r", stat: "strength", value: 2 }
+  ] as const;
+  type Icon = (typeof PARAGRAPHS)[number]["icon"];
+
+  /** Stats and keywords of the card with exactly the paragraphs for `active` icons switched on. */
+  const expected = (active: Icon[]) => {
+    const stats = { strength: d.strength ?? 0, life: d.life ?? 0, speed: d.speed ?? 0 };
+    const keywords: string[] = [];
+    for (const p of PARAGRAPHS) {
+      if (!active.includes(p.icon)) continue;
+      if ("keyword" in p) keywords.push(p.keyword);
+      else stats[p.stat] += p.value;
+    }
+    return { stats, keywords };
+  };
+  const observe = (engine: ReturnType<typeof buildGame>["engine"], cardId: string) => ({
+    stats: {
+      strength: engine.getStat(cardId, "strength"),
+      life: engine.getStat(cardId, "life"),
+      speed: engine.getStat(cardId, "speed")
+    },
+    keywords: engine.getKeywords(cardId).filter(k => k === "covert" || k === "aggro").sort()
+  });
+  const board = (counts: Partial<Record<Icon, number>>, theirs: Partial<Record<Icon, number>> = {}) => {
+    const game = buildGame({
+      playerA: { faction: developFaction() },
+      cards: [
+        { key: "so", def: d, owner: P1, zone: "play" },
+        ...PARAGRAPHS.flatMap(p => bank(p.icon, counts[p.icon] ?? 0, P1)),
+        ...PARAGRAPHS.flatMap(p => bank(p.icon, theirs[p.icon] ?? 0, P2))
+      ]
+    });
+    return { ...game, now: () => observe(game.engine, game.id("so")) };
+  };
+  const want = (active: Icon[]) => {
+    const e = expected(active);
+    return { stats: e.stats, keywords: [...e.keywords].sort() };
+  };
+
+  for (const p of PARAGRAPHS) {
+    test(`[${p.icon[0].toUpperCase()}]: its paragraph is on only while the controller has the icon, and extra icons do not stack`, () => {
+      assert.deepEqual(board({}).now(), want([]));
+      assert.deepEqual(board({ [p.icon]: 1 }).now(), want([p.icon]));
+      assert.deepEqual(board({ [p.icon]: 5 }).now(), want([p.icon]));
+    });
+  }
+
+  test("the paragraphs are independent: every icon switches on exactly its own paragraph", () => {
+    assert.deepEqual(
+      board({ obsession: 1, greed: 1, elitism: 1, deception: 1, rage: 1 }).now(),
+      want(["obsession", "greed", "elitism", "deception", "rage"])
+    );
+    assert.deepEqual(board({ rage: 1, greed: 1 }).now(), want(["rage", "greed"]));
+  });
+
+  test("only the controller's icons count", () => {
+    assert.deepEqual(board({}, { obsession: 3, greed: 3, elitism: 3, deception: 3, rage: 3 }).now(), want([]));
+  });
+
+  test("they are not abilities: nothing to activate, and trying changes nothing", () => {
+    assert.deepEqual(
+      (d.behavior?.abilities ?? []).filter(a => a.type === "activated"),
+      []
+    );
+    const { engine, id, now } = board({ rage: 4 });
+    for (const p of PARAGRAPHS) assert.throws(() => activate(engine, P1, id("so"), p.id));
+    assert.deepEqual(now(), want(["rage"]));
+  });
+
+  test("a paragraph turns on as the icon arrives and off the instant it leaves", () => {
+    const smash = tactic({
+      name: "Smash",
+      cost: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "s",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "resource" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+    const rage = bank("rage", 1, P1)[0];
+    const inHand = { ...bank("rage", 1, P1)[0], zone: "hand" as const };
     const { engine, id } = buildGame({
       playerA: { faction: developFaction() },
-      cards: [{ key: "so", def: d, owner: P1, zone: "play" }, ...bank("rage", 4, P1)]
+      cards: [
+        { key: "so", def: d, owner: P1, zone: "play" },
+        rage,
+        inHand,
+        { key: "smash1", def: smash, owner: P1, zone: "hand" },
+        { key: "smash2", def: smash, owner: P1, zone: "hand" }
+      ]
     });
-    activate(engine, P1, id("so"), "r");
-    assert.equal(engine.getStat(id("so"), "strength"), (d.strength ?? 0) + 2);
+    // One [R] in play already: +2 strength. A second adds nothing.
+    assert.deepEqual(observe(engine, id("so")), want(["rage"]));
+    engine.perform({
+      type: "chooseDevelop",
+      playerId: P1,
+      choice: { type: "playResource", cards: [{ cardId: id(inHand.key), faceDown: false }] }
+    } as never);
+    resolvePendingResponses(engine);
+    assert.deepEqual(observe(engine, id("so")), want(["rage"]));
+    // Destroying both [R] resources turns the paragraph off.
+    play(engine, P1, id("smash1"), { selected: { t: [id(rage.key)] } });
+    assert.deepEqual(observe(engine, id("so")), want(["rage"]));
+    play(engine, P1, id("smash2"), { selected: { t: [id(inHand.key)] } });
+    assert.deepEqual(observe(engine, id("so")), want([]));
   });
 });
 
@@ -2738,9 +2848,9 @@ describe("Ungodly Mess — Wily Circumvention", () => {
   });
 });
 
-describe("Ungodly Mess — Yenessa Shipping, LLP", () => {
+describe("Ungodly Mess — Yenassa Shipping, LLP", () => {
   test("gains +2/+2 per item your opponents control", () => {
-    const d = def("Yenessa Shipping, LLP");
+    const d = def("Yenassa Shipping, LLP");
     const { engine, id } = buildGame({
       cards: [
         { key: "ys", def: d, owner: P1, zone: "play" },

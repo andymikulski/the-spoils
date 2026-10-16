@@ -37,7 +37,8 @@
     "test": "node scripts/run-tests.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
     "sync-cards": "node scripts/sync-cards.cjs",
-    "card-markup": "node --import tsx scripts/card-markup/cli.ts"
+    "card-markup": "node --import tsx scripts/card-markup/cli.ts",
+    "card-audit": "node --import tsx scripts/card-audit/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",

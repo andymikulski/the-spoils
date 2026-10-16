@@ -2401,7 +2401,7 @@
         "ability",
         "state"
       ],
-      "spec": "ContinuousAbility.canUseOpponentAbilities?: boolean - while the source is in play, its controller may activate activated abilities on cards their opponent controls: getAvailableActivatedAbilities surfaces them, the numeric (payResources) cost is charged to the controller's own resources, and the ability resolves with ResolutionContext.controllerId = the opponent (so non-numeric costs + effects act 'as though your opponent used it'). 'You may use abilities on your opponent's cards ...' (The Billionaire).",
+      "spec": "ContinuousAbility.canUseOpponentAbilities?: boolean | \"asOpponent\" - while the source is in play, its controller may activate activated abilities on cards their opponent controls: getAvailableActivatedAbilities surfaces them (judged against whoever pays), and the ability resolves with ResolutionContext.controllerId = the opponent. `true` (2nd Edition): the numeric (payResources) cost is charged to the controller's own resources and non-numeric costs + effects act 'as though your opponent used it'. \"asOpponent\" (1st Edition, Open Beta): every cost, numeric included, is paid by the opponent. 'You may use abilities on your opponent's cards ...' (The Billionaire).",
       "cards": [
         "2ec131a8-26eb-4dd7-914d-ced1ca9e770c",
         "ff195e18-a459-4594-b155-8572b869f368"
@@ -2603,6 +2603,20 @@
         "78571459-b948-4558-823e-e463e5fc5526"
       ],
       "rulesRef": "RULES.md §3.6"
+    },
+    "seat-swap": {
+      "status": "implemented",
+      "kind": [
+        "ability",
+        "state",
+        "engine"
+      ],
+      "spec": "ContinuousAbility.swapsSides?: boolean + GameState.seatSwap?: { exchanged: [{ cardId, previousControllerId }] } + the seatsSwapped event. While an odd number of live swapsSides sources are in play (checkStateBasedActions -> syncSeatSwap) every card in play, both factions included, passes to the opposing player and the players exchange factionId / influence, so 'your faction / characters / resources' follow control; lifting it returns each exchanged card still in play under the controller the swap gave it. Hands, decks, discard / void / removed zones stay with their owners; a faction at 0 influence costs its OWNER the game (CR 102.1). Emergency Obfuscation.",
+      "cards": [
+        "9df5c987-d2c0-45d4-86ae-1d487cc7f937",
+        "1999770c-5f2d-415d-8da1-8efe44ef3e41"
+      ],
+      "rulesRef": "RULES.md §12 'Seat swap'"
     }
   },
   "parityGaps": {
@@ -2611,12 +2625,6 @@
       "clause": "The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and \"INFLUENCE = 15 + 10*X\" / \"repeat X-1 times\".",
       "needs": "N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.",
       "scope": "xlarge"
-    },
-    "seat-swap": {
-      "summary": "Every player swaps to controlling the opposing side (seats, hands, decks, in-play cards); the owner of the winning deck wins.",
-      "clause": "While this card is in play, each player moves 1 seat to the left. Each player is in control of that opponent's side. If the game ends, the owner of the winning deck wins the game. (Emergency Obfuscation)",
-      "needs": "A player-identity / seat model separate from deck ownership, plus a full control swap of every zone. The engine ties control to player id and player id to deck; untangling that is a game-state refactor.",
-      "scope": "large"
     }
   },
   "cards": [
@@ -10526,10 +10534,10 @@
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "restrictPlay (no characters this turn) + draw, as the elseEffects of a mayPay(player: picked). CONCESSION: the picked player's pay-2 buyout ('look at your top card, terminate this') is offered on resolution, not as a true pre-stack EXTRA COST.",
+      "notes": "restrictPlay (no characters this turn) + draw, as the elseEffects of a mayPay(player: picked); paying 2 looks at your top card and ends the card. The Shade printing puts the pay-2 buyout in the EFFECT, so offering it on resolution is exactly as printed (card-image audit 2026-10-16).",
       "rulesAudited": true,
       "parityGaps": [],
-      "fidelity": "partial"
+      "fidelity": "full"
     },
     {
       "id": "fd095fbd-7566-4b39-832e-0f40a0181289",
@@ -10681,10 +10689,10 @@
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "mass-destroy of 3 picked characters with 3 strength or less, as the elseEffects of a mayPay(player: opponent); the buyout branch is lookAndReorder with chooser: opponent. CONCESSION: the pay-3 buyout is offered on resolution, not as a true pre-stack EXTRA COST.",
+      "notes": "mass-destroy of 3 picked characters (with different names, as printed) with 3 strength or less, as the elseEffects of a mayPay(player: opponent); the buyout branch is lookAndReorder with chooser: opponent. The Shade printing puts the pay-3 buyout in the EFFECT, so it resolves on resolution as printed (card-image audit 2026-10-16).",
       "rulesAudited": true,
       "parityGaps": [],
-      "fidelity": "partial"
+      "fidelity": "full"
     },
     {
       "id": "f83b3af9-a7cb-4945-9632-bdfab77a111a",
@@ -21254,7 +21262,7 @@
     },
     {
       "id": "01df169f-77e2-4b6e-bb7c-cf0b7c84d6e9",
-      "name": "Abram Ka-darbo Alkazin",
+      "name": "Abram Ka-darbo Alakazin",
       "set": "Ungodly Mess",
       "type": "character",
       "status": "verified",
@@ -21288,7 +21296,7 @@
     },
     {
       "id": "cfa555a9-7c42-44f0-8787-d3b61fd3621e",
-      "name": "Abram Ka-darbo Alkazin",
+      "name": "Abram Ka-darbo Alakazin",
       "set": "Ungodly Mess",
       "type": "character",
       "status": "verified",
@@ -25715,7 +25723,7 @@
       "id": "4a2644f2-727c-4db8-b3dc-800a0efc82a2",
       "name": "Unwise Encirclement",
       "set": "Ungodly Mess",
-      "type": "character",
+      "type": "tactic",
       "status": "verified",
       "textHash": "55be731137bd",
       "behavior": {
@@ -26049,7 +26057,7 @@
     },
     {
       "id": "453a6b4d-a4c3-46f7-a9cc-9e043cde9f50",
-      "name": "Yenessa Shipping, LLP",
+      "name": "Yenassa Shipping, LLP",
       "set": "Ungodly Mess",
       "type": "character",
       "status": "verified",
@@ -26080,7 +26088,7 @@
     },
     {
       "id": "684d5f70-bf07-4b3a-95bc-c06c4aa11c81",
-      "name": "Yenessa Shipping, LLP",
+      "name": "Yenassa Shipping, LLP",
       "set": "Ungodly Mess",
       "type": "character",
       "status": "verified",
@@ -27780,10 +27788,11 @@
         "needed": true,
         "shapes": [
           "behavior.keywords [tactical]",
+          "continuous: swapsSides (seat swap — control of every card in play and both factions passes to the opponent while in play)",
           "triggered:turnStarted (eventPlayerIs controller) -> addCounter source token 1",
           "triggered:turnEnding (eventPlayerIs controller) condition {counterCompare(source, token, '>=', 2)} -> destroy source"
         ],
-        "reusesProvenShape": true,
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -27794,14 +27803,14 @@
           "tactical"
         ]
       },
-      "engineCapability": [],
-      "display": {},
-      "confidence": "medium",
-      "notes": "The 'each player moves 1 seat left / is in control of that opponent's side / owner of the winning deck wins' clause is a full seat/side/deck-ownership swap — a game-format refactor. Token-accrual + self-destruct clauses are authored.",
-      "rulesAudited": true,
-      "parityGaps": [
+      "engineCapability": [
         "seat-swap"
       ],
+      "display": {},
+      "confidence": "medium",
+      "notes": "Seat swap authored as ContinuousAbility.swapsSides (engine-derived reading — the CR defines neither 'seat' nor 'side'): the players switch seats and control passes for every card in play, both factions and this card included, so the token clock runs on the OTHER player's turns; hands, decks and discard piles stay with their owners; the faction's owner loses at 0 influence ('the owner of the winning deck wins'); cards played while swapped stay with whoever played them. See data/card-audit/deferred/emergency-obfuscation.md. Verified by src/engine/__tests__/seat-swap.test.ts and per-card/printed-variants.test.ts.",
+      "rulesAudited": true,
+      "parityGaps": [],
       "fidelity": "full"
     },
     {
@@ -31626,7 +31635,7 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "continuous {canUseOpponentAbilities:true} -- controller may activate activated abilities on cards the opponent controls; numeric cost paid from the controller's resources, non-numeric costs + effect resolved as though the opponent used it",
+          "continuous {canUseOpponentAbilities:\"asOpponent\"} -- controller may activate activated abilities on cards the opponent controls; every cost (numeric included) is paid by the opponent, and the effect resolves as the opponent (\"as though you were your opponent\")",
           "activated CHANGE COSTUME: costs [payResources 3], effects: moveCard source deck; shuffleDeck {controller}; chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'pluck', conditions:[{not:{cardNameEquals:{target:__candidate, other:source}}}]} count 1 optional} -> putIntoPlay {selected} {controller:controller}; shuffleDeck {controller}"
         ],
         "reusesProvenShape": false,
@@ -31643,7 +31652,7 @@
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "Meta-ability: ContinuousAbility.canUseOpponentAbilities surfaces the opponent's cards' activated abilities to the controller (getAvailableActivatedAbilities), numeric cost charged to the activator, resolution context.controllerId = the opponent.",
+      "notes": "Meta-ability: ContinuousAbility.canUseOpponentAbilities:\"asOpponent\" surfaces the opponent's cards' activated abilities to the controller (getAvailableActivatedAbilities); every cost, numeric included, is paid by the opponent, and resolution context.controllerId = the opponent. The 2nd Edition reprint prints \"pay any numeric cost with your own resources\" and keeps canUseOpponentAbilities:true.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -33863,10 +33872,11 @@
         "needed": true,
         "shapes": [
           "behavior.keywords [tactical]",
+          "continuous: swapsSides (seat swap — control of every card in play and both factions passes to the opponent while in play)",
           "triggered:turnStarted (eventPlayerIs controller) -> addCounter source token 1",
           "triggered:turnEnding (eventPlayerIs controller) condition {counterCompare(source, token, '>=', 2)} -> destroy source"
         ],
-        "reusesProvenShape": true,
+        "reusesProvenShape": false,
         "newTestNeeded": false
       },
       "metadata": {
@@ -33877,14 +33887,14 @@
           "tactical"
         ]
       },
-      "engineCapability": [],
-      "display": {},
-      "confidence": "medium",
-      "notes": "The 'each player moves 1 seat left / is in control of that opponent's side / owner of the winning deck wins' clause is a full seat/side/deck-ownership swap — a game-format refactor. Token-accrual + self-destruct clauses are authored. (reprint of the identical Open Beta card.)",
-      "rulesAudited": true,
-      "parityGaps": [
+      "engineCapability": [
         "seat-swap"
       ],
+      "display": {},
+      "confidence": "medium",
+      "notes": "Seat swap authored as ContinuousAbility.swapsSides (engine-derived reading — the CR defines neither 'seat' nor 'side'): the players switch seats and control passes for every card in play, both factions and this card included, so the token clock runs on the OTHER player's turns; hands, decks and discard piles stay with their owners; the faction's owner loses at 0 influence ('the owner of the winning deck wins'); cards played while swapped stay with whoever played them. See data/card-audit/deferred/emergency-obfuscation.md. Verified by src/engine/__tests__/seat-swap.test.ts and per-card/printed-variants.test.ts. (reprint of the identical Open Beta card.)",
+      "rulesAudited": true,
+      "parityGaps": [],
       "fidelity": "full"
     },
     {
@@ -37862,14 +37872,14 @@
       },
       "metadata": {
         "unique": null,
-        "attachTo": "character",
+        "attachTo": null,
         "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
       "display": {},
       "confidence": "high",
-      "notes": "'no rules text (incl. abilities)' = suppressAllAbilities on the host (Mittens of Muffled Thought pattern).",
+      "notes": "'no rules text (incl. abilities)' = suppressAllAbilities on the host (Mittens of Muffled Thought pattern). 1st Edition printing has no ATTACH TO line: enters unattached, attaches only via MOVE (card-image audit 2026-10-16).",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -38087,7 +38097,7 @@
       "behavior": {
         "needed": true,
         "shapes": [
-          "continuous {canUseOpponentAbilities:true} -- controller may activate activated abilities on cards the opponent controls; numeric cost paid from the controller's resources, non-numeric costs + effect resolved as though the opponent used it",
+          "continuous {canUseOpponentAbilities:\"asOpponent\"} -- controller may activate activated abilities on cards the opponent controls; every cost (numeric included) is paid by the opponent, and the effect resolves as the opponent (\"as though you were your opponent\")",
           "activated CHANGE COSTUME: costs [payResources 3], effects: moveCard source deck; shuffleDeck {controller}; chooserSelectsTarget{chooser:controller, {owner:self, zone:deck, subtype:'pluck', conditions:[{not:{cardNameEquals:{target:__candidate, other:source}}}]} count 1 optional} -> putIntoPlay {selected} {controller:controller}; shuffleDeck {controller}"
         ],
         "reusesProvenShape": false,
@@ -38104,7 +38114,7 @@
       ],
       "display": {},
       "confidence": "medium",
-      "notes": "Meta-ability: ContinuousAbility.canUseOpponentAbilities surfaces the opponent's cards' activated abilities to the controller (getAvailableActivatedAbilities), numeric cost charged to the activator, resolution context.controllerId = the opponent. (reprint of the identical Open Beta card.)",
+      "notes": "Meta-ability: ContinuousAbility.canUseOpponentAbilities:\"asOpponent\" surfaces the opponent's cards' activated abilities to the controller (getAvailableActivatedAbilities); every cost, numeric included, is paid by the opponent, and resolution context.controllerId = the opponent. The 2nd Edition reprint prints \"pay any numeric cost with your own resources\" and keeps canUseOpponentAbilities:true.",
       "rulesAudited": true,
       "fidelity": "full"
     },
@@ -56968,7 +56978,7 @@
     },
     {
       "id": "be1f9d58-c075-4bc4-9ca1-235ab980cb3c",
-      "name": "Duskfall Buckgriff",
+      "name": "Duskfall Buckgrif",
       "set": "Seed Saga",
       "type": "character",
       "status": "verified",

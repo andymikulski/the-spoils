@@ -157,9 +157,13 @@ export type NumberExpression =
       /**
        * How many of a given resource `icon` `player` controls in play — the
        * sum of `getResourceIcons` over their in-play resources (face-up
-       * printed icons, plus Volition for each face-down resource). Also the
-       * idiom for "while you control at least [X][X]" gates, via
-       * `numberCompare` against a literal.
+       * printed icons, plus Volition for each face-down resource). Always the
+       * REAL count — OMNIPOTENCE (`meetsAllThresholds`) does not inflate it.
+       * Right for "X is the number of [O] you control" and an inline "if you
+       * control at least [X][X]" (via `numberCompare` against a literal). A
+       * paragraph that begins with threshold icons ("[R][R][R]: ...", CR
+       * §405.4) is the `meetsThreshold` condition instead, which honors
+       * OMNIPOTENCE.
        */
       type: "resourceIcons";
       player: PlayerRef;

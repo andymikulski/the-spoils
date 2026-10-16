@@ -667,8 +667,8 @@ Test file: `src/engine/__tests__/per-card/holy-heist.test.ts`
 
 Test file: `src/engine/__tests__/per-card/ungodly-mess.test.ts`
 
-- [x] Abram Ka-darbo Alkazin _(character)_
-- [x] Abram Ka-darbo Alkazin _(character)_
+- [x] Abram Ka-darbo Alakazin _(character)_
+- [x] Abram Ka-darbo Alakazin _(character)_
 - [x] Abusive Major General _(character)_
 - [x] Acrolosian Outpost #30016968A _(location)_
 - [x] Animated Scrap Heap _(character)_
@@ -814,7 +814,7 @@ Test file: `src/engine/__tests__/per-card/ungodly-mess.test.ts`
 - [x] Unchained Sarcophyle _(character)_
 - [x] Undesirable Intrusion _(tactic)_
 - [x] Unfortunate Fortune Hunter _(character)_
-- [x] Unwise Encirclement _(character)_
+- [x] Unwise Encirclement _(tactic)_
 - [x] Vexillarius Dacian-Draco _(character)_
 - [x] Voidal Bask _(character)_
 - [x] Voidal Tactician _(character)_
@@ -825,8 +825,8 @@ Test file: `src/engine/__tests__/per-card/ungodly-mess.test.ts`
 - [x] Wasteland _(location)_
 - [x] Whistleblower Policy _(tactic)_
 - [x] Wily Circumvention _(tactic)_
-- [x] Yenessa Shipping, LLP _(character)_
-- [x] Yenessa Shipping, LLP _(character)_
+- [x] Yenassa Shipping, LLP _(character)_
+- [x] Yenassa Shipping, LLP _(character)_
 - [x] Zenobia, Artificer _(character)_
 - [x] Zenobia, Artificer _(character)_
 - [x] Zenobia's Intervention _(tactic)_
@@ -1914,7 +1914,7 @@ Test file: `src/engine/__tests__/per-card/seed-saga.test.ts`
 - [x] Drivey Car _(character)_
 - [x] Drowned Catacombs _(faction)_
 - [x] Drygulch _(tactic)_
-- [x] Duskfall Buckgriff _(character)_
+- [x] Duskfall Buckgrif _(character)_
 - [x] Dwarvish Grimalkin _(character)_
 - [x] Dying Hero _(character)_
 - [x] Ecneret, The Expendable One _(character)_

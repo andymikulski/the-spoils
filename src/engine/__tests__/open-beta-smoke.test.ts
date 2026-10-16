@@ -321,7 +321,7 @@ describe("Open Beta smoke: authored behavior drives the engine", () => {
     );
   });
 
-  test("The Billionaire — activate an opponent card's ability paying with your own resources", () => {
+  test("The Billionaire — activate an opponent card's ability, paid for as though you were your opponent", () => {
     const oppEngine = character({
       name: "Opp Engine",
       behavior: { abilities: [{ id: "go", type: "activated", costs: [{ type: "payResources", amount: 1 }], effects: [{ type: "draw", player: "controller", amount: 1 }] }] }
@@ -331,13 +331,16 @@ describe("Open Beta smoke: authored behavior drives the engine", () => {
         { key: "b", def: def("The Billionaire"), owner: P1, zone: "play" },
         { key: "o", def: oppEngine, owner: P2, zone: "play" },
         ...bank("deception", 1, P1),
+        ...bank("deception", 1, P2),
         ...Array.from({ length: 2 }, (_, i) => ({ key: `d${i}`, def: character({ name: `D${i}` }), owner: P2, zone: "deck" as const }))
       ]
     });
     const p2HandBefore = engine.state.players[P2].hand.length;
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("o"), abilityId: "go" });
     settle(engine);
-    assert.equal(engine.getAvailableResourceCount(P1), 0);
+    // Open Beta prints "as though you were your opponent": the opponent pays, the effect is theirs.
+    assert.equal(engine.getAvailableResourceCount(P1), 1);
+    assert.equal(engine.getAvailableResourceCount(P2), 0);
     assert.equal(engine.state.players[P2].hand.length, p2HandBefore + 1);
   });
 
