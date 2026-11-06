@@ -8989,19 +8989,23 @@ export class SpoilsEngine {
       if (frame.announcedEffect === current) {
         this.announcedSearch = current;
       }
+      const framesBefore = this.state.pendingEffectFrames.length;
       this.resolveEffect(frame.effects[i], frame.context);
       addedToDecks = intoDeck ? deckTotal() - totalBefore : undefined;
       this.processImmediateQueue();
       this.checkStateBasedActions();
 
       if (this.state.pendingChoice) {
-        this.state.pendingEffectFrames.push({ ...frame, index: i + 1 });
+        // The rest of this list waits BELOW whatever the paused effect parked
+        // for itself (a `forEachPlayer`'s remaining players): that finishes first.
+        const rest: PendingEffectFrame[] = [{ ...frame, index: i + 1 }];
         if (this.retrySearchFrame) {
           // The search paused on its own announcement: run it again (with the
           // announcement marked answered) before the rest of this list.
-          this.state.pendingEffectFrames.push(this.retrySearchFrame);
+          rest.push(this.retrySearchFrame);
           this.retrySearchFrame = undefined;
         }
+        this.state.pendingEffectFrames.splice(Math.min(framesBefore, this.state.pendingEffectFrames.length), 0, ...rest);
         return false;
       }
 

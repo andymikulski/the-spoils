@@ -257,6 +257,68 @@ const BOTH: CardDefinition = character({
   }
 });
 
+/** "Each opponent discards a card. Then you lose 1 influence." */
+const TOLLGATE: CardDefinition = character({
+  name: "Tollgate",
+  behavior: {
+    abilities: [
+      {
+        id: "toll",
+        type: "activated",
+        costs: [],
+        effects: [
+          {
+            type: "forEachPlayer",
+            players: "opponents",
+            effects: [
+              {
+                type: "chooserSelectsTarget",
+                chooser: "opponent",
+                declaration: { id: "d", selector: { zone: "hand", controller: "opponent" }, count: 1 },
+                effects: [{ type: "moveCard", target: { type: "selected", id: "d" }, to: "discard" }]
+              }
+            ]
+          },
+          { type: "modifyInfluence", player: "controller", amount: -1 }
+        ]
+      }
+    ]
+  }
+});
+
+describe("effects after a 'for each player' wait for every player (resume order)", () => {
+  test("the effect after 'each opponent discards' resolves only after the last opponent has chosen", () => {
+    const FILL = character({ name: "Fill" });
+    const { engine, id } = buildGame({
+      players: SEATS,
+      cards: [
+        { key: "t", def: TOLLGATE, owner: "p1" },
+        { key: "a2", def: FILL, owner: "p2", zone: "hand" },
+        { key: "b2", def: FILL, owner: "p2", zone: "hand" },
+        { key: "a3", def: FILL, owner: "p3", zone: "hand" },
+        { key: "b3", def: FILL, owner: "p3", zone: "hand" }
+      ]
+    });
+    const before = influence(engine).p1;
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("t"), abilityId: "toll" });
+    resolvePendingResponses(engine);
+    const choosers: string[] = [];
+    while (engine.state.pendingChoice?.kind === "chooserSelectsTarget") {
+      const pending = engine.state.pendingChoice;
+      choosers.push(pending.playerId);
+      assert.equal(influence(engine).p1, before, `not yet: ${pending.playerId} is still choosing`);
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: pending.playerId,
+        choice: { kind: "chooserSelectsTarget", selected: [engine.state.players[pending.playerId].hand[0]] }
+      });
+      resolvePendingResponses(engine);
+    }
+    assert.deepEqual(choosers, ["p2", "p3"]);
+    assert.equal(influence(engine).p1, before - 1);
+  });
+});
+
 describe("both players (MP 3)", () => {
   test("'both players' is the controller and the named opponent", () => {
     const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "b", def: BOTH, owner: "p1" }] });
