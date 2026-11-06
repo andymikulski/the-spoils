@@ -19404,7 +19404,7 @@ export class SpoilsEngine {
         if (!choice.cardId) {
           assert(
             !pending.heroClaim ||
-              !pending.candidates.some(cardId => this.claimedTacticPlayable(cardId, pending.playerId)),
+              !pending.candidates.some(cardId => this.claimedTacticDryRunPlays(cardId, pending.playerId)),
             "A claimed Hero tactic that can be played must be played (SD 9)."
           );
           this.state.pendingChoice = undefined;
@@ -24492,6 +24492,31 @@ export class SpoilsEngine {
       }
     }
     return false;
+  }
+
+  /**
+   * Whether playing the claimed Hero tactic \`cardId\` (now the pending
+   * `deployForFree` choice) actually succeeds on a dry run, taking the first
+   * legal cards for every pick it must make — the test for refusing to let
+   * the claimer decline it (SD 9: "plays it for free if they can").
+   */
+  private claimedTacticDryRunPlays(cardId: CardInstanceId, playerId: PlayerId): boolean {
+    if (!this.claimedTacticPlayable(cardId, playerId)) return false;
+    const definition = this.getDefinition(cardId);
+    const context: ResolutionContext = { sourceId: cardId, controllerId: playerId, selected: {} };
+    const selected: Record<string, CardInstanceId[]> = {};
+    for (const declaration of this.getPlayTargetDeclarations(definition, 0)) {
+      const needed = declaration.optional ? 0 : Math.max(0, this.evaluateNumber(declaration.count, context));
+      selected[declaration.id] = this.targetCandidates(declaration.selector, context, playerId, needed)
+        .slice(0, needed)
+        .map(card => card.id);
+      context.selected[declaration.id] = selected[declaration.id];
+    }
+    return this.checkAction({
+      type: "resolvePendingChoice",
+      playerId,
+      choice: { kind: "deployForFree", cardId, selected }
+    }).ok;
   }
 
   /** Sets the game's result and announces it. */
