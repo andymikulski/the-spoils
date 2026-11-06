@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** merge the two per-card fix branches (audit g1/g2, g3/g4) when they report; run the full suite + oracle; then the remaining Known follow-ups and open questions with the user.
+**Next action:** the remaining engine gaps below (each unblocks a named card), then open questions Q-MP1 / Q-MP2 with the user. Every phase checklist item is otherwise done.
 
 ## Sources
 
@@ -129,7 +129,7 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] Static "references an opponent" analysis per block; binding at play /
       activate / trigger; created effects capture `opponentId`
 - [x] Card audit → `data/multiplayer-audit/*.json` (spec below)
-- [ ] Apply category (b)/(c) fixes; 3-player tests for (b)/(c)/(d)
+- [x] Apply category (b)/(c) fixes; 3-player tests for (b)/(c)/(d)
 
 ### Phase 4 — Showdown
 - [x] `src/engine/showdown.ts`: opponent rule (SD 13–15), allegiance dealer
@@ -244,8 +244,14 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 
 - 2026-11-06 (cont.) — r13-multiplayer, r14-showdown, r15-epic all done (15/15 rules batches). r14 found three `claimHeroCards` mismatches, fixed: a playable claimed tactic must be played (SD 9), an unplayable one is removed at once (SD 10), the rest of a claim survives a tactic. The Evil Alliance and Slightly Less Evil Alliance re-encoded (full fidelity; clause tests converted from TODO; oracle games 501/502 re-recorded as an intended data change). Elimination re-stamps turns counted ahead; `startOfOpponentNextTurn` follows the bound opponent. RULES.md §16/§17, BEHAVIORS.md, README, `examples/showdown.ts`.
 
+- 2026-11-06 (cont.) — Per-card multiplayer fixes merged: audit g1/g2 (17 cards / 33 printings re-encoded, 11 verified, 11 d-rulings pinned; `per-card/multiplayer-g12.test.ts`, 78 tests) and g3/g4 (27 of 31 cards re-encoded; `per-card/multiplayer-g34.test.ts`, 56 tests). Classic oracle unchanged by both. Engine: conditions alone never need an opponent named; replacements bind the affected opponent; mid-resolution with nobody to ask → first candidate; a block bound to an eliminated opponent reaches nobody; effect-frame resume order fixed (a list's remainder waits below what its paused effect parked).
+
 ## Known follow-ups
 
+- **Cards still waiting on an engine feature** (see each audit entry's `resolved`): Final Countdown (delayed effect on the bound opponent's next turn — now supported by `startOfOpponentNextTurn` + `opponentId`; re-check), Underhanded Gamer 8bed01de ("cannot be blocked by <player>" grant), Omahkapi'si Pi'kssii (pick restriction conditional on the picker), Unloyal Necromorph (optional replacement offered to every opponent), The Billionaire (borrowed ability's opponent should be the Billionaire), The Open R&D Faction (one created ability per player), Thabbashite Barbeque ("look at an opponent's hand" needs a mid-effect `chooseOpponent`), Meat of the Mountain (singular "that player's opponent").
+- `anyPlayerMayPay` has no `elseEffects` and prompts players who cannot pay (the g34 cards use `forEachPlayer` + `mayPay` instead). Changing the prompt order alters classic games: re-record the oracle deliberately if done.
+- `forEachPlayer` inside a replacement runs state-based checks mid-replacement (Lucky Bastard worked around it).
+- The "keep every player" d-rulings (Community Chest, Free Trade Agreement, Ambiguity Embiggener, Mercenary's Creed) read "both players" more widely than MP 3 — confirm with the user.
 - SD 2 ("The Villain uses The Evil Alliance faction") is not enforced at setup: any faction may sit in the Villain's seat (house-rule friendly). Enforce with a faction flag if wanted.
 - `usesPerTurn` on the shared faction's abilities is keyed per card + ability, not per Hero (equivalent while they are own-turn only).
 - Slightly Less Evil Alliance's TRUE COLORS uses `eventPlayerIs: "controller"` (the shared card is the Villain's), so it also ticks — harmlessly — in a classic game.
