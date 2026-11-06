@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** the remaining engine gaps below (each unblocks a named card), then open questions Q-MP1 / Q-MP2 with the user. Every phase checklist item is otherwise done.
+**Next action:** Phase 7 — baseline the table-mode matrix (`ffa3`, `ffa4`, `showdown`) over the whole suite, then divide the failures among Sonnet agents by suite / set (triage → harness / card data / engine gap), engine gaps fixed by the lead in batches, until every mode is green.
 
 ## Sources
 
@@ -150,6 +150,41 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] r13–r15 atom tests; `mark-done` (r15-epic done)
 - [x] Fuzz: 3/4/5-player FFA, Showdown 1v2/1v3/1v4 with traitors
 - [x] `examples/showdown.ts`
+
+### Phase 7 — Every test at every table (the acceptance gate)
+
+Goal: every existing test — unit, per-card, clause, rules, oracle (~43.7k) — passes
+unchanged at bigger tables. `SPOILS_TABLE=<mode>` re-seats every two-player
+`buildGame` board (`src/engine/__tests__/support/bystander.ts`):
+
+| Mode | Seats | Format |
+|---|---|---|
+| `classic` | P1, P2 | classic |
+| `ffa3` | P1, P2, B1 | freeForAll |
+| `ffa4` | P1, B1, P2, B2 | freeForAll |
+| `showdown` | P1 Villain; P2, B1, B2 loyal Heroes | showdown |
+
+The extra seats are passive (pass priority, decline, end their turns); each test's
+two-player meaning is kept (the other original player is named as "your opponent";
+the result is judged between the original two). Expected: identical to classic. A
+failure in a mode = something a bigger table changes → classify:
+- **harness** — the test or wrapper assumes two seats in a way the rules don't (fix the harness/test, not the engine);
+- **card data** — the card's encoding is wrong at a bigger table (patch + 3-player test);
+- **engine** — a rule/capability gap (written up; fixed by the lead, serially).
+
+Run: `node .work/mp-lead/run-matrix.cjs <mode> <repoDir>` → `.work/mp-lead/matrix-<mode>.json`
+(failures with file / test / error). Tests built with `createFactionGame` or
+`buildGame({ players })` already choose their own table and run once.
+
+- [ ] Baseline ffa3 / ffa4 / showdown (failure counts per suite below)
+- [ ] Triage + fix by suite/set (agents, worktrees; engine gaps to the lead)
+- [ ] All modes green; add `npm run test:tables` and run it in CI
+
+| Mode | Tests | Failing | Notes |
+|---|---|---|---|
+| ffa3 | | | |
+| ffa4 | | | |
+| showdown | | | |
 
 ## Card audit spec (Phase 3)
 
