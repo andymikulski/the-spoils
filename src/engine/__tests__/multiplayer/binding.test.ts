@@ -319,6 +319,44 @@ describe("effects after a 'for each player' wait for every player (resume order)
   });
 });
 
+/** "At the start of your opponent's next turn, you gain 5 influence." (Final Countdown's shape) */
+const COUNTDOWN: CardDefinition = character({
+  name: "Countdown",
+  behavior: {
+    abilities: [
+      {
+        id: "count",
+        type: "activated",
+        costs: [],
+        effects: [
+          { type: "scheduleEffect", when: "startOfOpponentNextTurn", effects: [{ type: "modifyInfluence", player: "controller", amount: 5 }] }
+        ]
+      }
+    ]
+  }
+});
+
+describe("'your opponent's next turn' is the named opponent's", () => {
+  test("a delayed effect for p3's next turn skips p2's turn", () => {
+    const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "c", def: COUNTDOWN, owner: "p1" }] });
+    assert.throws(
+      () => engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("c"), abilityId: "count" }),
+      /Choose which opponent/
+    );
+    const before = influence(engine).p1;
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("c"), abilityId: "count", opponentId: "p3" });
+    resolvePendingResponses(engine);
+    engine.perform({ type: "endTurn", playerId: "p1" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.activePlayerId, "p2");
+    assert.equal(influence(engine).p1, before, "not on p2's turn");
+    engine.perform({ type: "endTurn", playerId: "p2" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.activePlayerId, "p3");
+    assert.equal(influence(engine).p1, before + 5, "on p3's turn");
+  });
+});
+
 describe("both players (MP 3)", () => {
   test("'both players' is the controller and the named opponent", () => {
     const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "b", def: BOTH, owner: "p1" }] });

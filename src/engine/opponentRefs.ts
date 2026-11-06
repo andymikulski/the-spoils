@@ -73,8 +73,12 @@ function walk(node: unknown, inPick: boolean, refs: OpponentRefs): void {
   // themselves ("each opponent ...", "any player may pay ..."): the body's
   // references are not the enclosing block's.
   const rebindsBody = record.type === "forEachPlayer" || record.type === "anyPlayerMayPay";
-  // "Both players" names the block's opponent itself (MP 3).
-  if (record.type === "forEachPlayer" && record.players === "controllerAndOpponent") {
+  // "Both players" names the block's opponent itself (MP 3), as does "at the
+  // start of your opponent's next turn".
+  if (
+    (record.type === "forEachPlayer" && record.players === "controllerAndOpponent") ||
+    (record.type === "scheduleEffect" && record.when === "startOfOpponentNextTurn")
+  ) {
     if (inPick) refs.inPicks = true;
     else refs.elsewhere = true;
   }
