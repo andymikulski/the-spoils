@@ -9,8 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** Phase 0 agents running (atoms source, classic oracle, epic
-legality, rarity sweep, card audit ×4). Lead: Phase 1 types.
+**Next action:** Phase 2 — elimination + `GameResult` (replaces `winner`; save format v2 migration; codemod tests), then battle defender selection, turn-parity scheduling, `buildGame({ players })` fixture. Classic oracle agent still running in a worktree; merge its branch when it reports.
 
 ## Sources
 
@@ -90,14 +89,14 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 ### Phase 0 — Sources & safety net
 - [x] Transcribe the three rules cards → `docs/rules/*.md` with atoms
 - [x] This tracker
-- [ ] Rules-suite atom source `data/rule-tests/source/multiplayer.txt` +
+- [x] Rules-suite atom source `data/rule-tests/source/multiplayer.txt` +
       `_atoms.ts` / CLI support + batches `r13-multiplayer`, `r14-showdown`,
       `r15-epic`
 - [ ] Classic regression oracle: seeded autoplay transcripts recorded from
       the pre-refactor engine + replay test asserting identical output
 
 ### Phase 1 — Types (`src/types/`)
-- [ ] `GameFormat`, `GameState.format`, `turnOrder`
+- [x] `GameFormat`, `GameState.format`, `turnOrder`
 - [ ] `PlayerState.eliminated`, `turnsBegun`, Showdown `side` / allegiance
 - [ ] `GameResult` replaces `GameWinner`
 - [ ] `ResolutionContext.opponentId`; `opponentId` on `playCard` /
@@ -111,12 +110,13 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [ ] `src/types/showdown.ts`
 
 ### Phase 2 — Core engine N-player refactor
-- [ ] Seats & opponents: replace `getOpponent` (29 callers) with
+- [ ] Seat swap (Emergency Obfuscation) — asserts two living players (`soleOtherSeat`) until an E6 ruling
+- [x] Seats & opponents: replace `getOpponent` (29 callers) with
       `nextSeat` / `opponentsOf` / `boundOpponent`; unify
       `scopeMatchesPlayer`, `selectorPlayerMatch` and inline copies
 - [ ] Turn order + turn-parity arithmetic → per-player turn scheduling
-- [ ] Priority rotation (D6)
-- [ ] Setup: `createFactionGame(defs, players[], { format })`,
+- [x] Priority rotation (D6)
+- [x] Setup: `createFactionGame(defs, players[], { format })`,
       `createGame(players[], cards)`; fixture `buildGame({ players })`
 - [ ] Battle defender selection
 - [ ] Elimination + `GameResult` (D3, D8)
@@ -139,15 +139,15 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [ ] Setup validation
 
 ### Phase 5 — Epic legality & card data
-- [ ] `isEpicCard`, deck options, issue kinds (EP 2–4), export
-- [ ] Data-integrity test pinning the epic set
-- [ ] Rarity-strip image sweep for unmarked epic printings
+- [x] `isEpicCard`, deck options, issue kinds (EP 2–4), export
+- [x] Data-integrity test pinning the epic set
+- [x] Rarity-strip image sweep for unmarked epic printings
 
 ### Phase 6 — Docs & hardening
 - [ ] RULES.md §15 Multiplayer, §16 Showdown; rewrite §3.6 note
       (`RULES.md:375-379`); N-player wording in §1/§5/§7
 - [ ] BEHAVIORS.md, TESTING.md, README.md
-- [ ] r13–r15 atom tests; `mark-done`
+- [ ] r13–r15 atom tests; `mark-done` (r15-epic done)
 - [ ] Fuzz: 3/4/5-player FFA, Showdown 1v2/1v3/1v4 with traitors
 - [ ] `examples/showdown.ts`
 
@@ -232,6 +232,10 @@ Lecram (look at an opponent's top card — unencoded). Equivalent-in-2p but
 should move to `controllerOf` the picked/event card for N players: Blow Up,
 Splattergun, Redonkulous, Ritual of the Knob & Pull, Smothering Corpulence,
 Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
+
+## Progress log
+
+- 2026-11-06 — Phase 0 sources + tracker. Card audit (318 cards). Epic legality (`deckRules.ts`, RULES.md §15, r15-epic done). Rarity sweep: OCR + visual over all 2257 printings — exactly the 7 known epic printings, no data change needed. Rules suite gains the MULTIPLAYER source (40 atoms, batches r13–r15). N-seat setup (`createGame`, `createFactionGame`, `seating.ts`, `showdown.ts`). `getOpponent` removed: opponent set semantics, `ResolutionContext.opponentId`, priority rotation via `ResponseWindowState.stackResponders`, battle responders, N-bidder auction. `scripts/run-tests.cjs` passes relative paths (Windows command-line limit in deep worktrees). Agent worktrees branch from `main` — brief agents to `git merge --ff-only multiplayer` first.
 
 ## Open questions
 
