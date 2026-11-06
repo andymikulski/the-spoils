@@ -206,6 +206,29 @@ describe("saveGame / loadGame", () => {
       /newer than this engine supports/
     );
   });
+
+  test("a format-1 save loads as a classic game, its winner becoming the result", () => {
+    const { engine } = buildGame({});
+    const legacyState = structuredClone(engine.state) as unknown as Record<string, unknown>;
+    delete legacyState.format;
+    delete legacyState.turnOrder;
+    legacyState.winner = P2;
+    const legacy = { formatVersion: 1, state: legacyState } as unknown as SerializedGame;
+
+    const restored = loadGame(legacy, Object.values(engine.definitions));
+
+    assert.deepEqual(restored.state.format, { kind: "classic" });
+    assert.deepEqual(restored.state.turnOrder, [P1, P2]);
+    assert.deepEqual(restored.state.result, { outcome: "victory", winners: [P2] });
+    assert.equal("winner" in restored.state, false);
+  });
+
+  test("a format-1 drawn game loads as a draw", () => {
+    const { engine } = buildGame({});
+    const legacyState = { ...structuredClone(engine.state), winner: "draw" } as unknown as SerializedGame["state"];
+    const restored = loadGame({ formatVersion: 1, state: legacyState }, Object.values(engine.definitions));
+    assert.deepEqual(restored.state.result, { outcome: "draw", winners: [] });
+  });
 });
 
 describe("getSaveSummary", () => {
