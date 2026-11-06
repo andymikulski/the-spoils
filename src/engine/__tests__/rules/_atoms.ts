@@ -2,7 +2,9 @@
 //
 // The Comprehensive Rules (v2.5) and the Rules FAQ (v2.0) are split into
 // *atoms*: one per numbered rule or sub-rule ("CR 408.3b") and one per FAQ
-// question ("FAQ 7"). Every atom must be covered by a rule test (`_rule.ts`)
+// question ("FAQ 7"). A third source, the printed multi-player / Showdown / epic
+// rules cards (docs/rules/), contributes one atom per stated rule ("MP 2",
+// "SD 13", "SD-EA 6", "SD-SLE 2", "EP 3"). Every atom must be covered by a rule test (`_rule.ts`)
 // or explicitly exempted with a reason; `_coverage.test.ts` enforces it.
 //
 // The source text lives in data/rule-tests/source/ (extracted once from the
@@ -13,10 +15,11 @@
 // manifest and the gate's idea of "every atom" can never drift.
 
 export interface RuleAtom {
-  /** `CR 408.3b` or `FAQ 7`. */
+  /** `CR 408.3b`, `FAQ 7`, `MP 2`, `SD 13`, `SD-EA 6`, `SD-SLE 2` or `EP 3`. */
   id: string;
-  source: "CR" | "FAQ";
-  /** CR: the three-digit section ("408"). FAQ: "FAQ". */
+  /** `MULTIPLAYER` covers the MP / SD / SD-EA / SD-SLE / EP atoms (data/rule-tests/source/multiplayer.txt). */
+  source: "CR" | "FAQ" | "MULTIPLAYER";
+  /** CR: the three-digit section ("408"). FAQ: "FAQ". Multi-player cards: the id prefix ("SD-EA"). */
   section: string;
   sectionTitle: string;
   /** CR only: the atom this one nests under ("408.3" for "408.3b"). */
@@ -30,8 +33,17 @@ export interface RuleAtom {
   batch: string;
 }
 
-/** Test batches: contiguous runs of CR sections, ordered riskiest-first (docs/TESTING.md). */
-export const BATCHES: readonly { batch: string; title: string; sections: readonly string[] }[] = [
+export interface RuleBatch {
+  batch: string;
+  title: string;
+  /** CR sections ("408") and "FAQ" that belong to the batch. */
+  sections?: readonly string[];
+  /** Atom-id prefixes ("SD-EA ") that belong to the batch, for sources without CR sections. */
+  prefixes?: readonly string[];
+}
+
+/** Test batches: contiguous runs of CR sections, ordered riskiest-first (docs/TESTING.md); r13-r15 are keyed by atom-id prefix. */
+export const BATCHES: readonly RuleBatch[] = [
   { batch: "r01-priority-responses", title: "Responding to actions, ending a turn", sections: ["607", "610"] },
   { batch: "r02-battle", title: "Attacking, resolving a battle, battle terms, unblockability", sections: ["302", "608", "609", "412"] },
   { batch: "r03-costs-effects", title: "Costs, effects, numeric cost, numbers, pay", sections: ["401", "402", "406", "410", "309", "404"] },
@@ -43,10 +55,17 @@ export const BATCHES: readonly { batch: string; title: string; sections: readonl
   { batch: "r09-resources-thresholds", title: "Threshold, resources, factions", sections: ["405", "202", "203"] },
   { batch: "r10-card-types", title: "Characters, tactics, items, locations, changing card types, parts of a card", sections: ["201", "204", "205", "206", "207", "208"] },
   { batch: "r11-general-loops-bidding", title: "Most important rule, object of the game, deck construction, tournaments, errata, bidding, action loops", sections: ["101", "102", "103", "104", "105", "413", "414"] },
-  { batch: "r12-faq", title: "Rules FAQ", sections: ["FAQ"] }
+  { batch: "r12-faq", title: "Rules FAQ", sections: ["FAQ"] },
+  { batch: "r13-multiplayer", title: "Multi-Player Guidelines", prefixes: ["MP "] },
+  { batch: "r14-showdown", title: "Showdown rules, The Evil Alliance, Slightly Less Evil Alliance", prefixes: ["SD ", "SD-EA ", "SD-SLE "] },
+  { batch: "r15-epic", title: "Epic rules", prefixes: ["EP "] }
 ];
 
-const BATCH_OF = new Map(BATCHES.flatMap((b) => b.sections.map((s) => [s, b.batch] as const)));
+const BATCH_OF = new Map(BATCHES.flatMap((b) => (b.sections ?? []).map((s) => [s, b.batch] as const)));
+
+function batchOfId(id: string): string {
+  return BATCHES.find((b) => b.prefixes?.some((prefix) => id.startsWith(prefix)))?.batch ?? "unassigned";
+}
 
 const ATOM_START = /^\s*(\d{3})\.(\d+)([a-z]?)\.?(?:\s+(.*))?$/;
 const SECTION_START = /^(\d{3}) (\S.*)$/;
@@ -141,8 +160,49 @@ export function parseFaq(text: string): RuleAtom[] {
   }));
 }
 
-export function buildAtoms(crText: string, faqText: string): RuleAtom[] {
-  return [...parseCr(crText), ...parseFaq(faqText)];
+const MP_TITLES: Record<string, string> = {
+  MP: "Multi-Player Guidelines",
+  SD: "Showdown Rules",
+  "SD-EA": "Showdown: The Evil Alliance",
+  "SD-SLE": "Showdown: Slightly Less Evil Alliance",
+  EP: "Epic Rules"
+};
+const MP_ATOM = /^(MP|SD|SD-EA|SD-SLE|EP) (\d+) (\S.*)$/;
+
+/**
+ * Parses data/rule-tests/source/multiplayer.txt: one atom per line, `<id> <text>`
+ * (`MP 2 If a card refers to ...`). Blank lines and `#` comments are ignored.
+ */
+export function parseMultiplayer(text: string): RuleAtom[] {
+  return text.split(/\r?\n/).flatMap((line) => {
+    if (!line.trim() || line.startsWith("#")) return [];
+    const match = MP_ATOM.exec(line);
+    if (!match) throw new Error(`parseMultiplayer: cannot parse line "${line}"`);
+    const [, prefix, number, wording] = match;
+    const id = `${prefix} ${number}`;
+    return [{ id, source: "MULTIPLAYER", section: prefix!, sectionTitle: MP_TITLES[prefix!]!, kind: "rule", text: wording!.trim(), batch: batchOfId(id) } satisfies RuleAtom];
+  });
+}
+
+/**
+ * Pulls the atoms out of the "## Atoms" section of one of docs/rules/*.md
+ * (`- **SD 13** \u2014 text`, wrapped over several lines) as multiplayer.txt lines.
+ */
+export function extractGuidelineAtoms(markdown: string): string[] {
+  const section = /^## Atoms\s*$/m.exec(markdown);
+  if (!section) throw new Error('extractGuidelineAtoms: no "## Atoms" section');
+  const body = markdown.slice(section.index + section[0].length).split(/\r?\n(?=## )/)[0]!;
+  const out: string[] = [];
+  for (const line of body.split(/\r?\n/)) {
+    const item = /^- \*\*([^*]+)\*\* \u2014 (.*)$/.exec(line);
+    if (item) out.push(`${item[1]} ${item[2]}`);
+    else if (/^\s+\S/.test(line) && out.length) out[out.length - 1] += ` ${line.trim()}`;
+  }
+  return out;
+}
+
+export function buildAtoms(crText: string, faqText: string, multiplayerText: string): RuleAtom[] {
+  return [...parseCr(crText), ...parseFaq(faqText), ...parseMultiplayer(multiplayerText)];
 }
 
 // --- scanning the test sources for coverage ----------------------------------

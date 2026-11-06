@@ -1,6 +1,7 @@
 // CLI for the rules-coverage suite (docs/TESTING.md). Run: npm run rule-tests -- <command>
 //
-//   extract                  re-extract data/rule-tests/source/*.txt from the PDFs in docs/ (needs pdftotext)
+//   extract                  re-extract data/rule-tests/source/*.txt: the CR and FAQ from the PDFs in docs/ (needs pdftotext),
+//                            multiplayer.txt from the "## Atoms" sections of docs/rules/*.md
 //   build                    regenerate data/rule-tests/atoms.json from the source text
 //   batches                  one line per batch: atoms, covered, done
 //   manifest <batch>         the batch's atoms with their full wording and coverage state
@@ -12,7 +13,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { BATCHES, buildAtoms, scanRuleReferences, type RuleAtom, type RuleReference } from "../../src/engine/__tests__/rules/_atoms.ts";
+import { BATCHES, buildAtoms, extractGuidelineAtoms, scanRuleReferences, type RuleAtom, type RuleReference } from "../../src/engine/__tests__/rules/_atoms.ts";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const DATA = ROOT + "data/rule-tests/";
@@ -69,11 +70,13 @@ switch (command) {
       const result = spawnSync("pdftotext", ["-layout", ROOT + "docs/" + pdf, DATA + "source/" + out], { stdio: "inherit" });
       if (result.status !== 0) throw new Error(`pdftotext failed for ${pdf}`);
     }
+    const guidelines = ["multiplayer-guidelines", "showdown-rules", "epic-rules"].flatMap((name) => extractGuidelineAtoms(readFileSync(ROOT + `docs/rules/${name}.md`, "utf8")));
+    writeFileSync(DATA + "source/multiplayer.txt", guidelines.join("\n") + "\n");
     console.log("extracted; now run `build`");
     break;
   }
   case "build": {
-    const atoms = buildAtoms(readFileSync(DATA + "source/cr-2.5.txt", "utf8"), readFileSync(DATA + "source/faq-2.0.txt", "utf8"));
+    const atoms = buildAtoms(readFileSync(DATA + "source/cr-2.5.txt", "utf8"), readFileSync(DATA + "source/faq-2.0.txt", "utf8"), readFileSync(DATA + "source/multiplayer.txt", "utf8"));
     writeFileSync(DATA + "atoms.json", JSON.stringify(atoms, null, 1) + "\n");
     console.log(`${atoms.length} atoms (${atoms.filter((a) => a.kind === "heading").length} headings) -> data/rule-tests/atoms.json`);
     break;

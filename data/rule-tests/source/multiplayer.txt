@@ -1,0 +1,40 @@
+MP 1 The game may be played with three or more players.
+MP 2 If a card refers to "your opponent", select one of the other players as your opponent for the current block of rules text.
+MP 3 If a card refers to "both players", the same selection applies: "both players" means you and the opponent selected for that block of rules text.
+MP 4 The selected opponent is temporary: it holds only for the current block of rules text, and a new selection is made each time one is needed.
+MP 5 House rules are encouraged for combinations that are too powerful in multi-player (non-normative; the engine exposes no house-rule hook for this — see `docs/house-rules-mods-design.md`).
+SD 1 One player is the Villain; every other player is a Hero.
+SD 2 The Villain uses The Evil Alliance faction and a Villain Deck that follows all normal Constructed deck rules.
+SD 3 There is a single shared Hero Deck. Heroes access it only through effects (it is not any player's deck).
+SD 4 Each Hero uses a faction of their choice for their own deck.
+SD 5 Every Hero also has access to the Slightly Less Evil Alliance faction (a shared faction, in addition to their own).
+SD 6 Before the game starts, each Hero is dealt one Allegiance card at random, face-down. It determines that Hero's hidden loyalty (to the Heroes, or secretly to the Villain).
+SD 7 The Villain may look at every Allegiance card at any time.
+SD 8 To claim a Hero card: a non-tactic is put into play under the claiming player's control.
+SD 9 To claim a Hero tactic: the claiming player plays it for free if they can, ignoring threshold.
+SD 10 A Hero card is removed from the game when it leaves play, when it is done resolving, or if it cannot be played.
+SD 11 The Temptation Pile is a group of face-up cards on the table, manipulated by certain effects.
+SD 12 Heroes may attack each other.
+SD 13 The Villain's opponent: when a card refers to "your opponent" or "both players", the Villain selects one Hero as opponent for the current block of rules text.
+SD 14 A Hero's opponent is the Villain.
+SD 15 A Hero whose revealed Allegiance card shows loyalty to the Villain must select one of the other Heroes as opponent.
+SD-EA 1 X is the number of opponents the Villain has at the start of the game.
+SD-EA 2 Starting influence is 15 + 10·X.
+SD-EA 3 Starting resources: any 1+X staple resources.
+SD-EA 4 Starting draw: 7 going first, 8 going second.
+SD-EA 5 Restore rule: at the start of your turn, restore all your depleted cards and detach all resources from your faction.
+SD-EA 6 Develop rule: at the start of your turn, draw a card or play a resource; repeat X-1 times (X develop choices in total).
+SD-EA 7 DRAW: pay 3, draw a card.
+SD-EA 8 RESOURCE: pay 3, play a resource.
+SD-EA 9 ENTICEMENT: only during your turn, once per turn; draw X-1 cards, play a resource, put the top card of the Hero Deck into the Temptation Pile.
+SD-EA 10 DARING GAMBIT: if a Hero inflicts at least 7 damage to another Hero in a turn, the damaging Hero claims the entire Temptation Pile.
+SD-EA 11 OMNIPOTENCE: the Villain automatically meets all thresholds.
+SD-SLE 1 Every Hero can use the abilities on this card.
+SD-SLE 2 GIVE IN TO TEMPTATION: only during your turn, once per turn; pay 2 and pick a character another Hero controls; the Villain takes control of it, and you claim one card in the Temptation Pile.
+SD-SLE 3 SPRING FORTH MY BURLY PROTECTOR!: pay 6; reveal the top card of the Hero Deck and claim it.
+SD-SLE 4 TEAMWORK: pay 2, pick a card you control, choose another player; that player takes control of the card.
+SD-SLE 5 YOUR TRUE COLORS ARE REVEALED: at the start of the Villain's turn, put a token on this card; at 7 tokens, all Heroes turn their Allegiance cards face-up.
+EP 1 A card is epic if its printed rarity mark (bottom of the card, next to the set icon) reads "EPIC". In the catalog this is `rarity: "epic"`; the Showdown factions print "E-SLE" (`rarity: "e-sle"`), which is also epic.
+EP 2 A Constructed deck may include at most 1 copy of each epic card.
+EP 3 Epic cards may not be used in Limited play.
+EP 4 Epic cards may not be used in tournament play, unless the tournament is an "epic tournament".

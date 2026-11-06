@@ -9,7 +9,7 @@ The engine is checked from four directions. Every suite runs under `npm test`
 | Engine unit tests | `src/engine/__tests__/*.test.ts`, `src/__tests__/` | Individual mechanisms (stack, triggers, battle, choices, persistence, redaction, card text parsing, …) behave as `RULES.md` says. Synthetic fixtures only. |
 | Per-card suite | `src/engine/__tests__/per-card/<set>.test.ts` | Every catalog card plays its main effect on a small mid-game board, with concrete picks and outcomes. |
 | Clause suite | `src/engine/__tests__/clauses/<batch>.test.ts` | Every printed clause of every card does what the printed text says. |
-| Rules suite | `src/engine/__tests__/rules/<batch>.test.ts` | Every numbered rule of the Comprehensive Rules v2.5 and every FAQ v2.0 ruling is followed, independent of any real card. |
+| Rules suite | `src/engine/__tests__/rules/<batch>.test.ts` | Every numbered rule of the Comprehensive Rules v2.5 and every FAQ v2.0 ruling is followed, independent of any real card; also the multi-player, Showdown and epic rules cards. |
 
 Run one file while working on it:
 
@@ -225,12 +225,21 @@ true while a card waits (e.g. that costs were already paid).
 - **Atoms.** The CR is split into one atom per numbered rule or sub-rule
   (`CR 408.3b`) with its unnumbered paragraphs and examples folded in; each FAQ
   Q&A is one atom (`FAQ 7`). Title-only headings (`CR 201.1 Name`) are
-  `kind: "heading"` and need no coverage. `data/rule-tests/atoms.json` is
-  generated from the committed source text (`data/rule-tests/source/`) by
-  `npm run rule-tests -- build` and checked by the gate.
-- **Batches.** `BATCHES` in `rules/_atoms.ts` groups the CR sections into 12
-  batches. A batch's files are `rules/<batch>.test.ts` (or
-  `<batch>.pN.test.ts`).
+  `kind: "heading"` and need no coverage. A third source, the printed
+  multi-player / Showdown / epic rules cards (`docs/rules/*.md`, "## Atoms"
+  sections), adds one atom per stated rule: `MP n`, `SD n`, `SD-EA n`,
+  `SD-SLE n`, `EP n` (`source: "MULTIPLAYER"`), stored one per line as
+  `<id> <text>` in `data/rule-tests/source/multiplayer.txt`.
+  `data/rule-tests/atoms.json` is generated from the committed source text
+  (`data/rule-tests/source/`) by `npm run rule-tests -- build` and checked by
+  the gate.
+- **Batches.** `BATCHES` in `rules/_atoms.ts` groups the CR sections into
+  batches r01-r12 (r12 is the FAQ), plus r13-multiplayer (`MP`),
+  r14-showdown (`SD`, `SD-EA`, `SD-SLE`) and r15-epic (`EP`), which list
+  atom-id `prefixes` instead of CR sections. A batch's files are
+  `rules/<batch>.test.ts` (or `<batch>.pN.test.ts`). The gate only enforces
+  batches listed in `done.json`; batches not yet written show up as uncovered in
+  `coverage` / `batches` but do not fail it.
 - **Markers** (`rules/_rule.ts`). Every rule atom must be named by one of:
   - `rule(ids, title, fn)` — a test that the engine follows the rule(s);
   - `ruleMismatch(ids, findingId, title, fn)` — the same test, known failing,
@@ -248,7 +257,8 @@ true while a card waits (e.g. that costs were already paid).
   exemption has a reason, every batch in `done.json` covers all its atoms, no
   bare asserts.
 - **CLI** (`npm run rule-tests -- <command>`): `extract` (re-extract the source
-  text from the PDFs in `docs/`; needs `pdftotext`), `build`, `batches`,
+  text: the CR and FAQ from the PDFs in `docs/`, needing `pdftotext`, and
+  `multiplayer.txt` from `docs/rules/*.md`), `build`, `batches`,
   `manifest <batch>`, `show "<id>"`, `coverage [--batch b]` (writes
   `data/rule-tests/progress.md`), `mark-done <batch>`, `report`.
 

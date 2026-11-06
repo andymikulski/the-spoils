@@ -33,14 +33,17 @@ function readMarkdownDir(dir: string): string {
 
 describe("rules coverage", () => {
   test("data/rule-tests/atoms.json matches the source text (run `npm run rule-tests -- build`)", () => {
-    const current = buildAtoms(readFileSync(DATA + "source/cr-2.5.txt", "utf8"), readFileSync(DATA + "source/faq-2.0.txt", "utf8"));
+    const current = buildAtoms(readFileSync(DATA + "source/cr-2.5.txt", "utf8"), readFileSync(DATA + "source/faq-2.0.txt", "utf8"), readFileSync(DATA + "source/multiplayer.txt", "utf8"));
     assert.deepEqual(current, manifest);
   });
 
-  test("every atom belongs to a batch, and every batch section exists", () => {
+  test("every atom belongs to a batch, and every batch section and prefix exists", () => {
     assert.deepEqual(manifest.filter((atom) => atom.batch === "unassigned").map((atom) => atom.id), []);
     const sections = new Set(manifest.map((atom) => atom.section));
-    const missing = BATCHES.flatMap((b) => b.sections.filter((s) => !sections.has(s)).map((s) => `${b.batch}: section ${s} has no atoms`));
+    const missing = [
+      ...BATCHES.flatMap((b) => (b.sections ?? []).filter((s) => !sections.has(s)).map((s) => `${b.batch}: section ${s} has no atoms`)),
+      ...BATCHES.flatMap((b) => (b.prefixes ?? []).filter((p) => !manifest.some((atom) => atom.batch === b.batch && atom.id.startsWith(p))).map((p) => `${b.batch}: prefix "${p}" has no atoms`))
+    ];
     // CR 404 "Rule Not Found" is an empty section: it has a heading and no rules.
     assert.deepEqual(missing.filter((line) => !line.endsWith("section 404 has no atoms")), []);
   });

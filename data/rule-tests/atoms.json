@@ -3962,5 +3962,365 @@
   "text": "Can I attack if both Hangdog Alley and Arcana Department are in play?",
   "answer": "Although both cards are contradictory of each other it is still possible to attack. When two or more cards put requirements on the same action (in this case it is attacking) then the player must try to fulfill as many of the requirements as possible. If it is impossible to fulfill all requirements then the player must make the decision that satisfies as many of the requirements as possible. The Spoils USATM — Rules FAQ Version 2.0",
   "batch": "r12-faq"
+ },
+ {
+  "id": "MP 1",
+  "source": "MULTIPLAYER",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines",
+  "kind": "rule",
+  "text": "The game may be played with three or more players.",
+  "batch": "r13-multiplayer"
+ },
+ {
+  "id": "MP 2",
+  "source": "MULTIPLAYER",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines",
+  "kind": "rule",
+  "text": "If a card refers to \"your opponent\", select one of the other players as your opponent for the current block of rules text.",
+  "batch": "r13-multiplayer"
+ },
+ {
+  "id": "MP 3",
+  "source": "MULTIPLAYER",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines",
+  "kind": "rule",
+  "text": "If a card refers to \"both players\", the same selection applies: \"both players\" means you and the opponent selected for that block of rules text.",
+  "batch": "r13-multiplayer"
+ },
+ {
+  "id": "MP 4",
+  "source": "MULTIPLAYER",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines",
+  "kind": "rule",
+  "text": "The selected opponent is temporary: it holds only for the current block of rules text, and a new selection is made each time one is needed.",
+  "batch": "r13-multiplayer"
+ },
+ {
+  "id": "MP 5",
+  "source": "MULTIPLAYER",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines",
+  "kind": "rule",
+  "text": "House rules are encouraged for combinations that are too powerful in multi-player (non-normative; the engine exposes no house-rule hook for this — see `docs/house-rules-mods-design.md`).",
+  "batch": "r13-multiplayer"
+ },
+ {
+  "id": "SD 1",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "One player is the Villain; every other player is a Hero.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 2",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "The Villain uses The Evil Alliance faction and a Villain Deck that follows all normal Constructed deck rules.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 3",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "There is a single shared Hero Deck. Heroes access it only through effects (it is not any player's deck).",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 4",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "Each Hero uses a faction of their choice for their own deck.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 5",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "Every Hero also has access to the Slightly Less Evil Alliance faction (a shared faction, in addition to their own).",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 6",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "Before the game starts, each Hero is dealt one Allegiance card at random, face-down. It determines that Hero's hidden loyalty (to the Heroes, or secretly to the Villain).",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 7",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "The Villain may look at every Allegiance card at any time.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 8",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "To claim a Hero card: a non-tactic is put into play under the claiming player's control.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 9",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "To claim a Hero tactic: the claiming player plays it for free if they can, ignoring threshold.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 10",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "A Hero card is removed from the game when it leaves play, when it is done resolving, or if it cannot be played.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 11",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "The Temptation Pile is a group of face-up cards on the table, manipulated by certain effects.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 12",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "Heroes may attack each other.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 13",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "The Villain's opponent: when a card refers to \"your opponent\" or \"both players\", the Villain selects one Hero as opponent for the current block of rules text.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 14",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "A Hero's opponent is the Villain.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD 15",
+  "source": "MULTIPLAYER",
+  "section": "SD",
+  "sectionTitle": "Showdown Rules",
+  "kind": "rule",
+  "text": "A Hero whose revealed Allegiance card shows loyalty to the Villain must select one of the other Heroes as opponent.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 1",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "X is the number of opponents the Villain has at the start of the game.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 2",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "Starting influence is 15 + 10·X.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 3",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "Starting resources: any 1+X staple resources.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 4",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "Starting draw: 7 going first, 8 going second.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 5",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "Restore rule: at the start of your turn, restore all your depleted cards and detach all resources from your faction.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 6",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "Develop rule: at the start of your turn, draw a card or play a resource; repeat X-1 times (X develop choices in total).",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 7",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "DRAW: pay 3, draw a card.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 8",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "RESOURCE: pay 3, play a resource.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 9",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "ENTICEMENT: only during your turn, once per turn; draw X-1 cards, play a resource, put the top card of the Hero Deck into the Temptation Pile.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 10",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "DARING GAMBIT: if a Hero inflicts at least 7 damage to another Hero in a turn, the damaging Hero claims the entire Temptation Pile.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-EA 11",
+  "source": "MULTIPLAYER",
+  "section": "SD-EA",
+  "sectionTitle": "Showdown: The Evil Alliance",
+  "kind": "rule",
+  "text": "OMNIPOTENCE: the Villain automatically meets all thresholds.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-SLE 1",
+  "source": "MULTIPLAYER",
+  "section": "SD-SLE",
+  "sectionTitle": "Showdown: Slightly Less Evil Alliance",
+  "kind": "rule",
+  "text": "Every Hero can use the abilities on this card.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-SLE 2",
+  "source": "MULTIPLAYER",
+  "section": "SD-SLE",
+  "sectionTitle": "Showdown: Slightly Less Evil Alliance",
+  "kind": "rule",
+  "text": "GIVE IN TO TEMPTATION: only during your turn, once per turn; pay 2 and pick a character another Hero controls; the Villain takes control of it, and you claim one card in the Temptation Pile.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-SLE 3",
+  "source": "MULTIPLAYER",
+  "section": "SD-SLE",
+  "sectionTitle": "Showdown: Slightly Less Evil Alliance",
+  "kind": "rule",
+  "text": "SPRING FORTH MY BURLY PROTECTOR!: pay 6; reveal the top card of the Hero Deck and claim it.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-SLE 4",
+  "source": "MULTIPLAYER",
+  "section": "SD-SLE",
+  "sectionTitle": "Showdown: Slightly Less Evil Alliance",
+  "kind": "rule",
+  "text": "TEAMWORK: pay 2, pick a card you control, choose another player; that player takes control of the card.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "SD-SLE 5",
+  "source": "MULTIPLAYER",
+  "section": "SD-SLE",
+  "sectionTitle": "Showdown: Slightly Less Evil Alliance",
+  "kind": "rule",
+  "text": "YOUR TRUE COLORS ARE REVEALED: at the start of the Villain's turn, put a token on this card; at 7 tokens, all Heroes turn their Allegiance cards face-up.",
+  "batch": "r14-showdown"
+ },
+ {
+  "id": "EP 1",
+  "source": "MULTIPLAYER",
+  "section": "EP",
+  "sectionTitle": "Epic Rules",
+  "kind": "rule",
+  "text": "A card is epic if its printed rarity mark (bottom of the card, next to the set icon) reads \"EPIC\". In the catalog this is `rarity: \"epic\"`; the Showdown factions print \"E-SLE\" (`rarity: \"e-sle\"`), which is also epic.",
+  "batch": "r15-epic"
+ },
+ {
+  "id": "EP 2",
+  "source": "MULTIPLAYER",
+  "section": "EP",
+  "sectionTitle": "Epic Rules",
+  "kind": "rule",
+  "text": "A Constructed deck may include at most 1 copy of each epic card.",
+  "batch": "r15-epic"
+ },
+ {
+  "id": "EP 3",
+  "source": "MULTIPLAYER",
+  "section": "EP",
+  "sectionTitle": "Epic Rules",
+  "kind": "rule",
+  "text": "Epic cards may not be used in Limited play.",
+  "batch": "r15-epic"
+ },
+ {
+  "id": "EP 4",
+  "source": "MULTIPLAYER",
+  "section": "EP",
+  "sectionTitle": "Epic Rules",
+  "kind": "rule",
+  "text": "Epic cards may not be used in tournament play, unless the tournament is an \"epic tournament\".",
+  "batch": "r15-epic"
  }
 ]
