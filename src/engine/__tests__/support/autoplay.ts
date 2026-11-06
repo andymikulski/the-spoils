@@ -72,6 +72,8 @@ export interface AutoplayOptions {
   maxActions?: number;
   /** RNG driving the bot's own decisions (which card, block or not, decline-or-take an optional target, ...). Independent of the engine's own RNG. */
   botRandom?: () => number;
+  /** Resources the bot keeps unspent on its own turn so it can respond on the opponent's (default 2). Set 0 for a faction whose only way to draw/develop is a paid ability the reserve would forbid (The Knitting Coalition). */
+  reserve?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -81,7 +83,8 @@ export interface AutoplayOptions {
 function simulateLegal(engine: SpoilsEngine, action: GameAction): boolean {
   const probe = new SpoilsEngine(
     Object.values(engine.definitions),
-    structuredClone(engine.state),
+    // The probe never reads or needs the (informational, ever-growing) game log; dropping it keeps each probe cheap late in a game.
+    structuredClone({ ...engine.state, gameLog: [] }),
     () => 0.5
   );
 
@@ -320,14 +323,25 @@ function abilityCandidates(
 ): AbilityCandidate[] {
   const result: AbilityCandidate[] = [];
 
-  for (const cardId of engine.state.players[playerId].play) {
+  // Own cards, then the opponent's faction (some faction abilities are
+  // `usableBy: "anyPlayer"` -- The Knitting Coalition's "Both players may use this ability").
+  const opponentFactions = Object.values(engine.state.players)
+    .filter(p => p.id !== playerId && p.factionId)
+    .map(p => p.factionId!);
+  const ownCards = engine.state.players[playerId].play.filter(id => engine.state.cards[id].controllerId === playerId);
+
+  for (const cardId of [...ownCards, ...opponentFactions]) {
     const card = engine.state.cards[cardId];
-    if (card.controllerId !== playerId) continue;
     if (card.faceDown) continue;
+    const isOwn = card.controllerId === playerId;
 
     const definition = engine.getDefinition(cardId);
-    for (const ability of definition.behavior?.abilities ?? []) {
-      if (ability.type !== "activated") continue;
+    // Faction cards keep their abilities in `faction.abilities` (RULES.md §3.6); a faction may repeat one in `behavior.abilities`.
+    const seen = new Set<string>();
+    for (const ability of [...(definition.behavior?.abilities ?? []), ...(definition.faction?.abilities ?? [])]) {
+      if (ability.type !== "activated" || seen.has(ability.id)) continue;
+      seen.add(ability.id);
+      if (!isOwn && ability.usableBy !== "anyPlayer") continue;
       if (!abilityRoughlyAffordable(engine, playerId, ability, reserve)) continue;
       result.push({ cardId, ability });
     }
@@ -592,33 +606,41 @@ function handlePendingChoice(
     }
 
     case "selectTargets": {
-      const context: ResolutionContext = {
-        sourceId: pending.sourceId,
-        controllerId: pending.playerId,
-        selected: {},
-        variables: {}
-      };
+      // Start from the prompt's own resolution context when it has one: a trigger's picks can read its `event`.
+      const context: ResolutionContext = pending.context
+        ? { ...pending.context, selected: { ...pending.context.selected }, variables: { ...pending.context.variables } }
+        : {
+            sourceId: pending.sourceId,
+            controllerId: pending.playerId,
+            selected: {},
+            variables: {}
+          };
 
-      const selected: Record<string, CardInstanceId[]> = {};
-      for (const declaration of pending.declarations) {
-        const candidates = engine.queryCards(declaration.selector, context);
-        const wanted = engine.evaluateNumber(declaration.count, context);
-        const take = declaration.optional
-          ? (Math.min(wanted, candidates.length) > 0 && rng() < 0.5 ? Math.min(wanted, candidates.length) : 0)
-          : wanted;
-        const picked = shuffled(candidates, rng).slice(0, take).map(card => card.id);
-        selected[declaration.id] = picked;
-        context.selected[declaration.id] = picked;
-      }
+      // The engine can refuse a pick the selector lists (an untargetable card, a name already taken), so
+      // retry with a fresh random pick a few times before falling back to declining.
+      for (let attempt = 0; attempt < 12; attempt++) {
+        const selected: Record<string, CardInstanceId[]> = {};
+        context.selected = { ...(pending.context?.selected ?? {}) };
+        for (const declaration of pending.declarations) {
+          const candidates = engine.queryCards(declaration.selector, context);
+          const wanted = engine.evaluateNumber(declaration.count, context);
+          const take = declaration.optional
+            ? (Math.min(wanted, candidates.length) > 0 && rng() < 0.5 ? Math.min(wanted, candidates.length) : 0)
+            : wanted;
+          const picked = shuffled(candidates, rng).slice(0, take).map(card => card.id);
+          selected[declaration.id] = picked;
+          context.selected[declaration.id] = picked;
+        }
 
-      if (
-        tryCommit(engine, {
-          type: "resolvePendingChoice",
-          playerId: pending.playerId,
-          choice: { kind: "selectTargets", selected }
-        })
-      ) {
-        return;
+        if (
+          tryCommit(engine, {
+            type: "resolvePendingChoice",
+            playerId: pending.playerId,
+            choice: { kind: "selectTargets", selected }
+          })
+        ) {
+          return;
+        }
       }
 
       const decline: Record<string, CardInstanceId[]> = {};
@@ -770,24 +792,230 @@ function handlePendingChoice(
       });
       return;
     }
+
+    // The remaining kinds are rarer, card-specific prompts. The policy is
+    // deliberately simple (and, where an answer can be refused, always
+    // simulate-first with a guaranteed-legal decline as the fallback) so that
+    // real-catalog decks never wedge the driver on a prompt it can't answer.
+    case "pileAssignment": {
+      const half = Math.ceil(pending.cardIds.length / 2);
+      engine.perform({
+        type: "resolvePendingChoice",
+        playerId: pending.playerId,
+        choice: {
+          kind: "pileAssignment",
+          pile1: pending.cardIds.slice(0, half),
+          pile2: pending.cardIds.slice(half)
+        }
+      });
+      return;
+    }
+
+    case "replacementChoice": {
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        rng() < 0.5 ? { kind: "replacementChoice", apply: true } : { kind: "replacementChoice", apply: false },
+        { kind: "replacementChoice", apply: false }
+      );
+      return;
+    }
+
+    case "chooseReplacement": {
+      const index = Math.floor(rng() * pending.options.length);
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "chooseReplacement", index },
+        { kind: "chooseReplacement", index: 0 }
+      );
+      return;
+    }
+
+    case "nameValue": {
+      const candidates = nameValueCandidates(engine, pending);
+      for (const value of shuffled(candidates, rng).slice(0, 40)) {
+        if (tryCommit(engine, resolveAction(pending.playerId, { kind: "nameValue", value }))) return;
+      }
+      // Nothing the engine accepts was found: surface that as a real failure rather than spinning.
+      engine.perform(resolveAction(pending.playerId, { kind: "nameValue", value: candidates[0] ?? "" }));
+      return;
+    }
+
+    case "resourceReveal": {
+      engine.perform(resolveAction(pending.playerId, { kind: "resourceReveal" }));
+      return;
+    }
+
+    case "chooseNumber": {
+      const span = Math.max(0, pending.max - pending.min);
+      const value = pending.min + Math.floor(rng() * (Math.min(span, 4) + 1));
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "chooseNumber", value },
+        { kind: "chooseNumber", value: pending.min }
+      );
+      return;
+    }
+
+    case "mayPay":
+    case "alternatingPay":
+    case "anyPlayerMayPay": {
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: pending.kind, pay: rng() < 0.7 },
+        { kind: pending.kind, pay: false }
+      );
+      return;
+    }
+
+    case "useTargetAbility": {
+      const abilityId = pending.abilityIds.length > 0 && rng() < 0.5 ? pending.abilityIds[0] : undefined;
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "useTargetAbility", abilityId },
+        { kind: "useTargetAbility" }
+      );
+      return;
+    }
+
+    case "useAnyAbility": {
+      const cardId = pending.candidateCardIds.length > 0 && rng() < 0.5 ? pending.candidateCardIds[0] : undefined;
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "useAnyAbility", cardId },
+        { kind: "useAnyAbility" }
+      );
+      return;
+    }
+
+    case "partitionCards": {
+      const piles: CardInstanceId[][] = Array.from({ length: pending.piles }, () => []);
+      pending.cardIds.forEach((id, i) => piles[i % pending.piles].push(id));
+      engine.perform(resolveAction(pending.playerId, { kind: "partitionCards", piles }));
+      return;
+    }
+
+    case "pickPile": {
+      engine.perform(
+        resolveAction(pending.playerId, { kind: "pickPile", index: Math.floor(rng() * pending.piles.length) })
+      );
+      return;
+    }
+
+    case "takeFromPile": {
+      engine.perform(
+        resolveAction(pending.playerId, {
+          kind: "takeFromPile",
+          cardIds: pending.candidates.slice(0, pending.max)
+        })
+      );
+      return;
+    }
+
+    case "chooseChosenBlockers": {
+      const cardIds = shuffled(pending.candidates, rng).slice(0, Math.floor(rng() * (pending.candidates.length + 1)));
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "chooseChosenBlockers", cardIds },
+        { kind: "chooseChosenBlockers", cardIds: [] }
+      );
+      return;
+    }
+
+    case "coinFlipReplace": {
+      answerWithFallback(
+        engine,
+        pending.playerId,
+        { kind: "coinFlipReplace", reflip: rng() < 0.5 },
+        { kind: "coinFlipReplace", reflip: false }
+      );
+      return;
+    }
+
+    case "millInsteadOfDamage": {
+      engine.perform(resolveAction(pending.playerId, { kind: "millInsteadOfDamage", count: 0 }));
+      return;
+    }
+
+    case "auctionBid": {
+      engine.perform(resolveAction(pending.playerId, { kind: "auctionBid", bid: 0 }));
+      return;
+    }
+
+    case "spendCountersMenu": {
+      engine.perform(resolveAction(pending.playerId, { kind: "spendCountersMenu", optionIndex: null }));
+      return;
+    }
+
+    default: {
+      // A prompt kind this driver doesn't know: fail loudly instead of looping forever on it.
+      const unhandled: never = pending;
+      throw new Error(`autoplay has no handler for pending choice ${JSON.stringify(unhandled).slice(0, 200)}`);
+    }
   }
 }
+
+type ResolveChoice = Extract<GameAction, { type: "resolvePendingChoice" }>["choice"];
+
+function resolveAction(playerId: PlayerId, choice: ResolveChoice): GameAction {
+  return { type: "resolvePendingChoice", playerId, choice };
+}
+
+/** Commits `preferred` when the engine accepts it, else `fallback` (which must always be legal). */
+function answerWithFallback(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  preferred: ResolveChoice,
+  fallback: ResolveChoice
+): void {
+  if (tryCommit(engine, resolveAction(playerId, preferred))) return;
+  engine.perform(resolveAction(playerId, fallback));
+}
+
+/** Values a `nameValue` prompt could be answered with: its closed `options`, else subtypes / card names from the loaded definitions (sorted, so the choice is deterministic). */
+function nameValueCandidates(
+  engine: SpoilsEngine,
+  pending: Extract<PendingChoice, { kind: "nameValue" }>
+): string[] {
+  const exclude = new Set(pending.exclude ?? []);
+  if (pending.options) return pending.options.filter(option => !exclude.has(option));
+
+  const values = new Set<string>();
+  for (const definition of Object.values(engine.definitions)) {
+    if (pending.valueKind === "subtype") {
+      for (const subtype of definition.subtype ?? []) values.add(subtype);
+    } else if (!pending.nonResource || definition.type !== "resource") {
+      values.add(definition.name);
+    }
+  }
+  return [...values].filter(value => !exclude.has(value)).sort();
+}
+
+/** Most times the bot activates one card's one ability in a single turn. */
+const MAX_USES_PER_ABILITY_PER_TURN = 3;
 
 function handleMain(
   engine: SpoilsEngine,
   playerId: PlayerId,
   opponentId: PlayerId,
   rng: () => number,
-  report: AutoplayReport
+  report: AutoplayReport,
+  reserve: number,
+  abilityUses: Map<string, number>
 ): void {
-  // Keep a small cushion of unspent resources and hold tactics back, so this
+  // Keep a small cushion (`reserve`) of unspent resources and hold tactics back, so this
   // player can still answer the opponent's turn (CR §607 — the engine no
   // longer permits responding to your own action, so the reactive game only
   // gets exercised when the non-acting player kept something in reserve).
-  const RESERVE = 2;
 
   for (const cardId of shuffled(
-    handCardCandidates(engine, playerId, def => def.type !== "tactic", RESERVE),
+    handCardCandidates(engine, playerId, def => def.type !== "tactic", reserve),
     rng
   )) {
     if (tryPlayCard(engine, playerId, cardId, rng)) {
@@ -796,8 +1024,17 @@ function handleMain(
     }
   }
 
-  for (const { cardId, ability } of shuffled(abilityCandidates(engine, playerId, RESERVE), rng)) {
+  // A free, repeatable ability (e.g. a no-cost "put a counter") would otherwise be spammed for the whole
+  // turn; cap each (card, ability) at a few uses per turn so the game always moves on.
+  const usesKey = (cardId: CardInstanceId, abilityId: string): string =>
+    `${engine.state.turn}:${cardId}:${abilityId}`;
+  const usable = abilityCandidates(engine, playerId, reserve).filter(
+    ({ cardId, ability }) => (abilityUses.get(usesKey(cardId, ability.id)) ?? 0) < MAX_USES_PER_ABILITY_PER_TURN
+  );
+  for (const { cardId, ability } of shuffled(usable, rng)) {
     if (tryActivateAbility(engine, playerId, cardId, ability, rng)) {
+      const key = usesKey(cardId, ability.id);
+      abilityUses.set(key, (abilityUses.get(key) ?? 0) + 1);
       report.abilitiesActivated += 1;
       return;
     }
@@ -817,6 +1054,8 @@ function handleMain(
 export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOptions = {}): AutoplayReport {
   const rng = options.botRandom ?? mulberry32(0xc0ffee);
   const maxActions = options.maxActions ?? 50000;
+  const reserve = options.reserve ?? 2;
+  const abilityUses = new Map<string, number>();
 
   const report: AutoplayReport = {
     turns: engine.state.turn,
@@ -898,7 +1137,7 @@ export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOpti
       }
 
       case "main": {
-        handleMain(engine, flow.activePlayerId, opponentOf(flow.activePlayerId), rng, report);
+        handleMain(engine, flow.activePlayerId, opponentOf(flow.activePlayerId), rng, report, reserve, abilityUses);
         break;
       }
     }
