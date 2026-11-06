@@ -19,6 +19,15 @@ export interface ResolutionContext {
    */
   payerId?: PlayerId;
 
+  /**
+   * The opponent this block of rules text is about (MP 2, SD 13–15): every
+   * "your opponent" / "opponent" reference in the resolution names this
+   * player. Absent while unbound — a reference then means every opponent of
+   * `controllerId` (a static reading), and a reference that needs exactly
+   * one player resolves only when there is a single candidate.
+   */
+  opponentId?: PlayerId;
+
   event?: GameEvent;
 
   selected: Record<string, CardInstanceId[]>;

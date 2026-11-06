@@ -762,22 +762,34 @@ export interface ResponseWindowState {
   /**
    * The one player entitled to act right now. The Spoils has no
    * priority-passing system (CR §607.2b): while the response stack has
-   * items this is always the opponent of the top item's controller — you
-   * never respond to your own action (CR §607.1). While the stack is empty
-   * it is the head of `pendingResponders`.
+   * items this is the head of `stackResponders` — a player other than the
+   * one whose action is on top; you never respond to your own action (CR
+   * §607.1). While the stack is empty it is the head of `pendingResponders`.
    */
   priorityPlayerId: PlayerId;
+
+  /**
+   * While the response stack has items: the players who may still respond
+   * to the item now on top, in turn order from the seat after whoever put it
+   * there (in a two-player game, just the opponent). Each pass shifts the
+   * head off; when it empties the top item resolves. A response replaces the
+   * list with the players who may respond to *that* response (engine-derived,
+   * D6). Absent on a window saved before this field existed: the single
+   * `priorityPlayerId` is then the only responder.
+   */
+  stackResponders?: PlayerId[];
 
   /**
    * Players who still get a top-level opportunity to respond once the
    * response stack drains, in order. A single-responder `action` window is
    * driven entirely by its stack item and leaves this empty; an `endTurn`
-   * window holds `[opponent-of-turn-ender]`; a two-sided battle response
-   * window (CR §608.1c / §609.1a — "the attacking player may deploy tactics
-   * and use abilities as many times as they want, then the defending player
-   * may do the same") holds `[attacker, defender]`. A player is shifted off
-   * once they pass with an empty stack; when it empties and the stack is
-   * empty the window closes.
+   * window holds every other living player from the seat after the
+   * turn-ender; a battle response window (CR §608.1c / §609.1a — "the
+   * attacking player may deploy tactics and use abilities as many times as
+   * they want, then the defending player may do the same") holds
+   * `[attacker, defender]`, then every other living player in turn order.
+   * A player is shifted off once they pass with an empty stack; when it
+   * empties and the stack is empty the window closes.
    */
   pendingResponders: PlayerId[];
 
