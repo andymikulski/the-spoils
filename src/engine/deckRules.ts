@@ -16,7 +16,10 @@
  *   (`FactionDefinition.minimumDeckSize`) or a size the caller passes. RULES.md
  *   has no general minimum, so there is none here; the faction card is not
  *   part of the deck (RULES.md §3.6) and does not count toward it;
- * - a faction's own starting-resource rule: `findFactionDeckIssues`.
+ * - a faction's own starting-resource rule: `findFactionDeckIssues`;
+ * - epic cards (RULES.md "Epic cards", EP 1-4): printed rarity EPIC or E-SLE
+ *   (`isEpicCard`); at most 1 copy in Constructed, none in Limited, and none in
+ *   tournament play unless it is an epic tournament.
  */
 
 import type { CardDefinition, CardDefinitionId, FactionDefinition } from "../types/index.js";
@@ -26,12 +29,21 @@ import { isStapleResourceDefinition, withBuiltInFactionDefaults } from "./utilit
 /** The normal "no more than N copies of a card" limit of a constructed deck. */
 export const DEFAULT_MAX_COPIES = 4;
 
+/** The most copies of an epic card a Constructed deck may hold (EP 2). */
+export const EPIC_MAX_COPIES = 1;
+
 export type DeckConstructionIssueKind =
   | "empty"
   | "unknownCard"
   | "factionCount"
   | "copyLimit"
   | "minimumSize"
+  /** More than 1 copy of an epic card in a Constructed deck (EP 2). Replaces the `copyLimit` issue for that card. */
+  | "epicCopyLimit"
+  /** An epic card (the faction card included) in a Limited deck (EP 3). */
+  | "epicInLimited"
+  /** An epic card (the faction card included) in a tournament deck that is not an epic tournament (EP 4). */
+  | "epicInTournament"
   /** The deck's faction cannot start a game with this decklist (`findFactionDeckIssues`). */
   | "factionRule";
 
@@ -39,11 +51,11 @@ export interface DeckConstructionIssue {
   kind: DeckConstructionIssueKind;
   /** A complete, display-ready sentence. */
   message: string;
-  /** The card concerned: the unknown id (`unknownCard`) or the over-limit card (`copyLimit`). */
+  /** The card concerned: the unknown id (`unknownCard`), the over-limit card (`copyLimit`, `epicCopyLimit`) or the epic card (`epicInLimited`, `epicInTournament`). */
   cardId?: CardDefinitionId;
-  /** `copyLimit` only: how many copies the decklist holds of `cardId`. */
+  /** `copyLimit` / `epicCopyLimit` only: how many copies the decklist holds of `cardId`. */
   count?: number;
-  /** `copyLimit` only: the most copies `getMaxCopies` allows of `cardId` (always a number: an unlimited card is never an issue). */
+  /** `copyLimit` / `epicCopyLimit` only: the most copies allowed of `cardId` (`getMaxCopies`, or `EPIC_MAX_COPIES`; always a number: an unlimited card is never an issue). */
   max?: number;
 }
 
@@ -61,8 +73,29 @@ export interface DeckConstructionOptions {
    * for a faction that prints one.
    */
   minimumSize?: number | false;
+  /**
+   * How the deck is played: `"constructed"` (default) or `"limited"`. Epic
+   * cards are held to 1 copy in Constructed (EP 2) and are not allowed in
+   * Limited (EP 3). Nothing else here is format-dependent: pass `minimumSize`
+   * for the format's deck size.
+   */
+  play?: "constructed" | "limited";
+  /**
+   * Present = tournament play: epic cards are not allowed (EP 4) unless
+   * `epic: true` (an epic tournament). Absent (default) = casual play.
+   */
+  tournament?: { epic?: boolean };
   /** Also report the deck's faction's own starting-resource rule (default `true`). */
   factionRules?: boolean;
+}
+
+/**
+ * Whether a card is an epic card (EP 1): its printed rarity reads EPIC or
+ * E-SLE (the two Showdown factions). Case-insensitive.
+ */
+export function isEpicCard(definition: CardDefinition): boolean {
+  const rarity = definition.rarity.trim().toLowerCase();
+  return rarity === "epic" || rarity === "e-sle";
 }
 
 /**
@@ -132,7 +165,10 @@ export function resolveDeckCards(
 /**
  * Everything wrong with a decklist as a deck, in a fixed order: empty,
  * unknown cards, faction count, copy limits, minimum size, then the faction's
- * own starting-resource rule. An empty result is a constructible deck.
+ * own starting-resource rule. Epic restrictions (EP 2-4) come with the copy
+ * limits: per distinct epic card, one `epicCopyLimit` (instead of
+ * `copyLimit`) when over 1 copy in Constructed, or one `epicInLimited` in
+ * Limited, and one `epicInTournament` in a non-epic tournament. An empty result is a constructible deck.
  * `cards` is the decklist's definitions, one entry per copy, faction card
  * included (as clients store a decklist); the faction card is not counted
  * toward the minimum size. This is the complete list: a client
@@ -170,18 +206,37 @@ export function findDeckConstructionIssues(
   // so the limit counts every printing of a name together. The issue names the
   // first printing of the name in the decklist; a name is unlimited when any of
   // its printings is (the "as many copies" sentence is the card's, not the printing's).
-  const counts = new Map<string, { card: CardDefinition; count: number; unlimited: boolean }>();
+  // Epic is the same: a name is epic when any printing is (EP 1), and the faction card is checked too.
+  const play = options.play ?? "constructed";
+  const counts = new Map<string, { card: CardDefinition; count: number; unlimited: boolean; epic: boolean }>();
+  const epicCards = new Map<string, CardDefinition>();
   for (const card of cards) {
+    const epic = isEpicCard(card);
+    if (epic && !epicCards.has(card.name)) epicCards.set(card.name, card);
     if (card.type === "faction") continue;
     const unlimited = getMaxCopies(card) === null;
     const entry = counts.get(card.name);
     if (entry) {
       entry.count++;
       entry.unlimited ||= unlimited;
-    } else counts.set(card.name, { card, count: 1, unlimited });
+      entry.epic ||= epic;
+    } else counts.set(card.name, { card, count: 1, unlimited, epic });
   }
-  for (const { card, count, unlimited } of counts.values()) {
+  for (const { card, count, unlimited, epic } of counts.values()) {
     const cardId = card.id;
+    if (epic) {
+      // An epic card has its own limit instead of the normal one (EP 2); in Limited it is not allowed at all (reported below).
+      if (play === "constructed" && count > EPIC_MAX_COPIES) {
+        issues.push({
+          kind: "epicCopyLimit",
+          cardId,
+          count,
+          max: EPIC_MAX_COPIES,
+          message: `${count} copies of ${card.name} is over the ${EPIC_MAX_COPIES}-copy limit for epic cards.`
+        });
+      }
+      continue;
+    }
     const max = unlimited ? null : getMaxCopies(card);
     if (max !== null && count > max) {
       issues.push({
@@ -190,6 +245,23 @@ export function findDeckConstructionIssues(
         count,
         max,
         message: `${count} copies of ${card.name} is over the ${max}-copy limit.`
+      });
+    }
+  }
+
+  for (const card of epicCards.values()) {
+    if (play === "limited") {
+      issues.push({
+        kind: "epicInLimited",
+        cardId: card.id,
+        message: `${card.name} is an epic card, and epic cards are not allowed in Limited.`
+      });
+    }
+    if (options.tournament && !options.tournament.epic) {
+      issues.push({
+        kind: "epicInTournament",
+        cardId: card.id,
+        message: `${card.name} is an epic card, and epic cards are not allowed in tournament play unless it is an epic tournament.`
       });
     }
   }
