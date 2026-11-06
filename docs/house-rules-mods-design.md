@@ -69,7 +69,7 @@ authoritative.
 | `emit()` + `GameEventMap` | `src/types/events.ts` | the trigger / reaction bus |
 | `GameState` | `src/types/state.ts` (~L769) | `saveGame` deep-clones this (`src/engine/persistence.ts` ~L41), so anything stored here travels through save / load / replay for free |
 | `declareBlockers` / `assignBattleDamage` / `finishBattle` | `src/engine/SpoilsEngine.ts` | party-vs-party combat algorithm — the target for structural combat mods |
-| `createTwoPlayerFactionGame` + `FactionGameSetupOptions` | `src/engine/factionSetup.ts` | the real game entry point; natural place to accept `mods` |
+| `createFactionGame` + `FactionGameSetupOptions` | `src/engine/factionSetup.ts` | the real game entry point; natural place to accept `mods` |
 | `TOURNAMENT_FACTION_DEFAULTS` | `src/engine/utilities.ts` (~L149) | the hardcoded setup constants Tier 0 overlays |
 
 Reusable shapes already in the type model:
@@ -114,7 +114,7 @@ A mod is a *bundle*; rules within it come in tiers of escalating power.
 Ship the tiers in order — each is independently useful and independently
 shippable.
 
-`createTwoPlayerFactionGame` accepts `mods: GameMod[]` in its options and
+`createFactionGame` accepts `mods: GameMod[]` in its options and
 writes them onto the initial `GameState`.
 
 ---

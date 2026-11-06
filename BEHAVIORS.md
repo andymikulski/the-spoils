@@ -1421,10 +1421,24 @@ to touch when just authoring card data.)
 ## PlayerRef (`src/types/expressions.ts`)
 
 ```ts
-PlayerRef = "controller" | "owner" | "activePlayer" | "opponent"
+PlayerRef = "controller" | "owner" | "activePlayer" | "opponent" | "villain"
           | { type: "player"; id: PlayerId }
           | { type: "ownerOf"; target: TargetRef }
+          | { type: "controllerOf"; target: TargetRef }
 ```
+
+**"opponent" with three or more players (RULES.md §16).** In a block of
+rules text it names the one opponent the block is bound to
+(`ResolutionContext.opponentId`: the action's `opponentId`, a pick through
+an `"opponent"` selector, or the triggering event's player — otherwise a
+`chooseOpponent` prompt). In a continuous ability, and in a selector or
+condition while nothing is bound, it means *every* opponent (a condition holds
+if it holds for some single opponent). Write printed "each opponent" as
+`forEachPlayer { players: "opponents" }`, "both players" as `forEachPlayer
+{ players: "controllerAndOpponent" }`, "any opponent may pay" as
+`anyPlayerMayPay { players: "opponents" }`, and "that character's
+controller" as `controllerOf` — never `"opponent"`, which only coincides
+with it at a two-player table. `"villain"` is Showdown's Villain.
 
 `"controller"`/`"owner"` resolve relative to `ResolutionContext.
 controllerId` (almost always the same player; they diverge only for a
@@ -1676,7 +1690,15 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
   `startingDraw` makes the opponent's opening hand use *this* faction's
   `setup.openingHand`; `suppressDevelop` gives the opponent no Develop Rule
   (`getDevelopChoices` → `[]`). The Knitting Coalition (HIDDEN INFLUENCE /
-  PULLING STRINGS). 2-player only.
+  PULLING STRINGS). With three or more players it reaches every opponent.
+- **Opponent-scaled numbers** (The Evil Alliance's X — opponents at the start
+  of the game): `influencePerOpponent` (added to `startingInfluence`),
+  `setup.startingResources.countPerOpponent`, `turn.develop.usesPerOpponent`
+  (multiplies `usesPerTurn`), and the `{ type: "opponentCountAtStart" }`
+  NumberExpression for effects ("draw X-1 cards").
+- **`daringGambit: { damage }`** — Showdown's DARING GAMBIT on the Villain's
+  faction: the first time in a turn one Hero's damage to another Hero's faction
+  reaches `damage`, that Hero claims the whole Temptation Pile.
 - **`setup.startingResources`** — beyond `{ count, names?, stapleOnly? }`:
   - `slots: [{ kind: "resource", staple?, name? } | { kind: "anyCard" }]`
     — a per-slot program. `"resource"` places a face-up resource;
@@ -1775,6 +1797,22 @@ CreatedEffectPart  = { kind: CreatedEffectKind; amount?: number }               
 
 `Duration`: `permanent | untilEndOfTurn | whileSourceInPlay`.
 `ModifierOperation`: `add | set | multiply`.
+
+## Showdown vocabulary (RULES.md §17)
+
+- **Effects** — `claimHeroCards { claimer, from: "heroDeckTop" |
+  "temptationPile" | "selected", count?: n | "all", selected? }` (a claimed
+  non-tactic enters play under the claimer; a tactic is offered as a free,
+  threshold-ignoring play, removed if declined); `heroDeckToTemptationPile
+  { count? }`; `revealAllegiances`.
+- **Selectors** — `controller: "otherHero"` ("a character another Hero
+  controls"); `showdownPile: "heroDeck" | "temptationPile"` with `zone:
+  "table"` ("claim one card in the Temptation Pile": a pick, then
+  `claimHeroCards { from: "selected" }`).
+- **Abilities** — `usableBy: "heroes"` (the shared faction's "All Heroes can
+  use abilities on this card"); resolved under whichever Hero uses it.
+- **Card instances** — `heroCard: true` marks a Hero card: removed from the
+  game whenever it would go anywhere but play.
 
 ## Common recipes
 
@@ -2029,8 +2067,8 @@ record ambiguities as `notes` + `confidence: "low"` rather than guessing) →
 a smoke game exercise it) → `verified`. `vanilla` = no `behavior` needed
 (text-free / keyword-only / plain resource). `blocked` = classified but
 cannot be authored until a capability lands. `wontImplement` = references a
-mechanic a 2-player, single-game engine can't model (alternate win
-conditions, "outside the game", multiplayer/politics, draft/format text) —
+mechanic the engine can't model (alternate win conditions, "outside the
+game", draft/format text) —
 carries a `notes` saying which, and counts as *resolved* (not blocked) in
 the roll-up.
 

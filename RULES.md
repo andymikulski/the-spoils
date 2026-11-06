@@ -319,7 +319,7 @@ carry activated abilities, usable any time you could use an ability
   specific sub-rules of the **opponent's** faction (The Knitting Coalition):
   `startingDraw` makes the opponent's opening hand use *this* faction's
   `setup.openingHand` sizes (HIDDEN INFLUENCE — resolved in
-  `createTwoPlayerFactionGame`), `suppressDevelop` gives the opponent no
+  `createFactionGame`), `suppressDevelop` gives the opponent no
   Develop Rule at all (PULLING STRINGS — `getDevelopChoices` returns `[]`
   for them). 2-player only.
 - **`setup.startingResources`** beyond the flat `{ count, names?,

@@ -54,7 +54,7 @@ module resolution. Legacy `node10` resolution is also supported via
 ## Quick start
 
 ```ts
-import { createTwoPlayerFactionGame, saveGame, loadGame, type CardDefinitionId } from "the-spoils";
+import { createFactionGame, saveGame, loadGame, type CardDefinitionId } from "the-spoils";
 import { CARD_CATALOG } from "the-spoils/data";
 
 // No decklists ship with the package. A deck is a list of card ids from
@@ -62,11 +62,13 @@ import { CARD_CATALOG } from "the-spoils/data";
 const deckA: CardDefinitionId[] = [/* … */];
 const deckB: CardDefinitionId[] = [/* … */];
 
-const game = createTwoPlayerFactionGame(
-  CARD_CATALOG,
+// Seats in turn order. Two seats play the classic game; three or more play a
+// free-for-all, or pass `format: { kind: "showdown", villainId }` (plus
+// `showdown: { heroDeck, sharedFactionDefinitionId }`) for Showdown.
+const game = createFactionGame(CARD_CATALOG, [
   { id: "p1", name: "Player 1", deckDefinitionIds: deckA },
   { id: "p2", name: "Player 2", deckDefinitionIds: deckB }
-);
+]);
 
 // Setup has already run: factions are in play, decks shuffled, hands drawn.
 // Both players keep their opening hands.
@@ -106,6 +108,16 @@ A runnable version is in [`examples/basic.ts`](examples/basic.ts)
   `redactLogFor` produce a per-player view for networked play.
 - **Your own cards**: the engine takes any `CardDefinition[]`, so you can run
   it against custom or synthetic cards without importing the catalog.
+- **Three or more players**: free-for-all and Showdown tables
+  (`GameState.format`; RULES.md §16–§17). When a card's "your opponent" could
+  mean several players, the action names one (`opponentId`;
+  `getPlayRequirements` lists an `opponent` requirement) or a trigger asks
+  (`chooseOpponent`). `opponentsOf`, `livingSeats` and the Showdown helpers
+  (`getLoyalty`, `isHero`, …) answer who opposes whom; a finished game's
+  `state.result` lists its winners.
+- **Epic cards**: `findDeckConstructionIssues(…, { play, tournament })`
+  enforces the epic 1-copy limit and the Limited / tournament bans
+  (`isEpicCard`; RULES.md §15).
 
 The rules the engine implements, with citations, are in [RULES.md](RULES.md).
 The card-behavior vocabulary is documented in [BEHAVIORS.md](BEHAVIORS.md).
