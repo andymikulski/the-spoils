@@ -59,9 +59,12 @@ other player then wins.
   **(FAQ:** *Quotidian Assassination* cannot pick a faction; *Bask Bile*
   can**)**.
 
-**(engine-derived)** Surfaced as `GameState.winner` / `GameFlowView.winner`
-(`PlayerId | "draw"`), set by the same continuous check as everything else
-in §11; `GameFlowView.mode` becomes `"gameOver"`. Once set, `perform()`
+**(engine-derived)** Surfaced as `GameState.result` / `GameFlowView.result`
+(a `GameResult`: `{ outcome: "victory", winners }` or `{ outcome: "draw",
+winners: [] }`), set by the same continuous check as everything else in
+§11; `GameFlowView.mode` becomes `"gameOver"`. With three or more players a
+faction at 0 eliminates its owner instead and the game goes on until one
+player (Showdown: one side) is left — see §16. Once set, `perform()`
 rejects anything that would start a new action but still lets whatever was
 already in flight (an open response window, an in-progress battle) drain to
 a clean stop, since a lethal blow is often struck mid-battle-resolution.
@@ -372,11 +375,11 @@ with no further bookkeeping. Both sides' `CardDefinition`s must be
 registered with the engine for the flip to take effect (loading the full
 catalog, as every real consumer does, guarantees this).
 
-Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
-Alliance, Imperial Army, ...) additionally reference Showdown multiplayer
-format mechanics that are **out of scope for a two-player engine** and are
-left unmodelled: the X = number-of-opponents scaling, the Temptation Pile,
-the Hero deck.
+Seed 3's epic faction cards (§15) include the two Showdown factions, The
+Evil Alliance and Slightly Less Evil Alliance, whose X-scaling, Hero Deck,
+Temptation Pile and Allegiance rules are modelled for the `showdown` table
+format (§17). In a two-player game X is 1 and their Showdown-only clauses
+have nothing to act on.
 
 ### 3.7 Changing card types (CR §208)
 
@@ -1980,3 +1983,107 @@ card). **(EP 3)** Epic cards may not be used in Limited play (`play:
 tournament play (`tournament: {}` → `epicInTournament`) unless it is an
 "epic tournament" (`tournament: { epic: true }`). Casual Constructed play —
 the default — allows them. Epic legality is independent of the table format.
+
+## 16. Multiplayer (docs/rules/multiplayer-guidelines.md)
+
+**Table formats (D1).** `GameState.format` is `classic` (exactly two players
+— everything above), `freeForAll` (two or more; every player is every other
+player's opponent) or `showdown` (§17). `createFactionGame(defs, seats,
+{ format })` seats the players in turn order (`GameState.turnOrder`; §5).
+
+**Your opponent (MP 2, MP 4; D4).** A block of rules text — an activated
+ability, a card's play (its EXTRA COSTs, targets and, for a tactic, its
+effects), a triggered ability, a FLIP UP — binds **one** opponent for its
+whole resolution (`ResolutionContext.opponentId`); every "opponent" in it
+names that player. Nothing is asked when there is only one candidate (every
+two-player game). Otherwise, in order:
+- the action names it (`opponentId` on `playCard` / `activateAbility` /
+  `flipUp`; `getPlayRequirements` lists `{ kind: "opponent", candidates }`);
+- a pick of an opponent's card names it (E2: "pick a character an opponent
+  controls" — that character's controller); a later pick through another
+  "opponent" selector must then belong to the same player;
+- a triggering event names it (E3): the player who acted, the controller of
+  the card the event is about, or a side of the current battle;
+- otherwise a trigger asks its controller (`chooseOpponent` pending choice).
+A deploy an effect makes, with nobody to ask, takes the first candidate in
+turn order. The binding is made afresh for every block (MP 4).
+
+**Both players (MP 3).** "Both players" in a block is the controller and its
+bound opponent (`forEachPlayer { players: "controllerAndOpponent" }`).
+"Each opponent" / "all opponents" resolves once per opponent
+(`forEachPlayer { players: "opponents" }`, E1); "any opponent may pay" is
+offered to each opponent in turn (`anyPlayerMayPay { players: "opponents" }`,
+E5).
+
+**Statics (D4).** A continuous ability's "opponent" means every opponent —
+it cannot stop to ask. A condition about "your opponent" with nothing bound
+holds when it holds for some one opponent, judged on their own (E4: "an
+opponent controls more characters than you"). What a resolved block
+*creates* — an area modifier, a delayed or scheduled effect, an installed
+replacement, a hand-move redirect — keeps the opponent that block bound.
+
+**Turns and responses (D5, D6).** Play passes to the next living seat. After
+any action every other living player, in turn order from the actor, may
+respond; the top of the stack resolves once all of them pass in a row, and a
+response restarts the round after its own controller. Battle windows go to
+the attacker, the defender, then everyone else in turn order. Ending a turn
+is answered by every other player.
+
+**Attacking and blocking (D7).** A player may attack any other living
+player's faction or location; only the defending player blocks. Without a
+named target an attack needs exactly one other player.
+
+**Elimination (D3, D8).** A player whose faction reaches 0 influence (or,
+under Trickster's Globe, whose deck is empty) while others remain is
+eliminated (`PlayerState.eliminated`, `playerEliminated` event): cards they
+control but do not own return to their owners; every card they own leaves the
+game; their actions on the response stack, queued triggers and delayed
+effects are dropped; a battle they are a side of ends. They take no further
+turns and are nobody's opponent; if it was their turn it passes once
+whatever is resolving settles. The last player standing wins; players who
+fall together as the last ones draw.
+
+**Faction rules naming "your opponent" (D9).** The Knitting Coalition's
+STARTING DRAW and DEVELOP overrides and The Union of Unextraordinary Miners'
+top-up reach every opponent. Emergency Obfuscation's seat swap works only
+while exactly two players remain (engine-derived, Q-MP2). Bidding (Auction
+House) goes clockwise through every living player; a player who passes is out.
+
+## 17. Showdown (docs/rules/showdown-rules.md)
+
+**Sides (SD 1, SD 4–7).** `format: { kind: "showdown", villainId,
+allegiance? }`; every other seat is a Hero. Each Hero is dealt an Allegiance
+card at random from `allegiance.cards` (`AllegianceDeckConfig`; default
+`defaultAllegianceDeck`: all loyal, one Villain-loyal card with three or more
+Heroes — a placeholder for the unpublished card set, D2). An Allegiance card
+is seen by its Hero, by the Villain, and by everyone once face-up
+(`redactStateFor`).
+
+**Opponents (SD 13–15).** The Villain's opponents are the Heroes; a Hero's
+is the Villain, or — once their Allegiance card is face-up showing loyalty to
+the Villain — the other Heroes. Heroes may still attack each other (SD 12).
+
+**The table (SD 3, SD 5, SD 11).** `showdown: { heroDeck,
+sharedFactionDefinitionId }` at setup: the Hero Deck is shuffled into the
+`table` zone (`GameState.showdown.heroDeck`, face-down to all); the
+Temptation Pile (`temptationPile`) is face-up; the shared faction (Slightly
+Less Evil Alliance) sits in play under the Villain, its `usableBy: "heroes"`
+abilities open to every Hero (SD-SLE 1) and never the Villain.
+
+**Claiming (SD 8–10).** `claimHeroCards`: the claimer becomes the owner; a
+non-tactic is put into play under them; a tactic is offered to them to play
+for free ignoring threshold (declined: removed from the game). A Hero card is
+removed from the game whenever it would go anywhere but play — leaving play,
+finishing resolving.
+
+**The Evil Alliance (SD-EA).** X (`opponentCountAtStart`) is fixed when the
+game begins. Influence `startingInfluence + influencePerOpponent·X`;
+starting staples `count + countPerOpponent·X`; Develop Rule used
+`usesPerTurn·X` times (`usesPerOpponent`). DARING GAMBIT
+(`daringGambit.damage`): the first time in a turn one Hero's damage to one
+other Hero's faction reaches the threshold, that Hero claims the entire
+Temptation Pile (a trigger of the Villain's faction).
+
+**Winning (D3).** The Villain falling hands the win to every Hero loyal to
+the Heroes, eliminated ones included; once no loyal Hero is left, the Villain
+and every Villain-loyal Hero win. Both at once: a draw.

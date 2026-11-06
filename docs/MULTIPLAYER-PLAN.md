@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** D4 created-effect capture (runtime modifiers / scheduled / replacements / redirects carry the binding block's `opponentId`); E1 `forEachPlayer` opponents scope; E5 opponents-only `anyPlayerMayPay`; then Phase 4 Showdown setup (allegiance dealing, Hero Deck, Temptation Pile, shared SLE faction, Evil Alliance X-scaling). Agents: audit re-check against printed text; r13-multiplayer rules tests.
+**Next action:** merge the agent branches when they report (Evil Alliance / SLE encoding; r14-showdown tests). Then the per-card b/c fixes from the re-checked audit (19 b, 35 c — patch modules + 3-player tests), the remaining d rulings, `examples/showdown.ts`, BEHAVIORS.md / README.md updates, and the Known follow-ups below.
 
 ## Sources
 
@@ -101,13 +101,13 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] `GameResult` replaces `GameWinner`
 - [x] `ResolutionContext.opponentId`; `opponentId` on `playCard` /
       `activateAbility`; `chooseOpponent` pending choice
-- [ ] `alternatingPay` tuple → arrays / records
-- [ ] `forEachPlayer` fan-out effect; `chooseOpponent` effect;
+- [x] `alternatingPay` tuple → arrays / records
+- [x] `forEachPlayer` fan-out effect; `chooseOpponent` effect;
       `CardInstance.chosenOpponentId`
-- [ ] Faction schema: expression-valued `startingInfluence` /
+- [x] Faction schema: expression-valued `startingInfluence` /
       `startingResources.count` (`opponentCountAtStart`), develop repeat,
       `usableBy: "heroes"`
-- [ ] `src/types/showdown.ts`
+- [x] `src/types/showdown.ts`
 
 ### Phase 2 — Core engine N-player refactor
 - [ ] Seat swap (Emergency Obfuscation) — asserts two living players (`soleOtherSeat`) until an E6 ruling
@@ -118,22 +118,22 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] Priority rotation (D6)
 - [x] Setup: `createFactionGame(defs, players[], { format })`,
       `createGame(players[], cards)`; fixture `buildGame({ players })`
-- [ ] Battle defender selection
+- [x] Battle defender selection
 - [x] Elimination + `GameResult` (D3, D8)
 - [ ] Two-party constructs bound to controller + bound opponent
       (alternatingPay, auction, partitionAndPick, seat swap);
       `forEachPlayer` / `anyPlayerMayPay` rotate all seats
-- [ ] Persistence version bump; redaction of Allegiance
+- [x] Persistence version bump; redaction of Allegiance
 
 ### Phase 3 — Opponent binding & card audit
 - [x] Static "references an opponent" analysis per block; binding at play /
       activate / trigger; created effects capture `opponentId`
-- [ ] Card audit → `data/multiplayer-audit/*.json` (spec below)
+- [x] Card audit → `data/multiplayer-audit/*.json` (spec below)
 - [ ] Apply category (b)/(c) fixes; 3-player tests for (b)/(c)/(d)
 
 ### Phase 4 — Showdown
-- [ ] `src/engine/showdown.ts`: opponent rule (SD 13–15), allegiance dealer
-- [ ] Hero Deck & Temptation Pile shared zones; claiming (SD 8–10)
+- [x] `src/engine/showdown.ts`: opponent rule (SD 13–15), allegiance dealer
+- [x] Hero Deck & Temptation Pile shared zones; claiming (SD 8–10)
 - [ ] Re-encode The Evil Alliance (SD-EA) and Slightly Less Evil Alliance
       (SD-SLE)
 - [ ] Setup validation
@@ -144,11 +144,11 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] Rarity-strip image sweep for unmarked epic printings
 
 ### Phase 6 — Docs & hardening
-- [ ] RULES.md §15 Multiplayer, §16 Showdown; rewrite §3.6 note
+- [x] RULES.md §15 Multiplayer, §16 Showdown; rewrite §3.6 note
       (`RULES.md:375-379`); N-player wording in §1/§5/§7
 - [ ] BEHAVIORS.md, TESTING.md, README.md
 - [ ] r13–r15 atom tests; `mark-done` (r15-epic done)
-- [ ] Fuzz: 3/4/5-player FFA, Showdown 1v2/1v3/1v4 with traitors
+- [x] Fuzz: 3/4/5-player FFA, Showdown 1v2/1v3/1v4 with traitors
 - [ ] `examples/showdown.ts`
 
 ## Card audit spec (Phase 3)
@@ -240,7 +240,11 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 - 2026-11-06 (cont.) — Classic oracle merged (31 real-catalog games; replays identically after every engine step so far). `GameResult` replaces `winner` (save format 2 + v1 migration). Elimination (D3/D8) incl. Showdown sides and eliminated-turn passing. Seat-aware next-turn numbering (`turnNumberOfNextTurn`). `buildGame({ players, format })` fixture. Opponent binding: `opponentId` on playCard / activateAbility / flipUp, `opponent` play requirement, E2 (pick), E3 (event), `chooseOpponent` prompt for triggers, E4 existential condition evaluation (`conditionNodeRefersToOpponent`). Multiplayer tests: `src/engine/__tests__/multiplayer/{seating,elimination,binding}.test.ts`.
 - **Audit caveat (2026-11-06):** the auditors judged the archival `text` field; each printing plays as *printed* (`markup` / `data/card-audit/corrections.json`). The latent-bug agent found most "classic bugs" were faithful to the printed "your opponent" wording. Real fixes merged: Lecram (both looks were unencoded), Redonkulous + Smothering Corpulence (Seed Saga / DoD printings say "that character's controller" → `controllerOf`). Audit entries are being re-checked against printed text.
 
+- 2026-11-06 (cont.) — E1 `forEachPlayer { players: "opponents" }`, MP 3 `"controllerAndOpponent"`, E5 `anyPlayerMayPay { players: "opponents" }`; D4 created effects keep `opponentId` (area modifiers, scheduled effects, runtime replacements, hand-move redirects); E3 also binds the current battle's sides. Showdown engine: `table` zone, Allegiance dealing + redaction, Hero Deck / Temptation Pile, `claimHeroCards` / `heroDeckToTemptationPile` / `revealAllegiances`, `usableBy: "heroes"`, PlayerRef `"villain"`, selector `controller: "otherHero"` + `showdownPile`, `opponentCountAtStart`, `influencePerOpponent` / `countPerOpponent` / `develop.usesPerOpponent`, `daringGambit`. Fuzz (`multiplayer/fuzz.test.ts`, 18 real-deck games) found and fixed: eliminated battle side left a dangling battle continuation; seat swap at 3+ seats; autoplay could not answer trigger prompts (probe lacked the trigger queue) or distinct-name picks. Audit re-checked against printed text: a 251 · b 19 · c 35 · d 13. RULES.md §16 Multiplayer, §17 Showdown.
+
 ## Known follow-ups
+
+- Audit re-check findings to fold into per-card fixes: "both players" cards encoded as all-player `forEachPlayer` (Ashes of Zenobia, Research Investment, Spastic Tentacles, Tremor Engine, Hideous Hexapede de6f18) → `controllerAndOpponent`; printings that differ (Epic Smackdown 74da08, Lucky Bastard 451308, Brainbath 3bd6878a → fan-out; Mass Confusion da25a463 → picked player); Rocket Lawnchair `isActivePlayer opponent` → `not isActivePlayer controller`; noResponse cards printing singular "your opponent cannot respond" (Degenerate Molestation, Tactician Vacation, Voidal Replication) are d.
 
 - Predicted turn numbers (`untilTurn`, `restoreRuleSkips`) are stamped from the seating at creation; an elimination afterwards can shift them by a turn. Re-stamp on elimination.
 - A deploy made by an effect (no action to name an opponent) whose text needs one takes the first candidate in turn order; should prompt.
@@ -248,6 +252,8 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 - `startOfOpponentNextTurn` scheduling still means "the turn right after scheduling, if an opponent's"; with a bound opponent it should be that opponent's next turn.
 
 ## Open questions
+
+- Q-MP2: Emergency Obfuscation ("both players switch seats") at a table of three or more — engine-derived for now: it does nothing while more than two players remain. Alternative: swap with an opponent chosen as it enters play.
 
 - Q-MP1: Allegiance deck composition (D2 placeholder default: Heroes − 1
   loyal cards + 1 traitor card for 3+ Heroes, all loyal for 2 Heroes?) —
