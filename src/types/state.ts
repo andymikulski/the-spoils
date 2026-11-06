@@ -213,6 +213,8 @@ export interface RuntimeAreaModifier {
   sourceAbilityId?: AbilityId;
   /** The controller of the effect when it resolved. */
   controllerId: PlayerId;
+  /** The opponent the creating block of rules text was about (D4): its "opponent" keeps naming that player. Absent: every opponent. */
+  opponentId?: PlayerId;
   selector: CardSelector;
 
   stat: Stat;
@@ -332,6 +334,8 @@ export interface RuntimeReplacement {
   id: ModifierId;
   sourceId: CardInstanceId;
   controllerId: PlayerId;
+  /** The opponent the creating block of rules text was about (D4): its "opponent" keeps naming that player. Absent: every opponent. */
+  opponentId?: PlayerId;
   /** Same shape as `installReplacement.replaces`; `controlledBy` / `by` are relative to `controllerId`. */
   replaces: Extract<Effect, { type: "installReplacement" }>["replaces"];
   condition?: Condition;
@@ -362,6 +366,8 @@ export interface RuntimeHandMoveRedirect {
   /** The card whose effect installed it (read-only info for `getActiveProtections`). */
   sourceId?: CardInstanceId;
   sourceControllerId: PlayerId;
+  /** The opponent the creating block of rules text was about (D4): its "opponent" keeps naming that player. Absent: every opponent. */
+  opponentId?: PlayerId;
   who: "self" | "opponent" | "any";
   to: Zone;
   duration: Duration;
@@ -466,6 +472,8 @@ export interface ScheduledEffect {
   turnScheduled: number;
   sourceId: CardInstanceId;
   controllerId: PlayerId;
+  /** The opponent the creating block of rules text was about (D4): its "opponent" keeps naming that player. Absent: every opponent. */
+  opponentId?: PlayerId;
   condition?: Condition;
   effects: Effect[];
   /** The event that triggered the scheduling ability (SYS-48): a rider's `target: "eventCard"` keeps resolving when it fires later. */

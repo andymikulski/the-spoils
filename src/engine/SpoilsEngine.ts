@@ -3861,6 +3861,7 @@ export class SpoilsEngine {
         const context: ResolutionContext = {
           sourceId: area.sourceId ?? cardId,
           controllerId: area.controllerId,
+          ...(area.opponentId !== undefined ? { opponentId: area.opponentId } : {}),
           abilityId: area.sourceAbilityId,
           selected: { __candidate: [cardId] }
         };
@@ -5055,8 +5056,9 @@ export class SpoilsEngine {
         if (rr.replaces.cardType && rr.replaces.cardType !== this.replacementAffectedType(cardId)) continue;
         if (rr.replaces.event === "destroy") {
           const rel = rr.replaces.controlledBy ?? "any";
-          const sameController = this.state.cards[cardId].controllerId === rr.controllerId;
-          if ((rel === "self" && !sameController) || (rel === "opponent" && sameController)) continue;
+          const affectedController = this.state.cards[cardId].controllerId;
+          if (rel === "self" && affectedController !== rr.controllerId) continue;
+          if (rel === "opponent" && !this.opponentIdsFor(rr).includes(affectedController)) continue;
         }
         if (rr.condition) {
           let holds = true;
@@ -5145,9 +5147,9 @@ export class SpoilsEngine {
     for (const w of this.state.handMoveRedirects) {
       if (!sourceLive(w.duration, w.sourceId)) continue;
       const owner = cardId !== undefined ? this.state.cards[cardId]?.ownerId : undefined;
-      if (owner !== undefined && !this.scopeMatchesPlayer(w.who, w.sourceControllerId, owner)) continue;
+      if (owner !== undefined && !this.redirectReaches(w, owner)) continue;
       const d = this.protectionDuration(w.duration);
-      const redirectOpponents = opponentsOf(this.state, w.sourceControllerId);
+      const redirectOpponents = this.opponentIdsFor({ controllerId: w.sourceControllerId, opponentId: w.opponentId });
       const whose =
         w.who === "any"
           ? "any player's hand"
@@ -14338,6 +14340,7 @@ export class SpoilsEngine {
         const dupContext: ResolutionContext = {
           sourceId: targetId,
           controllerId: context.controllerId,
+          ...(stackItem?.context.opponentId !== undefined ? { opponentId: stackItem.context.opponentId } : {}),
           abilityId: stackItem?.context.abilityId,
           selected: { ...(stackItem?.context.selected ?? {}) },
           variables: {
@@ -15037,6 +15040,7 @@ export class SpoilsEngine {
           sourceId: context.sourceId,
           sourceAbilityId: context.abilityId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           selector: effect.selector,
           stat: effect.stat,
           operation: effect.operation,
@@ -15611,6 +15615,7 @@ export class SpoilsEngine {
           id: this.nextId("handMoveRedirect"),
           sourceId: context.sourceId,
           sourceControllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           who: effect.who,
           to: effect.to,
           duration: effect.duration,
@@ -15624,6 +15629,7 @@ export class SpoilsEngine {
           id: this.nextId("runtimeReplacement"),
           sourceId: context.sourceId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           replaces: effect.replaces,
           condition: effect.condition,
           effects: effect.effects,
@@ -15655,6 +15661,7 @@ export class SpoilsEngine {
           turnScheduled: this.state.turn,
           sourceId: context.sourceId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           condition: effect.condition,
           effects: effect.effects,
           event: context.event ? structuredClone(context.event) : undefined,
@@ -16108,12 +16115,17 @@ export class SpoilsEngine {
       }
 
       case "forEachPlayer": {
-        const order = livingSeats(this.state);
+        // "Each player": every living seat from the active player, each one
+        // resolving as its own controller. "Each opponent" (E1): every
+        // opponent of the resolving controller, bound as its opponent in turn.
+        const eachOpponent = effect.players === "opponents";
+        const order = eachOpponent ? opponentsOf(this.state, context.controllerId) : livingSeats(this.state);
+        const contextFor = (playerId: PlayerId): ResolutionContext =>
+          eachOpponent
+            ? { ...context, opponentId: playerId }
+            : { ...context, controllerId: playerId, opponentId: undefined };
         for (let pi = 0; pi < order.length; pi++) {
-          const pctx: ResolutionContext = {
-            ...context,
-            controllerId: order[pi]
-          };
+          const pctx = contextFor(order[pi]);
           const framesBefore = this.state.pendingEffectFrames.length;
           const done = this.runEffectFrame({
             effects: effect.effects,
@@ -16131,7 +16143,7 @@ export class SpoilsEngine {
               this.state.pendingEffectFrames.push({
                 effects: effect.effects,
                 index: 0,
-                context: { ...context, controllerId: order[rj] }
+                context: contextFor(order[rj])
               });
             }
             this.state.pendingEffectFrames.push(...remainder);
@@ -16303,7 +16315,9 @@ export class SpoilsEngine {
       }
 
       case "anyPlayerMayPay": {
-        const order = livingSeats(this.state);
+        const order =
+          effect.players === "opponents" ? opponentsOf(this.state, context.controllerId) : livingSeats(this.state);
+        if (order.length === 0) return;
         this.state.pendingChoice = {
           kind: "anyPlayerMayPay",
           id: this.nextId("choice"),
@@ -17478,11 +17492,17 @@ export class SpoilsEngine {
     if (!card) return undefined;
     let redirect: Zone | undefined;
     for (const w of this.state.handMoveRedirects) {
-      if (this.scopeMatchesPlayer(w.who, w.sourceControllerId, handOwnerId)) {
+      if (this.redirectReaches(w, handOwnerId)) {
         redirect = w.to;
       }
     }
     return redirect;
+  }
+
+  /** Whether a hand-move redirect reaches `playerId`'s hand — "your opponent's" names the opponent its block was about (D4). */
+  private redirectReaches(w: GameState["handMoveRedirects"][number], playerId: PlayerId): boolean {
+    if (w.who === "opponent") return this.opponentIdsFor({ controllerId: w.sourceControllerId, opponentId: w.opponentId }).includes(playerId);
+    return this.scopeMatchesPlayer(w.who, w.sourceControllerId, playerId);
   }
 
   /**
@@ -18793,7 +18813,15 @@ export class SpoilsEngine {
       case "anyPlayerMayPay": {
         assert(pending.kind === "anyPlayerMayPay", "This choice does not match the pending decision.");
 
-        const payCtx = { ...pending.context, controllerId: pending.playerId };
+        // The payer resolves the paid effects as their controller; the card's
+        // own controller, when someone else pays, is that payer's opponent.
+        const original = pending.context.controllerId;
+        const payCtx: ResolutionContext = {
+          ...pending.context,
+          controllerId: pending.playerId,
+          opponentId:
+            pending.playerId !== original && isOpponentOf(this.state, pending.playerId, original) ? original : undefined
+        };
         if (choice.pay && this.canPayWithReductions(pending.cost, payCtx)) {
           this.state.pendingChoice = undefined;
           this.payWithReductions(pending.cost, payCtx);
@@ -20177,6 +20205,7 @@ export class SpoilsEngine {
     return {
       sourceId: rr.sourceId,
       controllerId: rr.controllerId,
+      ...(rr.opponentId !== undefined ? { opponentId: rr.opponentId } : {}),
       selected: { ...rr.selected, __candidate: [cardId] }
     };
   }
@@ -20263,8 +20292,8 @@ export class SpoilsEngine {
       if (rr.replaces.event === "destroy") {
         // Whose card, and who caused it: both relative to the installer.
         const rel = rr.replaces.controlledBy ?? "any";
-        const sameController = affected.controllerId === rr.controllerId;
-        if ((rel === "self" && !sameController) || (rel === "opponent" && sameController)) continue;
+        if (rel === "self" && affected.controllerId !== rr.controllerId) continue;
+        if (rel === "opponent" && !this.opponentIdsFor(rr).includes(affected.controllerId)) continue;
         if (!this.causeFitsReplacement(rr.replaces.by, rr.replaces.bySource, rr.sourceId, rr.controllerId)) continue;
       }
 
@@ -21258,6 +21287,7 @@ export class SpoilsEngine {
       const ctx: ResolutionContext = {
         sourceId: s.sourceId,
         controllerId: s.controllerId,
+        ...(s.opponentId !== undefined ? { opponentId: s.opponentId } : {}),
         event: s.event,
         selected: s.selected ? structuredClone(s.selected) : {}
       };

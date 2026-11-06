@@ -164,6 +164,112 @@ describe("a pick of an opponent's card names the opponent (E2)", () => {
   });
 });
 
+/** "Each opponent loses 1 influence." */
+const QUAKE: CardDefinition = character({
+  name: "Quake",
+  behavior: {
+    abilities: [
+      {
+        id: "quake",
+        type: "activated",
+        costs: [],
+        effects: [{ type: "forEachPlayer", players: "opponents", effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }] }]
+      }
+    ]
+  }
+});
+
+/** "Any opponent may pay 0 to make your faction lose 3 influence." */
+const OFFER: CardDefinition = character({
+  name: "Offer",
+  behavior: {
+    abilities: [
+      {
+        id: "offer",
+        type: "activated",
+        costs: [],
+        effects: [
+          {
+            type: "anyPlayerMayPay",
+            players: "opponents",
+            costs: [],
+            effects: [{ type: "modifyInfluence", player: "opponent", amount: -3 }]
+          }
+        ]
+      }
+    ]
+  }
+});
+
+/** "Your opponent's characters get -1 strength this turn." — a lasting effect the block creates. */
+const WITHER: CardDefinition = character({
+  name: "Wither",
+  behavior: {
+    abilities: [
+      {
+        id: "wither",
+        type: "activated",
+        costs: [],
+        effects: [
+          {
+            type: "createAreaModifier",
+            selector: { type: "character", controller: "opponent" },
+            stat: "strength",
+            operation: "add",
+            value: -1,
+            duration: { type: "untilEndOfTurn" }
+          }
+        ]
+      }
+    ]
+  }
+});
+
+describe("a lasting effect keeps its block's opponent (D4)", () => {
+  test("'your opponent's characters' created for p3 affects p3's characters only", () => {
+    const { engine, id } = buildGame({
+      players: SEATS,
+      cards: [
+        { key: "w", def: WITHER, owner: "p1" },
+        { key: "g2", def: GRUNT, owner: "p2" },
+        { key: "g3", def: GRUNT, owner: "p3" }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("w"), abilityId: "wither", opponentId: "p3" });
+    resolvePendingResponses(engine);
+    assert.equal(engine.getStat(id("g3"), "strength"), 2);
+    assert.equal(engine.getStat(id("g2"), "strength"), 3);
+  });
+});
+
+describe("each opponent (E1) and any opponent may pay (E5)", () => {
+  test("'each opponent' needs no opponent named and reaches every opponent once", () => {
+    const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "q", def: QUAKE, owner: "p1" }] });
+    const before = influence(engine);
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("q"), abilityId: "quake" });
+    resolvePendingResponses(engine);
+    const after = influence(engine);
+    assert.deepEqual([after.p1, after.p2, after.p3], [before.p1, before.p2 - 1, before.p3 - 1]);
+  });
+
+  test("'any opponent may pay' is offered to the opponents only, in turn order", () => {
+    const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "o", def: OFFER, owner: "p1" }] });
+    const before = influence(engine);
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("o"), abilityId: "offer" });
+    resolvePendingResponses(engine);
+    const offeredTo: string[] = [];
+    while (engine.state.pendingChoice?.kind === "anyPlayerMayPay") {
+      const pending = engine.state.pendingChoice;
+      offeredTo.push(pending.playerId);
+      const pay = pending.playerId === "p3";
+      engine.perform({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "anyPlayerMayPay", pay } });
+      resolvePendingResponses(engine);
+    }
+    assert.deepEqual(offeredTo, ["p2", "p3"]);
+    assert.equal(influence(engine).p1, before.p1 - 3, "the payer's opponent is the card's controller");
+  });
+});
+
 describe("triggers (E3) and statics", () => {
   test("an opponent's action names the opponent its trigger is about", () => {
     const { engine, id } = buildGame({

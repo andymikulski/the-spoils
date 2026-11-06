@@ -69,8 +69,13 @@ function walk(node: unknown, inPick: boolean, refs: OpponentRefs): void {
   if (node === null || typeof node !== "object") return;
   const record = node as Record<string, unknown>;
   const isDeclaration = "id" in record && "selector" in record;
+  // Effects that resolve their body once per player rebind "opponent" for it
+  // themselves ("each opponent ...", "any player may pay ..."): the body's
+  // references are not the enclosing block's.
+  const rebindsBody = record.type === "forEachPlayer" || record.type === "anyPlayerMayPay";
   for (const [key, value] of Object.entries(record)) {
     if (NOT_A_REFERENCE.has(key)) continue;
+    if (rebindsBody && key === "effects") continue;
     if (value === "opponent") {
       if (inPick) refs.inPicks = true;
       else refs.elsewhere = true;

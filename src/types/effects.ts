@@ -1287,8 +1287,14 @@ export type Effect =
        * `controller`/`owner` to that player. "Each player may draw a card
        * or play a resource." Nested chooser effects pause per player, the
        * same as anywhere else.
+       *
+       * `players: "opponents"` resolves it once per opponent of the
+       * resolving controller instead ("each opponent discards 2 cards"): the
+       * controller stays the resolving player and `opponent` is bound to
+       * each opponent in turn (E1). Default `"all"`: every living player.
        */
       type: "forEachPlayer";
+      players?: "all" | "opponents";
       effects: Effect[];
     }
   | {
@@ -1340,8 +1346,13 @@ export type Effect =
        * paid effect to each player (active player first) in turn; the first
        * to accept pays and resolves `effects`, then the offer stops. All
        * decline → nothing. Recycling Scheme Facility.
+       *
+       * `players: "opponents"` offers it only to the resolving controller's
+       * opponents, in turn order after the controller ("any opponent may pay
+       * 2 ...", E5). Default `"all"`.
        */
       type: "anyPlayerMayPay";
+      players?: "all" | "opponents";
       costs: Cost[];
       effects: Effect[];
     }
