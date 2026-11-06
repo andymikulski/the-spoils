@@ -6,11 +6,12 @@
       "3398fc6e-d1fd-487d-85f2-59486e3256eb",
       "0de292e7-cc1a-481a-ad01-697f928caac1"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
-      "each opponent may do the same"
+      "If you do, your opponent may do the same."
     ],
-    "notes": "Already fans out via forEachPlayer + not isActivePlayer. Minor: relies on controller being the active player; an opponents-only forEachPlayer scope would be more robust."
+    "notes": "Printed singular: only the bound opponent may deploy a free non-tactic card. Current encoding offers it to every opponent. Re-encode the follow-up deployForFree with player:opponent (bound, prompted when >1) instead of the forEachPlayer fan-out.",
+    "recheck": "changed from a because all 3 printings say singular \"your opponent\" (one bound opponent), but behavior fans out to every non-active player via forEachPlayer+not isActivePlayer"
   },
   {
     "name": "A Death Fit for a King",
@@ -21,7 +22,8 @@
     "phrases": [
       "pick a character in an opponent's discard pile"
     ],
-    "notes": "Target union selector (unique in play, or owner:opponent discard) works with a bound opponent. Pattern: opponent only appears in a target selector."
+    "notes": "Target union selector (unique in play, or owner:opponent discard) works with a bound opponent. Pattern: opponent only appears in a target selector.",
+    "recheck": "unchanged"
   },
   {
     "name": "Adroit Marauder",
@@ -30,11 +32,12 @@
       "f1bdb798-4336-433c-8186-1ea18e12754b",
       "936d6c91-46c0-4f03-a48e-e64e20e1194b"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "While an opponent has at least 10 cards in their discard pile"
+      "While your opponent has at least 10 cards in their discard pile"
     ],
-    "notes": "Static condition counts selector owner:opponent zone:discard >= 10. If static 'opponent' sums over all opponents this is wrong: the text means some single opponent has >=10. Needs an existential per-opponent condition (any opponent satisfies count>=10) instead of an aggregate count."
+    "notes": "Static condition counts selector owner:opponent zone:discard >= 10; with no bound opponent E4 judges it per opponent (some opponent has >=10), which is the printed meaning. No data change.",
+    "recheck": "changed from c because printed wording is singular \"your opponent\" and E4 now evaluates an opponent-referencing condition existentially (some single opponent has >=10)"
   },
   {
     "name": "Arcana Experiment",
@@ -45,9 +48,11 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent chooses X of those cards"
+      "Your opponent picks X of those cards",
+      "Your opponent chooses X of those cards"
     ],
-    "notes": "Single 'An opponent' chooser in one resolving block; binds one opponent."
+    "notes": "Single printed \"your opponent\" chooser in one resolving block; binds one opponent.",
+    "recheck": "unchanged (printings word it picks/chooses, same behavior)"
   },
   {
     "name": "Ashara, Gideon's Twin",
@@ -57,9 +62,10 @@
     ],
     "category": "a",
     "phrases": [
-      "pick a character in an opponent's discard pile with 3 life or less"
+      "You may pick a character in an opponent's discard pile with 3 life or less."
     ],
-    "notes": "Optional extra-cost target from one opponent's discard pile; binding works."
+    "notes": "Optional extra-cost target from one opponent's discard pile; binding works.",
+    "recheck": "unchanged"
   },
   {
     "name": "Ashes of Zenobia",
@@ -68,11 +74,13 @@
       "b175a535-2a58-4df1-806d-6828e76d2868",
       "b3c323b0-c7ea-4970-a286-92df7d2fe2f3"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
-      "Each player puts a character they control into its owner's hand"
+      "Both players must put a character they control into its owner's hand.",
+      "Both players put a character they control into its owner's hand."
     ],
-    "notes": "Already fans out via forEachPlayer over all players; matches 'Each player'."
+    "notes": "All printings say \"Both players\" (1st/Open Beta add \"must\"). D4: both players in a block = controller + the bound opponent. Current forEachPlayer makes every player in the game bounce a character. Re-encode as controller + bound opponent (a players scope of controller+opponent, or two explicit steps).",
+    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
   },
   {
     "name": "Bask Bomb",
@@ -81,10 +89,11 @@
     ],
     "category": "c",
     "phrases": [
-      "an opponent is blocking",
-      "Inflict Y damage divided however that opponent wants to the attacking party"
+      "Play this only when you are attacking and your opponent is blocking.",
+      "Inflict Y damage divided however your opponent wants to the attacking party."
     ],
-    "notes": "'that opponent' is the blocking player. distributeAmong chooser:opponent must resolve to the player whose party is blocking (the defender), not a prompted pick; bind opponentId to the battle's blocking player for this ability (no prompt) and have the condition check that player blocked."
+    "notes": "Printed \"your opponent\" is the opponent who is blocking, i.e. the defending player of this battle. Bind opponentId to the battle's blocking player (no prompt) so the chooser/condition use the defender, not a prompted pick; battleRole attacker proxy is 2-player-only.",
+    "recheck": "unchanged"
   },
   {
     "name": "Card Counter",
@@ -95,9 +104,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Put the top X cards of an opponent's deck into their discard pile"
+      "Put the top X cards of your opponent's deck into their discard pile."
     ],
-    "notes": "One bound opponent for the ETB block."
+    "notes": "One bound opponent for the ETB block.",
+    "recheck": "unchanged"
   },
   {
     "name": "Catastrophic Betrayal",
@@ -108,20 +118,23 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character in an opponent's discard pile"
+      "Pick a character in your opponent's discard pile."
     ],
-    "notes": "Target owner:opponent; works with a bound opponent. Pattern: when 'opponent' is only used in a target selector, the picked target could derive the binding (no prompt)."
+    "notes": "Target owner:opponent; works with a bound opponent. Pattern: when 'opponent' is only used in a target selector, the picked target could derive the binding (no prompt).",
+    "recheck": "unchanged"
   },
   {
     "name": "Community Chest",
     "ids": [
       "fe7095e0-d918-420c-9303-fbc5054d2564"
     ],
-    "category": "a",
+    "category": "d",
     "phrases": [
-      "At the start of each player's turn, each player may draw a card or play a resource"
+      "At the start of each player's turn, both players may draw a card or play a resource."
     ],
-    "notes": "Already forEachPlayer over all players."
+    "notes": "Which two players? D4 reads \"both players\" as controller + bound opponent, but this is a trigger on every player's turn start with no natural opponent to bind (E3 binds the turn's player, who may be the controller). Current encoding gives every player the option.",
+    "ruling": "Engine-derived reading: every player (each living player may draw or play a resource at every player's turn start) -- keep the current forEachPlayer.",
+    "recheck": "changed from a because printed text is \"both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players"
   },
   {
     "name": "Death of the Demon Knights",
@@ -130,10 +143,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character an opponent controls",
-      "that character's controller picks another character they control"
+      "Pick a character an opponent controls.",
+      "that character's controller picks another character they control."
     ],
-    "notes": "Mark and the second pick both use the one bound opponent (the marked character's controller)."
+    "notes": "Mark and the second pick both use the one bound opponent (the marked character's controller).",
+    "recheck": "unchanged"
   },
   {
     "name": "Defenestrate",
@@ -143,9 +157,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Put the top 2 cards of an opponent's deck into their discard pile"
+      "Put the top 2 cards of your opponent's deck into their discard pile."
     ],
-    "notes": "One bound opponent."
+    "notes": "One bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Degenerate Molestation",
@@ -154,13 +169,15 @@
       "12cfc4e1-e8f7-431e-a37a-593210181b0c",
       "f77f9b48-ebfb-4f8f-a32d-46a0309da781"
     ],
-    "category": "a",
+    "category": "d",
     "phrases": [
-      "Your opponents cannot respond to this card",
-      "Pick an opponent",
-      "That player discards a card"
+      "Your opponent cannot respond to this card.",
+      "Your opponent must discard a card.",
+      "Repeat this until your opponent has no cards in their hand."
     ],
-    "notes": "'Pick an opponent' = the D4 binding; repeatWhile and chooser use that one opponent. noResponse must block every opponent (matches plural text)."
+    "notes": "Discard/repeat parts bind one opponent (a). But \"Your opponent cannot respond\" is singular: strictly only the bound opponent is denied a response, while the noResponse flag resolves the card with no response window at all (all opponents denied).",
+    "ruling": "Keep noResponse (no window for anyone): simplest and matches the card's intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
+    "recheck": "changed from a because printed text is singular \"your opponent\" everywhere (not plural opponents/pick an opponent): noResponse is a card-level flag that denies every opponent"
   },
   {
     "name": "Devilfang Thunderhoof",
@@ -170,10 +187,12 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick an opponent",
-      "That player discards a card"
+      "Pick an opponent.",
+      "Your opponent discards a card.",
+      "That opponent discards a card."
     ],
-    "notes": "Disrupt binds one opponent (explicit pick)."
+    "notes": "Disrupt binds one opponent (explicit pick).",
+    "recheck": "unchanged (printings word it Your opponent / That opponent)"
   },
   {
     "name": "Downsizing",
@@ -182,11 +201,12 @@
       "040213b2-7931-48c4-bf89-f8d45eaa98be",
       "43425eec-287e-44b7-8bff-60c2b58feb9f"
     ],
-    "category": "b",
+    "category": "a",
     "phrases": [
-      "Each opponent's faction gains X influence"
+      "Your opponent's faction gains X influence, where X is the number of characters destroyed."
     ],
-    "notes": "modifyInfluence player:opponent hits only the bound opponent. Wrap that modifyInfluence (not the destroy/bind of X) in an opponents-only forEachPlayer (plain forEachPlayer includes the controller) with player:controller."
+    "notes": "modifyInfluence player:opponent hits the one bound opponent, which is the printed meaning. No data change.",
+    "recheck": "changed from b because every printing says singular \"your opponent's faction\" (one bound opponent), not each opponent"
   },
   {
     "name": "Draconarius Slitherform",
@@ -195,9 +215,10 @@
     ],
     "category": "c",
     "phrases": [
-      "your opponents' characters"
+      "Inflict X damage divided however you want to your opponents' characters."
     ],
-    "notes": "Death trigger uses controller:opponent targets, i.e. the single bound opponent's characters; the text is plural: damage is divided among all opponents' characters (one distribution across every opponent's characters). Needs a selector scope spanning every opponent for this block instead of the bound opponent. Block trigger ('the blocking party') is unaffected."
+    "notes": "Death trigger uses controller:opponent targets, i.e. the single bound opponent's characters; the printed text is plural, so the damage is divided among every opponent's characters in one distribution. Needs a selector scope spanning every opponent (not the bound opponent) for this trigger. The block trigger (\"the blocking party\") is unaffected.",
+    "recheck": "unchanged (printed plural \"your opponents' characters\")"
   },
   {
     "name": "Dragon Tank",
@@ -208,9 +229,11 @@
     ],
     "category": "a",
     "phrases": [
-      "you may pick a character an opponent controls"
+      "destroy a character your opponent controls",
+      "pick a character your opponent controls"
     ],
-    "notes": "Trigger binds one opponent; 'no opponent characters' check uses the same one. Minor: a player may bind an opponent with no characters and lose the Tank, which is their choice."
+    "notes": "Trigger binds one opponent; 'no opponent characters' check uses the same one. Minor: a player may bind an opponent with no characters and lose the Tank, which is their choice.",
+    "recheck": "unchanged (printings differ in wording only)"
   },
   {
     "name": "Dragon's Strategy",
@@ -220,9 +243,10 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent's faction loses 2 influence"
+      "Your opponent's faction loses 2 influence."
     ],
-    "notes": "One bound opponent."
+    "notes": "One bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Ecto-Distillation",
@@ -233,9 +257,11 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent may search your deck for any number of copies of the card"
+      "Your opponent may search your deck for any number of copies of the card",
+      "Your opponent must search your deck for all copies of the card"
     ],
-    "notes": "One bound opponent is the chooser; no change."
+    "notes": "Every printing has a single \"your opponent\" chooser in one resolving block; binds one opponent.",
+    "recheck": "unchanged (printing 37f34e has an older wording/behavior: opponent must search; all still one bound opponent)"
   },
   {
     "name": "Emergency Obfuscation",
@@ -245,11 +271,11 @@
     ],
     "category": "c",
     "phrases": [
-      "each player moves 1 seat to the left",
-      "Each player is in control of that opponent's side",
-      "the owner of the winning deck wins the game"
+      "both players switch seats",
+      "Both players are in control of their opponent's side"
     ],
-    "notes": "swapsSides is a 2-player swap. For N players it must rotate every player's side one seat left (each player controls the side of the player now in their former seat, by turnOrder), and winner attribution stays with the deck owner. Needs an N-seat rotation definition and turnOrder-aware control mapping."
+    "notes": "Printed text is a swap between \"both players\" (D4: controller + bound opponent), not an N-seat rotation. swapsSides is a continuous flag that swaps the only two seats; re-define it as a swap of controller and the bound/chosen opponent (E6), with control mapping and winner attribution (owner of the winning deck wins) carried per pair.",
+    "recheck": "unchanged (printed \"both players switch seats\": controller + bound opponent swap)"
   },
   {
     "name": "Enter The Demon Knights",
@@ -258,10 +284,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick an opponent",
-      "That opponent chooses one of those characters"
+      "Pick an opponent.",
+      "That opponent chooses one of those characters."
     ],
-    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player."
+    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player.",
+    "recheck": "unchanged"
   },
   {
     "name": "Executive Order #6370u7",
@@ -272,7 +299,8 @@
     "phrases": [
       "At the start of an opponent's turn"
     ],
-    "notes": "Trigger condition is 'not the controller's turn' = any opponent's turn; no player binding needed."
+    "notes": "Trigger condition is 'not the controller's turn' = any opponent's turn; no player binding needed.",
+    "recheck": "unchanged (E3 binds the turn's player; trigger fires on any opponent's turn)"
   },
   {
     "name": "Executive Poaching",
@@ -283,9 +311,11 @@
     ],
     "category": "a",
     "phrases": [
-      "the character an opponent controls with the highest numeric cost"
+      "Destroy the character your opponent controls with the highest numeric cost.",
+      "Destroy the character your opponent controls with the highest cost."
     ],
-    "notes": "'highest' is computed among the one bound opponent's characters (MP 2 reading); acceptable, no change."
+    "notes": "'highest' is computed among the one bound opponent's characters (MP 2 reading); acceptable, no change.",
+    "recheck": "unchanged"
   },
   {
     "name": "Face in the Crowd",
@@ -293,11 +323,12 @@
       "9eefa81d-6214-47bf-af77-7bb5ca92c8d4",
       "10b2d3fb-c61b-4c10-99ed-7d81de0c6b7e"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "While an opponent controls at least 4 characters"
+      "While your opponent controls at least 4 characters"
     ],
-    "notes": "Static condition counts selector controller:opponent characters >= 4. Text means some single opponent controls >=4; an aggregate sum over opponents would be wrong. Needs an existential per-opponent condition."
+    "notes": "Both printings (with/without the lone-attacker clause) use count controller:opponent characters >= 4 in a condition; E4 judges it per opponent. No data change.",
+    "recheck": "changed from c because printed wording is singular \"your opponent\" and E4 now evaluates an opponent-referencing condition existentially (some single opponent controls >=4)"
   },
   {
     "name": "Forget",
@@ -308,9 +339,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Look at an opponent's hand and choose a card in it"
+      "Look at your opponent's hand and pick a card.",
+      "Your opponent must discard that card."
     ],
-    "notes": "Single opponent's hand via the block binding."
+    "notes": "Single opponent's hand via the block binding.",
+    "recheck": "unchanged"
   },
   {
     "name": "Free Trade Agreement",
@@ -319,15 +352,16 @@
       "6a09105b-8cde-488e-ae5b-89ebc81beade",
       "234559f8-329c-4c05-bc09-c34e087a4182"
     ],
-    "category": "a",
+    "category": "d",
     "phrases": [
-      "At the start of each player's turn, that player chooses",
-      "their opponents may play a resource",
-      "their opponents may draw a card",
-      "Each player may draw up to 2 cards",
-      "Each player may play up to 2 resources"
+      "That player may draw a card and their opponent may play a resource.",
+      "That player may play a resource and their opponent may draw a card.",
+      "Both players may draw up to 2 cards",
+      "Both players may play up to 2 resources"
     ],
-    "notes": "Already fans out via forEachPlayer; 'opponents' encoded as every non-active player, which is correct for N players. (Pattern: forEachPlayer + not isActivePlayer as 'each opponent'.)"
+    "notes": "\"Their opponent\" / \"both players\" is relative to the active player (each player's turn), and under D4 would be one opponent of that player. There is no natural binding (the card's controller is not the chooser), so which opponent is not determined. Current encoding gives every non-active player the benefit (and 'both players' = every player).",
+    "ruling": "Engine-derived reading: \"their opponent\" = every other player; \"both players\" = every player. Keep the forEachPlayer + not isActivePlayer encoding.",
+    "recheck": "changed from a because printed text is singular \"their opponent\" / \"Both players\" relative to the turn's player, not \"opponents\"; ambiguous in 3+ players"
   },
   {
     "name": "Geiseric, the Souleater",
@@ -336,9 +370,10 @@
     ],
     "category": "a",
     "phrases": [
-      "If a character would be put into an opponent's hand from play"
+      "If a character is put into your opponent's hand from play"
     ],
-    "notes": "Static replacement controlledBy:opponent: applies for every opponent's characters."
+    "notes": "Static replacement controlledBy:opponent: applies for every opponent's characters.",
+    "recheck": "unchanged (static: applies to every opponent)"
   },
   {
     "name": "Giada, the Elegant",
@@ -347,9 +382,10 @@
     ],
     "category": "a",
     "phrases": [
-      "by an opposing card or effect"
+      "If this card would be destroyed by an opposing card or effect"
     ],
-    "notes": "Static replacement by:opponent matches any opponent's source."
+    "notes": "Static replacement by:opponent matches any opponent's source.",
+    "recheck": "unchanged"
   },
   {
     "name": "Gideon's Legacy",
@@ -358,10 +394,12 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a player",
-      "Each other player's faction gains X influence"
+      "Pick a player.",
+      "Pick a card in that player's discard pile.",
+      "Each other player's faction gains X influence."
     ],
-    "notes": "Picked card's owner is the picked player; the forEachPlayer fan-out gives influence to every player who does not own the card, matching 'each other player'."
+    "notes": "Picked card's owner is the picked player; the forEachPlayer fan-out gives influence to every player who does not own the card, matching 'each other player'.",
+    "recheck": "unchanged (printed \"Each other player\": forEachPlayer over players who don't own the picked card)"
   },
   {
     "name": "Goutflame Talonclaw",
@@ -372,7 +410,8 @@
     "phrases": [
       "Opponents cannot take control of this card"
     ],
-    "notes": "cannotBeTakenControl is unconditional; fine for all opponents. In Showdown check that a fellow Hero's TEAMWORK is not treated as an opponent taking control."
+    "notes": "cannotBeTakenControl is unconditional; fine for all opponents. In Showdown check that a fellow Hero's TEAMWORK is not treated as an opponent taking control.",
+    "recheck": "unchanged"
   },
   {
     "name": "Grand Theft All",
@@ -383,9 +422,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Put up to 4 non-tactic cards in an opponent's discard pile into play under your control"
+      "Put up to 4 characters, items, locations, and/or resources from your opponent's discard pile into play under your control.",
+      "Put up to 4 non-tactic cards in your opponent's discard pile into play under your control."
     ],
-    "notes": "All cards come from one bound opponent's discard pile."
+    "notes": "All cards come from one bound opponent's discard pile.",
+    "recheck": "unchanged (printings differ in wording only)"
   },
   {
     "name": "Heist Planner",
@@ -396,9 +437,10 @@
     ],
     "category": "a",
     "phrases": [
-      "search an opponent's deck for up to 3 cards with different names"
+      "you may search your opponent's deck for up to 3 cards with different names and put them into your opponent's discard pile"
     ],
-    "notes": "One bound opponent; shuffleDeck player:opponent is the same one."
+    "notes": "One bound opponent; shuffleDeck player:opponent is the same one.",
+    "recheck": "unchanged"
   },
   {
     "name": "Hilarious Refrigerator Alarm",
@@ -407,10 +449,11 @@
     ],
     "category": "b",
     "phrases": [
-      "If an opponent deployed at least 2 cards with the same name this turn",
-      "each opponent may put 3 Micromajig tokens into play under their control"
+      "If an opponent played at least 2 cards with the same name this turn",
+      "Otherwise, each opponent may put 3 Micromajig tokens into play under their control."
     ],
-    "notes": "The 'Otherwise' branch uses mayPay player:opponent (single bound player); wrap it in an opponents-only forEachPlayer so every opponent may make 3 tokens. The deploySameNameThisTurn player:opponent condition should also be existential across all opponents ('an opponent'), not just the bound one."
+    "notes": "The 'Otherwise' branch uses mayPay player:opponent (one bound player) but the printed text says each opponent: wrap it in an opponents-only forEachPlayer so every opponent may make 3 tokens. The deploySameNameThisTurn player:opponent condition (printed \"an opponent\") is judged existentially by E4, no change needed.",
+    "recheck": "unchanged (single printing; printed \"each opponent\" still needs fan-out)"
   },
   {
     "name": "Ipsighast, the Lustful",
@@ -420,10 +463,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character in an opponent's discard pile",
+      "Pick a character in an opponent's discard pile.",
       "the top 3 cards of that opponent's deck"
     ],
-    "notes": "The picked target fixes the opponent; mill uses ownerOf(selected), which is correct for any opponent."
+    "notes": "The picked target fixes the opponent; mill uses ownerOf(selected), which is correct for any opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Irresistible Bribe",
@@ -432,11 +476,12 @@
       "4779dd8b-22b8-45ea-adfc-aaf6c9ce11d8",
       "8e36b4a0-419d-413d-9512-b539e37681aa"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "That character’s controller's faction gains X influence"
+      "Your opponent's faction gains X influence."
     ],
-    "notes": "Target is any character, but influence goes to player:'opponent' (bound opponent). Re-encode to {controllerOf: selected c}; this is also wrong in classic when the picked character is your own, and wrong in MP when its controller is not the bound opponent."
+    "notes": "Pick any character; influence goes to the block's one bound opponent (player:opponent), exactly as printed. No data change (the earlier 'latent bug' claim came from the archival text).",
+    "recheck": "changed from c because every printing says \"Your opponent's faction\" (one bound opponent), not \"that character's controller's faction\"; the binding is the printed reading"
   },
   {
     "name": "Jackmove",
@@ -447,9 +492,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Reveal up to the top X cards of an opponent's deck"
+      "Reveal the top X cards of your opponent's deck.",
+      "the remaining cards into your opponent's discard pile"
     ],
-    "notes": "One bound opponent."
+    "notes": "One bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Knobby Stave",
@@ -459,9 +506,10 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent discards a card"
+      "Your opponent must discard a card."
     ],
-    "notes": "Activated ability binds one opponent."
+    "notes": "Activated ability binds one opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Land Shark",
@@ -471,9 +519,10 @@
     ],
     "category": "a",
     "phrases": [
-      "each face-down resource each opponent controls"
+      "for each face-down resource your opponent controls"
     ],
-    "notes": "Static selector owner:opponent; count must sum over every opponent (static opponent = all opponents), which matches 'each opponent'."
+    "notes": "Static selector owner:opponent; count must sum over every opponent (static opponent = all opponents), which matches 'each opponent'.",
+    "recheck": "unchanged (static: sums over every opponent)"
   },
   {
     "name": "Lecram, Silent Advisor",
@@ -484,7 +533,8 @@
     "phrases": [
       "look at the top card of an opponent's deck"
     ],
-    "notes": "The look effect is not encoded (empty winEffects), so there is nothing to change; when encoded it binds one opponent for that trigger."
+    "notes": "The look effect is not encoded (empty winEffects), so there is nothing to change; when encoded it binds one opponent for that trigger.",
+    "recheck": "unchanged (both looks now encoded; look at an opponent's deck binds one opponent)"
   },
   {
     "name": "Lugubrian Octopod",
@@ -493,11 +543,13 @@
       "f54b6b5c-7d76-441f-a521-7d2e65b31d0b",
       "9637226d-3115-48cd-bf92-b6946d7eafed"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "that faction's controller discards 2 cards"
+      "If this card inflicts damage to a faction, your opponent must discard 2 cards.",
+      "your opponent discards 2 cards."
     ],
-    "notes": "The discarder is the damaged faction's controller (chooser ownerOf eventCard) but the hand selector is owner:opponent, i.e. the bound opponent. With 3+ players the trigger's opponentId must be set from the event (the damaged faction's controller, no prompt), or the selector must be re-expressed relative to the chooser."
+    "notes": "damageDealt event card is the damaged faction; eventOpponent binds its controller, so the chooser (ownerOf eventCard) and the owner:opponent hand selector are the same player. No data change.",
+    "recheck": "changed from c because E3 now binds the trigger's opponent from the event (the damaged faction's controller), so owner:opponent resolves to that player with no prompt"
   },
   {
     "name": "Master Scavenger",
@@ -508,9 +560,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Remove 3 cards in an opponent's discard pile from the game"
+      "Remove 3 cards in your opponent's discard pile from the game."
     ],
-    "notes": "Cost pick from one opponent's discard; works with binding."
+    "notes": "Cost pick from one opponent's discard; works with binding.",
+    "recheck": "unchanged"
   },
   {
     "name": "Meager Research",
@@ -520,9 +573,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Reveal the top card of an opponent's deck"
+      "Reveal the top card of your opponent's deck and put it into their hand."
     ],
-    "notes": "One bound opponent's deck."
+    "notes": "One bound opponent's deck.",
+    "recheck": "unchanged (printings say their/his hand)"
   },
   {
     "name": "Mud Prison",
@@ -532,9 +586,10 @@
     "category": "a",
     "phrases": [
       "pick a character an opponent controls",
-      "Treat characters your opponents control with a token on them"
+      "Treat characters your opponents control with a token on them as though they have no rules text."
     ],
-    "notes": "Trigger binds one opponent for the pick; the static suppressAllAbilities selector controller:opponent covers every opponent's marked characters."
+    "notes": "Trigger binds one opponent for the pick; the static suppressAllAbilities selector controller:opponent covers every opponent's marked characters.",
+    "recheck": "unchanged"
   },
   {
     "name": "Octo-Ba-Ba, the Devourer",
@@ -543,9 +598,10 @@
     ],
     "category": "a",
     "phrases": [
-      "When a character an opponent controls is destroyed"
+      "If a character your opponent controls is destroyed"
     ],
-    "notes": "Static trigger on any opponent's character."
+    "notes": "Static trigger on any opponent's character.",
+    "recheck": "unchanged (E3 binds the event's controller; trigger condition eventCardControlledBy:opponent)"
   },
   {
     "name": "Pillaging Pirate",
@@ -556,9 +612,10 @@
     ],
     "category": "a",
     "phrases": [
-      "put the top 2 cards of an opponent's deck into their discard pile"
+      "put the top 2 cards of your opponent's deck into their discard pile"
     ],
-    "notes": "One bound opponent."
+    "notes": "One bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Pluck",
@@ -570,9 +627,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a non-tactic card in an opponent's discard pile"
+      "Pick a non-tactic card in your opponent's discard pile."
     ],
-    "notes": "Target owner:opponent with binding."
+    "notes": "Target owner:opponent with binding.",
+    "recheck": "unchanged (printings differ in punctuation only)"
   },
   {
     "name": "Pony Slaystation",
@@ -581,9 +639,10 @@
     ],
     "category": "a",
     "phrases": [
-      "under an opponent's control"
+      "When a character with 3 strength of less enters play under an opponent's control"
     ],
-    "notes": "Static trigger eventCardControlledBy:opponent: any opponent."
+    "notes": "Static trigger eventCardControlledBy:opponent: any opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Port Manteau",
@@ -592,9 +651,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Players must pay 2 to deploy cards with the named subtype"
+      "Players must pay 2 to play cards with the named subtype."
     ],
-    "notes": "costModifiers affecting controller and opponent: opponent covers every opponent."
+    "notes": "costModifiers affecting controller and opponent: opponent covers every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Rabid Sarume",
@@ -607,7 +667,8 @@
     "phrases": [
       "inflict 1 damage to all your opponent's characters"
     ],
-    "notes": "Singular 'your opponent' = the bound opponent (MP 2); the selector controller:opponent hits only that player's characters."
+    "notes": "Singular 'your opponent' = the bound opponent (MP 2); the selector controller:opponent hits only that player's characters.",
+    "recheck": "unchanged"
   },
   {
     "name": "Ravenous Wolf",
@@ -616,10 +677,9 @@
       "8ccb3e92-e728-48e0-a631-c2b87c06e5f6"
     ],
     "category": "a",
-    "phrases": [
-      "if you deployed it during an opponent's turn"
-    ],
-    "notes": "'An opponent's turn' = any turn that is not yours; encoding uses deployedAsResponse as the proxy and has no player reference, so no MP change."
+    "phrases": [],
+    "notes": "No player-relative wording in any printing; deployedAsResponse has no player reference. Nothing to change.",
+    "recheck": "unchanged (printed text has no opponent / player-relative wording at all: the 'opponent's turn' phrase was only in the archival text)"
   },
   {
     "name": "Research Investment",
@@ -628,11 +688,13 @@
       "8debcbf9-ef88-4e7a-b25e-5b7d69629a96",
       "828a6b95-9e5f-4035-b348-6258c1937c87"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
-      "Each player may search their deck for up to 3 staple resources"
+      "Both players may search their deck for up to 3 staple resources and put them into play.",
+      "Both players may search their deck for up to 5 staple resources and put them into play."
     ],
-    "notes": "Already forEachPlayer over all players."
+    "notes": "Printings ec6467/8debcb say up to 3, 828a6b says up to 5 (behavior already matches each). D4: \"both players\" in a block = controller + the bound opponent; forEachPlayer lets every player in a 3+ game fetch staples. Re-encode as controller + bound opponent.",
+    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
   },
   {
     "name": "Ritual of the Screaming Cheese",
@@ -642,10 +704,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick an opponent",
-      "That player chooses one of the following"
+      "Your opponent must pick one of the following:"
     ],
-    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player."
+    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player.",
+    "recheck": "unchanged (printed \"Your opponent\" binds one opponent; no explicit 'Pick an opponent' in the printing)"
   },
   {
     "name": "Ritual of the Shattering Teeth",
@@ -656,9 +718,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Look at an opponent's hand"
+      "Look at your opponent's hand and pick X or fewer cards.",
+      "Your opponent must discard those cards."
     ],
-    "notes": "One bound opponent's hand."
+    "notes": "One bound opponent's hand.",
+    "recheck": "unchanged"
   },
   {
     "name": "Sarcophyle Matriculation",
@@ -668,9 +732,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character an opponent controls"
+      "Play this only when you are being attacked. Pick a character your opponent controls."
     ],
-    "notes": "Bound opponent; only useful if it is the attacker, but any choice is legal. Optionally default the binding to the attacking player."
+    "notes": "The pick of an opponent's character binds that opponent (E2); any opponent's character is legal. Whether it should be restricted to the attacker is a design choice, not a data bug.",
+    "recheck": "unchanged"
   },
   {
     "name": "Scrag",
@@ -680,11 +745,13 @@
       "c0b6851e-1ad8-4079-8f81-5e5ff07f9187",
       "fb663668-19d6-4f14-a48f-6e9ae04e8875"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "If that character's controller has at least X cards in their discard pile"
+      "if your opponent has at least X cards in their discard pile",
+      "If the character's controller has at least X cards in their discard pile"
     ],
-    "notes": "Counts owner:opponent discard but the picked character may be anyone's; text means the character's controller. Re-encode with the discard of controllerOf(selected c) (pre-existing 2-player bug when targeting your own character; with 3+ players it is wrong whenever the controller is not the bound opponent)."
+    "notes": "printings differ in wording but each behavior encodes its own printed text (fb6636 already controllerOf the picked character). No data change; the earlier 'latent bug' came from the archival text.",
+    "recheck": "changed from c because printings 98f684, c0b685 and a41131 print \"your opponent\" (bound opponent, faithful) and printing fb6636 prints \"the character's controller\" with behavior already using controllerOf"
   },
   {
     "name": "Shieldmane Grandchest",
@@ -693,9 +760,10 @@
     ],
     "category": "a",
     "phrases": [
-      "When battle damage is inflicted to a character an opponent controls, increase the amount by 2"
+      "If battle damage is inflicted to a character your opponent controls, increase the amount by 2."
     ],
-    "notes": "Static damageModifiers selector controller:opponent covers every opponent's characters."
+    "notes": "Static damageModifiers selector controller:opponent covers every opponent's characters.",
+    "recheck": "unchanged (static: every opponent's characters)"
   },
   {
     "name": "Siege Machine",
@@ -706,9 +774,10 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent's faction loses 1 influence"
+      "Your opponent's faction loses 1 influence."
     ],
-    "notes": "One bound opponent."
+    "notes": "One bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Sleeping Guard",
@@ -718,9 +787,10 @@
     ],
     "category": "a",
     "phrases": [
-      "While an opponent controls a character"
+      "While your opponent controls a character"
     ],
-    "notes": "Static >=1 count; summing over all opponents is equivalent to 'any opponent controls a character'."
+    "notes": "Static >=1 count; summing over all opponents is equivalent to 'any opponent controls a character'.",
+    "recheck": "unchanged (>=1 count: summing over opponents equals 'some opponent controls one'; E4 existential also fine)"
   },
   {
     "name": "Slightly Less Evil Alliance",
@@ -729,13 +799,14 @@
     ],
     "category": "c",
     "phrases": [
-      "All Heroes can use abilities on this card",
-      "Pick a character another Hero controls",
-      "The Villain takes control of the character",
-      "Choose another player",
+      "All Heroes can use abilities on this card.",
+      "Pick a character another Hero controls.",
+      "The Villain takes control of the character.",
+      "Choose another player.",
       "all Heroes turn their Allegiance cards face-up"
     ],
-    "notes": "Currently encoded as a bare setup with no abilities. Needs the full Showdown encoding (SD-SLE 1-5): usableBy:'heroes' shared faction, GIVE IN TO TEMPTATION (pick character another Hero controls, takeControl to the Villain, claim Temptation Pile card), SPRING FORTH (Hero deck claim), TEAMWORK ('another player' = any other player chosen as target player, not the bound opponent), and the token/7-token allegiance reveal."
+    "notes": "Currently encoded as a bare setup with no abilities. Needs the full Showdown encoding (SD-SLE 1-5): usableBy:'heroes' shared faction, GIVE IN TO TEMPTATION (pick character another Hero controls, takeControl to the Villain, claim Temptation Pile card), SPRING FORTH (Hero deck claim), TEAMWORK ('another player' = any other player chosen as target player, not the bound opponent), and the token/7-token allegiance reveal.",
+    "recheck": "unchanged"
   },
   {
     "name": "Slingerang",
@@ -744,12 +815,13 @@
       "b67c8587-63f7-4562-a6f9-f4ffabd1f843",
       "93ebda5d-c273-4c97-a5c2-29202057b6e0"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "When an opponent deploys a character",
-      "only if an opponent deployed a character this turn"
+      "If your opponent plays a character",
+      "only if your opponent played a character this turn"
     ],
-    "notes": "The trigger ('When an opponent deploys') is a static any-opponent and fine. The CHEAP SHOT activation condition uses deploysThisTurn player:opponent, which is evaluated before/outside a resolving block binding: it must mean 'any opponent deployed a character this turn' (aggregate across all opponents), not the bound opponent."
+    "notes": "Both printings print singular \"your opponent\". 'Some opponent deployed a character this turn' is exactly E4's existential reading of deploysThisTurn player:opponent. No data change.",
+    "recheck": "changed from c because the trigger is eventPlayerIs:opponent (E3 binds the acting opponent) and the activation condition (opponent played a character this turn) is judged existentially by E4"
   },
   {
     "name": "Spastic Tentacles",
@@ -757,11 +829,12 @@
       "b817ac26-bdd5-4f11-8c48-e71cb58ef421",
       "9b955719-5c5a-4401-8a40-d41c7390829e"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
-      "each player puts a resource they control into its owner's hand"
+      "both players must put a resource they control into its owner's hand."
     ],
-    "notes": "Already forEachPlayer over all players; matches 'each player'."
+    "notes": "On enter, only you and the bound opponent bounce a resource (D4 \"both players\"); forEachPlayer makes every player do it in a 3+ game. Re-encode as controller + bound opponent.",
+    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
   },
   {
     "name": "Spatchcocking",
@@ -770,10 +843,11 @@
     ],
     "category": "b",
     "phrases": [
-      "Each player chooses a card of each non-resource type they control",
-      "Each opponent reveals their hand, chooses a card of each non-resource type in it, and discards the remaining non-resource cards"
+      "Each player chooses a card of each non-resource type they control.",
+      "Each opponent reveals their hand, chooses a card of each non-resource type in it, and discards the remaining non-resource cards."
     ],
-    "notes": "Main effect already forEachPlayer (correct). RECUR effect uses reveal of:opponent and chooser:opponent for a single player: wrap the reveal, the four chooserSelectsTarget and the discard forEach in an opponents-only forEachPlayer (selectors rewritten to controller:self per iterated opponent)."
+    "notes": "Main effect already forEachPlayer (correct). RECUR effect uses reveal of:opponent and chooser:opponent for a single player: wrap the reveal, the four chooserSelectsTarget and the discard forEach in an opponents-only forEachPlayer (selectors rewritten to controller:self per iterated opponent).",
+    "recheck": "unchanged"
   },
   {
     "name": "Stolen Inspiration",
@@ -784,9 +858,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Look at an opponent's hand and choose a non-resource card in it"
+      "Look at your opponent's hand and pick a non-resource card.",
+      "Your opponent must discard that card."
     ],
-    "notes": "One bound opponent's hand."
+    "notes": "One bound opponent's hand.",
+    "recheck": "unchanged"
   },
   {
     "name": "Storm the Gates",
@@ -796,9 +872,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character your opponent owns"
+      "Pick a character your opponent owns."
     ],
-    "notes": "Target owner:opponent with the bound opponent."
+    "notes": "Target owner:opponent with the bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Summary Judgment",
@@ -809,10 +886,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character an opponent controls",
-      "That character's controller may destroy the character"
+      "Pick a character your opponent controls.",
+      "Your opponent must pick one of the following: destroy the character or you draw X cards."
     ],
-    "notes": "Target selector uses the bound opponent; the mayPay player is controllerOf the target. Works."
+    "notes": "Target selector uses the bound opponent; the mayPay player is controllerOf the target. Works.",
+    "recheck": "unchanged"
   },
   {
     "name": "Swarm of Gnats",
@@ -823,9 +901,10 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent discards a card"
+      "When this card enters or leaves play, your opponent must discard a card."
     ],
-    "notes": "Enter and leave triggers are separate blocks, each binds its own opponent (a fresh pick per MP 4)."
+    "notes": "Enter and leave triggers are separate blocks, each binds its own opponent (a fresh pick per MP 4).",
+    "recheck": "unchanged"
   },
   {
     "name": "Swashbuckler",
@@ -836,9 +915,10 @@
     ],
     "category": "a",
     "phrases": [
-      "you may remove 4 cards in an opponent's discard pile from the game"
+      "you may remove 4 cards in your opponent's discard pile from the game"
     ],
-    "notes": "Condition and removal both use the one opponent bound for the ETB block."
+    "notes": "Condition and removal both use the one opponent bound for the ETB block.",
+    "recheck": "unchanged"
   },
   {
     "name": "Tactician Vacation",
@@ -847,11 +927,13 @@
       "4181e922-7ffb-4c71-aef6-17adf4f006c7",
       "5ca25182-e910-4f21-97d0-b30298e7d4af"
     ],
-    "category": "a",
+    "category": "d",
     "phrases": [
-      "Your opponents cannot respond to this card"
+      "Your opponent cannot respond to this card."
     ],
-    "notes": "noResponse covers every opponent; the 'tactics cannot be deployed' restriction already uses forEachPlayer over all players."
+    "notes": "The 'no tactics can be played' restriction already fans out over all players (fine). \"Your opponent cannot respond\" is singular: strictly only the bound opponent is denied; the noResponse flag resolves it with no response window for anyone.",
+    "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
+    "recheck": "changed from a because every printing says singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent"
   },
   {
     "name": "The Billionaire",
@@ -862,12 +944,13 @@
     ],
     "category": "d",
     "phrases": [
-      "You may use abilities on your opponent's cards",
-      "as though your opponent is using the ability",
-      "as if your opponent used it"
+      "You may use abilities on your opponent's cards as though you were your opponent.",
+      "Any additional costs must be satisfied as though your opponent is using the ability.",
+      "The ability's effect happens as if your opponent used it."
     ],
-    "notes": "canUseOpponentAbilities asOpponent: static (every opponent's cards usable), but 'as though your opponent is using' needs a defined acting player and opponent binding for the borrowed ability's own 'opponent' references.",
-    "ruling": "You may use abilities on any opponent's cards (static, all opponents). The borrowed ability resolves as if the card's controller activated it (that player is 'controller' for the block), but you pay numeric costs from your own resources. Inside the borrowed block, 'opponent' is bound to the Billionaire's controller (the real user), so the 2-player relationship is preserved; no extra prompt."
+    "notes": "canUseOpponentAbilities is a static (every opponent's cards usable), but the borrowed ability's acting player and its own 'opponent' references need a defined binding. ff195e/2ec131 use canUseOpponentAbilities:'asOpponent', fb604d uses true; the same ruling applies to both.",
+    "ruling": "You may use abilities on any opponent's cards (static, all opponents). The borrowed ability resolves as if the card's controller activated it (that player is 'controller' for the block), but you pay numeric costs from your own resources. Inside the borrowed block, 'opponent' is bound to the Billionaire's controller (the real user), so the 2-player relationship is preserved; no extra prompt.",
+    "recheck": "unchanged (printings differ in wording: ff195e/2ec131 'as though you were your opponent', fb604d own numeric costs + 'as if your opponent used it'; both d)"
   },
   {
     "name": "The Enemy's Head",
@@ -878,7 +961,8 @@
     "phrases": [
       "When a character an opponent controls is destroyed"
     ],
-    "notes": "Static trigger on any opponent's character."
+    "notes": "Static trigger on any opponent's character.",
+    "recheck": "unchanged"
   },
   {
     "name": "The Evil Alliance",
@@ -887,12 +971,13 @@
     ],
     "category": "c",
     "phrases": [
-      "X is the number of opponents you have at the start of the game",
+      "X is the number of opponents you have at the start of the game.",
       "Any 1+X staple resources",
-      "Repeat this X-1 times",
-      "Draw X-1 cards"
+      "Repeat this X-1 times.",
+      "Draw X-1 cards."
     ],
-    "notes": "Encoded for X=1 only (startingInfluence 25, 2 starting staples, 1 develop choice). Needs expression-valued startingInfluence = 15+10X, starting resources 1+X, develop repeated X-1 more times (X total), and X resolved from opponent count at setup (D1/D9/Phase 4). ENTICEMENT, DARING GAMBIT, Hero deck/Temptation Pile and the 'going second' draw for seats 2..N are not encoded yet."
+    "notes": "Encoded for X=1 only (startingInfluence 25, 2 starting staples, 1 develop choice). Needs expression-valued startingInfluence = 15+10X, starting resources 1+X, develop repeated X-1 more times (X total), and X resolved from opponent count at setup (D1/D9/Phase 4). ENTICEMENT, DARING GAMBIT, Hero deck/Temptation Pile and the 'going second' draw for seats 2..N are not encoded yet.",
+    "recheck": "unchanged"
   },
   {
     "name": "The Knitting Coalition",
@@ -901,11 +986,12 @@
     ],
     "category": "c",
     "phrases": [
-      "Your opponent ignores their faction's STARTING DRAW rule",
-      "Your opponent ignores their faction's DEVELOP RULE",
-      "Both players may use this ability"
+      "Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead.",
+      "Your opponent ignores their faction's DEVELOP RULE.",
+      "Both players may use this ability."
     ],
-    "notes": "overridesOpponent (startingDraw, suppressDevelop) must apply to every opponent per D9. usableBy:'anyPlayer' on DRAW/RESOURCE must mean every player at the table (each pays from their own resources) rather than a two-seat pair."
+    "notes": "overridesOpponent (startingDraw, suppressDevelop) must apply to every opponent per D9. usableBy:'anyPlayer' on DRAW/RESOURCE must mean every player at the table (each pays from their own resources) rather than a two-seat pair.",
+    "recheck": "unchanged"
   },
   {
     "name": "The Ministry of Other Smaller Ministries",
@@ -916,9 +1002,12 @@
     ],
     "category": "a",
     "phrases": [
-      "Each opponent must pay 2 to attack"
+      "Your opponent must pay 2 for each attacking party they form.",
+      "Your opponent must pay 2 to attack.",
+      "Your opponent cannot attack unless they pay 2 for each party."
     ],
-    "notes": "Static attackTax player:opponent applies to every opponent per D4."
+    "notes": "Static attackTax player:opponent applies to every opponent per D4 statics.",
+    "recheck": "unchanged (printed singular \"your opponent\" in a static = every opponent per D4; printings differ in wording only)"
   },
   {
     "name": "The Open R&D Faction",
@@ -927,11 +1016,12 @@
     ],
     "category": "d",
     "phrases": [
-      "both players create the rules text for an ability",
+      "Before the game begins, both players create the rules text for an ability.",
       "both players can use it"
     ],
     "notes": "playerCreatedAbility is a pre-game setup rule; no block exists to bind an opponent, so 'both players' is ambiguous with 3+ players.",
-    "ruling": "Every player creates one ability before the game begins, and the faction (and every ability written for it) is usable by every player. (Engine: playerCreatedAbility becomes one ability per player, usableBy anyPlayer.)"
+    "ruling": "Every player creates one ability before the game begins, and the faction (and every ability written for it) is usable by every player. (Engine: playerCreatedAbility becomes one ability per player, usableBy anyPlayer.)",
+    "recheck": "unchanged"
   },
   {
     "name": "The Union of Unextraordinary Miners",
@@ -940,9 +1030,10 @@
     ],
     "category": "c",
     "phrases": [
-      "Your opponent starts with their usual resources plus enough staple resources so that both players have the same number of starting resources"
+      "Your opponent starts with their usual resources plus enough staple resources so that both players have the same number of starting resources."
     ],
-    "notes": "matchOpponentCount must apply per opponent (D9): each opponent is topped up with staples until their starting resource count equals the Union player's (X+1 staples/Deception total). The X choice is made once by the Union player."
+    "notes": "matchOpponentCount must apply per opponent (D9): each opponent is topped up with staples until their starting resource count equals the Union player's (X+1 staples/Deception total). The X choice is made once by the Union player.",
+    "recheck": "unchanged"
   },
   {
     "name": "Tremor Engine",
@@ -951,11 +1042,13 @@
       "de074019-381e-4229-85db-46d2d7c30eb4",
       "f58d1a64-ffe6-44e6-a0fb-7fee920c215d"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
-      "each player puts the top 2 cards of their deck into their discard pile"
+      "At the start of your turn, both players must put the top 2 cards of their deck into their discard pile.",
+      "At the start of your turn, both players put the top 2 cards of their deck into their discard pile."
     ],
-    "notes": "Already forEachPlayer over all players."
+    "notes": "On your turn start only you and the bound opponent mill 2 (D4 \"both players\"); forEachPlayer mills every player in a 3+ game. Re-encode as controller + bound opponent (the trigger has no event opponent, so it prompts for one).",
+    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer mills every player"
   },
   {
     "name": "Unscrupuls of Victory",
@@ -964,10 +1057,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent discards 1 card",
-      "search an opponent's deck for 1 card"
+      "your opponent discards 1 card",
+      "search your opponent's deck for 1 card and put it into their discard pile"
     ],
-    "notes": "Both clauses are in one block, so the same bound opponent is used; acceptable under MP 2."
+    "notes": "Both clauses are in one block, so the same bound opponent is used; acceptable under MP 2.",
+    "recheck": "unchanged"
   },
   {
     "name": "Vilghame Manewaft",
@@ -976,10 +1070,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Your opponents must pay 1 to deploy a tactic",
-      "The first resource each opponent plays each turn"
+      "Your opponent must pay 1 to play a tactic.",
+      "The first resource each opponent plays each turn enters play attached to that opponent's faction."
     ],
-    "notes": "Static costModifier affects:opponent = all opponents; eventOrdinal is tallied per event type and player, so 'first each turn' is per opponent."
+    "notes": "Static costModifier affects:opponent = all opponents; eventOrdinal is tallied per event type and player, so 'first each turn' is per opponent.",
+    "recheck": "unchanged (statics: every opponent)"
   },
   {
     "name": "Voidal Poisoning",
@@ -990,9 +1085,11 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent discards a card"
+      "Your opponent must discard a card.",
+      "Your opponent discards a card."
     ],
-    "notes": "Whole tactic is one block; the 2-token option uses the single bound opponent."
+    "notes": "Whole tactic is one block; the 2-token option uses the single bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Voidal Replication",
@@ -1001,11 +1098,14 @@
       "63369e53-e89b-4b7d-beb0-7110cb1290ce",
       "b9e94612-3cbd-44ff-9aac-a553a49c0955"
     ],
-    "category": "a",
+    "category": "d",
     "phrases": [
-      "Your opponents cannot respond to this card"
+      "Your opponent cannot respond to this card.",
+      "Your opponents cannot respond to this card."
     ],
-    "notes": "noResponse blocks all opponents; matches plural text."
+    "notes": "printings differ: b9e946 (plural \"opponents\") is fine as is (a). 7416a5 and 63369e are singular: strictly only the bound opponent is denied; noResponse resolves with no response window for anyone.",
+    "ruling": "Keep noResponse for all three printings (no window for anyone); strict D4 would let non-bound opponents respond to the singular printings.",
+    "recheck": "changed from a because printings 7416a5 and 63369e print singular \"Your opponent cannot respond\" (b9e946 prints plural \"Your opponents\"), and noResponse is a card-level flag that denies every opponent"
   },
   {
     "name": "Warehouse Raid",
@@ -1015,9 +1115,10 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent discards X cards at random"
+      "Your opponent must discard X cards at random."
     ],
-    "notes": "One bound opponent for both random picks."
+    "notes": "One bound opponent for both random picks.",
+    "recheck": "unchanged"
   },
   {
     "name": "Well Laid Plans",
@@ -1026,9 +1127,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick an opponent",
-      "Search that player's deck for a card and reveal it"
+      "Pick an opponent.",
+      "Search that player's deck for a card and reveal it."
     ],
-    "notes": "Explicit 'Pick an opponent' = the binding."
+    "notes": "Explicit 'Pick an opponent' = the binding.",
+    "recheck": "unchanged"
   }
 ]

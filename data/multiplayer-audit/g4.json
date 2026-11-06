@@ -4,12 +4,12 @@
     "ids": [
       "386bbf0c-3e4d-4db2-b476-70ce87b7e228"
     ],
-    "category": "d",
+    "category": "a",
     "phrases": [
-      "If you deployed this card during an opponent's turn"
+      "If you played this card during an opponent's turn"
     ],
-    "notes": "Extra cost condition isActivePlayer player:controller negated; in a block this means 'a turn of some opponent'. It is not a reference to a bound opponent.",
-    "ruling": "'An opponent's turn' = any turn whose active player is not the controller; no opponent binding is needed or consumed."
+    "notes": "'An opponent's turn' is indefinite: any turn whose active player is not the controller. The condition is not(isActivePlayer controller), which names no bound opponent and needs no ruling.",
+    "recheck": "changed from d because the printed wording is the indefinite 'an opponent's turn' (any opponent's turn), which the encoding already means; nothing to bind"
   },
   {
     "name": "Big McLargehuge",
@@ -20,20 +20,22 @@
     "phrases": [
       "pick an opponent and that player destroys a face-down resource they control"
     ],
-    "notes": "One bound opponent at the leaves-play trigger."
+    "notes": "One bound opponent at the leaves-play trigger.",
+    "recheck": "unchanged"
   },
   {
     "name": "Bottlebeard Brandyshanks",
     "ids": [
       "2b1308a7-014c-4924-b430-0448854cb6cc"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "The top card of each opponent's deck is revealed at all times",
+      "The top card of each opponents' deck is revealed at all times",
       "If any of those cards are a character, this card gains 3 speed",
       "Pick an opponent"
     ],
-    "notes": "Reveal static (grantsReveal of:opponent) covers every opponent (ok). The speed static tests deckPosition player:opponent (one deck); it must be existential over all opponents' top cards ('any of those cards'). CHUG! binds one opponent (ok)."
+    "notes": "grantsReveal of:opponent covers every opponent. The speed static's condition tests deckPosition player:\"opponent\"; a condition referencing 'opponent' with none bound is existential (E4), i.e. true when some opponent's top card is a character, which is 'if any of those cards'. CHUG! binds one opponent via the activation (opponentId).",
+    "recheck": "changed from c because E4 makes the unbound static condition existential over opponents"
   },
   {
     "name": "Breath of the Barduse",
@@ -43,9 +45,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Each player destroys 2 character they own"
+      "Each player destroys 2 characters they own"
     ],
-    "notes": "Already forEachPlayer (activeFirst). Verify chooser 'controller' and owner:self rebind to the iterated player inside the fan-out."
+    "notes": "Already forEachPlayer (activeFirst). Verify chooser 'controller' and owner:self rebind to the iterated player inside the fan-out.",
+    "recheck": "unchanged (a); phrase corrected to the printed 'characters'"
   },
   {
     "name": "Camouflaged Urchin",
@@ -56,7 +59,8 @@
     "phrases": [
       "your opponents cannot pick this card"
     ],
-    "notes": "cannotBePickedByOpponents static = every opponent."
+    "notes": "cannotBePickedByOpponents static = every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Candy Skull Commander",
@@ -67,7 +71,8 @@
     "phrases": [
       "Whenever an opponent forms an attacking party"
     ],
-    "notes": "Trigger is battleStarted with battleRole defender, i.e. only when this card's controller is attacked. Text fires whenever any opponent forms an attacking party, including one aimed at a third player; needs the trigger keyed on attacker controlled by an opponent regardless of defender."
+    "notes": "Trigger is battleStarted with battleRole defender: fires only when this card's controller is attacked. Printed 'Whenever an opponent forms an attacking party' also fires for a party aimed at a third player. The battleStarted event names no attacker, so E3 cannot bind from it either: needs the trigger keyed on an attacking party controlled by an opponent regardless of defender.",
+    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix"
   },
   {
     "name": "Carnival Funhouse",
@@ -78,7 +83,8 @@
     "phrases": [
       "pick one character your opponent controls and one character you control"
     ],
-    "notes": "One bound opponent for the onPlay block; modifiers are created on the picked cards."
+    "notes": "One bound opponent for the onPlay block; modifiers are created on the picked cards.",
+    "recheck": "unchanged"
   },
   {
     "name": "Carnival Whipmaster",
@@ -87,9 +93,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Take control of one character and one item an opponent controls"
+      "Take control of one character and item an opponent controls"
     ],
-    "notes": "Single bound opponent supplies both the character and the item (same reading as 2-player)."
+    "notes": "Single bound opponent supplies both the character and the item (same reading as 2-player).",
+    "recheck": "unchanged (a); phrase corrected to the printed wording"
   },
   {
     "name": "Clockman City Shuffle",
@@ -100,7 +107,8 @@
     "phrases": [
       "characters your opponents control lose 1 strength and 1 life"
     ],
-    "notes": "forEach selector controller:opponent inside a resolving block would resolve to the bound opponent only; must hit every opponent's characters (wrap in forEachPlayer over opponents or use an all-opponents selector scope). Own-character boost unchanged."
+    "notes": "forEach selector controller:opponent inside a resolving block would resolve to the bound opponent only; must hit every opponent's characters (wrap in forEachPlayer over opponents or use an all-opponents selector scope). Own-character boost unchanged.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Confrontational Conflagration",
@@ -111,7 +119,8 @@
     "phrases": [
       "Pick a character an opponent controls"
     ],
-    "notes": "One bound opponent's character; other targets are not player-relative."
+    "notes": "One bound opponent's character; other targets are not player-relative.",
+    "recheck": "unchanged"
   },
   {
     "name": "Conniving Puppeteer",
@@ -122,20 +131,22 @@
     "phrases": [
       "an opponent's discard pile"
     ],
-    "notes": "Cost-time pick from one bound opponent's discard pile."
+    "notes": "Cost-time pick from one bound opponent's discard pile.",
+    "recheck": "unchanged"
   },
   {
     "name": "Contiguous Defalcating Machine",
     "ids": [
       "25ba52f8-62c9-4e2c-8daa-7e6d841f6c76"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "its controller",
-      "Put a resource they control into its owners's hand",
+      "its controller must choose one of the following",
+      "Put a resource they control into its owner's hand",
       "Their faction loses 3 influence"
     ],
-    "notes": "The affected player is the entering character's controller, who can be any seat (not the machine's controller or its bound opponent). Option 1 selects the resource with selector controller:self / controller:opponent behind an eventCardControlledBy branch; in 3+ players this must be a selector bound to controllerOf(eventCard) (drop the self/opponent branching). Options 2 and 3 already use eventCard / controllerOf and are fine."
+    "notes": "The trigger fires on any character entering play. When an opponent's character enters, E3 binds opponentId to that character's controller, so the selector controller:\"opponent\" in option 1 (chosen by controllerOf eventCard) is that player's resources; when the machine's controller's own character enters, the eventCardControlledBy branch uses controller:self. Options 2 and 3 already use eventCard / controllerOf. Cosmetic: on the controller's own character the trigger still asks chooseOpponent although nothing uses it.",
+    "recheck": "changed from c because E3 binds the entering character's controller as the block's opponent (unneeded chooseOpponent prompt only when the controller's own character enters)"
   },
   {
     "name": "Corrosive Waste Dispenser",
@@ -146,30 +157,32 @@
     "phrases": [
       "Each opponent destroys a character they control"
     ],
-    "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent."
+    "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Cunning Ruse",
     "ids": [
       "19fa3b83-2708-4d40-9928-0a02f46c7cb0"
     ],
-    "category": "d",
+    "category": "a",
     "phrases": [
-      "Flip the item face-down under its opponent's control"
+      "Flip the item face-down under its owner's control"
     ],
-    "notes": "Encoded as a plain face-down flip in place with no control change; 'its opponent's control' names no bound opponent and would be undefined with 3+ players.",
-    "ruling": "Keep the classic encoding: the item is flipped face-down under its current controller (the printed 'its opponent' is read as the existing opposing controller / owner, no control change), so no opponent is consumed."
+    "notes": "Printed text says 'under its owner's control' (no opponent at all); the audit's phrase came from the archival text. The encoding (plain flipFaceDown on the picked item) has no player reference. Nothing to bind or rule on.",
+    "recheck": "changed from d because the printed wording names the item's owner, not an opponent"
   },
   {
     "name": "Dual Blade Assassin",
     "ids": [
       "ca0987a9-99ab-462e-8d61-cc898b3441dc"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "if you inflicted damage to an opponent's faction this turn"
     ],
-    "notes": "Deploy condition playerInflictedDamageToFactionThisTurn player:opponent must be existential over all opponents (any opponent's faction), not just a bound one, since it gates legality before any binding."
+    "notes": "Deploy condition playerInflictedDamageToFactionThisTurn player:\"opponent\": an unbound opponent condition is existential (E4), or, when the play names an opponent, it must be one whose faction you damaged; either way 'an opponent's faction' is satisfied by any single opponent. No data change.",
+    "recheck": "changed from c because E4 evaluates the unbound opponent condition existentially"
   },
   {
     "name": "Engorged Sarcophyle",
@@ -181,7 +194,8 @@
       "pick an opponent",
       "That opponent destroys a character they control"
     ],
-    "notes": "One bound opponent chosen via the faction target; owner/controller of the character resolve to it."
+    "notes": "One bound opponent chosen via the faction target; owner/controller of the character resolve to it.",
+    "recheck": "unchanged"
   },
   {
     "name": "Enlightened Sarcophyle",
@@ -192,18 +206,20 @@
     "phrases": [
       "each opponent loses 1 influence"
     ],
-    "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent. The controller +1 stays outside."
+    "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent. The controller +1 stays outside.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Escort Ally",
     "ids": [
       "0007c001-1606-422f-b1a8-cdc4c7afbce9"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "cannot be destroyed by cards or abilities your opponents control"
     ],
-    "notes": "installReplacement with by:opponent creates a lingering effect. Text says all opponents, so it must not capture the single bound opponent (D4 created-effect binding); it must apply to every opponent's cards/abilities."
+    "notes": "installReplacement replaces.by:\"opponent\" matches any destruction caused by a player other than the controller (causeFitsReplacement compares against the installing controller, not the bound opponent), so it covers every opponent as printed ('your opponents'). Only quirk: the activation still asks which opponent it is about (opponentId) though nothing uses it.",
+    "recheck": "changed from c because by:\"opponent\" is already 'any non-controller cause'; the created-effect binding (D4) does not narrow it"
   },
   {
     "name": "Expedition Endeavour",
@@ -212,9 +228,10 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent may detach up to 3 resources"
+      "Your opponent may detach up to 3 resources"
     ],
-    "notes": "Option 1 extra cost: one bound opponent (bound at play, before cost payment) may detach; matches 'an opponent'. Other options reference no player."
+    "notes": "Option 1 extra cost: one bound opponent (bound at play, before cost payment) may detach; matches 'an opponent'. Other options reference no player.",
+    "recheck": "unchanged (a); phrase corrected to the printed 'Your opponent'"
   },
   {
     "name": "Extremely Tiny Bonnet of Invisibility",
@@ -226,7 +243,8 @@
       "Pick an opponent",
       "That player may detach up to 2 resources from their faction"
     ],
-    "notes": "One bound opponent for the onPlay block."
+    "notes": "One bound opponent for the onPlay block.",
+    "recheck": "unchanged"
   },
   {
     "name": "Finger Explosive",
@@ -237,7 +255,8 @@
     "phrases": [
       "a character an opponent controls"
     ],
-    "notes": "One bound opponent's character."
+    "notes": "One bound opponent's character.",
+    "recheck": "unchanged"
   },
   {
     "name": "Flaming Cube",
@@ -249,7 +268,8 @@
       "each opponents' faction loses 6 influence",
       "Any player may use this ability"
     ],
-    "notes": "fc-boom modifyInfluence player:opponent must be wrapped in forEachPlayer over every opponent. CONTROL THE FLAME (usableBy anyPlayer, selector controller:self) is correct for any seat provided 'self'/'controller' = the activating player."
+    "notes": "fc-boom modifyInfluence player:opponent must be wrapped in forEachPlayer over every opponent. CONTROL THE FLAME (usableBy anyPlayer, selector controller:self) is correct for any seat provided 'self'/'controller' = the activating player.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Flesh Deliquesce",
@@ -261,7 +281,8 @@
       "Pick an opponent",
       "the number of detached resources that player controls"
     ],
-    "notes": "X counts the bound opponent's detached resources; binding must occur before the variable is evaluated."
+    "notes": "X counts the bound opponent's detached resources; binding must occur before the variable is evaluated.",
+    "recheck": "unchanged"
   },
   {
     "name": "Foreclosure Overseer",
@@ -272,7 +293,8 @@
     "phrases": [
       "your opponents must pay 1 to deploy cards"
     ],
-    "notes": "Static costModifiers affects:opponent = every opponent."
+    "notes": "Static costModifiers affects:opponent = every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Forgotten Tentacle",
@@ -284,7 +306,8 @@
       "Pick an opponent",
       "that player"
     ],
-    "notes": "Resolving block with one 'Pick an opponent'; all later 'that player' refs (selector opponent, chooser opponent, draw/playResource player opponent) resolve to the bound opponent."
+    "notes": "Resolving block with one 'Pick an opponent'; all later 'that player' refs (selector opponent, chooser opponent, draw/playResource player opponent) resolve to the bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Frantic Jerryrigging",
@@ -295,7 +318,8 @@
     "phrases": [
       "destroy an item your opponent controls"
     ],
-    "notes": "One bound opponent in the resolving block."
+    "notes": "One bound opponent in the resolving block.",
+    "recheck": "unchanged"
   },
   {
     "name": "Geldale, City-Fortress",
@@ -304,9 +328,10 @@
     ],
     "category": "a",
     "phrases": [
-      "You opponents may only play tactics during their own turn"
+      "Your opponents may only play tactics during their own turn"
     ],
-    "notes": "Static playRestrictions player:opponent timing notActivePlayer = every opponent restricted to their own turn."
+    "notes": "Static playRestrictions player:opponent timing notActivePlayer = every opponent restricted to their own turn.",
+    "recheck": "unchanged (a); phrase corrected to the printed wording"
   },
   {
     "name": "Gigantitect's Giant Giant",
@@ -317,7 +342,8 @@
     "phrases": [
       "Opponents cannot take control of this card."
     ],
-    "notes": "Static restriction cannotBeTakenControl applies against every opponent. Confirm the restriction only blocks control changes to other players, not controller-initiated effects, since in Showdown a Hero can be an 'opponent' of another Hero."
+    "notes": "Static restriction cannotBeTakenControl applies against every opponent. Confirm the restriction only blocks control changes to other players, not controller-initiated effects, since in Showdown a Hero can be an 'opponent' of another Hero.",
+    "recheck": "unchanged"
   },
   {
     "name": "God's Blessing of Readiness",
@@ -328,7 +354,8 @@
     "phrases": [
       "At the start of each opponent's turn"
     ],
-    "notes": "Granted trigger fires on turnStarted when the event player is not the controller = every opponent's turn (static trigger, matches 'each opponent's turn')."
+    "notes": "Granted trigger fires on turnStarted when the event player is not the controller = every opponent's turn (static trigger, matches 'each opponent's turn').",
+    "recheck": "unchanged"
   },
   {
     "name": "Gor-blach the Endowed",
@@ -339,7 +366,8 @@
     "phrases": [
       "Inflict X damage to an opponent's faction"
     ],
-    "notes": "One bound opponent's faction in the resolving block. (The blocker's controller could be a different opponent; printed text says 'an opponent', so bound reading is fine.)"
+    "notes": "One bound opponent's faction in the resolving block. (The blocker's controller could be a different opponent; printed text says 'an opponent', so bound reading is fine.)",
+    "recheck": "unchanged"
   },
   {
     "name": "Hassan-i of Thabbash",
@@ -350,7 +378,8 @@
     "phrases": [
       "each opponent must destroy a character they control"
     ],
-    "notes": "Death trigger encodes a single chooserSelectsTarget with chooser/selector opponent; wrap in forEachPlayer over every opponent (each destroys one of their own)."
+    "notes": "Death trigger encodes a single chooserSelectsTarget with chooser/selector opponent; wrap in forEachPlayer over every opponent (each destroys one of their own).",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Illusionist's Trick",
@@ -362,7 +391,8 @@
       "Pick an opponent",
       "That opponent puts cards equal to the highest speed"
     ],
-    "notes": "One bound opponent via the faction target; mill targets ownerOf it."
+    "notes": "One bound opponent via the faction target; mill targets ownerOf it.",
+    "recheck": "unchanged"
   },
   {
     "name": "Insidious Brainworm",
@@ -373,7 +403,8 @@
     "phrases": [
       "each opponent loses 3 influence"
     ],
-    "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent."
+    "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Juice Sale!",
@@ -384,7 +415,8 @@
     "phrases": [
       "Pick an opponent's character with the highest strength"
     ],
-    "notes": "One bound opponent; the isExtremum 'among' set is also controller:opponent = that opponent's characters. Reading is highest among the bound opponent's characters; same as 2-player."
+    "notes": "One bound opponent; the isExtremum 'among' set is also controller:opponent = that opponent's characters. Reading is highest among the bound opponent's characters; same as 2-player.",
+    "recheck": "unchanged"
   },
   {
     "name": "Lockbox of the Aeons",
@@ -394,10 +426,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Your opponents cannot use FLIP UP",
-      "cards cannot be put into your opponents' hands"
+      "your opponents cannot use FLIP UP",
+      "cards cannot be returned to their hands"
     ],
-    "notes": "Static playRestrictions / restrictReturnToHand player:opponent apply to every opponent (D4 static)."
+    "notes": "Static playRestrictions / restrictReturnToHand player:opponent apply to every opponent (D4 static).",
+    "recheck": "unchanged (a); phrase corrected to the printed wording"
   },
   {
     "name": "Lost on Floor 3",
@@ -406,9 +439,10 @@
     ],
     "category": "a",
     "phrases": [
-      "your opponent paying a cost at the end of your turn"
+      "in response to your opponent paying a cost at end of your turn"
     ],
-    "notes": "Parenthetical reminder only; the encoding is condition endOfTurnDeclared(controller) with no opponent reference. Any other player can be the one who responded."
+    "notes": "Parenthetical reminder only; the encoding is condition endOfTurnDeclared(controller) with no opponent reference. Any other player can be the one who responded.",
+    "recheck": "unchanged (a); phrase corrected to the printed wording"
   },
   {
     "name": "Luteorunic Behemoth",
@@ -419,7 +453,8 @@
     "phrases": [
       "all opponents must destroy 4 non-staple cards they control"
     ],
-    "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent (each destroys 4 of their own non-staple cards)."
+    "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent (each destroys 4 of their own non-staple cards).",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Man Shark",
@@ -431,7 +466,8 @@
       "each face-down resource each opponent controls",
       "Pick an opponent"
     ],
-    "notes": "Static strength/life count over controller:opponent face-down resources = all opponents (D4 static, matches 'each opponent'). FOLLOW SUIT binds one opponent."
+    "notes": "Static strength/life count over controller:opponent face-down resources = all opponents (D4 static, matches 'each opponent'). FOLLOW SUIT binds one opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Martial Arts Wannabe",
@@ -440,20 +476,22 @@
     ],
     "category": "c",
     "phrases": [
-      "While you control more characters than any opponent"
+      "If you control more characters than any opponent"
     ],
-    "notes": "Static compares own count to count of controller:opponent characters, which sums all opponents. 'More than any opponent' = more than every individual opponent (greater than the max per-opponent count); needs a per-opponent quantified (all opponents) comparison."
+    "notes": "The continuous condition is count(self) > count(controller:\"opponent\"). With nothing bound, E4 makes it existential ('more than at least one opponent'), but printed 'more than any opponent' means more than every opponent. Re-encode as not(count(opponent) >= count(self)): the nested condition is then judged existentially under the not, which gives 'no opponent has as many'.",
+    "recheck": "unchanged (c); E4's existential reading is the wrong quantifier for 'more than any opponent'"
   },
   {
     "name": "Master General",
     "ids": [
       "ffee58bd-4f4b-4742-b601-0d6e84566a2c"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "When a player deploys a tactic, inflict 3 damage to that player's faction"
     ],
-    "notes": "mg-opp fires for any opponent playing a tactic, but its damage targets factionOf player:opponent (a bound opponent, not necessarily the player who deployed). Target must be the event player's faction; the two abilities can merge using an eventPlayer ref."
+    "notes": "mg-opp fires on cardPlayed by an opponent (eventPlayerIs opponent), so E3 binds opponentId to the deploying player with no prompt; dealDamage to factionOf player:\"opponent\" is then exactly 'that player's faction'. mg-self covers the controller's own deploys. No data change.",
+    "recheck": "changed from c because E3 binds the event's player as the opponent"
   },
   {
     "name": "Micromajigmakermachinemajig",
@@ -465,7 +503,8 @@
       "Pick an opponent",
       "That player may put a Micromajig token into play under their control"
     ],
-    "notes": "One bound opponent; the token creation is an otherPlayerChooses cost for the bound opponent. Damage-reduction effect is attached to the token it creates."
+    "notes": "One bound opponent; the token creation is an otherPlayerChooses cost for the bound opponent. Damage-reduction effect is attached to the token it creates.",
+    "recheck": "unchanged"
   },
   {
     "name": "Mindrender",
@@ -476,7 +515,8 @@
     "phrases": [
       "When an opponent discards a card"
     ],
-    "notes": "Static trigger eventPlayerIs opponent = any opponent."
+    "notes": "Static trigger eventPlayerIs opponent = any opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Moment of Annihilation",
@@ -487,33 +527,36 @@
     "phrases": [
       "an opponent's discard pile"
     ],
-    "notes": "Extra-cost selection from one bound opponent's discard pile (bound before cost)."
+    "notes": "Extra-cost selection from one bound opponent's discard pile (bound before cost).",
+    "recheck": "unchanged"
   },
   {
     "name": "Negotiation Ceremonies",
     "ids": [
       "fc6ce67c-25c7-48b2-911c-fec7572c8154"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "Pick an opponent",
       "that opponent may pay 1",
       "Each player draws cards equal to the amount they paid"
     ],
-    "notes": "alternatingPay between controller and one bound opponent (first/opponent tuple, vars __paidByFirst/__paidByOpponent); 'each player' = controller + bound opponent per MP 3. Needs the alternatingPay generalisation (tuple -> arrays/records) bound to controller + bound opponent; no fan-out to other seats."
+    "notes": "'Pick an opponent' = the opponent named at activation (opponentId; alternatingPay first:controller / opponent:\"opponent\" and draw player:\"opponent\" all use it). 'Each player draws cards equal to the amount they paid' involves only the controller and that opponent, since no one else pays, so drawing for just those two is equivalent. No data change.",
+    "recheck": "changed from c because the bound opponent is exactly the second payer; other seats pay nothing"
   },
   {
     "name": "Neuralyzer Agent",
     "ids": [
       "0a7c01eb-92bd-4172-9c0d-24886de70287"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "pick an opponent",
       "an opponent's faction",
       "that faction's owner discards a card"
     ],
-    "notes": "Attack trigger is fine (bound opponent). The second ability (battle damage to 'an opponent's faction') fires for any opponent's faction but its discard uses chooser/selector 'opponent', which would bind an arbitrary opponent; discard must target ownerOf/controllerOf(eventCard) (the damaged faction's owner)."
+    "notes": "Attack trigger: characterAttacked names no opponent, so the controller is asked which opponent (matches 'pick an opponent'). Faction-hit trigger: damageDealt's event card is the damaged faction, so E3 binds its controller; the discard chooser/selector 'opponent' is then 'that faction's owner'. No data change.",
+    "recheck": "changed from c because E3 binds the damaged faction's controller for the second trigger"
   },
   {
     "name": "Omahkapi'si Pi'kssii",
@@ -525,7 +568,8 @@
       "While there are at least 10 cards in an opponent's discard pile, that player cannot pick this card",
       "Pick a card in an opponent's discard pile"
     ],
-    "notes": "Static counts the summed discard piles of all opponents and then bars all opponents (cannotBePickedByOpponents). Should be per opponent: only an opponent whose own discard pile has >= 10 cards is barred. FLEX binds one opponent (ok)."
+    "notes": "The 'hide' static compares count(owner:\"opponent\" discard) >= 10 (existential under E4: some opponent has 10+) but then applies cannotBePickedByOpponents to every opponent. Printed 'that player cannot pick this card' bars only the opponent whose own pile has 10+ cards: needs a restriction scoped to those players. FLEX binds one opponent (ok).",
+    "recheck": "unchanged (c); E4 fixes the count but the restriction still bars every opponent"
   },
   {
     "name": "Opportunistic Pirate",
@@ -537,7 +581,8 @@
     "phrases": [
       "an opponent's discard pile"
     ],
-    "notes": "Extra-cost selection from one bound opponent's discard pile (bound before cost). No other player references."
+    "notes": "Extra-cost selection from one bound opponent's discard pile (bound before cost). No other player references.",
+    "recheck": "unchanged"
   },
   {
     "name": "Purloining Performance",
@@ -549,7 +594,8 @@
       "Pick an opponent",
       "that player's deck"
     ],
-    "notes": "One bound opponent; look/mill use player:opponent."
+    "notes": "One bound opponent; look/mill use player:opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Quotidian Transposition",
@@ -560,7 +606,8 @@
     "phrases": [
       "Each player picks a character they own"
     ],
-    "notes": "Already wrapped in forEachPlayer. Verify that inside forEachPlayer the chooser 'controller' and selector owner:self rebind to the iterated player (each player picks their own)."
+    "notes": "Already wrapped in forEachPlayer. Verify that inside forEachPlayer the chooser 'controller' and selector owner:self rebind to the iterated player (each player picks their own).",
+    "recheck": "unchanged"
   },
   {
     "name": "Rantzigite Inquisitor",
@@ -572,43 +619,46 @@
       "pick an opponent",
       "That opponent discards a card"
     ],
-    "notes": "One bound opponent chosen at the destroy trigger."
+    "notes": "One bound opponent chosen at the destroy trigger.",
+    "recheck": "unchanged"
   },
   {
     "name": "Rasputin Unleashed",
     "ids": [
       "2f870c54-2a0f-470c-a73e-2939196e0853"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "pick an opponent",
       "the speed of all characters that opponent controls is reduced to 0"
     ],
-    "notes": "createAreaModifier with selector controller:opponent creates a lingering effect that must stay bound to the opponent chosen when the trigger resolved (D4 created-effect binding); otherwise it would re-resolve against all/other opponents each evaluation. Store opponentId on the area modifier."
+    "notes": "The trigger prompts which opponent ('pick an opponent'); createAreaModifier now keeps the block's opponentId (D4 created-effect binding), so the speed reduction stays on the chosen opponent's characters. No data change.",
+    "recheck": "changed from c because created effects now keep the block's bound opponent"
   },
   {
     "name": "Recycling Scheme Facility",
     "ids": [
       "fd3fea1f-448c-405d-96c3-e6aa6e1395ef"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "any player may pay 4"
     ],
-    "notes": "anyPlayerMayPay must offer the payment to every living seat in order (not just controller/opponent); first payer moves the character to the top of its owner's deck. Other ability needs no change."
+    "notes": "rsf-recur uses anyPlayerMayPay with the default players:\"all\", offered to every living seat in turn order; the first payer moves the card to the top of its owner's deck (eventCard). Matches printed 'any player may pay 4' with no data change.",
+    "recheck": "changed from c because anyPlayerMayPay (default all) already offers every living seat"
   },
   {
     "name": "Rocket Lawnchair",
     "ids": [
       "1dd0bbbc-1202-41c2-9073-5ce87acaf67e"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
-      "Pick a character an opponent controls",
-      "an opponent's attacking party"
+      "Pick a character your opponent controls",
+      "member of an opponent's attacking party"
     ],
-    "notes": "'theirs' is the bound opponent's character, but the 'opponent's attacking party' check uses isActivePlayer player:opponent, which would only match the bound opponent.",
-    "ruling": "Treat 'an opponent's attacking party' as any attacking party whose controller is not the Lawnchair's controller (active player != controller), independent of the bound opponent; the picked opponent character is the bound opponent's."
+    "notes": "The 'theirs' pick binds the block's opponent X (E2), but the party check uses isActivePlayer player:\"opponent\", i.e. only X's turn. Printed 'an opponent's attacking party' is any opponent's party (e.g. your own stolen character attacking for opponent Y). Replace with not(isActivePlayer controller). No ruling needed for the indefinite 'an opponent's'.",
+    "recheck": "changed from d because 'an opponent's attacking party' is indefinite (any non-controller party), so it needs a plain re-encoding, not a ruling"
   },
   {
     "name": "Runic Junker",
@@ -620,7 +670,8 @@
       "pick an opponent",
       "That player must pick a face-down resource you control"
     ],
-    "notes": "One bound opponent chosen in the trigger block; chooser opponent matches."
+    "notes": "One bound opponent chosen in the trigger block; chooser opponent matches.",
+    "recheck": "unchanged"
   },
   {
     "name": "Seance Ritualist",
@@ -632,7 +683,8 @@
       "Pick an opponent",
       "That player discards X cards"
     ],
-    "notes": "One bound opponent; cost X paid by controller, discard by bound opponent."
+    "notes": "One bound opponent; cost X paid by controller, discard by bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Shade of the Devoured Emperor",
@@ -644,7 +696,8 @@
       "At the end of an opponent's turn",
       "choose a player and search their deck"
     ],
-    "notes": "Static turnEnding trigger with eventPlayerIs opponent = any opponent's turn (a). 'Choose a player' is a faction selector over all factions, so any player including self is selectable."
+    "notes": "Static turnEnding trigger with eventPlayerIs opponent = any opponent's turn (a). 'Choose a player' is a faction selector over all factions, so any player including self is selectable.",
+    "recheck": "unchanged"
   },
   {
     "name": "Sharpey Pointy Lethal Army Tool",
@@ -656,7 +709,8 @@
       "all characters your opponents control lose 1 life",
       "destroy all characters your opponents control"
     ],
-    "notes": "Both forEach selectors controller:opponent would hit only the bound opponent inside a block; both effects must cover every opponent (forEachPlayer over opponents, or all-opponents selector scope)."
+    "notes": "Both forEach selectors controller:opponent would hit only the bound opponent inside a block; both effects must cover every opponent (forEachPlayer over opponents, or all-opponents selector scope).",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Shriever General",
@@ -668,7 +722,8 @@
       "if an opponent's faction lost influence this turn",
       "inflict 2 damage to that faction and pick a character that opponent controls"
     ],
-    "notes": "Condition lostInfluenceThisTurn player:opponent is existential, and the later 'that faction'/'that opponent' must refer to an opponent who satisfied it. Needs the condition to quantify over opponents and bind the qualifying one as the block's opponent for the damage and character pick."
+    "notes": "The trigger's condition lostInfluenceThisTurn player:\"opponent\" is existential at trigger time (E4), but the later 'that faction' / 'that opponent' (factionOf opponent, selector controller:\"opponent\") resolve against the opponent the controller is asked for (no event names one), who need not be the one whose faction lost influence. Bind the qualifying opponent: prompt only among opponents who satisfy the condition, or move the check inside the block so it binds the same opponent.",
+    "recheck": "unchanged (c); binding does not tie the existential condition to the opponent used afterwards"
   },
   {
     "name": "Silencer",
@@ -680,7 +735,8 @@
     "phrases": [
       "If a character enters play under your opponent's control"
     ],
-    "notes": "Static trigger on eventCardControlledBy opponent = any opponent."
+    "notes": "Static trigger on eventCardControlledBy opponent = any opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Sockem Bot",
@@ -691,7 +747,8 @@
     "phrases": [
       "Any player may use this ability"
     ],
-    "notes": "usableBy anyPlayer = every seat. No opponent reference; ensure engine treats anyPlayer as all living players in N-player."
+    "notes": "usableBy anyPlayer = every seat. No opponent reference; ensure engine treats anyPlayer as all living players in N-player.",
+    "recheck": "unchanged"
   },
   {
     "name": "Stuttershy",
@@ -703,7 +760,8 @@
       "each opponent's faction gains 1 influence",
       "for each influence gained this way"
     ],
-    "notes": "Wrap modifyInfluence (player opponent, +1) in forEachPlayer over every opponent. The optional Micromajig token is 'for each influence gained' = number of opponents (currently creates exactly 1): token count must become the total influence gained (N-1), still one 'may' decision."
+    "notes": "Wrap modifyInfluence (player opponent, +1) in forEachPlayer over every opponent. The optional Micromajig token is 'for each influence gained' = number of opponents (currently creates exactly 1): token count must become the total influence gained (N-1), still one 'may' decision.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent); also the Micromajig count must follow total influence gained"
   },
   {
     "name": "Swindle",
@@ -715,7 +773,8 @@
       "Your opponents cannot respond to this card",
       "Each opponent must attach a resource to their faction"
     ],
-    "notes": "noResponse already covers all other players. The attach effect (chooser/selector owner:opponent, attachTo factionOf opponent) addresses one opponent; wrap in forEachPlayer over every opponent. Draw/discard stay outside the fan-out."
+    "notes": "noResponse already covers all other players. The attach effect (chooser/selector owner:opponent, attachTo factionOf opponent) addresses one opponent; wrap in forEachPlayer over every opponent. Draw/discard stay outside the fan-out.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Tedious TriAdic Truculence",
@@ -726,7 +785,8 @@
     "phrases": [
       "Any opponent may pay 3"
     ],
-    "notes": "'Any opponent' is encoded as mayPay player:opponent (one bound opponent). Should be any-of-the-opponents may pay (anyPlayerMayPay restricted to opponents, first payer wins), not just the bound one. The picks and X effects need no change."
+    "notes": "'Any opponent' is encoded as mayPay player:opponent (one bound opponent). Should be any-of-the-opponents may pay (anyPlayerMayPay restricted to opponents, first payer wins), not just the bound one. The picks and X effects need no change.",
+    "recheck": "unchanged (c): printed 'Any opponent may pay 3' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")"
   },
   {
     "name": "Tempered Rage",
@@ -737,7 +797,8 @@
     "phrases": [
       "Each faction loses X influence"
     ],
-    "notes": "Already forEachPlayer; modifyInfluence player:controller rebinds to the iterated player. Verify the rebinding."
+    "notes": "Already forEachPlayer; modifyInfluence player:controller rebinds to the iterated player. Verify the rebinding.",
+    "recheck": "unchanged"
   },
   {
     "name": "Temple of Rantzigore",
@@ -748,7 +809,8 @@
     "phrases": [
       "Characters your opponents control lose 1 strength, 1 life, and 1 speed"
     ],
-    "notes": "Static area modifiers selector controller:opponent = every opponent's characters."
+    "notes": "Static area modifiers selector controller:opponent = every opponent's characters.",
+    "recheck": "unchanged"
   },
   {
     "name": "Thabbashite Penumbra",
@@ -758,9 +820,10 @@
     "category": "a",
     "phrases": [
       "Pick an opponent",
-      "different staple resources that player controls"
+      "different types of staple resources that player controls"
     ],
-    "notes": "X counts the bound opponent's staples; binding must occur before cost payment."
+    "notes": "X counts the bound opponent's staples; binding must occur before cost payment.",
+    "recheck": "unchanged (a); phrase corrected to the printed wording"
   },
   {
     "name": "Thabbashite Weapons Expert",
@@ -771,7 +834,8 @@
     "phrases": [
       "inflict X damage to each opponent's faction"
     ],
-    "notes": "The forEach selector faction controller:opponent in a resolving block resolves to the bound opponent only; must damage every opponent's faction (forEachPlayer over opponents or all-opponents selector scope)."
+    "notes": "The forEach selector faction controller:opponent in a resolving block resolves to the bound opponent only; must damage every opponent's faction (forEachPlayer over opponents or all-opponents selector scope).",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "The Lugubrian Council of Quotidian Affairs",
@@ -783,7 +847,8 @@
       "Pick an opponent's character with strength X or less",
       "That character's controller may detach up to X resources from their faction"
     ],
-    "notes": "PASS: one bound opponent whose character is picked; detach chooser/selector 'opponent' resolves to the same bound opponent (the picked character's controller in the normal case). Other abilities reference no player."
+    "notes": "PASS: one bound opponent whose character is picked; detach chooser/selector 'opponent' resolves to the same bound opponent (the picked character's controller in the normal case). Other abilities reference no player.",
+    "recheck": "unchanged"
   },
   {
     "name": "The Ministry of Other Smaller Smaller Ministries",
@@ -794,7 +859,8 @@
     "phrases": [
       "Each opponent must pay 2 to form an attacking party"
     ],
-    "notes": "Static attackTax player:opponent applies to every opponent."
+    "notes": "Static attackTax player:opponent applies to every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Totally Random Kid",
@@ -805,30 +871,33 @@
     "phrases": [
       "that opponent's deck"
     ],
-    "notes": "Mill targets ownerOf(eventCard), i.e. the damaged faction's owner, which is exactly the referenced opponent; no binding needed."
+    "notes": "Mill targets ownerOf(eventCard), i.e. the damaged faction's owner, which is exactly the referenced opponent; no binding needed.",
+    "recheck": "unchanged"
   },
   {
     "name": "Trickster's Globe",
     "ids": [
       "c47c8579-7fdc-49e7-b934-f3e86c37dc13"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "an opponent's faction",
       "When a player has no cards in their deck, they lose the game"
     ],
-    "notes": "millInsteadOfFactionDamage must apply to damage to any other player's faction. emptyDeckLoses with 3+ players should mean that player is eliminated (D3) and the game continues, not that the game ends."
+    "notes": "No data change: the millInsteadOfFactionDamage static already offers the swap for damage to any other player's faction (factionMillOffer compares only against the inflictor), and emptyDeckLoses now ends in elimination via settleDefeats (D3) with the game continuing when others remain.",
+    "recheck": "changed from c because both statics are engine-level and already N-player (any other player's faction; elimination under D3/E7)"
   },
   {
     "name": "Twisted Marionette",
     "ids": [
       "f78f043a-1c35-49ae-939f-3e0efabdd810"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "that faction's controller puts a character they control into its owner's hand"
     ],
-    "notes": "The damaged faction's controller may be any opponent, but the selector is controller:opponent (the bound opponent) while the chooser is ownerOf(eventCard). Selector must be characters controlled by controllerOf(eventCard), chosen by that player."
+    "notes": "The damageDealt event's card is the damaged faction, so E3 binds its controller as the opponent: the selector controller:\"opponent\" is that faction's controller, who is also the chooser (ownerOf eventCard). No data change.",
+    "recheck": "changed from c because E3 binds the damaged faction's controller"
   },
   {
     "name": "Uhluhtc Unleashed",
@@ -840,7 +909,8 @@
       "pick an opponent and then choose one of the following",
       "That player must destroy a character they control"
     ],
-    "notes": "One bound opponent chosen before the option; both options resolve against it."
+    "notes": "One bound opponent chosen before the option; both options resolve against it.",
+    "recheck": "unchanged"
   },
   {
     "name": "Undesirable Intrusion",
@@ -851,7 +921,8 @@
     "phrases": [
       "Your opponents cannot respond to this card"
     ],
-    "notes": "noResponse already covers all other players; micromajig goes to controllerOf(responded source)."
+    "notes": "noResponse already covers all other players; micromajig goes to controllerOf(responded source).",
+    "recheck": "unchanged"
   },
   {
     "name": "Undevoted Gargantuan",
@@ -862,7 +933,8 @@
     "phrases": [
       "each opponent may detach up to 3 resources from their faction"
     ],
-    "notes": "Wrap the chooserSelectsTarget (chooser/selector opponent) in forEachPlayer over every opponent; each opponent decides separately."
+    "notes": "Wrap the chooserSelectsTarget (chooser/selector opponent) in forEachPlayer over every opponent; each opponent decides separately.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Violating Ritual",
@@ -875,7 +947,8 @@
       "Pick an opponent",
       "That opponent discards 2 cards"
     ],
-    "notes": "One bound opponent for the whole block; discard chooser/selector 'opponent' matches."
+    "notes": "One bound opponent for the whole block; discard chooser/selector 'opponent' matches.",
+    "recheck": "unchanged"
   },
   {
     "name": "Voidal Bask",
@@ -887,7 +960,8 @@
       "look at an opponent's hand",
       "That player discards that card"
     ],
-    "notes": "One bound opponent chosen at the leaves-play trigger."
+    "notes": "One bound opponent chosen at the leaves-play trigger.",
+    "recheck": "unchanged"
   },
   {
     "name": "Voidal Trinket",
@@ -899,7 +973,8 @@
       "Pick an opponent",
       "That opponent may detach up to X resources from their faction"
     ],
-    "notes": "One bound opponent. The detach is an otherPlayerChooses cost, so the opponent must be bound before costs are paid (at activation)."
+    "notes": "One bound opponent. The detach is an otherPlayerChooses cost, so the opponent must be bound before costs are paid (at activation).",
+    "recheck": "unchanged"
   },
   {
     "name": "Wasted Wickedness",
@@ -909,9 +984,11 @@
     "category": "a",
     "phrases": [
       "Pick a player",
-      "that player"
+      "staple resources they control",
+      "That player puts X non-resource cards"
     ],
-    "notes": "'Pick a player' encoded as two modes (bound opponent / yourself); with 3+ players the bound-opponent mode covers choosing any other player and is prompted only when >1 candidate. Opponent must be bound before costs (X is evaluated in the cost)."
+    "notes": "'Pick a player' encoded as two modes (bound opponent / yourself); with 3+ players the bound-opponent mode covers choosing any other player and is prompted only when >1 candidate. Opponent must be bound before costs (X is evaluated in the cost).",
+    "recheck": "unchanged (a); the two modes (bound opponent / yourself) cover any other player now that the opponent is named at activation before the cost; phrases corrected to the printed wording"
   },
   {
     "name": "Words of Glory",
@@ -922,7 +999,8 @@
     "phrases": [
       "the total strength of all characters your opponents control"
     ],
-    "notes": "sumStat selector controller:opponent inside a block would sum only the bound opponent's characters; X must sum over every opponent (e.g. accumulate across forEachPlayer over opponents, or an all-opponents selector scope). Damage to all characters unchanged."
+    "notes": "sumStat selector controller:opponent inside a block would sum only the bound opponent's characters; X must sum over every opponent (e.g. accumulate across forEachPlayer over opponents, or an all-opponents selector scope). Damage to all characters unchanged.",
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
   },
   {
     "name": "Yenassa Shipping, LLP",
@@ -934,7 +1012,8 @@
     "phrases": [
       "for each item your opponents control"
     ],
-    "notes": "Static count of controller:opponent items = all opponents. The granted upkeep text uses eventPlayerIs controller (each item's own controller), unaffected."
+    "notes": "Static count of controller:opponent items = all opponents. The granted upkeep text uses eventPlayerIs controller (each item's own controller), unaffected.",
+    "recheck": "unchanged"
   },
   {
     "name": "Zenobian Mechanics Explained",
@@ -946,6 +1025,7 @@
       "Choose a character an opponent controls",
       "that player discards a card"
     ],
-    "notes": "One bound opponent's character; discard goes to ownerOf(selected character), same player in the normal case."
+    "notes": "One bound opponent's character; discard goes to ownerOf(selected character), same player in the normal case.",
+    "recheck": "unchanged"
   }
 ]

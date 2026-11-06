@@ -8,7 +8,8 @@
     "phrases": [
       "Locations opponents control lose 1 structure"
     ],
-    "notes": "Static modifier selector controller:\"opponent\" covers every opponent's locations."
+    "notes": "Static modifier selector controller:\"opponent\" covers every opponent's locations.",
+    "recheck": "unchanged"
   },
   {
     "name": "Additional Tribute",
@@ -19,18 +20,20 @@
     "phrases": [
       "Any opponent may pay 1"
     ],
-    "notes": "mayPay player:\"opponent\" offers the payment only to the one bound opponent. 'Any opponent' means each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents (offer in seat order, first payer pays; the controller is never offered). Also settle who draws ('they' = the payer) since the encoding draws for the controller."
+    "notes": "mayPay player:\"opponent\" offers the payment only to the one bound opponent. 'Any opponent' means each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents (offer in seat order, first payer pays; the controller is never offered). Also settle who draws ('they' = the payer) since the encoding draws for the controller.",
+    "recheck": "unchanged (c): printed 'Any opponent may pay 1' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")"
   },
   {
     "name": "Akashic Coin",
     "ids": [
       "21274c5d-a966-4303-a9e6-9db01061d7a0"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "enters play under an opponent's control, that player may pay 2"
     ],
-    "notes": "Both triggers use mayPay player:\"opponent\" for 'that player'. In 3+ players the payer must be the opponent whose card entered, not a freshly bound/prompted opponent: use player {controllerOf eventCard} (as Phantasmagoric Tollbooth does) or auto-bind opponentId to the event player for triggers on an opponent's event."
+    "notes": "Both triggers (resourcePlayed / cardEnteredPlay) fire on an opponent's event, so E3 binds opponentId to that event's player with no prompt; mayPay player:\"opponent\" is then exactly 'that player'. No data change.",
+    "recheck": "changed from c because E3 event-player binding makes 'that player' the opponent whose card entered or was played"
   },
   {
     "name": "Akashic Notes",
@@ -41,7 +44,8 @@
     "phrases": [
       "enters play under an opponent's control"
     ],
-    "notes": "Trigger conditions eventPlayerIs / eventCardControlledBy opponent fire for any opponent; effects only reference the controller."
+    "notes": "Trigger conditions eventPlayerIs / eventCardControlledBy opponent fire for any opponent; effects only reference the controller.",
+    "recheck": "unchanged"
   },
   {
     "name": "Architectural Restitution",
@@ -51,10 +55,13 @@
     ],
     "category": "a",
     "phrases": [
+      "while your opponent is attacking",
+      "your opponent's attack",
       "while an opponent is attacking you",
       "that opponent's attack"
     ],
-    "notes": "Gated by battleRole defender; the attacker is whichever opponent attacks you. No opponent selector is encoded."
+    "notes": "Gated by battleRole defender; the attacker is whichever opponent attacks you. No opponent selector is encoded.",
+    "recheck": "unchanged (a); Seed b4c72134 prints 'your opponent', Seed Saga 6b38d626 'an opponent ... attacking you'; same behavior (battleRole defender gate, no opponent selector)"
   },
   {
     "name": "Assistant Mud Whisperer",
@@ -64,9 +71,11 @@
     ],
     "category": "a",
     "phrases": [
+      "At the start of your opponent's turn",
       "At the start of each opponent's turn"
     ],
-    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start.",
+    "recheck": "unchanged (a); Seed 'your opponent's turn' / Seed Saga 'each opponent's turn' share one behavior; E3 binds the turn's player"
   },
   {
     "name": "Bewilderbeast",
@@ -77,19 +86,21 @@
     "phrases": [
       "When an opponent discards any number of cards"
     ],
-    "notes": "Static trigger condition eventPlayerIs opponent: fires for any opponent's discard."
+    "notes": "Static trigger condition eventPlayerIs opponent: fires for any opponent's discard.",
+    "recheck": "unchanged"
   },
   {
     "name": "Blitz of Destruction",
     "ids": [
       "3f5aab3e-81e1-46be-98e7-b55fbd60c047"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "Pick a player that controls more resources than you",
       "That player destroys a face-down resource they control"
     ],
-    "notes": "Text picks a player (any player with more resources than you); encoding uses condition count(opponent resources) > count(self) plus chooser/selector \"opponent\" (bound). With 3+ players candidates are the players with more resources than you: add a faction target restricted to those players and use the picked player as chooser and selector controller in the destroy step."
+    "notes": "'Pick a player that controls more resources than you' = pick an opponent who qualifies. The ability binds one opponent at activation (opponentId, before the condition runs); the existential count(opponent resources) > count(self) condition is then judged for that opponent alone, and chooser/selector 'opponent' resolve to the same player. No data change.",
+    "recheck": "changed from c because binding (opponentId chosen before the condition is checked) makes the picked player the bound opponent"
   },
   {
     "name": "Brainbath",
@@ -99,11 +110,14 @@
       "2bf6045a-5b3f-4189-ae91-28837c0d7b83",
       "3bd6878a-1a14-402f-93eb-a23afac654b0"
     ],
-    "category": "a",
+    "category": "b",
     "phrases": [
-      "An opponent discards a card"
+      "Your opponent discards a card",
+      "An opponent discards a card",
+      "All opponents discard a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Printings differ. Seed a037259c 'Your opponent discards a card' and Seed Saga b9677697 / Ungodly Mess 2bf6045a 'An opponent discards a card' work by binding (a). Decade of Deckadence 3bd6878a prints 'All opponents discard a card' but its recur ability encodes one chooser:\"opponent\" discard: wrap in forEachPlayer players:\"opponents\" (E1) for that printing only.",
+    "recheck": "printings differ: 3bd6878a (Decade of Deckadence) needs fan-out (b); a037259c, b9677697, 2bf6045a are a"
   },
   {
     "name": "Caboodling Gladhander",
@@ -111,11 +125,13 @@
       "d75f8c4e-5fd7-4169-8daa-051c703fb089",
       "32655b89-00e6-4a06-a187-3e987dd11954"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
+      "Your opponent's faction gains X influence",
       "That character's controller's faction gains X influence"
     ],
-    "notes": "Encoded as modifyInfluence player:\"opponent\" (wrong even in 2 players if the picked character is yours). Re-encode with player {controllerOf: selected c}, captured before the destroy, so the picked character's controller gains the influence regardless of the bound opponent."
+    "notes": "Printings differ in wording and encoding, both correct. Seed d75f8c4e prints 'Your opponent's faction' and encodes modifyInfluence player:\"opponent\" (the bound opponent, faithful to the printed text even when the picked character is yours). Seed Saga 32655b89 prints 'That character's controller's faction' and already encodes player {controllerOf: selected c}.",
+    "recheck": "changed from c because the Seed printing's printed 'your opponent' is faithfully encoded and the Seed Saga printing already uses controllerOf"
   },
   {
     "name": "Canny Bailiff",
@@ -126,7 +142,8 @@
     "phrases": [
       "While an opponent is deploying a tactic"
     ],
-    "notes": "Static costModifiers affects:\"opponent\": applies to every opponent."
+    "notes": "Static costModifiers affects:\"opponent\": applies to every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Chain Reaction",
@@ -137,9 +154,12 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's faction"
+      "your opponent's faction",
+      "an opponent's faction",
+      "inflict 1 damage to an opponent and draw"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent's faction', Seed Saga 'an opponent's faction', Decade of Deckadence 'an opponent' (no 'faction'); one behavior (dealDamage factionOf opponent, bound)"
   },
   {
     "name": "Cheats, the Dirty Rotten",
@@ -152,7 +172,8 @@
       "search that player's deck",
       "their discard pile"
     ],
-    "notes": "onPlay picks a faction target 'opp' but the search/shuffle use owner/player \"opponent\" (bound). The EXTRA COST pick must be the opponent the ETB resolves against (opponentId := owner of the picked faction, persisted to the ETB trigger). 'if you picked an opponent' stays targetExists."
+    "notes": "onPlay picks a faction target 'opp' (owner:\"opponent\"), which binds the play block's opponent (E2), but the printed 'search that player's deck' is in a separate cardEnteredPlay trigger. Its context inherits the picked selection, not opponentId, and nothing on the entering event names an opponent, so with 3+ players the engine would prompt chooseOpponent and the search/shuffle could hit a different opponent than the picked one. Make the trigger use ownerOf the picked faction (or persist the play's opponentId to the entry trigger).",
+    "recheck": "unchanged (c); binding settles the pick but not the ETB trigger's opponent"
   },
   {
     "name": "Chum, the Ugliest Sarume",
@@ -163,7 +184,8 @@
     "phrases": [
       "Search an opponent's deck"
     ],
-    "notes": "Discard-pile pick is any owner; the 'an opponent's deck' search is a separate sentence bound to one opponent."
+    "notes": "Discard-pile pick is any owner; the 'an opponent's deck' search is a separate sentence bound to one opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Craniata Nester",
@@ -175,7 +197,8 @@
       "you may pick an opponent",
       "each opponent's discard pile"
     ],
-    "notes": "Mill uses the bound opponent (matches 'pick an opponent'); the static strength/life count over owner:\"opponent\" discard characters sums every opponent, matching 'each opponent's discard pile'."
+    "notes": "Mill uses the bound opponent (matches 'pick an opponent'); the static strength/life count over owner:\"opponent\" discard characters sums every opponent, matching 'each opponent's discard pile'.",
+    "recheck": "unchanged"
   },
   {
     "name": "Cryptic Athenaeum",
@@ -185,10 +208,13 @@
     ],
     "category": "a",
     "phrases": [
+      "your opponent may draw a card",
+      "your opponent discards a card",
       "an opponent may draw a card",
       "an opponent discards a card"
     ],
-    "notes": "Each sentence is an 'an opponent' bound to one opponent for the block; 'pick a character' is any-owner."
+    "notes": "Each sentence is an 'an opponent' bound to one opponent for the block; 'pick a character' is any-owner.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent', same behavior"
   },
   {
     "name": "Day of the Tentacle",
@@ -198,10 +224,13 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's hand",
-      "that opponent's control"
+      "Look at your opponent's hand",
+      "under your opponent's control",
+      "Look at an opponent's hand",
+      "under that opponent's control"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent / that opponent'"
   },
   {
     "name": "Defiler of Innocence",
@@ -211,10 +240,13 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's hand",
+      "Look at your opponent's hand",
+      "Your opponent discards that character",
+      "Look at an opponent's hand",
       "That player discards that character"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent / that player'"
   },
   {
     "name": "Department of Rejections",
@@ -224,20 +256,24 @@
     ],
     "category": "a",
     "phrases": [
-      "Your opponents must pay 2 to search their deck"
+      "Your opponent must pay 2 to search their deck",
+      "Your opponents must pay 2 to search their deck",
+      "Your opponents must pay 2 to use a character's ability"
     ],
-    "notes": "Static searchTax / abilityCostModifiers opponentCharacters apply to every opponent."
+    "notes": "Static searchTax / abilityCostModifiers opponentCharacters apply to every opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'your opponents' are both statics reaching every opponent"
   },
   {
     "name": "Dizzying Blow",
     "ids": [
       "b6b6b202-7629-49e6-a451-7b2e3feb6c11"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "attacking your faction"
     ],
-    "notes": "Target selector controller:\"opponent\" + inBattle attacker; the attacker can be any opponent in 3+ players, not only a pre-bound one. Bind opponentId to the attacker's controller (or replace controller:\"opponent\" with not-controlled-by-self)."
+    "notes": "The pick's selector (controller:\"opponent\", inBattle attacker) is the only opponent reference, so the pick itself binds opponentId (E2) to the picked attacker's controller, whichever opponent is attacking. No data change.",
+    "recheck": "changed from c because E2 binds the block's opponent from the picked attacker"
   },
   {
     "name": "Drill Garrison",
@@ -248,9 +284,12 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's faction"
+      "inflict 1 damage to your opponent's faction",
+      "inflict 1 damage to an opponent's faction",
+      "inflict 1 damage to an opponent."
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent's faction', Seed Saga 'an opponent's faction', Decade of Deckadence 'an opponent'; one behavior"
   },
   {
     "name": "Drivey Car",
@@ -260,9 +299,11 @@
     ],
     "category": "a",
     "phrases": [
+      "the number of characters your opponent controls minus the number of characters you control",
       "the number of characters an opponent controls minus the number of characters you control"
     ],
-    "notes": "Resolving trigger: the bound opponent's character count (MP 2). Not a static comparison."
+    "notes": "Resolving trigger: the bound opponent's character count (MP 2). Not a static comparison.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'; the trigger binds one opponent (prompt) and counts that opponent's characters"
   },
   {
     "name": "Drowned Catacombs",
@@ -270,12 +311,12 @@
       "9d0ed925-fc2d-4745-82c0-68f90bf5d576",
       "a896049a-e01d-4cd6-a9e6-aa04bcf6534c"
     ],
-    "category": "d",
+    "category": "a",
     "phrases": [
       "the number of characters your opponent controls"
     ],
-    "notes": "SNEAK cost X and the strength cap both count controller:\"opponent\" characters; the cost needs the opponent chosen before payment.",
-    "ruling": "The opponent is selected at activation (before the cost is computed); X is that opponent's character count, used for both the cost and the strength limit."
+    "notes": "Sneak's cost X and its strength cap both read count(controller:\"opponent\" characters); both live in one ability block, so the activation binds one opponent (opponentId) before the cost is computed, giving X = that opponent's character count for the cost and the cap alike. This is the ruling the audit proposed; binding now implements it. No data change.",
+    "recheck": "changed from d because D4 binding applies the proposed ruling (one opponent chosen at activation, before the cost)"
   },
   {
     "name": "Encumber",
@@ -285,10 +326,13 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's hand",
+      "Look at your opponent's hand",
+      "Your opponent discards that card",
+      "Look at an opponent's hand",
       "That opponent discards that card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Essence of Deception",
@@ -298,9 +342,11 @@
     ],
     "category": "a",
     "phrases": [
-      "Search an opponent's deck"
+      "Search your opponent's deck for a card",
+      "Search an opponent's deck for a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Essence of Obsession",
@@ -310,9 +356,11 @@
     ],
     "category": "a",
     "phrases": [
+      "Your opponent discards a card",
       "An opponent discards a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Final Countdown",
@@ -323,8 +371,9 @@
     "phrases": [
       "At the start of your opponent's next turn"
     ],
-    "notes": "scheduleEffect when:\"startOfOpponentNextTurn\" is ambiguous with 3+ players (next opponent in seat order, earliest turn of any opponent, or a chosen opponent's).",
-    "ruling": "Per D4, binds the opponent chosen for the casting block (prompted only if more than one candidate) and the delayed effect fires at the start of that opponent's next turn; if that opponent is eliminated first it is dropped (D8)."
+    "notes": "scheduleEffect when:\"startOfOpponentNextTurn\" still fires 'the turn right after scheduling, if an opponent's' (fireScheduledEffects), not the bound opponent's next turn (tracked in the plan's Known follow-ups). Ruling stands: bind the opponent chosen for the casting block and fire at the start of that opponent's next turn; drop if they are eliminated (D8).",
+    "ruling": "Per D4, binds the opponent chosen for the casting block (prompted only if more than one candidate) and the delayed effect fires at the start of that opponent's next turn; if that opponent is eliminated first it is dropped (D8).",
+    "recheck": "unchanged (d); binding exists but the delayed-effect scheduler does not use it yet"
   },
   {
     "name": "Flagitious Denunciator",
@@ -334,10 +383,13 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's hand",
+      "Look at your opponent's hand",
+      "Your opponent discards that character",
+      "Look at an opponent's hand",
       "That player discards that character"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent / that player'"
   },
   {
     "name": "Forbidden Bibliotheca",
@@ -348,7 +400,8 @@
     "phrases": [
       "Each opponent discards 2 cards"
     ],
-    "notes": "Check Out encodes one opponent (chooserSelectsTarget chooser/selector opponent). Wrap the chooserSelectsTarget in forEachPlayer scoped to opponents (needs an opponents-only scope; forEachPlayer is all players today), with chooser/selector rebound to the iterated player (self)."
+    "notes": "Check Out encodes one opponent (chooserSelectsTarget chooser/selector \"opponent\", bound). Printed 'Each opponent discards 2 cards': wrap in forEachPlayer players:\"opponents\" (E1 now exists in the engine) with chooser/selector rebound to the iterated player.",
+    "recheck": "unchanged (b); engine E1 opponents scope exists, card data still single-opponent"
   },
   {
     "name": "Forbidden Knowledge",
@@ -358,9 +411,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's hand"
+      "look at your opponent's hand",
+      "look at an opponent's hand"
     ],
-    "notes": "Only the draw is encoded (the look is informational); 'an opponent' = the bound opponent."
+    "notes": "Only the draw is encoded (the look is informational); 'an opponent' = the bound opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Gallant Commander",
@@ -370,9 +425,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's faction"
+      "Inflict 3 damage to your opponent's faction",
+      "Inflict 3 damage to an opponent's faction"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Gambling Den",
@@ -382,10 +439,13 @@
     ],
     "category": "a",
     "phrases": [
+      "both players may draw a card",
+      "both players may play a resource",
       "each player may draw a card",
       "each player may play a resource"
     ],
-    "notes": "Already forEachPlayer for both 'each player' branches; fans out to all players."
+    "notes": "Already forEachPlayer for both 'each player' branches; fans out to all players.",
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already encoded with forEachPlayer over every player"
   },
   {
     "name": "Gathering of Unlikely Heroes",
@@ -397,7 +457,8 @@
       "Pick an opponent",
       "That player names 2 non-Universal trades"
     ],
-    "notes": "Namer is ownerOf(picked faction); no other opponent refs, so the picked opponent is used consistently."
+    "notes": "Namer is ownerOf(picked faction); no other opponent refs, so the picked opponent is used consistently.",
+    "recheck": "unchanged"
   },
   {
     "name": "Gideon, the Ultimate Warrior",
@@ -407,9 +468,11 @@
     ],
     "category": "a",
     "phrases": [
+      "If your opponent's faction loses influence",
       "When an opponent's faction loses influence"
     ],
-    "notes": "Static influenceModifiers player:\"opponent\": every opponent's faction loses 1 more."
+    "notes": "Static influenceModifiers player:\"opponent\": every opponent's faction loses 1 more.",
+    "recheck": "unchanged (a); Seed 'your opponent's faction', Seed Saga 'an opponent's faction'; static influenceModifiers covers every opponent"
   },
   {
     "name": "Heist Training Grounds",
@@ -419,10 +482,13 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's deck",
+      "search your opponent's deck for a card",
+      "your opponent discards a card at random",
+      "search an opponent's deck for a card",
       "an opponent discards a card at random"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "High Court of Demands",
@@ -432,9 +498,11 @@
     ],
     "category": "a",
     "phrases": [
+      "Your opponent cannot attack your faction",
       "Your opponents cannot attack your faction"
     ],
-    "notes": "preventsAttackOnFaction player:self applies against every opponent."
+    "notes": "preventsAttackOnFaction player:self applies against every opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'your opponents' are statics against every opponent"
   },
   {
     "name": "Inebriated Defenestration",
@@ -445,7 +513,8 @@
     "phrases": [
       "an opponent's deck"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged"
   },
   {
     "name": "Leaping Sarume",
@@ -456,7 +525,8 @@
     "phrases": [
       "all your opponent's characters"
     ],
-    "notes": "Single 'your opponent' = the bound opponent for the block; 'all characters' is unrestricted."
+    "notes": "Single 'your opponent' = the bound opponent for the block; 'all characters' is unrestricted.",
+    "recheck": "unchanged"
   },
   {
     "name": "Living God of Thabbash",
@@ -466,9 +536,11 @@
     ],
     "category": "a",
     "phrases": [
+      "your opponent discards a card",
       "an opponent discards a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Lucky Charm",
@@ -478,9 +550,11 @@
     ],
     "category": "a",
     "phrases": [
+      "Your opponent must pay 1 to pick a character you control",
       "Your opponents must pay 1 to pick a character you control"
     ],
-    "notes": "Static pickTax affects:\"opponent\": every opponent pays."
+    "notes": "Static pickTax affects:\"opponent\": every opponent pays.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'your opponents' are statics reaching every opponent"
   },
   {
     "name": "Lunk Nut",
@@ -491,7 +565,8 @@
     "phrases": [
       "At the start of each opponent's turn"
     ],
-    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start.",
+    "recheck": "unchanged"
   },
   {
     "name": "Mass Confusion",
@@ -501,10 +576,12 @@
     ],
     "category": "c",
     "phrases": [
-      "Pick a player",
-      "that player controls"
+      "where Y is the number of characters your opponent controls minus the number of characters you control",
+      "Pick a player. Pick X characters that player controls.",
+      "where Y is the number of characters that player controls minus the number of characters you control"
     ],
-    "notes": "Encoded with no player pick: targets are any X characters and Y counts controller:\"opponent\" (bound/sum). Needs a faction pick, X characters restricted to ownerOf(that faction), and Y = count of that player's characters minus yours."
+    "notes": "Printings differ. Seed 48c4d2f0 ('Pick X characters ... characters your opponent controls') is encoded as any X characters with Y = count(controller:\"opponent\" characters): works by binding (a). Seed Saga da25a463 prints 'Pick a player. Pick X characters that player controls ... Y ... that player controls' and encodes a free faction pick 'pl' (any faction) and characters controlled by ownerOf(pl), but Y still counts controller:\"opponent\" characters, which is the separately bound opponent, not the picked player. Re-encode Y as the count of characters controlled by ownerOf(pl) (or make the faction pick owner:\"opponent\" so E2 binds it, losing the 'pick yourself' branch).",
+    "recheck": "printings differ: da25a463 (Seed Saga) needs re-encoding (c) because the bound opponent can differ from the picked player; 48c4d2f0 (Seed) is a"
   },
   {
     "name": "Master Mud Whisperer",
@@ -514,9 +591,11 @@
     ],
     "category": "a",
     "phrases": [
-      "each opponent's turn"
+      "At the start of your opponent's turn",
+      "At the start of each opponent's turn"
     ],
-    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start.",
+    "recheck": "unchanged (a); Seed 'your opponent's turn', Seed Saga 'each opponent's turn'"
   },
   {
     "name": "Mirthless Altar",
@@ -528,7 +607,8 @@
     "phrases": [
       "each player's turn"
     ],
-    "notes": "Trigger turnStarted has no player condition (any player's turn); no opponent reference."
+    "notes": "Trigger turnStarted has no player condition (any player's turn); no opponent reference.",
+    "recheck": "unchanged"
   },
   {
     "name": "Mountainous Golem",
@@ -538,9 +618,11 @@
     ],
     "category": "a",
     "phrases": [
+      "Your opponent cannot take control of this card",
       "Your opponents cannot take control of this card"
     ],
-    "notes": "cannotBeTakenControl restriction must reject any player other than the controller (engine must not compare against a single opponent)."
+    "notes": "cannotBeTakenControl restriction must reject any player other than the controller (engine must not compare against a single opponent).",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'your opponents' statics"
   },
   {
     "name": "Nefarious Horror",
@@ -548,12 +630,13 @@
       "287fad39-5bc3-499b-9099-f95294af36e6",
       "6a568b43-e53e-4c0f-915d-df90aa61872e"
     ],
-    "category": "d",
+    "category": "a",
     "phrases": [
+      "While your opponent controls more characters than you",
       "While an opponent controls more characters than you"
     ],
-    "notes": "Static comparison encoded as count(controller:\"opponent\" characters) > count(own), i.e. the SUM over all opponents, which is too easy to satisfy in 3+ players.",
-    "ruling": "Static and cannot bind: true while at least one opponent individually controls more characters than you (compare you to each opponent separately, not the combined total)."
+    "notes": "Static continuous condition numberCompare(count(controller:\"opponent\" characters) > count(self characters)). A condition that references 'opponent' with none bound is existential (E4): true when it holds for some single opponent, compared on its own rather than summed. Both printings ('your opponent' / 'an opponent') read that way. No data change.",
+    "recheck": "changed from d because E4 evaluates the unbound opponent condition per single opponent (existential), not as a sum"
   },
   {
     "name": "Noble Sacrifice",
@@ -562,9 +645,10 @@
     ],
     "category": "a",
     "phrases": [
-      "Pick a character an opponent owns"
+      "Pick a character your opponent owns"
     ],
-    "notes": "Target selector owner:\"opponent\" for a single pick; the bound opponent's character."
+    "notes": "Target selector owner:\"opponent\" for a single pick; the bound opponent's character.",
+    "recheck": "unchanged (a); Seed only; the pick (owner:\"opponent\") binds the opponent (E2)"
   },
   {
     "name": "Obscene Communion",
@@ -574,10 +658,11 @@
     ],
     "category": "a",
     "phrases": [
-      "each player's turn",
-      "Each player draws a card"
+      "Both players draw a card.",
+      "Each player draws a card."
     ],
-    "notes": "Already uses forEachPlayer for every 'each player' step and chooser activePlayer; works for N players."
+    "notes": "Already uses forEachPlayer for every 'each player' step and chooser activePlayer; works for N players.",
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already forEachPlayer over every player"
   },
   {
     "name": "Offering of False Friendship",
@@ -588,7 +673,8 @@
     "phrases": [
       "Any opponent may pay 2"
     ],
-    "notes": "mayPay player:\"opponent\" only asks the bound opponent. 'Any opponent may pay' = each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents; the elseEffects (put the character and same-name characters on the deck bottom) run only if all decline, the first payer terminates the card."
+    "notes": "mayPay player:\"opponent\" asks only the bound opponent. Printed 'Any opponent may pay 2' = each opponent in turn may pay: re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it); the elseEffects run only if all decline, a payer terminates the card.",
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay"
   },
   {
     "name": "P3pp3r 0f 1n54n17y",
@@ -598,9 +684,11 @@
     ],
     "category": "a",
     "phrases": [
+      "At the start of your opponent's turn",
       "At the start of each opponent's turn"
     ],
-    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start.",
+    "recheck": "unchanged (a); Seed 'your opponent's turn', Seed Saga 'each opponent's turn'"
   },
   {
     "name": "Pant Swipe",
@@ -610,9 +698,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's deck"
+      "the top 4 cards of your opponent's deck",
+      "the top 4 cards of an opponent's deck"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Perturbatious Warlock",
@@ -622,9 +712,11 @@
     ],
     "category": "a",
     "phrases": [
+      "your opponent puts a card from their hand",
       "an opponent puts a card from their hand"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Phalludrix, the Impotenator",
@@ -634,10 +726,13 @@
     ],
     "category": "a",
     "phrases": [
+      "If an effect controlled by your opponent causes you to discard",
+      "At the start of your opponent's turn",
       "When an effect controlled by an opponent causes you to discard",
       "At the start of each opponent's turn"
     ],
-    "notes": "Replacement by:\"opponent\" and the restore trigger apply for any opponent."
+    "notes": "Replacement by:\"opponent\" and the restore trigger apply for any opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent / each opponent's turn'"
   },
   {
     "name": "Phantasmagoric Tollbooth",
@@ -649,7 +744,8 @@
       "under an opponent's control",
       "a character an opponent owns"
     ],
-    "notes": "Both triggers already read the event card's controller/owner (mayPay player controllerOf eventCard), so they cover every opponent."
+    "notes": "Both triggers already read the event card's controller/owner (mayPay player controllerOf eventCard), so they cover every opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Profane Proposal",
@@ -662,7 +758,8 @@
       "Pick an opponent",
       "That player separates those cards into two piles"
     ],
-    "notes": "The opponent is picked via a faction target and the splitter is ownerOf(picked faction), so it already reads the picked opponent in 3+ players. Engine note: the picked faction should also be the block's bound opponent (no other opponent refs here)."
+    "notes": "The opponent is picked via a faction target and the splitter is ownerOf(picked faction), so it already reads the picked opponent in 3+ players. Engine note: the picked faction should also be the block's bound opponent (no other opponent refs here).",
+    "recheck": "unchanged (a); both printings (Holy Heist 7f75ce4c, Decade of Deckadence 1d036bac) print 'Pick an opponent ... That player separates'"
   },
   {
     "name": "Raging Ferocity",
@@ -674,7 +771,8 @@
       "Pick a player",
       "X is number of resources that player controls"
     ],
-    "notes": "The picked player is any faction (fac), but the damage amount counts controller:\"opponent\" resources (bound/sum) and compares ownerOf only to self. Re-encode X as the count of resources controlled by ownerOf(fac) so a picked non-bound opponent is used."
+    "notes": "The picked player is any faction (fac) but the damage amount counts controller:\"opponent\" resources, i.e. the separately bound opponent, while the damage goes to the picked faction. Printed 'Pick a player. X is number of resources that player controls': re-encode X as the count of resources controlled by ownerOf(fac). (Making the pick owner:\"opponent\" would bind via E2 but drop picking yourself, which the printed text allows.)",
+    "recheck": "unchanged (c); binding does not tie the free faction pick to the opponent used in the count"
   },
   {
     "name": "Rigged Tables",
@@ -682,11 +780,15 @@
       "48f100ed-f3bb-4dcd-b4b7-78ac791fe579",
       "4c1790d7-4cc7-4df5-aa33-2e7369bd960d"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "any deck"
+      "Look at the top card of either deck",
+      "Put the top card of either deck on the bottom",
+      "Look at the top card of any deck",
+      "Put the top card of any deck on the bottom"
     ],
-    "notes": "Size Up / Rig offer only 'Your deck' and 'Opponent deck' (bound). 'Any deck' with 3+ players means any player's deck: replace the two options with a player pick (an option per player's deck, or a faction pick feeding lookAndReorder / deckPosition with that player)."
+    "notes": "Size Up / Rig offer 'Your deck' and 'Opponent deck' (the bound opponent). The ability's block binds one opponent at activation (opponentId, before the look), so 'any deck' (Seed Saga) = your deck or the deck of whichever opponent you name; naming the opponent first loses nothing because the look has no earlier information. Same as Sly Bilker's 'either deck'. No data change.",
+    "recheck": "changed from c because opponent binding at activation covers 'any deck' (Seed Saga 4c1790d7); Seed 48f100ed prints 'either deck'"
   },
   {
     "name": "Robustical Badass",
@@ -696,9 +798,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's faction"
+      "inflict 1 damage to your opponent's faction",
+      "inflict 1 damage to an opponent's faction"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Runivoltaic Accumulator",
@@ -708,9 +812,11 @@
     ],
     "category": "c",
     "phrases": [
+      "If your opponent attacks",
       "When an opponent attacks"
     ],
-    "notes": "Encoded as battleStarted + battleRole defender ('you are attacked'); that equals 'an opponent attacks' only in 2 players. In 3+ players (and Showdown, where Heroes attack each other) an opponent attacking someone else should also trigger: change the condition to 'attacker is controlled by an opponent'."
+    "notes": "Encoded as battleStarted + battleRole defender ('you are attacked'). Printed 'If your opponent attacks' / 'When an opponent attacks' also covers an opponent attacking someone else in 3+ players (and Showdown, where Heroes attack each other). E3 binds opponentId to an attacker's player but cannot repair the condition: change it to 'attacker is controlled by an opponent'.",
+    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix"
   },
   {
     "name": "Shadowy Mugger",
@@ -720,9 +826,11 @@
     ],
     "category": "a",
     "phrases": [
-      "an opponent's deck"
+      "you may search your opponent's deck for a card",
+      "you may search an opponent's deck for a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Sly Bilker",
@@ -734,7 +842,8 @@
     "phrases": [
       "either deck"
     ],
-    "notes": "'Either deck' = your deck or the bound opponent's deck (opponent chosen for the block); no change."
+    "notes": "'Either deck' = your deck or the bound opponent's deck (opponent chosen for the block); no change.",
+    "recheck": "unchanged"
   },
   {
     "name": "Spitting Sarume",
@@ -744,9 +853,11 @@
     ],
     "category": "a",
     "phrases": [
+      "all characters your opponent controls",
       "all characters an opponent controls"
     ],
-    "notes": "'An opponent' = the single bound opponent whose characters all take damage."
+    "notes": "'An opponent' = the single bound opponent whose characters all take damage.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Stupidify",
@@ -756,22 +867,27 @@
     ],
     "category": "a",
     "phrases": [
-      "An opponent discards 2 cards"
+      "Your opponent discards 2 cards",
+      "An opponent discards 2 cards",
+      "Your opponent discards a card",
+      "An opponent discards a card"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Subdermal Micromajig",
     "ids": [
       "7a303331-f7dd-4abc-b223-ef0b033db6b9"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
       "Pick an opponent",
       "an attacking character that player controls",
       "That player puts a Micromajig token"
     ],
-    "notes": "The picked faction p is used for the token (ownerOf p) but the attacker selector is controller:\"opponent\" (bound opponent). Both must be the same picked player: make the 'Pick an opponent' cost set the block's opponentId (or replace with a chooseOpponent cost) so the selector resolves to p's owner."
+    "notes": "'Pick an opponent' is a faction pick (owner:\"opponent\") in the ability's targets, so it binds opponentId (E2) before the cost and effects run; the attacker selector (controller:\"opponent\") and the token's controller (ownerOf the picked faction) then name the same player. No data change.",
+    "recheck": "changed from c because E2 makes the picked opponent the block's bound opponent"
   },
   {
     "name": "Subordinate Demotivation",
@@ -781,9 +897,11 @@
     ],
     "category": "a",
     "phrases": [
+      "the character your opponent controls with the lowest numeric cost",
       "the character an opponent controls with the lowest numeric cost"
     ],
-    "notes": "One bound opponent; isExtremum among that opponent's characters."
+    "notes": "One bound opponent; isExtremum among that opponent's characters.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'an opponent'"
   },
   {
     "name": "Suicide Smash",
@@ -794,7 +912,8 @@
     "phrases": [
       "an opponent's faction"
     ],
-    "notes": "Resolving block: the single bound opponent; no change."
+    "notes": "Resolving block: the single bound opponent; no change.",
+    "recheck": "unchanged"
   },
   {
     "name": "Surprise!",
@@ -802,11 +921,13 @@
       "95ad5456-4279-4481-848b-933036e72684",
       "82f7c006-8b9f-4668-b3db-9507ce0bd479"
     ],
-    "category": "c",
+    "category": "a",
     "phrases": [
-      "attacking your faction"
+      "Pick an attacking character your opponent controls",
+      "Pick a character attacking your faction"
     ],
-    "notes": "Target selector controller:\"opponent\" + inBattle attacker: the attacker may be any opponent in 3+ players. Bind opponentId to the attacker's controller (or use not-controlled-by-self) instead of a separately bound opponent. (Printed 'or a location you control' alternative is not encoded.)"
+    "notes": "The only opponent reference is the pick's selector (controller:\"opponent\", inBattle attacker), so the pick binds opponentId (E2) to whichever opponent controls the picked attacker. Both printings share one behavior (battleRole defender gate); Seed prints 'your opponent controls', Seed Saga 'attacking your faction or a location you control' (the location alternative is not encoded, a fidelity matter, not a multiplayer one).",
+    "recheck": "changed from c because E2 binds the block's opponent from the picked attacker"
   },
   {
     "name": "Thabbashite Barbeque",
@@ -818,7 +939,8 @@
       "Any opponent may pay 2",
       "Look at an opponent's hand"
     ],
-    "notes": "'Any opponent may pay 2' is encoded as mayPay player:\"opponent\" (bound only): re-encode as anyPlayerMayPay restricted to opponents. The later 'Look at an opponent's hand ... That player discards' sentence is fine with the bound opponent."
+    "notes": "'Any opponent may pay 2' is encoded as mayPay player:\"opponent\" (bound only): re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it). The later 'Look at an opponent's hand ... That player discards' sentence is fine with the bound opponent.",
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay"
   },
   {
     "name": "Thabbashite Urchin",
@@ -829,7 +951,8 @@
     "phrases": [
       "While an opponent controls an item"
     ],
-    "notes": "Static count over controller:\"opponent\" items >= 1 means any opponent controls an item."
+    "notes": "Static count over controller:\"opponent\" items >= 1 means any opponent controls an item.",
+    "recheck": "unchanged"
   },
   {
     "name": "Thabbashite Wizard",
@@ -839,9 +962,11 @@
     ],
     "category": "a",
     "phrases": [
+      "both players may draw up to 2 cards",
       "each player may draw up to 2 cards"
     ],
-    "notes": "Already wrapped in forEachPlayer; fans out to all players (not just 'both')."
+    "notes": "Already wrapped in forEachPlayer; fans out to all players (not just 'both').",
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; already forEachPlayer"
   },
   {
     "name": "Theocratic Senate of Marduun",
@@ -851,9 +976,11 @@
     ],
     "category": "a",
     "phrases": [
+      "Your opponent cannot attack your faction",
       "Your opponents cannot attack your faction"
     ],
-    "notes": "preventsAttackOnFaction player:self applies against every opponent."
+    "notes": "preventsAttackOnFaction player:self applies against every opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent' / Seed Saga 'your opponents' statics"
   },
   {
     "name": "Theological Theft",
@@ -866,7 +993,8 @@
       "Each of those players",
       "an opponent's discard pile"
     ],
-    "notes": "Players are picked via unrestricted faction targets (x up to total players), already N-player. 'an opponent's discard pile' uses the bound opponent, independent of the picked players."
+    "notes": "Players are picked via unrestricted faction targets (x up to total players), already N-player. 'an opponent's discard pile' uses the bound opponent, independent of the picked players.",
+    "recheck": "unchanged"
   },
   {
     "name": "Thieving Casino",
@@ -878,7 +1006,8 @@
       "pick a player",
       "an opponent's discard pile"
     ],
-    "notes": "'Pick a player' is an unrestricted faction pick (works for N players); Cash Out's 'an opponent's discard pile' target is the bound opponent."
+    "notes": "'Pick a player' is an unrestricted faction pick (works for N players); Cash Out's 'an opponent's discard pile' target is the bound opponent.",
+    "recheck": "unchanged"
   },
   {
     "name": "Underdog",
@@ -889,7 +1018,8 @@
     "phrases": [
       "that your opponents own"
     ],
-    "notes": "Static count owner:\"opponent\" sums every opponent, matching 'your opponents'."
+    "notes": "Static count owner:\"opponent\" sums every opponent, matching 'your opponents'.",
+    "recheck": "unchanged"
   },
   {
     "name": "Underhanded Gamer",
@@ -899,11 +1029,14 @@
     ],
     "category": "d",
     "phrases": [
-      "an opponent controls more characters than you",
-      "those players"
+      "Use this only if your opponent controls more characters than you",
+      "Use this only if an opponent controls more characters than you",
+      "This turn, this card cannot be blocked.",
+      "This turn, this card cannot be blocked by those players."
     ],
-    "notes": "Activation condition compares you against the SUM of opponents' characters, and Outsmart grants unconditional cannotBeBlocked, so it would apply against every player. Also needs a scoped unblockable restriction (cannotBeBlockedBy the chosen player).",
-    "ruling": "The ability's block binds one opponent who must individually control more characters than you (not the combined total; unavailable if none qualifies); this card cannot be blocked by that opponent's characters this turn, and can still be blocked by others."
+    "notes": "Printings differ. The use condition (count(opponent) > count(self)) now works by binding: the activation names one opponent who must individually control more characters (E4 / opponentId). Seed 8c111617 then prints an unconditional 'cannot be blocked', which the encoded grantKeyword cannotBeBlocked matches (a). Seed Saga 8bed01de prints 'cannot be blocked by those players': the encoding is still unconditional, so it needs a restriction scoped to the opponent(s) who qualify.",
+    "ruling": "For Seed Saga 8bed01de: the ability's block binds one opponent who must individually control more characters than you (unavailable if none qualifies); this card cannot be blocked by that opponent's characters this turn and can still be blocked by others. Seed 8c111617 stays as printed (unblockable by everyone).",
+    "recheck": "printings differ: 8c111617 (Seed) is a; 8bed01de (Seed Saga) is still d (needs a scoped cannotBeBlockedBy restriction and a ruling on 'those players'); the condition itself is fixed by binding/E4"
   },
   {
     "name": "Unloyal Necromorph",
@@ -915,7 +1048,8 @@
       "any opponent may pay 2",
       "that player takes control of this card"
     ],
-    "notes": "Replacement uses chooser:\"opponent\" (one bound opponent). 'Any opponent may pay 2' needs each opponent offered in seat order (anyPlayerMayPay-style offer restricted to opponents); the opponent who pays becomes the new controller (takeControl to that payer, not the controller ref)."
+    "notes": "Replacement uses chooser:\"opponent\" (one bound opponent). Printed 'any opponent may pay 2 ... that player takes control' needs each opponent offered in seat order (anyPlayerMayPay players:\"opponents\", engine E5 exists); the payer becomes the new controller (takeControl to that payer, not the controller ref).",
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent"
   },
   {
     "name": "Watchtower",
@@ -926,9 +1060,11 @@
     ],
     "category": "a",
     "phrases": [
-      "under an opponent's control"
+      "If a character enters play under your opponent's control",
+      "When a character enters play under an opponent's control"
     ],
-    "notes": "Static trigger eventCardControlledBy opponent: any opponent."
+    "notes": "Static trigger eventCardControlledBy opponent: any opponent.",
+    "recheck": "unchanged (a); Seed 'your opponent', Seed Saga and Decade of Deckadence 'an opponent'"
   },
   {
     "name": "iDumb De-Itemizer",
@@ -939,6 +1075,7 @@
     "phrases": [
       "Only an opponent may use this ability"
     ],
-    "notes": "usableBy:\"opponent\" is a standing permission: every opponent of the controller may use Reset (resolved under the activator)."
+    "notes": "usableBy:\"opponent\" is a standing permission: every opponent of the controller may use Reset (resolved under the activator).",
+    "recheck": "unchanged"
   }
 ]
