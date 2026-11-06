@@ -1,0 +1,1760 @@
+{
+ "mode": "ffa4",
+ "summary": {
+  "tests": 43755,
+  "pass": 43375,
+  "fail": 370
+ },
+ "failures": [
+  {
+   "file": "src\\engine\\__tests__\\card-behaviors.test.ts",
+   "test": "can target an opponent's deck",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\card-behaviors.test.ts",
+   "test": "taxes an opponent's matching deploys and discounts the controller's, with a floor",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\card-behaviors.test.ts",
+   "test": "the sides swap on entering play and swap back when the clock destroys it",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Degenerate Molestation (1st Edition) [2:rule] the repeat looks at the opponent's hand as it is NOW: a card the opponent draws from a free-played card is discarded as well",
+   "error": "error: |- so the effect repeats: the opponent must discard again + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ectypal Stave (1st Edition) [0:ability:counterfeit] only a tactic played THIS turn counts: a tactic from an earlier turn does not enable it",
+   "error": "error: |- Expected values to be strictly equal:  5 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ectypal Stave (1st Edition) [0:ability:counterfeit] the duplicate keeps the tactic's extra costs: with a card in hand, the duplicate makes you discard it",
+   "error": "error: |- the duplicate's effect happened  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (1st Edition) [2:rule] the duplicate keeps the tactic's extra costs: with a card in hand, the duplicate makes you discard it",
+   "error": "error: |- Expected values to be strictly equal:  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Brummagem Jewelry (1st Edition) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+   "error": "error: |- Expected values to be strictly equal:  9 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Tournament Faction (1st Edition) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (1st Edition Part 2) [0:rule] while it is in play the opponent's hand is revealed (and your own is not)",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (1st Edition Part 2) [0:rule] a Diva controlled by the opponent reveals the Diva's owner's hand (your opponent's hand is the other player's)",
+   "error": "error: |- P2 controls the Diva, so P1's hand is revealed + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (1st Edition Part 2) [0:rule] the hand stops being revealed once the Diva leaves play",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (1st Edition Part 2) [0:rule] two Divas still reveal the hand (it is simply revealed)",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "T Force 5 Megabrutemajig (1st Edition Part 2) [0:rule] only resources of my own faction can be picked: not a character, not the opponent's spent resources",
+   "error": "error: 'theirs.length >= 1' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "T Force 5 Megadudemajig (1st Edition Part 2) [0:rule] only resources of my own faction can be picked: not a character, not the opponent's spent resources",
+   "error": "error: 'theirs.length >= 1' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "T Force 5 Megascoutmajig (1st Edition Part 2) [0:rule] only resources of my own faction can be picked: not a character, not the opponent's spent resources",
+   "error": "error: 'theirs.length >= 1' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Top-Secret Subterranean Goofarium (1st Edition Part 2) [1:rule] only my own faction's resources can be picked: not a character, not the opponent's spent resources",
+   "error": "error: 'theirs.length >= 1' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Auction House (1st Edition Part 2) [0:rule] the active player's spent resources are detached by the turn-start restore, so they all count",
+   "error": "error: |- restored: all four are detached  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Counter Attack (1st Edition Part 2) [0:ability] played in response to the end of their turn, the turn still ends once the battle is resolved (the announcement is not lost)",
+   "error": "error: |- Expected values to be strictly equal:  4 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Degenerate Molestation (2nd Edition) [1:rule] the repeat looks at the opponent's hand as it is NOW: a card the opponent draws from a free-played card is discarded as well",
+   "error": "error: |- so the effect repeats: the opponent must discard again + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ectypal Stave (2nd Edition) [0:ability:counterfeit] only a tactic played THIS turn counts: a tactic from an earlier turn does not enable it",
+   "error": "error: |- Expected values to be strictly equal:  5 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ectypal Stave (2nd Edition) [0:ability:counterfeit] the duplicate keeps the tactic's extra costs: with a card in hand, the duplicate makes you discard it",
+   "error": "error: |- the duplicate's effect happened  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ectypal Stave (2nd Edition) [0:ability:counterfeit] a duplicated tactic with labelled options lets you choose a new option for the copy (CR 307.2)",
+   "error": "error: |- the copy used the OTHER option (Tax), not the one the original used (Draw)  30 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (2nd Edition) [0:rule] while it is in play the opponent's hand is revealed (and your own is not)",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (2nd Edition) [0:rule] a Diva controlled by the opponent reveals the Diva's owner's hand (your opponent's hand is the other player's)",
+   "error": "error: |- P2 controls the Diva, so P1's hand is revealed + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (2nd Edition) [0:rule] the hand stops being revealed once the Diva leaves play",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Odious Diva (2nd Edition) [0:rule] two Divas still reveal the hand (it is simply revealed)",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (2nd Edition) [1:ability] duplicates the LAST tactic played, not an earlier one: Cantrip then Taxer, then Replication repeats the Taxer only",
+   "error": "error: |- the Taxer was duplicated  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (2nd Edition) [1:ability] the duplicate is made once: the tactic is repeated exactly once, the duplicate leaves no card behind, the original stays in the discard pile",
+   "error": "error: |- exactly one more influence lost  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (2nd Edition) [1:ability] the duplicate costs 0 and needs no threshold (CR 307.1): copying your own cost-5 [R][R][R] tactic costs only Replication's own 3",
+   "error": "error: |- the copy's effect happened  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (2nd Edition) [1:ability] 'opponent' inside the duplicated text means the opponent of the duplicate's controller: copying their 'opponent loses 1 influence' tactic makes THEM lose it",
+   "error": "error: |- the copy is mine: its 'opponent' is them  30 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Brummagem Jewelry (2nd Edition) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+   "error": "error: |- Expected values to be strictly equal:  9 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Auction House (2nd Edition) [0:rule] the active player's spent resources are detached by the turn-start restore, so they all count",
+   "error": "error: |- restored: all four are detached  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (2nd Edition) [0:rule] at the start of your turn you may pick a character your opponent controls; if you do, destroy it (and the Tank survives)",
+   "error": "error: 'the Tank asks for a pick' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (2nd Edition) [0:rule] the pick can be any opposing character (a different one each time, dragons included)",
+   "error": "error: 'a pick is pending' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (2nd Edition) [0:rule] the pick is restricted to characters your opponent controls: own characters, the Tank itself, items and out-of-play cards are refused",
+   "error": "error: |- control: the pick is open + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (2nd Edition) [0:rule] if you decline to pick, the Tank itself is destroyed and no opposing character is",
+   "error": "error: 'a pick is pending' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (2nd Edition) [0:rule] 'your turn' and 'your opponent' follow the controller: a Tank controlled by P2 asks P2 to pick among P1's characters on P2's turn",
+   "error": "error: 'pc' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Corpse Churner (Decade of Deckadence) [0:rule] at the start of EACH turn (mine and my opponent's) it gets a token",
+   "error": "error: |- start of the opponent's turn  2 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Corpse Churner (Decade of Deckadence) [0:rule] exactly one token per turn start, and the other cards get none",
+   "error": "error: |- one token, not two  2 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Corpse Churner (Decade of Deckadence) [0:rule] a Churner that is not in play gets nothing, and one the opponent controls ticks at each turn start too",
+   "error": "error: |- at every turn start, whoever controls it  4 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Corpse Churner (Decade of Deckadence) [0:rule] the token is added to the tokens already on it, and entering play does not itself give one",
+   "error": "error: |- Expected values to be strictly equal:  5 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Engorged Sarcophyle (Decade of Deckadence) [0:rule] when destroyed, the opponent (not me) chooses and destroys one character they control",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Engorged Sarcophyle (Decade of Deckadence) [0:rule] the opponent can choose any character they control, and only one",
+   "error": "error: 'answerPending(): pending choice is selectTargets, expected chooserSelectsTarget' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:19:31)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Engorged Sarcophyle (Decade of Deckadence) [0:rule] they can only destroy a character THEY control: my character and their item are refused",
+   "error": "error: 'answerPending(): pending choice is selectTargets, expected chooserSelectsTarget' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:19:31)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Engorged Sarcophyle (Decade of Deckadence) [0:rule] with one character they have no choice, and with none nothing happens",
+   "error": "error: \"Target 'opp' requires 1 selection(s).\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Engorged Sarcophyle (Decade of Deckadence) [0:rule] 'an opponent' is its controller's opponent: an Engorged Sarcophyle the opponent controls makes ME destroy one of my characters",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] opponent DECLINES: the picked card goes to its owner's hand, then I look at their hand and they discard the non-resource card I choose",
+   "error": "error: \"Cannot read properties of undefined (reading 'kind')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] my own character picked: it returns to MY hand, and my hand is not part of the opponent's-hand choice",
+   "error": "error: 'answerPending(): no pending choice (expected chooserSelectsTarget)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] item and location picks return to their owner's hand too",
+   "error": "error: 'answerPending(): no pending choice (expected chooserSelectsTarget)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] the picked card goes to its OWNER's hand even when I control it",
+   "error": "error: 'answerPending(): no pending choice (expected chooserSelectsTarget)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] the bounced card is already in their hand when I look: I may choose it to be discarded",
+   "error": "error: \"Cannot read properties of undefined (reading 'kind')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] only non-resource cards in their hand can be chosen: the resource card is refused, every other card accepted",
+   "error": "error: 'answerPending(): no pending choice (expected chooserSelectsTarget)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Thabbashite Barbeque (Holy Heist) [1:rule] an opponent with fewer than 2 resources cannot pay: the else branch happens",
+   "error": "error: \"Cannot read properties of undefined (reading 'kind')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] an opponent's tactic with a numeric cost below 3 is raised to 3 (costs 0, 1 and 2), and one costing exactly 3 or more is left alone (3 and 5)",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] the raised cost is really paid: a cost-1 opposing tactic spends 3 resources, and cannot be played with only 2",
+   "error": "error: 'Missing expected exception: 2 resources for a minimum cost of 3' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] it applies in response windows too: an opposing cost-1 tactic played in response to my attack costs 3",
+   "error": "error: |- it cost 3  2 !== 0"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] 'an opponent' is relative to the Bailiff's controller: a Bailiff P2 controls taxes P1's tactics and not P2's",
+   "error": "error: |- P1 is the opponent of the Bailiff's controller  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] two Bailiffs do not stack: the minimum is still 3",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] it only works while in play face-up: a face-down Bailiff, one in the hand, and one in the discard pile do nothing",
+   "error": "error: |- control: face-up in play  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] the tax ends when the Bailiff leaves play, and stays off",
+   "error": "error: |- on  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Canny Bailiff (Holy Heist) [0:rule] a tactic deployed by FLIP UP is still a tactic being deployed: an opposing cost-1 tactic flipped up for 1 is raised to 3 in total (2 more resources than without the Bailiff)",
+   "error": "error: |- paid 3 in total instead of 1: the Bailiff costs the flipper 2 more resources  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] when it would be destroyed the OPPONENT is offered the choice; paying 2 gives them control of it instead of it being destroyed",
+   "error": "error: 'an opponent choice is offered' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] 'may pay': declining destroys it normally and costs the opponent nothing",
+   "error": "error: 'answerPending(): no pending choice (expected replacementChoice)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] the opponent must be able to pay 2: with 1 resource, or with all resources already spent, it is simply destroyed",
+   "error": "error: 'answerPending(): no pending choice (expected replacementChoice)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] all damage already inflicted to it this turn is reduced to 0 when the opponent takes control",
+   "error": "error: 'answerPending(): no pending choice (expected replacementChoice)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] destroyed by lethal damage (4 on 4 life): taking control also wipes that damage, so it is not destroyed again",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] destroyed by lethal battle damage: the attacking opponent may pay 2 and takes control of it (damage cleared)",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unloyal Necromorph (Holy Heist) [0:rule] the new controller's opponent (its owner) may pay 2 to take it back when it would be destroyed again",
+   "error": "error: 'answerPending(): no pending choice (expected replacementChoice)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "T Force 5 MegaManlyMajig (Holy Heist) [0:rule] you cannot detach more than 3, nor resources attached to the opponent's faction",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Tournament Faction (Holy Heist) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Unlikely Heroes (Holy Heist) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lugubrian Council Expedition Division (Holy Heist) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Primitive Tribes of Thabbash (Holy Heist) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (Open Beta) [1:rule] duplicates the LAST tactic deployed, not an earlier one: Cantrip then Taxer, then Replication repeats the Taxer only",
+   "error": "error: |- the Taxer was duplicated  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (Open Beta) [1:rule] the duplicate is made once and is not Replication itself: the first tactic is repeated exactly once, the duplicate leaves no card behind",
+   "error": "error: |- exactly one more influence lost  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (Open Beta) [1:rule] the duplicate costs 0 (CR 307.1): copying your own cost-5 tactic costs only Replication's own 3",
+   "error": "error: |- the copy's effect happened  29 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Voidal Replication (Open Beta) [1:rule] a duplicated tactic with labelled options lets you choose a new option for the copy (CR 307.2)",
+   "error": "error: |- the copy used the OTHER option (Tax), not the one the original used (Draw)  30 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Brummagem Jewelry (Open Beta) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+   "error": "error: |- Expected values to be strictly equal:  9 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Erotic Assassin (Open Beta) [0:rule] it stays depleted for any number of turns",
+   "error": "error: |- Expected values to be strictly equal:  15 !== 9"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "All-Nighter (Open Beta) [0:ability] only my attached resources can be picked: not my ready (unattached) resources, not my opponent's attached resources, and no other kind of card",
+   "error": "error: |- the opponent's resources are untouched  0 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "All-Nighter (Open Beta) [0:ability] the opponent's attached resources stay attached",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] before it is in play nothing is swapped; the moment it enters play every card in play changes controller: characters, items, resources, both factions and the Obfuscation itself",
+   "error": "error: |- m1 is now controlled by P2  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] 'your faction' follows control: the players hold each other's faction card and influence",
+   "error": "error: |- P1 now holds P2's faction + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] each player now controls the OTHER side's resources: my available resources are the ones the opponent had, and theirs the ones I had left",
+   "error": "error: |- P1 now has the 4 Greed the opponent had  2 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] both players are in control of their opponent's side: I can use the abilities of the characters that were the opponent's, and not those of my own former characters (and vice versa)",
+   "error": "error: 'Missing expected exception: my former character is under P2 now' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] when the Obfuscation leaves play the seats switch back: control, factions and influence all return",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] two Obfuscations in play cancel out (everyone back in their own seat); removing one swaps again; removing both swaps back",
+   "error": "error: |- one copy: swapped  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] a swap in the middle of a battle removes everyone from it (a control change takes a character out of the battle)",
+   "error": "error: |- the attacker changed controller, so it left the battle + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [1:rule] if the game ends, the owner of the winning deck wins: an attack on the faction I hold from my own deck's side costs ME the game",
+   "error": "error: |- I control the opponent's character now  'p2' !== 'p1'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [2:rule] at the start of the turn of the player who controls it (after the swap, the player who did NOT play it) it gets exactly one token, with no choice",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [2:rule] one token per controller turn: 2 tokens after its controller's second turn",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [3:rule] at the end of its controller's turn with only 1 token it stays; with 2 tokens it is destroyed",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [3:rule] 'at least 2': three tokens also destroy it at the end of its controller's turn",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [3:rule] the check is at the end of ITS CONTROLLER'S turn only: with 5 tokens it survives the end of the other player's turn",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Emergency Obfuscation (Open Beta) [3:rule] when it is destroyed at the end of the turn the seats switch back",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (Open Beta) [0:rule] at the start of your turn you may destroy an opponent's character: it is destroyed and the Tank stays",
+   "error": "error: 'you are asked' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (Open Beta) [0:rule] if you don't, the Tank is destroyed instead and no opponent's character is",
+   "error": "error: 'a pick is pending' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (Open Beta) [0:rule] only a character your OPPONENT controls can be destroyed: your own character, an item and a faction are refused",
+   "error": "error: 'the prompt stays open' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (Open Beta) [0:rule] happens at the start of each of your turns",
+   "error": "error: 'a pick is pending' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dragon Tank (Open Beta) [0:rule] an opponent-controlled Tank asks THEM at the start of their turn and destroys one of YOUR characters",
+   "error": "error: \"Cannot read properties of undefined (reading 'playerId')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Tournament Faction (Open Beta) [2:rule:RESTORE ABILITY] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [1:option:OPTION 1] both players draw the top card of their deck and then put a chosen card from their hand on the bottom of their deck (active player first)",
+   "error": "error: \"P1's hand holds the card from the top of P1's deck\" code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [1:option:OPTION 1] the card put on the bottom can be the card just drawn",
+   "error": "error: \"Illegal target 'card_3289' for 'b'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [1:option:OPTION 1] an empty hand but a stocked deck: the player draws and then must put that card (or any card) away",
+   "error": "error: \"Illegal target 'card_3368' for 'b'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [2:option:OPTION 2] 'Both players may play a resource': a player who says yes actually plays a resource from their hand into play",
+   "error": "error: |- the resource card from P2's hand is now in play  'deck' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [2:option:OPTION 2] 'may': each player can decline to play a resource, and then nothing enters play",
+   "error": "error: |- bres stays in hand  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [3:option:OPTION 3] each discards only from their own hand: cards in play are refused, and the discard is mandatory",
+   "error": "error: \"Illegal target 'card_3671' for 'd'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [4:option:OPTION 4] both players put a chosen card from their hand on TOP of their deck (active player first)",
+   "error": "error: |- on top of P2's deck, rest in order + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed) [4:option:OPTION 4] each puts only a card from THEIR OWN hand: cards in play are refused, and it is mandatory",
+   "error": "error: \"Illegal target 'card_3766' for 't'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "P3pp3r 0f 1n54n17y (Seed) [2:rule] it is the OPPONENT's turn start only: at the start of my own turn the Pepper restores nothing",
+   "error": "error: |- turn 3 starts as MY turn: the Pepper did not restore at my own turn start  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed) [1:rule] the opponent must pay 1 to pick a character I control: a tactic that picks my character costs them 1 resource on top",
+   "error": "error: |- they paid 1 to pick my character (the tactic itself costs 0)  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed) [1:rule] an opponent with no resource cannot pick my character at all",
+   "error": "error: 'Missing expected exception: they cannot pay 1' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed) [1:rule] the payment applies to ability picks as well: a Poke ability picking my character costs them 1",
+   "error": "error: |- 1 resource paid to pick my character  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed) [1:rule] two Lucky Charms: each demands 1, so picking my character costs them 2",
+   "error": "error: |- 1 for each Charm  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed) [1:rule] the payment is spent from their resources: it is attached to their faction like any payment",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Tournament Faction (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Moist Cave of the Darkpump (Seed) [2:rule:RESTORE RULE] the same when the faction is in the second seat",
+   "error": "error: |- 3 rage + 1 face-down resource are attached before my turn  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Moist Cave of the Darkpump (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Order of the Golden String (Seed) [2:rule:RESTORE RULE] the same when the faction is in the second seat",
+   "error": "error: |- 3 rage + 1 face-down resource are attached before my turn  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Order of the Golden String (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Alliance of Handy Weirdos (Seed) [2:rule:RESTORE RULE] the same when the faction is in the second seat",
+   "error": "error: |- 3 rage + 1 face-down resource are attached before my turn  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Alliance of Handy Weirdos (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drowned Catacombs (Seed) [2:rule:RESTORE RULE] the same when the faction is in the second seat",
+   "error": "error: |- 3 rage + 1 face-down resource are attached before my turn  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drowned Catacombs (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Hall of Great Justice (Seed) [2:rule:RESTORE RULE] the same when the faction is in the second seat",
+   "error": "error: |- 3 rage + 1 face-down resource are attached before my turn  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Hall of Great Justice (Seed) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction': the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] reveals a face-down tactic I control; I may play it, and then I draw a card: the tactic's effect happens and Manifest ends in my discard pile",
+   "error": "error: |- the revealed tactic was played: 3 damage to their faction  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] with an empty deck the failed draw costs nothing (CR 306.2) and the rest still happens",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] only the revealed tactic is played: another face-down tactic stays face-down",
+   "error": "error: |- exactly one tactic was played  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] 'You may play the tactic' (not 'for free'): the revealed tactic's numeric cost is paid (a cost-2 tactic costs 2 more resources)",
+   "error": "error: |- control: the tactic was played  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] 'You may play the tactic': a [G] tactic CAN be played when I control Greed too (the threshold is checked, not ignored)",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] 'You may play the tactic': a tactic with its own pick is played with that pick",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] the effect happens when Manifest resolves, not when it is played: the revealed tactic is still face-down while the opponent may respond",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [0:ability] being a tactic, it can be played in response on the opponent's turn, and not outside a response window",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [2:flipUp] flipping it up resolves it as the tactic: the revealed face-down tactic may be played, a card is drawn, and Manifest ends in my discard pile",
+   "error": "error: |- the revealed tactic was played  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [2:flipUp] FLIP UP does not change when a tactic can be played: in response on the opponent's turn it works, outside a response window it does not",
+   "error": "error: |- flipped up in response to the attack  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Manifest (Seed 2) [2:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+   "error": "error: |- the opponent may respond  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] the tactic is duplicated under MY control and terminated: its effect hits my opponent's faction instead of mine, and the original goes to its owner's discard pile",
+   "error": "error: |- the original (which would have hit me) was terminated  27 !== 30"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Pay X: X is the numeric cost of the tactic -- a cost-0 tactic costs me exactly 0",
+   "error": "error: |- control: the duplicate resolved  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Pay X: X is the numeric cost of the tactic -- a cost-1 tactic costs me exactly 1",
+   "error": "error: |- control: the duplicate resolved  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Pay X: X is the numeric cost of the tactic -- a cost-5 tactic costs me exactly 5",
+   "error": "error: |- control: the duplicate resolved  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] in a chain it answers the tactic on top: I play a tactic, my opponent responds with theirs, and Muddle copies and terminates THEIR tactic",
+   "error": "error: |- their tactic did not hit me  27 !== 30"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Terminate: the original tactic's effect never happens (no damage to me), even though my opponent paid for it",
+   "error": "error: |- Expected values to be strictly equal:  27 !== 30"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Duplicate: the copy has cost number 0 and needs no threshold -- a tactic needing [R][R] is copied though I control no Rage",
+   "error": "error: |- the duplicate resolved  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed 2) [0:ability] Duplicate: the copy still has the original's extra costs (CR 307.1): a copy of a tactic with an extra 'pay 2' costs me 2 more",
+   "error": "error: |- control: the copy resolved  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Astrologer (Seed 2) [0:ability:gaze] plays a tactic from my hand for free: its effect happens, it ends in my discard pile, and no resource is paid for it",
+   "error": "error: |- the tactic's effect happened (1 damage to their faction)  30 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Astrologer (Seed 2) [0:ability:gaze] 'for free' only sets the cost NUMBER to 0 (CR 308.1): a tactic with an extra 'pay 2' still costs 2",
+   "error": "error: |- control: the tactic was played  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Astrologer (Seed 2) [0:ability:gaze] can be used in response on the opponent's turn (CR 502.3): the tactic is played then",
+   "error": "error: |- Expected values to be strictly equal:  30 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ritual of the Double Monkey (Seed 2) [1:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+   "error": "error: |- the opponent may respond  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] at the start of a turn with 3 tokens on it, my opponent takes control of the item and all tokens are removed",
+   "error": "error: |- my opponent now controls it  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] the 3-token check happens at the START of the turn: after my own end of turn put the third token on it, the swap happens at the start of THEIR turn",
+   "error": "error: |- Expected values to be strictly equal:  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] 'at least 3': with 4 tokens at the start of a turn it passes to my opponent and ALL tokens are removed",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 0"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] 'each turn': it also checks at the start of my own turn: 3 tokens at the start of my turn pass the item to my opponent",
+   "error": "error: |- Expected values to be strictly equal:  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] 'your opponent' is the opponent of the CURRENT controller: when my opponent controls it with 3 tokens it returns to me",
+   "error": "error: |- my opponent controls it, so THEIR opponent (me) takes control  'b1' !== 'p1'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] when it changes hands the item stays in play (it is not destroyed or moved) and keeps its owner",
+   "error": "error: \"it is among my opponent's cards in play\" code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] the new controller starts again at 0 tokens: at the end of THEIR turn it gets one token and THEIR faction loses 1",
+   "error": "error: |- Expected values to be strictly equal:  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed 2) [1:rule] a full cycle: the item changes hands every three end-of-turns and each owner pays 1 + 2 + 3",
+   "error": "error: |- at the start of their turn it passed to them  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] at the end of my turn the character with the lowest numeric cost (here cost 1, mine) is put into its owner's hand",
+   "error": "error: |- f2 stays  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] 'each turn': it also happens at the end of my OPPONENT's turn",
+   "error": "error: |- f2 stays  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] the lowest cost is judged across BOTH players' characters: when their character is cheapest, theirs goes to THEIR hand",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] exactly ONE character is returned each turn end",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 0"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] a cost of 0 is the lowest: a cost-0 character goes before a cost-1 character",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] the cost compared is the numeric cost (cost number), not strength or life: the cheapest character goes even when it is the strongest",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] a tie: I decide which of the tied characters is returned (here two cost-1 characters, mine and theirs)",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] a tie: exactly one character is returned, not both",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Verrucose Brains (Seed 2) [0:rule] two Brains each return a character: the two cheapest go, one per item",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] at the start of my opponent's turn I may pick a resource attached to my faction: picking it detaches it",
+   "error": "error: |- the other spent resource stays attached  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] a detached resource is ready to pay again: the count of ready resources goes up by one",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] 'a resource': only ONE resource is picked and detached, even with several attached; picking two is refused",
+   "error": "error: \"Illegal target 'card_4458' for 'res'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] it is a 'may': picking nothing detaches nothing",
+   "error": "error: 'answerPending(): no pending choice (expected selectTargets)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] the pick must be a resource ATTACHED to my faction: a ready (unattached) resource is refused",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] an attached resource of the opponent's cannot be picked",
+   "error": "error: 'answerPending(): no pending choice (expected selectTargets)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] a card that is not a resource cannot be picked: not a character, an item, or the Aide itself",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] the resource detached at the start of their turn can be used during their turn: I pay 1 for an ability in response",
+   "error": "error: 'answerPending(): no pending choice (expected selectTargets)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] it is the Aide's CONTROLLER's opponent that matters: an Aide the opponent controls offers THEM the pick at the start of MY turn",
+   "error": "error: 'expected an open pending choice of kind selectTargets, found none' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] two Aides each get a pick: both resources can be detached",
+   "error": "error: |- two of the three were detached  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed 2) [1:rule] the picked resource can be any of my attached resources, including one that was attached by paying for the Aide's own deployment",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Burly Assailment (Seed 2) [2:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+   "error": "error: |- the opponent may respond  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Dark Awakening (Seed 2) [0:ability] a tactic in my discard pile can be picked and played: its effect happens and it ends in my discard pile again",
+   "error": "error: |- the played tactic's effect happened  30 !== 27"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Port Manteau (Seed 3) [0:rule] entering play makes its controller name a card subtype (nothing is taxed until a subtype is named)",
+   "error": "error: |- it taxes me too  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Port Manteau (Seed 3) [1:rule] players pay 2 more for cards with the named subtype (characters, items, tactics; mine and the opponent's; also with several subtypes) and the others cost their printed 1",
+   "error": "error: |- ogear has the named subtype: 1 + 2  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Port Manteau (Seed 3) [1:rule] the opponent pays the extra 2 as well: on their turn their gear card costs 3 (refused with 2 resources, accepted with 3)",
+   "error": "error: 'Missing expected exception: their gear card costs 3' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Port Manteau (Seed 3) [1:rule] the named subtype is the one chosen: naming 'elf' taxes elf cards (mine and theirs) and not gear cards",
+   "error": "error: |- oplain  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Vilghame Manewaft (Seed 3) [1:rule] my opponent pays 1 more for a tactic: cost 2 becomes 3, a free tactic costs 1; the extra is really spent, and one resource short is refused",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Vilghame Manewaft (Seed 3) [1:rule] the tax needs Vilghame IN PLAY: in my hand it changes nothing, and once it is destroyed the opponent's tactics cost their printed cost again",
+   "error": "error: |- a free removal tactic is taxed too  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Vilghame Manewaft (Seed 3) [1:rule] the tax also applies to a tactic the opponent plays as a RESPONSE on my turn: a cost-2 tactic costs them 3, and my own tactic that they respond to is not taxed",
+   "error": "error: |- their response cost 2 + 1  4 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [3:rule:RESTORE RULE] 'your': the opponent's depleted cards stay depleted, their resources stay attached, and so does a card I own but the opponent controls",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [4:rule:DEVELOP RULE] any card may be played face-down as a resource (Volition) -- including an actual resource card, which then gives Volition rather than its icon; a non-resource can't go face-up",
+   "error": "error: |- that was the Develop Rule's one resource play + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [4:rule:DEVELOP RULE] 'draw a card OR play a resource': not both (X - 1 = 0 repeats with one opponent), so a second use in the same turn is refused either way round",
+   "error": "error: |- already developed this turn: nothing more is offered + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [4:rule:DEVELOP RULE] only on my own turn, optional, and available again every turn",
+   "error": "error: |- the Develop Rule is offered again at the start of my next turn  6 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [5:ability] DRAW has no printed limit (usable again the same turn) and is separate from the Develop Rule in both orders",
+   "error": "error: 'A pending choice must be resolved before any other action.' code: 'ERR_TEST_FAILURE' stack: |- SpoilsEngine.performAction (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\SpoilsEngine.ts:978:28)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Evil Alliance (Seed 3) [7:ability] ENTICEMENT exists on the faction and, during my turn, plays a resource from my hand (drawing X-1 = 0 cards with one opponent)",
+   "error": "error: |- X - 1 = 0 cards drawn  3 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Society of Magical Propriety (Seed 3) [4:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Knitting Coalition (Seed 3) [5:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Open R&D Faction (Seed 3) [3:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "The Union of Unextraordinary Miners (Seed 3) [4:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Imperial Army (Seed 3) [2:rule:RESTORE RULE] does not restore the opponent's cards or touch the opponent's resources",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Counter-Imperial Army (Seed 3) [0:rule:RESTORE RULE] detaches only MY faction's resources: the opponent's stay attached",
+   "error": "error: |- 'your faction' — the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Muddle (Seed Saga) [1:rule] the duplicate keeps the tactic's extra costs and the original does nothing",
+   "error": "error: |- the original did not hit P2  29 !== 30"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [0:rule] at the start of the controller's own turn the controller chooses; it triggers on each player's turn",
+   "error": "error: \"Illegal target 'card_1068' for 'd'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [1:option:OPTION 1] OPTION 1: each player draws a card, then puts a card from their hand on the bottom of their deck",
+   "error": "error: \"Illegal target 'card_1131' for 'b'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [1:option:OPTION 1] OPTION 1: the card put back may be the one just drawn",
+   "error": "error: \"Illegal target 'card_1160' for 'b'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [1:option:OPTION 1] OPTION 1 does only that: no resources move, nobody discards",
+   "error": "error: \"Illegal target 'card_1173' for 'b'.\" code: 'ERR_TEST_FAILURE' stack: |- assert (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\utilities.ts:89:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [3:option:OPTION 3] OPTION 3: each player discards a card of their choice from their own hand; nothing else",
+   "error": "error: |- the unchosen card stays  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [4:option:OPTION 4] OPTION 4: each player puts a card from their hand on the TOP of their own deck",
+   "error": "error: |- on top of P1's deck + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [1:option:OPTION 1] OPTION 1: each player chooses a card from THEIR OWN hand (the other player's hand card is refused)",
+   "error": "error: |- Expected values to be strictly equal:  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [3:option:OPTION 3] OPTION 3: each player chooses a card from THEIR OWN hand (the other player's hand card is refused)",
+   "error": "error: |- Expected values to be strictly equal:  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [4:option:OPTION 4] OPTION 4: each player chooses a card from THEIR OWN hand (the other player's hand card is refused)",
+   "error": "error: |- Expected values to be strictly equal:  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Obscene Communion (Seed Saga) [2:option:OPTION 2] OPTION 2: 'may play a resource' follows the Play a Resource steps (CR 605.1): the player decides face-up or face-down for a real resource card; any card from their own hand may be played face-down; the opponent's hand card is refused",
+   "error": "error: |- Expected values to be strictly equal:  'deck' !== 'hand'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed Saga) [1:rule] at the start of the opponent's turn with 3 tokens, an opponent of its controller takes control and all tokens are removed",
+   "error": "error: |- the opponent took control  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed Saga) [1:rule] 'each turn': it also checks at the start of its own controller's turn (3 tokens, P2 ends, P1's turn starts: P2 takes it)",
+   "error": "error: |- an opponent of its controller (P1) takes control  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed Saga) [1:rule] the opponent in question is the opponent of the CURRENT controller: P2 controls it with 3 tokens, so P1 takes it back",
+   "error": "error: |- Expected values to be strictly equal:  'b1' !== 'p1'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed Saga) [1:rule] 'at least 3': more than 3 tokens also trigger it and ALL tokens go (5 -> 0)",
+   "error": "error: |- Expected values to be strictly equal:  'b2' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Tumescent Guilt Bladder (Seed Saga) [1:rule] after the opponent takes it, the new controller's turn end puts a fresh token on it (1) and costs THEIR faction 1",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] at the start of the opponent's turn I may pick a resource attached to my faction and detach it",
+   "error": "error: |- only the picked one  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] declining the pick detaches nothing",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] picking a detached resource isn't allowed: only resources attached to my faction can be picked",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] an opponent's resource can't be picked (theirs are already detached by their own Restore Rule when the trigger resolves)",
+   "error": "error: 'answerPending(): no pending choice (expected selectTargets)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] the controller check alone refuses an opponent's resource: one still attached (to my faction) at the trigger, identical to a resource of mine except for its controller",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] a non-resource card (an item in play) can't be picked",
+   "error": "error: 'answerPending(): no pending choice (expected selectTargets)' code: 'ERR_TEST_FAILURE' stack: |- answerPending (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\clauses\\_board.ts:18:18)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] only one resource: picking two at once is refused",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] an opponent-controlled Aide does not prompt me at their turn start; it prompts them at mine",
+   "error": "error: |- its controller picks + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Braggadocian Aide (Seed Saga) [1:rule] two Aides each trigger: two resources can be detached",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "P3pp3r 0f 1n54n17y (Seed Saga) [2:rule] does not trigger at the start of the Pepper controller's OWN turn: an attached opponent character stays depleted then",
+   "error": "error: |- not restored at its controller's own turn start  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed Saga) [1:rule] my opponent must pay 1 to pick a character I control with a tactic: the pick costs them one resource and then lands",
+   "error": "error: |- exactly 1 was paid for the pick  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed Saga) [1:rule] an opponent with no resource to pay cannot pick my character",
+   "error": "error: 'Missing expected exception: no resource to pay the 1' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed Saga) [1:rule] the tax applies to abilities that pick my character as well as to cards",
+   "error": "error: |- 1 paid for the ability's pick  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lucky Charm (Seed Saga) [1:rule] each character picked costs 1: picking two of my characters costs 2",
+   "error": "error: |- 1 per character picked  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Banner of Elysium (Seed Saga) [1:rule] detach 2 resources from your faction: exactly 2 chosen are detached, the others and the opponent's stay",
+   "error": "error: |- the opponent's attached resources are untouched  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Banner of Elysium (Seed Saga) [1:rule] entering as a non-resource provider: detach exactly 2 chosen resources from my faction",
+   "error": "error: |- the opponent's attached resources are untouched  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Defenders of Marduun (Seed Saga) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Legions of Chaos (Seed Saga) [2:rule:RESTORE RULE] does not restore the opponent's cards or detach the opponent's resources",
+   "error": "error: |- the opponent's resources stay attached  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [1:option:OPTION 1] the opponent may detach up to 3 of their (attached) resources: 0, 1, 2 or 3, nobody else's",
+   "error": "error: |- n=0: exactly 0 detached  0 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [1:option:OPTION 1] the opponent can't detach more than 3, nor the caster's resources, nor an unattached or non-resource card",
+   "error": "error: |- positive control  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [1:option:OPTION 1] a resource that is not attached to the faction can't be detached, so it can't be one of the opponent's picks",
+   "error": "error: |- positive control: an attached one can be detached  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [2:option:OPTION 2] X=0: no characters are depleted and exactly 3 of your attached resources are detached (the ones just paid are legal choices)",
+   "error": "error: |- the opponent's resources stay attached  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [2:option:OPTION 2] only resources attached to YOUR faction can be detached",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Expedition Endeavour (Shade of the Devoured Emperor) [3:option:OPTION 3] the picked character (yours or the opponent's) gains COVERT this turn; no other character does; the other modes don't happen",
+   "error": "error: |- OPTION 1 (opponent detaches) did not happen  0 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Man Shark (Shade of the Devoured Emperor) [0:rule] every face-down card the opponent controls counts, whatever its type and even when it is spent (attached to their faction)",
+   "error": "error: |- the face-down card is spent + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Swindle (Shade of the Devoured Emperor) [0:ability] Swindle: a resource already attached (spent) can't be attached again; the opponent picks among the unattached ones",
+   "error": "error: 'set-up: one free and two spent resources' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Stuttershy (Shade of the Devoured Emperor) [1:rule] a Micromajig token (a Gearsmith majig character, 1/1/3) enters play under my control",
+   "error": "error: |- one token for the one influence gained  3 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Stuttershy (Shade of the Devoured Emperor) [1:rule] 'you' is the Stuttershy's CONTROLLER: for a stolen one the owner's faction gains the influence and the controller gets the token",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Stuttershy (Shade of the Devoured Emperor) [1:rule] destroyed in battle as a blocker: the influence gain and the token happen too",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Stuttershy (Shade of the Devoured Emperor) [1:rule] 'if this card is flipped down' — ANY flip-down counts, not just the destruction replacement",
+   "error": "error: |- and a Micromajig can be put into play  3 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Clockman Skydocks (Shade of the Devoured Emperor) [1:ability:cs-bday] EFFECT: the printed text has no 'this turn', so the reduction waits for the next card even across turns",
+   "error": "error: |- Expected values to be strictly equal:  5 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Clockman Skydocks (Shade of the Devoured Emperor) [2:ability:cs-overtime] EFFECT: the printed text has no 'this turn', so the reduction waits for the next card even across turns",
+   "error": "error: |- Expected values to be strictly equal:  5 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Remains of Foreman Pete, the Clock Man (Shade of the Devoured Emperor) [3:ability:foreman-pete-clock-out] EFFECT: it must be MY faction's resource: the opponent's attached resource is refused and stays attached",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] pick another character of mine: nothing changes at once, it gains 3 strength at the start of the next turn only (2 to 5 to 2), and unpicked characters gain nothing",
+   "error": "error: |- +3 during the next turn  2 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] the picked character may be an opponent's: it gets the +3 at the start of the next turn (theirs) and mine stay unchanged",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] another character with the same NAME is still 'another': a second Drill Instructor (mine or the opponent's) can be picked",
+   "error": "error: |- my other Drill Instructor gained 3  2 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] whichever turn it lands on, the picked character (mine or the opponent's) gains exactly 3 strength for that one turn only: [5,2] or [2,5], then 2 again",
+   "error": "error: 'mine: exactly one of the next two turns has +3 (saw 2,2,2)' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] two Drill Instructors on the same character give +3 each, +6 in total, for one turn only",
+   "error": "error: '+6 on exactly one of the next two turns (saw 2,2,2)' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Drill Instructor (Shade of the Devoured Emperor) [2:rule] two Drill Instructors picking the same character stack: +6 strength for that turn",
+   "error": "error: |- 2 + 3 + 3  2 !== 8"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Wily Circumvention (Ungodly Mess) [1:rule] the character restores normally at the restore after that (only the next one is skipped)",
+   "error": "error: |- Expected values to be strictly equal:  7 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Wily Circumvention (Ungodly Mess) [1:rule] your own depleted character skips your next RESTORE RULE, not the opponent's turn start, and restores after",
+   "error": "error: |- Expected values to be strictly equal:  9 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ecto-Conduit (Ungodly Mess) [0:rule] it fires every one of my turns, not only the first",
+   "error": "error: |- Expected values to be strictly equal:  9 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Extremely Tiny Bonnet of Invisibility (Ungodly Mess) [1:extraCost] the opponent chooses up to 2 of their faction-attached (spent) resources to detach; choosing two detaches exactly those two",
+   "error": "error: |- unchosen resource stays attached  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Extremely Tiny Bonnet of Invisibility (Ungodly Mess) [1:extraCost] the opponent may detach just one",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Extremely Tiny Bonnet of Invisibility (Ungodly Mess) [1:extraCost] 'may': the opponent can decline to detach anything, and the Bonnet is still deployed",
+   "error": "error: |- nothing detached  0 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Extremely Tiny Bonnet of Invisibility (Ungodly Mess) [1:extraCost] 'up to 2': three resources cannot be chosen",
+   "error": "error: |- control: two are fine  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Extremely Tiny Bonnet of Invisibility (Ungodly Mess) [1:extraCost] only resources attached to the opponent's faction are choosable: not their ready ones, not the caster's",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Quotidian Quagmire (Ungodly Mess) [0:extraCost] that character's controller (the opponent) chooses; they may detach up to 2 of THEIR faction's resources",
+   "error": "error: |- detached 2  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Quotidian Quagmire (Ungodly Mess) [0:extraCost] up to 2 only: 3 resources are refused",
+   "error": "error: 't0' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Quotidian Quagmire (Ungodly Mess) [0:extraCost] if you pick your own character, YOU decide about your faction's resources",
+   "error": "error: \"the opponent's stay attached\" code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ritual of the Sucking Skull (Ungodly Mess) [0:extraCost] X is the card's numeric cost: the controller may detach up to X (=cost of the terminated card) resources, not X+1",
+   "error": "error: 'an unpicked one stays' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ritual of the Sucking Skull (Ungodly Mess) [1:rule] terminates the card: a deployed character never enters play (goes to its owner's discard pile) and its controller's detach is optional",
+   "error": "error: '\"may\": nothing detached (t0)' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Ritual of the Sucking Skull (Ungodly Mess) [2:flipUp] FLIP UP for 4 [O] terminates the card and, because Ritual WAS deployed with FLIP UP, the controller detaches nothing",
+   "error": "error: 't0 stays attached' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] while depleted, the opponent pays 1 more: a cost-2 character needs 3 resources (2 refused, 3 deploys and spends all 3)",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] not depleted: no tax (2 resources deploy the cost-2 character); depleting it turns the tax on, restoring turns it off",
+   "error": "error: |- depleted  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] the tax applies to every card type deployed: free cards, items, locations and tactics each cost 1 more",
+   "error": "error: |- free costs 1  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] it is MY Overseer's tax: an Overseer controlled by the opponent taxes me, not them",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] the tax is attached to the card being in play: gone once the Overseer is destroyed",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] two depleted Overseers each add 1 (the cost-2 character costs 4)",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Foreclosure Overseer (Ungodly Mess) [0:rule] a card deployed with FLIP UP is deployed too: the face-down Cove costs 3 to flip while the Overseer is depleted",
+   "error": "error: 'Missing expected exception: FLIP UP taxed' code: 'ERR_ASSERTION' name: 'AssertionError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "God's Blessing of Readiness (Ungodly Mess) [3.1:grant-rule] \"you may\": the restore is optional, so it is offered and declining leaves the characters depleted",
+   "error": "error: |- host stays depleted  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "God's Blessing of Readiness (Ungodly Mess) [3.1:grant-rule] the trigger does not fire at your own turn start (no restore effect resolves)",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\clauses\\_clause.ts",
+   "test": "Lost on Floor 3 (Ungodly Mess) [1:rule] control: without it, the turn ends once the opponent's response resolves",
+   "error": "error: |- Expected values to be strictly equal:  4 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\fidelity-fixes.test.ts",
+   "test": "Odious Diva — grantsReveal marks each opponent's hand public",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\free-play-and-duplicates.test.ts",
+   "test": "the extra 'pay 2' is paid, the printed cost of 1 is not",
+   "error": "error: |- and the tactic resolved  25 !== 24"
+  },
+  {
+   "file": "src\\engine\\__tests__\\free-play-and-duplicates.test.ts",
+   "test": "the opponent gets a response window before it resolves",
+   "error": "error: |- Expected values to be strictly equal:  25 !== 24"
+  },
+  {
+   "file": "src\\engine\\__tests__\\free-play-and-duplicates.test.ts",
+   "test": "a tactic the opponent cannot respond to resolves at once",
+   "error": "error: |- Expected values to be strictly equal:  25 !== 24"
+  },
+  {
+   "file": "src\\engine\\__tests__\\free-play-and-duplicates.test.ts",
+   "test": "the copy discards another card and pays X again, with the original's X",
+   "error": "error: |- the copy took effect with X = 2  23 !== 21"
+  },
+  {
+   "file": "src\\engine\\__tests__\\game-log.test.ts",
+   "test": "a decline is recorded so a game reads end-to-end — 'X passes', before what it lets resolve",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\game-log.test.ts",
+   "test": "every battle-flow player action is logged — each pass names its window, blocks and damage assignments show",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\game-log.test.ts",
+   "test": "a pass made while a response sits on the stack names that item, not the battle window it's nested in",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\more-client-queries.test.ts",
+   "test": "named cards: reveal-from-hand, ATTACH TO, a pick after a cost, X, distinct picks, modes",
+   "error": "error: |- I Drink Your Milkshake! (an optional search) + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\more-client-queries.test.ts",
+   "test": "over the real catalog: the input's picks equal getPlayRequirements for every card and mode",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\numeric-cost.test.ts",
+   "test": "a pick of the taxed character costs the picker 1 on top of a cost-0 tactic; their own characters are free",
+   "error": "error: |- my character: 1  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\other-reveals.test.ts",
+   "test": "shows every card turned over from the deck, through the first character",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 0"
+  },
+  {
+   "file": "src\\engine\\__tests__\\other-reveals.test.ts",
+   "test": "shows the whole deck when no character turns up",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 0"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\holy-heist.test.ts",
+   "test": "when the opponent declines to pay, the picked card returns to hand and they discard",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\holy-heist.test.ts",
+   "test": "opponents' tactics cost at least 3",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\holy-heist.test.ts",
+   "test": "would-be destruction: an opponent may pay 2 to take control of it instead",
+   "error": "error: |- Expected values to be strictly equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\printed-variants.test.ts",
+   "test": "Open Beta: playing it swaps the sides; two of its controller's turns later it is destroyed and the sides come back",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\printed-variants.test.ts",
+   "test": "Open Beta: played as a tactic in response to an attack, it takes the attackers out of the fight",
+   "error": "error: 'engine.state.seatSwap' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\printed-variants.test.ts",
+   "test": "1st Edition: playing it swaps the sides; two of its controller's turns later it is destroyed and the sides come back",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\seed-2.test.ts",
+   "test": "at end of turn, bounces the lowest-cost character to its owner's hand",
+   "error": "error: |- Expected values to be strictly equal:  'hand' !== 'play'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\seed-3.test.ts",
+   "test": "opponents pay 1 more to deploy a tactic",
+   "error": "error: |- Expected values to be strictly equal:  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\per-card\\seed.test.ts",
+   "test": "at each turn start, the active player may pick 'each discards'",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 1"
+  },
+  {
+   "file": "src\\engine\\__tests__\\persistence.test.ts",
+   "test": "a format-1 save loads as a classic game, its winner becoming the result",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\persistence.test.ts",
+   "test": "small, indexable metadata alongside a save, without deserializing it",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected ... Lines skipped "
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-blocked-and-delayed-effects.test.ts",
+   "test": "nothing is pending, then CHILLAX schedules the return: listed, logged, and gone once it fires",
+   "error": "error: |- P1 is the active player: its next turn is two turns on  6 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-blocked-and-delayed-effects.test.ts",
+   "test": "Palace: paying at the end of my turn schedules the return for my next turn",
+   "error": "error: |- P1's next turn after the opponent's turn 3  6 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-blocked-and-delayed-effects.test.ts",
+   "test": "Monstrous Lassitude: my next Restore Rule is skipped, and the entry is consumed at that turn",
+   "error": "error: |- Expected values to be strictly equal:  6 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-blocked-and-delayed-effects.test.ts",
+   "test": "per-card restore flags and borrowed cards are listed with the card they touch",
+   "error": "error: |- P1 is active: its next Restore Rule is two turns on  6 !== 4"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-requirements-agreement.test.ts",
+   "test": "I Drink Your Milkshake!: an optional search of the opponent's deck (min)",
+   "error": "error: \"Cannot read properties of undefined (reading 'declinable')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-requirements-agreement.test.ts",
+   "test": "I Drink Your Milkshake!: an optional search of the opponent's deck (max)",
+   "error": "error: \"Cannot read properties of undefined (reading 'declinable')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-requirements-agreement.test.ts",
+   "test": "Profane Proposal: a forced pick (their faction) (min)",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-requirements-agreement.test.ts",
+   "test": "Profane Proposal: a forced pick (their faction) (max)",
+   "error": "error: |- Expected values to be strictly equal:  false !== true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\play-requirements-agreement.test.ts",
+   "test": "accepting, refusing, rolling and shuffling actions change nothing, rngState included",
+   "error": "error: \"Cannot read properties of undefined (reading 'id')\" code: 'ERR_TEST_FAILURE' name: 'TypeError' stack: |-"
+  },
+  {
+   "file": "src\\engine\\__tests__\\precon-systems-edge-cases.test.ts",
+   "test": "a full turn can carry two separate attacks, and the next player's turn mirrors it, including a direct attack on a location",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\precon-systems-edge-cases.test.ts",
+   "test": "a self-sacrifice-for-tokens trigger and a location's optional-token trigger each fire only on their own controller's turns, across several turns",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\priority-and-responses.test.ts",
+   "test": "CR §607.1 — an `endTurn` announcement is answered only by the opponent, and one pass ends it",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\priority-and-responses.test.ts",
+   "test": "the attacker acts first, then the defender; each single pass advances",
+   "error": "error: |- Expected values to be strictly deep-equal: + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 607.2c] triggers cannot be responded to: a trigger resolves immediately with no response window and no stack item",
+   "error": "error: |- the trigger resolved  31 !== 28"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 610.1] once the opponent's responses are complete the turn ends and the opponent becomes the active player",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 610.1a] end-of-turn triggers do not happen when the end of turn is announced, only after the opponent's responses",
+   "error": "error: |- at the moment the turn actually ends  27 !== 26"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 409.3b] a token made by my effect but put into play under my opponent's control is owned by me, the effect's controller",
+   "error": "error: |- the token enters play under my opponent's control  'b1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 503.1] an 'at the start of the turn' trigger happens at the start of the turn",
+   "error": "error: |- it triggered at the start of the opponent's turn (any turn start)  33 !== 29"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 507.4e] cost increases apply to the running total that began at the Flip Up cost",
+   "error": "error: |- Flip Up cost 2 plus the increase of 1  2 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.1] a duplicate is an invisible copy: it has the original's effect and no new card appears",
+   "error": "error: |- the copy (controlled by P2) cost P1 2 influence  25 !== 23"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.1] the copy's cost number is 0 and it needs no threshold: a player with no resources can duplicate a cost-2 threshold-R tactic",
+   "error": "error: |- the copy took effect anyway  25 !== 23"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.2] a duplicate of a card with labelled options lets its owner choose a NEW option (the other one)",
+   "error": "error: |- the copy used option 1 (Big) against P1  25 !== 21"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.2] the duplicate's owner may also choose the same option as the original",
+   "error": "error: |- Expected values to be strictly equal:  25 !== 21"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.2] the duplicate may choose the option the original did not, in either direction (original Big, copy Small)",
+   "error": "error: |- the copy chose Small  25 !== 24"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 307.3] control: with no restriction, a duplicate made by an ability copies the tactic and takes effect",
+   "error": "error: |- the duplicate resolved too  23 !== 21"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 308.1a] a free play still pays the card's extra costs: the discard is made and then the card resolves",
+   "error": "error: |- and the tactic resolved  25 !== 24"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 403.4a] a triggered ability of a card in hand does not fire; the same card in play does",
+   "error": "error: |- control: in play it triggers  10 !== 5"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 603.1] the active player is the player taking the current turn, and it passes to the opponent when the turn ends",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 603.2d] the turn can be ended only once: a second end-of-turn while the first is announced is refused",
+   "error": "error: |- the turn ended exactly once  3 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 201.5b] a triggered ability only triggers in play",
+   "error": "error: |- in play it triggers  4 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 201.5b] 'unless otherwise stated': a card that states another zone has active text there (ability from the discard pile, trigger in the discard pile)",
+   "error": "error: |- and the stated discard-pile trigger fires there  31 !== 30"
+  },
+  {
+   "file": "src\\engine\\__tests__\\rules\\_rule.ts",
+   "test": "[CR 414.1a] the rules do not generate effects: turns, Restore and Develop recurring over and over never make a draw",
+   "error": "error: |- and the turns really did pass  25 !== 13"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "every card in play, both factions and the resources included, goes to the other player",
+   "error": "error: 'the swap is in effect' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "the play arrays follow control, so resources and thresholds are the other side's",
+   "error": "error: 'p1Play.includes(id(\"guard\")) && p1Play.includes(id(\"res2\"))' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "ownership never changes (CR §407.8)",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "a seat-swap event is emitted and logged",
+   "error": "error: 'engine.getLog().some(entry => entry.event?.type === \"seatsSwapped\")' code: 'ERR_ASSERTION' name: 'AssertionError' expected: true"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "damage and counters ride along with the card",
+   "error": "error: |- Expected values to be strictly equal:  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "destroying the source puts everyone back and lifts the swap",
+   "error": "error: |- Expected values to be strictly equal:  0 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "influence travels with its faction, both ways",
+   "error": "error: |- P1 now holds P2's faction  11 !== 22"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "the develop rule is the held faction's, and a resource developed while swapped stays with its developer",
+   "error": "error: 'No Develop Rule option \"/^Play /\"; offered: Draw 1 card.' code: 'ERR_TEST_FAILURE' stack: |- pickOption (C:\\Users\\Andy\\dev\\spoils-db\\.work\\testtree\\src\\engine\\__tests__\\support\\develop.ts:33:11)"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "the latest permanent take-control wins over the swap when it is lifted",
+   "error": "error: |- the swap handed Hero to P2  'p1' !== 'p2'"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "the new turn's player commands the characters on the side they now hold",
+   "error": "error: |- Expected values to be strictly equal:  undefined !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seat-swap.test.ts",
+   "test": "an attack hits the faction the opponent holds (the attacker's own), and its owner loses",
+   "error": "error: |- Expected values to be strictly equal:  25 !== 3"
+  },
+  {
+   "file": "src\\engine\\__tests__\\seed2-smoke.test.ts",
+   "test": "Manifest deploys a revealed face-down tactic, paying its cost (not free: rules answer Q11)",
+   "error": "error: |- Expected values to be strictly equal:  20 !== 18"
+  },
+  {
+   "file": "src\\engine\\__tests__\\turn-queries.test.ts",
+   "test": "under a cost-raising effect the cost goes up and the same flip is refused",
+   "error": "error: |- FLIP UP 1 + the Overseer's 1  1 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\turn-queries.test.ts",
+   "test": "a cost-raising effect still leaves a flip payable when the pool covers it",
+   "error": "error: |- Expected values to be strictly equal:  1 !== 2"
+  },
+  {
+   "file": "src\\engine\\__tests__\\turn-queries.test.ts",
+   "test": "targets leave out a faction that cannot be attacked (High Court of Demands) but keep locations",
+   "error": "error: |- P2's faction is protected + actual - expected "
+  },
+  {
+   "file": "src\\engine\\__tests__\\turn-structure-and-setup.test.ts",
+   "test": "ending a turn restores the next active player's board",
+   "error": "error: |- Expected values to be strictly equal:  3 !== 2"
+  }
+ ]
+}

@@ -1,0 +1,27 @@
+- P3pp3r 0f 1n54n17y (Seed) — ffa3 1 / ffa4 1 / showdown 1
+- Manifest (Seed 2) — ffa3 1 / ffa4 11 / showdown 1
+- Muddle (Seed 2) — ffa3 8 / ffa4 8 / showdown 8
+- Ritual of the Double Monkey (Seed 2) — ffa3 1 / ffa4 1 / showdown 1
+- Tumescent Guilt Bladder (Seed 2) — ffa3 2 / ffa4 8 / showdown 2
+- Verrucose Brains (Seed 2) — ffa3 1 / ffa4 9 / showdown 1
+- Braggadocian Aide (Seed 2) — ffa3 1 / ffa4 11 / showdown 0
+- Burly Assailment (Seed 2) — ffa3 1 / ffa4 1 / showdown 1
+- Port Manteau (Seed 3) — ffa3 1 / ffa4 4 / showdown 0
+- The Evil Alliance (Seed 3) — ffa3 5 / ffa4 6 / showdown 5
+- Obscene Communion (Seed) — ffa3 0 / ffa4 8 / showdown 1
+- Lucky Charm (Seed) — ffa3 0 / ffa4 5 / showdown 0
+- The Tournament Faction (Seed) — ffa3 0 / ffa4 1 / showdown 0
+- Moist Cave of the Darkpump (Seed) — ffa3 0 / ffa4 2 / showdown 0
+- Order of the Golden String (Seed) — ffa3 0 / ffa4 2 / showdown 0
+- Alliance of Handy Weirdos (Seed) — ffa3 0 / ffa4 2 / showdown 0
+- Drowned Catacombs (Seed) — ffa3 0 / ffa4 2 / showdown 0
+- Hall of Great Justice (Seed) — ffa3 0 / ffa4 2 / showdown 0
+- Obscene Astrologer (Seed 2) — ffa3 0 / ffa4 3 / showdown 0
+- Dark Awakening (Seed 2) — ffa3 0 / ffa4 1 / showdown 0
+- Vilghame Manewaft (Seed 3) — ffa3 0 / ffa4 3 / showdown 0
+- The Society of Magical Propriety (Seed 3) — ffa3 0 / ffa4 1 / showdown 0
+- The Knitting Coalition (Seed 3) — ffa3 0 / ffa4 1 / showdown 0
+- The Open R&D Faction (Seed 3) — ffa3 0 / ffa4 1 / showdown 0
+- The Union of Unextraordinary Miners (Seed 3) — ffa3 0 / ffa4 1 / showdown 0
+- Imperial Army (Seed 3) — ffa3 0 / ffa4 1 / showdown 0
+- Counter-Imperial Army (Seed 3) — ffa3 0 / ffa4 1 / showdown 0

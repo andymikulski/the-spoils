@@ -70,6 +70,7 @@
   "scripts": {
     "build": "node -e \"require('fs').rmSync('build',{recursive:true,force:true})\" && tsc -p tsconfig.json",
     "prepare": "npm run build",
+    "test:tables": "node scripts/table-matrix.cjs",
     "test": "node scripts/run-tests.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
     "sync-cards": "node scripts/sync-cards.cjs",
