@@ -20315,10 +20315,17 @@ export class SpoilsEngine {
     rr: GameState["runtimeReplacements"][number],
     cardId: CardInstanceId
   ): ResolutionContext {
+    // Unbound, an opponent's card being replaced names that opponent (as E3 does for a trigger).
+    const affectedController = this.state.cards[cardId]?.controllerId;
+    const opponentId =
+      rr.opponentId ??
+      (affectedController !== undefined && isOpponentOf(this.state, rr.controllerId, affectedController)
+        ? affectedController
+        : undefined);
     return {
       sourceId: rr.sourceId,
       controllerId: rr.controllerId,
-      ...(rr.opponentId !== undefined ? { opponentId: rr.opponentId } : {}),
+      ...(opponentId !== undefined && opponentsOf(this.state, rr.controllerId).length > 1 ? { opponentId } : {}),
       selected: { ...rr.selected, __candidate: [cardId] }
     };
   }
@@ -24256,12 +24263,9 @@ export class SpoilsEngine {
     // An eliminated bound opponent is still the one named; acting on them does nothing (their cards are gone).
     if (context.opponentId !== undefined && !isLiving(this.state, context.opponentId)) return context.opponentId;
     const ids = this.opponentIdsFor(context);
-    assert(
-      ids.length === 1,
-      ids.length === 0
-        ? `'${context.controllerId}' has no opponent left in the game.`
-        : `'${context.controllerId}' has ${ids.length} opponents and none is chosen for this rules text.`
-    );
+    assert(ids.length > 0, `'${context.controllerId}' has no opponent left in the game.`);
+    // Several opponents and none bound, mid-resolution with nobody to ask (a
+    // replacement, a nested effect): the first in turn order (RULES.md §16).
     return ids[0];
   }
 

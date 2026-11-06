@@ -2005,8 +2005,11 @@ two-player game). Otherwise, in order:
 - a triggering event names it (E3): the player who acted, the controller of
   the card the event is about, or a side of the current battle;
 - otherwise a trigger asks its controller (`chooseOpponent` pending choice).
-A deploy an effect makes, with nobody to ask, takes the first candidate in
-turn order. The binding is made afresh for every block (MP 4).
+A replacement binds the controller of the opponent's card it replaces for.
+Where there is nobody to ask (a deploy an effect makes, a replacement on
+your own card) the first candidate in turn order is taken. A condition
+alone never needs the opponent named (it is judged for each opponent, E4).
+The binding is made afresh for every block (MP 4).
 
 **Both players (MP 3).** "Both players" in a block is the controller and its
 bound opponent (`forEachPlayer { players: "controllerAndOpponent" }`).

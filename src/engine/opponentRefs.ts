@@ -81,6 +81,9 @@ function walk(node: unknown, inPick: boolean, refs: OpponentRefs): void {
   for (const [key, value] of Object.entries(record)) {
     if (NOT_A_REFERENCE.has(key)) continue;
     if (rebindsBody && key === "effects") continue;
+    // A condition about an opponent is judged for each opponent on its own
+    // when nothing is bound (E4): it does not need the block's opponent named.
+    if (SUB_CONDITION_KEYS.has(key)) continue;
     if (value === "opponent") {
       if (inPick) refs.inPicks = true;
       else refs.elsewhere = true;
