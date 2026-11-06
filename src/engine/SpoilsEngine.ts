@@ -16191,7 +16191,14 @@ export class SpoilsEngine {
         // resolving as its own controller. "Each opponent" (E1): every
         // opponent of the resolving controller, bound as its opponent in turn.
         const eachOpponent = effect.players === "opponents";
-        const order = eachOpponent ? opponentsOf(this.state, context.controllerId) : livingSeats(this.state);
+        // "Both players" (MP 3): the controller and the opponent this block is about, in turn order.
+        const both =
+          effect.players === "controllerAndOpponent"
+            ? new Set([context.controllerId, ...this.opponentIdsFor(context).slice(0, 1)])
+            : undefined;
+        const order = eachOpponent
+          ? opponentsOf(this.state, context.controllerId)
+          : livingSeats(this.state).filter(id => !both || both.has(id));
         const contextFor = (playerId: PlayerId): ResolutionContext =>
           eachOpponent
             ? { ...context, opponentId: playerId }
@@ -24315,6 +24322,11 @@ export class SpoilsEngine {
     const players: unknown[] = [record.playerId, record.attackerPlayerId, record.defenderPlayerId];
     const cardId = this.getEventCardId(event);
     if (cardId !== undefined && this.state.cards[cardId]) players.push(this.state.cards[cardId].controllerId);
+    // A battle event is about the battle's two sides ("when this card attacks, your opponent ..." — the defender).
+    const battle = this.state.battle;
+    if (battle && ("battleId" in record || /attack|block|battle/i.test(event.type))) {
+      players.push(battle.defenderPlayerId, battle.attackerPlayerId);
+    }
     return players.find((id): id is PlayerId => typeof id === "string" && candidates.includes(id));
   }
 

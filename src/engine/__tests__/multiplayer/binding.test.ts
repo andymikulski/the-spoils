@@ -242,6 +242,33 @@ describe("a lasting effect keeps its block's opponent (D4)", () => {
   });
 });
 
+/** "Both players draw a card." (MP 3) */
+const BOTH: CardDefinition = character({
+  name: "Both",
+  behavior: {
+    abilities: [
+      {
+        id: "both",
+        type: "activated",
+        costs: [],
+        effects: [{ type: "forEachPlayer", players: "controllerAndOpponent", effects: [{ type: "modifyInfluence", player: "controller", amount: -1 }] }]
+      }
+    ]
+  }
+});
+
+describe("both players (MP 3)", () => {
+  test("'both players' is the controller and the named opponent", () => {
+    const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "b", def: BOTH, owner: "p1" }] });
+    const before = influence(engine);
+    assert.throws(() => engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("b"), abilityId: "both" }), /Choose which opponent/);
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("b"), abilityId: "both", opponentId: "p3" });
+    resolvePendingResponses(engine);
+    const after = influence(engine);
+    assert.deepEqual([after.p1, after.p2, after.p3], [before.p1 - 1, before.p2, before.p3 - 1]);
+  });
+});
+
 describe("each opponent (E1) and any opponent may pay (E5)", () => {
   test("'each opponent' needs no opponent named and reaches every opponent once", () => {
     const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "q", def: QUAKE, owner: "p1" }] });

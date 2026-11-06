@@ -1291,10 +1291,13 @@ export type Effect =
        * `players: "opponents"` resolves it once per opponent of the
        * resolving controller instead ("each opponent discards 2 cards"): the
        * controller stays the resolving player and `opponent` is bound to
-       * each opponent in turn (E1). Default `"all"`: every living player.
+       * each opponent in turn (E1). `"controllerAndOpponent"` — printed "both
+       * players" (MP 3): the controller and the opponent the block is about,
+       * each resolving as their own controller. Default `"all"`: every living
+       * player.
        */
       type: "forEachPlayer";
-      players?: "all" | "opponents";
+      players?: "all" | "opponents" | "controllerAndOpponent";
       effects: Effect[];
     }
   | {
