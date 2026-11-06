@@ -45,6 +45,17 @@ export interface GameEventMap {
     reason: PlayerElimination["reason"];
   };
 
+  /** Showdown: a player claimed Hero cards from the Hero Deck or the Temptation Pile (SD 8–10). */
+  heroCardsClaimed: {
+    playerId: PlayerId;
+    cardIds: CardInstanceId[];
+  };
+
+  /** Showdown: these Heroes' Allegiance cards were turned face-up (SD-SLE 5). */
+  allegiancesRevealed: {
+    playerIds: PlayerId[];
+  };
+
   /**
    * The players switched seats (`swapped: true` — control of every card in
    * play and of both factions passed to the opposing player) or switched

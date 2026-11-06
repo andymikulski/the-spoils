@@ -135,7 +135,13 @@ export type Zone =
   | "discard"
   | "void"
   /** "Removed from the game" (RULES.md §2) — gone; nothing can retrieve it. */
-  | "removed";
+  | "removed"
+  /**
+   * A shared pile on the table that belongs to no player's zones — Showdown's
+   * Hero Deck and Temptation Pile (`GameState.showdown`; SD 3, SD 11). Only
+   * the effects that work those piles reach a card here.
+   */
+  | "table";
 
 export type Stat =
   | "strength"

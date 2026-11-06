@@ -33,6 +33,12 @@ export type DevelopChoice =
 
 export interface FactionDefinition {
   startingInfluence: number;
+  /**
+   * Extra starting influence for each opponent the player has when the game
+   * begins: The Evil Alliance's "INFLUENCE = 15+(10*X)" is
+   * `startingInfluence: 15, influencePerOpponent: 10` (SD-EA 2).
+   */
+  influencePerOpponent?: number;
 
   /**
    * The faction's printed MINIMUM DECK SIZE (The Society of Magical Propriety:
@@ -52,6 +58,12 @@ export interface FactionDefinition {
     startsFlipped?: boolean;
     startingResources: {
       count: number;
+      /**
+       * Extra starting resources for each opponent at the start of the game:
+       * The Evil Alliance's "Any 1+X staple resources" is `count: 1,
+       * countPerOpponent: 1` (SD-EA 3).
+       */
+      countPerOpponent?: number;
       /** Optional exact resource names for factions that require specific cards. */
       names?: string[];
       /** Tournament Faction uses staple resources. */
@@ -102,7 +114,7 @@ export interface FactionDefinition {
        * faction's OPPONENT up with staple resources until both players hold
        * the same number of starting resources ("...enough staple resources
        * so that both players have the same number of starting resources").
-       * 2-player only.
+       * With three or more players every opponent is topped up (D9).
        */
       matchOpponentCount?: boolean;
     };
@@ -156,6 +168,12 @@ export interface FactionDefinition {
        * second develop, so `usesPerTurn: 2`.
        */
       usesPerTurn?: number;
+      /**
+       * Multiply `usesPerTurn` by the number of opponents the player had at
+       * the start of the game: The Evil Alliance's "draw a card or play a
+       * resource. Repeat this X-1 times." (SD-EA 6).
+       */
+      usesPerOpponent?: boolean;
     };
 
     /**
@@ -220,6 +238,15 @@ export interface FactionDefinition {
    * every threshold, regardless of which resource icons they control.
    */
   meetsAllThresholds?: boolean;
+
+  /**
+   * DARING GAMBIT (The Evil Alliance, SD-EA 10) — "If a Hero inflicts at
+   * least \`damage\` damage to another Hero this turn, the damaging Hero
+   * claims the entire Temptation Pile." Counted per pair of Heroes per turn
+   * as damage to the other Hero's faction; it fires once, the moment a
+   * Hero's total against one other Hero reaches \`damage\`.
+   */
+  daringGambit?: { damage: number };
 
   /**
    * "You must pay N more to deploy tactics using FLIP UP." (The Primitive
@@ -536,9 +563,12 @@ export interface ActivatedAbility extends AbilityBase {
    * (The Knitting Coalition — "Both players may use this ability"; offered
    * to the opponent too and resolved under whoever activated it), or
    * `"opponent"` (iDumb De-Itemizer — "Only an opponent may use this
-   * ability"; hidden from the controller, resolved under the opponent).
+   * ability"; hidden from the controller, resolved under the opponent), or
+   * `"heroes"` (Slightly Less Evil Alliance — "All Heroes can use abilities
+   * on this card", SD-SLE 1; offered to every Showdown Hero and resolved
+   * under whoever activated it, never the Villain).
    */
-  usableBy?: "controller" | "anyPlayer" | "opponent";
+  usableBy?: "controller" | "anyPlayer" | "opponent" | "heroes";
   /**
    * An *icon* requirement to activate this ability, same shorthand as
    * `CardDefinition.threshold` (e.g. `"gg"` = two Greed icons) — a gate,

@@ -14,6 +14,8 @@ import type {
 } from "../types/index.js";
 import { assert, deriveIdSeq, nextId } from "./utilities.js";
 import { randomSeed } from "./rng.js";
+import { defaultAllegianceDeck } from "./showdown.js";
+import { opponentsOf } from "./seating.js";
 
 /**
  * A fresh `CardInstance`. `id` defaults to the process-global counter
@@ -77,9 +79,14 @@ export function resolveGameFormat(seats: readonly PlayerId[], format?: GameForma
     case "showdown":
       assert(seats.includes(resolved.villainId), `The Villain '${resolved.villainId}' is not seated at this table.`);
       assert(seats.length >= 3, `A Showdown game seats one Villain and at least two Heroes (got ${seats.length} seats).`);
-      break;
+      return { ...resolved, allegiance: resolved.allegiance ?? defaultAllegianceDeck(seats.length - 1) };
   }
   return resolved;
+}
+
+/** How many opponents each seat has as the game begins (`GameState.startingOpponentCounts`). */
+export function startingOpponentCountsOf(state: GameState): Record<PlayerId, number> {
+  return Object.fromEntries(state.turnOrder.map(id => [id, opponentsOf(state, id).length]));
 }
 
 /**
@@ -167,6 +174,8 @@ export function createGame(
     idSeq: 0,
     format,
     turnOrder: seats.map(seat => seat.id),
+    // Filled in just below, once the table is laid out.
+    startingOpponentCounts: {},
     players,
     cards: cardMap,
     modifiers: [],
@@ -221,6 +230,7 @@ export function createGame(
     cardMap[cardId].attackEligibleTurn = 1;
   }
 
+  state.startingOpponentCounts = startingOpponentCountsOf(state);
   state.idSeq = deriveIdSeq(state);
 
   return state;

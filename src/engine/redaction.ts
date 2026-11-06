@@ -24,6 +24,7 @@ import type {
 import { logMessageFor, type GameLogEntry } from "../types/log.js";
 import type { PendingChoice } from "../types/choices.js";
 import type { CardDefinitionId, CardInstanceId, PlayerId } from "../types/ids.js";
+import { canSeeAllegiance } from "./showdown.js";
 
 /** A seated player, or a neutral onlooker with no hidden information of their own. */
 export type Viewer = PlayerId | "spectator";
@@ -169,10 +170,27 @@ export function redactStateFor(
 ): GameState {
   const revealed = options.revealed ?? NOTHING_REVEALED;
   const cards = redactCards(state.cards, viewer, revealed, options);
+  // Showdown: the Hero Deck is face-down to everyone (SD 3); an Allegiance
+  // card is seen by its Hero, by the Villain, and by all once face-up (SD 7).
+  for (const cardId of state.showdown?.heroDeck ?? []) {
+    if (cards[cardId] && !options.visibleCardIds?.has(cardId)) cards[cardId] = maskCard(cards[cardId]);
+  }
+  const showdown = state.showdown
+    ? {
+        ...state.showdown,
+        allegiance: Object.fromEntries(
+          Object.entries(state.showdown.allegiance).map(([heroId, card]) => [
+            heroId,
+            canSeeAllegiance(state, viewer, heroId) ? card : { ...card, loyalty: "hidden" as const }
+          ])
+        )
+      }
+    : undefined;
 
   return {
     ...state,
     cards,
+    ...(showdown ? { showdown } : {}),
     // `state.gameLog` is otherwise a raw, unredacted copy riding along inside
     // an otherwise-safe `GameState` — redact it the same way `redactLogFor`
     // is meant to be called standalone (e.g. against `GameController.getLog()`,

@@ -6,6 +6,7 @@ import type {
   CardCatalogEntry,
   CardDefinition,
   CardDefinitionId,
+  CardInstance,
   CardInstanceId,
   CreatedAbilitySpec,
   FactionDefinition,
@@ -22,6 +23,7 @@ import {
 } from "./utilities.js";
 import { createCardInstance, createGame, resolveGameFormat } from "./setup.js";
 import { opponentsOf, seatsFrom } from "./seating.js";
+import { dealAllegiance, defaultAllegianceDeck } from "./showdown.js";
 import { SpoilsEngine } from "./SpoilsEngine.js";
 import { drawRandom, shuffleInPlace } from "./rng.js";
 
@@ -43,6 +45,15 @@ export interface FactionGameSetupOptions {
    * for more (see `GameFormat`).
    */
   format?: GameFormat;
+  /**
+   * The shared Showdown table (format `showdown` only): the Hero Deck every
+   * Hero reaches through effects (SD 3), shuffled at setup, and the shared
+   * faction every Hero may use — Slightly Less Evil Alliance (SD 5).
+   */
+  showdown?: {
+    heroDeck: CardDefinitionId[];
+    sharedFactionDefinitionId?: CardDefinitionId;
+  };
   /** Who takes the first turn, already decided by the caller. Wins over `chooseFirstPlayer`. */
   firstPlayerId?: PlayerId;
   /**
@@ -487,9 +498,18 @@ export function createFactionGame(
     resolved[i].deckDefinitionIds.map(id => createCardInstance(id, player.id, "deck", mintCardId()))
   );
 
+  // Showdown's shared table (SD 3, SD 5): the Hero Deck's cards wait on the
+  // table, nominally the Villain's until a Hero claims one; the shared faction
+  // sits in play under the Villain, its abilities open to every Hero.
+  const showdownTable =
+    format.kind === "showdown" ? buildShowdownTable(definitions, format.villainId, options.showdown, mintCardId) : undefined;
+
   const state = createGame(
     players.map(player => ({ id: player.id, name: player.name, influence: 0 })),
-    players.flatMap((_, i) => [factions[i], ...decks[i]]),
+    [
+      ...players.flatMap((_, i) => [factions[i], ...decks[i]]),
+      ...(showdownTable ? [...showdownTable.heroDeck, ...(showdownTable.sharedFaction ? [showdownTable.sharedFaction] : [])] : [])
+    ],
     { format }
   );
 
@@ -503,10 +523,29 @@ export function createFactionGame(
   if (options.chooseFirstPlayer && options.firstPlayerId === undefined) {
     state.decideFirstPlayer = true;
   }
+  if (showdownTable && format.kind === "showdown") {
+    // SD 6: each Hero is dealt an Allegiance card at random; the Hero Deck is shuffled.
+    const random = () => drawRandom(state);
+    const heroDeck = showdownTable.heroDeck.map(card => card.id);
+    shuffleInPlace(heroDeck, random);
+    state.showdown = {
+      allegiance: dealAllegiance(
+        seatIds.filter(id => id !== format.villainId),
+        format.allegiance ?? defaultAllegianceDeck(seatIds.length - 1),
+        random
+      ),
+      heroDeck,
+      temptationPile: [],
+      ...(showdownTable.sharedFaction ? { sharedFactionId: showdownTable.sharedFaction.id } : {})
+    };
+  }
 
   players.forEach((player, i) => {
+    const faction = resolved[i].factionDefinition.faction!;
     state.players[player.id].factionId = factions[i].id;
-    state.players[player.id].influence = resolved[i].factionDefinition.faction!.startingInfluence;
+    // "INFLUENCE = 15+(10*X)", X the opponents at the start (SD-EA 2).
+    state.players[player.id].influence =
+      faction.startingInfluence + (faction.influencePerOpponent ?? 0) * (state.startingOpponentCounts[player.id] ?? 0);
   });
 
   const engine = new SpoilsEngine(normalizedDefinitions, state, undefined, options.cardCatalog);
@@ -515,7 +554,10 @@ export function createFactionGame(
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
   players.forEach((player, i) => {
     const playerId = player.id;
-    const rule = resolved[i].factionDefinition.faction!.setup.startingResources;
+    const rule = scaledStartingResources(
+      resolved[i].factionDefinition.faction!.setup.startingResources,
+      state.startingOpponentCounts[playerId] ?? 0
+    );
     const chosenX = options.startingResourceX?.[playerId];
     const choiceCount = options.chooseStartingResources
       ? stapleChoiceCountFor(engine, playerId, rule, chosenX)
@@ -560,6 +602,38 @@ export function createFactionGame(
   };
 
   return engine;
+}
+
+/** A STARTING RESOURCES rule with its per-opponent extra folded in ("Any 1+X staple resources", SD-EA 3). */
+function scaledStartingResources(
+  rule: FactionDefinition["setup"]["startingResources"],
+  opponents: number
+): FactionDefinition["setup"]["startingResources"] {
+  if (!rule.countPerOpponent) return rule;
+  return { ...rule, count: rule.count + rule.countPerOpponent * opponents };
+}
+
+/** The Showdown table's card instances: the Hero Deck (in the `table` zone) and the shared faction (in play). */
+function buildShowdownTable(
+  definitions: Record<CardDefinitionId, CardDefinition>,
+  villainId: PlayerId,
+  table: FactionGameSetupOptions["showdown"],
+  mintCardId: () => CardInstanceId
+): { heroDeck: CardInstance[]; sharedFaction?: CardInstance } {
+  const heroDeck = (table?.heroDeck ?? []).map(id => {
+    assert(definitions[id], `Hero Deck references missing card '${id}'.`);
+    const card = createCardInstance(id, villainId, "table", mintCardId());
+    card.heroCard = true;
+    return card;
+  });
+  const sharedId = table?.sharedFactionDefinitionId;
+  if (sharedId !== undefined) {
+    assert(definitions[sharedId]?.type === "faction", `The shared faction '${sharedId}' is not a faction card.`);
+  }
+  return {
+    heroDeck,
+    ...(sharedId !== undefined ? { sharedFaction: createCardInstance(sharedId, villainId, "play", mintCardId()) } : {})
+  };
 }
 
 /**

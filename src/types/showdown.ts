@@ -25,7 +25,8 @@ export interface AllegianceDeckConfig {
 
 /** One Hero's dealt Allegiance card. */
 export interface AllegianceCard {
-  loyalty: Loyalty;
+  /** `"hidden"` only in a state redacted for a viewer who may not see this card (`redactStateFor`). */
+  loyalty: Loyalty | "hidden";
   /** Turned face-up (SD-SLE 5). While face-down only its holder and the Villain may look at it (SD 7). */
   faceUp: boolean;
 }
@@ -40,4 +41,6 @@ export interface ShowdownState {
   temptationPile: CardInstanceId[];
   /** The shared Slightly Less Evil Alliance faction card every Hero may use (SD 5, SD-SLE 1), if one is on the table. */
   sharedFactionId?: CardInstanceId;
+  /** This turn's damage by each Hero to each other Hero's faction, for DARING GAMBIT (SD-EA 10). Reset every turn. */
+  heroDamageThisTurn?: Record<PlayerId, Record<PlayerId, number>>;
 }

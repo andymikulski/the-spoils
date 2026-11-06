@@ -29,8 +29,12 @@ export interface ShowdownFormat {
   kind: "showdown";
   /** The Villain (SD 1). Every other seat is a Hero. */
   villainId: PlayerId;
-  /** How Allegiance cards are dealt to the Heroes (SD 6). */
-  allegiance: AllegianceDeckConfig;
+  /**
+   * How Allegiance cards are dealt to the Heroes (SD 6). Omitted at setup:
+   * `defaultAllegianceDeck` for the number of Heroes; always set on
+   * `GameState.format`.
+   */
+  allegiance?: AllegianceDeckConfig;
 }
 
 export type GameFormatKind = GameFormat["kind"];

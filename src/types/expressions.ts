@@ -11,6 +11,8 @@ export type PlayerRef =
   | "owner"
   | "activePlayer"
   | "opponent"
+  /** Showdown's Villain (SD 1). Unresolvable outside Showdown. */
+  | "villain"
   | { type: "player"; id: PlayerId }
   /** The owner of a targeted card (e.g. "any one deck" — the caster picks a faction card, this resolves to that player). */
   | { type: "ownerOf"; target: TargetRef }
@@ -112,6 +114,15 @@ export type NumberExpression =
   | {
       type: "count";
       selector: CardSelector;
+    }
+  | {
+      /**
+       * How many opponents the resolving controller (or \`player\`) had when
+       * the game began — The Evil Alliance's X ("X is the number of opponents
+       * you have at the start of the game", SD-EA 1).
+       */
+      type: "opponentCountAtStart";
+      player?: PlayerRef;
     }
   | {
       type: "add";
@@ -369,8 +380,14 @@ export type NumberExpression =
     };
 
 export interface CardSelector {
-  controller?: "self" | "opponent" | "any";
+  /** `"otherHero"`: a Showdown Hero other than the one resolving ("a character another Hero controls", SD-SLE 2). */
+  controller?: "self" | "opponent" | "any" | "otherHero";
   owner?: "self" | "opponent" | "any";
+  /**
+   * Only cards in this Showdown table pile (zone `table`): the Hero Deck or
+   * the face-up Temptation Pile ("claim one card in the Temptation Pile").
+   */
+  showdownPile?: "heroDeck" | "temptationPile";
 
   /**
    * The game area(s) this selector looks in. **When omitted, it matches

@@ -1358,6 +1358,34 @@ export type Effect =
     }
   | {
       /**
+       * Showdown — \`claimer\` claims Hero cards (SD 8–10): the top \`count\`
+       * (default 1) of the Hero Deck, revealed (\`heroDeckTop\`); \`count\`
+       * cards of the Temptation Pile, or all of it (\`temptationPile\`,
+       * \`count: "all"\`); or the cards picked as \`selected\` (a pick over a
+       * \`showdownPile\` selector). A claimed non-tactic is put into play under
+       * the claimer; a claimed tactic is offered to the claimer to play for
+       * free ignoring threshold (declined or unplayable: removed from the
+       * game). The claimer owns what they claim; a Hero card leaving play or
+       * finishing resolving is removed from the game.
+       */
+      type: "claimHeroCards";
+      claimer: PlayerRef;
+      from: "heroDeckTop" | "temptationPile" | "selected";
+      count?: number | "all";
+      /** For \`from: "selected"\`: the declaration whose picks are claimed. */
+      selected?: string;
+    }
+  | {
+      /** Showdown — puts the top \`count\` (default 1) cards of the Hero Deck face-up into the Temptation Pile (SD-EA 9). */
+      type: "heroDeckToTemptationPile";
+      count?: number;
+    }
+  | {
+      /** Showdown — every Hero turns their Allegiance card face-up (SD-SLE 5). */
+      type: "revealAllegiances";
+    }
+  | {
+      /**
        * Puts `count` token permanents into play under `controller` — cards
        * with no deck backing that cease to exist on leaving play. `token`
        * is a minimal inline definition (name + type + optional stats /

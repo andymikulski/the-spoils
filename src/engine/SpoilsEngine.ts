@@ -107,8 +107,8 @@ import {
 import { cardTextToPlain } from "../cardText.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
-import { resolveGameFormat } from "./setup.js";
-import { getLoyalty } from "./showdown.js";
+import { resolveGameFormat, startingOpponentCountsOf } from "./setup.js";
+import { getLoyalty, heroesOf, isHero, revealAllAllegiances, villainOf } from "./showdown.js";
 import { conditionNodeRefersToOpponent, opponentRefsOf } from "./opponentRefs.js";
 import {
   isLiving,
@@ -779,6 +779,7 @@ export class SpoilsEngine {
     // Normalize partially-specified states (test fixtures, hand-built saves).
     this.state.turnOrder ??= Object.keys(this.state.players);
     this.state.format ??= resolveGameFormat(this.state.turnOrder);
+    this.state.startingOpponentCounts ??= startingOpponentCountsOf(this.state);
     this.state.responseStack ??= [];
     this.state.gameLog ??= [];
     this.state.setup ??= { phase: "complete" };
@@ -2294,9 +2295,15 @@ export class SpoilsEngine {
     );
   }
 
-  /** How many times `playerId`'s faction may use its Develop Rule per turn (default 1; "OVERTIME" = 2). */
+  /**
+   * How many times `playerId`'s faction may use its Develop Rule per turn
+   * (default 1; "OVERTIME" = 2; The Evil Alliance's "Repeat this X-1 times"
+   * = one per opponent at the start of the game).
+   */
   private developsAllowed(playerId: PlayerId): number {
-    return this.getFactionDefinition(playerId)?.turn.develop.usesPerTurn ?? 1;
+    const develop = this.getFactionDefinition(playerId)?.turn.develop;
+    const uses = develop?.usesPerTurn ?? 1;
+    return develop?.usesPerOpponent ? uses * Math.max(1, this.state.startingOpponentCounts[playerId] ?? 1) : uses;
   }
 
   /**
@@ -4032,7 +4039,8 @@ export class SpoilsEngine {
     if (
       card.controllerId === playerId ||
       ability.usableBy === "anyPlayer" ||
-      ability.usableBy === "opponent"
+      ability.usableBy === "opponent" ||
+      ability.usableBy === "heroes"
     ) {
       return undefined;
     }
@@ -4120,12 +4128,15 @@ export class SpoilsEngine {
           !controlsIt &&
           ability.usableBy !== "anyPlayer" &&
           ability.usableBy !== "opponent" &&
+          ability.usableBy !== "heroes" &&
           !borrowMode
         ) {
           continue;
         }
         // "Only an opponent may use this ability" — hidden from the controller.
         if (controlsIt && ability.usableBy === "opponent") continue;
+        // "All Heroes can use abilities on this card" (SD-SLE 1) — only Heroes.
+        if (ability.usableBy === "heroes" && !isHero(this.state, playerId)) continue;
 
         const because: AbilityUnavailableReason | undefined = !timingOk
           ? "timing"
@@ -7740,10 +7751,12 @@ export class SpoilsEngine {
     assert(
       borrowed ||
         ability.usableBy === "anyPlayer" ||
-        (ability.usableBy === "opponent"
-          ? card.controllerId !== action.playerId
-          : card.controllerId === action.playerId),
-      "You do not control that card."
+        (ability.usableBy === "heroes"
+          ? isHero(this.state, action.playerId)
+          : ability.usableBy === "opponent"
+            ? card.controllerId !== action.playerId
+            : card.controllerId === action.playerId),
+      ability.usableBy === "heroes" ? "Only a Hero can use this ability." : "You do not control that card."
     );
 
     // Most abilities are usable only from `play`; RECUR / RETIRE-style ones
@@ -9433,6 +9446,9 @@ export class SpoilsEngine {
 
     const batchId = this.nextId("batch");
     const triggers = silent ? [] : this.findTriggers(event, batchId);
+    if (!silent && event.type === "damageDealt") {
+      triggers.push(...this.daringGambitTriggers(event, batchId));
+    }
     if (!silent && event.type === "turnStarted") {
       triggers.push(...this.factionStartTriggers(event, batchId));
     }
@@ -11046,6 +11062,11 @@ export class SpoilsEngine {
     }
 
     switch (expression.type) {
+      case "opponentCountAtStart": {
+        const playerId = this.resolvePlayerRef(expression.player ?? "controller", context).id;
+        return this.state.startingOpponentCounts[playerId] ?? 0;
+      }
+
       case "stat": {
         const cardId = this.resolveTargetRef(
           expression.target,
@@ -11796,6 +11817,9 @@ export class SpoilsEngine {
     if (value === "any") return "any";
     if (value === "self") return [context.controllerId];
     if (value === "opponent") return this.opponentIdsFor(context);
+    if (value === "otherHero") {
+      return heroesOf(this.state).filter(id => id !== context.controllerId && isLiving(this.state, id));
+    }
     if (value && typeof value === "object") {
       try {
         return [this.resolvePlayerRef(value as PlayerRef, context).id];
@@ -11835,6 +11859,11 @@ export class SpoilsEngine {
     selector: CardSelector,
     context: ResolutionContext
   ): boolean {
+    if (selector.showdownPile) {
+      const pile = selector.showdownPile === "heroDeck" ? this.state.showdown?.heroDeck : this.state.showdown?.temptationPile;
+      if (!pile?.includes(card.id)) return false;
+    }
+
     if (selector.controller) {
       const wanted = this.selectorPlayerMatch(selector.controller, context);
       if (wanted !== "any" && !wanted.includes(card.controllerId)) return false;
@@ -12383,6 +12412,12 @@ export class SpoilsEngine {
 
     if (ref === "opponent") {
       return this.requirePlayer(this.soleOpponentFor(context));
+    }
+
+    if (ref === "villain") {
+      const villainId = villainOf(this.state);
+      assert(villainId !== undefined, "There is no Villain outside a Showdown game.");
+      return this.requirePlayer(villainId);
     }
 
     if (ref.type === "ownerOf") {
@@ -14046,6 +14081,43 @@ export class SpoilsEngine {
         } finally {
           this.endEventBatch();
         }
+        return;
+      }
+
+      case "claimHeroCards": {
+        const showdown = this.state.showdown;
+        if (!showdown) return;
+        const claimerId = this.resolvePlayerRef(effect.claimer, context).id;
+        const count = effect.count ?? 1;
+        let cardIds: CardInstanceId[];
+        if (effect.from === "heroDeckTop") {
+          cardIds = showdown.heroDeck.slice(0, count === "all" ? undefined : count);
+          // "Reveal the top card of the Hero deck and claim it." (SD-SLE 3)
+          if (cardIds.length > 0) this.emitReveal(cardIds, "all", context.sourceId);
+        } else if (effect.from === "temptationPile") {
+          cardIds = showdown.temptationPile.slice(0, count === "all" ? undefined : count);
+        } else {
+          cardIds = (context.selected[effect.selected ?? ""] ?? []).filter(
+            id => showdown.heroDeck.includes(id) || showdown.temptationPile.includes(id)
+          );
+        }
+        this.claimHeroCards(cardIds, claimerId, context);
+        return;
+      }
+
+      case "heroDeckToTemptationPile": {
+        const showdown = this.state.showdown;
+        if (!showdown) return;
+        const moved = showdown.heroDeck.splice(0, Math.max(0, effect.count ?? 1));
+        showdown.temptationPile.push(...moved);
+        // The Temptation Pile stays face-up on the table (SD 11).
+        if (moved.length > 0) this.emitReveal(moved, "all", context.sourceId);
+        return;
+      }
+
+      case "revealAllegiances": {
+        const turned = revealAllAllegiances(this.state);
+        if (turned.length > 0) this.emit({ type: "allegiancesRevealed", playerIds: turned });
         return;
       }
 
@@ -19308,6 +19380,17 @@ export class SpoilsEngine {
 
         if (!choice.cardId) {
           this.state.pendingChoice = undefined;
+          // A claimed Hero tactic that is not played is removed from the game
+          // (SD 10); the rest of the claim carries on.
+          if (pending.heroClaim) {
+            for (const cardId of pending.candidates) {
+              const card = this.state.cards[cardId];
+              if (card && card.zone === "table") this.moveCard(cardId, "removed");
+            }
+            if (pending.afterDeploy) {
+              this.state.pendingEffectFrames.push({ effects: pending.afterDeploy, index: 0, context: pending.context });
+            }
+          }
           this.resumeEffectFrames();
           return;
         }
@@ -19878,6 +19961,12 @@ export class SpoilsEngine {
       to !== "play" &&
       to !== "removed"
     ) {
+      to = "removed";
+    }
+
+    // A Showdown Hero card is removed from the game when it leaves play or is
+    // done resolving (SD 10) — it never reaches a hand, deck, discard or void.
+    if (card.heroCard && to !== "play" && to !== "deploying" && to !== "removed") {
       to = "removed";
     }
 
@@ -21372,6 +21461,7 @@ export class SpoilsEngine {
     this.state.turn++;
     this.state.activePlayerId = next.id;
     this.state.priorityPlayerId = next.id;
+    if (this.state.showdown) this.state.showdown.heroDamageThisTurn = {};
     this.state.turnEventTally = {};
     this.state.turnDeploys = {};
     this.state.turnDestroyed = [];
@@ -24226,6 +24316,106 @@ export class SpoilsEngine {
     const cardId = this.getEventCardId(event);
     if (cardId !== undefined && this.state.cards[cardId]) players.push(this.state.cards[cardId].controllerId);
     return players.find((id): id is PlayerId => typeof id === "string" && candidates.includes(id));
+  }
+
+  /**
+   * Hands claimed Hero cards to `claimerId` (SD 8–10): each leaves its table
+   * pile and becomes theirs. A non-tactic is put into play under them; the
+   * first tactic is offered to them to play for free, ignoring threshold (a
+   * `deployForFree` choice marked `heroClaim`), with the rest of the claim
+   * continuing once that is settled.
+   */
+  private claimHeroCards(cardIds: readonly CardInstanceId[], claimerId: PlayerId, context: ResolutionContext): void {
+    const showdown = this.state.showdown;
+    if (!showdown) return;
+    const claimed = cardIds.filter(id => this.state.cards[id]?.zone === "table");
+    showdown.heroDeck = showdown.heroDeck.filter(id => !claimed.includes(id));
+    showdown.temptationPile = showdown.temptationPile.filter(id => !claimed.includes(id));
+    for (const cardId of claimed) {
+      const card = this.requireCard(cardId);
+      card.ownerId = claimerId;
+      card.controllerId = claimerId;
+    }
+    if (claimed.length > 0) this.emit({ type: "heroCardsClaimed", playerId: claimerId, cardIds: [...claimed] });
+
+    for (let i = 0; i < claimed.length; i++) {
+      const cardId = claimed[i];
+      if (this.getDefinition(cardId).type !== "tactic") {
+        this.putCardIntoPlay(cardId, claimerId, false, { ...context, controllerId: claimerId });
+        continue;
+      }
+      const rest = claimed.slice(i + 1);
+      const restKey = "__heroClaimRest";
+      const claimContext: ResolutionContext = {
+        ...context,
+        controllerId: claimerId,
+        selected: { ...context.selected, [restKey]: rest }
+      };
+      this.state.pendingChoice = {
+        kind: "deployForFree",
+        id: this.nextId("choice"),
+        playerId: claimerId,
+        candidates: [cardId],
+        context: claimContext,
+        fromZone: true,
+        ignoreThreshold: true,
+        heroClaim: true,
+        ...(rest.length > 0
+          ? {
+              afterDeploy: [
+                { type: "claimHeroCards", claimer: { type: "player", id: claimerId }, from: "selected", selected: restKey }
+              ]
+            }
+          : {})
+      };
+      return;
+    }
+  }
+
+  /**
+   * DARING GAMBIT (SD-EA 10): tallies a Hero's damage to another Hero's
+   * faction this turn and, the moment one Hero's total against one other
+   * Hero reaches the Villain faction's `daringGambit.damage`, queues the
+   * damaging Hero's claim of the entire Temptation Pile — the Villain
+   * faction's rule, so it is a trigger of that faction card.
+   */
+  private daringGambitTriggers(
+    event: Extract<GameEvent, { type: "damageDealt" }>,
+    batchId: string
+  ): TriggerResolution[] {
+    const showdown = this.state.showdown;
+    const villainId = villainOf(this.state);
+    if (!showdown || villainId === undefined || !event.sourceId || event.amount <= 0) return [];
+    const gambit = this.getFactionDefinition(villainId)?.daringGambit;
+    const villainFactionId = this.state.players[villainId]?.factionId;
+    if (!gambit || !villainFactionId || !this.state.cards[villainFactionId]) return [];
+    const target = this.state.cards[event.targetId];
+    const source = this.state.cards[event.sourceId];
+    if (!target || !source || this.getDefinition(target.id).type !== "faction") return [];
+    const victimId = this.factionHolderId(target);
+    const heroId = source.controllerId;
+    if (heroId === victimId || !isHero(this.state, heroId) || !isHero(this.state, victimId)) return [];
+
+    const tally = ((showdown.heroDamageThisTurn ??= {})[heroId] ??= {});
+    const before = tally[victimId] ?? 0;
+    tally[victimId] = before + event.amount;
+    if (before >= gambit.damage || tally[victimId] < gambit.damage) return [];
+
+    const abilityId = "showdown-daring-gambit";
+    return [
+      {
+        sourceId: villainFactionId,
+        ability: {
+          type: "triggered",
+          id: abilityId,
+          name: "Daring Gambit",
+          event: "damageDealt",
+          effects: [{ type: "claimHeroCards", claimer: { type: "player", id: heroId }, from: "temptationPile", count: "all" }]
+        },
+        context: { sourceId: villainFactionId, controllerId: villainId, abilityId, event, selected: {} },
+        batchId
+      }
+    ];
   }
 
   /** Sets the game's result and announces it. */

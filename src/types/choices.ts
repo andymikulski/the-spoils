@@ -225,6 +225,11 @@ export interface PendingDeployForFreeChoice {
   /** Set by `deployFromZone.afterDeploy` — runs only when the card is deployed. */
   afterDeploy?: Effect[];
   /**
+   * A claimed Showdown Hero tactic (SD 9): declining removes the card from
+   * the game (SD 10) and `afterDeploy` — the rest of the claim — still runs.
+   */
+  heroClaim?: boolean;
+  /**
    * Set by `deployFromZone.free: false` / an unmet `free` condition — the
    * player still pays the card's printed numeric cost ("...otherwise you
    * may deploy it [paying its cost]"). Default (unset) is a free deploy.

@@ -40,7 +40,8 @@ export function heroesOf(state: GameState): PlayerId[] {
 export function getLoyalty(state: GameState, playerId: PlayerId): Loyalty | undefined {
   if (state.format.kind !== "showdown") return undefined;
   if (isVillain(state, playerId)) return "villain";
-  return allegianceOf(state, playerId)?.loyalty ?? "heroes";
+  const loyalty = allegianceOf(state, playerId)?.loyalty ?? "heroes";
+  return loyalty === "hidden" ? undefined : loyalty;
 }
 
 /** Whether `playerId`'s Allegiance card is face-up. */

@@ -148,6 +148,13 @@ export interface CardInstance {
   isToken?: boolean;
 
   /**
+   * A Showdown Hero card (SD 3, SD 8–10): it starts in the shared Hero Deck
+   * (zone `table`), is owned by whoever claims it, and is removed from the
+   * game when it leaves play or finishes resolving.
+   */
+  heroCard?: boolean;
+
+  /**
    * The turn number on which this card started the turn in play under its
    * current controller. AGGRO ignores this restriction.
    */
@@ -1276,6 +1283,9 @@ export interface GameState {
 
   /** Showdown's shared table state; present exactly when `format.kind === "showdown"`. */
   showdown?: ShowdownState;
+
+  /** How many opponents each player had when the game began (the `opponentCountAtStart` expression; The Evil Alliance's X). */
+  startingOpponentCounts: Record<PlayerId, number>;
 
   modifiers: RuntimeModifier[];
   /** Standing "this turn" stat changes over a selector's cards (`createAreaModifier` — Rasputin Unleashed). */
