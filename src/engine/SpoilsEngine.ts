@@ -14106,8 +14106,9 @@ export class SpoilsEngine {
         } else if (effect.from === "temptationPile") {
           cardIds = showdown.temptationPile.slice(0, count === "all" ? undefined : count);
         } else {
+          // A pick from a pile, or the rest of a claim waiting behind a claimed tactic: Hero cards still on the table.
           cardIds = (context.selected[effect.selected ?? ""] ?? []).filter(
-            id => showdown.heroDeck.includes(id) || showdown.temptationPile.includes(id)
+            id => this.state.cards[id]?.zone === "table" && this.state.cards[id].heroCard === true
           );
         }
         this.claimHeroCards(cardIds, claimerId, context);
@@ -19401,6 +19402,10 @@ export class SpoilsEngine {
           // A claimed Hero tactic that is not played is removed from the game
           // (SD 10); the rest of the claim carries on.
           if (pending.heroClaim) {
+            assert(
+              !pending.candidates.some(cardId => this.claimedTacticPlayable(cardId, pending.playerId)),
+              "A claimed Hero tactic that can be played must be played (SD 9)."
+            );
             for (const cardId of pending.candidates) {
               const card = this.state.cards[cardId];
               if (card && card.zone === "table") this.moveCard(cardId, "removed");
@@ -24371,6 +24376,11 @@ export class SpoilsEngine {
         this.putCardIntoPlay(cardId, claimerId, false, { ...context, controllerId: claimerId });
         continue;
       }
+      // "...plays it for free if they can (ignoring threshold)"; one that cannot be played is removed (SD 9, SD 10).
+      if (!this.claimedTacticPlayable(cardId, claimerId)) {
+        this.moveCard(cardId, "removed");
+        continue;
+      }
       const rest = claimed.slice(i + 1);
       const restKey = "__heroClaimRest";
       const claimContext: ResolutionContext = {
@@ -24443,6 +24453,32 @@ export class SpoilsEngine {
         batchId
       }
     ];
+  }
+
+  /**
+   * Whether `claimerId` can play the claimed Hero tactic `cardId` (SD 9): its
+   * condition holds and every pick it must make has enough candidates, in at
+   * least one of its modes. Threshold and numeric cost are waived.
+   */
+  private claimedTacticPlayable(cardId: CardInstanceId, claimerId: PlayerId): boolean {
+    const definition = this.getDefinition(cardId);
+    const modeCount = Math.max(1, definition.behavior?.modes?.length ?? 0);
+    const context: ResolutionContext = { sourceId: cardId, controllerId: claimerId, selected: {} };
+    for (let mode = 0; mode < modeCount; mode++) {
+      try {
+        const condition = this.getTacticCondition(definition, mode);
+        if (condition && !this.evaluateCondition(condition, context)) continue;
+        const fits = this.getPlayTargetDeclarations(definition, mode).every(declaration => {
+          if (declaration.optional) return true;
+          const needed = Math.max(0, this.evaluateNumber(declaration.count, context));
+          return this.targetCandidates(declaration.selector, context, claimerId, needed).length >= needed;
+        });
+        if (fits) return true;
+      } catch {
+        // A mode that cannot even be evaluated here is not playable.
+      }
+    }
+    return false;
   }
 
   /** Sets the game's result and announces it. */
