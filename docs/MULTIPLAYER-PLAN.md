@@ -182,9 +182,9 @@ Run: `node .work/mp-lead/run-matrix.cjs <mode> <repoDir>` → `.work/mp-lead/mat
 
 | Mode | Tests | Failing | Notes |
 |---|---|---|---|
-| ffa3 | | | |
-| ffa4 | | | |
-| showdown | | | |
+| ffa3 | 43,755 | 339 → (re-baselining) | first run; dominant cluster was harness (extra seat's own start-of-turn prompts) |
+| ffa4 | 43,755 | 765 → (re-baselining) | same cluster, twice the extra seats |
+| showdown | 43,755 | 317 → (re-baselining) | same cluster |
 
 ## Card audit spec (Phase 3)
 
