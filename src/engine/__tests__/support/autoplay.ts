@@ -33,6 +33,9 @@ import {
   type TargetDeclaration,
   type Threshold,
   DEVELOP_RULE_ABILITY_ID,
+  isHero,
+  opponentsOf,
+  otherLivingSeats,
   parseThreshold,
   SpoilsEngine
 } from "../../../engine.js";
@@ -97,7 +100,14 @@ function simulateLegal(engine: SpoilsEngine, action: GameAction): boolean {
 }
 
 function tryCommit(engine: SpoilsEngine, action: GameAction): boolean {
-  if (!simulateLegal(engine, action)) return false;
+  // `simulateLegal` rebuilds an engine from `state` alone, which has no queued triggers, so it can never answer a
+  // trigger's prompt. With three or more players such prompts are common (several opponents to pick among); there the
+  // engine's own dry run, which carries the queue, judges them. (Two-player games keep the decisions they always had.)
+  const legal =
+    action.type === "resolvePendingChoice" && engine.state.turnOrder.length > 2
+      ? engine.checkAction(action).ok
+      : simulateLegal(engine, action);
+  if (!legal) return false;
   engine.perform(action);
   return true;
 }
@@ -328,6 +338,9 @@ function abilityCandidates(
   const opponentFactions = Object.values(engine.state.players)
     .filter(p => p.id !== playerId && p.factionId)
     .map(p => p.factionId!);
+  // Showdown's shared faction (`usableBy: "heroes"`), controlled by the Villain.
+  const sharedFactionId = engine.state.showdown?.sharedFactionId;
+  if (sharedFactionId && engine.state.cards[sharedFactionId]?.controllerId !== playerId) opponentFactions.push(sharedFactionId);
   const ownCards = engine.state.players[playerId].play.filter(id => engine.state.cards[id].controllerId === playerId);
 
   for (const cardId of [...ownCards, ...opponentFactions]) {
@@ -341,13 +354,22 @@ function abilityCandidates(
     for (const ability of [...(definition.behavior?.abilities ?? []), ...(definition.faction?.abilities ?? [])]) {
       if (ability.type !== "activated" || seen.has(ability.id)) continue;
       seen.add(ability.id);
-      if (!isOwn && ability.usableBy !== "anyPlayer") continue;
+      if (!isOwn && ability.usableBy !== "anyPlayer" && !(ability.usableBy === "heroes" && isHero(engine.state, playerId))) continue;
       if (!abilityRoughlyAffordable(engine, playerId, ability, reserve)) continue;
       result.push({ cardId, ability });
     }
   }
 
   return result;
+}
+
+/**
+ * With several opponents, the opponent a play's rules text is about (MP 2), picked at random. Nothing with one
+ * opponent, so a two-player game's actions (and its random stream) are exactly what they always were.
+ */
+function namedOpponent(engine: SpoilsEngine, playerId: PlayerId, rng: () => number): { opponentId?: PlayerId } {
+  const candidates = opponentsOf(engine.state, playerId);
+  return candidates.length > 1 ? { opponentId: candidates[Math.floor(rng() * candidates.length)] } : {};
 }
 
 function tryPlayCard(engine: SpoilsEngine, playerId: PlayerId, cardId: CardInstanceId, rng: () => number): boolean {
@@ -360,7 +382,7 @@ function tryPlayCard(engine: SpoilsEngine, playerId: PlayerId, cardId: CardInsta
     const selected = buildSelected(engine, playerId, cardId, declarations, variables, rng);
     if (!selected) continue;
 
-    const action: GameAction = { type: "playCard", playerId, cardId, selected, variables };
+    const action: GameAction = { type: "playCard", playerId, cardId, selected, variables, ...namedOpponent(engine, playerId, rng) };
     if (tryCommit(engine, action)) return true;
   }
 
@@ -387,7 +409,8 @@ function tryActivateAbility(
       cardId,
       abilityId: ability.id,
       selected,
-      variables
+      variables,
+      ...namedOpponent(engine, playerId, rng)
     };
     if (tryCommit(engine, action)) return true;
   }
@@ -711,7 +734,17 @@ function handlePendingChoice(
                 Number(engine.getDefinition(a.id).type === "resource")
             )
           : shuffled(candidates, rng);
-      const picked = ordered.slice(0, take).map(card => card.id);
+      // "Pick N cards with different names": skip a name already taken.
+      const names = new Set<string>();
+      const distinct = pending.declaration.distinctNames
+        ? ordered.filter(card => {
+            const name = engine.getDefinition(card.id).name;
+            if (names.has(name)) return false;
+            names.add(name);
+            return true;
+          })
+        : ordered;
+      const picked = distinct.slice(0, take).map(card => card.id);
 
       engine.perform({
         type: "resolvePendingChoice",
@@ -1079,12 +1112,11 @@ export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOpti
 
   const responsesByWindow = new Map<string, number>();
 
-  const playerIds = Object.keys(engine.state.players) as PlayerId[];
-  if (playerIds.length !== 2) {
-    throw new Error("playGameToCompletion expects exactly two players.");
-  }
-  const [playerA, playerB] = playerIds;
-  const opponentOf = (playerId: PlayerId): PlayerId => (playerId === playerA ? playerB : playerA);
+  // Whom to attack: the one other player in a two-player game; otherwise a random living one (SD 12: any of them).
+  const opponentOf = (playerId: PlayerId): PlayerId => {
+    const others = otherLivingSeats(engine.state, playerId);
+    return others.length === 1 ? others[0] : others[Math.floor(rng() * others.length)];
+  };
 
   for (let i = 0; i < maxActions; i++) {
     report.actions = i;

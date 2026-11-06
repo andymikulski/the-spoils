@@ -491,3 +491,8 @@ export function fromStored(stored: StoredSnapshot): OracleSnapshot {
     ...(stored.full ? { full: { ...stored.full.head, turns: stored.full.turns } } : {})
   };
 }
+
+/** The seat specs and deck builder, for the multiplayer fuzz games (src/engine/__tests__/multiplayer/fuzz.test.ts). */
+export const ORACLE_SEATS = { TOURNEY_OB, TOURNEY_SAGA, TOURNEY_SEED, KNITTING, UNION, IMPERIAL, COUNTER_IMPERIAL, EVIL, LESS_EVIL, HALL, CATACOMBS, GOLDEN_STRING, WEIRDOS, MOIST_CAVE, LEGIONS, UNLIKELY, MARDUUN, LUGUBRIAN, TRIBES };
+export { buildDeck as buildOracleDeck, definitionsFor as oracleDefinitionsFor, findCard as findOracleCard };
+export type { SeatSpec as OracleSeatSpec };

@@ -9144,6 +9144,15 @@ export class SpoilsEngine {
   private resumeContinuation(
     continuation: ResponseContinuation
   ): void {
+    // A battle that ended while its window was open (a side was eliminated, D8)
+    // has no step left to resume.
+    if ("battleId" in continuation) {
+      const battle = this.state.battle;
+      if (!battle || battle.id !== continuation.battleId || battle.phase === "finished") {
+        this.state.priorityPlayerId = this.state.activePlayerId;
+        return;
+      }
+    }
     switch (continuation.type) {
       case "main":
         this.state.priorityPlayerId = this.state.activePlayerId;
@@ -17791,7 +17800,9 @@ export class SpoilsEngine {
    */
   private syncSeatSwap(): boolean {
     if (!this.mayHaveSeatSwapSource()) return false;
-    const wanted = this.seatSwapWanted();
+    // "Both players switch seats" is a two-player exchange: with three or more
+    // players still in the game it does nothing (engine-derived, Q-MP2).
+    const wanted = this.seatSwapWanted() && livingSeats(this.state).length === 2;
     const swapped = this.state.seatSwap !== undefined;
     if (wanted === swapped) return false;
     if (wanted) this.applySeatSwap();
@@ -24507,9 +24518,15 @@ export class SpoilsEngine {
     }
     this.state.scheduledEffects = this.state.scheduledEffects.filter(entry => entry.controllerId !== playerId);
 
+    // A battle one side of which left the game is over (D8): it finishes as any
+    // battle does, and its pending steps are skipped (`resumeContinuation`).
     const battle = this.state.battle;
-    if (battle && (battle.attackerPlayerId === playerId || battle.defenderPlayerId === playerId)) {
-      this.state.battle = undefined;
+    if (
+      battle &&
+      battle.phase !== "finished" &&
+      (battle.attackerPlayerId === playerId || battle.defenderPlayerId === playerId)
+    ) {
+      this.finishBattle(battle);
     }
 
     const window = this.state.responseWindow;
