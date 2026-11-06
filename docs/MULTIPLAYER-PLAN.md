@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** merge the agent branches when they report (Evil Alliance / SLE encoding; r14-showdown tests). Then the per-card b/c fixes from the re-checked audit (19 b, 35 c — patch modules + 3-player tests), the remaining d rulings, `examples/showdown.ts`, BEHAVIORS.md / README.md updates, and the Known follow-ups below.
+**Next action:** merge the two per-card fix branches (audit g1/g2, g3/g4) when they report; run the full suite + oracle; then the remaining Known follow-ups and open questions with the user.
 
 ## Sources
 
@@ -134,7 +134,7 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 ### Phase 4 — Showdown
 - [x] `src/engine/showdown.ts`: opponent rule (SD 13–15), allegiance dealer
 - [x] Hero Deck & Temptation Pile shared zones; claiming (SD 8–10)
-- [ ] Re-encode The Evil Alliance (SD-EA) and Slightly Less Evil Alliance
+- [x] Re-encode The Evil Alliance (SD-EA) and Slightly Less Evil Alliance
       (SD-SLE)
 - [ ] Setup validation
 
@@ -146,10 +146,10 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 ### Phase 6 — Docs & hardening
 - [x] RULES.md §15 Multiplayer, §16 Showdown; rewrite §3.6 note
       (`RULES.md:375-379`); N-player wording in §1/§5/§7
-- [ ] BEHAVIORS.md, TESTING.md, README.md
-- [ ] r13–r15 atom tests; `mark-done` (r15-epic done)
+- [x] BEHAVIORS.md, TESTING.md, README.md
+- [x] r13–r15 atom tests; `mark-done` (r15-epic done)
 - [x] Fuzz: 3/4/5-player FFA, Showdown 1v2/1v3/1v4 with traitors
-- [ ] `examples/showdown.ts`
+- [x] `examples/showdown.ts`
 
 ## Card audit spec (Phase 3)
 
@@ -242,14 +242,17 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 
 - 2026-11-06 (cont.) — E1 `forEachPlayer { players: "opponents" }`, MP 3 `"controllerAndOpponent"`, E5 `anyPlayerMayPay { players: "opponents" }`; D4 created effects keep `opponentId` (area modifiers, scheduled effects, runtime replacements, hand-move redirects); E3 also binds the current battle's sides. Showdown engine: `table` zone, Allegiance dealing + redaction, Hero Deck / Temptation Pile, `claimHeroCards` / `heroDeckToTemptationPile` / `revealAllegiances`, `usableBy: "heroes"`, PlayerRef `"villain"`, selector `controller: "otherHero"` + `showdownPile`, `opponentCountAtStart`, `influencePerOpponent` / `countPerOpponent` / `develop.usesPerOpponent`, `daringGambit`. Fuzz (`multiplayer/fuzz.test.ts`, 18 real-deck games) found and fixed: eliminated battle side left a dangling battle continuation; seat swap at 3+ seats; autoplay could not answer trigger prompts (probe lacked the trigger queue) or distinct-name picks. Audit re-checked against printed text: a 251 · b 19 · c 35 · d 13. RULES.md §16 Multiplayer, §17 Showdown.
 
+- 2026-11-06 (cont.) — r13-multiplayer, r14-showdown, r15-epic all done (15/15 rules batches). r14 found three `claimHeroCards` mismatches, fixed: a playable claimed tactic must be played (SD 9), an unplayable one is removed at once (SD 10), the rest of a claim survives a tactic. The Evil Alliance and Slightly Less Evil Alliance re-encoded (full fidelity; clause tests converted from TODO; oracle games 501/502 re-recorded as an intended data change). Elimination re-stamps turns counted ahead; `startOfOpponentNextTurn` follows the bound opponent. RULES.md §16/§17, BEHAVIORS.md, README, `examples/showdown.ts`.
+
 ## Known follow-ups
 
+- SD 2 ("The Villain uses The Evil Alliance faction") is not enforced at setup: any faction may sit in the Villain's seat (house-rule friendly). Enforce with a faction flag if wanted.
+- `usesPerTurn` on the shared faction's abilities is keyed per card + ability, not per Hero (equivalent while they are own-turn only).
+- Slightly Less Evil Alliance's TRUE COLORS uses `eventPlayerIs: "controller"` (the shared card is the Villain's), so it also ticks — harmlessly — in a classic game.
 - Audit re-check findings to fold into per-card fixes: "both players" cards encoded as all-player `forEachPlayer` (Ashes of Zenobia, Research Investment, Spastic Tentacles, Tremor Engine, Hideous Hexapede de6f18) → `controllerAndOpponent`; printings that differ (Epic Smackdown 74da08, Lucky Bastard 451308, Brainbath 3bd6878a → fan-out; Mass Confusion da25a463 → picked player); Rocket Lawnchair `isActivePlayer opponent` → `not isActivePlayer controller`; noResponse cards printing singular "your opponent cannot respond" (Degenerate Molestation, Tactician Vacation, Voidal Replication) are d.
 
-- Predicted turn numbers (`untilTurn`, `restoreRuleSkips`) are stamped from the seating at creation; an elimination afterwards can shift them by a turn. Re-stamp on elimination.
 - A deploy made by an effect (no action to name an opponent) whose text needs one takes the first candidate in turn order; should prompt.
 - An eliminated player's own in-flight pending choice is still theirs to answer (not cleared).
-- `startOfOpponentNextTurn` scheduling still means "the turn right after scheduling, if an opponent's"; with a bound opponent it should be that opponent's next turn.
 
 ## Open questions
 
