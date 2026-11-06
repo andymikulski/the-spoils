@@ -6878,7 +6878,9 @@ export class SpoilsEngine {
           targets: targetDeclarations,
           costs: this.getTacticCosts(definition, mode),
           condition: tacticCondition,
-          effects: definition.type === "tactic" ? this.getTacticEffects(definition, mode) : []
+          effects: definition.type === "tactic" ? this.getTacticEffects(definition, mode) : [],
+          // "Both players switch seats": the card is played against one opponent.
+          ...(this.continuousAbilitiesOf(definition).some(ability => ability.swapsSides) ? { against: "opponent" } : {})
         },
         targetDeclarations,
         announced?.opponentId
@@ -8906,6 +8908,8 @@ export class SpoilsEngine {
         // play, so it never enters play: it goes to its owner's discard pile.
         this.moveCard(card.id, "discard");
       } else if (card.zone === "deploying") {
+        // The opponent it was played against stays with it while in play (D4).
+        if (item.context.opponentId !== undefined) card.chosenOpponentId = item.context.opponentId;
         this.moveCard(card.id, "play");
 
         if (definition.attachTo) {
@@ -17824,18 +17828,37 @@ export class SpoilsEngine {
   }
 
   /**
+   * The two players a seat swap exchanges (MP 3 "both players"): the first
+   * live source's controller and the opponent it was played against (or that
+   * controller's only opponent). `undefined` when no such pair exists.
+   */
+  private seatSwapPair(): [PlayerId, PlayerId] | undefined {
+    let pair: [PlayerId, PlayerId] | undefined;
+    this.forEachActiveContinuous((source, ability) => {
+      if (pair || !ability.swapsSides) return;
+      const sole = opponentsOf(this.state, source.controllerId);
+      const other =
+        source.chosenOpponentId !== undefined && isLiving(this.state, source.chosenOpponentId)
+          ? source.chosenOpponentId
+          : sole.length === 1
+            ? sole[0]
+            : undefined;
+      if (other !== undefined) pair = [source.controllerId, other];
+    });
+    return pair;
+  }
+
+  /**
    * Brings `GameState.seatSwap` in line with `seatSwapWanted()` — applying the
    * swap when the first source enters play, lifting it when the last one
    * leaves. Returns whether anything changed.
    */
   private syncSeatSwap(): boolean {
     if (!this.mayHaveSeatSwapSource()) return false;
-    // "Both players switch seats" is a two-player exchange: with three or more
-    // players still in the game it does nothing (engine-derived, Q-MP2).
-    const wanted = this.seatSwapWanted() && livingSeats(this.state).length === 2;
+    const pair = this.seatSwapWanted() ? this.seatSwapPair() : undefined;
     const swapped = this.state.seatSwap !== undefined;
-    if (wanted === swapped) return false;
-    if (wanted) this.applySeatSwap();
+    if ((pair !== undefined) === swapped) return false;
+    if (pair) this.applySeatSwap(pair);
     else this.liftSeatSwap();
     return true;
   }
@@ -17846,18 +17869,20 @@ export class SpoilsEngine {
    * exchange their `factionId` / `influence` so "your faction" follows
    * control. A card that "cannot be taken control of" keeps its controller.
    */
-  private applySeatSwap(): void {
+  private applySeatSwap(pair: [PlayerId, PlayerId]): void {
+    const [a, b] = pair;
     const exchanged: SeatSwapState["exchanged"] = [];
     for (const card of Object.values(this.state.cards)) {
       if (card.zone !== "play") continue;
+      if (card.controllerId !== a && card.controllerId !== b) continue;
       if (this.hasRestriction(card.id, "cannotBeTakenControl")) continue;
       exchanged.push({ cardId: card.id, previousControllerId: card.controllerId });
     }
     for (const { cardId, previousControllerId } of exchanged) {
-      this.reassignControl(cardId, this.soleOtherSeat(previousControllerId));
+      this.reassignControl(cardId, previousControllerId === a ? b : a);
     }
-    this.exchangeFactionSeats();
-    this.state.seatSwap = { exchanged };
+    this.exchangeFactionSeats(a, b);
+    this.state.seatSwap = { exchanged, players: [a, b] };
     this.emit({ type: "seatsSwapped", swapped: true });
   }
 
@@ -17871,20 +17896,22 @@ export class SpoilsEngine {
     const swap = this.state.seatSwap;
     this.state.seatSwap = undefined;
     if (!swap) return;
+    const [a, b] = swap.players ?? (this.state.turnOrder.slice(0, 2) as [PlayerId, PlayerId]);
     for (const { cardId, previousControllerId } of swap.exchanged) {
       const card = this.state.cards[cardId];
       if (!card || card.zone !== "play") continue;
-      if (card.controllerId === this.soleOtherSeat(previousControllerId)) {
+      if (card.controllerId === (previousControllerId === a ? b : a)) {
         this.reassignControl(cardId, previousControllerId);
       }
     }
-    this.exchangeFactionSeats();
+    this.exchangeFactionSeats(a, b);
     this.emit({ type: "seatsSwapped", swapped: false });
   }
 
-  /** Swap which faction (and influence pool) each of the two players holds. */
-  private exchangeFactionSeats(): void {
-    const [first, second] = Object.values(this.state.players);
+  /** Swap which faction (and influence pool) the two players hold. */
+  private exchangeFactionSeats(a: PlayerId, b: PlayerId): void {
+    const first = this.requirePlayer(a);
+    const second = this.requirePlayer(b);
     [first.factionId, second.factionId] = [second.factionId, first.factionId];
     [first.influence, second.influence] = [second.influence, first.influence];
   }
@@ -20092,6 +20119,7 @@ export class SpoilsEngine {
       // Tokens / counters vanish when a card leaves play; a card that comes
       // back is a new object with none (CR 409.2).
       card.counters = {};
+      delete card.chosenOpponentId;
       this.lethalDamageCause.delete(cardId);
       // Snapshot the card's own links before clearing them, so a "when this
       // card leaves play" trigger (which may resolve later, behind an event
@@ -24727,13 +24755,6 @@ export class SpoilsEngine {
     this.state.endingTurnFor = undefined;
     this.state.startingTurnFor = undefined;
     this.passTurn(activeId);
-  }
-
-  /** The one other seat at a table of two living players — for the two-player-only constructs (seat swaps). */
-  private soleOtherSeat(playerId: PlayerId): PlayerId {
-    const others = otherLivingSeats(this.state, playerId);
-    assert(others.length === 1, "This effect needs exactly two players left in the game.");
-    return others[0];
   }
 }
 

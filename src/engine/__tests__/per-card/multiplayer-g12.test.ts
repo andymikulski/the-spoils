@@ -1206,27 +1206,42 @@ describe("faction rules naming \"your opponent\" reach every opponent (D9)", () 
   });
 });
 
-describe("Emergency Obfuscation - \"both players switch seats\" (RULES.md Q-MP2: engine-derived, two living players only)", () => {
+describe("Emergency Obfuscation - \"both players switch seats\" (MP 3: the controller and the opponent it was played against)", () => {
   const OBFUSCATION = ["9df5c987-d2c0-45d4-86ae-1d487cc7f937", "1999770c-5f2d-415d-8da1-8efe44ef3e41"];
 
   for (const oid of OBFUSCATION) {
-    test(`${oid.slice(0, 6)}: with three players at the table nothing is swapped; with two it is`, () => {
-      const play = (seats: typeof SEATS) => {
-        const built = buildGame({
-          players: seats,
-          cards: [{ key: "eo", def: printing(oid), owner: "p1", zone: "hand" }, ...bank("deception", 3), fighter("m1", "p1"), fighter("m2", "p2")]
-        });
-        built.engine.perform({ type: "playCard", playerId: "p1", cardId: built.id("eo") } as never);
-        resolvePendingResponses(built.engine);
-        return built;
-      };
-      const three = play(SEATS);
-      assert.equal(three.engine.state.seatSwap, undefined);
-      assert.equal(three.engine.state.cards[three.id("m1")].controllerId, "p1");
-      assert.equal(three.engine.state.cards[three.id("m2")].controllerId, "p2");
-      const two = play(ONE_ON_ONE);
-      assert.notEqual(two.engine.state.seatSwap, undefined);
-      assert.equal(two.engine.state.cards[two.id("m1")].controllerId, "p2");
+    test(`${oid.slice(0, 6)}: with three players it names an opponent and swaps seats with that one player only`, () => {
+      const built = buildGame({
+        players: SEATS,
+        cards: [
+          { key: "eo", def: printing(oid), owner: "p1", zone: "hand" },
+          ...bank("deception", 3),
+          fighter("m1", "p1"),
+          fighter("m2", "p2"),
+          fighter("m3", "p3")
+        ]
+      });
+      assert.throws(
+        () => built.engine.perform({ type: "playCard", playerId: "p1", cardId: built.id("eo") } as never),
+        /Choose which opponent/
+      );
+      built.engine.perform({ type: "playCard", playerId: "p1", cardId: built.id("eo"), opponentId: "p3" } as never);
+      resolvePendingResponses(built.engine);
+      assert.deepEqual(built.engine.state.seatSwap?.players, ["p1", "p3"]);
+      assert.equal(built.engine.state.cards[built.id("m1")].controllerId, "p3");
+      assert.equal(built.engine.state.cards[built.id("m3")].controllerId, "p1");
+      assert.equal(built.engine.state.cards[built.id("m2")].controllerId, "p2", "the third player is untouched");
+    });
+
+    test(`${oid.slice(0, 6)}: with two players it swaps with the only opponent, unnamed`, () => {
+      const built = buildGame({
+        players: ONE_ON_ONE,
+        cards: [{ key: "eo", def: printing(oid), owner: "p1", zone: "hand" }, ...bank("deception", 3), fighter("m1", "p1"), fighter("m2", "p2")]
+      });
+      built.engine.perform({ type: "playCard", playerId: "p1", cardId: built.id("eo") } as never);
+      resolvePendingResponses(built.engine);
+      assert.notEqual(built.engine.state.seatSwap, undefined);
+      assert.equal(built.engine.state.cards[built.id("m1")].controllerId, "p2");
     });
   }
 });

@@ -2048,8 +2048,9 @@ fall together as the last ones draw.
 
 **Faction rules naming "your opponent" (D9).** The Knitting Coalition's
 STARTING DRAW and DEVELOP overrides and The Union of Unextraordinary Miners'
-top-up reach every opponent. Emergency Obfuscation's seat swap works only
-while exactly two players remain (engine-derived, Q-MP2). Bidding (Auction
+top-up reach every opponent. Emergency Obfuscation's "both players switch
+seats" swaps its controller with the opponent it was played against (MP 3;
+the card keeps that opponent, `chosenOpponentId`); everyone else is untouched. Bidding (Auction
 House) goes clockwise through every living player; a player who passes is out.
 
 ## 17. Showdown (docs/rules/showdown-rules.md)

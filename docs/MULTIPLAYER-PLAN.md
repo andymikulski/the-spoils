@@ -297,7 +297,7 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 
 ## Open questions
 
-- Q-MP2: Emergency Obfuscation ("both players switch seats") at a table of three or more — engine-derived for now: it does nothing while more than two players remain. Alternative: swap with an opponent chosen as it enters play.
+- Q-MP2 (resolved 2026-11-06): Emergency Obfuscation swaps its controller with the opponent it was played against (MP 3 "both players"); the table matrix confirmed this keeps every two-player test identical.
 
 - Q-MP1: Allegiance deck composition (D2 placeholder default: Heroes − 1
   loyal cards + 1 traitor card for 3+ Heroes, all loyal for 2 Heroes?) —

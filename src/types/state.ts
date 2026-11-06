@@ -155,6 +155,13 @@ export interface CardInstance {
   heroCard?: boolean;
 
   /**
+   * The opponent this card was played against, kept while it is in play: a
+   * card whose standing text needs one opponent (Emergency Obfuscation's
+   * "both players switch seats") reads it instead of every opponent (D4).
+   */
+  chosenOpponentId?: PlayerId;
+
+  /**
    * The turn number on which this card started the turn in play under its
    * current controller. AGGRO ignores this restriction.
    */
@@ -1230,6 +1237,8 @@ export interface SeatSwapState {
    * later was never part of the exchange and keeps whoever controls it.
    */
   exchanged: Array<{ cardId: CardInstanceId; previousControllerId: PlayerId }>;
+  /** The two players who switched seats (MP 3: the source's controller and the opponent it was played against). Absent in a format-1 save: the first two seats. */
+  players?: [PlayerId, PlayerId];
 }
 
 export interface GameState {
