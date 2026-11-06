@@ -1,0 +1,248 @@
+# Locations
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+95 entries.
+
+- **53cur17y 5y573m** _(Seed Saga)_
+  - subtitle: protecting Acrolos so you don't have to
+  - flavor: You see, female 31v35 usually don't leave their homeland Nidia. So why did this one leave? To be a ninja? A super spy? That's not very 31f like. I'm calling shenanigans.
+- **Abandoned Testing Complex** _(Shade of the Devoured Emperor)_
+  - subtitle: technological treasure trove
+  - flavor: Buried deep beneath layers of Clockman's history, it is not clear who had built it or why. The archives in Acrolos had no record of this place, but yet they found Kaiser prototypes, node terminals, all manner of the most advanced voidal technologies. The greatest prize of all, however, was the Testudine. Surely that was what the Emperor's ghost had meant for them to find.
+- **Acrolosian Outpost #30016968A** _(Ungodly Mess)_
+  - subtitle: good deal for you
+  - flavor: "We got your thingamajigs, your whoseawhatsits, your motronjuices, your dynamamites-- everything you need to watch the carnage and go home in style."
+- **Ancient and Disreputable Law Office** _(Shade of the Devoured Emperor)_
+  - subtitle: exactly as advertised
+  - flavor: Have you or a loved one recently got blowed up? If so, visit the offices of Dewey, Cheatem, and Howe. Get what's yours!
+- **Apparition Alley** _(Ungodly Mess)_
+  - subtitle: just south of the torchlight district
+  - flavor: "Padamose wandered the streets of Clockman wondering how his beloved Marmothoa had given rise to such a vile and dangerous place."
+- **Arcana Department** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: where suspicion breeds confidence
+  - flavor: "Take two lefts, an up, and a sideways...it's the third door on your right."
+- **Armored Keep** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: protected store of gold, jewels, and catnip
+- **Assimilation Center** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: these are lost drunken men who don't care
+  - flavor: "And these are lost drunken men who do care! And these are men who aren't lost and care, but don't drink."
+- **Auction House** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: get 'em while they're tasty!
+- **Barracks of Precipitancy** _(Shade of the Devoured Emperor)_
+  - subtitle: less thinking, more killing
+- **Carnival Funhouse** _(Ungodly Mess)_
+  - subtitle: clowns, man. freaking clowns.
+  - flavor: Available for children's parties, bar mitzvahs, and funerals.
+- **Cathédrale de Mau** _(Holy Heist)_
+  - subtitle: money is god, greed is king, and corruption runs the rest
+- **Clandestine Resort** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: ah...at last! more pudding!
+  - flavor: Every Mau secretly desires their own private island, where the feasts are endless and the beaches are littered with catnip.
+- **Clockman Skydocks** _(Shade of the Devoured Emperor)_
+  - subtitle: look to the skies
+  - flavor: One of the few places where it's just about 'getting it done'.
+- **Cryptic Athenaeum** _(Seed)_
+  - subtitle: do you have "Bartholomew and the Oobleck"...?
+- **Cryptic Athenaeum** _(Seed Saga)_
+  - subtitle: do you have a book called "How to Beat Barney?"
+- **Department of Rejections** _(Seed Saga)_
+  - subtitle: nope
+  - flavor: PLEASE TRY AGAIN NEVER
+- **Dimensional Rift** _(1st Edition Part 2)_
+  - subtitle: portal to anywhere
+  - flavor: "I just teleported in from Lugubria, and boy are my arms tired!"
+- **Direstock Stronghold** _(Ungodly Mess)_
+  - subtitle: a nigh-impregnable fortress-city complex
+- **Doarden Flee Market** _(Ungodly Mess)_
+  - subtitle: where traitors go on sale every Sunday
+- **Domain of Depravity** _(Seed, Seed Saga)_
+  - subtitle: where's waldo now?
+  - flavor: "These cutaneous lichens will be delicious in my soup!"
+- **Dragon's Quarters** _(1st Edition)_
+  - subtitle: dragonomically designed
+  - flavor: "Excuse me?...Is this barracks handicap acce...Oh no! ARGH! NO! <blumph> <mumph> crunch, crunch, crunch, crunch, munch...gulp...<BURP>... "
+- **Dragon's Quarters** _(2nd Edition, Open Beta)_
+  - subtitle: dragonomically designed
+  - flavor: "Excuse me?...Is this barracks handicap acce...Oh no! ARGH! NO! <blumph> <mumph> crunch, crunch, crunch, crunch, munch...gulp...<BURP>..."
+- **Drill Garrison** _(Seed, Seed Saga)_
+  - subtitle: now turn to the left and stab stab stab!
+- **Eidolic Cove** _(Ungodly Mess)_
+  - subtitle: in the jungle-choked northern region of the gidean land mass
+  - flavor: Goru-Goru Gidea - Home to exotic wildlife, lost cities, bloodthirsty cannibals and warlike tribes of barbarous Lesser Mau.
+- **Escrow Office** _(1st Edition Part 2)_
+  - flavor: Almost as big as Alex's house and just as real.
+- **Escrow Office** _(2nd Edition)_
+  - subtitle: wow, it really echoes in here
+- **First Unified Market of Abstract Secure Theoreticals** _(1st Edition Part 2, 2nd Edition)_
+  - flavor: A location so ginormous it took three artists to build.
+- **Forbidden Bibliotheca** _(Holy Heist)_
+  - subtitle: it giveth and taketh away
+- **Fornicaves** _(Seed 3)_
+  - flavor: This was an actual thing. Look it up.
+- **Gambling Den** _(Seed)_
+  - subtitle: smart money's on the cobra
+  - flavor: Poking it's a single, stroking it's a double. To get a triple...well, let's just say you don't use your hands.
+- **Gambling Den** _(Seed Saga)_
+  - subtitle: smart money's on the cobra
+  - flavor: Poking it's a single, stroking it's a double. To get a triple... well, let's just say you don't use your hands.
+- **Geldale, City-Fortress** _(Ungodly Mess)_
+  - subtitle: counter-imperial army stronghold
+  - flavor: Located in the forests of Yenassa at the base of Elzibeth's Peak, the rangers of Geldale have protected the forest against monsters, invasions and monstrous invasions for generations.
+- **Gloamspike-Gosche Bridge** _(Shade of the Devoured Emperor)_
+  - subtitle: the arcane crossing
+  - flavor: An invisible bridge stretches the passage between mainland Clockman and the isolated towers of the Clockman Arcanology Branch
+- **Gold Summit** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: who's your daddy?
+  - flavor: Randolph von Macavowitz Spitoon III, Ltd. always enjoys showing his money who's boss.
+- **Gosche's God Amplification Chamber** _(Ungodly Mess)_
+  - subtitle: where the god goes, so goes eldridge
+- **Gosche's Restoration Fortress** _(Ungodly Mess)_
+  - subtitle: regenerative voidal experimentation
+- **Gosche's Retained Earnings Vault** _(Ungodly Mess)_
+  - subtitle: hidden on goru-goru gidea for safekeeping
+- **Gosche's Solar Citadel** _(Ungodly Mess)_
+  - subtitle: life from the void
+- **Gosche's Spynarium** _(Ungodly Mess)_
+  - subtitle: hidden by magick and ritual
+- **Hall of Conventions** _(Seed, Seed Saga)_
+  - subtitle: let's not go there...it is a silly place
+- **Hangdog Alley** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: refuge of outcasts
+  - flavor: Its confusing design and plentiful exits make Hangdog Alley the perfect retreat for those wishing to avoid the law. Justice is handled by the locals and traitors are dealt with swiftly.
+- **Heist Training Grounds** _(Seed, Seed Saga)_
+  - subtitle: if you die here, you'd die twice out there
+- **High Court of Demands** _(Seed, Seed Saga)_
+  - subtitle: but the people want us to be rich
+  - flavor: "For the last time, Senator Winterbottom, your proposed self-enrichment bill is denied!"
+- **Hypnotic Plafond** _(1st Edition, Open Beta)_
+  - subtitle: pretty...colors...
+  - flavor: Mirgla remained entranced by the beautiful imagery. Little did he know the mocking of his life was mere moments away.
+- **Imperial Palace** _(Seed Saga)_
+  - subtitle: it's alright i guess
+  - flavor: It's where I keep my stuff.
+- **Intriguing Mezzanine** _(Seed 3)_
+  - subtitle: you're invited to our fundraiser... we insist...
+- **Lab of Luxury** _(Seed 2, Seed Saga)_
+  - subtitle: at the cutting edge of extravagance
+- **Lodge Dock Florist** _(Seed 2, Seed Saga)_
+  - subtitle: "hoe-cake, murder."
+  - flavor: Mural: Yonder nor sorghum stenches shut ladle gulls stopper torque wet strainers.
+- **Lordly Stables** _(Seed Saga)_
+  - subtitle: four things greater than all things are
+  - flavor: Women and Horses and Power and War.
+- **Luxurious Gaming Establishment** _(Seed, Seed Saga)_
+  - subtitle: kick back and stay a while
+  - flavor: Where the music stinks, and they water the drinks. Where the girlies dance in their underpants. Where you see their butt, and their trap stays shut.
+- **Marduun Baitings and Loan** _(Seed)_
+  - subtitle: come on in! you're pre-pre-qualified!
+- **Marduun Baitings and Loan** _(Seed Saga)_
+  - subtitle: no credit, no collateral, no problem
+  - flavor: Just sign here where it says we get to turn your corpse into a mindless zombie when you die.
+- **Marduun Ruins** _(Holy Heist)_
+  - subtitle: jewel of a dead empire
+  - flavor: 150 years have passed since Elzibeth and Gloamspike delivered Marduun into the hands of the Thabbashite hordes. Those years have not been kind. The Thabbashites have established Marduun as a perverse mecca. Formerly a shining beacon of power and civilization, Marduun has become a mausoleum of twisted masonry and tragic grandeur, overrun by tentacled god-things and their adulatory attendants.
+- **Mau Caravan** _(Seed Saga)_
+  - subtitle: the gilded promenade
+  - flavor: "In its last days, the Marmothoan Empire became deeply indebted to mixed-blood relatives of the Emperor - the Mau. Enraged and without suitable recourse, Padamose declared all debts to 'housecats' absolved, thereby forcing their immediate flee across the desert. Their destination? A small mining town on the coast called Clockman..." / — Marduun, a Forgotten History
+- **Microdefense Autosystem** _(Holy Heist)_
+  - subtitle: a fun way to play
+  - flavor: This is our fort. No 80y5 allowed.
+- **Micromajig Factory** _(1st Edition)_
+  - subtitle: produces micromajigs and/or milkshakes
+- **Micromajig Factory** _(Open Beta)_
+  - subtitle: it's a small world, after all
+- **Micromajig Recycling Station** _(Shade of the Devoured Emperor)_
+  - subtitle: preserving Lugubria for a better tomorrow
+  - flavor: This product made with at least 60% post-consumer majig parts.
+- **Mighty Ballista** _(Seed Saga)_
+  - subtitle: ready the MISS-ILE!
+- **Mirthless Altar** _(Seed Saga)_
+  - subtitle: leave the laughter at the door
+- **Mud Prison** _(Seed Saga)_
+  - subtitle: erected to hold in Gideon's sons
+  - flavor: For their safety. And ours.
+- **Narrow Passage** _(Seed Saga)_
+  - subtitle: the perfect place for an ambush
+- **Personal God Shrine** _(Holy Heist)_
+  - subtitle: unrequited reverence
+  - flavor: At first, I found it curious the Thabbashites devoted themselves to worshipping beings that did not give them the least notice. Later, I realized this hardly distinguished them from any other cult.
+- **Phantasmagoric Tollbooth** _(Holy Heist)_
+  - subtitle: they had big axes, so we decided to pay
+- **Pony Slaystation** _(Seed 3)_
+  - subtitle: whoa... great graphics!
+  - flavor: I love rainbows and fountains... of blood.
+- **Port Manteau** _(Seed 3)_
+  - flavor: "We don't take kindly to strangers 'round here!"
+- **PP&E** _(Ungodly Mess)_
+  - subtitle: property plunder and exploitation
+- **Recollection Bazaar** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: "that time I ate too much pie" is always popular
+- **Recycling Scheme Facility** _(Shade of the Devoured Emperor)_
+  - subtitle: reduce, reuse, reanimate
+  - flavor: It just so happens that your friend here is only "MOSTLY dead." There's a big difference between "mostly dead" and "all dead." "Mostly dead" is slightly alive. With "all dead," well, with "all dead" there's usually only one thing you can do: go through his clothes and look for loose change.
+- **Reveille Tower** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: echoing the anthems of tyranny
+  - flavor: Its chilling sound slices the morning air like a razor-sharp sword. The eerie melody foreshadows the dawn of a dark age.
+- **Thabbashite Temple** _(Holy Heist)_
+  - subtitle: anything but inconspicious
+- **The Currency Bazaar** _(Seed, Seed Saga)_
+  - subtitle: even honesty is a financial speculation
+- **The Great Wall of Keeping Stuff Out** _(Seed 3)_
+  - flavor: Known by the tribal people as the Shrine of Greanpatoot.
+- **The Ministry of Other Smaller Ministries** _(1st Edition, 2nd Edition, Open Beta)_
+  - flavor: "I told you to stop putting your departments on my side of the table!"
+- **The Poshernacle** _(Seed 2)_
+  - flavor: A large portable tent used for prayer, worship, and kicking back by the pool.
+- **The Poshernacle** _(Seed Saga)_
+  - subtitle: the perfect place to pause a pilgrimage
+  - flavor: A large portable tent used for prayer, worship, and kicking back by the pool.
+- **Theocratic Senate of Marduun** _(Seed)_
+  - subtitle: protecting your right to do what we say
+  - flavor: Terrifying machine of state, as finite as it is deterministic.
+- **Theocratic Senate of Marduun** _(Seed Saga)_
+  - subtitle: we cannot speak for god
+  - flavor: We just do the paperwork and take his bribes.
+- **Thieving Casino** _(Holy Heist)_
+  - subtitle: the house always wins
+- **Time Portal** _(Seed)_
+  - subtitle: moose? where we're going, we don't need moose.
+  - flavor: 7hr33 – 025/165, 108/200, 099/165, 001/200, 083/200
+- **Time Portal** _(Seed Saga)_
+  - subtitle: it's just a jump to the left
+  - flavor: And then a step to the right, with your hands on your hips, your bring your knees in tight.
+- **Time Traveler Tourist Trap** _(Seed 2)_
+  - subtitle: an astounding alliterative accomplishment
+  - flavor: Yeah, kallisti did this too. But he's got enough credits.
+- **Time Traveler Tourist Trap** _(Seed Saga)_
+  - subtitle: live the glory days
+  - flavor: Then re-live them! BOGO deal.
+- **Torchlight District** _(Shade of the Devoured Emperor)_
+  - subtitle: wretched hive of scum and villainy
+  - flavor: Butcher in front, don't ask about the back.
+- **Torchlight Safehouse** _(Holy Heist)_
+  - subtitle: nest for ne'er-do-wells
+  - flavor: No key can be bought for money or love, only stolen from the pocket of a fellow thief.
+- **Treasure Brokerage** _(Seed, Seed Saga)_
+  - subtitle: thank god for "buffet pants"
+- **Underhanded Hang-Out** _(Shade of the Devoured Emperor)_
+  - subtitle: congregation of the criminally-inclined
+  - flavor: Whatcha buyin', stranger?
+- **Vast Mastabatorium** _(Seed 2, Seed Saga)_
+  - subtitle: "over 1 million served"
+  - flavor: "I'll be done in a minute!"
+- **Voidal Nullification Chamber** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: key component of ecto-distillation
+- **Voidal Observatory** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: precisely detects irrelevant details
+- **Wasteland** _(Ungodly Mess)_
+  - subtitle: in the end, everything turned to dust
+  - flavor: The Blades escaped, just barely, but left behind a terrorscape filled with unspeakable horrors.
+- **Watchtower** _(Seed Saga)_
+  - subtitle: there must be some kind of way out of here
+  - flavor: Said the joker to the thief.
+- **Workshop** _(Seed, Seed Saga)_
+  - subtitle: i has a hammer
+- **Zenobia's Tower** _(Ungodly Mess)_
+  - subtitle: on the spectral face of mt. mulrich...
+  - flavor: ...Zenobia researches geomagical activity.

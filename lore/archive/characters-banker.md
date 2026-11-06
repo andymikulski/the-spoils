@@ -1,0 +1,389 @@
+# Characters — Banker
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+141 entries.
+
+- **Abecedarian Investor** _(Holy Heist; investor)_
+  - subtitle: he's got you covered
+  - flavor: There's a reason he's smiling. Look it up.
+- **Addlebrained Defense Attorney** _(Holy Heist; lawyer, necromorph)_
+  - subtitle: he'll have your brains on a platter
+  - flavor: I concur and move to strike. Or both! HAHA! I don't know nothin' about how I do anything.
+- **Amortized Straw Man** _(1st Edition, Open Beta; straw man)_
+  - subtitle: who needs a brain with all this money?
+  - flavor: We need to affect a proactive paradigm shift by way of ubiquitous partnerships with channel suppliers and forward-thinking opinion leaders in the equity growth vertical.
+- **Avuncular Merlion** _(Seed, Seed Saga; merlion)_
+  - subtitle: rescue pirates can, la
+  - flavor: "But keep some for uncle, la."
+- **Balthassar Gristwalter** _(Seed; politician, mau)_
+  - subtitle: parties so swanky the emperor is ashamed to attend
+  - flavor: "You know what you do, you buy the wine in Geldale, then you get on the train and you go to Yenassa and you buy a manchild, then you eat the manchild and you drink the wine and you look at the ocean and it is a beautiful thing... mwah!"
+- **Balthassar Gristwalter** _(Seed Saga; politician, mau)_
+  - subtitle: parties so swanky the emperor is ashamed to attend
+  - flavor: "You know what you do, you buy the wine in Geldale, then you get on the train and you go to Yenassa and you buy a manchild, and then you eat the manchild and you drink the wine and you look at the ocean and it is a beautiful thing... mwah!"
+- **Beatrix Winterbottom** _(1st Edition, 2nd Edition, Open Beta; mau)_
+  - subtitle: aggressive and dominant closer of deals
+  - flavor: She doesn't care about you, she's just looking at your assets.
+- **Black Scourge of the Brine** _(Seed, Seed Saga; pirate, mercenary, mau)_
+  - subtitle: you mean oil?
+  - flavor: "No, I mean black scourge of the brine!"
+- **Blanching Butcher** _(1st Edition, Open Beta; mercenary, assassin)_
+  - subtitle: you got served
+  - flavor: "Waiter! Where's my soup!?"
+- **Caboodling Gladhander** _(Seed, Seed Saga; mau)_
+  - subtitle: hey! great to see you ol' pal!
+- **Canny Bailiff** _(Holy Heist; attendant, lackey)_
+  - subtitle: you didn't see nothing
+  - flavor: So what if he didn't do it? Everyone's guilty of something.
+- **Caracal Morphnus** _(Seed Saga; seraphim, dragon)_
+  - subtitle: reputed to be twice as frightening as Vilghame was fierce
+- **Ceremonious Groomer** _(Seed 2; mau)_
+  - subtitle: "what was his name again?... Jean-Luc!"
+- **Ceremonious Groomer** _(Seed Saga; mau)_
+  - subtitle: licking perfection
+  - flavor: Occupational hazards include: thrush, leukoplakia, and fur balls.
+- **Chancellor of Reinstatement** _(Seed, Seed Saga; mau)_
+  - subtitle: repurposes the purposeless
+  - flavor: "You! You're a baker now. And you... a phlebotomist."
+- **Circumspect Hijacker** _(Seed, Seed Saga; pirate, mau)_
+  - subtitle: don't be alarmed, we're taking over the ship
+  - flavor: "Commandeer. We're going to commandeer that ship. Nautical term."
+- **Class Action Defender** _(1st Edition Part 2, 2nd Edition; lawyer, mau)_
+  - subtitle: because corporate giants have rights too
+  - flavor: "Is that everyone? Okay, your refund is right down that alley..."
+- **Club Mau Bouncer** _(1st Edition Part 2; mercenary, mau)_
+  - subtitle: there's no petting in the Catnip Room
+  - flavor: None.
+- **Concealed Goon** _(1st Edition, 2nd Edition, Open Beta; mercenary)_
+  - subtitle: he blends right in
+  - flavor: Sure is lucky there aren't any goons around. Yep, no goons here. I mean, it would really suck if a goon turned up. That would ruin everything. But, um... yeah. No goons.
+- **Crooked Appraiser** _(1st Edition Part 2; mau)_
+  - subtitle: seller shall repair any infestations
+  - flavor: ...including, but not limited to, broken roof shingles, smashed pipes, vandalism, cannon holes, and acts of arson, at seller's own expense.
+- **D3ck W4rd3n** _(Seed, Seed Saga; pirate, mercenary, mau)_
+  - subtitle: lolz t3h c4p741n 15 4 pu55y!!!!!11oneone
+  - flavor: 15 n00bz 0n 4 d34d d00dz ch357 roflmao 4nd 4 b07713 0f rum
+- **Dandy Day-Trader** _(1st Edition, 2nd Edition, Open Beta; mau)_
+  - subtitle: trafficker of metaphysical currency
+  - flavor: Mortimer made a fortune investing in the gravity IPO. Unfortunately, he lost it all on a rainy day due to a massive overextension in the sunlight market.
+- **Death Investor** _(Ungodly Mess; investor, mau)_
+  - subtitle: 100% guaranteed return on investment
+- **Deceitful Mortgage Underwriter** _(Holy Heist; lackey, mau)_
+  - subtitle: no cash, no credit, no problem
+- **Defalcating Accountant** _(Holy Heist; employee, mau)_
+  - subtitle: skimming off the top
+  - flavor: Fiduciary capacity maldoer. Fervent cash manipulator. Furry cat man. Falsifying clerk of misappropriation.
+- **Defense Attorney** _(1st Edition, Open Beta; lawyer)_
+  - subtitle: impassioned advocate for hire
+  - flavor: "Clearly my client is the victim here!"
+- **Derelict Seafarer** _(Seed 2, Seed Saga; pirate, mercenary, mau)_
+  - subtitle: it's hardly an ideal world
+  - flavor: In an ideal world, I'd have all 10 fingers on my right hand so my left hand would just be a fist for punching.
+- **Desperate Defender** _(Ungodly Mess; lawyer)_
+  - subtitle: what you know about bird law?
+- **Dowsing Cleric** _(Seed 2, Seed Saga; priest, mau)_
+  - subtitle: let's see...50 paces north...then 20 paces east...
+  - flavor: "If you can think of a better way to find water, I'd looove to hear it."
+- **Dwarvish Grimalkin** _(Seed Saga; mau)_
+  - subtitle: judge me by my size, do you?
+- **Embezzling Bookkeeper** _(1st Edition Part 2, 2nd Edition; employee, mau)_
+  - subtitle: your most profitable loss to date
+  - flavor: I should have hired this guy sooner. I especially like his "employer bonus" program.
+- **Emissary of Loot** _(Seed 2, Seed Saga; mau)_
+  - subtitle: it's your money. you paid for it.
+- **Enlightened Mau** _(Shade of the Devoured Emperor; mau, pacifist)_
+  - subtitle: agnostic ascetic
+  - flavor: Money is a terrible master, but an excellent servant.
+- **Entry-Level Employee** _(1st Edition Part 2, 2nd Edition; employee)_
+  - subtitle: now with 2% less chance of uprising!
+  - flavor: The default setting is "malinger," but you can reprogram it to "sabotage," "embezzle" or our newest feature, "hold out for more pay."
+- **Erotic Assassin** _(1st Edition, 2nd Edition; mercenary, assassin)_
+  - subtitle: violent and voluptuous
+  - flavor: "Now there's a wave of destruction that's easy on the eyes."
+- **Erotic Assassin** _(Open Beta; mercenary, assassin)_
+  - subtitle: violent and voluptuous
+  - flavor: Now there's a wave of destruction that's easy on the eyes.
+- **Eustace Padamose-Gristwalter** _(Shade of the Devoured Emperor; eustace, blade of questionable morality)_
+  - subtitle: the littlest litigator
+- **Expedition Advisor** _(Holy Heist; advisor)_
+  - subtitle: worth every penny
+  - flavor: I thought you said he was an intern.
+- **Expert Debater** _(Ungodly Mess; politician)_
+  - subtitle: need I say more?
+- **Fade of the Devoured Emperor** _(Ungodly Mess; ghost, mau)_
+  - subtitle: and now his watch had ended
+  - flavor: With the god gone and his mission fulfilled, Padamose drifted to his final rest.
+- **Fallen Quarter-Finalist** _(Shade of the Devoured Emperor; necromorph)_
+  - subtitle: he didn't make it to the semi-finals
+  - flavor: Fighting the fight, swinging the sword. / He slipped in the gore, a master no more. / He haunts the arena just looking for fights, / missing the cheers, the blood and the spotlights.
+- **Fiscal Intercessor** _(Seed, Seed Saga; mau)_
+  - subtitle: blessed be the moolah
+  - flavor: "May this moolah begat more moolah, and may that moolah also be ours. Let us give thanks for all that we have and all we shall take, and deliver our moolah from the taking of others."
+- **Flabbergasting Philosopher** _(Seed, Seed Saga; mau)_
+  - subtitle: what if there were no hypothetical questions?
+- **Foolhardy Desperado** _(Seed, Seed Saga; pirate, mau)_
+  - subtitle: i don't think he's coming back
+  - flavor: "I hope no one minds but I have no intention of facing this sober."
+- **Foreclosure Overseer** _(Ungodly Mess; employee, mau)_
+  - subtitle: FUMAST employee of the month six times running
+  - flavor: Especially reveered for his reality brokering and real-estate dealings.
+- **Fountain Diver** _(Seed, Seed Saga; mau)_
+  - subtitle: you see a fountain, i see an opportunity
+  - flavor: Wishes do come true, especially when they aren't yours.
+- **Framptle Tromwibbler, Lord of Bling** _(Seed 2; mau)_
+  - flavor: "I've made some empty promises in my life, but hands down... this was the most generous."
+- **Framptle Tromwibbler, Lord of Bling** _(Seed Saga; mau)_
+  - subtitle: peace is good for business
+  - flavor: War is also good for business.
+- **Frisky Fortunehunter** _(Seed Saga; pirate, mau)_
+  - subtitle: pirate in training
+  - flavor: "Argh matey! Jump off the plank! Heeheehehe!"
+- **Furtive Investor** _(1st Edition Part 2, 2nd Edition; investor, mau)_
+  - subtitle: i never invest without an exit strategy
+- **Gargoyle of Cathédrale de Mau** _(Holy Heist; dragon, mau, gargoyle)_
+  - subtitle: stone by day, warrior by night
+- **Ghostly Auditor** _(1st Edition, 2nd Edition, Open Beta; lackey, ghost)_
+  - subtitle: balancing your books from beyond the grave
+  - flavor: "You forgot to file form 37-Ohhhhh..."
+- **Ghosts of Loot** _(Ungodly Mess; ghost)_
+  - subtitle: shiny transcends death
+- **Goldmau Sacks Representative** _(Shade of the Devoured Emperor; mau, employee)_
+  - subtitle: doing god's work
+  - flavor: The first thing you need to know about Goldmau Sacks is that it's everywhere. Clockman's most powerful investment bank is a great vampire squid wrapped around the face of humanity, relentlessly jamming its blood funnel into anything that smells like money.
+- **Grandiose Resurrector** _(Seed 2; mau)_
+  - subtitle: come forth! lest yon nip go without cat.
+- **Grandiose Resurrector** _(Seed Saga; mau)_
+  - subtitle: who dares disturb my slumb- ooh, is that catnip?
+- **Great Mau General** _(Ungodly Mess; mau, soldier)_
+  - subtitle: imperial army mercenary
+  - flavor: A Mercenary Commander, conscripted under the Imperial Army due to his renown ferocity and expert tactics.
+- **Gus VanBaymaven** _(Seed 2; mau)_
+  - subtitle: "...and my scratchpostarium will go there..."
+- **Gus VanBaymaven** _(Seed Saga; mau)_
+  - subtitle: all this is mine now
+- **Hassan-i of Thabbash** _(Shade of the Devoured Emperor; assassin)_
+  - subtitle: the living gods call for acceptance of death
+  - flavor: The original Hashshashin.
+- **Hired Goons** _(1st Edition Part 2, 2nd Edition; mercenary, mau)_
+  - subtitle: goons. hired goons.
+- **Homewrecker** _(Shade of the Devoured Emperor; mau, assassin)_
+  - subtitle: assume the position
+  - flavor: Who's your momma?!!
+- **Intermittently Sneaky Lawyer** _(1st Edition, Open Beta; lawyer, mau)_
+  - subtitle: a little on the nose, don't you think?
+  - flavor: "We need a symbol. Something that says we're sneaky and a lawyer."
+- **Key Man** _(1st Edition Part 2, 2nd Edition; executive, mau)_
+  - subtitle: congratulations...you're our 23rd CEO!
+  - flavor: "Bruno here will uncork the bubbly when you reach altitude."
+- **Mafia Lawyer** _(1st Edition, 2nd Edition, Open Beta; mercenary, lawyer, mau)_
+  - subtitle: you're not innocent until he says so
+  - flavor: "You have the right to an attorney. If you cannot afford an attorney, Vinny and Brick there will break your kneecaps."
+- **Market Oracle** _(1st Edition Part 2, 2nd Edition; investor, mau)_
+  - subtitle: signs point to "buy"
+  - flavor: I have a sell order on Empire Impoverishments when the pendulum swings north.
+- **Mau “Consultant”** _(1st Edition, Open Beta; mercenary, mau)_
+  - subtitle: if you're buying, he's advising
+  - flavor: "My good lad, nothing could be more practical in battle than this marvelous jewel-encrusted dagger. As your trusted advisor and friend, I suggest you immediately buy three."
+- **Mau Strategist** _(Shade of the Devoured Emperor; mau, bureaucrat)_
+  - subtitle: conniving and cunning
+  - flavor: Always looking for the next task to increase his own bank account. He will risk it all just for a little more profit, even if "it all", isn't his 'it all' to risk.
+- **Mau Tough** _(1st Edition; mercenary, mau)_
+  - subtitle: he'll bill you for the blood you got on his suit
+  - flavor: "Well if you really want them dead, I suggest my $PLATINUM DEAL$ which includes a broken neck, two punctured lungs, a shattered hip, and a free disembowling all administered with the most extravagant bludgeons money can buy!"
+- **Mau Tough** _(2nd Edition; mercenary, mau)_
+  - subtitle: he'll bill you for the blood you got on his suit
+  - flavor: "Well if you really want them dead, I suggest my platinum deal which includes a broken neck, two punctured lungs, a shattered hip, and a free disembowling all administered with the most extravagent bludgeons money can buy!"
+- **Mau Tough** _(Open Beta; mercenary, mau)_
+  - subtitle: he'll bill you for the blood you got on his suit
+  - flavor: "Well if you really want them dead, I suggest my $PLATINUM DEAL$ which includes a broken neck, two punctured lungs, a shattered hip, and a free disembowling all administered with the most extravagent bludgeons money can buy!"
+- **Moneychanger** _(1st Edition Part 2; investor)_
+  - flavor: Don't forget to wipe your money.
+- **Moneychanger** _(2nd Edition; investor)_
+  - subtitle: don't forget to wipe your money
+- **Montgomery Blatherscythe** _(Seed, Seed Saga; mau)_
+  - subtitle: every corpse has its price
+  - flavor: "Oh, who's a gweedy wittle cadaver? Who wants a shiny?"
+- **Motivational Dancer** _(Holy Heist; dancer, mau)_
+  - subtitle: uh uh... no touchie
+- **Motivational Speaker** _(1st Edition Part 2; salesman)_
+  - subtitle: awaken the giant within
+  - flavor: "You too can unleash your inner strength and achieve even your wildest dreams! Now get out there, and foreclose on that orphanage!"
+- **Mr. Fetch** _(Shade of the Devoured Emperor; pluck, grifter)_
+  - subtitle: only finds what you didn't know you needed
+- **Mushroom Merchant** _(Shade of the Devoured Emperor; mau, merchant)_
+  - subtitle: it's dangerous to go alone, take this
+  - flavor: Buy something, will ya?
+- **Nasty Butler** _(1st Edition, 2nd Edition, Open Beta; lackey)_
+  - subtitle: please wait in the garden, sir
+  - flavor: "I'm ending this transmission." — L.G.
+- **Necromorph Bureaucrat** _(1st Edition, Open Beta; lackey, necromorph)_
+  - subtitle: can't I just speak to a live person?
+- **Officious Obstructionist** _(1st Edition Part 2; bureaucrat)_
+  - subtitle: towering maven of bureaucratic rule
+  - flavor: "I don't care what you're Lord of, the registration closes at 5 PM."
+- **Overinsured Figurehead** _(1st Edition Part 2, 2nd Edition; executive)_
+  - subtitle: he used to be so down to earth
+  - flavor: That new job title has really gone to his head. I don't like how he's always talking down to us these days.
+- **Padamose Cultists** _(Ungodly Mess; cultist)_
+  - subtitle: worshipping the undead
+  - flavor: Clockman is home to all manner of cults. It didn't take long before Padamose found himself at the center of one.
+- **Pandering Politician** _(Ungodly Mess; mau, politician)_
+  - subtitle: redistributing wealth
+- **Paralegal Prodigy** _(1st Edition, 2nd Edition, Open Beta; lawyer, mau)_
+  - subtitle: almost ready for the big time
+  - flavor: "Your Honor, I move for a full dismissal on the basis that the plaintiff is a doody head!"
+- **Pervasive Bodyguard** _(1st Edition; mercenary, mau)_
+  - flavor: One of Steve's weird-ass "vacation" snaps.
+- **Pervasive Bodyguard** _(2nd Edition; mercenary, mau)_
+  - subtitle: keeping a watchful eye
+  - flavor: Since the Clockman Guard is infamously corrupt. Mau often feel the need to contract private security from their own kind to safeguard their personal interests.
+- **Pettifogger** _(1st Edition, 2nd Edition, Open Beta; lawyer, mau)_
+  - subtitle: "and furthermore..."
+  - flavor: "Extended articulation of the mandatory invocation of the relevant amendment for incessant objection of forward motion of trial proceeding ad nauseum etc. etc."
+- **Pilgrimage Auditor** _(Seed, Seed Saga; mau)_
+  - subtitle: oh, you want to rest at that shrine over there?
+  - flavor: "I'm sorry, but I'll have to deduct points for that."
+- **Pinguid Bodyguard** _(Shade of the Devoured Emperor; mercenary, mau)_
+  - subtitle: big enough for two
+- **Portly Tradesmau** _(Seed; merchant, mau)_
+  - subtitle: you seem familiar. have I cheated you before?
+  - flavor: If by "junk" you mean "priceless artifacts" then I agree.
+- **Portly Tradesmau** _(Seed Saga; merchant, mau)_
+  - subtitle: you seem familiar. have i cheated you before?
+  - flavor: If by "junk" you mean "priceless artifacts" then I agree.
+- **Prehensile Pirate** _(Seed, Seed Saga; pirate, mau)_
+  - subtitle: it's like a long, furry finger
+  - flavor: Another tragic loss that could have been prevented by Dentu-Grip.
+- **President Model #16** _(Holy Heist; executive)_
+  - subtitle: always the right man for the job
+  - flavor: He can run your country or company, it just depends on the intelligence of your people.
+- **Pride of Goru-Goru Gidea** _(Ungodly Mess; ghost, vehicle)_
+  - subtitle: destined to wander the oceans
+  - flavor: A cursed mirror of the Yenassa Shipping, LLP.
+- **Property Condemner** _(Seed, Seed Saga; priest, mau)_
+  - subtitle: haunted? it's my lucky day!
+  - flavor: We thought the ghosts were sort of fun, but the priest kicked us out anyway. Something about the church taking care of it....
+- **Prophetic Assistant** _(Seed 2, Seed Saga; mau)_
+  - subtitle: indispensable purveyor of divination
+- **Prostitution Lobbyist** _(Seed; politician, mau)_
+  - subtitle: show some respect, it's the oldest profession
+  - flavor: Perhaps I could be persuaded to support your measure...provided your measure supports what's in my pants.
+- **Prostitution Lobbyist** _(Seed Saga; politician, mau)_
+  - subtitle: show some respect, it's the oldest profession
+  - flavor: Perhaps I could be persuaded to support your measure... provided your measure supports what's in my pants.
+- **Prudent Thug** _(2nd Edition; mercenary, investor)_
+  - subtitle: graduate from the hard knocks school of negotiation
+- **Public Defender Intern** _(Holy Heist; lackey, lawyer)_
+  - subtitle: at least you're not a slave
+  - flavor: If you were, you wouldn't be wearing clothes. More coffee!
+- **Pugnacious Publicist** _(1st Edition Part 2; publicist)_
+  - subtitle: time to issue a "full contact" press release
+  - flavor: "Here's one for your editor, too!"
+- **Purifying Priest** _(Seed, Seed Saga; priest, mau)_
+  - subtitle: looks haunted to me. we'll just have to burn it.
+  - flavor: "...and build a new church on the land. You know, to purify it. We'll be accepting donations in the fall."
+- **Purloinering Pirate** _(Shade of the Devoured Emperor; pirate)_
+  - subtitle: fly the unfriendly skies
+  - flavor: Hey can I see your watch? Whoa! Look at that fish!
+- **Randolph von Macovawitz Spitoon III, Ltd.** _(1st Edition Part 2, 2nd Edition; mau)_
+  - flavor: Randolph has acquired the rarified status of "limited liability person," which means he cannot be held responsible for his actions as long as he's acting in his own best interest.
+- **Real Estate Auctioneer** _(1st Edition Part 2, 2nd Edition; auctioneer)_
+  - subtitle: every home has its flaws
+  - flavor: "Do I hear 20,000? 20,000 for this lovely home with only a slight human infestation?"
+- **Recapitulating Apparition** _(1st Edition; ghost)_
+  - flavor: "Honestly, Frank, just pay for the damn piano already!"
+- **Recapitulating Apparition** _(2nd Edition; ghost)_
+  - subtitle: quiet down!
+  - flavor: "Honestly, Frank, just pay for the damn piano already!"
+- **Reluctant Hiree** _(1st Edition Part 2, 2nd Edition; employee)_
+  - subtitle: i dunno...it's shiny and all, but...
+- **Repo Man** _(1st Edition, 2nd Edition, Open Beta; lackey, mau)_
+  - subtitle: lackey of predatory lenders
+  - flavor: "Your dog is 17 bowls of kibble overdue on his mortgage."
+- **Resurrecting Necromorph** _(Holy Heist; mau, necromorph)_
+  - subtitle: stop calling me daisy
+  - flavor: "Yes, Ms. Daisy."
+- **Resurrection Technician** _(1st Edition, 2nd Edition, Open Beta; lackey)_
+  - subtitle: looks like the soup du jour was him, har har
+  - flavor: "My God! That's the chairman of Empire Impoverishments! Doesn't he realize he'll return as a necromorph?" / "It's what the will says. Pull the lever, Max."
+- **Samuel Gristwalter** _(1st Edition; lawyer, mau)_
+  - flavor: Every law has its price and you get what you pay for.
+- **Samuel Gristwalter** _(2nd Edition; lawyer, mau)_
+  - subtitle: every law has its price...
+  - flavor: ...and you get what you pay for.
+- **Siluriformes Flaxenscale** _(Shade of the Devoured Emperor; siluriformes, seraphim, dragon)_
+  - subtitle: avarice incarnate
+- **Skilled Negotiator** _(1st Edition, Open Beta; lawyer)_
+  - subtitle: throw in the mustache and we have a deal
+- **Slick Orator** _(Seed, Seed Saga; politician, mau)_
+  - subtitle: i don't do nuance
+  - flavor: "As you know, these are open forums, you're able to come and listen to what I have to say."
+- **Smokin' Hottie** _(Ungodly Mess; ghost)_
+  - subtitle: got a light?
+  - flavor: Come around here often, suga?
+- **Snooty Doorman** _(1st Edition Part 2, 2nd Edition; lackey)_
+  - subtitle: oh, i'm sorry sir
+  - flavor: "...you're just not our kind of people."
+- **Spurious Anthropologist** _(Holy Heist; advisor)_
+  - subtitle: just work with me here, look at all of this
+- **Swinish Elder** _(Seed 2; priest, mau)_
+  - subtitle: custodian of justice
+  - flavor: "The smell of sin is such a...delicious...aroma."
+- **Tad Disingenuous** _(1st Edition Part 2; lawyer, mau)_
+  - subtitle: hey, judge-baby, you look ravishing! rrrrowr!
+  - flavor: "I don't use the word 'hero' very often, but you sir...are the greatest hero in Mau history."
+- **Tad Disingenuous** _(2nd Edition; lawyer, mau)_
+  - subtitle: hey, judge-baby, you look ravishing! rrrowr!
+  - flavor: "I don't use the word 'hero' very often, but you sir...are the greatest hero in Mau history."
+- **Tax Attorney** _(1st Edition, 2nd Edition, Open Beta; lawyer, mau)_
+  - subtitle: ingenious protector of assets
+  - flavor: "What, this? Just some old junk Mr. Padamose purchased on debt and leased back to his holding company for a convertible note secured against funds owed for consultations with his subsidiary's equity partner's offshore capital advisory firm. Minus out the cost of maintenance, depreciation and interest and it's a crushing loss. He's just a poor old Mau with nothing to call his own but liens, liabilities and a spider or two."
+- **Temple Guardian** _(Seed, Seed Saga; priest, mau)_
+  - subtitle: blessed defender of sacred things
+  - flavor: I thought "arrow offering" day was next week...
+- **Thabbashite Deacon** _(Holy Heist; priest)_
+  - subtitle: the living gods call for collection
+  - flavor: The clergy of the Doarden tribes have developed an ingenious way of coercing the masses to give offerings. They fashion collection baskets from the skulls of recalcitrant Thabbashites and then voidally augment the skulls into monstrous shapes capable of biting.
+- **Thabbashite Financier** _(Shade of the Devoured Emperor; merchant)_
+  - subtitle: the living gods call for riches
+  - flavor: The value of gold transcends culture.
+- **Thabbashite Glutton** _(Ungodly Mess; fighter)_
+  - subtitle: unstoppable calories of doom
+- **The Brotherhood of the Mau** _(Seed Saga; advisor, politician, mau)_
+  - subtitle: they run the show
+  - flavor: Extorting empires since before it was cool.
+- **The Garbageman** _(1st Edition Part 2, 2nd Edition; lackey, mau)_
+  - subtitle: well, looky here! come to papa, baby!
+  - flavor: "...shake the plastic bag and do the twisty thing they do...the garbageman! Ohhh, the garbageman can!"
+- **Timid Mau** _(Shade of the Devoured Emperor; mau)_
+  - subtitle: don't be such a pussy
+  - flavor: Kitty gonna cry? Big kitty gonna cry?
+- **Undead Sword** _(Seed Saga; necromorph)_
+  - subtitle: bravery enslaved
+  - flavor: In death, nobility. In undeath, despair.
+- **Underpaid Ancestor** _(Seed, Seed Saga; ghost, mau)_
+  - subtitle: always pay your departed dearly
+  - flavor: "I wants my gold and rubies! I wants my crystal and pearls! Damn you, greedy children! I'll take you all instead!"
+- **Unfortunate Fortune Hunter** _(Ungodly Mess; mau, mercenary, hunter)_
+  - subtitle: left yenassa for adventure
+  - flavor: "Arcanist Lords amassed untold wealth as a result of the commodification of voidal humour. Untrusting of the banker Mau class and unable to protect his treasure in person, Gosche hid witch clocks throughout Goru-Goru Gidea to protect his riches. Witch clocks, portable ritual casting devices, are considered dangerous, are usually illegal, and have proven highly effective."
+- **Union Leader** _(1st Edition, 2nd Edition, Open Beta; mau)_
+  - subtitle: creator of the 7-day weekend
+  - flavor: "Hey! You can't lift that pillow! You need a Union Lifter, and a Union Lifter Assistant, Union Pillow Management, Union Pillow Fluffier..."
+- **Unloyal Necromorph** _(Holy Heist; necromorph, mercenary)_
+  - subtitle: in life he was the most loyal of mercenaries
+  - flavor: Dang it! Where's the off button?
+- **Unscrupulous Attendant** _(Seed, Seed Saga; attendant)_
+  - subtitle: i've guarded this door my entire life
+  - flavor: At last I can fulfill my lifelong dream of selling out.
+- **Vilghame Manewaft** _(Seed 3; vilghame, sword of great justice)_
+  - subtitle: He knows you ate his pudding.
+  - flavor: How can you have any pudding if you don't eat your meat?!
+- **War Racketeer** _(Ungodly Mess; mau, tough guy)_
+  - subtitle: "i'll take forty-over-thirty on the Living God getting blowed up!"
+- **Yenassa Shipping, LLP** _(Ungodly Mess; vehicle)_
+  - subtitle: Limited Liability Pirates
+  - flavor: But who sent them? Elizibeth's hired pirates would never tell of their queen.
+- **Yenassa Shipping, LLP** _(Ungodly Mess; vehicle)_
+  - subtitle: limited liability pirates

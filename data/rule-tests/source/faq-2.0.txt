@@ -1,0 +1,147 @@
+                                                         RULES FAQ
+
+The purpose of this document is to act as a quick "go-to" sheet for rules questions that may come up
+during a tournament. These are questions/card interactions that have come up frequently in
+tournaments and have been discussed frequently by judges. Many of the questions you will find here
+are likely to be asked by new/first time players and this document should serve as a quick way of
+providing them with answers. If an answer/ruling cannot be found in this document then it is likely to be
+a more obscure question and the Comprehensive Rules Reference should be consulted to find the
+answer.
+
+IMPORTANT RESOURCES TO USE IN CONJUNCTION WITH THIS DOCUMENT
+    · The Spoils Rulebook
+    · The Spoils Comprehensive Rules Reference
+    · The Spoils Tournament Policy
+    · The Spoils Penalty Guidelines
+    · The Spoils Tournaments FAQ
+    · The Spoils Judge Behavior Document
+
+    Questions & Answers
+
+    Q: Who is the active player?
+    A: The active player is simply the player whose turn it is. The active player does not change
+    regardless of who is currently performing an action or playing a card. The only way the active player
+    changes is for one turn to end and another to begin.
+
+    Q: My opponent has played a Tactician Vacation. Can I play a card that "can be played
+    whenever you could play a tactic?"
+    A: No, you cannot. Although the card that "can be played whenever you could play a tactic" is not
+    actually a tactic (usually a character or item), the window for playing tactics has been closed for the
+    entire turn. When Tactician Vacation resolves it closes all opportunities for tactics to be played,
+    therefore closing all opportunities for cards to be played "whenever you could play a tactic." The
+    card, however, can still be played when it normally could be played.
+
+    Q: Can I use my Faction's abilities at any time?
+    A: You can use your Faction's abilities (Draw, Resource, etc) any time you can legally use an ability.
+    This can be any time during your turn, in response to your opponent playing a card/using an ability
+    (after costs are paid but before the effect happens), or in response to an opponent announcing the
+    end of their turn.
+
+    Q: At the start of my turn do I get to both draw a card AND play a resource?
+    A: The answer to this question depends on the Develop Rule of the Faction card being used.
+    Currently, a player must choose to either draw a card or play a resource, not both. Faction abilities,
+    however, will generally allow you to draw cards and play resources whenever you can normally use
+    abilities.
+
+                                       The Spoils USATM ­ Rules FAQ Version 2.0
+Q: My opponent plays a Dwarvish Grimalkin when he has 9 Greed in play. Does he draw 3
+cards at once or 1 card 3 times?
+A: He draws 1 card 3 times. Each trigger on Dwarvish Grimalkin is seperate from the others,
+therefore 3 separate instances of drawing. Although all three triggers go off at the same time (when
+Dwarvish Grimalkin enters play), each one is resolved separately. For example, if you have a Beatrix
+Winterbottom and 9 Greed in play when you play Dwarvish Grimalkin, you would draw 6 cards, not
+4 (each instance of drawing 1 card is increased to 2 and there are 3 instances of drawing).
+
+Q: What happens when multiple triggers go off at the same time?
+A: If all the triggers originated from cards under one player's control, that player decides the order
+in which they happen. However, if the triggers originated from cards under both players' control
+then the active player decides the order in which they happen. The order does not have to be
+decided ahead of time; the deciding player lets one trigger happen, then afterwards decides which
+trigger happens next.
+
+Q: If a card is flipped face down as a resource is it considered to have left play?
+A: Yes. When a card is flipped face down as a resource it is considered to have left play and
+reentered play as an entirely new card. This holds true for a card flipping-up from the resource row
+as well.
+
+Q: I want to use Recur on my Death Fit for a King when it is in my discard pile. Is this considered
+playing a tactic?
+A: No. Recur, is always considered an ability, regardless of what type of card type it is on. This is
+because it has a name (Recur), a cost, and an effect.
+
+Q: What happens when a character has 0 life?
+A: When a character has 0 life he is destroyed. This is because any character is destroyed when the
+damage on the character is equal to or greater than his current life. In this case, the character has 0
+damage on him, which is equal to his 0 life.
+
+Q: My character has 5 printed Life and 2 damage on him. Does he have 3 life now?
+A: No. A character is always considered to have Life equal to his printed Life stat, plus/minus any
+modifications that may come from other effects such as items or locations. Damage on a character
+does not reduce life, it simply indicates how much damage the character has taken this turn. A 5 life
+character with 2 damage on it is still considered to have 5 life.
+
+Q: Can I have the same Unique card in play as my opponent?
+A: Yes. The Unique trait on a card only applies to cards under your control. For example, if you have
+a Rudo Mangod, Holder of LIght in play, your opponent may also have a Rudo Mangod, Holder of
+Light in play. If you manage to take control of your opponent's Rudo Mangod, Holder of Light,
+however, one must be destroyed as you cannot control two of the same Unique card.
+
+                                  The Spoils USATM ­ Rules FAQ Version 2.0
+Q: If I have two copies of the same Unique card in play, what happens?
+A: If a player ever has two copies of the same Unique card (two cards with the "Unique" keyword
+followed by the same identifier) in play one must be destroyed immediately. The controller of the
+two unique cards chooses which stays in play and which is destroyed.
+
+Q: There are two cards in play that are forcing me to pick them ("anything that can pick this
+card must pick it") at the same time. Which one do I pick, or am I forced into picking both?
+A: If two cards are forcing you to pick them at the same time then you simply pick one and ignore
+the other. Only the card you choose to be picked counts as "being picked," for purposes of other
+effects and triggers.
+
+Q: What is the difference between Entering Play and Being Deployed?
+A: A card is considered to be "being deployed" after its costs are fully paid for but before it hits the
+table. It is "being deployed" when the opponent has the chance to respond to the card in any
+manner he/she chooses. Once all responses have been taken, the card has resolved and enters play.
+When a card is "entering play" there is no more opportunities to respond to the card, however,
+there are opportunities for various triggers to occur when the card "enters play."
+
+Anytime a card enters the play zone (also known as "In Play") it is considered to have "entered play."
+This can be done by paying for it, putting it into play (by the effect of another card), flipping it up
+from your resource row, or playing it from your discard pile. A card is "being played" when its costs
+have been paid. A card that has been "put into play" was never considered "being played."
+
+Q: Can I play Quotidian Assassination and pick my opponent's Faction?
+A: No. A faction can only be picked by cards/effects that specifically states it can pick a faction (ex.
+Bask Bile). Cards that say "pick a card" or "pick a non-resource card" only refer to cards that are in
+play, unless specifically stated otherwise.
+
+Q: What can I use to represent tokens?
+A: Anything that can be made clear to both players can be used as a token. Common tools used as
+tokens involve coins, dice, and beads. As long as both players understand that the object is a token
+and how many tokens it represents then it can be used.
+
+Q: What is battle damage?
+A: The term battle damage applies to the damage inflicted as part of the steps of resolving a battle.
+Any damage dealt by tactics, abilities, or triggers during battle is not considered battle damage.
+
+Q: Can I begin to pay for a card, use an ability to detach resources, then continue paying for
+the card?
+A: No. There is no way to "float" resources. In order to pay for a card or ability you must be able to
+pay for it all at once when you are attempting to play it. When playing a card there is no window to
+use abilities or effects to detach resources, therefore it is impossible to detach a resource that has
+already been used to pay for a card to pay for the same card again.
+
+                                  The Spoils USATM ­ Rules FAQ Version 2.0
+Q: Do characters with 0 speed assign damage?
+A: Yes. 0 speed is simply the lowest speed a character can have and does not mean that the
+character cannot assign/deal damage. 0 speed characters assign their damage in the same manner
+as all other characters, although it is likely they will be assigning their damage last as there is no
+speed value lower than 0.
+Q: Can I attack if both Hangdog Alley and Arcana Department are in play?
+A: Although both cards are contradictory of each other it is still possible to attack. When two or
+more cards put requirements on the same action (in this case it is attacking) then the player must
+try to fulfill as many of the requirements as possible. If it is impossible to fulfill all requirements then
+the player must make the decision that satisfies as many of the requirements as possible.
+
+                                  The Spoils USATM ­ Rules FAQ Version 2.0
+

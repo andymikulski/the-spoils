@@ -1,0 +1,371 @@
+# Characters — Rogue
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+141 entries.
+
+- **Abram Ka-darbo Alakazin** _(Ungodly Mess; pluck, performer, blade of questionable morality)_
+  - subtitle: how bout a magic trick?
+- **Abram Ka-darbo Alakazin** _(Ungodly Mess; pluck, performer, blade of questionable morality)_
+  - subtitle: how 'bout a magic trick?
+- **Adroit Marauder** _(1st Edition, 2nd Edition, Open Beta; pirate)_
+  - subtitle: dexterous dangling debaucher
+  - flavor: A grandfather clock, a bucket of jewels, a priceless heirloom and his daughter's virginity...he'll think twice next time he leaves the window unbolted.
+- **Affectionate Dollkeeper** _(Seed; hedonist)_
+  - subtitle: best friends forever
+  - flavor: I bite the feet off so they can't run away.
+- **Affectionate Dollkeeper** _(Seed Saga; hedonist)_
+  - subtitle: stitch witch
+  - flavor: I'm gonna hug you and kiss you and love you forever.
+- **Agile Highwayman** _(Seed; outlaw)_
+  - flavor: Henry Gunawan is so fast, he can run around the world and punch himself in the back of the head.
+- **Agile Highwayman** _(Seed Saga; outlaw)_
+  - subtitle: rob from the poor
+  - flavor: Thieve from the rich.
+- **Ashara, Gideon's Twin** _(Seed Saga; sorceress)_
+  - subtitle: exactly what it looks like
+  - flavor: "Everyone who isn't us is an enemy."
+- **Backdoor Brigand** _(Shade of the Devoured Emperor; outcast)_
+  - subtitle: screw you guys, I'm going home
+  - flavor: Look! Over there! A distraction!
+- **Befuddling Beggar** _(1st Edition, 2nd Edition, Open Beta; outcast)_
+  - subtitle: stench so thick you can chew it
+- **Bipolar Sarcophyle** _(1st Edition, 2nd Edition, Open Beta; sarcophyle)_
+  - subtitle: cast into the gloomy depths of eternal cheer
+- **Booty Licker** _(Seed; thief)_
+  - subtitle: tastes like chicken
+  - flavor: ...aaand this one's mine too.
+- **Booty Licker** _(Seed Saga; thief)_
+  - subtitle: tastes like chicken
+  - flavor: "...aaand this one's mine too."
+- **Bottlebeard Brandyshanks** _(Shade of the Devoured Emperor; pluck, drunk)_
+  - subtitle: bottomless imbiber of booze
+  - flavor: The liver is evil and it must be punished. Sobriety is the enemy.
+- **Camouflaged Urchin** _(Ungodly Mess; martial artist)_
+  - subtitle: you no see nothing
+- **Card Counter** _(1st Edition, 2nd Edition, Open Beta; thief)_
+  - subtitle: luck's got nothing to do with it
+  - flavor: It must be all the Jinn of Elk he drinks.
+- **Carnival King** _(2nd Edition; outcast)_
+  - subtitle: everybody conga!
+- **Carnival Ringmaster** _(Shade of the Devoured Emperor; performer)_
+  - subtitle: specialist in chicanery and showmanship
+- **Carnival Whipmaster** _(Ungodly Mess; performer)_
+  - subtitle: come one, come all
+  - flavor: Unfortunately, the show in Acrolos was cancelled.
+- **Casino Kingpin** _(Seed; crimelord)_
+  - subtitle: the best bet you get is an even break
+  - flavor: Suckers have no business with money anyway.
+- **Casino Kingpin** _(Seed Saga; crimelord)_
+  - subtitle: happy to take what's his
+  - flavor: Suckers have no business with money anyway.
+- **Cheats McGuillicutty** _(1st Edition Part 2, 2nd Edition; pluck, grifter)_
+  - subtitle: wicked...tricksy...false...we hates him
+- **Cheats, the Dirty Rotten** _(Holy Heist; pluck, grifter)_
+  - subtitle: he likes to trade at a 5:1 ratio
+  - flavor: When Cheats saw the two rare items, he did a double take.
+- **Chosen Reaper of Thabbash** _(Ungodly Mess; outcast)_
+  - flavor: Thabbashite society is largely a mystery to the peoples of Luridia, but one thing is certain: if you see a Reaper, run.
+- **Chum, the Ugliest Sarume** _(Holy Heist; dragon)_
+  - subtitle: deception through saliva
+  - flavor: A Pluck's best friend.
+- **Cicibeo the Swift** _(Shade of the Devoured Emperor; grifter, cicibeo)_
+  - subtitle: deft hands, swift feet
+  - flavor: Excellent dancer, better pickpocket.
+- **Cicibeo, The Implicator** _(Ungodly Mess; grifter, cicibeo, sarcophyle)_
+  - subtitle: it's the implication
+- **Cloaked Weaponmaster** _(Seed; outlaw)_
+  - subtitle: be prepared
+  - flavor: "I'd rather have it and not need it than..."
+- **Cloaked Weaponmaster** _(Seed Saga; outlaw)_
+  - subtitle: he's got what you need
+  - flavor: "I'd rather have it and not need it than..."
+- **Clockman Pickpocket** _(1st Edition Part 2, 2nd Edition; thief)_
+  - subtitle: you can always count on Dick for a surprise!
+  - flavor: Damn...I can't find the third rooster. I'll just have to improvise...
+- **Conniving Puppeteer** _(Ungodly Mess; performer)_
+  - subtitle: dance for me
+- **Costly Filcher** _(1st Edition, Open Beta; thief)_
+  - subtitle: if you've got the money, he'll get the prize
+  - flavor: As long as it's not too hard. Or very far away. Or on Saturday. Or before noon.
+- **Craniata Nester** _(Holy Heist; monstrosity)_
+  - subtitle: malevolent desert terror
+- **Crow With Fists** _(Ungodly Mess; beast)_
+  - subtitle: it's a crow
+  - flavor: With fists.
+- **Cute Cutpurse** _(1st Edition Part 2; thief)_
+  - flavor: "I know who's been naughty!"
+- **Cute Cutpurse** _(2nd Edition; thief)_
+  - subtitle: adorably delinquent
+  - flavor: "I know who's been naughty!"
+- **Dauntless Gambler** _(Seed, Seed Saga; gambler)_
+  - subtitle: i bluff your bluffing of my bluff
+- **Dazzling Trapezist** _(Seed; performer)_
+  - subtitle: and for my next trick...
+  - flavor: ...I need something from the audience.
+- **Dazzling Trapezist** _(Seed Saga; performer)_
+  - subtitle: life should be lived on the edge of life
+  - flavor: You have to exercise rebellion: to refuse to tape yourself to rules.
+- **Delusive Strumpet** _(Seed 2, Seed Saga; dancer)_
+  - subtitle: or was "elusive" the right word?
+  - flavor: She can go up and down. Heh.
+- **Dock Sentinel** _(1st Edition, 2nd Edition, Open Beta; guard)_
+  - subtitle: talk to the hand
+  - flavor: I almost hope he doesn't go away. It's been a few hours since I've kicked someone's ass.
+- **Duskfall Buckgrif** _(Seed Saga; seraphim, dragon)_
+  - subtitle: don't blink
+  - flavor: Blink and you're dead.
+- **Dweedle Tee** _(Holy Heist; clown)_
+  - subtitle: and then I says... let's battle
+  - flavor: Contrariwise, if it was so, it might be; and if it were so, it would be; but as it isn't, it ain't. That's logic.
+- **Efficacious Gunslinger** _(Ungodly Mess; vigilante)_
+  - subtitle: long days and pleasant nights
+  - flavor: First comes smiles. Then comes lies. Last is gunfire.
+- **Elusive Wolf** _(Shade of the Devoured Emperor; beast)_
+  - subtitle: he ain't nothing like a hound dog
+- **Entrancing Harlot** _(1st Edition, 2nd Edition, Open Beta; dancer)_
+  - subtitle: i'd hit that
+  - flavor: She keeps taking them up there, but I've yet to see anyone come down.
+- **Epicureous Mammajamma** _(Seed 2, Seed Saga; hedonist)_
+  - subtitle: perfect in every dimension
+  - flavor: OH NOOOOO!!!
+- **Ezekial Cutpurse** _(Ungodly Mess; thief)_
+  - subtitle: if I don't have it, there ain't any
+  - flavor: Unless you have it, then so do I.
+- **Face in the Crowd** _(1st Edition; outcast)_
+  - flavor: All our WACOMs were taken, so Silvia did this oldschool: with a pencil.
+- **Face in the Crowd** _(2nd Edition; outcast)_
+  - subtitle: blends right in
+  - flavor: Three hundred bystanders. Not a single witness.
+- **Feckless Chronicler** _(Ungodly Mess; performer)_
+  - subtitle: singing the song of the unlikely heroes
+- **Ferrous Ferret** _(1st Edition, 2nd Edition; beast)_
+  - subtitle: man's best (and worst) friend
+  - flavor: They say ferrets are the highest tier of weapon. What is beyond the ferret tier? A vast, great white nothingness.
+- **Ferrous Ferret** _(Open Beta; beast)_
+  - subtitle: man's best (and worst) friend
+  - flavor: No, you can't do that...there's a ferret on your nose.
+- **Fired Hand** _(Seed 2; miner)_
+  - subtitle: "i'm finished!"
+- **Fired Hand** _(Seed Saga; miner)_
+  - subtitle: not gonna make it to laketown this time
+- **Flimflam Man** _(Seed, Seed Saga; grifter)_
+  - subtitle: riveting!
+  - flavor: "...a huge, gargantuan, swollen, bloated, mushroom!"
+- **Forcible Depredator** _(1st Edition Part 2, 2nd Edition; thief)_
+  - subtitle: move the thing...and...that other thing...move it!
+- **Fwing Snipe** _(Holy Heist; beast)_
+  - subtitle: swallowed the finger, kept the ring
+  - flavor: We thought of going with "My preciousssss" - but that is well overused, so we decided not to! / That would also imply the ring is precious. Which it isn't. Really. What are you doing? DON'T TOUCH IT!
+- **Gang Leader** _(1st Edition Part 2; thief)_
+  - subtitle: we'll give you a horse of your own...
+  - flavor: ...right after your "initiation."
+- **Gang Weapon Dealer** _(Shade of the Devoured Emperor; gang member)_
+  - subtitle: Maybe I got something for you, eh?
+  - flavor: You can never be too rich, too good looking, or too well armed!
+- **Gassy Gastornis** _(Shade of the Devoured Emperor; beast)_
+  - subtitle: tastes like chicken
+  - flavor: smells like a three day old corpse stuffed with garlic and bear poop
+- **Gnarling Lupine** _(Holy Heist; beast)_
+  - subtitle: my leg! it won't grow back!
+  - flavor: He needed another leg.
+- **Guttersnipe** _(Seed, Seed Saga; outcast)_
+  - subtitle: i will come to your house and i will cut you
+- **Harbinger of Anguish** _(Seed Saga; teller)_
+  - subtitle: shall we tell the truth then, you and I? no more lies?
+- **Hasty Sarcophyle** _(1st Edition Part 2, 2nd Edition; sarcophyle)_
+  - subtitle: he's hasty. and a sarcophyle.
+  - flavor: Man, that is one hasty sarcophyle. Whoosh.
+- **Headlong Purloiner** _(1st Edition, 2nd Edition, Open Beta; thief)_
+  - subtitle: you brought the woman too? bonus!
+  - flavor: The great thing about Randy is that he really throws himself into whatever he does.
+- **Heist Planner** _(1st Edition, 2nd Edition, Open Beta; thief)_
+  - subtitle: so cunning you could brush your teeth with it
+  - flavor: "You throw the paintings out of the window and we'll run by and pick them up."
+- **Hulking Vigilante** _(1st Edition Part 2, 2nd Edition; outcast, vigilante)_
+  - subtitle: distributor of pain
+  - flavor: I am the terror that stalks in the street. / I am the dragon that lives in the slums. / I am the ogre that hammers the lawless. / I am the last thing you'll ever see.
+- **Hyperphagic Sarcophyle** _(1st Edition; sarcophyle)_
+  - subtitle: bottomless glutton of blood
+  - flavor: "The suave sarcophyle we know in society is a myth; if our young people really understood what these monsters become, if they could see the wake of tragedy and despair, they would never seek to convert." / — Ernest Arndell, 'A Cancer in our Midst: On Sarcophelia and the Coming Plague'
+- **Hyperphagic Sarcophyle** _(2nd Edition; sarcophyle)_
+  - subtitle: bottomless glutton of blood
+  - flavor: "The suave sarcophyle we know in society is a myth; if our young people really understood what these monsters become, if they could see the wake of tragedy and despair, they would never seek to convert." — Ernest Amdell, 'A Cancer in our Midst: On Sarcophelia and the Coming Plague'
+- **Hyperphagic Sarcophyle** _(Open Beta; sarcophyle)_
+  - subtitle: bottomless glutton of blood
+  - flavor: "The suave sarcophyle we know in society is a myth; if our young people really understood what these monsters become, if they could see the wake of tragedy and despair, they would never seek to convert." / — Ernest Amdell, 'A Cancer in our Midst: On Sarcophelia and the Coming Plague'
+- **Hypnotic Illusionist** _(Seed, Seed Saga; performer)_
+  - subtitle: the piper will be paid
+- **Impeccable Triggerman** _(Holy Heist; assassin)_
+  - subtitle: thanks for the pizza
+- **Impulsive Abductress** _(1st Edition, 2nd Edition, Open Beta; pirate)_
+  - subtitle: take me! take me!
+  - flavor: A hearty lass, she sailed the seas / A queen of all things nautical / She snatched up men with wanton ease / Whene'er she felt erotical
+- **Iohane, the Convex** _(Seed 3; iohane, sword of great justice)_
+  - subtitle: hukk! blurp! slosh! ...and pose!
+- **Ipsighast, the Lustful** _(Seed 3; ipsighast, demon knight)_
+  - subtitle: equal opportunity molester
+- **Jumping Screamspider** _(1st Edition, Open Beta; beast)_
+  - subtitle: it smells your fear
+- **Lecram, Silent Advisor** _(Seed Saga; advisor)_
+  - subtitle: ...
+  - flavor: ...
+- **Loyal Companion** _(Holy Heist; outcast, mau)_
+  - subtitle: jo's right hand mau
+  - flavor: When you see her, you will never be the same and neither will she.
+- **Lucky Bastard** _(Seed 2, Seed Saga; gambler)_
+  - subtitle: and that was without a single drop of rum
+- **Martial Artist** _(1st Edition Part 2, 2nd Edition; martial artist)_
+  - subtitle: you suckers got nothing
+  - flavor: "Now are you boys gonna put down the weapons or do I have to keep embarrassing you..."
+- **Martial Arts Master** _(1st Edition Part 2, 2nd Edition; martial artist)_
+  - subtitle: try? do or do not. there is no try.
+  - flavor: "Judge me by my size, do you?"
+- **Martial Arts Trainee** _(1st Edition Part 2, 2nd Edition; martial artist)_
+  - subtitle: stronger, faster, more powerful than before
+  - flavor: "Good! Now help me move this training dummy back into the storeroom."
+- **Martial Arts Wannabe** _(Shade of the Devoured Emperor; martial artist)_
+  - subtitle: lacks discipline - leaks ice cream
+  - flavor: Teach say, student do. Well, not always.
+- **Master Scavenger** _(1st Edition, 2nd Edition, Open Beta; outcast)_
+  - subtitle: plundering where others fear to tread
+  - flavor: After the inhabitants pick the bones clean, they just throw the treasure away.
+- **Master Thief** _(1st Edition Part 2, 2nd Edition; thief)_
+  - subtitle: getting there is easy; getting away is the trick
+- **Maxwell Cockswagger** _(Seed Saga; grifter)_
+  - subtitle: O lay!
+- **Mendacious Brigand** _(1st Edition Part 2; thief)_
+  - subtitle: love of my life, breathe deep the sweet perfume
+- **Murderous Kleptomaniac** _(Shade of the Devoured Emperor; vigilante)_
+  - subtitle: steals anything he can, even life
+  - flavor: Some Clockman criminals are licensed professionals. Others are less... legitimate.
+- **Muscle Tribe of Danger and Excellence** _(Seed 2, Seed Saga; miner)_
+  - flavor: "I don't care if you're pregnant...that's a threesome as far as I can tell!"
+- **Mustache Aficionado** _(Seed 2; gambler)_
+  - flavor: Luxurious facial hair is no laughing matter.
+- **Mustache Aficionado** _(Seed Saga; gambler)_
+  - subtitle: Movember Champions
+  - flavor: Luxurious facial hair is no laughing matter.
+- **Noxious Gambler** _(Ungodly Mess; gambler)_
+  - subtitle: i play to win
+  - flavor: Or I don't play at all.
+- **Numba 1 Stunna!** _(Shade of the Devoured Emperor; grifter)_
+  - subtitle: prize fighter. literally.
+- **Obtuse Pipesmoker** _(Seed; hedonist)_
+  - subtitle: dazed and confused
+  - flavor: "Ugghh...ohhh yeah...I feel my second wind coming on..."
+- **Obtuse Pipesmoker** _(Seed Saga; hedonist)_
+  - subtitle: dazed and confused
+  - flavor: "Ugggh...ohhh yeah...I feel my second wind coming on..."
+- **Omahkapi'si Pi'kssii** _(Ungodly Mess; omahkapi'si, seraphim, dragon)_
+  - subtitle: it means wolf-bird
+- **Opportune Slotpuller** _(Seed, Seed Saga; gambler)_
+  - subtitle: so...happy...but...can't...breathe...
+  - flavor: Or...speak...at...normal...rate.
+- **Opportunistic Pirate** _(Shade of the Devoured Emperor; pirate)_
+  - subtitle: theft from any direction
+  - flavor: For any client.
+- **Parkour Hoodlum** _(Shade of the Devoured Emperor; daredevil)_
+  - subtitle: felonious freerunner
+  - flavor: "Obstacles are found everywhere, and in overcoming them we nourish ourselves."
+- **Party Clowns** _(Seed Saga; clowns)_
+  - subtitle: get down with the clown
+  - flavor: There ain't no party like a party clown party cuz a party clown party don't stop.
+- **Pillaging Pirate** _(1st Edition, 2nd Edition, Open Beta; pirate)_
+  - subtitle: so long, fatty!
+  - flavor: Ogdred the Unreliable had been waiting for the right moment to start his own pirating franchise. An absent-minded order to carry the loot proved his perfect opportunity.
+- **Pit Boss** _(Seed, Seed Saga; crimelord)_
+  - subtitle: severed ear! house takes all.
+  - flavor: The casino controls the croupier, the croupier controls the game.
+- **Pluck** _(1st Edition, 2nd Edition, Open Beta; pluck, grifter)_
+  - subtitle: crafty exploiter of scenes
+- **Ravenous Wolf** _(1st Edition; beast)_
+  - subtitle: so...chicken again?
+- **Ravenous Wolf** _(Open Beta; beast)_
+  - subtitle: hunts for meat at the fruit stand
+- **Recondite Hunter** _(1st Edition, Open Beta; hunter)_
+  - subtitle: he'll never see it coming
+  - flavor: "But if you're the police, who will police the police?"
+- **Red Raven** _(1st Edition, 2nd Edition, Open Beta; beast)_
+  - subtitle: always calls "tails"
+- **Resistance Fighter** _(Seed 2; miner)_
+  - flavor: "Here kitty kitty kitty..."
+- **Resistance Fighter** _(Seed Saga; miner)_
+  - subtitle: we're no lynch mob...
+  - flavor: We're freedom fighters from the future.
+- **Rosy Palmer, and Her Five Friends** _(Seed 2; dancer)_
+  - flavor: "There is worse things than 4 naked ladies at the same time..." / — Hans
+- **Rosy Palmer, and Her Five Friends** _(Seed Saga; dancer)_
+  - flavor: 6 naked ladies...woah man, that's TOO MUCH!
+- **Shadowy Mugger** _(Seed, Seed Saga; thief)_
+  - subtitle: that guy's been standing there for over an hour
+- **Sickened Sarcophyle** _(Shade of the Devoured Emperor; sarcophyle)_
+  - subtitle: nearly immortal invalid
+  - flavor: While sarcophyles are resilient against most ailments, they are strangely vulnerable to a few, such as anemia.
+- **Slinking Bandido** _(Seed, Seed Saga; outlaw)_
+  - subtitle: which way did she go? which way did she go?
+- **Sly Bilker** _(Seed, Seed Saga; gambler)_
+  - subtitle: duuude...you should totally bet
+  - flavor: "That's a mighty fine hook you've got there."
+- **Sneaky Sarco** _(Holy Heist; hedonist, sarcophyle)_
+  - subtitle: such a beautiful way to die
+- **Sudden Osprey** _(1st Edition, 2nd Edition; beast)_
+  - subtitle: who keeps a bird in a treasure chest?
+  - flavor: "Honestly. A bird in a treasure chest."
+- **Sudden Osprey** _(Open Beta; beast)_
+  - subtitle: who keeps a bird in a treasure chest?
+  - flavor: Honestly. A bird in a treasure chest.
+- **Swashbuckler** _(1st Edition, 2nd Edition, Open Beta; pirate)_
+  - subtitle: dashing seeker of danger
+- **Swollen Ostrich** _(Seed, Seed Saga; beast)_
+  - subtitle: ahh! ohh! there's my trick knee.
+- **Thabbashite Assailant** _(Shade of the Devoured Emperor; assassin)_
+  - subtitle: the living gods call for a killing
+- **Thabbashite Dartist** _(Holy Heist; hunter)_
+  - subtitle: spit assassin
+  - flavor: Blow guns are a favored weapon among the tribe of Geroam. One shot. One kill. No exceptions.
+- **Thabbashite Seer** _(Ungodly Mess; teller)_
+  - subtitle: using his powers for villainy
+  - flavor: The seers of the Doarden tribes lose their eyes at an early age, but gain a new kind of sight in exchange.
+- **Thabbashite Urchin** _(Holy Heist; outlaw)_
+  - subtitle: i swear the bear don't care
+  - flavor: "First I stick my tongue out like this, see? Then I stick my toe out like this, see? Then it's a simple matter of not being seen, see?" / "And if that doesn't work?" / "We flee, see?"
+- **The Billionaire** _(1st Edition, 2nd Edition, Open Beta; pluck, grifter)_
+  - subtitle: always on the guest list
+- **Thief Doyen** _(1st Edition, 2nd Edition, Open Beta; thief)_
+  - subtitle: it's good to be the king
+- **Throatstabber** _(1st Edition Part 2; pirate)_
+  - subtitle: oh, i'm sorry...were you saying something?
+- **Titillating Contortionist** _(Seed Saga; performer)_
+  - subtitle: do you see it yet?
+  - flavor: "Not yet. Keep contorting."
+- **Torchlight Sarcophyle** _(Holy Heist; sarcophyle)_
+  - subtitle: it's death o'clock
+  - flavor: I'm going to give you the choice I never had.
+- **Totally Random Kid** _(Shade of the Devoured Emperor; outcast)_
+  - subtitle: unctuous urchin
+- **Transient Smuggler** _(Seed, Seed Saga; smuggler)_
+  - subtitle: quit hogging the covers!
+- **TZONE! Street Dancer** _(Holy Heist; dancer, outcast, performer)_
+  - subtitle: better than those turbo and o-zone guys
+  - flavor: It's like that, and that's the way it is.
+- **Unchained Sarcophyle** _(Ungodly Mess; sarcophyle)_
+  - subtitle: doom bringer
+  - flavor: Mutations, albeit uncommon, are known to exist among the Sarcophyle classes. First the mind rots; then the body revolts.
+- **Uncontrollable Jalopy** _(Seed 2, Seed Saga; vehicle)_
+  - subtitle: "don't make me hate poop...even more..."
+- **Underdog** _(Holy Heist; outcast)_
+  - subtitle: never say die
+  - flavor: Man is not made for defeat. A man can be destroyed but not defeated.
+- **Underhanded Gamer** _(Seed, Seed Saga; gambler)_
+  - subtitle: if you pull it off, they deserve it
+- **Unexpected Boobysnake** _(1st Edition Part 2, 2nd Edition; beast)_
+  - subtitle: nobody expects the unexpected boobysnake!
+- **Vander Malagut** _(1st Edition, 2nd Edition, Open Beta; sarcophyle)_
+  - subtitle: seething hatred, seductive wit
+- **Warehouse Sentinel** _(Holy Heist; guard, tough guy)_
+  - subtitle: he ain't got time to bleed
+  - flavor: He will hit you with so many rights, you're going to beg for a left.
+- **Wild Boars** _(1st Edition Part 2, 2nd Edition; beast)_
+  - subtitle: freshly summoned from the abyss
+  - flavor: "We should have ordered the chicken!"

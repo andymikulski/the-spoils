@@ -1,0 +1,433 @@
+# Characters — Warlord
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+156 entries.
+
+- **6r4wny 60dy9u4rd5** _(Shade of the Devoured Emperor; 31f, mercenary)_
+  - subtitle: see also: burly, beefy, and bulging
+  - flavor: Please allow me to introduce my associates, Max Deltoid and Chunk McSlabmeats.
+- **Abusive Major General** _(Ungodly Mess; soldier, tyrant)_
+  - subtitle: considered nice by all imperial standards
+  - flavor: Barduse feed on friendly flesh nearly as often as that of the enemy.
+- **Adriel, Defender of Marduun** _(Seed Saga; adriel, sword of great justice)_
+  - subtitle: ultimately, he didn't do a great job
+  - flavor: He really tried though, bless his heart.
+- **Adriel, Supreme General of the Imperial Army** _(Seed Saga; adriel, general)_
+  - subtitle: stern, imperious, doomed
+  - flavor: "It is rumored that the former Great Sword Adriel, having forsaken king and realm, orchestrated the demise of his greatest ally Gideon and the rise of Emperor Barduse. It might not be an overestimation to say that the world we live in today is a direct result of his actions, although this author cannot be certain (for fear of getting blowed up)." / — Marduun, a Forgotten History authored by the Right Honorable Basel E. Corgington, Esq
+- **Anxious Oaf** _(1st Edition Part 2; berserker)_
+  - subtitle: BUH-NEE!
+  - flavor: "Castle Direstock? Most people never even make it past the rabbits."
+- **Arena Quarter-Finalist** _(1st Edition, 2nd Edition, Open Beta; fighter)_
+  - subtitle: it's hard damn work being this good
+  - flavor: Any rookie can swing a sword; mastery is about keeping your footing when the ring is thick with gore.
+- **Aroused Stiffbone** _(Seed 2; dragon)_
+  - subtitle: ancient yet vigorous
+- **Aroused Stiffbone** _(Seed Saga; dragon)_
+  - subtitle: what is dead may never die
+  - flavor: But rises again, harder and stronger.
+- **Ascendant Madcap** _(Seed 2; soldier)_
+  - subtitle: tonight we dine in hell
+  - flavor: Or maybe Arby's.
+- **Ascendant Madcap** _(Seed Saga; soldier)_
+  - subtitle: tonight we dine in hell
+  - flavor: I hear they have great cake.
+- **Athalamund Mangod, The Iron Fist** _(Seed Saga; athalamund, sword of great justice)_
+  - subtitle: his jokes are always funny
+  - flavor: It's because of his punchlines.
+- **Aweless Charger** _(Seed, Seed Saga; soldier)_
+  - subtitle: breaking barriers with ease
+- **Balking Foecrusher** _(Seed Saga; soldier)_
+  - subtitle: smashing!
+- **Barbaric Rifleman** _(1st Edition Part 2; soldier)_
+  - flavor: Zi Jian's tears can cure cancer. Too bad he's never cried.
+- **Barbaric Rifleman** _(2nd Edition; soldier)_
+  - subtitle: batter up!
+  - flavor: Every winter, the Imperial and Counter-Imperial armies compete against each other in the Metatropean Headball Championship Series. The amount of trash talk is unbelievable.
+- **Battle-Ready Back-Breaker** _(Shade of the Devoured Emperor; berserker)_
+  - subtitle: a bulging brute
+  - flavor: Oh, snap!
+- **Berserker Corps** _(1st Edition, 2nd Edition, Open Beta; berserker)_
+  - subtitle: shhh...the screaming arouses them
+  - flavor: Got juice?
+- **Big McLargehuge** _(Ungodly Mess; dragon)_
+  - flavor: The name Bladefist Doomwing was already taken.
+- **Bladefist Doomwing** _(1st Edition; dragon)_
+  - flavor: The name Big McLargehuge was already taken.
+- **Bladefist Doomwing** _(2nd Edition; dragon)_
+  - subtitle: "Big McLargehuge" was already taken
+  - flavor: Disciplining a barduse requires nerves of steel. A flame-retardant uniform comes in handy, too.
+- **Blazing Shriever** _(Seed, Seed Saga; dragon)_
+  - subtitle: my body! i'm not supposed to get fire on it!
+- **Bloating Bask** _(Shade of the Devoured Emperor; dragon)_
+  - subtitle: like a bilious balloon
+- **Bloodcrazed Berserker** _(Ungodly Mess; berserker)_
+  - subtitle: i'd be scared of me, too
+- **Bloodcurdling Bulldozer** _(1st Edition, 2nd Edition, Open Beta; berserker)_
+  - subtitle: as scary as he thinks he is
+  - flavor: "OHHH YEEEAAHHH!!!" — K.M.
+- **Bloody Fisted Fanatic** _(Shade of the Devoured Emperor; fighter)_
+  - subtitle: never ask him the time
+  - flavor: It's always punch o'clock.
+- **Boorish Boar** _(Holy Heist; beast)_
+  - subtitle: boom goes the swine-amite
+- **Brash Basher** _(1st Edition Part 2; fighter)_
+  - subtitle: he's in over your head
+  - flavor: "...we're going to Clockman, and Blightmore, and Marmothoa, and then we're going to go to Castle Direstock and we're gonna take back the YYYEEEEEAAAAAAARRRRRGGGGGHHHH!!!!"
+- **Bursting Bask** _(Ungodly Mess; dragon)_
+  - subtitle: it's gonna blow!
+  - flavor: They're all gonna blow.
+- **Callow Liegeman** _(1st Edition Part 2, 2nd Edition; soldier)_
+  - subtitle: hazing? do your worst.
+  - flavor: You know if you stab a man in the dead of winter, steam will rise up from the wounds.
+- **Cannon Squadron** _(1st Edition, Open Beta; soldier)_
+  - subtitle: ready! aim!
+- **Colossal Flattener** _(Seed, Seed Saga; beast)_
+  - subtitle: who's really in control here?
+- **Conscientious Objector** _(Seed 2; pacifist)_
+  - flavor: Destroying his home was a BIG mistake.
+- **Conscientious Objector** _(Seed Saga; pacifist)_
+  - subtitle: destroying his home was a big mistake
+  - flavor: "These. Are. My. FLOWERS!!!!"
+- **Courageous Paladin** _(Seed, Seed Saga; soldier)_
+  - subtitle: he who makes himself a sheep will be eaten by wolves
+  - flavor: "Gehhht to the choppaaah!"
+- **Crazed Deputy** _(1st Edition, 2nd Edition, Open Beta; tyrant)_
+  - subtitle: a tad unstable
+  - flavor: "What do you mean my shoulder pads make me look like a dandy? RAR! blargity blarg BLARGH!"
+- **Crazed Executioner** _(Holy Heist; tyrant)_
+  - subtitle: death from above
+  - flavor: Another knife kill killcam...
+- **Creaky Old Swordsman** _(1st Edition, 2nd Edition; soldier)_
+  - subtitle: i'm getting too old for this shit
+  - flavor: "...he says if I don't grease him up first he just can't seem to get into it..."
+- **Creaky Old Swordsman** _(Open Beta; soldier)_
+  - subtitle: and only three days from retirement
+  - flavor: "I'm getting too old for this shit."
+- **Crimson Pandiatus** _(Ungodly Mess; beast)_
+  - subtitle: eternal enemy of the cucurbita pepo
+  - flavor: It wasn't until the Pandiatus Army discovered the surprising side effects of Voidal Bamboo that the tides of war turned.
+- **Damascus Sword Swinger** _(Holy Heist; soldier)_
+  - subtitle: bathes in the blood of his victims
+  - flavor: The pen is mightier than the sword if the sword is very short, and the pen is very sharp. / Who uses a short sword?
+- **Deadly Striker** _(1st Edition Part 2; dragon)_
+  - subtitle: rock you like a hurricane
+  - flavor: Dear Sir or Madam: / The Imperial Army regrets to inform you that your son(s) are dead because they got blowed up. Sorry for the inconvenience. / Best wishes, / Praxis, Grand General of Bad Death Stuff
+- **Deadly Striker** _(2nd Edition; dragon)_
+  - subtitle: rock you like a hurricane
+  - flavor: Dear Sir or Madam: / The Imperial Army regrets to inform you that your son(s) are dead because they got blown up. Sorry for the inconvenience. / Best wishes, / Praxis, Grand General of Bad Death Stuff
+- **Direstock Paratrooper** _(Ungodly Mess; soldier)_
+  - subtitle: daggers from above
+  - flavor: In warfare, Dragon Riders will leap from their steeds to rain fury from the skies, confident that their dragon partners will be ready to swoop them up before they splatter on the ground. Which they do. Usually.
+- **Discordant Cadencer** _(Shade of the Devoured Emperor; soldier)_
+  - subtitle: beats to the march of his own drum
+  - flavor: Can't you hear it? I thought it would stop, but it never does. Never, ever stops. Inside my head... it's everywhere. Listen, listen, listen!
+- **Disposable Meatsack** _(Ungodly Mess; soldier)_
+  - subtitle: every army has them
+  - flavor: The Thabbashites killed Imperial Army and Counter-Imperial Army nondiscriminately in defense of their god.
+- **Draconarius Slitherform** _(Seed Saga; seraphim, dragon)_
+  - subtitle: coiled carnage
+- **Dragon Archer** _(Seed, Seed Saga; dragon)_
+  - subtitle: if only he had two heads
+  - flavor: You see, he may have four arms but he can't aim two bows at...oh, screw it. I'm the only one who notices these things anyway.
+- **Dragon Rider** _(1st Edition, 2nd Edition, Open Beta; rider)_
+  - subtitle: commanding from above
+  - flavor: A dragon and his rider are peers. The rider rides at the will of the dragon. They are the captains of the field, circling the battle, landing only to deliver punishment where needed.
+- **Dragon Tank** _(1st Edition, 2nd Edition, Open Beta; dragon)_
+  - subtitle: delivers the biggest beatings ever
+  - flavor: Pulled into battle by mighty basks, the dragon tank is feared above all else. Even if its victims can disable the enormous machinery, the basks remain to spew their acidic venom in an annihilating torrent of pain.
+- **Drill Instructor** _(Shade of the Devoured Emperor; soldier)_
+  - subtitle: right in the butt
+  - flavor: You know what? This is weird. Really, really weird. We're seriously creeped out. Like, not even sure why we did this. We're sorry. No, really.
+- **Duelist of Surfeit** _(Shade of the Devoured Emperor; fighter)_
+  - subtitle: thoroughly excessive
+  - flavor: Flyswatter of Doom? Check! Hockey Stick of Holes? Check! Midget Glaive? Check! Trident of Spaghetti? Check! Bubble Blower of Gold? Check! Glove of Awesome! Check! Piles of Bodies? Check! Hoop of Stuff? Check! Thing [...] k! Belt of Bullets? Check! Dude with [...] Arrows of Doom?
+- **Dying Hero** _(Seed Saga; soldier)_
+  - subtitle: mortal wounds, my only weakness
+  - flavor: The object of war is not to die for your country but to make the other guy die for his.
+- **Ecneret, The Expendable One** _(Seed Saga; fighter, soldier)_
+  - subtitle: he does what he can
+  - flavor: because he must, for all the rest of us that are still alive
+- **Elbow Dropper** _(1st Edition Part 2, 2nd Edition; fighter)_
+  - subtitle: i can't believe it! that's gotta hurt!
+  - flavor: "Illegal, Mean Jean!"
+- **Elzibeth, Counter Imperial Countess** _(Seed Saga; sorceress)_
+  - subtitle: in place of an emperor you will set up a queen
+  - flavor: I shall not be dark, but beautiful and terrible. All shall love me, and despair.
+- **Elzibeth, Military Sorceress** _(Seed Saga; sorceress)_
+  - subtitle: fierce
+  - flavor: Gideon's wife, commander of the Great Swords, and mother of a new age of horror. For now.
+- **Embittered Cadet** _(Seed 2; soldier)_
+  - subtitle: uh...my therapist thinks it will help...i have a note.
+- **Embittered Cadet** _(Seed Saga; soldier)_
+  - subtitle: uh...my therapist thinks it will help...i have a note.
+  - flavor: This house is a prison on planet stupid in the galaxy of this sucks.
+- **Enduring Swordsman** _(Seed; soldier)_
+  - flavor: Zi Jian doesn't actually paint his artwork. The colors assemble themselves out of fear.
+- **Enduring Swordsman** _(Seed Saga; soldier)_
+  - subtitle: no eras come about because of swords...
+  - flavor: ...they're created by the people who wield them.
+- **Fanatical Shriever** _(Shade of the Devoured Emperor; dragon)_
+  - subtitle: citrus? I HATE CITRUS!
+  - flavor: Didn't you know dragons are allergic to lemon parties?
+- **Fervent Beastslayer** _(Seed, Seed Saga; soldier)_
+  - subtitle: he loves what he does
+  - flavor: "My lifelong dream? To find a beast that, like, spits out more beasts, which spit out more beasts. Man, I could slay that forever."
+- **Fire Tail Kamikaze** _(Holy Heist; dragon)_
+  - subtitle: riding the winds of death to a party near you
+  - flavor: I love the smell of burning flesh in the morning!
+- **Flaming Barduse** _(1st Edition, 2nd Edition, Open Beta; dragon)_
+  - subtitle: harbinger of sticky, burning doom
+  - flavor: "In a state of supreme agitation, the mighty barduse vomits a sticky, viscous mess which bursts into a white-hot flame, consuming everything it touches."
+- **Fleshripping Scenepuller** _(1st Edition Part 2, 2nd Edition; fighter)_
+  - subtitle: his face? i didn't like it.
+  - flavor: He'll beat you to death, eat your flesh, and sew your skin into his clothing. And if you're very, very lucky, he'll do it in that order.
+- **Frenzied Shriever** _(Seed, Seed Saga; dragon)_
+  - subtitle: you should probably just stand back
+- **Gallant Commander** _(Seed, Seed Saga; soldier)_
+  - subtitle: let's do this!
+  - flavor: "You ain't afraid of a little rain, are ya boys?"
+- **Giada, the Elegant** _(Seed 3; giada, sword of great justice)_
+  - subtitle: last Sword to swear allegiance to Padamose
+  - flavor: Giada's independence was matched only by her grit.
+- **Gideon, the Ultimate Warrior** _(Seed Saga; gideon, sword of great justice)_
+  - subtitle: another white hetero male power fantasy
+  - flavor: Child of the [REDACTED].
+- **Godwing Thunderhoof** _(Seed Saga; godwing, seraphim, dragon)_
+  - subtitle: my teeth are swords
+  - flavor: My claws are spears. My wings are a HURRICANE!
+- **Gor-blach the Endowed** _(Ungodly Mess; fighter, tough guy)_
+  - subtitle: thabbashite champion
+- **Gore Engine** _(2nd Edition; warmachine)_
+  - subtitle: accept no substitutes
+- **Goutflame Talonclaw** _(Seed Saga; dragon)_
+  - subtitle: D. I. A. G. F. (Die in a Godzilla fire)
+- **Heirloom Incinerator** _(1st Edition, Open Beta; tyrant)_
+  - subtitle: destroyer of ancestry and culture
+  - flavor: "Quit your blubbering old man! You and your stuff are going to a better place!"
+- **Heirloom Incinerator** _(2nd Edition; tyrant)_
+  - subtitle: destroyer of ancestry and culture
+  - flavor: "Quit your blubbering old man! You *and* your stuff are going to a better place!"
+- **Hidden Sniper** _(1st Edition; soldier)_
+  - subtitle: 1050...1051...1052...
+- **Hidden Sniper** _(2nd Edition; soldier)_
+  - subtitle: 1056...1057...1058...
+- **Hidden Sniper** _(Open Beta; soldier)_
+  - subtitle: 1047...1048...1049...
+- **Idol Smasher** _(Seed Saga; vandal)_
+  - subtitle: it's finally over
+  - flavor: They really ruined it by the end, but it's finally over.
+- **Impressive Hero** _(Seed, Seed Saga; soldier)_
+  - subtitle: with a really big friend
+  - flavor: "That's what I THOUGHT! You didn't expect to see a sword like THIS, did you!?"
+- **Infuriator** _(1st Edition Part 2; soldier)_
+  - subtitle: strong words from a strong man
+  - flavor: "...and your big ugly face is as dumb as a butt!"
+- **Leaping Sarume** _(Holy Heist; dragon)_
+  - subtitle: can't jump hoops either
+- **Lieutenant General** _(1st Edition Part 2; soldier)_
+  - subtitle: it is good to be loved. it is better to be feared.
+  - flavor: "There is no avoiding war; it can only be postponed to the advantage of others."
+- **Lingamite Descendant** _(Holy Heist; soldier)_
+  - subtitle: muh grad fodder wa a lingamite warror
+  - flavor: "I don't care about your family tree, but you ARE one of our best deaf soldiers." / "huh?" / Yes, his grandfather was Gideon. His father was deaf and when all of Gideon's other children were turned into barduse, he remained unchanged. Through his sire, Gideon's legacy remains.
+- **Malevolent Trooper** _(Ungodly Mess; soldier)_
+  - subtitle: welcome to the brigade, kid!
+- **Marauding Madster** _(Shade of the Devoured Emperor; berserker)_
+  - subtitle: out of mind - out of control
+  - flavor: I'm out of here!
+- **Menacing Mauler** _(1st Edition; berserker)_
+  - flavor: Zi Jian had a third testicle. He cut it off and threw it into the ocean. It's now commonly known as the continent of Australia.
+- **Menacing Mauler** _(2nd Edition; berserker)_
+  - subtitle: run away!
+- **Morale Officer** _(1st Edition Part 2, 2nd Edition; soldier)_
+  - subtitle: brings out the best in his men
+  - flavor: "And when we're done, I have no doubt you'll embrace the good and truth of our cause."
+- **Murderous Commander** _(1st Edition Part 2, 2nd Edition; soldier)_
+  - subtitle: next!
+  - flavor: "You see killmajigs have a preset kill limit. Knowing their weakness, I sent wave after wave of my own men at them...until they reached their limit and shut down."
+- **Necromantic Healer** _(Seed Saga; sorceress)_
+  - subtitle: bringing life to some and less life to others
+  - flavor: It's a win-win situation.
+- **Nimble Conscript** _(Seed, Seed Saga; soldier)_
+  - subtitle: boot to the head
+  - flavor: "OK, then I'm going to start kicking air like this. And if any part of you should fill that air, it's your own fault."
+- **Octo-Ba-Ba, the Devourer** _(Seed 3; octo-ba-ba, sword of great justice)_
+  - flavor: Some historians trace Direstock's cannibalistic culture to Octo-Ba-Ba's influence.
+- **Overly Eager Exemplar** _(Holy Heist; soldier)_
+  - subtitle: revenge me my brothers
+  - flavor: Revenge is a dish best served with a sword - and a flail - and an army - and my mother in law!
+- **Oversoon Lightfoot** _(1st Edition, 2nd Edition, Open Beta; soldier)_
+  - subtitle: the battle is next Tuesday
+  - flavor: Early to rise, early to die.
+- **Padamose, Emperor of Marduun** _(Seed Saga; padamose, emperor, mau)_
+  - subtitle: likes: swords, great justice, being emperor
+  - flavor: dislikes: wizards, lesser mau, being devoured alive by giant tentacle monsters.
+- **Plodding Brute** _(1st Edition, 2nd Edition, Open Beta; soldier)_
+  - subtitle: killing at his own pace
+  - flavor: Large and uncoordinated, the Brutes travel just behind the main army to ensure that survivors won't be overlooked.
+- **Plunging Shriever** _(Seed 2, Seed Saga; dragon)_
+  - subtitle: if meat's bad for you, then how come it's food?
+- **Proficient Battler** _(Seed, Seed Saga; soldier)_
+  - subtitle: standing out in a crowd
+  - flavor: In battle, beauty is the ultimate advantage.
+- **Rabid Sarume** _(1st Edition, 2nd Edition; dragon)_
+  - subtitle: bookish and brutal
+  - flavor: "Let's see...sarcophyle, sardines... ah, here it is. Sarume... aaaaaauuuugh!"
+- **Rabid Sarume** _(Open Beta; dragon)_
+  - subtitle: vicious and quick
+  - flavor: Frederick suddenly regretted taking bacon from the mess hall.
+- **Raging Bask** _(1st Edition, 2nd Edition; dragon)_
+  - subtitle: bloated reptile on a vomitous rampage
+  - flavor: Basks are theorized to be nothing more than a tiny brain atop a mountain of bile. None have survived to validate this claim.
+- **Raging Bask** _(Open Beta; dragon)_
+  - subtitle: bloated reptile on a vomitus rampage
+  - flavor: Basks are theorized to be nothing more than a tiny brain atop a mountain of bile. None have survived to validate this claim.
+- **Rapacious Soldier** _(Holy Heist; soldier)_
+  - subtitle: i will add your head to my head collection
+  - flavor: I will do your hair and make you pretty! Pretty, I say!
+- **Readied Rifleman** _(Ungodly Mess; soldier)_
+  - subtitle: wait for the headshot
+  - flavor: The Imperial Army fought Thabbashite, Expedition, and Unlikely Hero alike for control over the Living God, utilizing units of all kinds in the effort.
+- **Really Big Barduse** _(1st Edition Part 2, 2nd Edition; dragon)_
+  - subtitle: i didn't know you played the ass-trombone!
+  - flavor: "It's not the random devouring that bothers me. It's the way he plays with them first."
+- **Reckless Challenger** _(1st Edition, 2nd Edition, Open Beta; fighter)_
+  - subtitle: fearless and foolish
+  - flavor: "I don't care if it's one at a time or all together...I'm going to make ALL OF YOU my bitch."
+- **Righteous Exemplar** _(Seed, Seed Saga; soldier)_
+  - subtitle: better than being wrongeous
+  - flavor: "Die in ignorance. I have no more time for you."
+- **Robustical Badass** _(Seed, Seed Saga; soldier)_
+  - subtitle: ripped and ready for anything
+  - flavor: Now, if only something would happen...
+- **Rudo Mangod** _(1st Edition, 2nd Edition, Open Beta; fighter)_
+  - subtitle: frightful adonis of infamous temperament
+- **Rudo Mangod, Dragonweight Champion** _(Shade of the Devoured Emperor; rudo, fighter)_
+  - subtitle: prettiest pugilist in the platoon
+  - flavor: Just sit back and watch how it's supposed to be done
+- **Rudo Mangod, Holder of Light** _(Holy Heist; rudo, blade of questionable morality)_
+  - subtitle: handsome, fearsome, awesome
+  - flavor: Only a true Mangod heir could free the sword from its resting place. In one swift movement, Rudo claimed his birthright to badassery and generations of stored power. This is going to end very poorly for somebody.
+- **Rushing Crushing Blockhead** _(Shade of the Devoured Emperor; berserker)_
+  - subtitle: you are the brute squad
+  - flavor: Berserkers are not well-known for their creative problem-solving.
+- **Ruthless Platoon** _(1st Edition Part 2, 2nd Edition; soldier)_
+  - subtitle: Bob was tasty for a thin guy
+  - flavor: "You know most people overlook it, but there's a lot of good meat on the face."
+- **Sadistic Colonel** _(1st Edition Part 2, 2nd Edition; soldier)_
+  - subtitle: eeny, meeny, miney, moe
+  - flavor: Colonel Blastwad always makes inspection a lot of fun!
+- **Salvo Sarume** _(Ungodly Mess; dragon)_
+  - subtitle: most sarumes have cunning intelligence
+  - flavor: Others have dynamite strapped to their backs.
+- **Scout** _(1st Edition, 2nd Edition, Open Beta; soldier)_
+  - subtitle: omen of the coming horde
+  - flavor: Only the most disagreeable warriors are chosen to be scouts. They comb the countryside in disguise, searching for riches, women, and easily killed men. A town can only pray that it has less of these things than its neighbors.
+- **Shade of the Devoured Emperor** _(Shade of the Devoured Emperor; padamose, emperor, mau)_
+  - subtitle: back on unfinished business
+- **Shieldmane Grandchest** _(Seed 3; grandchest, seraphim, dragon)_
+  - subtitle: gory gory hallelujah
+  - flavor: Venerated by the Marmothoans as a guardian, reviled by their enemies as a destroyer.
+- **Silencer** _(Ungodly Mess; mercenary)_
+  - subtitle: i will give you a good death
+  - flavor: Shh, now.
+- **Skilled Bannerman** _(Holy Heist; soldier)_
+  - subtitle: don't wave at him
+  - flavor: Give them NOTHING! But take from them EVERYTHING!
+- **Skullcrush Steamroller** _(Shade of the Devoured Emperor; warmachine)_
+  - subtitle: production version of the gore engine
+  - flavor: If you build it, it will crush!
+- **Sleeping Guard** _(1st Edition, Open Beta; soldier)_
+  - subtitle: he didn't like being human anyway
+  - flavor: Failure to do one's duty often results in "volunteering" for the latest dragon juice experiments.
+- **Slippery Assailant** _(Ungodly Mess; soldier)_
+  - subtitle: he had a really great childhood
+  - flavor: We're talking class A awesome.
+- **Special Forces** _(Holy Heist; soldier)_
+  - subtitle: shhhhhhhhhhhhhhhhhhh
+  - flavor: I'd crawl into a mau's toilet if it kept me out of sight.
+- **Spitting Sarume** _(Seed, Seed Saga; dragon)_
+  - subtitle: they didn't see it coming
+  - flavor: And they'll never see again.
+- **Spry Archer** _(Seed 2; soldier)_
+  - subtitle: fort infiltration win
+- **Stalwart Soldier** _(1st Edition, 2nd Edition, Open Beta; soldier)_
+  - subtitle: rejecting the moral decay of his brethren
+  - flavor: "It was early winter when I went forth from my home base. After many months I found a cave containing tropical coconuts. Using these I fashioned a crude hovel and lived in it for several days. Soon I befriended a pack of bears and we traveled east, towards Macaroon. There I took up small odd jobs under the name of Mister Pilkington. But perhaps I've said too much..."
+- **Suicide Squad** _(1st Edition Part 2; soldier)_
+  - subtitle: perhaps today is a good day to die!
+  - flavor: "...prepare for RAMMING SPEED!"
+- **Suicide Squad** _(2nd Edition; soldier)_
+  - subtitle: perhaps today is a good day to die!
+  - flavor: "...prepare for ramming speed!"
+- **Surplus Soldier** _(Seed 2; soldier)_
+  - subtitle: i also write poetry
+  - flavor: Haikus are easy, / But sometimes they don't make sense. / Refrigerator.
+- **Surplus Soldier** _(Seed Saga; soldier)_
+  - subtitle: i got a ninety-nine problems, but a soldier ain't one
+  - flavor: Why do they always sell uniforms in packs of ten, but sell soldiers in packs of twelve?
+- **Thabbashite Bowlegger** _(Holy Heist; rider)_
+  - subtitle: epic mount d00d
+  - flavor: Riding beaver into glory! Sometimes beavers can be tamed... sort of.
+- **Thabbashite Host** _(Ungodly Mess; fighter)_
+  - subtitle: symbiosis gives him strength
+  - flavor: A living god animates his body, ripples through his veins, gives power to his strikes.
+- **Thabbashite Warmonger** _(Shade of the Devoured Emperor; tyrant)_
+  - subtitle: the living gods call for blood
+- **Thabbashite Weapons Expert** _(Ungodly Mess; fighter)_
+  - subtitle: jerry-rigging!?
+  - flavor: I HATE jerry-rigging!
+- **The Emperor Barduse** _(Seed 2; emperor barduse, dragon)_
+  - flavor: There are only those with power, and those too weak to seek it.
+- **The Emperor Barduse** _(Seed Saga; emperor barduse, dragon)_
+  - subtitle: Gideon is gone. Only Barduse remains.
+  - flavor: Forged in a crucible of desperation and failure.
+- **Thundering Nilpha** _(1st Edition Part 2, 2nd Edition; dragon)_
+  - subtitle: crushing coils of carnage
+  - flavor: Smashed into pulp, dashed to bloody ribbons on the rocks, spined and impaled, devoured and ingested, boiled alive in the churning belly of the demon. / Good times.
+- **Tiny Sarume** _(Seed, Seed Saga; dragon)_
+  - subtitle: expedient eater of toes
+- **Torrential Bleeder** _(1st Edition Part 2, 2nd Edition; dragon)_
+  - subtitle: let the death shower begin!
+  - flavor: "Damn you bleedy buggers! Damn you to hell!"
+- **Trebuchet Officer** _(Seed Saga; soldier)_
+  - subtitle: he's grrrrrreat
+- **Trophy Collector** _(1st Edition Part 2; soldier)_
+  - flavor: We always wondered about those veiny, dried up hot dogs Zi Jian brings for lunch.
+- **Trophy Collector** _(2nd Edition; soldier)_
+  - subtitle: only the finest frankfurters
+  - flavor: After eight months of beans and hardtack, you don't ask where the meat comes from.
+- **Twisted Cannoneer** _(Holy Heist; tyrant)_
+  - subtitle: he's still alive!
+  - flavor: That proves the enemy is weak! Fire at will!
+- **Unflinching Bowman** _(Seed, Seed Saga; soldier)_
+  - subtitle: there is nothing around you
+  - flavor: There is only you and your target.
+- **Unstoppable Asskicker** _(Seed; soldier)_
+  - subtitle: like a hot knife through butter
+  - flavor: "The bile of the vanquished flows over my hands."
+- **Ursine Assassin** _(Shade of the Devoured Emperor; warbeast)_
+  - subtitle: bears bred to be brutal
+  - flavor: An amazing asset on an expedition, just don't get in its way when it's pissed... or horny.
+- **Vexillarius Dacian-Draco** _(Ungodly Mess; vexillarius, seraphim, dragon)_
+  - subtitle: slithering serpent of savagery
+- **Vicious Bruiser** _(Holy Heist; fighter)_
+  - subtitle: don't lose your head
+  - flavor: Flawless Victory. FATALITY!
+- **Vigilant Raider** _(Seed; soldier)_
+  - flavor: Guang Yu does not sleep. He waits.
+- **Vigilant Raider** _(Seed Saga; soldier)_
+  - subtitle: oh, that's a nicol rorix killmouth kite of hell
+  - flavor: Imagine that. Dragons. Much wow.
+- **Virtuous Razer** _(Seed Saga; soldier, vandal)_
+  - subtitle: hammer time!
+- **Warbeast of Thabbash** _(Shade of the Devoured Emperor; warbeast)_
+  - subtitle: the living god calls for servitude
+- **Warrior Prodigy** _(1st Edition, 2nd Edition, Open Beta; soldier)_
+  - subtitle: just a morning workout
+  - flavor: The most talented fighters are encouraged from a young age. They're given all the food they can eat, all the women they can handle, and all the men they can kill.
+- **Wyrmfang Deathskull** _(1st Edition Part 2, 2nd Edition; dragon)_
+  - subtitle: who lives in a pineapple under the sea?
+  - flavor: WYRM-FANG-DEATH-SKULL!

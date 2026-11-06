@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      # `prepare` runs `npm run build` on install and emits build/.
+      - run: yarn install --frozen-lockfile
+
+      # card-coverage.json / COVERAGE.md / card-fidelity.json must be
+      # regenerated after any catalog or classification change.
+      - name: coverage manifest is up to date
+        run: node scripts/build-coverage.cjs --check
+
+      # src/data/*.js are generated — fail if a data/*.json edit landed
+      # without `npm run sync-cards`.
+      - name: generated src/data is in sync
+        run: |
+          npm run sync-cards
+          git diff --exit-code -- src/data/cards.js src/data/card-fidelity.js
+
+      - run: npm run typecheck
+
+      # The published .d.ts must compile in a strict downstream project.
+      - run: npm run typecheck:consumer
+
+      - run: npm test

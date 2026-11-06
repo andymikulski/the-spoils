@@ -1,0 +1,3966 @@
+[
+ {
+  "id": "CR 101.1",
+  "source": "CR",
+  "section": "101",
+  "sectionTitle": "The Most Important Rule",
+  "kind": "rule",
+  "text": "If a card directly contradicts the rules, the card always takes precedence.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 102.1",
+  "source": "CR",
+  "section": "102",
+  "sectionTitle": "Object of the Game",
+  "kind": "rule",
+  "text": "The object of the game is to reduce the influence score of your opponent's faction to 0. If at any time a faction's influence score is 0, the owner of that faction immediately loses the game.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 102.1a",
+  "source": "CR",
+  "section": "102",
+  "sectionTitle": "Object of the Game",
+  "parent": "102.1",
+  "kind": "rule",
+  "text": "You do not lose the game if your deck runs out of cards; you simply cannot draw any more.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 102.2",
+  "source": "CR",
+  "section": "102",
+  "sectionTitle": "Object of the Game",
+  "kind": "rule",
+  "text": "If all players still in the game lose the game at the same time, the game is a draw between those players.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.1",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "kind": "rule",
+  "text": "Constructed decks must meet the following criteria:",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.1a",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.1",
+  "kind": "rule",
+  "text": "Utilize only one faction card.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.1b",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.1",
+  "kind": "rule",
+  "text": "A minimum of 75 cards must be included, not including your faction card. There is no maximum deck size.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.1c",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.1",
+  "kind": "rule",
+  "text": "No more than 4 copies of any card with the same name may be included. However, staple resources, cards with the supertype \"staple\", and cards that specifically note otherwise are exempt from this rule.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.1d",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.1",
+  "kind": "rule",
+  "text": "No cards that are banned in the format being played may be included. The current banned list for all formats can be found in the official Tournament Rules, available online at www.thespoils.com/rules.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.2",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "kind": "rule",
+  "text": "Limited decks must meet the following criteria:",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.2a",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.2",
+  "kind": "rule",
+  "text": "Utilize only one faction card.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.2b",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.2",
+  "kind": "rule",
+  "text": "A minimum of 40 cards must be included, not including your faction card. There is no maximum deck size.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.2c",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.2",
+  "kind": "rule",
+  "text": "There is no restriction on the number of copies of a card that can be included. It is limited only by your card pool.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.2d",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.2",
+  "kind": "rule",
+  "text": "Unless the Tournament Rules have specifically banned a card in Limited play, any cards banned from Constructed play may be included.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.3",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "kind": "rule",
+  "text": "Constructed Decks for Two Headed Majig.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 103.3a",
+  "source": "CR",
+  "section": "103",
+  "sectionTitle": "Deck Construction",
+  "parent": "103.3",
+  "kind": "rule",
+  "text": "Coming Soon.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 104.1",
+  "source": "CR",
+  "section": "104",
+  "sectionTitle": "Tournaments",
+  "kind": "rule",
+  "text": "This document only discusses the rules of play. For detailed information about tournaments, please refer to the official Tournament Rules, available online at www.thespoils.com/rules.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 105.1",
+  "source": "CR",
+  "section": "105",
+  "sectionTitle": "Errata",
+  "kind": "rule",
+  "text": "All cards must be played as though they were the most recent version of the card. The current wording for all cards can be found online at www.thespoils.com/rules.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 201.1",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Name",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.1a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.1",
+  "kind": "rule",
+  "text": "A card's name is written at the top in large letters. Just below you'll find the subtitle, a descriptive line of text related to the card's overall theme.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.1b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.1",
+  "kind": "rule",
+  "text": "A card's name is what uniquely identifies it. Cards with the same name are considered to be the same card even if their other characteristics are different.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.2",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Cost Number",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.2a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.2",
+  "kind": "rule",
+  "text": "A card's cost number appears in the upper left corner. It represents the number of resources needed to play the card.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.3",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Threshold Icons",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.3a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.3",
+  "kind": "rule",
+  "text": "A card's threshold consists of resource icons in the upper left corner, just below its cost number. It represents the resource icons you must control in order to play the card. Resource icons are never spent to meet threshold.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Type Line",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.4",
+  "kind": "rule",
+  "text": "A card's type line appears in the middle, just below the artwork. Written on this line are its trade, supertype, type, and subtypes (which are located after the dash).",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.4",
+  "kind": "rule",
+  "text": "Subtypes are descriptive words or phrases that sometimes interact with other cards during the game. Not every card has subtypes. Subtypes do not have any game rules associated with them. If an effect refers to a subtype, it always appears between quotation marks. For example, a card might say \"This card gains 1 strength and 1 life for each `dragon' card you control.\"",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4c",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.4",
+  "kind": "rule",
+  "text": "Supertypes are descriptive words that affect the rules of the card. The most common supertype is the \"staple\" supertype found on resource cards.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4d",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.4",
+  "kind": "rule",
+  "text": "Trades are descriptive words that reference what trade the card belongs to. The trades are: Gearsmith, Warlord, Banker, Rogue, Arcanist, and Universal.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.4e",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.4",
+  "kind": "rule",
+  "text": "Types refer to what kind of card it is. Types can be gained or lost. The six types are: Resource, Tactic, Character, Location, Item, and Faction.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Rules Text",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.5",
+  "kind": "rule",
+  "text": "A card's rules text appears on the bottom half, just below the type line. This text explains what the card can do during the game.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.5",
+  "kind": "rule",
+  "text": "Unless otherwise stated, a card's rules text is only active while it's in play.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5c",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.5",
+  "kind": "rule",
+  "text": "Abilities appear in rules text. They each have a center-justified name and a labeled cost and effect section. Dividing lines help to separate abilities from the rest of the rules text.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5d",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.5",
+  "kind": "rule",
+  "text": "Some paragraphs of rules text begin with threshold icons. These paragraphs are only active while you are meeting that threshold. (405.4)",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.5e",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.5",
+  "kind": "rule",
+  "text": "Any text written in italics is not part of the rules text. It's either a descriptive paragraph relating to the card's overall theme or a reminder to help answer a commonly asked question about the card.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.6",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Collector Info",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.6a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.6",
+  "kind": "rule",
+  "text": "A card's collector info appears at the bottom, just below the rules text.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.6b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.6",
+  "kind": "rule",
+  "text": "The set icon identifies which set this card belongs to.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.6c",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.6",
+  "kind": "rule",
+  "text": "The rarity is common, uncommon, rare, or ultra rare and it defines how often you'll find the card in a pack.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.6d",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.6",
+  "kind": "rule",
+  "text": "The collector number helps you organize your cards. For example, if it says \"196/220\" it's the 196th card in a set of 220 cards. Collector numbers are sorted alphabetically by trade and card name.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.7",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Battle Stats",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.7a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.7",
+  "kind": "rule",
+  "text": "Only characters have battle stats.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.7b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.7",
+  "kind": "rule",
+  "text": "A card's battle stats appear in the upper right corner, consisting of strength (STR), life (LIFE), and speed (SPD).",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.7c",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.7",
+  "kind": "rule",
+  "text": "Some items (usually referred to as \"gear\") affect a character's battle stats. Those adjustments are conveniently represented in the item's upper right corner, preceded by a \"+\" or \"-\" symbol.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.8",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "kind": "heading",
+  "text": "Structure",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.8a",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.8",
+  "kind": "rule",
+  "text": "Only locations have structure.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 201.8b",
+  "source": "CR",
+  "section": "201",
+  "sectionTitle": "Parts of a Card",
+  "parent": "201.8",
+  "kind": "rule",
+  "text": "A location's structure appears in the upper right corner instead of battle stats. It represents the amount of damage markers it takes to destroy the location.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 202.1",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "You are only allowed to use one faction card per deck. (103.1a, 103.2a)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.2",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Your faction starts the game in play. (601.1a)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.3",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Your faction's influence is used as the score during the game. Once the influence runs out, you lose the game. (102.1)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.3a",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "parent": "202.3",
+  "kind": "rule",
+  "text": "Every faction has a unique starting influence. This number is defined at the top of the card, just below the name.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.4",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "If damage is inflicted to your faction, it loses an equal amount of influence. (408.3)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.5",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Every faction has a Starting Resources section in its rules text. This section explains which resources from your deck start the game in play.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.6",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Every faction has a Starting Draw section in its rules text. This section explains how many cards you draw in your opening hand. This number is usually different if you are going first as opposed to second.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.7",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Every faction has a Restore Rule section in its rules text. It helps replenish your cards and resources every turn.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.8",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "Every faction has a Develop Rule section in its rules text. It usually allows you to draw cards or play resources each turn.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.9",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "kind": "rule",
+  "text": "A faction is not affected by effects unless they specifically say that they apply to factions.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 202.9a",
+  "source": "CR",
+  "section": "202",
+  "sectionTitle": "Factions",
+  "parent": "202.9",
+  "kind": "rule",
+  "text": "This means you cannot pick a faction unless explicitly instructed to.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.1",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "You can only play a resource when an effect instructs you to do so.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.1a",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.1",
+  "kind": "rule",
+  "text": "The most common effects that allow you to play resources are generated by your faction.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.2",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "When you play a resource, you decide if you are going to play it face-up or face-down. Any card can be played face-down, but only actual resource cards can be played face-up.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.2a",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.2",
+  "kind": "rule",
+  "text": "A face-down card's controller can look at its front face at any time. (411.2)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.3",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "If you are instructed to pay a number, you attach that number of resources to your faction. (309.1)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.3a",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.3",
+  "kind": "rule",
+  "text": "You can only attach resources that are currently not attached to anything.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.4",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "Most resource cards provide resource icons. These icons are clearly indicated in the card's rules text area. Resource icons correspond with threshold icons.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.4a",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.4",
+  "kind": "rule",
+  "text": "Each face-down card provides one Volition resource icon.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.5",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "Staple resources are the most common kind of resource. They are clearly labeled with the word \"staple\" on their type line.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.5a",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.5",
+  "kind": "rule",
+  "text": "The five staple resources are named Obsession, Greed, Elitism, Deception, and Rage.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.5b",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.5",
+  "kind": "rule",
+  "text": "You are allowed to include any number of staple resource cards in your Constructed decks. (103.1c)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.5c",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "parent": "203.5",
+  "kind": "rule",
+  "text": "Each staple resource provides one resource icon of its type and all face-down cards provide the Volition icon.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.6",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "Resources should be oriented sideways while they are in play.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 203.7",
+  "source": "CR",
+  "section": "203",
+  "sectionTitle": "Resources",
+  "kind": "rule",
+  "text": "Resources never deplete. When they are used, they are attached to your faction.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 204.1",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "kind": "rule",
+  "text": "You mainly deploy characters during your turn, but certain effects allow you to deploy them during your opponent's turn. Example — If an effect says \"deploy a card\" or \"deploy a character\" you may do it when the effect resolves, regardless of whose turn it is.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.2",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "kind": "rule",
+  "text": "When a character resolves, put it into play.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.2a",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.2",
+  "kind": "rule",
+  "text": "Characters enter play under the control of the card or effect's controller.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.3",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "kind": "rule",
+  "text": "Your characters can attack and block while they're in play. However, a character cannot attack unless it started the turn in play under your control.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.3a",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.3",
+  "kind": "rule",
+  "text": "However, characters can use any of their abilities the first turn they are in play under your control.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.3b",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.3",
+  "kind": "rule",
+  "text": "A character that is put into play by an effect that happened at the start of the turn cannot attack this turn because it wasn't technically in play at the moment the turn actually started.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.4",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "kind": "rule",
+  "text": "Each character has three battle stats: strength, life, and speed.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.4a",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.4",
+  "kind": "rule",
+  "text": "A character's strength represents how much damage it can inflict in battle.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.4b",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.4",
+  "kind": "rule",
+  "text": "A character's life represents how much damage it takes to destroy it.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.4c",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "parent": "204.4",
+  "kind": "rule",
+  "text": "A character's speed defines when its damage is inflicted.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 204.5",
+  "source": "CR",
+  "section": "204",
+  "sectionTitle": "Characters",
+  "kind": "rule",
+  "text": "If the damage a character receives in a single turn is ever equal to or greater than its life, destroy it immediately. (408.4)",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 205.1",
+  "source": "CR",
+  "section": "205",
+  "sectionTitle": "Tactics",
+  "kind": "rule",
+  "text": "Tactics can be deployed during your turn. They can also be deployed in response to your opponent's actions, even if it isn't your turn. There are also special times during battles when you can deploy tactics.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 205.2",
+  "source": "CR",
+  "section": "205",
+  "sectionTitle": "Tactics",
+  "kind": "rule",
+  "text": "When a tactic resolves, follow its instructions and put it into its owner's discard pile.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 206.1",
+  "source": "CR",
+  "section": "206",
+  "sectionTitle": "Items",
+  "kind": "rule",
+  "text": "You mainly deploy items during your turn, but certain effects allow you to deploy them during your opponent's turn. Example — If an effect says \"deploy a card\" or \"deploy an item\" you may do it when the effect resolves, regardless of whose turn it is.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 206.2",
+  "source": "CR",
+  "section": "206",
+  "sectionTitle": "Items",
+  "kind": "rule",
+  "text": "When an item resolves, put it into play.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.1",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "You mainly deploy locations during your turn, but certain effects allow you to deploy them during your opponent's turn. Example — If an effect says \"deploy a card\" or \"deploy a location\" you may do it when the effect resolves, regardless of whose turn it is.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.2",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "When a location resolves, put it into play.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.3",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "Your opponent can attack your locations.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.4",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "Each location has a structure value. It defines how many damage markers it takes to destroy the location.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.5",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "If the damage markers a location has received is ever equal to or greater than its structure value, destroy it immediately. (408.5)",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.5a",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "parent": "207.5",
+  "kind": "rule",
+  "text": "It's best to keep track of a location's damage markers with pen and paper or by using a six-sided die.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.5b",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "parent": "207.5",
+  "kind": "rule",
+  "text": "If a location leave play, all damage markers on it disappear.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 207.6",
+  "source": "CR",
+  "section": "207",
+  "sectionTitle": "Locations",
+  "kind": "rule",
+  "text": "If an effect removes damage markers from a location, adjust the total damage markers it has received this game accordingly.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 208.1",
+  "source": "CR",
+  "section": "208",
+  "sectionTitle": "Changing Card Types",
+  "kind": "rule",
+  "text": "A card is allowed to have more than one type at the same time.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 208.1a",
+  "source": "CR",
+  "section": "208",
+  "sectionTitle": "Changing Card Types",
+  "parent": "208.1",
+  "kind": "rule",
+  "text": "Certain effects might say the card \"gains\" a type. If it does, it still has its other types in addition to the new type.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 208.2",
+  "source": "CR",
+  "section": "208",
+  "sectionTitle": "Changing Card Types",
+  "kind": "rule",
+  "text": "If the effect of a card refers to a specific card type, but the card it is trying to affect is no longer that type, then the card is not affected by that effect.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 208.3",
+  "source": "CR",
+  "section": "208",
+  "sectionTitle": "Changing Card Types",
+  "kind": "rule",
+  "text": "If a card with the character type loses that type, it forgets all damage it received this turn. Example — If an item becomes a character, receives damage, stops being a character, then later that turn becomes a character again, the damage it received earlier is not remembered.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 208.4",
+  "source": "CR",
+  "section": "208",
+  "sectionTitle": "Changing Card Types",
+  "kind": "rule",
+  "text": "If a card with the character type loses that type during a battle, the card is removed from the battle immediately.",
+  "batch": "r10-card-types"
+ },
+ {
+  "id": "CR 301.1",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "kind": "rule",
+  "text": "To attach one card to another, arrange the attaching card so it overlaps the target card.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 301.2",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "kind": "rule",
+  "text": "When you attach a card to something, it is simultaneously detached from anything else it is already attached to.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 301.3",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "kind": "rule",
+  "text": "An attaching card can only be attached to one target at a time. However, target cards can have any number of cards attached to them at once.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 301.4",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "kind": "rule",
+  "text": "If a target card leaves play, all cards attached to it leave play in the same way.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 301.4a",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "parent": "301.4",
+  "kind": "rule",
+  "text": "This refers to any possible way of leaving play, including being destroyed, removed from the game, put into owner's hand, or shuffled into owner's deck.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 301.4b",
+  "source": "CR",
+  "section": "301",
+  "sectionTitle": "Attach & Detach",
+  "parent": "301.4",
+  "kind": "rule",
+  "text": "If the target card's method of leaving play is replaced, the attached card's method of leaving play is also replaced.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 302.1",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Target of the attack — The faction or location being attacked during the current battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.2",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Being attacked — A player is being attacked during any battle in which a faction or location they control is the target of the attack.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.3",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Attacking player — The player that started the current battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.4",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Defending player — The player being attacked during the current battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.5",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Battle party — A group of characters working together in a battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.6",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Attacking party — The battle party under the attacking player's control during a battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.7",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Blocking party — The battle party under the defending player's control during a battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.8",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "During a battle — A battle is the period of time from the moment an attack is announced, lasting until the battle is fully resolved.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.9",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "In a battle — A character is considered to be in a battle while it is a member of an attacking party or blocking party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.10",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Opposing party — The battle party under your opponent's control during a battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.11",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Covert party — An attacking party containing only characters with covert.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.11a",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "parent": "302.11",
+  "kind": "rule",
+  "text": "If any member of a covert party loses covert during the battle, the party immediately isn't covert anymore.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.11b",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "parent": "302.11",
+  "kind": "rule",
+  "text": "If the status of a covert party changes during a battle, it doesn't affect any blocks that have already been made.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.12",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Attacking Character — A character is considered to be attacking while it's a member of an attacking party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.13",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Blocking Character — A character is considered to be blocking while it's a member of a blocking party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.14",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "In a party with — If a character refers to another character that is in a party with it, any member of that party meets this criterion, even the character doing the check. For example, if a card says \"pick a character in a party with this card\" then you could pick the card itself.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 302.15",
+  "source": "CR",
+  "section": "302",
+  "sectionTitle": "Battle Terms",
+  "kind": "rule",
+  "text": "Removed from battle — If a character is removed from battle it is no longer part of its battle party. Any battle damage assigned to the character is not inflicted.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 303.1",
+  "source": "CR",
+  "section": "303",
+  "sectionTitle": "Deplete & Restore",
+  "kind": "rule",
+  "text": "You deplete some cards to indicate they have been used for the turn. If you're instructed to deplete a card, turn the card sideways to indicate it is depleted.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 303.2",
+  "source": "CR",
+  "section": "303",
+  "sectionTitle": "Deplete & Restore",
+  "kind": "rule",
+  "text": "You can only deplete a card if it isn't depleted already. You can only restore a card if it isn't already restored.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 303.3",
+  "source": "CR",
+  "section": "303",
+  "sectionTitle": "Deplete & Restore",
+  "kind": "rule",
+  "text": "To restore a card, return the card to an upright position.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 304.1",
+  "source": "CR",
+  "section": "304",
+  "sectionTitle": "Destroy",
+  "kind": "rule",
+  "text": "To destroy a card means to remove it from play and put it into its owner's discard pile.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 305.1",
+  "source": "CR",
+  "section": "305",
+  "sectionTitle": "Discard",
+  "kind": "rule",
+  "text": "To discard a card means to take it from its owner's hand and put it into their discard pile.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 305.2",
+  "source": "CR",
+  "section": "305",
+  "sectionTitle": "Discard",
+  "kind": "rule",
+  "text": "If you instructed to discard multiple cards, all cards enter the discard pile at the same time.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 306.1",
+  "source": "CR",
+  "section": "306",
+  "sectionTitle": "Draw",
+  "kind": "rule",
+  "text": "To draw a card is to put the top card of your deck into your hand.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 306.2",
+  "source": "CR",
+  "section": "306",
+  "sectionTitle": "Draw",
+  "kind": "rule",
+  "text": "If you run out of cards in your deck to draw you don't lose the game, you just fail to draw the remaining cards. (102.1a)",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 306.3",
+  "source": "CR",
+  "section": "306",
+  "sectionTitle": "Draw",
+  "kind": "rule",
+  "text": "Cards are always drawn as a group. For example, if a card says \"draw 2 cards\" then you put them into your hand at the same time, instead of 2 separate \"draw a card\" events.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 306.4",
+  "source": "CR",
+  "section": "306",
+  "sectionTitle": "Draw",
+  "kind": "rule",
+  "text": "A draw is also the term for a game that has no winner. If all players still in the game lose the game at the same time, the game is a draw between those players. (102.2).",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 307.1",
+  "source": "CR",
+  "section": "307",
+  "sectionTitle": "Duplicate",
+  "kind": "rule",
+  "text": "If you are instructed to duplicate a tactic, an invisible copy is created. Its cost number is considered to be 0 and you don't need to meet its threshold. The copy has all the rules text of the original, so you must still satisfy all its extra costs. If you can't, the duplicate is terminated.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 307.2",
+  "source": "CR",
+  "section": "307",
+  "sectionTitle": "Duplicate",
+  "kind": "rule",
+  "text": "If a card's rules text has several labeled options, you can choose a new option for the duplicate.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 307.3",
+  "source": "CR",
+  "section": "307",
+  "sectionTitle": "Duplicate",
+  "kind": "rule",
+  "text": "If an effect restricts you from playing tactics, any duplicates created while that restriction is active are terminated immediately.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 307.4",
+  "source": "CR",
+  "section": "307",
+  "sectionTitle": "Duplicate",
+  "kind": "rule",
+  "text": "When a duplicate leaves the Being Deployed game area, it disappears.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 308.1",
+  "source": "CR",
+  "section": "308",
+  "sectionTitle": "Free",
+  "kind": "rule",
+  "text": "If an effect lets you play a card for free then its cost number is considered to be 0 while you deploy it.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 308.1a",
+  "source": "CR",
+  "section": "308",
+  "sectionTitle": "Free",
+  "parent": "308.1",
+  "kind": "rule",
+  "text": "You still need to meet its threshold and satisfy its extra costs.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 309.1",
+  "source": "CR",
+  "section": "309",
+  "sectionTitle": "Pay",
+  "kind": "rule",
+  "text": "If you are instructed to pay a number, you must attach that number of resources to your faction.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 309.1a",
+  "source": "CR",
+  "section": "309",
+  "sectionTitle": "Pay",
+  "parent": "309.1",
+  "kind": "rule",
+  "text": "You can only attach resources that are currently not attached to anything.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 309.1b",
+  "source": "CR",
+  "section": "309",
+  "sectionTitle": "Pay",
+  "parent": "309.1",
+  "kind": "rule",
+  "text": "The word pay is never used to refer to your faction losing influence.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 310.1",
+  "source": "CR",
+  "section": "310",
+  "sectionTitle": "Pick",
+  "kind": "rule",
+  "text": "The word pick is a special term used when an effect needs to specifically refer to a card. The usage of the specific word is important because picking is considered a distinct action. Example — If a card says \"you cannot pick this card\" then you cannot follow any instruction that says \"pick\" that card. You could, however, select the card in other ways that don't specifically use the word pick.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 311.1",
+  "source": "CR",
+  "section": "311",
+  "sectionTitle": "Provides",
+  "kind": "rule",
+  "text": "If a card says it provides resource icons, those icons count towards meeting the thresholds of your cards.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 311.2",
+  "source": "CR",
+  "section": "311",
+  "sectionTitle": "Provides",
+  "kind": "rule",
+  "text": "By default, every staple resource card provides one icon of the appropriate type and all face-down cards provide the Volition icon. (203.5c)",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 312.1",
+  "source": "CR",
+  "section": "312",
+  "sectionTitle": "Search",
+  "kind": "rule",
+  "text": "If a deck is searched, its owner must shuffle it afterwards.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 312.2",
+  "source": "CR",
+  "section": "312",
+  "sectionTitle": "Search",
+  "kind": "rule",
+  "text": "You are allowed to fail in finding any card that must match specific search criteria. You may choose to fail even if there are valid cards available to find. Example — If a card says \"search your deck for an item\" then you can fail to find it either because the deck contains no items or because you choose to fail. However, if a card says \"search your deck for a card\" you must find a card (unless the deck contains no cards).",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 313.1",
+  "source": "CR",
+  "section": "313",
+  "sectionTitle": "Shuffle",
+  "kind": "rule",
+  "text": "To shuffle a deck is to sufficiently randomize it.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 313.2",
+  "source": "CR",
+  "section": "313",
+  "sectionTitle": "Shuffle",
+  "kind": "rule",
+  "text": "If you are instructed to shuffle cards into a deck, you only perform the shuffle if more than 0 cards are being added to the deck.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 314.1",
+  "source": "CR",
+  "section": "314",
+  "sectionTitle": "Terminate",
+  "kind": "rule",
+  "text": "To terminate a card or ability is to stop it before it resolves. You must cease following any instructions associated with the card or ability immediately. If it's a card, put it into its owner's discard pile.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 314.2",
+  "source": "CR",
+  "section": "314",
+  "sectionTitle": "Terminate",
+  "kind": "rule",
+  "text": "To terminate an effect is to stop it from having its impact on the game. You must not complete any of the effect's instructions.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 401.1",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "kind": "rule",
+  "text": "A cost is any action a player must take to fulfill a card's needs. Most costs involve paying numbers and following simple instructions, but a cost might also have restrictions on when it can be satisfied.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.1a",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "parent": "401.1",
+  "kind": "rule",
+  "text": "The term cost is also used as part of the cost and effect relationship on some cards and abilities. In this context, the words are used out of convenience. Technically, costs can exist in any part of a card's rules text. However, the only type of cost that can exist outside of the cost section of a card or ability is a pay instruction.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.2",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "kind": "rule",
+  "text": "If you cannot complete all instructions and meet all restrictions of a cost, then you cannot satisfy that cost. This means you cannot take the action associated with it.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.2a",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "parent": "401.2",
+  "kind": "rule",
+  "text": "If you are trying to satisfy a cost as though you were your opponent, you can only do so with the knowledge you currently have about the game state. For example, if you must satisfy a cost that says \"discard a character\" you can only do so if your opponent's hand is currently revealed by an ongoing effect.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.3",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "kind": "rule",
+  "text": "An extra cost is any instruction listed in the cost section of a card or ability's rules text. Extra costs must always be completed in the order they are listed, except for pay instructions (406.3a). If you come to a step that you cannot complete, then the whole action is illegal and you must undo everything you've done so far to take the action.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.3a",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "parent": "401.3",
+  "kind": "rule",
+  "text": "Some extra costs take the form of restrictions. Restrictions define criteria for satisfying the cost. For example, a cost might say \"use this only during your turn.\" Each restriction must be satisfied like any other cost.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 401.3b",
+  "source": "CR",
+  "section": "401",
+  "sectionTitle": "Costs",
+  "parent": "401.3",
+  "kind": "rule",
+  "text": "If an extra cost requires a card to lose something, it cannot be satisfied unless the card has that thing.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.1",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "An effect is anything a card's rules text does that affects the game in some way. An effect is generated when a player follows an instruction in a card's rules text.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.1a",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.1",
+  "kind": "rule",
+  "text": "To be clear, the rules don't generate effects; only cards do.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.1b",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.1",
+  "kind": "rule",
+  "text": "The term effect is also used as part of the cost and effect relationship on some cards and abilities. In this context, the words are used out of convenience. Technically, effects can be generated by any part of a card's rules text, including the cost.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.2",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If an effect instructs multiple players to do something at the same time, the active player takes the action first, then continues clockwise.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.3",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If a card does not specify the game area it affects, it affects only the in play game area.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.3a",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.3",
+  "kind": "rule",
+  "text": "This includes picking. For example, if a card says \"pick a character\" you can only pick characters in play since the area it affects was not specified.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.4",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If a card moves from one game area to another, any unresolved effects that were going to impact it in the old area lose track of it. Example — If an effect would put a character into your hand from play when it resolves, but that character is destroyed in response, you don't get to put the character into your hand from your discard pile.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.5",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If you are unable to complete all of an effect's instructions, you must follow as many of the instructions as you can and ignore the rest.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.5a",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.5",
+  "kind": "rule",
+  "text": "Effects never \"fizzle\" if the thing they were trying to affect leaves play before they resolve.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.5b",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.5",
+  "kind": "rule",
+  "text": "If an instruction is dependant on another instruction that you ignored or was replaced by a replacement effect, you can't follow the dependant instruction. It is considered dependant if it refers specifically to an element within the previous instruction, or if it refers to information or choices made during the previous instruction. Note: Most dependent instructions begin with \"If you do\".",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.6",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If an ongoing effect says a card gains something but another ongoing effect says the card loses that thing, the lose effect always takes precedence.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.7",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If an effect says something can happen but another effect says it cannot, the cannot effect always takes precedence.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.7a",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.7",
+  "kind": "rule",
+  "text": "There's a difference between saying you can do something and being instructed to actually do that thing. For example, if a card says \"characters cannot be destroyed\" then all \"destroy a character\" effects are ignored.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.8",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "If an effect puts a card into play, it is not the same as deploying that card.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.8a",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "parent": "402.8",
+  "kind": "rule",
+  "text": "Anything that triggers when a card is deployed doesn't trigger when a card is put into play.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 402.9",
+  "source": "CR",
+  "section": "402",
+  "sectionTitle": "Effects",
+  "kind": "rule",
+  "text": "A faction is not affected by effects unless they specifically say that they apply to factions (202.9).",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 403.1",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Deck",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.1a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.1",
+  "kind": "rule",
+  "text": "This is the pile of cards you brought to the game, excluding your faction. No one is allowed to look through your deck or shuffle it unless instructed to do so.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.1b",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.1",
+  "kind": "rule",
+  "text": "The term deck is also used to describe your overall selection of cards used in a tournament, including your faction. This usage is for discussing your cards outside of the context of a game.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.2",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Hand",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.2a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.2",
+  "kind": "rule",
+  "text": "This is the group of cards that you currently have access to. Keep the front face of the cards in your hand hidden from your opponent.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.2b",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.2",
+  "kind": "rule",
+  "text": "There is no limit to the number of cards you can have in your hand.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.3",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Being Deployed",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.3a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.3",
+  "kind": "rule",
+  "text": "This is where a non-resource card goes when you play it from your hand. It stays in this area until your opponent is done responding and it resolves.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.4",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "In Play",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.4a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.4",
+  "kind": "rule",
+  "text": "This is the place on the table where you put the cards you've deployed or put into play. Most cards can't do anything until they're in play.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.5",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Discard Pile",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.5a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.5",
+  "kind": "rule",
+  "text": "This is where you put your cards when they are discarded or destroyed. You should keep this pile face-up next to your deck.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.5b",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.5",
+  "kind": "rule",
+  "text": "The specific order of cards in your discard pile does not need to be maintained.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.6",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Out of Game",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.6a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.6",
+  "kind": "rule",
+  "text": "This is where a card goes when it is removed from the game. You should set the card aside face-up for the rest of the game.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.7",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "kind": "heading",
+  "text": "Void",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.7a",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.7",
+  "kind": "rule",
+  "text": "This is where a card is placed that is sent to the Void. It may be sent there either face-up or face down, depending on the rules that put it there.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 403.7b",
+  "source": "CR",
+  "section": "403",
+  "sectionTitle": "Game Areas",
+  "parent": "403.7",
+  "kind": "rule",
+  "text": "You can not pick or choose a face-down card in the void unless an effect specifies to pick or choose a face-down card in the void.",
+  "batch": "r07-zones-actions"
+ },
+ {
+  "id": "CR 405.1",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "Certain elements in the game have a threshold associated with them. The threshold is represented visually with resource icons. In order to meet it, you must control cards that provide the proper resource icons.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 405.2",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "If you cannot meet a card's threshold, you cannot play the card.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 405.3",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "Some abilities have thresholds, located directly after the ability name in the card's rules text. If you cannot meet an ability's threshold, you cannot use that ability.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 405.4",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "Certain paragraphs of rules text have a threshold listed at the beginning. These paragraphs are only active while their controller is currently meeting that threshold.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 405.5",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "Resource icons are: Obsession, Greed, Elitism, Deception, Rage, and Volition. Each staple resource provides its corresponding icon and all face-down cards provide the Volition icon. (203.5c)",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 405.6",
+  "source": "CR",
+  "section": "405",
+  "sectionTitle": "Threshold",
+  "kind": "rule",
+  "text": "Resource icons are never spent to meet thresholds.",
+  "batch": "r09-resources-thresholds"
+ },
+ {
+  "id": "CR 406.1",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "The numeric cost of a card that is not currently being played is equal to its cost number, located in its upper-left corner.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.2",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "If a card doesn't have a cost number, its numeric cost is 0.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.3",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "While a card is being played, its numeric cost is handled differently. You must calculate it by keeping a running total of cost additions, increases, and reductions. A card's running total starts as its cost number. Then, you satisfy its extra costs. If an extra cost says \"pay\" a number, you don't pay it right away. Instead, you add that number to the running total. Once all the extra costs are satisfied, you apply all cost increases to the running total in any order you want, followed by all cost reductions in any order you want. The overall total is the card's numeric cost while it's being deployed. Finally, you pay that amount.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.3a",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "parent": "406.3",
+  "kind": "rule",
+  "text": "This means you always pay numeric costs last.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.4",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "An ability's numeric cost is handled in the same way as a card's numeric cost. But since abilities don't have a cost number, any ability without a pay instruction in its cost section is considered to not have a numeric cost at all.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.5",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "If an effect says \"pay\" a number, it is considered a numeric cost.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.5a",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "parent": "406.5",
+  "kind": "rule",
+  "text": "Therefore, any applicable numeric cost reduction effects would apply to the number.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.5b",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "parent": "406.5",
+  "kind": "rule",
+  "text": "This kind of effect-based numeric cost is not the same as the numeric cost of the card while it's being played. This means that any cost reduction effects that specifically work on that type of card won't work on the effect-based numeric cost. Example — If an effect says \"the numeric cost of your items is reduced by 1\" and an item leaves play that says \"when this card leaves play, you may pay 4...\" then that effect is not considered to be an \"item's numeric cost\" and is therefore not reduced. However, any generalized reduction effects, such as \"reduce the next numeric cost you pay this turn by 1\" would apply to that cost.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.6",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "Numeric costs can never go below 0. If an effect tries to reduce a number below 0, that number stays at 0 (410.4).",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 406.7",
+  "source": "CR",
+  "section": "406",
+  "sectionTitle": "Numeric Cost",
+  "kind": "rule",
+  "text": "To determine the numeric cost of a card deployed with Flip Up, you keep the same running total as you would with a regularly deployed card (406.3). However, the running total begins once the Flip Up cost has been paid with an initial value of the card's Flip Up cost. Then, you satisfy the card's extra costs. Cost additions are applied as normal. Once you've finished satisfying the extra costs and all cost increases and reductions have been applied as normal, you must pay the balance of the numeric cost. To do this, take the final numeric cost and subtract the card's Flip Up cost (since you already paid it). Then, pay that amount.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 407.1",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "You control the cards you play, and the effects generated by cards you control.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.1a",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "parent": "407.1",
+  "kind": "rule",
+  "text": "This means if a card's ability is used and in response you gain control of that card, the effects generated by that ability's rules text are controlled by you.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.2",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "The terms you and your in a card's rules text always refer to the card's current controller.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.3",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "If an effect causes a player to take control of a card, unless otherwise stated that player retains control of the card until it leaves play, or until another effect takes control of it.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.3a",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "parent": "407.3",
+  "kind": "rule",
+  "text": "If two ongoing effects take control of a card, the most recent effect always takes precedence.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.4",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "If the controller of a character changes during a battle, the character is removed from the battle immediately.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.4a",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "parent": "407.4",
+  "kind": "rule",
+  "text": "This means it is no longer part of its battle party. Any battle damage assigned to the character is not inflicted. (302.15)",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.5",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "If the target of an attack is a location and its controller changes during the battle, the location stops being the target of the attack.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.5a",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "parent": "407.5",
+  "kind": "rule",
+  "text": "This means that if the attackers try to assign their battle damage to the location, they don't actually do anything but are still considered to have assigned their battle damage for the purposes of ending the resolution loop. (609.2)",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.6",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "If an effect tries to add a character you do not control to a battle party you do control, that effect is terminated.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.7",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "You own any card that started the game as a part of your deck, regardless of who currently controls it.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.7a",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "parent": "407.7",
+  "kind": "rule",
+  "text": "This includes your faction card.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 407.8",
+  "source": "CR",
+  "section": "407",
+  "sectionTitle": "Control & Ownership",
+  "kind": "rule",
+  "text": "Ownership of a card cannot change during a game.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.1",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If something tries to inflict 0 damage, then no damage is actually inflicted.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.1a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.1",
+  "kind": "rule",
+  "text": "This means nothing that would trigger as a result of damage being inflicted happens.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.1b",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.1",
+  "kind": "rule",
+  "text": "If it was battle damage, the source character is considered to have inflicted its damage for the purposes of ending the resolution loop.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.2",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If damage greater than 0 is inflicted, damage increase and reduction effects are applied but nothing else that should trigger happens yet.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.2a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.2",
+  "kind": "rule",
+  "text": "If the final adjusted amount of damage is 0, nothing further happens. However, if it was battle damage, the source character is considered to have inflicted its damage for the purposes of ending the resolution loop.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.2b",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.2",
+  "kind": "rule",
+  "text": "If the final adjusted amount is greater than 0, all appropriate triggers now occur.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.3",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If damage is inflicted to your faction, it loses an equal amount of influence.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.3a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.3",
+  "kind": "rule",
+  "text": "Once your faction has 0 influence, you lose the game. (102.1)",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.3b",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.3",
+  "kind": "rule",
+  "text": "If a faction loses influence it's not the same as receiving damage, so anything that would affect damage doesn't affect the loss of influence. Example — A card might say \"your opponent's faction loses 2 influence\" while another card says \"if damage is inflicted to a faction, reduce the amount by 1.\" Your opponent's faction would still lose 2 influence because the other effect only reduces damage.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.4",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If the damage a character receives in a single turn is ever equal to or greater than its life, destroy it immediately.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.4a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.4",
+  "kind": "rule",
+  "text": "You only need to keep track of the current turn's damage because that's all that will ever matter. Although there is no official step when a character's damage for the turn is \"healed\" that's essentially what happens when a new turn begins.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.4b",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.4",
+  "kind": "rule",
+  "text": "If the destruction is replaced, reduce all damage the card has received from the source of the destruction to 0. (506.6)",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.5",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If the damage a markers location has received is ever equal to or greater than its structure, destroy it immediately.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.5a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.5",
+  "kind": "rule",
+  "text": "It's best to keep track of a location's damage markers with pen and paper or by using a six-sided die.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.5b",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.5",
+  "kind": "rule",
+  "text": "Certain effects can remove the damage markers from a location. If this happens, adjust the total damage markers the location has received this game accordingly. (207.6)",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.5c",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.5",
+  "kind": "rule",
+  "text": "If the destruction is replaced, reduce all damage the card has received from the source of the destruction to 0. (506.6) This means the location will not receive any damage markers from that damage.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.5d",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.5",
+  "kind": "rule",
+  "text": "If damage is inflicted to a location, it gains that many damage markers.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.6",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "The term battle damage applies to the damage inflicted as part of the steps of resolving a battle.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.6a",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "parent": "408.6",
+  "kind": "rule",
+  "text": "Battle damage works the same way as regular damage, except certain rules and cards interact specifically with battle damage.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.7",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If a card instructs you to inflict damage, then that card is considered the source of that damage. For battle damage, the source is the character which assigned it.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.8",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "A card is considered to have been destroyed by any damage that put it over its limit. Example — Let's say a character with 4 life has received 3 damage this turn. If that character then receives 1 more damage this turn, it would be considered to have been destroyed by that damage.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 408.9",
+  "source": "CR",
+  "section": "408",
+  "sectionTitle": "Damage",
+  "kind": "rule",
+  "text": "If a card changes game areas, all damage the card has received is reduced to 0.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.1",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "kind": "rule",
+  "text": "A token is a bead, coin, or other object placed on a card in play. Tokens have no inherent meaning, so a card always explains how it uses tokens in its rules text.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.2",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "kind": "rule",
+  "text": "If a card leaves play, any tokens on it disappear.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.3",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "kind": "heading",
+  "text": "Card Tokens",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.3a",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "parent": "409.3",
+  "kind": "rule",
+  "text": "If a Card Token leaves play, any attached cards leave play in that manner and then the Card Token disappears.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.3b",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "parent": "409.3",
+  "kind": "rule",
+  "text": "The owner of a Card Token is the player who controlled the effect that created it.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 409.3c",
+  "source": "CR",
+  "section": "409",
+  "sectionTitle": "Tokens",
+  "parent": "409.3",
+  "kind": "rule",
+  "text": "Common Card Token Stats 4.09.3.c.1 Micromajig Tokens are considered Gearsmith character cards with 1 strength, 1 life, 3 speed, and the \"majig\" subtype.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 410.1",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "kind": "rule",
+  "text": "An even number is any number that is a multiple of 2.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.1a",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "parent": "410.1",
+  "kind": "rule",
+  "text": "This includes the number 0.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.2",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "kind": "rule",
+  "text": "Cards with variable numbers fully explain how those variables are used in their rules text. If you are instructed to choose a number for a variable, you must choose a whole number (e.g. 2 is fine, but not -1 or 3—).",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.2a",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "parent": "410.2",
+  "kind": "rule",
+  "text": "We consider 0 to be a whole number.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.3",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "kind": "rule",
+  "text": "If a number is increased and/or reduced by more than one effect at the same time, apply all increases in any order you want followed by all reductions in any order you want.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.4",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "kind": "rule",
+  "text": "If an effect tries to reduce a number below 0, that number stays at 0.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 410.5",
+  "source": "CR",
+  "section": "410",
+  "sectionTitle": "Numbers",
+  "kind": "rule",
+  "text": "If a number is reduced to a minimum of some number, that restriction doesn't apply if the thing was already less than the minimum. Example — If a numeric cost of 0 is reduced by 1, to a minimum of 1, then that numeric cost is still 0.",
+  "batch": "r03-costs-effects"
+ },
+ {
+  "id": "CR 411.1",
+  "source": "CR",
+  "section": "411",
+  "sectionTitle": "Face-Down Cards",
+  "kind": "rule",
+  "text": "Every face-down card in play is considered to be a resource and provides one Volition resource icon. Note: Cards in the Void are not in play.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 411.2",
+  "source": "CR",
+  "section": "411",
+  "sectionTitle": "Face-Down Cards",
+  "kind": "rule",
+  "text": "The controller of a face-down card may look at its front face at any time.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 411.3",
+  "source": "CR",
+  "section": "411",
+  "sectionTitle": "Face-Down Cards",
+  "kind": "rule",
+  "text": "If a face-down card is flipped face-up, it stops being a resource and it is considered to have left play. If applicable, its face-up version is considered to have entered play as a completely new card.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 411.4",
+  "source": "CR",
+  "section": "411",
+  "sectionTitle": "Face-Down Cards",
+  "kind": "rule",
+  "text": "If a face-up card is flipped face-down, it is considered to have left play. It becomes a face-down resource and that resource is considered to have entered play as though it were a completely new card.",
+  "batch": "r04-damage-control"
+ },
+ {
+  "id": "CR 412.1",
+  "source": "CR",
+  "section": "412",
+  "sectionTitle": "Unblockability",
+  "kind": "rule",
+  "text": "If an effect says a character \"cannot be blocked\", then while it is a member of a battle party containing only unblockable characters, the defending player may not form a blocking party during step 607.1d of the battle. Note: Cards that add characters into the blocking party will still block an unblockable party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 413.1",
+  "source": "CR",
+  "section": "413",
+  "sectionTitle": "Bidding",
+  "kind": "rule",
+  "text": "If an effect instructs players to bid, they take turns choosing a number or passing. Each number chosen must be higher than the last. Bidding continues until only 1 player remains, that player wins the bid. All other players lose the bid.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 413.1a",
+  "source": "CR",
+  "section": "413",
+  "sectionTitle": "Bidding",
+  "parent": "413.1",
+  "kind": "rule",
+  "text": "Unless otherwise stated, bidding always begins with the active player and continues clockwise.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 413.1b",
+  "source": "CR",
+  "section": "413",
+  "sectionTitle": "Bidding",
+  "parent": "413.1",
+  "kind": "rule",
+  "text": "If a player cannot bid higher, they must pass. A player that has passed for any reason, may not bid again.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.1",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "kind": "rule",
+  "text": "If a series of effects form an infinitely repeating loop that cannot be voluntarily ended by either player, the game ends as a draw.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.1a",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.1",
+  "kind": "rule",
+  "text": "Keep in mind that the rules don't generate effects, so this rule only applies to things that cards do.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.2",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "kind": "rule",
+  "text": "You can have a series of voluntary actions repeat automatically. To do this, follow these steps:",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.2a",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.2",
+  "kind": "rule",
+  "text": "Demonstrate the series of actions.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.2b",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.2",
+  "kind": "rule",
+  "text": "Choose a number of times to repeat the series. Infinity is not a valid choice.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.2c",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.2",
+  "kind": "rule",
+  "text": "Your opponent can interrupt the loop at any point if they want to respond. For example, they could interrupt the loop by saying \"after 15 times, I respond to that ability by deploying a card.\" After the response, the loop continues until it is complete (unless your opponent decides to interrupt it again).",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.3",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "kind": "rule",
+  "text": "If an action loop involves the voluntary actions of multiple players, you must follow these steps:",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.3a",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.3",
+  "kind": "rule",
+  "text": "All involved players must demonstrate the loop. The loop is complete when the next action a player would take is identical to their first action.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.3b",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.3",
+  "kind": "rule",
+  "text": "The active player chooses a number, followed by their opponent. The loop is repeated the lesser number of times. If 0 is chosen, no repetitions occur.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 414.3c",
+  "source": "CR",
+  "section": "414",
+  "sectionTitle": "Action Loops",
+  "parent": "414.3",
+  "kind": "rule",
+  "text": "During the last repetition of the loop, the active player may choose any point in the loop at which to stop. This means it is valid to take all, some, or none of the actions in the last repetition if the active player chooses.",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "CR 501.1",
+  "source": "CR",
+  "section": "501",
+  "sectionTitle": "Italic Text",
+  "kind": "rule",
+  "text": "Italic text is not considered part of a card's rules text. It is either a descriptive paragraph relating to the card's overall theme, or a reminder to help answer a common question about the card.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 502.1",
+  "source": "CR",
+  "section": "502",
+  "sectionTitle": "Abilities",
+  "kind": "rule",
+  "text": "Many cards have abilities in their rules text. Every ability has a center-justified name and a clearly labeled cost and effect section.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 502.2",
+  "source": "CR",
+  "section": "502",
+  "sectionTitle": "Abilities",
+  "kind": "rule",
+  "text": "Some abilities have threshold icons next to their name. You can't use an ability unless you've met its threshold and can satisfy all its costs. (405.3)",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 502.3",
+  "source": "CR",
+  "section": "502",
+  "sectionTitle": "Abilities",
+  "kind": "rule",
+  "text": "Just like tactics, abilities can be used in response to your opponent's actions even if it isn't your turn. There are also special times during battles when you can use abilities.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 502.4",
+  "source": "CR",
+  "section": "502",
+  "sectionTitle": "Abilities",
+  "kind": "rule",
+  "text": "When an ability resolves, follow its rules text as it was written when you first paid the cost, even if its rules text has since changed or the ability's source has since left play.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 503.1",
+  "source": "CR",
+  "section": "503",
+  "sectionTitle": "Triggers",
+  "kind": "rule",
+  "text": "Triggers begin with the words if, when, or at and are followed by a trigger condition. If the trigger condition happens, you must immediately follow the instructions of the trigger as they were written when it happened, even if you are in the middle of resolving something else or the source of the trigger has left play.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 503.2",
+  "source": "CR",
+  "section": "503",
+  "sectionTitle": "Triggers",
+  "kind": "rule",
+  "text": "Players cannot respond to triggers.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 503.3",
+  "source": "CR",
+  "section": "503",
+  "sectionTitle": "Triggers",
+  "kind": "rule",
+  "text": "If a trigger happens while a player is satisfying the costs of a card or ability, it waits until after the costs are completely satisfied before it actually resolves.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 503.4",
+  "source": "CR",
+  "section": "503",
+  "sectionTitle": "Triggers",
+  "kind": "rule",
+  "text": "Sometimes multiple triggers happen at the same time. If all the triggers originated from cards under one player's control, that player decides the order in which they happen. However, if the triggers originated from cards under multiple players' control then the active player decides the order in which they happen.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 503.4a",
+  "source": "CR",
+  "section": "503",
+  "sectionTitle": "Triggers",
+  "parent": "503.4",
+  "kind": "rule",
+  "text": "The order does not have to be decided ahead of time; the deciding player lets one trigger happen, then afterwards decides which trigger happens next.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 504.1",
+  "source": "CR",
+  "section": "504",
+  "sectionTitle": "Conditionals",
+  "kind": "rule",
+  "text": "Conditionals use the word while followed by a condition to define rules text that is only active while the condition is true. Example — A card might say \"while your opponent controls a character, this card gains 1 strength and 1 life.\" This effect immediately ceases if your opponent ever stops controlling a character.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 505.1",
+  "source": "CR",
+  "section": "505",
+  "sectionTitle": "Requirements",
+  "kind": "rule",
+  "text": "Requirements use the word must to define something you are required to do. If you can't meet the requirements for an action then you can't take that action. Example — A card might say \"your opponent must pay 2 for each attacking party they form.\" In that case, your opponent could not form a new attacking party unless they could meet the requirement by paying 2.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 505.2",
+  "source": "CR",
+  "section": "505",
+  "sectionTitle": "Requirements",
+  "kind": "rule",
+  "text": "Sometimes multiple requirements exist for the same action. In these cases, you must satisfy as many of the requirements as you can. If it is impossible to fulfill them all, you must make the decision that would satisfy the greatest number of requirements.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 505.2a",
+  "source": "CR",
+  "section": "505",
+  "sectionTitle": "Requirements",
+  "parent": "505.2",
+  "kind": "rule",
+  "text": "If you do not have enough available resources to pay a requirement cost, it is not considered impossible to fulfill.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 505.2b",
+  "source": "CR",
+  "section": "505",
+  "sectionTitle": "Requirements",
+  "parent": "505.2",
+  "kind": "rule",
+  "text": "If more than one decision would satisfy the same number of requirements, you can choose which decision to make. Example — A card might say \"anything that could pick this card must pick it.\" If there are two copies of this card in play, you decide which of the two cards you must pick. However, if there are two copies of a card in play that says \"you must pay 2 for each attacking party you form\" then they must both be fulfilled; to attack, you must pay 4.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 505.2c",
+  "source": "CR",
+  "section": "505",
+  "sectionTitle": "Requirements",
+  "parent": "505.2",
+  "kind": "rule",
+  "text": "If a player is trying to take an action that has multiple requirements, they must satisfy at least one of them (and more if possible). It is invalid to reason that \"not taking the action in the first place satisfies all the requirements; therefore I cannot take the action.\" This logic is circular and incorrect.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.1",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Replacements use the word instead to define one thing that completely replaces another. Example — A card might say \"if this card is put into your discard pile from play, remove it from the game instead.\" In that case, the card would never go to the discard pile; going to the discard pile is completely replaced with removing it from the game.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.2",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Replacements don't apply to extra costs. If the thing to be replaced is part of an extra cost, it isn't replaced.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.2a",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "parent": "506.2",
+  "kind": "rule",
+  "text": "Any attached cards that have replacements will still be replaced. Example: A character with Rusty Pickaxe attached. If you Rapine the character, the Rusty Pickaxe will still have it's replacement and will flip face-down. The character's replacements will not happen if it was destroyed as part of a cost.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.3",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Certain replacements say \"the next\" to define something that could be replaced in the future. These are called delayed replacements. They wait until whatever they are trying to replace happens.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.4",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Sometimes multiple replacements try to replace something at the same time. If all the replacements originated from cards under one player's control, that player chooses one to apply and the rest are ignored. However, if the replacements originated from cards under multiple players' control, then the active player chooses one to apply and the rest are ignored. Delayed replacements are an exception; if a delayed replacement is not chosen, it is not ignored. Instead, it continues waiting for another instance of whatever it is trying to replace.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.5",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Under rare circumstances, a series of replacements might try to create infinite recursion. However, this is prevented because each replacement can only be applied to the same thing once. Example — If one card says \"if a card is destroyed, put it into its owner's hand instead\" while another card says \"if a card is put it its owner's hand from play, destroy it instead.\" These two replacements could theoretically replace each other infinitely. However, each replacement can only be applied to the same thing once. Therefore if a card is destroyed, that destruction is replaced by being put into its owner's hand which in turn is replaced by being destroyed. This is the end of the replacement cycle because you cannot replace the \"destroy\" with \"put into owner's hand\" again for this particular instance since you've already done that once. If in the above example there were two copies of the card that says \"if a card is destroyed, put it into its owner's hand instead\" then the replacement cycle would be handled differently. Each replacement gets to be applied once, even if it's identical to another replacement. Therefore, you'd actually apply that replacement twice since there are two copies of it.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 506.6",
+  "source": "CR",
+  "section": "506",
+  "sectionTitle": "Replacements",
+  "kind": "rule",
+  "text": "Replacements that replace the destruction of a card reduce all damage the card has received from the source of the destruction to 0.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 507.1",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "rule",
+  "text": "Keywords are used to describe a set of complex behaviors that would take up too much room to explain on a card. Keywords are always active. A card has a keyword when it is listed as a bold name or when it gains a keyword through rules text or abilities. Sometimes a keyword is mentioned in an effect or as part of the rules text; this does not mean the card has that keyword.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "heading",
+  "text": "Attach to [Type]",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2a",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.2",
+  "kind": "rule",
+  "text": "When you play the card, you must pick a target card of the appropriate type as the first extra cost. When the attaching card resolves, it enters play attached to the target card.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2b",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.2",
+  "kind": "rule",
+  "text": "If the attaching card is put into play by something that does not specify a target for it, you must pick a target card as the attaching card enters play.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2c",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.2",
+  "kind": "rule",
+  "text": "If there is no valid target card to pick or the attaching card's target is no longer in play when the attaching card tries to enter play, put the attaching card into its owner's discard pile instead. If it was already in the discard pile, it just stays there.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2d",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.2",
+  "kind": "rule",
+  "text": "If the attaching card is put into play at the same time as another card, the other card can be selected as a target for the attaching card.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.2e",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.2",
+  "kind": "rule",
+  "text": "If the target card stops being the appropriate type, destroy the attaching card immediately.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "heading",
+  "text": "Covert",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3a",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.3",
+  "kind": "rule",
+  "text": "If all members of an attacking party have the covert keyword, that party is considered a covert party.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3b",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.3",
+  "kind": "rule",
+  "text": "Only covert characters can block a covert party.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3c",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.3",
+  "kind": "rule",
+  "text": "Covert characters can only block covert parties.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3d",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.3",
+  "kind": "rule",
+  "text": "If an effect says a character \"gains covert\" then the character is considered to actually have the covert keyword in its rules text. (508.2)",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.3e",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.3",
+  "kind": "rule",
+  "text": "A card cannot have more than one instance of the covert keyword. Therefore, if a character with covert \"gains covert\" or gains temporary rules text containing the covert keyword, the extra instances of the keyword disappear.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "heading",
+  "text": "Flip Up",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4a",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.4",
+  "kind": "rule",
+  "text": "If a card with Flip Up is currently in play under your control as a face-down resource, you may play the card as though it were in your hand by paying its Flip Up cost and flipping it face-up. To deploy it, you must also meet its Flip Up threshold, listed next to the keyword.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4b",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.4",
+  "kind": "rule",
+  "text": "You pay the Flip Up cost before you actually flip the card over, so you can use the card to pay for its own Flip Up cost.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4c",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.4",
+  "kind": "rule",
+  "text": "If the card has any Flip Up extra costs, they must be satisfied directly before its regular extra costs.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4d",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.4",
+  "kind": "rule",
+  "text": "Flip Up does not change when you are allowed to deploy certain types of cards. For example, you can still only deploy a character during your turn. However, if the card says in its rules text that it can be deployed at other times, you can deploy it with Flip Up at those times too.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.4e",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.4",
+  "kind": "rule",
+  "text": "For information on determining the numeric cost of a card deployed with Flip Up, see its entry under Numeric Cost (406.7).",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.5",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "heading",
+  "text": "Unique [Identifier]",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.5a",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.5",
+  "kind": "rule",
+  "text": "If you ever control more than one card that says \"unique\" followed by the same identifier, you must choose one to keep and destroy the rest. This restriction only applies to your cards, so your opponent is allowed to have their own single copy of a unique card in play as well.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.5b",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.5",
+  "kind": "rule",
+  "text": "If the destruction of an extra copy of a card is prevented by an effect, the unique keyword doesn't try to destroy the card again until the prevention effect ends.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.6",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "kind": "heading",
+  "text": "Tactical",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.6a",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.6",
+  "kind": "rule",
+  "text": "A card with tactical may be deployed at any time you could deploy a tactic.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 507.6b",
+  "source": "CR",
+  "section": "507",
+  "sectionTitle": "Keywords",
+  "parent": "507.6",
+  "kind": "rule",
+  "text": "Tactical is active even when the card is a face-down resource or in your hand.",
+  "batch": "r06-keywords"
+ },
+ {
+  "id": "CR 508.1",
+  "source": "CR",
+  "section": "508",
+  "sectionTitle": "Temporary Rules Text",
+  "kind": "rule",
+  "text": "Some effects add temporary rules text to a card. This text exists on the card until it enters another game area.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 508.1a",
+  "source": "CR",
+  "section": "508",
+  "sectionTitle": "Temporary Rules Text",
+  "parent": "508.1",
+  "kind": "rule",
+  "text": "Therefore, if a card has temporary rules text that says \"if this card leaves play, draw a card\" it would actually trigger when the card leaves play.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 508.2",
+  "source": "CR",
+  "section": "508",
+  "sectionTitle": "Temporary Rules Text",
+  "kind": "rule",
+  "text": "If an effect says that a card \"gains\" a keyword, that card is considered to have the keyword as temporary rules text.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 508.3",
+  "source": "CR",
+  "section": "508",
+  "sectionTitle": "Temporary Rules Text",
+  "kind": "rule",
+  "text": "If a card gains temporary rules text while it has the character type but later loses that type, the temporary rules text gained while it was a character is removed.",
+  "batch": "r05-abilities"
+ },
+ {
+  "id": "CR 601.1",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "kind": "rule",
+  "text": "At the start of each game, follow these steps:",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1a",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "Faction cards start the game in play. Write down the starting influence of all factions on a piece of paper so you can keep track of it.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1b",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "All players search their deck for the appropriate resources listed under their faction's Starting Resources entry. These resources are put into play face-down.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1c",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "Randomly determine which player will decide who takes the first turn of the game. That player chooses who goes first.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1d",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "All players flip their starting resources face-up.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1e",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "Each player draws the appropriate number of cards according to their faction's Starting Draw entry. The number of cards drawn is usually different if you are going first as opposed to second.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1f",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "The first player may mulligan by selecting any number of cards in their hand and placing them on the bottom of their deck in any order. Then, they draw an equal number of cards. This can be done only once.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1g",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "Each player, in clockwise order, follows steps F.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 601.1h",
+  "source": "CR",
+  "section": "601",
+  "sectionTitle": "Starting a Game",
+  "parent": "601.1",
+  "kind": "rule",
+  "text": "The first turn of the game begins.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 602.1",
+  "source": "CR",
+  "section": "602",
+  "sectionTitle": "Start of turn",
+  "kind": "rule",
+  "text": "This is a single point of time and all things happen simultaneously, this is not a phase or step. These are not triggers.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 602.1a",
+  "source": "CR",
+  "section": "602",
+  "sectionTitle": "Start of turn",
+  "parent": "602.1",
+  "kind": "rule",
+  "text": "All damage on characters is cleared and reset to 0. (408.4a)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 602.1b",
+  "source": "CR",
+  "section": "602",
+  "sectionTitle": "Start of turn",
+  "parent": "602.1",
+  "kind": "rule",
+  "text": "All \"this turn\" effects end.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 602.1c",
+  "source": "CR",
+  "section": "602",
+  "sectionTitle": "Start of turn",
+  "parent": "602.1",
+  "kind": "rule",
+  "text": "Any cards that are in play under the active players control are elgible to attack this turn. (608.1b)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 602.2",
+  "source": "CR",
+  "section": "602",
+  "sectionTitle": "Start of turn",
+  "kind": "rule",
+  "text": "All \"At start of turn\" triggers happen simultaneously. The active player decides the order they resolve.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.1",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "kind": "rule",
+  "text": "The active player is the player taking the current turn.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.2",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "kind": "rule",
+  "text": "During a turn, the active player may take the following actions in any order and as many times as they want:",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.2a",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "parent": "603.2",
+  "kind": "rule",
+  "text": "Deploy a Card",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.2b",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "parent": "603.2",
+  "kind": "rule",
+  "text": "Use an Ability",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.2c",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "parent": "603.2",
+  "kind": "rule",
+  "text": "Attack",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 603.2d",
+  "source": "CR",
+  "section": "603",
+  "sectionTitle": "During a Turn",
+  "parent": "603.2",
+  "kind": "rule",
+  "text": "End the Turn (this can only be done once)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "kind": "rule",
+  "text": "To deploy a non-resource card, follow these steps:",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1a",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Selection — Choose a non-resource card in your hand.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1b",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Threshold — Check if you have met the card's threshold. If you have not, you cannot play the card. (405.2)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1c",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Play — Put the card onto the playing surface face-up. The card is now in the being deployed area.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1d",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Costs — Satisfy all the card's costs. This includes its numeric cost and any extra costs listed in its rules text. Any triggers that occur wait until after the costs have been fully satisfied instead of resolving immediately (503.3).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1e",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Legality — If you are unable to satisfy all of the card's costs then deploying that card was illegal. You must undo all actions you've taken so far to deploy the card. Any triggers that occurred while you were deploying the card are terminated.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1f",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Triggers — Any pending triggers that occurred while the card was being played happen simultaneously. (503.3)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1g",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Responses — Wait for your opponent to respond to the card.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.1h",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "parent": "604.1",
+  "kind": "rule",
+  "text": "Resolution — The card resolves. If it is a character, item, or location put it into play under your control. If it's a tactic, follow its instructions and put it into its owner's discard pile.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.2",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "kind": "rule",
+  "text": "If an effect lets you deploy a card, you can only deploy a non- resource card. You do this by following the steps listed above. If an effect lets you play a resource, instead follow the steps for playing a resource (605).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 604.3",
+  "source": "CR",
+  "section": "604",
+  "sectionTitle": "Deploying a Card",
+  "kind": "rule",
+  "text": "If a card enters play as a result of deploying a card, all triggers that would trigger off the card entering play would happen simultaneously.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.1",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "kind": "rule",
+  "text": "If you are instructed to play a resource, follow these steps:",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.1a",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "parent": "605.1",
+  "kind": "rule",
+  "text": "Selection — Choose any card in your hand.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.1b",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "parent": "605.1",
+  "kind": "rule",
+  "text": "Facing — Decide if you are going to play a face-up or face- down resource. Any card can be played face-down, but only actual resource cards can be played face-up. (203.2)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.1c",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "parent": "605.1",
+  "kind": "rule",
+  "text": "Triggers — Some cards have effects that trigger \"while you play a resource.\" These effects happen after you have selected a card from your hand to play as a resource but before the resource enters play. ( Example: Witty Worm)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.1d",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "parent": "605.1",
+  "kind": "rule",
+  "text": "Play — Put the selected card from your hand into play either face-up or face-down, depending on what you have chosen.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.2",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "kind": "rule",
+  "text": "If an effect lets you deploy a card, you can only deploy a non- resource card. You're only allowed to play resources if an effect specifically says so (604.2).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 605.3",
+  "source": "CR",
+  "section": "605",
+  "sectionTitle": "Playing a Resource",
+  "kind": "rule",
+  "text": "If a resource enters play, all triggers that would trigger off the card entering play would happen simultaneously.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "kind": "rule",
+  "text": "To use an ability, follow these steps:",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1a",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Selection — Choose an ability on a card you control (or in special cases, on a card you own that isn't in play).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1b",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Threshold — Check if you have met the ability's threshold (if it has one). If it has a threshold and you have not met it, you cannot use the ability. (405.3)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1c",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Costs — Satisfy all the ability's costs. This includes its numeric cost (if any) and any extra costs listed in its rules text. Any triggers that occur wait until after the costs have been fully satisfied instead of resolving immediately (503.3).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1d",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Legality — If you are unable to satisfy all of the ability's costs then using that ability was illegal. You must undo all actions you've taken so far to use the ability. Any triggers that occurred while you were using the ability are terminated.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1e",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Triggers — Any pending triggers that occurred while the ability's cost was being satisfied happen simultaneously. (503.3)",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1f",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Responses — Wait for your opponent to respond to the ability.",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 606.1g",
+  "source": "CR",
+  "section": "606",
+  "sectionTitle": "Using an Ability",
+  "parent": "606.1",
+  "kind": "rule",
+  "text": "Resolution — The ability resolves. Follow its effect instructions as they were written when you used the ability (502.4).",
+  "batch": "r08-turn-deploy"
+ },
+ {
+  "id": "CR 607.1",
+  "source": "CR",
+  "section": "607",
+  "sectionTitle": "Responding to Actions",
+  "kind": "rule",
+  "text": "You can respond to your opponent whenever they deploy a card, use an ability, or end their turn. You cannot respond to your own actions.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 607.2",
+  "source": "CR",
+  "section": "607",
+  "sectionTitle": "Responding to Actions",
+  "kind": "rule",
+  "text": "When you have the chance to respond, you may deploy a tactic or use an ability. Once this response resolves, you may make another response. You may repeat this any number of times. Once you are finished making responses, the original action resolves.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 607.2a",
+  "source": "CR",
+  "section": "607",
+  "sectionTitle": "Responding to Actions",
+  "parent": "607.2",
+  "kind": "rule",
+  "text": "Keep in mind that your opponent can respond to your responses. For example, if you respond to your opponent by deploying a tactic, your opponent has a chance to respond to that tactic with their own. A series of responses can go back and forth between players indefinitely.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 607.2b",
+  "source": "CR",
+  "section": "607",
+  "sectionTitle": "Responding to Actions",
+  "parent": "607.2",
+  "kind": "rule",
+  "text": "Because you cannot respond to your own actions, there is no need for a \"priority passing\" system that many other games use. You simply make a series of responses to your opponent, resolving each one before moving to the next. Each of your responses can be responded to by your opponent in the same way. Although the variations that can occur with this system are many, the rules governing the system are simple.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 607.2c",
+  "source": "CR",
+  "section": "607",
+  "sectionTitle": "Responding to Actions",
+  "parent": "607.2",
+  "kind": "rule",
+  "text": "Technically, there is no stack in The Spoils like there is in other card games. While it's true that the response system can behave in a similar fashion (e.g. actions resolve last in, first out) we don't maintain the concept of a stack formally in the rules. This is important because many things that would use the stack in other games can't be responded to in The Spoils, such as triggers.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 608.1",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "kind": "rule",
+  "text": "To attack, follow these steps:",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 608.1a",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "parent": "608.1",
+  "kind": "rule",
+  "text": "Announcement — Choose a faction or location you don't control and announce you are attacking it. If you forget to choose a target, by default you're attacking your opponent's faction. You can only validly announce an attack under the right circumstances. If you have no potential attackers or if an effect is preventing an attack, the battle ends immediately at this step before anything has a chance to trigger as a result of the attack.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 608.1b",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "parent": "608.1",
+  "kind": "rule",
+  "text": "Attackers — Choose one or more characters you control that can attack. A character can attack if it is not depleted and if you have controlled it since the start of the turn. Deplete these characters. They form the attacking party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 608.1c",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "parent": "608.1",
+  "kind": "rule",
+  "text": "Tactics & Abilities — You may deploy tactics and use abilities as many times as you want. Then, your opponent may do the same. If an effect causes any number of characters to become members of the blocking party during this step, the blocking party isn't actually formed yet. The characters should be added to the blocking party after it's formed during the next step. If no blocking party is formed during the next step, the characters become the blocking party. However, effects that apply to the formation of a battle party don't happen since a battle party wasn't technically formed in this case.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 608.1d",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "parent": "608.1",
+  "kind": "rule",
+  "text": "Blockers — The defending player may choose one or more characters they control that are not depleted. If they do, those characters form the blocking party. Otherwise, there is no blocking party during this battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 608.1e",
+  "source": "CR",
+  "section": "608",
+  "sectionTitle": "Attacking",
+  "parent": "608.1",
+  "kind": "rule",
+  "text": "Resolution — Resolve the battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "kind": "rule",
+  "text": "To resolve a battle, follow these steps:",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1a",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Tactics & Abilities — The attacking player may deploy tactics and use abilities as many times as they want. Then, the defending player may do the same.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1b",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Speed Level — Find the highest speed among characters that have not yet assigned battle damage during this battle. X is that speed.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1c",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Assign Attacker's Damage — All attacking characters with X speed that have not yet assigned battle damage during this battle assign damage equal to their strength divided however the attacking player wants to the blocking party. If there are no members left in the blocking party, the attacking characters assign their battle damage to the target of the attack instead.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1d",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Assign Blocker's Damage — All blocking characters with X speed that have not yet assigned battle damage during this battle assign damage equal to their strength divided however the defending player wants to the attacking party.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1e",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Tactics & Abilities — The attacking player may deploy tactics and use abilities as many times as they want. Then, the defending player may do the same.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1f",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Damage Infliction — All assigned battle damage is inflicted simultaneously. If more than one character inflicts damage to the same thing during this step, the sum of the damage is inflicted as a single amount.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1g",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "Repeat — Repeat steps A through F until all characters in the battle have either assigned their battle damage or are no longer in play.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.1h",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "parent": "609.1",
+  "kind": "rule",
+  "text": "End — Deplete all surviving characters in the battle.",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 609.2",
+  "source": "CR",
+  "section": "609",
+  "sectionTitle": "Resolving a Battle",
+  "kind": "rule",
+  "text": "If there is nothing left for a character to assign its battle damage to, the character doesn't actually do anything but it is still considered to have assigned its battle damage for the purposes of ending the resolution loop. Example — An attacking party featuring characters with many different speeds is targeting a location. If the first wave of characters destroys the location, the remaining characters don't assign any damage. However, they are considered to have assigned damage for the purposes of ending the battle (i.e. the battle resolution doesn't just infinitely repeat).",
+  "batch": "r02-battle"
+ },
+ {
+  "id": "CR 610.1",
+  "source": "CR",
+  "section": "610",
+  "sectionTitle": "Ending a Turn",
+  "kind": "rule",
+  "text": "When the active player announces that they are ending their turn, the turn doesn't actually end until their opponent has had a chance to respond. Once the opponent's responses are complete, the turn ends.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "CR 610.1a",
+  "source": "CR",
+  "section": "610",
+  "sectionTitle": "Ending a Turn",
+  "parent": "610.1",
+  "kind": "rule",
+  "text": "End of turn triggers happen after your opponent has made all their responses, at the moment the turn actually ends.",
+  "batch": "r01-priority-responses"
+ },
+ {
+  "id": "FAQ 1",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Who is the active player?",
+  "answer": "The active player is simply the player whose turn it is. The active player does not change regardless of who is currently performing an action or playing a card. The only way the active player changes is for one turn to end and another to begin.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 2",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "My opponent has played a Tactician Vacation. Can I play a card that \"can be played whenever you could play a tactic?\"",
+  "answer": "No, you cannot. Although the card that \"can be played whenever you could play a tactic\" is not actually a tactic (usually a character or item), the window for playing tactics has been closed for the entire turn. When Tactician Vacation resolves it closes all opportunities for tactics to be played, therefore closing all opportunities for cards to be played \"whenever you could play a tactic.\" The card, however, can still be played when it normally could be played.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 3",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Can I use my Faction's abilities at any time?",
+  "answer": "You can use your Faction's abilities (Draw, Resource, etc) any time you can legally use an ability. This can be any time during your turn, in response to your opponent playing a card/using an ability (after costs are paid but before the effect happens), or in response to an opponent announcing the end of their turn.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 4",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "At the start of my turn do I get to both draw a card AND play a resource?",
+  "answer": "The answer to this question depends on the Develop Rule of the Faction card being used. Currently, a player must choose to either draw a card or play a resource, not both. Faction abilities, however, will generally allow you to draw cards and play resources whenever you can normally use abilities. The Spoils USATM — Rules FAQ Version 2.0",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 5",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "My opponent plays a Dwarvish Grimalkin when he has 9 Greed in play. Does he draw 3 cards at once or 1 card 3 times?",
+  "answer": "He draws 1 card 3 times. Each trigger on Dwarvish Grimalkin is seperate from the others, therefore 3 separate instances of drawing. Although all three triggers go off at the same time (when Dwarvish Grimalkin enters play), each one is resolved separately. For example, if you have a Beatrix Winterbottom and 9 Greed in play when you play Dwarvish Grimalkin, you would draw 6 cards, not 4 (each instance of drawing 1 card is increased to 2 and there are 3 instances of drawing).",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 6",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "What happens when multiple triggers go off at the same time?",
+  "answer": "If all the triggers originated from cards under one player's control, that player decides the order in which they happen. However, if the triggers originated from cards under both players' control then the active player decides the order in which they happen. The order does not have to be decided ahead of time; the deciding player lets one trigger happen, then afterwards decides which trigger happens next.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 7",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "If a card is flipped face down as a resource is it considered to have left play?",
+  "answer": "Yes. When a card is flipped face down as a resource it is considered to have left play and reentered play as an entirely new card. This holds true for a card flipping-up from the resource row as well.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 8",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "I want to use Recur on my Death Fit for a King when it is in my discard pile. Is this considered playing a tactic?",
+  "answer": "No. Recur, is always considered an ability, regardless of what type of card type it is on. This is because it has a name (Recur), a cost, and an effect.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 9",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "What happens when a character has 0 life?",
+  "answer": "When a character has 0 life he is destroyed. This is because any character is destroyed when the damage on the character is equal to or greater than his current life. In this case, the character has 0 damage on him, which is equal to his 0 life.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 10",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "My character has 5 printed Life and 2 damage on him. Does he have 3 life now?",
+  "answer": "No. A character is always considered to have Life equal to his printed Life stat, plus/minus any modifications that may come from other effects such as items or locations. Damage on a character does not reduce life, it simply indicates how much damage the character has taken this turn. A 5 life character with 2 damage on it is still considered to have 5 life.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 11",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Can I have the same Unique card in play as my opponent?",
+  "answer": "Yes. The Unique trait on a card only applies to cards under your control. For example, if you have a Rudo Mangod, Holder of LIght in play, your opponent may also have a Rudo Mangod, Holder of Light in play. If you manage to take control of your opponent's Rudo Mangod, Holder of Light, however, one must be destroyed as you cannot control two of the same Unique card. The Spoils USATM — Rules FAQ Version 2.0",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 12",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "If I have two copies of the same Unique card in play, what happens?",
+  "answer": "If a player ever has two copies of the same Unique card (two cards with the \"Unique\" keyword followed by the same identifier) in play one must be destroyed immediately. The controller of the two unique cards chooses which stays in play and which is destroyed.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 13",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "There are two cards in play that are forcing me to pick them (\"anything that can pick this card must pick it\") at the same time. Which one do I pick, or am I forced into picking both?",
+  "answer": "If two cards are forcing you to pick them at the same time then you simply pick one and ignore the other. Only the card you choose to be picked counts as \"being picked,\" for purposes of other effects and triggers.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 14",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "What is the difference between Entering Play and Being Deployed?",
+  "answer": "A card is considered to be \"being deployed\" after its costs are fully paid for but before it hits the table. It is \"being deployed\" when the opponent has the chance to respond to the card in any manner he/she chooses. Once all responses have been taken, the card has resolved and enters play. When a card is \"entering play\" there is no more opportunities to respond to the card, however, there are opportunities for various triggers to occur when the card \"enters play.\" Anytime a card enters the play zone (also known as \"In Play\") it is considered to have \"entered play.\" This can be done by paying for it, putting it into play (by the effect of another card), flipping it up from your resource row, or playing it from your discard pile. A card is \"being played\" when its costs have been paid. A card that has been \"put into play\" was never considered \"being played.\"",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 15",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Can I play Quotidian Assassination and pick my opponent's Faction?",
+  "answer": "No. A faction can only be picked by cards/effects that specifically states it can pick a faction (ex. Bask Bile). Cards that say \"pick a card\" or \"pick a non-resource card\" only refer to cards that are in play, unless specifically stated otherwise.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 16",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "What can I use to represent tokens?",
+  "answer": "Anything that can be made clear to both players can be used as a token. Common tools used as tokens involve coins, dice, and beads. As long as both players understand that the object is a token and how many tokens it represents then it can be used.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 17",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "What is battle damage?",
+  "answer": "The term battle damage applies to the damage inflicted as part of the steps of resolving a battle. Any damage dealt by tactics, abilities, or triggers during battle is not considered battle damage.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 18",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Can I begin to pay for a card, use an ability to detach resources, then continue paying for the card?",
+  "answer": "No. There is no way to \"float\" resources. In order to pay for a card or ability you must be able to pay for it all at once when you are attempting to play it. When playing a card there is no window to use abilities or effects to detach resources, therefore it is impossible to detach a resource that has already been used to pay for a card to pay for the same card again. The Spoils USATM — Rules FAQ Version 2.0",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 19",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Do characters with 0 speed assign damage?",
+  "answer": "Yes. 0 speed is simply the lowest speed a character can have and does not mean that the character cannot assign/deal damage. 0 speed characters assign their damage in the same manner as all other characters, although it is likely they will be assigning their damage last as there is no speed value lower than 0.",
+  "batch": "r12-faq"
+ },
+ {
+  "id": "FAQ 20",
+  "source": "FAQ",
+  "section": "FAQ",
+  "sectionTitle": "Rules FAQ",
+  "kind": "rule",
+  "text": "Can I attack if both Hangdog Alley and Arcana Department are in play?",
+  "answer": "Although both cards are contradictory of each other it is still possible to attack. When two or more cards put requirements on the same action (in this case it is attacking) then the player must try to fulfill as many of the requirements as possible. If it is impossible to fulfill all requirements then the player must make the decision that satisfies as many of the requirements as possible. The Spoils USATM — Rules FAQ Version 2.0",
+  "batch": "r12-faq"
+ }
+]

@@ -1,0 +1,85 @@
+{
+  "name": "the-spoils",
+  "version": "1.0.0",
+  "description": "Data-driven, UI-free rules engine and card database for The Spoils CCG",
+  "license": "MIT",
+  "author": "Andy Mikulski",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andymikulski/the-spoils.git"
+  },
+  "homepage": "https://github.com/andymikulski/the-spoils#readme",
+  "bugs": {
+    "url": "https://github.com/andymikulski/the-spoils/issues"
+  },
+  "keywords": [
+    "the-spoils",
+    "ccg",
+    "tcg",
+    "card-game",
+    "rules-engine",
+    "game-engine",
+    "typescript"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "main": "./build/src/engine.js",
+  "types": "./build/src/engine.d.ts",
+  "typesVersions": {
+    "*": {
+      "data": [
+        "./build/src/data.d.ts"
+      ],
+      "assets": [
+        "./build/src/assets.d.ts"
+      ],
+      "card-text": [
+        "./build/src/cardText.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "types": "./build/src/engine.d.ts",
+      "default": "./build/src/engine.js"
+    },
+    "./data": {
+      "types": "./build/src/data.d.ts",
+      "default": "./build/src/data.js"
+    },
+    "./assets": {
+      "types": "./build/src/assets.d.ts",
+      "default": "./build/src/assets.js"
+    },
+    "./card-text": {
+      "types": "./build/src/cardText.d.ts",
+      "default": "./build/src/cardText.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "build/src",
+    "data/cards.json",
+    "LEGAL.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node -e \"require('fs').rmSync('build',{recursive:true,force:true})\" && tsc -p tsconfig.json",
+    "prepare": "npm run build",
+    "test": "node scripts/run-tests.cjs",
+    "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
+    "sync-cards": "node scripts/sync-cards.cjs",
+    "card-markup": "node --import tsx scripts/card-markup/cli.ts",
+    "card-tests": "node --import tsx scripts/card-tests/cli.ts",
+    "rule-tests": "node --import tsx scripts/rule-tests/cli.ts",
+    "typecheck:consumer": "tsc -p types-test/tsconfig.json && tsc -p types-test/tsconfig.bundler.json"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "prettier": "^3.9.6",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}

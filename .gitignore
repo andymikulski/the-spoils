@@ -1,0 +1,6 @@
+node_modules/
+build/
+.work/
+data/.cards-lock
+*.tgz
+__pycache__/

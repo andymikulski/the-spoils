@@ -1,0 +1,1678 @@
+Comprehensive Rules Reference
+Last updated on May 19, 2016
+
+Welcome to The SpoilsTM Comprehensive Rules Reference! This reference is intended to
+offer a definitive answer for every possible rules question. It is not designed to teach you
+how to play. If you are a beginner, please refer to the Basic Rules available in the latest
+Pre-Constructed Decks and Competition Packs. You can also find the Basic Rules on our
+website at http://thespoilscardgame.com/players/.
+Table of Contents
+
+Section 1 - General Rules ................................................................................................... 4  
+
+   101   The Most Important Rule.................................................................................... 4  
+   102   Object of the Game ............................................................................................. 4  
+   103   Deck Construction .............................................................................................. 4  
+   104   Tournaments ....................................................................................................... 5  
+   105   Errata................................................................................................................... 5  
+
+Section 2 - Card Types........................................................................................................ 5  
+
+   201   Parts of a Card..................................................................................................... 5  
+   202   Factions ............................................................................................................... 7  
+   203   Resources ............................................................................................................ 8  
+   204   Characters ........................................................................................................... 9  
+   205   Tactics ............................................................................................................... 10  
+   206   Items.................................................................................................................. 10  
+   207   Locations........................................................................................................... 10  
+   208   Changing Card Types ....................................................................................... 11  
+
+Section 3 - Key Terminology............................................................................................ 11  
+
+   301   Attach & Detach ............................................................................................... 11  
+   302   Battle Terms...................................................................................................... 12  
+   303   Deplete & Restore............................................................................................. 13  
+   304   Destroy.............................................................................................................. 13  
+   305   Discard .............................................................................................................. 13  
+   306   Draw.................................................................................................................. 13  
+   307   Duplicate ........................................................................................................... 14  
+   308   Free ................................................................................................................... 14  
+   309   Pay..................................................................................................................... 14  
+   310   Pick ................................................................................................................... 14  
+   311   Provides............................................................................................................. 14  
+   312   Search................................................................................................................ 15  
+   313   Shuffle............................................................................................................... 15  
+   314   Terminate .......................................................................................................... 15  
+
+Section 4 - Game Concepts............................................................................................... 15  
+
+   401   Costs.................................................................................................................. 15  
+   402   Effects ............................................................................................................... 16  
+   403   Game Areas....................................................................................................... 17  
+   404   Rule Not Found................................................................................................. 19  
+   405   Threshold .......................................................................................................... 19  
+   406   Numeric Cost .................................................................................................... 19  
+   407   Control & Ownership........................................................................................ 20  
+   408   Damage ............................................................................................................. 21  
+   409   Tokens............................................................................................................... 23  
+   410   Numbers............................................................................................................ 23  
+   411   Face-Down Cards.............................................................................................. 24  
+   412   Unblockability................................................................................................... 24  
+   413   Bidding.............................................................................................................. 25  
+   414   Action Loops..................................................................................................... 25  
+
+Section 5 - Types of Rules Text........................................................................................ 26  
+
+   501   Italic Text .......................................................................................................... 26  
+   502   Abilities............................................................................................................. 26  
+   503   Triggers ............................................................................................................. 26  
+   504   Conditionals ...................................................................................................... 27  
+   505   Requirements .................................................................................................... 27  
+   506   Replacements .................................................................................................... 28  
+   507   Keywords .......................................................................................................... 29  
+   508   Temporary Rules Text ...................................................................................... 31  
+
+Section 6 - Playing the Game............................................................................................ 31  
+
+   601   Starting a Game................................................................................................. 31  
+   602   Start of turn ....................................................................................................... 32  
+   603   During a Turn.................................................................................................... 32  
+   604   Deploying a Card .............................................................................................. 32  
+   605   Playing a Resource............................................................................................ 33  
+   606   Using an Ability................................................................................................ 34  
+   607   Responding to Actions...................................................................................... 34  
+   608   Attacking........................................................................................................... 35  
+   609   Resolving a Battle ............................................................................................. 36  
+   610   Ending a Turn ................................................................................................... 37  
+Section 1 - General Rules
+
+101 The Most Important Rule
+
+101.1 If a card directly contradicts the rules, the card always takes
+          precedence.
+
+102 Object of the Game
+
+102.1 The object of the game is to reduce the influence score of your
+          opponent's faction to 0. If at any time a faction's influence score is 0,
+          the owner of that faction immediately loses the game.
+
+102.1a You do not lose the game if your deck runs out of cards; you
+            simply cannot draw any more.
+
+102.2 If all players still in the game lose the game at the same time, the
+          game is a draw between those players.
+
+103 Deck Construction
+
+103.1 Constructed decks must meet the following criteria:
+
+103.1a Utilize only one faction card.
+
+103.1b A minimum of 75 cards must be included, not including your
+            faction card. There is no maximum deck size.
+
+103.1c                 No more than 4 copies of any card with the same name may be
+                       included. However, staple resources, cards with the supertype
+                       "staple", and cards that specifically note otherwise are exempt
+                       from this rule.
+
+103.1d                 No cards that are banned in the format being played may be
+                       included. The current banned list for all formats can be found
+                       in the official Tournament Rules, available online at
+                       www.thespoils.com/rules.
+
+103.2 Limited decks must meet the following criteria:
+
+103.2a Utilize only one faction card.
+
+103.2b A minimum of 40 cards must be included, not including your
+            faction card. There is no maximum deck size.
+
+103.2c There is no restriction on the number of copies of a card that
+            can be included. It is limited only by your card pool.
+            103.2d Unless the Tournament Rules have specifically banned a card
+                        in Limited play, any cards banned from Constructed play may
+                        be included.
+
+103.3 Constructed Decks for Two Headed Majig.
+
+            103.3a Coming Soon.
+
+104 Tournaments
+
+104.1 This document only discusses the rules of play. For detailed
+          information about tournaments, please refer to the official
+          Tournament Rules, available online at www.thespoils.com/rules.
+
+105 Errata
+
+105.1 All cards must be played as though they were the most recent version
+          of the card. The current wording for all cards can be found online at
+          www.thespoils.com/rules.
+
+Section 2 - Card Types
+
+201 Parts of a Card
+
+201.1 Name
+
+            201.1a   A card's name is written at the top in large letters. Just below
+                     you'll find the subtitle, a descriptive line of text related to the
+                     card's overall theme.
+
+            201.1b A card's name is what uniquely identifies it. Cards with the
+                        same name are considered to be the same card even if their
+                        other characteristics are different.
+
+201.2 Cost Number
+
+            201.2a A card's cost number appears in the upper left corner. It
+                        represents the number of resources needed to play the card.
+
+201.3 Threshold Icons
+
+            201.3a   A card's threshold consists of resource icons in the upper left
+                     corner, just below its cost number. It represents the resource
+                     icons you must control in order to play the card. Resource
+                     icons are never spent to meet threshold.
+
+201.4 Type Line
+201.4a  A card's type line appears in the middle, just below the
+        artwork. Written on this line are its trade, supertype, type, and
+        subtypes (which are located after the dash).
+
+201.4b  Subtypes are descriptive words or phrases that sometimes
+        interact with other cards during the game. Not every card has
+        subtypes. Subtypes do not have any game rules associated
+        with them.
+
+        If an effect refers to a subtype, it always appears between
+        quotation marks. For example, a card might say "This card
+        gains 1 strength and 1 life for each `dragon' card you control."
+
+201.4c  Supertypes are descriptive words that affect the rules of the
+        card. The most common supertype is the "staple" supertype
+        found on resource cards.
+
+201.4d Trades are descriptive words that reference what trade the card
+            belongs to. The trades are: Gearsmith, Warlord, Banker,
+            Rogue, Arcanist, and Universal.
+
+201.4e  Types refer to what kind of card it is. Types can be gained or
+        lost. The six types are: Resource, Tactic, Character, Location,
+        Item, and Faction.
+
+201.5 Rules Text
+
+201.5a  A card's rules text appears on the bottom half, just below the
+        type line. This text explains what the card can do during the
+        game.
+
+201.5b Unless otherwise stated, a card's rules text is only active while
+            it's in play.
+
+201.5c  Abilities appear in rules text. They each have a center-justified
+        name and a labeled cost and effect section. Dividing lines help
+        to separate abilities from the rest of the rules text.
+
+201.5d Some paragraphs of rules text begin with threshold icons.
+            These paragraphs are only active while you are meeting that
+            threshold. (405.4)
+
+201.5e  Any text written in italics is not part of the rules text. It's
+        either a descriptive paragraph relating to the card's overall
+        theme or a reminder to help answer a commonly asked
+        question about the card.
+
+201.6 Collector Info
+              201.6a A card's collector info appears at the bottom, just below the
+                          rules text.
+
+              201.6b The set icon identifies which set this card belongs to.
+
+              201.6c The rarity is common, uncommon, rare, or ultra rare and it
+                          defines how often you'll find the card in a pack.
+
+              201.6d  The collector number helps you organize your cards. For
+                      example, if it says "196/220" it's the 196th card in a set of 220
+                      cards. Collector numbers are sorted alphabetically by trade
+                      and card name.
+
+201.7 Battle Stats
+
+              201.7a Only characters have battle stats.
+
+              201.7b A card's battle stats appear in the upper right corner,
+                          consisting of strength (STR), life (LIFE), and speed (SPD).
+
+              201.7c  Some items (usually referred to as "gear") affect a character's
+                      battle stats. Those adjustments are conveniently represented in
+                      the item's upper right corner, preceded by a "+" or "-" symbol.
+
+201.8 Structure
+
+              201.8a Only locations have structure.
+
+              201.8b A location's structure appears in the upper right corner instead
+                          of battle stats. It represents the amount of damage markers it
+                          takes to destroy the location.
+
+202 Factions
+
+202.1 You are only allowed to use one faction card per deck. (103.1a,
+          103.2a)
+
+202.2 Your faction starts the game in play. (601.1a)
+
+202.3 Your faction's influence is used as the score during the game. Once
+          the influence runs out, you lose the game. (102.1)
+
+              202.3a Every faction has a unique starting influence. This number is
+                          defined at the top of the card, just below the name.
+
+202.4 If damage is inflicted to your faction, it loses an equal amount of
+          influence. (408.3)
+202.5 Every faction has a Starting Resources section in its rules text. This
+          section explains which resources from your deck start the game in
+          play.
+
+202.6          Every faction has a Starting Draw section in its rules text. This
+               section explains how many cards you draw in your opening hand.
+               This number is usually different if you are going first as opposed to
+               second.
+
+202.7 Every faction has a Restore Rule section in its rules text. It helps
+          replenish your cards and resources every turn.
+
+202.8 Every faction has a Develop Rule section in its rules text. It usually
+          allows you to draw cards or play resources each turn.
+
+202.9 A faction is not affected by effects unless they specifically say that
+          they apply to factions.
+
+202.9a This means you cannot pick a faction unless explicitly
+            instructed to.
+
+203 Resources
+
+203.1 You can only play a resource when an effect instructs you to do so.
+
+203.1a The most common effects that allow you to play resources are
+            generated by your faction.
+
+203.2 When you play a resource, you decide if you are going to play it
+          face-up or face-down. Any card can be played face-down, but only
+          actual resource cards can be played face-up.
+
+203.2a A face-down card's controller can look at its front face at any
+            time. (411.2)
+
+203.3 If you are instructed to pay a number, you attach that number of
+          resources to your faction. (309.1)
+
+203.3a You can only attach resources that are currently not attached
+            to anything.
+
+203.4 Most resource cards provide resource icons. These icons are clearly
+          indicated in the card's rules text area. Resource icons correspond
+          with threshold icons.
+
+203.4a Each face-down card provides one Volition resource icon.
+             203.5 Staple resources are the most common kind of resource. They are
+                        clearly labeled with the word "staple" on their type line.
+
+                   203.5a The five staple resources are named Obsession, Greed,
+                                Elitism, Deception, and Rage.
+
+                   203.5b You are allowed to include any number of staple resource
+                                cards in your Constructed decks. (103.1c)
+
+                   203.5c Each staple resource provides one resource icon of its type and
+                                all face-down cards provide the Volition icon.
+
+             203.6 Resources should be oriented sideways while they are in play.
+
+             203.7 Resources never deplete. When they are used, they are attached to
+                        your faction.
+
+204 Characters
+
+             204.1 You mainly deploy characters during your turn, but certain effects
+                        allow you to deploy them during your opponent's turn.
+
+                   Example ­ If an effect says "deploy a card" or "deploy a character" you
+                   may do it when the effect resolves, regardless of whose turn it is.
+
+             204.2 When a character resolves, put it into play.
+
+                   204.2a Characters enter play under the control of the card or effect's
+                                controller.
+
+             204.3 Your characters can attack and block while they're in play. However,
+                        a character cannot attack unless it started the turn in play under your
+                        control.
+
+                   204.3a However, characters can use any of their abilities the first turn
+                                they are in play under your control.
+
+                   204.3b A character that is put into play by an effect that happened at
+                                the start of the turn cannot attack this turn because it wasn't
+                                technically in play at the moment the turn actually started.
+
+             204.4 Each character has three battle stats: strength, life, and speed.
+
+                   204.4a A character's strength represents how much damage it can
+                                inflict in battle.
+
+                   204.4b A character's life represents how much damage it takes to
+                                destroy it.
+             204.4c A character's speed defines when its damage is inflicted.
+
+204.5 If the damage a character receives in a single turn is ever equal to or
+          greater than its life, destroy it immediately. (408.4)
+
+205 Tactics
+
+205.1          Tactics can be deployed during your turn. They can also be deployed
+               in response to your opponent's actions, even if it isn't your turn.
+               There are also special times during battles when you can deploy
+               tactics.
+
+205.2 When a tactic resolves, follow its instructions and put it into its
+          owner's discard pile.
+
+206 Items
+
+206.1 You mainly deploy items during your turn, but certain effects allow
+          you to deploy them during your opponent's turn.
+
+             Example ­ If an effect says "deploy a card" or "deploy an item" you
+             may do it when the effect resolves, regardless of whose turn it is.
+
+206.2 When an item resolves, put it into play.
+
+207 Locations
+
+207.1 You mainly deploy locations during your turn, but certain effects
+          allow you to deploy them during your opponent's turn.
+
+             Example ­ If an effect says "deploy a card" or "deploy a location" you
+             may do it when the effect resolves, regardless of whose turn it is.
+
+207.2 When a location resolves, put it into play.
+
+207.3 Your opponent can attack your locations.
+
+207.4 Each location has a structure value. It defines how many damage
+          markers it takes to destroy the location.
+
+207.5 If the damage markers a location has received is ever equal to or
+          greater than its structure value, destroy it immediately. (408.5)
+
+             207.5a It's best to keep track of a location's damage markers with pen
+                         and paper or by using a six-sided die.
+
+             207.5b If a location leave play, all damage markers on it disappear.
+207.6 If an effect removes damage markers from a location, adjust the total
+          damage markers it has received this game accordingly.
+
+208 Changing Card Types
+
+208.1 A card is allowed to have more than one type at the same time.
+
+208.1a Certain effects might say the card "gains" a type. If it does, it
+            still has its other types in addition to the new type.
+
+208.2 If the effect of a card refers to a specific card type, but the card it is
+          trying to affect is no longer that type, then the card is not affected by
+          that effect.
+
+208.3 If a card with the character type loses that type, it forgets all damage
+          it received this turn.
+
+Example ­ If an item becomes a character, receives damage, stops being
+a character, then later that turn becomes a character again, the damage
+it received earlier is not remembered.
+
+208.4 If a card with the character type loses that type during a battle, the
+          card is removed from the battle immediately.
+
+Section 3 - Key Terminology
+
+301 Attach & Detach
+
+301.1 To attach one card to another, arrange the attaching card so it
+          overlaps the target card.
+
+301.2 When you attach a card to something, it is simultaneously detached
+          from anything else it is already attached to.
+
+301.3 An attaching card can only be attached to one target at a time.
+          However, target cards can have any number of cards attached to them
+          at once.
+
+301.4 If a target card leaves play, all cards attached to it leave play in the
+          same way.
+
+301.4a               This refers to any possible way of leaving play, including
+                     being destroyed, removed from the game, put into owner's
+                     hand, or shuffled into owner's deck.
+
+301.4b If the target card's method of leaving play is replaced, the
+            attached card's method of leaving play is also replaced.
+302 Battle Terms
+
+             302.1 Target of the attack ­ The faction or location being attacked during
+                        the current battle.
+
+             302.2 Being attacked ­ A player is being attacked during any battle in
+                        which a faction or location they control is the target of the attack.
+
+             302.3 Attacking player ­ The player that started the current battle.
+
+             302.4 Defending player ­ The player being attacked during the current
+                        battle.
+
+             302.5 Battle party ­ A group of characters working together in a battle.
+
+             302.6 Attacking party ­ The battle party under the attacking player's
+                        control during a battle.
+
+             302.7 Blocking party ­ The battle party under the defending player's
+                        control during a battle.
+
+             302.8 During a battle ­ A battle is the period of time from the moment an
+                        attack is announced, lasting until the battle is fully resolved.
+
+             302.9 In a battle ­ A character is considered to be in a battle while it is a
+                        member of an attacking party or blocking party.
+
+             302.10 Opposing party ­ The battle party under your opponent's control
+                        during a battle.
+
+             302.11 Covert party ­ An attacking party containing only characters with
+                        covert.
+
+                   302.11a If any member of a covert party loses covert during the battle,
+                                the party immediately isn't covert anymore.
+
+                   302.11b If the status of a covert party changes during a battle, it
+                                doesn't affect any blocks that have already been made.
+
+             302.12 Attacking Character ­ A character is considered to be attacking
+                        while it's a member of an attacking party.
+
+             302.13 Blocking Character ­ A character is considered to be blocking while
+                        it's a member of a blocking party.
+
+             302.14 In a party with ­ If a character refers to another character that is in a
+                        party with it, any member of that party meets this criterion, even the
+                        character doing the check. For example, if a card says "pick a
+                        character in a party with this card" then you could pick the card
+                        itself.
+
+             302.15 Removed from battle ­ If a character is removed from battle it is no
+                        longer part of its battle party. Any battle damage assigned to the
+                        character is not inflicted.
+
+303 Deplete & Restore
+
+             303.1 You deplete some cards to indicate they have been used for the turn.
+                        If you're instructed to deplete a card, turn the card sideways to
+                        indicate it is depleted.
+
+             303.2 You can only deplete a card if it isn't depleted already. You can only
+                        restore a card if it isn't already restored.
+
+             303.3 To restore a card, return the card to an upright position.
+
+304 Destroy
+
+             304.1 To destroy a card means to remove it from play and put it into its
+                        owner's discard pile.
+
+305 Discard
+
+             305.1 To discard a card means to take it from its owner's hand and put it
+                        into their discard pile.
+
+             305.2 If you instructed to discard multiple cards, all cards enter the discard
+                        pile at the same time.
+
+306 Draw
+
+             306.1 To draw a card is to put the top card of your deck into your hand.
+
+             306.2 If you run out of cards in your deck to draw you don't lose the game,
+                        you just fail to draw the remaining cards. (102.1a)
+
+             306.3 Cards are always drawn as a group. For example, if a card says
+                        "draw 2 cards" then you put them into your hand at the same time,
+                        instead of 2 separate "draw a card" events.
+
+             306.4 A draw is also the term for a game that has no winner. If all players
+                        still in the game lose the game at the same time, the game is a draw
+                        between those players. (102.2).
+307 Duplicate
+
+307.1          If you are instructed to duplicate a tactic, an invisible copy is created.
+               Its cost number is considered to be 0 and you don't need to meet its
+               threshold. The copy has all the rules text of the original, so you must
+               still satisfy all its extra costs. If you can't, the duplicate is terminated.
+
+307.2 If a card's rules text has several labeled options, you can choose a
+          new option for the duplicate.
+
+307.3 If an effect restricts you from playing tactics, any duplicates created
+          while that restriction is active are terminated immediately.
+
+307.4 When a duplicate leaves the Being Deployed game area, it
+          disappears.
+
+308 Free
+
+308.1 If an effect lets you play a card for free then its cost number is
+          considered to be 0 while you deploy it.
+
+              308.1a You still need to meet its threshold and satisfy its extra costs.
+
+309 Pay
+
+309.1 If you are instructed to pay a number, you must attach that number of
+          resources to your faction.
+
+              309.1a You can only attach resources that are currently not attached
+                          to anything.
+
+              309.1b The word pay is never used to refer to your faction losing
+                          influence.
+
+310 Pick
+
+310.1 The word pick is a special term used when an effect needs to
+          specifically refer to a card. The usage of the specific word is
+          important because picking is considered a distinct action.
+
+              Example ­ If a card says "you cannot pick this card" then you cannot
+              follow any instruction that says "pick" that card. You could, however,
+              select the card in other ways that don't specifically use the word pick.
+
+311 Provides
+
+311.1 If a card says it provides resource icons, those icons count towards
+          meeting the thresholds of your cards.
+311.2 By default, every staple resource card provides one icon of the
+          appropriate type and all face-down cards provide the Volition icon.
+          (203.5c)
+
+312 Search
+
+312.1 If a deck is searched, its owner must shuffle it afterwards.
+
+312.2 You are allowed to fail in finding any card that must match specific
+          search criteria. You may choose to fail even if there are valid cards
+          available to find.
+
+             Example ­ If a card says "search your deck for an item" then you can
+             fail to find it either because the deck contains no items or because you
+             choose to fail. However, if a card says "search your deck for a card"
+             you must find a card (unless the deck contains no cards).
+
+313 Shuffle
+
+313.1 To shuffle a deck is to sufficiently randomize it.
+
+313.2 If you are instructed to shuffle cards into a deck, you only perform
+          the shuffle if more than 0 cards are being added to the deck.
+
+314 Terminate
+
+314.1 To terminate a card or ability is to stop it before it resolves. You
+          must cease following any instructions associated with the card or
+          ability immediately. If it's a card, put it into its owner's discard pile.
+
+314.2 To terminate an effect is to stop it from having its impact on the
+          game. You must not complete any of the effect's instructions.
+
+Section 4 - Game Concepts
+
+401 Costs
+
+401.1 A cost is any action a player must take to fulfill a card's needs. Most
+          costs involve paying numbers and following simple instructions, but
+          a cost might also have restrictions on when it can be satisfied.
+
+             401.1a  The term cost is also used as part of the cost and effect
+                     relationship on some cards and abilities. In this context, the
+                     words are used out of convenience. Technically, costs can
+                     exist in any part of a card's rules text. However, the only type
+                     of cost that can exist outside of the cost section of a card or
+                     ability is a pay instruction.
+401.2 If you cannot complete all instructions and meet all restrictions of a
+          cost, then you cannot satisfy that cost. This means you cannot take
+          the action associated with it.
+
+             401.2a  If you are trying to satisfy a cost as though you were your
+                     opponent, you can only do so with the knowledge you
+                     currently have about the game state. For example, if you must
+                     satisfy a cost that says "discard a character" you can only do
+                     so if your opponent's hand is currently revealed by an ongoing
+                     effect.
+
+401.3        An extra cost is any instruction listed in the cost section of a card or
+             ability's rules text. Extra costs must always be completed in the order
+             they are listed, except for pay instructions (406.3a). If you come to a
+             step that you cannot complete, then the whole action is illegal and
+             you must undo everything you've done so far to take the action.
+
+             401.3a  Some extra costs take the form of restrictions. Restrictions
+                     define criteria for satisfying the cost. For example, a cost
+                     might say "use this only during your turn." Each restriction
+                     must be satisfied like any other cost.
+
+             401.3b If an extra cost requires a card to lose something, it cannot be
+                         satisfied unless the card has that thing.
+
+402 Effects
+
+402.1 An effect is anything a card's rules text does that affects the game in
+          some way. An effect is generated when a player follows an
+          instruction in a card's rules text.
+
+             402.1a To be clear, the rules don't generate effects; only cards do.
+
+             402.1b  The term effect is also used as part of the cost and effect
+                     relationship on some cards and abilities. In this context, the
+                     words are used out of convenience. Technically, effects can be
+                     generated by any part of a card's rules text, including the cost.
+
+402.2 If an effect instructs multiple players to do something at the same
+          time, the active player takes the action first, then continues
+          clockwise.
+
+402.3 If a card does not specify the game area it affects, it affects only the
+          in play game area.
+
+             402.3a  This includes picking. For example, if a card says "pick a
+                     character" you can only pick characters in play since the area
+                     it affects was not specified.
+402.4 If a card moves from one game area to another, any unresolved
+          effects that were going to impact it in the old area lose track of it.
+
+Example ­ If an effect would put a character into your hand from play
+when it resolves, but that character is destroyed in response, you don't
+get to put the character into your hand from your discard pile.
+
+402.5 If you are unable to complete all of an effect's instructions, you must
+          follow as many of the instructions as you can and ignore the rest.
+
+402.5a Effects never "fizzle" if the thing they were trying to affect
+            leaves play before they resolve.
+
+402.5b          If an instruction is dependant on another instruction that you
+                ignored or was replaced by a replacement effect, you can't
+                follow the dependant instruction. It is considered dependant if
+                it refers specifically to an element within the previous
+                instruction, or if it refers to information or choices made
+                during the previous instruction.
+
+                Note: Most dependent instructions begin with "If you do".
+
+402.6 If an ongoing effect says a card gains something but another ongoing
+          effect says the card loses that thing, the lose effect always takes
+          precedence.
+
+402.7 If an effect says something can happen but another effect says it
+          cannot, the cannot effect always takes precedence.
+
+402.7a          There's a difference between saying you can do something
+                and being instructed to actually do that thing. For example, if a
+                card says "characters cannot be destroyed" then all "destroy a
+                character" effects are ignored.
+
+402.8 If an effect puts a card into play, it is not the same as deploying that
+          card.
+
+402.8a Anything that triggers when a card is deployed doesn't trigger
+            when a card is put into play.
+
+402.9 A faction is not affected by effects unless they specifically say that
+          they apply to factions (202.9).
+
+403 Game Areas
+
+403.1 Deck
+403.1a      This is the pile of cards you brought to the game, excluding
+            your faction. No one is allowed to look through your deck or
+            shuffle it unless instructed to do so.
+
+403.1b The term deck is also used to describe your overall selection of
+            cards used in a tournament, including your faction. This usage
+            is for discussing your cards outside of the context of a game.
+
+403.2 Hand
+
+403.2a      This is the group of cards that you currently have access to.
+            Keep the front face of the cards in your hand hidden from your
+            opponent.
+
+403.2b There is no limit to the number of cards you can have in your
+            hand.
+
+403.3 Being Deployed
+
+403.3a      This is where a non-resource card goes when you play it from
+            your hand. It stays in this area until your opponent is done
+            responding and it resolves.
+
+403.4 In Play
+
+403.4a      This is the place on the table where you put the cards you've
+            deployed or put into play. Most cards can't do anything until
+            they're in play.
+
+403.5 Discard Pile
+
+403.5a      This is where you put your cards when they are discarded or
+            destroyed. You should keep this pile face-up next to your
+            deck.
+
+403.5b The specific order of cards in your discard pile does not need
+            to be maintained.
+
+403.6 Out of Game
+
+403.6a This is where a card goes when it is removed from the game.
+            You should set the card aside face-up for the rest of the game.
+
+403.7 Void
+
+403.7a      This is where a card is placed that is sent to the Void. It may
+            be sent there either face-up or face down, depending on the
+            rules that put it there.
+403.7b You can not pick or choose a face-down card in the void
+            unless an effect specifies to pick or choose a face-down card
+            in the void.
+
+404 Rule Not Found
+
+405 Threshold
+
+405.1          Certain elements in the game have a threshold associated with them.
+               The threshold is represented visually with resource icons. In order to
+               meet it, you must control cards that provide the proper resource
+               icons.
+
+405.2 If you cannot meet a card's threshold, you cannot play the card.
+
+405.3 Some abilities have thresholds, located directly after the ability name
+          in the card's rules text. If you cannot meet an ability's threshold, you
+          cannot use that ability.
+
+405.4 Certain paragraphs of rules text have a threshold listed at the
+          beginning. These paragraphs are only active while their controller is
+          currently meeting that threshold.
+
+405.5 Resource icons are: Obsession, Greed, Elitism, Deception, Rage, and
+          Volition. Each staple resource provides its corresponding icon and all
+          face-down cards provide the Volition icon. (203.5c)
+
+405.6 Resource icons are never spent to meet thresholds.
+
+406 Numeric Cost
+
+406.1 The numeric cost of a card that is not currently being played is equal
+          to its cost number, located in its upper-left corner.
+
+406.2 If a card doesn't have a cost number, its numeric cost is 0.
+
+406.3 While a card is being played, its numeric cost is handled differently.
+          You must calculate it by keeping a running total of cost additions,
+          increases, and reductions.
+
+A card's running total starts as its cost number. Then, you satisfy its
+extra costs. If an extra cost says "pay" a number, you don't pay it right
+away. Instead, you add that number to the running total.
+
+Once all the extra costs are satisfied, you apply all cost increases to the
+running total in any order you want, followed by all cost reductions in
+any order you want. The overall total is the card's numeric cost while it's
+being deployed. Finally, you pay that amount.
+406.3a This means you always pay numeric costs last.
+
+406.4  An ability's numeric cost is handled in the same way as a card's
+       numeric cost. But since abilities don't have a cost number, any
+       ability without a pay instruction in its cost section is considered to
+       not have a numeric cost at all.
+
+406.5 If an effect says "pay" a number, it is considered a numeric cost.
+
+406.5a Therefore, any applicable numeric cost reduction effects
+            would apply to the number.
+
+406.5b  This kind of effect-based numeric cost is not the same as the
+        numeric cost of the card while it's being played. This means
+        that any cost reduction effects that specifically work on that
+        type of card won't work on the effect-based numeric cost.
+
+        Example ­ If an effect says "the numeric cost of your items is
+        reduced by 1" and an item leaves play that says "when this
+        card leaves play, you may pay 4..." then that effect is not
+        considered to be an "item's numeric cost" and is therefore not
+        reduced. However, any generalized reduction effects, such as
+        "reduce the next numeric cost you pay this turn by 1" would
+        apply to that cost.
+
+406.6 Numeric costs can never go below 0. If an effect tries to reduce a
+          number below 0, that number stays at 0 (410.4).
+
+406.7  To determine the numeric cost of a card deployed with Flip Up, you
+       keep the same running total as you would with a regularly deployed
+       card (406.3). However, the running total begins once the Flip Up cost
+       has been paid with an initial value of the card's Flip Up cost.
+
+Then, you satisfy the card's extra costs. Cost additions are applied as
+normal. Once you've finished satisfying the extra costs and all cost
+increases and reductions have been applied as normal, you must pay the
+balance of the numeric cost. To do this, take the final numeric cost and
+subtract the card's Flip Up cost (since you already paid it). Then, pay
+that amount.
+
+407 Control & Ownership
+
+407.1 You control the cards you play, and the effects generated by cards
+          you control.
+
+407.1a  This means if a card's ability is used and in response you gain
+        control of that card, the effects generated by that ability's rules
+        text are controlled by you.
+407.2 The terms you and your in a card's rules text always refer to the
+          card's current controller.
+
+407.3 If an effect causes a player to take control of a card, unless otherwise
+          stated that player retains control of the card until it leaves play, or
+          until another effect takes control of it.
+
+            407.3a If two ongoing effects take control of a card, the most recent
+                        effect always takes precedence.
+
+407.4 If the controller of a character changes during a battle, the character
+          is removed from the battle immediately.
+
+            407.4a This means it is no longer part of its battle party. Any battle
+                        damage assigned to the character is not inflicted. (302.15)
+
+407.5 If the target of an attack is a location and its controller changes
+          during the battle, the location stops being the target of the attack.
+
+            407.5a  This means that if the attackers try to assign their battle
+                    damage to the location, they don't actually do anything but are
+                    still considered to have assigned their battle damage for the
+                    purposes of ending the resolution loop. (609.2)
+
+407.6 If an effect tries to add a character you do not control to a battle party
+          you do control, that effect is terminated.
+
+407.7 You own any card that started the game as a part of your deck,
+          regardless of who currently controls it.
+
+            407.7a This includes your faction card.
+
+407.8 Ownership of a card cannot change during a game.
+
+408 Damage
+
+408.1 If something tries to inflict 0 damage, then no damage is actually
+          inflicted.
+
+            408.1a This means nothing that would trigger as a result of damage
+                        being inflicted happens.
+
+            408.1b If it was battle damage, the source character is considered to
+                        have inflicted its damage for the purposes of ending the
+                        resolution loop.
+
+408.2 If damage greater than 0 is inflicted, damage increase and reduction
+          effects are applied but nothing else that should trigger happens yet.
+408.2a  If the final adjusted amount of damage is 0, nothing further
+        happens. However, if it was battle damage, the source
+        character is considered to have inflicted its damage for the
+        purposes of ending the resolution loop.
+
+408.2b If the final adjusted amount is greater than 0, all appropriate
+            triggers now occur.
+
+408.3 If damage is inflicted to your faction, it loses an equal amount of
+          influence.
+
+408.3a Once your faction has 0 influence, you lose the game. (102.1)
+
+408.3b If a faction loses influence it's not the same as receiving
+            damage, so anything that would affect damage doesn't affect
+            the loss of influence.
+
+        Example ­ A card might say "your opponent's faction loses 2
+        influence" while another card says "if damage is inflicted to a
+        faction, reduce the amount by 1." Your opponent's faction
+        would still lose 2 influence because the other effect only
+        reduces damage.
+
+408.4 If the damage a character receives in a single turn is ever equal to or
+          greater than its life, destroy it immediately.
+
+408.4a  You only need to keep track of the current turn's damage
+        because that's all that will ever matter. Although there is no
+        official step when a character's damage for the turn is "healed"
+        that's essentially what happens when a new turn begins.
+
+408.4b If the destruction is replaced, reduce all damage the card has
+            received from the source of the destruction to 0. (506.6)
+
+408.5 If the damage a markers location has received is ever equal to or
+          greater than its structure, destroy it immediately.
+
+408.5a It's best to keep track of a location's damage markers with pen
+            and paper or by using a six-sided die.
+
+408.5b Certain effects can remove the damage markers from a
+            location. If this happens, adjust the total damage markers the
+            location has received this game accordingly. (207.6)
+
+408.5c  If the destruction is replaced, reduce all damage the card has
+        received from the source of the destruction to 0. (506.6) This
+        means the location will not receive any damage markers from
+        that damage.
+                   408.5d If damage is inflicted to a location, it gains that many damage
+                                markers.
+
+             408.6 The term battle damage applies to the damage inflicted as part of the
+                        steps of resolving a battle.
+
+                   408.6a Battle damage works the same way as regular damage, except
+                                certain rules and cards interact specifically with battle damage.
+
+             408.7 If a card instructs you to inflict damage, then that card is considered
+                        the source of that damage. For battle damage, the source is the
+                        character which assigned it.
+
+             408.8 A card is considered to have been destroyed by any damage that put
+                        it over its limit.
+
+                   Example ­ Let's say a character with 4 life has received 3 damage this
+                   turn. If that character then receives 1 more damage this turn, it would be
+                   considered to have been destroyed by that damage.
+
+             408.9 If a card changes game areas, all damage the card has received is
+                        reduced to 0.
+
+409 Tokens
+
+             409.1 A token is a bead, coin, or other object placed on a card in play.
+                        Tokens have no inherent meaning, so a card always explains how it
+                        uses tokens in its rules text.
+
+             409.2 If a card leaves play, any tokens on it disappear.
+
+             409.3 Card Tokens
+
+                   409.3a If a Card Token leaves play, any attached cards leave play in
+                                that manner and then the Card Token disappears.
+
+                   409.3b The owner of a Card Token is the player who controlled the
+                                effect that created it.
+
+                   409.3c Common Card Token Stats
+
+                            4.09.3.c.1 Micromajig Tokens are considered Gearsmith character
+                                         cards with 1 strength, 1 life, 3 speed, and the "majig"
+                                         subtype.
+
+410 Numbers
+
+             410.1 An even number is any number that is a multiple of 2.
+410.1a This includes the number 0.
+
+410.2  Cards with variable numbers fully explain how those variables are
+       used in their rules text. If you are instructed to choose a number for a
+       variable, you must choose a whole number (e.g. 2 is fine, but not -1
+       or 3½).
+
+410.2a We consider 0 to be a whole number.
+
+410.3 If a number is increased and/or reduced by more than one effect at
+          the same time, apply all increases in any order you want followed by
+          all reductions in any order you want.
+
+410.4 If an effect tries to reduce a number below 0, that number stays at 0.
+
+410.5 If a number is reduced to a minimum of some number, that restriction
+          doesn't apply if the thing was already less than the minimum.
+
+Example ­ If a numeric cost of 0 is reduced by 1, to a minimum of 1, then
+that numeric cost is still 0.
+
+411 Face-Down Cards
+
+411.1 Every face-down card in play is considered to be a resource and
+          provides one Volition resource icon. Note: Cards in the Void are not
+          in play.
+
+411.2 The controller of a face-down card may look at its front face at any
+          time.
+
+411.3 If a face-down card is flipped face-up, it stops being a resource and it
+          is considered to have left play. If applicable, its face-up version is
+          considered to have entered play as a completely new card.
+
+411.4  If a face-up card is flipped face-down, it is considered to have left
+       play. It becomes a face-down resource and that resource is
+       considered to have entered play as though it were a completely new
+       card.
+
+412 Unblockability
+
+412.1  If an effect says a character "cannot be blocked", then while it is a
+       member of a battle party containing only unblockable characters, the
+       defending player may not form a blocking party during step 607.1d
+       of the battle.
+
+       Note: Cards that add characters into the blocking party will still
+       block an unblockable party.
+413 Bidding
+
+413.1        If an effect instructs players to bid, they take turns choosing a
+             number or passing. Each number chosen must be higher than the last.
+             Bidding continues until only 1 player remains, that player wins the
+             bid. All other players lose the bid.
+
+             413.1a Unless otherwise stated, bidding always begins with the active
+                         player and continues clockwise.
+
+             413.1b If a player cannot bid higher, they must pass. A player that has
+                         passed for any reason, may not bid again.
+
+414 Action Loops
+
+414.1 If a series of effects form an infinitely repeating loop that cannot be
+          voluntarily ended by either player, the game ends as a draw.
+
+             414.1a Keep in mind that the rules don't generate effects, so this rule
+                         only applies to things that cards do.
+
+414.2 You can have a series of voluntary actions repeat automatically. To
+          do this, follow these steps:
+
+             414.2a Demonstrate the series of actions.
+
+             414.2b Choose a number of times to repeat the series. Infinity is not a
+                         valid choice.
+
+             414.2c  Your opponent can interrupt the loop at any point if they want
+                     to respond. For example, they could interrupt the loop by
+                     saying "after 15 times, I respond to that ability by deploying a
+                     card." After the response, the loop continues until it is
+                     complete (unless your opponent decides to interrupt it again).
+
+414.3 If an action loop involves the voluntary actions of multiple players,
+          you must follow these steps:
+
+             414.3a  All involved players must demonstrate the loop. The loop is
+                     complete when the next action a player would take is identical
+                     to their first action.
+
+             414.3b The active player chooses a number, followed by their
+                         opponent. The loop is repeated the lesser number of times. If 0
+                         is chosen, no repetitions occur.
+
+             414.3c During the last repetition of the loop, the active player may
+                         choose any point in the loop at which to stop. This means it is
+                 valid to take all, some, or none of the actions in the last
+                 repetition if the active player chooses.
+
+Section 5 - Types of Rules Text
+
+501 Italic Text
+
+501.1 Italic text is not considered part of a card's rules text. It is either a
+          descriptive paragraph relating to the card's overall theme, or a
+          reminder to help answer a common question about the card.
+
+502 Abilities
+
+502.1 Many cards have abilities in their rules text. Every ability has a
+          center-justified name and a clearly labeled cost and effect section.
+
+502.2 Some abilities have threshold icons next to their name. You can't use
+          an ability unless you've met its threshold and can satisfy all its costs.
+          (405.3)
+
+502.3 Just like tactics, abilities can be used in response to your opponent's
+          actions even if it isn't your turn. There are also special times during
+          battles when you can use abilities.
+
+502.4 When an ability resolves, follow its rules text as it was written when
+          you first paid the cost, even if its rules text has since changed or the
+          ability's source has since left play.
+
+503 Triggers
+
+503.1            Triggers begin with the words if, when, or at and are followed by a
+                 trigger condition. If the trigger condition happens, you must
+                 immediately follow the instructions of the trigger as they were
+                 written when it happened, even if you are in the middle of resolving
+                 something else or the source of the trigger has left play.
+
+503.2 Players cannot respond to triggers.
+
+503.3 If a trigger happens while a player is satisfying the costs of a card or
+          ability, it waits until after the costs are completely satisfied before it
+          actually resolves.
+
+503.4            Sometimes multiple triggers happen at the same time. If all the
+                 triggers originated from cards under one player's control, that player
+                 decides the order in which they happen. However, if the triggers
+                 originated from cards under multiple players' control then the active
+                 player decides the order in which they happen.
+503.4a            The order does not have to be decided ahead of time; the
+                  deciding player lets one trigger happen, then afterwards
+                  decides which trigger happens next.
+
+504 Conditionals
+
+504.1 Conditionals use the word while followed by a condition to define
+          rules text that is only active while the condition is true.
+
+Example ­ A card might say "while your opponent controls a character,
+this card gains 1 strength and 1 life." This effect immediately ceases if
+your opponent ever stops controlling a character.
+
+505 Requirements
+
+505.1 Requirements use the word must to define something you are
+          required to do. If you can't meet the requirements for an action then
+          you can't take that action.
+
+Example ­ A card might say "your opponent must pay 2 for each
+attacking party they form." In that case, your opponent could not form a
+new attacking party unless they could meet the requirement by paying 2.
+
+505.2  Sometimes multiple requirements exist for the same action. In these
+       cases, you must satisfy as many of the requirements as you can. If it
+       is impossible to fulfill them all, you must make the decision that
+       would satisfy the greatest number of requirements.
+
+505.2a If you do not have enough available resources to pay a
+            requirement cost, it is not considered impossible to fulfill.
+
+505.2b If more than one decision would satisfy the same number of
+            requirements, you can choose which decision to make.
+
+                  Example ­ A card might say "anything that could pick this
+                  card must pick it." If there are two copies of this card in play,
+                  you decide which of the two cards you must pick.
+
+                  However, if there are two copies of a card in play that says
+                  "you must pay 2 for each attacking party you form" then they
+                  must both be fulfilled; to attack, you must pay 4.
+
+505.2c            If a player is trying to take an action that has multiple
+                  requirements, they must satisfy at least one of them (and more
+                  if possible). It is invalid to reason that "not taking the action in
+                  the first place satisfies all the requirements; therefore I cannot
+                  take the action." This logic is circular and incorrect.
+506 Replacements
+
+506.1 Replacements use the word instead to define one thing that
+          completely replaces another.
+
+Example ­ A card might say "if this card is put into your discard pile
+from play, remove it from the game instead." In that case, the card
+would never go to the discard pile; going to the discard pile is
+completely replaced with removing it from the game.
+
+506.2 Replacements don't apply to extra costs. If the thing to be replaced is
+          part of an extra cost, it isn't replaced.
+
+506.2a Any attached cards that have replacements will still be
+            replaced.
+
+                  Example: A character with Rusty Pickaxe attached. If you
+                  Rapine the character, the Rusty Pickaxe will still have it's
+                  replacement and will flip face-down. The character's
+                  replacements will not happen if it was destroyed as part of a
+                  cost.
+
+506.3 Certain replacements say "the next" to define something that could
+          be replaced in the future. These are called delayed replacements.
+          They wait until whatever they are trying to replace happens.
+
+506.4  Sometimes multiple replacements try to replace something at the
+       same time. If all the replacements originated from cards under one
+       player's control, that player chooses one to apply and the rest are
+       ignored. However, if the replacements originated from cards under
+       multiple players' control, then the active player chooses one to apply
+       and the rest are ignored.
+
+Delayed replacements are an exception; if a delayed replacement is not
+chosen, it is not ignored. Instead, it continues waiting for another
+instance of whatever it is trying to replace.
+
+506.5 Under rare circumstances, a series of replacements might try to
+          create infinite recursion. However, this is prevented because each
+          replacement can only be applied to the same thing once.
+
+Example ­ If one card says "if a card is destroyed, put it into its owner's
+hand instead" while another card says "if a card is put it its owner's
+hand from play, destroy it instead." These two replacements could
+theoretically replace each other infinitely.
+
+However, each replacement can only be applied to the same thing once.
+Therefore if a card is destroyed, that destruction is replaced by being put
+into its owner's hand which in turn is replaced by being destroyed. This
+is the end of the replacement cycle because you cannot replace the
+"destroy" with "put into owner's hand" again for this particular
+instance since you've already done that once.
+
+If in the above example there were two copies of the card that says "if a
+card is destroyed, put it into its owner's hand instead" then the
+replacement cycle would be handled differently. Each replacement gets
+to be applied once, even if it's identical to another replacement.
+Therefore, you'd actually apply that replacement twice since there are
+two copies of it.
+
+506.6 Replacements that replace the destruction of a card reduce all
+          damage the card has received from the source of the destruction to 0.
+
+507 Keywords
+
+507.1         Keywords are used to describe a set of complex behaviors that would
+              take up too much room to explain on a card. Keywords are always
+              active. A card has a keyword when it is listed as a bold name or when
+              it gains a keyword through rules text or abilities. Sometimes a
+              keyword is mentioned in an effect or as part of the rules text; this
+              does not mean the card has that keyword.
+
+507.2 Attach to [Type]
+
+507.2a        When you play the card, you must pick a target card of the
+              appropriate type as the first extra cost. When the attaching
+              card resolves, it enters play attached to the target card.
+
+507.2b If the attaching card is put into play by something that does
+            not specify a target for it, you must pick a target card as the
+            attaching card enters play.
+
+507.2c        If there is no valid target card to pick or the attaching card's
+              target is no longer in play when the attaching card tries to
+              enter play, put the attaching card into its owner's discard pile
+              instead. If it was already in the discard pile, it just stays there.
+
+507.2d If the attaching card is put into play at the same time as
+            another card, the other card can be selected as a target for the
+            attaching card.
+
+507.2e If the target card stops being the appropriate type, destroy the
+            attaching card immediately.
+
+507.3 Covert
+507.3a If all members of an attacking party have the covert keyword,
+            that party is considered a covert party.
+
+507.3b Only covert characters can block a covert party.
+
+507.3c Covert characters can only block covert parties.
+
+507.3d If an effect says a character "gains covert" then the character
+            is considered to actually have the covert keyword in its rules
+            text. (508.2)
+
+507.3e  A card cannot have more than one instance of the covert
+        keyword. Therefore, if a character with covert "gains covert"
+        or gains temporary rules text containing the covert keyword,
+        the extra instances of the keyword disappear.
+
+507.4 Flip Up
+
+507.4a  If a card with Flip Up is currently in play under your control
+        as a face-down resource, you may play the card as though it
+        were in your hand by paying its Flip Up cost and flipping it
+        face-up. To deploy it, you must also meet its Flip Up
+        threshold, listed next to the keyword.
+
+507.4b You pay the Flip Up cost before you actually flip the card
+            over, so you can use the card to pay for its own Flip Up cost.
+
+507.4c If the card has any Flip Up extra costs, they must be satisfied
+            directly before its regular extra costs.
+
+507.4d  Flip Up does not change when you are allowed to deploy
+        certain types of cards. For example, you can still only deploy a
+        character during your turn. However, if the card says in its
+        rules text that it can be deployed at other times, you can
+        deploy it with Flip Up at those times too.
+
+507.4e  For information on determining the numeric cost of a card
+        deployed with Flip Up, see its entry under Numeric Cost
+        (406.7).
+
+507.5 Unique [Identifier]
+
+507.5a  If you ever control more than one card that says "unique"
+        followed by the same identifier, you must choose one to keep
+        and destroy the rest. This restriction only applies to your
+        cards, so your opponent is allowed to have their own single
+        copy of a unique card in play as well.
+507.5b If the destruction of an extra copy of a card is prevented by an
+            effect, the unique keyword doesn't try to destroy the card
+            again until the prevention effect ends.
+
+507.6 Tactical
+
+507.6a A card with tactical may be deployed at any time you could
+            deploy a tactic.
+
+507.6b Tactical is active even when the card is a face-down resource
+            or in your hand.
+
+508 Temporary Rules Text
+
+508.1 Some effects add temporary rules text to a card. This text exists on
+          the card until it enters another game area.
+
+508.1a               Therefore, if a card has temporary rules text that says "if this
+                     card leaves play, draw a card" it would actually trigger when
+                     the card leaves play.
+
+508.2 If an effect says that a card "gains" a keyword, that card is
+          considered to have the keyword as temporary rules text.
+
+508.3 If a card gains temporary rules text while it has the character type but
+          later loses that type, the temporary rules text gained while it was a
+          character is removed.
+
+Section 6 - Playing the Game
+
+601 Starting a Game
+
+601.1 At the start of each game, follow these steps:
+
+601.1a               Faction cards start the game in play. Write down the starting
+                     influence of all factions on a piece of paper so you can keep
+                     track of it.
+
+601.1b All players search their deck for the appropriate resources
+            listed under their faction's Starting Resources entry. These
+            resources are put into play face-down.
+
+601.1c Randomly determine which player will decide who takes the
+            first turn of the game. That player chooses who goes first.
+
+601.1d All players flip their starting resources face-up.
+601.1e                Each player draws the appropriate number of cards according
+                      to their faction's Starting Draw entry. The number of cards
+                      drawn is usually different if you are going first as opposed to
+                      second.
+
+601.1f                The first player may mulligan by selecting any number of
+                      cards in their hand and placing them on the bottom of their
+                      deck in any order. Then, they draw an equal number of cards.
+                      This can be done only once.
+
+601.1g Each player, in clockwise order, follows steps F.
+
+601.1h The first turn of the game begins.
+
+602 Start of turn
+
+602.1 This is a single point of time and all things happen simultaneously,
+          this is not a phase or step. These are not triggers.
+
+602.1a All damage on characters is cleared and reset to 0. (408.4a)
+
+602.1b All "this turn" effects end.
+
+602.1c Any cards that are in play under the active players control are
+            elgible to attack this turn. (608.1b)
+
+602.2 All "At start of turn" triggers happen simultaneously. The active
+          player decides the order they resolve.
+
+603 During a Turn
+
+603.1 The active player is the player taking the current turn.
+
+603.2 During a turn, the active player may take the following actions in any
+          order and as many times as they want:
+
+603.2a Deploy a Card
+
+603.2b Use an Ability
+
+603.2c Attack
+
+603.2d End the Turn (this can only be done once)
+
+604 Deploying a Card
+
+604.1 To deploy a non-resource card, follow these steps:
+
+604.1a Selection ­ Choose a non-resource card in your hand.
+604.1b Threshold ­ Check if you have met the card's threshold. If you
+            have not, you cannot play the card. (405.2)
+
+604.1c Play ­ Put the card onto the playing surface face-up. The card
+            is now in the being deployed area.
+
+604.1d                  Costs ­ Satisfy all the card's costs. This includes its numeric
+                        cost and any extra costs listed in its rules text. Any triggers
+                        that occur wait until after the costs have been fully satisfied
+                        instead of resolving immediately (503.3).
+
+604.1e                  Legality ­ If you are unable to satisfy all of the card's costs
+                        then deploying that card was illegal. You must undo all
+                        actions you've taken so far to deploy the card. Any triggers
+                        that occurred while you were deploying the card are
+                        terminated.
+
+604.1f Triggers ­ Any pending triggers that occurred while the card
+            was being played happen simultaneously. (503.3)
+
+604.1g Responses ­ Wait for your opponent to respond to the card.
+
+604.1h Resolution ­ The card resolves. If it is a character, item, or
+            location put it into play under your control. If it's a tactic,
+            follow its instructions and put it into its owner's discard pile.
+
+604.2  If an effect lets you deploy a card, you can only deploy a non-
+       resource card. You do this by following the steps listed above. If an
+       effect lets you play a resource, instead follow the steps for playing a
+       resource (605).
+
+604.3 If a card enters play as a result of deploying a card, all triggers that
+          would trigger off the card entering play would happen
+          simultaneously.
+
+605 Playing a Resource
+
+605.1 If you are instructed to play a resource, follow these steps:
+
+605.1a Selection ­ Choose any card in your hand.
+
+605.1b Facing ­ Decide if you are going to play a face-up or face-
+            down resource. Any card can be played face-down, but only
+            actual resource cards can be played face-up. (203.2)
+
+605.1c Triggers ­ Some cards have effects that trigger "while you
+            play a resource." These effects happen after you have selected
+                      a card from your hand to play as a resource but before the
+                      resource enters play. ( Example: Witty Worm)
+
+605.1d Play ­ Put the selected card from your hand into play either
+            face-up or face-down, depending on what you have chosen.
+
+605.2 If an effect lets you deploy a card, you can only deploy a non-
+          resource card. You're only allowed to play resources if an effect
+          specifically says so (604.2).
+
+605.3 If a resource enters play, all triggers that would trigger off the card
+          entering play would happen simultaneously.
+
+606 Using an Ability
+
+606.1 To use an ability, follow these steps:
+
+606.1a Selection ­ Choose an ability on a card you control (or in
+            special cases, on a card you own that isn't in play).
+
+606.1b Threshold ­ Check if you have met the ability's threshold (if it
+            has one). If it has a threshold and you have not met it, you
+            cannot use the ability. (405.3)
+
+606.1c                Costs ­ Satisfy all the ability's costs. This includes its numeric
+                      cost (if any) and any extra costs listed in its rules text. Any
+                      triggers that occur wait until after the costs have been fully
+                      satisfied instead of resolving immediately (503.3).
+
+606.1d                Legality ­ If you are unable to satisfy all of the ability's costs
+                      then using that ability was illegal. You must undo all actions
+                      you've taken so far to use the ability. Any triggers that
+                      occurred while you were using the ability are terminated.
+
+606.1e                Triggers ­ Any pending triggers that occurred while the
+                      ability's cost was being satisfied happen simultaneously.
+                      (503.3)
+
+606.1f Responses ­ Wait for your opponent to respond to the ability.
+
+606.1g Resolution ­ The ability resolves. Follow its effect instructions
+            as they were written when you used the ability (502.4).
+
+607 Responding to Actions
+
+607.1 You can respond to your opponent whenever they deploy a card, use
+          an ability, or end their turn. You cannot respond to your own actions.
+607.2          When you have the chance to respond, you may deploy a tactic or
+               use an ability. Once this response resolves, you may make another
+               response. You may repeat this any number of times. Once you are
+               finished making responses, the original action resolves.
+
+607.2a         Keep in mind that your opponent can respond to your
+               responses. For example, if you respond to your opponent by
+               deploying a tactic, your opponent has a chance to respond to
+               that tactic with their own. A series of responses can go back
+               and forth between players indefinitely.
+
+607.2b         Because you cannot respond to your own actions, there is no
+               need for a "priority passing" system that many other games
+               use. You simply make a series of responses to your opponent,
+               resolving each one before moving to the next. Each of your
+               responses can be responded to by your opponent in the same
+               way. Although the variations that can occur with this system
+               are many, the rules governing the system are simple.
+
+607.2c         Technically, there is no stack in The SpoilsTM like there is in
+               other card games. While it's true that the response system can
+               behave in a similar fashion (e.g. actions resolve last in, first
+               out) we don't maintain the concept of a stack formally in the
+               rules. This is important because many things that would use
+               the stack in other games can't be responded to in The
+               SpoilsTM, such as triggers.
+
+608 Attacking
+
+608.1 To attack, follow these steps:
+
+608.1a         Announcement ­ Choose a faction or location you don't
+               control and announce you are attacking it. If you forget to
+               choose a target, by default you're attacking your opponent's
+               faction.
+
+               You can only validly announce an attack under the right
+               circumstances. If you have no potential attackers or if an effect
+               is preventing an attack, the battle ends immediately at this step
+               before anything has a chance to trigger as a result of the
+               attack.
+
+608.1b         Attackers ­ Choose one or more characters you control that
+               can attack. A character can attack if it is not depleted and if
+               you have controlled it since the start of the turn. Deplete these
+               characters. They form the attacking party.
+608.1c                  Tactics & Abilities ­ You may deploy tactics and use abilities
+                        as many times as you want. Then, your opponent may do the
+                        same.
+
+                        If an effect causes any number of characters to become
+                        members of the blocking party during this step, the blocking
+                        party isn't actually formed yet. The characters should be
+                        added to the blocking party after it's formed during the next
+                        step. If no blocking party is formed during the next step, the
+                        characters become the blocking party. However, effects that
+                        apply to the formation of a battle party don't happen since a
+                        battle party wasn't technically formed in this case.
+
+608.1d                  Blockers ­ The defending player may choose one or more
+                        characters they control that are not depleted. If they do, those
+                        characters form the blocking party. Otherwise, there is no
+                        blocking party during this battle.
+
+608.1e Resolution ­ Resolve the battle.
+
+609 Resolving a Battle
+
+609.1 To resolve a battle, follow these steps:
+
+609.1a                  Tactics & Abilities ­ The attacking player may deploy tactics
+                        and use abilities as many times as they want. Then, the
+                        defending player may do the same.
+
+609.1b Speed Level ­ Find the highest speed among characters that
+            have not yet assigned battle damage during this battle. X is
+            that speed.
+
+609.1c                  Assign Attacker's Damage ­ All attacking characters with X
+                        speed that have not yet assigned battle damage during this
+                        battle assign damage equal to their strength divided however
+                        the attacking player wants to the blocking party. If there are no
+                        members left in the blocking party, the attacking characters
+                        assign their battle damage to the target of the attack instead.
+
+609.1d                  Assign Blocker's Damage ­ All blocking characters with X
+                        speed that have not yet assigned battle damage during this
+                        battle assign damage equal to their strength divided however
+                        the defending player wants to the attacking party.
+
+609.1e                  Tactics & Abilities ­ The attacking player may deploy tactics
+                        and use abilities as many times as they want. Then, the
+                        defending player may do the same.
+609.1f             Damage Infliction ­ All assigned battle damage is inflicted
+                   simultaneously. If more than one character inflicts damage to
+                   the same thing during this step, the sum of the damage is
+                   inflicted as a single amount.
+
+609.1g Repeat ­ Repeat steps A through F until all characters in the
+            battle have either assigned their battle damage or are no longer
+            in play.
+
+609.1h End ­ Deplete all surviving characters in the battle.
+
+609.2  If there is nothing left for a character to assign its battle damage to,
+       the character doesn't actually do anything but it is still considered to
+       have assigned its battle damage for the purposes of ending the
+       resolution loop.
+
+Example ­ An attacking party featuring characters with many different
+speeds is targeting a location. If the first wave of characters destroys the
+location, the remaining characters don't assign any damage. However,
+they are considered to have assigned damage for the purposes of ending
+the battle (i.e. the battle resolution doesn't just infinitely repeat).
+
+610 Ending a Turn
+
+610.1 When the active player announces that they are ending their turn, the
+          turn doesn't actually end until their opponent has had a chance to
+          respond. Once the opponent's responses are complete, the turn ends.
+
+610.1a End of turn triggers happen after your opponent has made all
+            their responses, at the moment the turn actually ends.
+

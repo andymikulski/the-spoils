@@ -1,0 +1,367 @@
+# Characters — Gearsmith
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+142 entries.
+
+- **0v3rw0rk3d 31f** _(Holy Heist; 31f)_
+  - subtitle: none shall pass
+  - flavor: One 31f alone at the barricade confronted armored carmajigs, while others fled. He stood for freedom for us all, but few care now if he's jailed or dead.
+- **313373 M3ch4n1c** _(Seed; 31f)_
+  - subtitle: h45 t3h 1337 7001 f0r t3h j08
+- **313373 M3ch4n1c** _(Seed Saga; 31f)_
+  - subtitle: n0w w17h 13373r 70015
+- **3cc3n7r1c 73chn1c14n** _(Seed 2; 31f)_
+  - subtitle: c|-|3c|< 0|_|7 |V|y 5W337 c4p3!!!
+- **3cc3n7r1c 73chn1c14n** _(Seed Saga; 31f)_
+  - subtitle: build all the things!
+- **3p1ph4ny 31f** _(1st Edition, 2nd Edition, Open Beta; 31f)_
+  - subtitle: thinks of something clever almost every day
+  - flavor: He's been in that epiphany booth an awfully long time...
+- **4p7 31f** _(1st Edition Part 2, 2nd Edition; 31f)_
+  - subtitle: 1337 700L h4ndL1ng sk1llz
+  - flavor: Also nunchuck sk1llz, b0whun71ng sk1llz, c0mpu73r h4ck1ng sk1llz
+- **4rm0r3d 31f** _(Seed Saga; 31f)_
+  - subtitle: powered by smugness
+- **5n4p** _(Shade of the Devoured Emperor; 31f)_
+  - subtitle: 50 M4ny M4j195!
+  - flavor: If we could build enough of these, we might just be able to sneak out of this place!
+- **633fy 31f** _(1st Edition, 2nd Edition, Open Beta; 31f)_
+  - subtitle: n00bz.ph33r.h1m
+  - flavor: j00.n00b...6r1|\|g.m3.ph1uph33.n00g47!
+- **700160x 31f** _(1st Edition, 2nd Edition, Open Beta; 31f)_
+  - subtitle: 1337.73ch.4.j00
+- **A Boy and His Toy** _(Holy Heist; inventor)_
+  - subtitle: how many times have i told you? knock!
+  - flavor: He is a sad, strange, not-so-little man, and he has our pity.
+- **A Series of Tubes** _(2nd Edition; node)_
+  - subtitle: it's not a big truck
+- **Abused 31f Conveyer** _(Holy Heist; mechanic, 31f)_
+  - subtitle: these boots weren't made for walking
+  - flavor: The road goes ever on and on and on and on... And on!
+- **Accumulation Majig** _(Shade of the Devoured Emperor; majig)_
+  - subtitle: MOAR!
+  - flavor: om nom nom nom
+- **Acuminous Gigantitect** _(1st Edition Part 2, 2nd Edition; inventor)_
+  - subtitle: ants! you all look like little, tiny ANTS!
+  - flavor: "hahahahaha! Smush you!"
+- **Adjunct Artisan** _(Seed; craftsman)_
+  - subtitle: don't flinch
+  - flavor: "FORE!"
+- **Adjunct Artisan** _(Seed Saga; craftsman)_
+  - subtitle: I told you not to flinch
+  - flavor: "BATTER UP!"
+- **Animated Scrap Heap** _(Ungodly Mess; golem, majig)_
+  - subtitle: compiled from the remains of abandoned genius
+- **Aristocratic Artificer** _(Seed, Seed Saga; craftsman)_
+  - subtitle: always draws a crowd
+  - flavor: What an incredible...whatever the hell it is!
+- **Assistant Mud Whisperer** _(Seed; mud whisperer, 31f)_
+  - subtitle: wh47 4 7001
+  - flavor: "8y 73h p0VV3r 0f 4|_|_ 7h47 15 3V1|_ 1 c0|V||V|4|\|d j00 70 4VV4k3|\| 4|\|d |V|4k3 |V|3 4 54|\|dVV1ch!"
+- **Assistant Mud Whisperer** _(Seed Saga; mud whisperer, 31f)_
+  - subtitle: wh47 4 7001
+  - flavor: "8y 73h p0W3r 0f 4|_|7h15 3V1|_ 1 c0|\/|\/4|\|d j00 70 4\/\/4k3|\| 4|\|d |\/|4k3 |\/|3 4 54|\|dW1ch!"
+- **Basic Node** _(1st Edition, 2nd Edition, Open Beta; node)_
+  - subtitle: you know...for n00bz
+- **Beefy Researcher** _(Ungodly Mess; 31f)_
+  - subtitle: 6732 years young
+- **Billowing Bouffant** _(Ungodly Mess; monstrosity)_
+  - subtitle: terror of the skies
+  - flavor: Travel by air in Luridia is not advised.
+- **Braggadocian Aide** _(Seed 2; craftsman)_
+  - subtitle: trying is the first step of failure
+- **Braggadocian Aide** _(Seed Saga; craftsman)_
+  - subtitle: doing all the don'ts
+- **Cantankerous Claywork** _(Seed 2; golem)_
+  - subtitle: 50 |=r34|<i|\|g 84d455
+- **Cantankerous Claywork** _(Seed Saga; golem)_
+  - subtitle: 50 |=r34|<i|\|g 84d455
+  - flavor: Size matters. Don't let her tell you different.
+- **Changing Boothmajig** _(Holy Heist; majig)_
+  - subtitle: for when you are in a hurry
+  - flavor: Hitting the battlefield in style never goes out of fashion.
+- **Clay Node** _(Seed 2; node)_
+  - subtitle: an early prototype
+- **Clay Node** _(Seed Saga; node)_
+  - subtitle: predecessor to the node network
+- **Clockman Junk Picker** _(Shade of the Devoured Emperor; mechanic)_
+  - subtitle: ooh, a thing!
+- **Contriving Engineer** _(1st Edition Part 2, 2nd Edition; inventor)_
+  - subtitle: now raise your left hand
+  - flavor: "Now pull the other 31f's trunks off. Yes, just like that. Good."
+- **Cowering Golem** _(Seed, Seed Saga; golem)_
+  - subtitle: made from the droppings of an elephant
+  - flavor: An elephant that never forgets...TO KILL!
+- **Cr4ck13** _(Holy Heist; 31f)_
+  - subtitle: aaaah, snap!
+  - flavor: They just keep popping out!
+- **Crushjaw Oceanhide** _(Seed Saga; seraphim, dragon)_
+  - subtitle: deadliest catch
+  - flavor: No seriously, this one time I saw it eat like, ten guys.
+- **Customized 31f** _(Ungodly Mess; 31f)_
+  - subtitle: imperial army abomination
+  - flavor: The Imperial Army is known to experiment on all manner of man and beast, erasing their memories and making them their pawns.
+- **Drainbow Crash** _(Ungodly Mess; horsemajig)_
+  - subtitle: nightclub VIP
+- **Drivey Car** _(Seed; vehicle)_
+  - flavor: 7VV0 – 016/200, 009/165, 093/165, 117/200, 001/165, 113/165, 089/200
+- **Drivey Car** _(Seed Saga; vehicle)_
+  - subtitle: compact yet roomy
+  - flavor: There's room right here on my lap.
+- **Elite Acrolos Engineer** _(Ungodly Mess; inventor)_
+  - subtitle: screw the rules
+  - flavor: I have money.
+- **Elitistmajig** _(Shade of the Devoured Emperor; majig)_
+  - subtitle: above the fray
+  - flavor: Be the 1%.
+- **Enormous and Uncooperative Golem** _(Seed Saga; golem)_
+  - subtitle: Golem is loafing around!
+- **Epiphanal Mechanic** _(1st Edition; inventor)_
+  - subtitle: W|-|0z 73h |V|4|\| |\|0W, 617(h!?
+- **Epiphanal Mechanic** _(Open Beta; inventor)_
+  - subtitle: ideas don't come up with themselves!
+- **Ex Machina Majig** _(Ungodly Mess; majig)_
+  - subtitle: we need machina power now!
+  - flavor: Go, go Micromajig power!
+- **Fleet Golem** _(Seed; golem)_
+  - subtitle: also a type of enema
+- **Fleet Golem** _(Seed Saga; golem)_
+  - subtitle: clay robots programmed with runes
+  - flavor: "Make sure to keep your hands and feet firmly on the golem at all times."
+- **Fleet Majig** _(Ungodly Mess; majig)_
+  - subtitle: monitoring the acrolosian exterior
+  - flavor: Acrolos is comprised of a chain of six islands on the border between the Specific Ocean and the Nidian Sea.
+- **Gigamajig** _(1st Edition; majig)_
+  - flavor: FangWei ate an entire 2lb bag of Candy Korn before coloring this picture.
+- **Gigamajig** _(2nd Edition; majig)_
+  - subtitle: that must be a deep bay
+  - flavor: You cannot defeat the Gigamajig. You can only hope to contain him.
+- **Gigantitect's Giant Giant** _(Shade of the Devoured Emperor; warmachine)_
+  - subtitle: precisely as advertised
+  - flavor: GG sir... GG!
+- **Goloam** _(Seed 2, Seed Saga; golem)_
+  - subtitle: crazy world. lots of smells.
+- **Guardforce Aggromajig** _(Holy Heist; guardforce, majig)_
+  - subtitle: fast and furious
+  - flavor: Often referred to as 'The Toddler of Death'.
+- **Guardforce Alpha Prime 31f** _(1st Edition Part 2, 2nd Edition; guardforce, 31f)_
+  - subtitle: i select you!
+  - flavor: "You are my monster selection!"
+- **Guardforce Alpha Prime H4x0r** _(1st Edition Part 2, 2nd Edition; guardforce, 31f)_
+  - subtitle: 1 4r3 73h r007
+- **Guardforce Morphmajig** _(1st Edition Part 2; guardforce, majig)_
+  - subtitle: it looks angry! what's it saying?
+  - flavor: "3xC|_|z3 |V|3 |=1n3 51rz, W0u1|) j00 m1|\|d 573pp1|\|g 0|_|7 0f 73h 60g?"
+- **Guardforce Morphmajig** _(2nd Edition; guardforce, majig)_
+  - subtitle: it looks angry! what's it saying?
+  - flavor: "3xC|_|z3 |\/|3 |=1n3 51rz, VV0u1|) j00 m1|\|d 573pp1|\|g 0_|7 0f 73h 60g?"
+- **Horsemajig of the Apocalypse - Death** _(1st Edition Part 2, 2nd Edition; horsemajig)_
+  - flavor: just find the strength, among them all, that's higher than its friends. you put them all, beside themselves, and you'll have passed the test! then each majig, beyond the first, you'll need to add once more. then you should be, proud of yourself, your mind you had to flex!
+- **Horsemajig of the Apocalypse - Famine** _(1st Edition Part 2, 2nd Edition; horsemajig)_
+  - flavor: When all you have, is one of each, you'll see the way they blend, And when you find, the numbers that, were greater than the rest, At first you need, to do the steps, I talked about before, Now if you solved, the mystery, behind this flavor text,
+- **Horsemajig of the Apocalypse - Pestilence** _(1st Edition Part 2, 2nd Edition; horsemajig)_
+  - flavor: to find their stats, can seem quite hard, 'tis easy as can be! for then you'll know, once and for all, the horsemajig's true size. there's one of each, no more no less, so follow me again! then add the rest, you'll have their stats, decipherment galore!
+- **Horsemajig of the Apocalypse - War** _(1st Edition Part 2, 2nd Edition; horsemajig)_
+  - flavor: The horsemajigs, they thrive in groups, as you will come to see, Then do the same, for life and speed, to try this out is wise, But wait there's more, you are not done, this only works out when, So if you have, them side by side, they'll start as two three four,
+- **Hub Node** _(1st Edition, 2nd Edition, Open Beta; node)_
+  - subtitle: n00b tested, 1337 approved
+- **Improved Micromajig** _(Holy Heist; majig)_
+  - subtitle: sometimes i'm overpowered
+  - flavor: It's morphin' time!
+- **Inconspicuous Golem** _(Seed, Seed Saga; golem)_
+  - subtitle: smells like golem!
+- **Ingenious Tinker** _(Seed Saga; 31f)_
+  - subtitle: real 31f of genius
+- **Jo Ciendeilio** _(1st Edition, 2nd Edition, Open Beta; inventor)_
+  - subtitle: good thing she didn't take after her brother
+- **Jo Ciendeilio, M07h3r 0f 1337** _(Shade of the Devoured Emperor; jo, blade of questionable morality)_
+  - subtitle: best communicator in Acrolos
+  - flavor: Jo was born and raised on the island-complex of Acrolos, which raises the question of where she managed to learn any kind of social graces. She now provides technology in bulk so the rich can resell each piece to the highest warmongering bidder.
+- **Juggernauts** _(Seed Saga; vehicle)_
+  - subtitle: get a load of these nauts
+  - flavor: Transport of the gods.
+- **Legacy Warmachine** _(1st Edition; warmachine)_
+  - subtitle: this card has everything...!
+  - flavor: ...an 31f and a j37.5k33!!!
+- **Legacy Warmachine** _(Open Beta; warmachine)_
+  - subtitle: still runs over people just fine
+  - flavor: Those middle blades are for fighting giants. Granted there aren't any, but you never know.
+- **LeoKaiser** _(2nd Edition; kaiser)_
+  - subtitle: meow
+- **Lunk Nut** _(Holy Heist; machine)_
+  - subtitle: it's just a nick name
+  - flavor: The 31v35 that ride point on their mechanical caravans are often known as "Nut Punchers".
+- **M3CHm4n1c 31f** _(Shade of the Devoured Emperor; mechanic, 31f)_
+  - subtitle: manic machine manipulator
+- **Manifold Quasi-Modal Steamwork** _(1st Edition, 2nd Edition, Open Beta; majig)_
+  - subtitle: he was so nice. kept to himself mostly.
+  - flavor: "Our manifold quasi-modal steamwork just hasn't been the same since that dancing gypsymajig showed up." / — Great Mecha-Arcanist Frollo
+- **Massive Erecting Golem** _(Seed, Seed Saga; golem)_
+  - subtitle: i learned too late that it implied tumescence
+  - flavor: "...and just when I thought we had run out of penis jokes...WHAM, it hit me!"
+- **Master Mud Whisperer** _(Seed, Seed Saga; mud whisperer)_
+  - subtitle: g0 f0r7h 4nd 6r1ng m3...4 5hru663ry!
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: i'm ready for my closeup
+  - flavor: There are few subjects capable of conflagrating a calm discussion amongst Acrolosian tinkers faster than that of the micromajig. Most find it peculiar, at the very least, that such a small and innocuous-seeming thing can inspire such passionate and contentious debate.
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: tell me i'm beautiful. lie to me if necessary
+  - flavor: Micromajigs are a humanoid pattern majig, standing perhaps half a foot tall, powered by an identical voidal circuitry core. They are not particularly strong, such as the luteoderm goliath, nor are they astonishingly powerful, such as the runic cannon, but they are unusually prolific. In fact, it is often postulated without question that the micromajig represents the single most common piece of voidal engineering in Luridia today. It is this element of quantity that the architects and inventors find so threatening, offensive, inspiring or simply ludicrous, according to their own views.
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: Ambassador M0d3 Un10ck3d
+  - flavor: To understand why these little things would be divisive, one must first understand the fact that the culture of invention in Acrolos is deeply seated in the traditions of voidal engineering practiced by the 31v35, who comprise a very significant portion of the community there. Since the first 31f expatriates settled in Turncrank Gorge in the days of old Marmothoa, they have practiced a small but strict, almost religious, set of tenets governing their art. One of these tenets is the stalwart abhorrence of mass production. The creation of one device that is the exact copy of another is not just uninteresting, but actively offensive to nearly all 31v35.* In stark contrast to this ban, the micromajig is so ubiquitous as to be regarded by many as a mundane nuisance. / * It is not known if the source of this distaste for duplication is grounded in historical experience or a merely religious aversion. Presumably, an answer exists, but it is nearly impossible to have a mature conversation with a male 31f, and nearly all the female 31v35 have sequestered themselves on N1d14, which we call Nidia.
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: #MicromajigRevolution
+  - flavor: The origin of the micromajig is shrouded in mystery. No one knows precisely when or how the first micromajig was built. The earliest known written record of a micromajig dates back only six years*, but many anecdotal stories feature their appearance as much as a decade earlier. It is widely believed to be the work of a single rogue gearsmith, referred to in awed or contemptuous voices, as "The Micromajig Master." The sheer quantity of micromajigs in the world, however, is far beyond the capacity of a single man to produce and would thus suggest that he has devised an entire apparatus dedicated to the express purpose of producing unfathomable quantities of them. This hypothetical complex of production, hidden somewhere in the Metratropean foothills, is a shrine of the forbidden in Acrolosian culture. / * It is found on the death certificate of one Private Second Class Gozark, kept in the Imperial Army records at Direstock. I have included here the original Direspeak entry for those who might be curious. "Death-cause : Crushed/smothered (rockslide of small-majigs)"
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: fetch the diamond codpiece!
+  - flavor: What motivates the Master to create these micromajigs is anyone's guess. Is he a folk hero, dedicated to breaking an irrational proscription against mass production? Is he simply a deviant, delighting in his multiplicative transgression against tradition? Perhaps one day the creator of the micromajig and their motives will become known to history. In the meantime, one would be wise to exercise caution when mentioning the subject in the company of tinkers, lest you find yourself subject to impassioned opinion.
+- **Micromajig** _(Holy Heist; majig)_
+  - subtitle: movin' on up
+  - flavor: A few tinkers have speculated, with expressions of wild enthusiasm or disgust, that the micromajigs have learned a way to reproduce themselves. There is no consensus on whether this would occur through crafting them directly as an inventor might, or building machines that build micromajigs, or, as was suggested in at least one moment of perverse fantasy, "coupling as animals do." Regardless, these speculations are not given much credit in the wider community.
+- **Micromajig Maker** _(1st Edition, 2nd Edition; inventor)_
+  - subtitle: the little ones nag the loudest
+- **Micromajig Maker** _(Open Beta; inventor)_
+  - subtitle: creating with care
+- **Micromajig Master** _(1st Edition, 2nd Edition; manager)_
+  - subtitle: your tiny sacrifices will save us all!
+- **Micromajig Master** _(Open Beta; manager)_
+  - subtitle: we can always make more
+- **Micromajig Shipping Container** _(2nd Edition; machine)_
+  - subtitle: s&h extra (schproingmajig not included)
+- **Mountainous Golem** _(Seed, Seed Saga; mountain, golem)_
+  - subtitle: whooo distuuurbs my slumberrr?
+- **Mud Whisperer Wannabe** _(Seed, Seed Saga; mud whisperer, 31f)_
+  - subtitle: j00 c4n b3 my fr13nd
+- **Multi-Attachment Man** _(Seed, Seed Saga; mechanic)_
+  - subtitle: perhaps more attachment than man
+  - flavor: "Let's go to my place later so I can show you my other parts..." / It's funny because he wants to have sex with them.
+- **Mundane Pupil** _(Seed, Seed Saga; 31f)_
+  - subtitle: j00 4r3 |\|0w du|\|c3
+- **Node in a Box** _(Holy Heist; node)_
+  - subtitle: step 1
+  - flavor: take a look inside...
+- **Oddment Collector** _(Seed, Seed Saga; golem)_
+  - subtitle: ooh, shiny!
+- **Omnidirectional Patrolmajig** _(2nd Edition; majig)_
+  - subtitle: vigilant verifier of veracity
+  - flavor: The inventors of Acrolos have several campuses on mainland Metatropea. Security is of the highest concern.
+- **P0p** _(Ungodly Mess; 31f)_
+  - subtitle: everyone out!
+- **PantherKaiser** _(1st Edition Part 2, 2nd Edition; kaiser)_
+  - subtitle: the left flank of kaiser justice
+  - flavor: "If you need me, I'll be outside sitting on a stump or something."
+- **Party Crashers** _(Ungodly Mess; majig)_
+  - subtitle: from the void beyond time and space
+- **Preponderant Craftsman** _(Seed, Seed Saga; craftsman)_
+  - subtitle: every little thing he makes is epic
+- **Prime Titan** _(Holy Heist; warmachine)_
+  - subtitle: say hello to my little friends
+- **Protractive Golem** _(Seed, Seed Saga; golem)_
+  - subtitle: been walked on all its life...
+  - flavor: ...but we love you anyway, Protractive Golem!
+- **Quipmajig** _(1st Edition Part 2; majig)_
+  - subtitle: you're on the b-list now!
+  - flavor: "...so Mirgla's mother says, 'Yeah, and it's DEEP, too!'"
+- **R3p347 0ff3nd3r** _(Shade of the Devoured Emperor; guardforce, 31f)_
+  - subtitle: screw the rules - i has an awesome suit
+- **RC Flashlight** _(Holy Heist; machine)_
+  - subtitle: never leave home without one
+- **Recyclable Golem** _(Seed 2; golem)_
+  - subtitle: i be melty
+- **Recyclable Golem** _(Seed Saga; golem)_
+  - subtitle: reduce, reclaim, reconstitute
+- **Redecorator Majig** _(Ungodly Mess; majig)_
+  - subtitle: this goes there and there goes this
+- **Research Assistant** _(1st Edition, Open Beta; 31f)_
+  - subtitle: don't drink the milk
+  - flavor: F14xu5 didn't spend 300 years in runecrafting school to bring snacks to some punk one fifth his age.
+- **Research Intern** _(Seed 2; 31f)_
+  - subtitle: |\|07h1|\|g ch4|\|g35
+- **Research Intern** _(Seed Saga; 31f)_
+  - subtitle: i'm hoping to finish my dissertation in about eighty years
+- **Runic Tattoo Artist** _(Seed, Seed Saga; 31f)_
+  - subtitle: i want a skull
+  - flavor: "Okay, well I can draw Kermit the Frog...how about a nice Kermit the Frog?"
+- **Runic Whale** _(Seed, Seed Saga; golem)_
+  - subtitle: never been caught
+  - flavor: "No one knows how old he is, but if you ask me, and most people do, he's a hundred years if he's a day."
+- **Sagacious 31f** _(1st Edition Part 2; 31f)_
+  - subtitle: come on guys! it'll be frickin' sweet!
+  - flavor: "You want how much to build it? And it does what?"
+- **Scavengemajig** _(1st Edition, 2nd Edition; majig)_
+  - subtitle: yaaaaaaayyyyyyy!
+  - flavor: "Ooooh! More blue ones! And that pink thing over there!"
+- **Scavengemajig** _(Open Beta; majig)_
+  - subtitle: the very latest in treasure reclamation
+  - flavor: Why did he keep EVERYTHING in treasure chests?
+- **Schproingmajig** _(1st Edition Part 2; majig)_
+  - subtitle: wheeee! kill meeeee! yayyyy!
+- **Scrapple-Jack** _(Holy Heist; horsemajig)_
+  - subtitle: i've been happily workin' in the lab ever since
+- **Securitymajig** _(1st Edition; majig)_
+  - subtitle: 1t.pW|\|z.j00.14m3r
+  - flavor: This year's model can distribute over 350 insults per minute. Plus it fries chickens. / (also cocks)
+- **Securitymajig** _(2nd Edition; majig)_
+  - subtitle: 1t.pW|\|z.j00.14m3r
+  - flavor: This year's model can distribute over 350 insults per minute! Plus it fries chickens. / (also cocks)
+- **Securitymajig** _(Open Beta; majig)_
+  - subtitle: 1t.pW|\|z.j00.14m3r
+  - flavor: This year's model can distribute over 350 insults per minute!
+- **Securitymajig Mark II** _(Ungodly Mess; majig)_
+  - subtitle: 413R7!
+  - flavor: Now with 455 insults per second!
+- **Senior Research Assistant** _(1st Edition Part 2; 31f)_
+  - subtitle: 1 5tuff3d 7h15 |/\|17h |V|y p00
+  - flavor: For F14xu5.
+- **Senior Research Assistant** _(2nd Edition; 31f)_
+  - subtitle: 1 5tuff3d 7h15 |/\|17h |V|y p00
+  - flavor: "F14xu5 would later become involved in a class action lawsuit over the urine content of the soup."
+- **Silent Sentinels** _(Ungodly Mess; warmachine)_
+  - subtitle: if you hear it
+  - flavor: It's too late.
+- **Sockem Bot** _(Shade of the Devoured Emperor; warmachine)_
+  - subtitle: arch nemesis of rockem bot
+- **Stuttershy** _(Shade of the Devoured Emperor; horsemajig)_
+  - subtitle: silent and ruthless
+- **T Force 5 Megabrutemajig** _(1st Edition Part 2, 2nd Edition; t force 5, majig)_
+  - subtitle: smooshy crunchy!
+  - flavor: Mashy bashy!
+- **T Force 5 Megadudemajig** _(1st Edition Part 2, 2nd Edition; t force 5, majig)_
+  - subtitle: the dudemajig abides
+  - flavor: "Hey man, there's a beverage involved here!"
+- **T Force 5 MegaManlyMajig** _(Holy Heist; t force 5, majig)_
+  - subtitle: the world is his gym
+  - flavor: He's here to pump you up!
+- **T Force 5 Megascoutmajig** _(1st Edition Part 2, 2nd Edition; t force 5, majig)_
+  - subtitle: that's my good deed for the day
+  - flavor: You cannot defeat the Teenage Towering Titan Trampling Team. You can only hope to contain them.
+- **Terra Cotta Flagellator** _(Seed, Seed Saga; plant, golem)_
+  - subtitle: at least it's a hard to kill plant
+  - flavor: "FEEEEEEHHEEED MEEEEHH!"
+- **Testudine Autoframe** _(Shade of the Devoured Emperor; testudine, seraphim, dragon)_
+  - subtitle: smarter than your average luteoderm
+- **Thabbashite Armorer** _(Shade of the Devoured Emperor; craftsman)_
+  - subtitle: the living gods call for weapons
+  - flavor: ...and the maker is honored to test them first.
+- **Thabbashite Convert** _(Ungodly Mess; 31f, fighter)_
+  - subtitle: male 31v35 often leave home
+  - flavor: Sometimes, they never return.
+- **Thabbashite Organist** _(Holy Heist; monstrosity)_
+  - subtitle: the living gods call for melody
+  - flavor: This odd gargantuan relic is actually alive. Nature in Luridia is not without its bizarre tendencies evidenced in this case by the instrumental biology of this unmoving creature.
+- **TigerKaiser** _(1st Edition, 2nd Edition, Open Beta; kaiser)_
+  - subtitle: the right arm of kaiser justice
+- **Topplemajig** _(2nd Edition; majig)_
+  - subtitle: ideal device of blenderfication
+- **Towering Researchmajig** _(1st Edition, Open Beta; majig)_
+  - subtitle: massive repository of runic knowledge
+- **Velocious Golem** _(Seed, Seed Saga; golem)_
+  - subtitle: certainly looks "velocious"
+  - flavor: Man, that's one velocious golem. Whoosh.
+- **Warmachine Smelder** _(Seed Saga; 31f, craftsman)_
+  - subtitle: smeld your way to sick abs in six easy steps
+  - flavor: Step one, get sick abs.
+- **Zenobia, Artificer** _(Ungodly Mess; sorceress)_
+  - subtitle: legendary witch, keeper of secrets

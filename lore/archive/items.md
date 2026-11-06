@@ -1,0 +1,441 @@
+# Items
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+180 entries.
+
+- **3p1c D00dm4k3r** _(Seed Saga; gear)_
+  - subtitle: suit up!
+  - flavor: Fighting evil by runelight, wearing pants by daylight.
+- **Akashic Coin** _(Holy Heist)_
+  - subtitle: mystic moola
+  - flavor: Spiritualists of Thabbash have been known to harness the void to create fake currency using akashic coins. It is always a good idea to have a way to test money you get from a Thabbashite.
+- **Akashic Notes** _(Holy Heist)_
+  - subtitle: intelligence is capability
+  - flavor: Void priests of Thabbash store communal knowledge through the use of akashic notes. This knowledge may then be shared with other groups of priests. Don't be fooled by their tentacle monster worship - not every Thabbashite is unlearned.
+- **Ambiguity Embiggener** _(1st Edition Part 2)_
+  - subtitle: embiggen is a perfectly cromulent word
+- **Ambiguity Inhibitor** _(1st Edition)_
+  - flavor: Get a leg up on the pile. No probalo!
+- **Ambiguity Inhibitor** _(2nd Edition)_
+  - subtitle: get a leg up on the pile
+  - flavor: Thereafter, Ignatius Felnsworth immediately canceled his plans to attend the 6th Annual Deadly Objects Convention.
+- **Arcane Escrow** _(Shade of the Devoured Emperor)_
+  - subtitle: keep it secret, keep it safe
+- **Arcanist's Almanac** _(1st Edition, 2nd Edition)_
+  - subtitle: a comprehensive course in absurdity
+  - flavor: Smarch 5th – Strong voidal storms from the southeast. Wear a bowler hat.
+- **Arcanist's Almanac** _(Open Beta)_
+  - subtitle: a comprehensive course in absurdity
+  - flavor: Smarch 5th — Strong voidal storms from the southeast. Wear a bowler hat.
+- **Ashes of Zenobia** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: used to be "Pot Roast of Zenobia"
+  - flavor: Until Zenobia left the damn stove on. Again.
+- **Ass** _(Seed 2)_
+  - subtitle: i'm sorry i wasn't listening
+  - flavor: All my brain blood was in my boner.
+- **Auspicious Tax** _(Seed Saga; gear)_
+  - subtitle: this is your brain on money
+  - flavor: The real tragedy of the poor is the poverty of their aspirations
+- **B14nd P3pp3r** _(Seed; gear)_
+  - subtitle: 4|/\|350|V|3!!!
+- **B14nd P3pp3r** _(Seed Saga; gear)_
+  - subtitle: mild by 31v15h taste
+- **Banana Peel** _(Shade of the Devoured Emperor)_
+  - subtitle: surprisingly effective against giants too!
+- **Banner of Avarice** _(Seed Saga; banner)_
+  - subtitle: pecuniary pendant
+- **Banner of Betrayal** _(Seed Saga; banner)_
+  - subtitle: sigil of the sly
+- **Banner of Compulsion** _(Seed Saga; banner)_
+  - subtitle: don't look too close
+- **Banner of Elysium** _(Seed Saga; banner)_
+  - subtitle: escutcheon of elitism
+- **Banner of Fury** _(Seed Saga; banner)_
+  - subtitle: it's hard to get bloodstains just the right color
+- **Brummagem Jewelry** _(1st Edition, 2nd Edition, Open Beta; gear)_
+  - subtitle: i pity the fool who don't like my jewelry
+- **Cashier's Window** _(Seed, Seed Saga)_
+  - subtitle: the last thing a winner sees
+  - flavor: "Yes, Mister Beansmelter...right this way...allow me to show you the back room."
+- **Claywork Compendium** _(Seed)_
+  - subtitle: written by really smart hamsters
+- **Claywork Compendium** _(Seed Saga)_
+  - subtitle: written by really smart hamsters
+  - flavor: "If only I understood the beautiful language of SQUEAKSQUEAKSQUUUU!!1!"
+- **Contiguous Defalcating Machine** _(Shade of the Devoured Emperor)_
+  - subtitle: not quite what it sounds like
+  - flavor: ...but exactly what it means.
+- **Contrabulous Fabtraption** _(Seed Saga)_
+  - subtitle: some day we will do a full art version of this card
+  - flavor: Art? Where we're going, we don't need art.
+- **Corrosive Waste Dispenser** _(Ungodly Mess)_
+  - subtitle: voidal waste remover
+- **Crematory Cache** _(Holy Heist)_
+  - subtitle: ash to ash, dust to -- SHINY!
+  - flavor: Honoring the dead by enriching the living.
+- **Cunning Disguise** _(Seed, Seed Saga; gear)_
+  - subtitle: i swear i know that guy
+- **Deity Delimitation Device** _(Holy Heist)_
+  - subtitle: a small glitch means that sometimes it releases "other" things
+- **Dethmürderblüdgeon, the Craghammer** _(2nd Edition; gear)_
+  - subtitle: batteries not included
+- **Digital Claywork Compendium** _(Holy Heist)_
+  - subtitle: this screen has amazing resolution!
+- **Direstock Cuffs** _(Ungodly Mess; gear)_
+  - subtitle: see also: thabbashite slaves
+- **Draconic Luteoderm Suit** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: fits like a glove. an ichorous, bloodthirsty, vengeful glove
+- **Dragon Catheter** _(1st Edition, 2nd Edition)_
+  - subtitle: it's disturbingly comfortable
+  - flavor: "Well at least our job is better than the guys who have to clean up."
+- **Dragon Catheter** _(Open Beta)_
+  - subtitle: it's disturbingly comfortable
+  - flavor: Well at least our job is better than the guys who have to clean up.
+- **Ecto-Conduit** _(Ungodly Mess)_
+  - subtitle: harnassing the unknown power of the void
+- **Ectological Hazard Suit** _(1st Edition Part 2, 2nd Edition; gear)_
+  - subtitle: the old model may be uglier, but at least it works
+- **Ectypal Stave** _(2nd Edition)_
+  - subtitle: a copy is never as good as the original
+- **Emergency Obfuscation** _(1st Edition)_
+  - subtitle: your head a splode
+- **Emergency Obfuscation** _(Open Beta)_
+  - subtitle: ok...i'm confused
+- **Ensmallment Ray** _(Seed 3)_
+  - subtitle: i'm not usually the butt of a joke
+  - flavor: ...I'm usually the face.
+- **Epiphany Ball** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: the answer just hit me! (hold for laughter)
+  - flavor: Thanks folks...I'll be here all night! / <applause>
+- **Espionage Loafers** _(Holy Heist; gear)_
+  - subtitle: made from the softest of furs... and dead bunnies
+- **Everlasting Blade of Light** _(Holy Heist; gear)_
+  - subtitle: the bane of all darkness
+- **Executive Order #6370u7** _(Seed Saga)_
+  - subtitle: by yon decree, thou shalt not interrupt the time of pooping
+  - flavor: With Executive Order #6370u7, Padamose expelled the Mau from Marduun, clearing the way for a more sinister cult to form in their stead.
+- **Expedition AutoBlind** _(Ungodly Mess)_
+  - subtitle: fearless expedition: hiding from thabbashites before it was cool
+- **Extremely Tiny Bonnet of Invisibility** _(Ungodly Mess; gear)_
+  - subtitle: it's tiny and invisible... like, extremely tiny
+  - flavor: Almost as fashionable, just as unseeable.
+- **Fantastic Über Kool Creator Majig** _(Ungodly Mess)_
+  - subtitle: do you see it?
+- **Fat Pants** _(1st Edition Part 2; gear)_
+  - subtitle: do these pants make me look fat?
+  - flavor: Laugh. Cry. Share the pants.
+- **Ferret Oil Coating** _(Holy Heist; gear)_
+  - subtitle: it's... sticky...
+  - flavor: The word on the street is that this will really help you stand out in a crowd.
+- **Fiendish Fez** _(Seed, Seed Saga; gear)_
+  - subtitle: or perhaps you'd prefer our beastly beanie?
+- **Flailing Knife** _(Seed, Seed Saga; gear)_
+  - subtitle: hard to throw, easy to find
+- **Flaming Cube** _(Shade of the Devoured Emperor)_
+  - subtitle: never pick the box!
+- **Flashy Bangs** _(Holy Heist)_
+  - subtitle: tip of the day: wax on wax off
+  - flavor: Solar flare!
+- **Fool's Gold** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: it's something for an executive
+  - flavor: "'Scuse me, my good man, I have five hundred dollars to blow. What've you got?"
+- **Form 37-Ohhhhh** _(Holy Heist)_
+  - subtitle: don't forget to file
+  - flavor: Not to be confused with form 37-Q.
+- **Free Trade Agreement** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: favors all, and none
+- **Frickin' Sweet Pogo-Bunny** _(Shade of the Devoured Emperor)_
+  - subtitle: terrifyingly cute
+- **G14n7 5p0rk D3f3n53** _(Seed 2, Seed Saga)_
+  - subtitle: fr33333ddddd00000mmmmmm!!!11oneone
+- **Gewgawed Gimcrack** _(Seed 2, Seed Saga)_
+  - subtitle: [gyoo-gawd jim-krak] ironically, it's quite useful.
+- **Gideon's Legacy** _(Seed Saga)_
+  - subtitle: terror and power runs in their blood
+- **God's Autograph** _(Seed 3)_
+  - flavor: "Can you carve your name into a stone twenty feet high? No? Then I guess you're not God."
+- **Golden Charm** _(Shade of the Devoured Emperor)_
+  - subtitle: draconic disc
+- **Golemizer** _(Seed Saga; gear)_
+  - subtitle: don't cross the streams
+- **Gory Trick Box** _(Ungodly Mess; gear)_
+  - subtitle: pain comes in pairs
+  - flavor: The slow poke is no joke.
+- **Gruesome Trophies** _(1st Edition)_
+  - subtitle: oh boy, not the toupee story again...
+  - flavor: "...and that one over there is from the trip to Gidea with the wife and kids... and the little one with the three nipples and the toupee, funny story about that..."
+- **Gruesome Trophies** _(Open Beta)_
+  - subtitle: i need to use your restroom...now!
+  - flavor: "The decorator used my favorite style: La Perte de Commande d'Entrailles...what do you think?"
+- **H07 P3pp3r** _(Seed, Seed Saga; gear)_
+  - subtitle: craph, ma faythe if numm
+- **Heavy Fists of Robotic Pounding** _(Holy Heist; gear)_
+  - subtitle: and a multitude of other good uses
+- **Heavy Plating** _(1st Edition Part 2, 2nd Edition; gear)_
+  - subtitle: oh boy...sleep! that's where i'm a viking!
+- **Heavy Sword** _(Seed, Seed Saga; gear)_
+  - subtitle: stand still, will ya!
+- **Hidden Dagger** _(Seed Saga; gear)_
+  - subtitle: you can't see it if it's shiny
+  - flavor: Not before it's too late, anyway.
+- **Hidden Sandwich** _(1st Edition, 2nd Edition, Open Beta; gear)_
+  - subtitle: forged from the remains of lesser sandwiches
+  - flavor: Never underestimate the deflective powers of pumpernickel.
+- **Hollow Moose** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i think it's about a moose that turns invisible
+  - flavor: ...and goes back in time for some reason.
+- **Horns of Thabbash** _(Holy Heist; gear)_
+  - subtitle: bad. ass.
+- **Humiliating Torture Apparatus** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: stop smiling, it hurts!
+  - flavor: Some torturers disguise their identities. They save the cutest costumes for their cruelest atrocities.
+- **Hungry-Hungry Idol** _(Seed, Seed Saga)_
+  - subtitle: feed the idol as fast as you can! but be careful...
+  - flavor: "I win!"
+- **iDumb De-Itemizer** _(Holy Heist; upgrade)_
+  - subtitle: we totally have this trademarked
+  - flavor: We always use this iDumb to de-itemize your item.
+- **Impressionistic Furball** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: it really captures the fluffiness, you know?
+  - flavor: Being good in business is the most fascinating kind of art. Making money is art and working is art and good business is the best art.
+- **Inadequate Wand** _(Seed 2, Seed Saga)_
+  - subtitle: you want it to be one way. but it's the other way.
+- **Incriminating Photograph** _(1st Edition, 2nd Edition)_
+  - subtitle: the wig is very slimming
+  - flavor: Another photo in Dr. Unpeg Noon's distinct style.
+- **Incriminating Photograph** _(Open Beta)_
+  - subtitle: the wig is very slimming
+  - flavor: Another photo by Dr. Unpeg Noon.
+- **Index of Natural Forces** _(1st Edition, Open Beta)_
+  - subtitle: trading ground of would-be gods
+  - flavor: Mau invest not only in property and jewels; they maintain interests in the fabric of reality itself.
+- **Inside Information** _(1st Edition Part 2)_
+  - subtitle: damning record of depravity
+  - flavor: "It's just a bunch of yowling! What the hell am I paying you for!?"
+- **Intellectual Reliquary** _(Seed)_
+  - subtitle: i'm always changing my mind
+  - flavor: "...and this is the brain where I keep my mad ninja skillz."
+- **Intellectual Reliquary** _(Seed Saga)_
+  - subtitle: i'm always changing my mind
+  - flavor: ...and this is the brain where I keep my mad ninja skillz.
+- **Jacque's Trap** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: you know. it's funny. get it?
+  - flavor: I still don't get it. Why is his crotch exploding? And who's that French guy?
+- **Juice Closet** _(Shade of the Devoured Emperor)_
+  - subtitle: not recommended for food storage
+  - flavor: To create a turgid, bloodthirsty maniac: just add juice!
+- **Kettinger** _(1st Edition, Open Beta; gear)_
+  - subtitle: i think you got him
+- **Key to the City** _(Ungodly Mess; gear)_
+  - subtitle: luridia is safe... for now
+- **Kitten Mittons** _(Ungodly Mess; gear)_
+  - subtitle: is your mau making too much noise all the time!?
+  - flavor: Finally, there's an elegant comfortable mitton...for mau!
+- **Knobby Stave** _(1st Edition, Open Beta)_
+  - subtitle: wanna touch it?
+- **Lockbox of the Aeons** _(Ungodly Mess)_
+  - subtitle: keeping in the unwanted
+- **Lucky Charm** _(Seed, Seed Saga)_
+  - subtitle: they're tragically malicious
+  - flavor: I've never lost at Hat-Sheep-Banana, and I don't intend to start now.
+- **Lugubrious Finger Trap** _(1st Edition, 2nd Edition, Open Beta; gear)_
+  - subtitle: a tragic opera of moral instruction in five parts
+  - flavor: "O! Cruel Fate! By what loathsome witching have I befallen thus?" / — The Finger Trap, Act II
+- **Lugubrious Node** _(1st Edition, Open Beta)_
+  - subtitle: with special sadness-blocking windows
+- **Luteoderm Armor** _(1st Edition, Open Beta; gear)_
+  - subtitle: alright...who wants some?
+- **Luteoderm Goliath** _(1st Edition, Open Beta; gear)_
+  - subtitle: i always hated that clock tower
+- **Luteoderm Goliath** _(2nd Edition; gear)_
+  - subtitle: i always hated that clock tower
+  - flavor: Immediately destroyed if your opponent plays Luteoderm David.
+- **Luteoderm Prototype** _(1st Edition, 2nd Edition; gear)_
+  - subtitle: at least we learned what not to do
+  - flavor: "Any volunteers...?"
+- **Luteoderm Prototype** _(Open Beta; gear)_
+  - subtitle: at least we learned what not to do
+- **Magic Vault** _(1st Edition, Open Beta)_
+  - subtitle: gradual enhancer of voidal currency
+  - flavor: "You see, feedback is the key to our wealth. The vaults are a tremendous expenditure, true, but the interest they generate simply by storing the voidal humour in its materialized state will eventually pay for the investment many times over. Never have the rich gotten richer with less effort."
+- **Makeshift Contrivance** _(1st Edition)_
+  - flavor: "Ivan...where do new icon designs come from?"
+- **Meat of the Mountain** _(Seed 2)_
+  - subtitle: with herb stuffed radicchio
+- **Melty Cheese** _(Seed 2, Seed Saga; gear)_
+  - subtitle: sooo...tasty...
+  - flavor: Sooo...bloated...
+- **Mercenary's Creed** _(2nd Edition; gear)_
+  - subtitle: a motivational orientation
+- **Micromajigmakermachinemajig** _(Shade of the Devoured Emperor)_
+  - subtitle: I swear they're breeding or something
+- **Midget Mine** _(Seed 2, Seed Saga)_
+  - subtitle: only 50% effective on non-midgets
+- **Misappropriation Machine** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: we've got theftbots, pilfermajigs...
+  - flavor: ...and even a dusty old yoinkmotron.
+- **Mittens of Muffled Thought** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: can't brain so good today
+  - flavor: I dumb!?
+- **Muddle Bugs** _(Seed)_
+  - subtitle: bring me another one
+  - flavor: I think there's some space on my butt.
+- **Muddle Bugs** _(Seed Saga)_
+  - subtitle: hey man
+  - flavor: You got any more of that muddle bug?
+- **Mysterious Invasion** _(Seed, Seed Saga)_
+  - subtitle: what are they?
+  - flavor: Your superior intellects are no match for our puny weapons!
+- **Napiform Protuberance** _(1st Edition, Open Beta; gear)_
+  - subtitle: does it look serious?
+- **Obscene Communion** _(Seed Saga)_
+  - subtitle: unlimited cosmic power
+- **One-Legged Hopping Pogo-Bear** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: terrifyingly silly
+- **P3pp3r 0f 1n54n17y** _(Seed, Seed Saga; gear)_
+  - subtitle: the most edible pepper of all
+  - flavor: WARNING: Should not be eaten.
+- **Phalludrix, the Impotenator** _(Seed Saga)_
+  - subtitle: it's easy to get a rise out of him
+  - flavor: If impotentated for more than four hours, seek arcanological attention.
+- **Poisoned Blade** _(1st Edition Part 2, 2nd Edition; gear)_
+  - subtitle: looks good enough to eat
+  - flavor: "Would you mind dipping those apples as well?"
+- **Pwny Bomb** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: tiny equine explosives
+  - flavor: Friendship is tragic.
+- **Quilt of Old Banners** _(Ungodly Mess; banner)_
+  - subtitle: remains from the descent
+- **Remains of Foreman Pete, the Clock Man** _(Shade of the Devoured Emperor)_
+  - subtitle: forgotten relic of a buried past
+  - flavor: Few residents of Clockman have ever seen their city's namesake.
+- **Rigged Tables** _(Seed, Seed Saga)_
+  - subtitle: double zeroes again?! AGAIN?!
+- **Rocket Boots** _(1st Edition, Open Beta; gear)_
+  - subtitle: "hey...that's not the wallet inspector!"
+- **Rocket Lawnchair** _(Shade of the Devoured Emperor)_
+  - subtitle: don't try this at home...
+  - flavor: ...unless you sign a waiver first.
+- **Roundalicious Breasticles** _(Seed 2, Seed Saga)_
+  - subtitle: "is it my birthday?"
+- **Rudimentary Lathe** _(1st Edition, Open Beta)_
+  - subtitle: this is the simplest one we could find
+  - flavor: Once you have the lathe, the rest is easy.
+- **Rune of Concealment** _(Seed, Seed Saga)_
+  - subtitle: d4mn, 1 h4v3 70 p33
+- **Runic Armor** _(Seed, Seed Saga; gear)_
+  - subtitle: even the armor has armor
+- **Runic Battery** _(Seed Saga)_
+  - subtitle: energizing beavers everywhere
+- **Runic Cannon** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: i don't care how much it costs...kill it!
+- **Runic Circuitry** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: powerful core of majig technology
+- **Runic Distribulator** _(Holy Heist)_
+  - subtitle: 31337 60057 93n3r470r
+- **Runic Field Enhancer** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: d0n7 cr055 7eh 57r34mz
+- **Runic Junker** _(Shade of the Devoured Emperor)_
+  - subtitle: looks down on everyone
+  - flavor: The Runic Junker has many trunks, and Jo has junk in every one of them.
+- **Runic Map** _(Shade of the Devoured Emperor)_
+  - subtitle: we only have one chance to get there, well maybe two
+- **Runivoltaic Accumulator** _(Seed, Seed Saga)_
+  - subtitle: science and magic...together at last!
+- **Rusty Pickaxe** _(Seed 2; gear)_
+  - subtitle: the perfect tool for mining...your face!
+- **Rusty Pickaxe** _(Seed Saga; gear)_
+  - subtitle: notched to perfection
+  - flavor: The invention of the pickaxe was groundbreaking.
+- **Scintillating Chamber Pot** _(Seed)_
+  - subtitle: to pee or not to pee. that is the question.
+  - flavor: Whether 'tis nobler in the bladder to suffer...
+- **Seance Sensor** _(Holy Heist)_
+  - subtitle: found in the archives of the forbidden bibliotheca...
+- **Seriously Weird Crystalline Artefact** _(Holy Heist)_
+  - subtitle: ...this strange item obviously houses great power...
+- **Serpentine Scepter** _(Holy Heist; gear)_
+  - subtitle: ...that can change the course of lugubria's future
+- **Severed Limb** _(Ungodly Mess; gear)_
+  - subtitle: the battlefield is littered with weapons
+- **Sharpey Pointy Lethal Army Tool** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: a multitude of bad choices
+  - flavor: You hold it like this... Or maybe like this? Wait!? No coffee machine?
+- **Short Term Investment** _(1st Edition Part 2)_
+  - subtitle: life insurance? won't need that where i'm going!
+  - flavor: The wife can eat cat food.
+- **Siege Machine** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: intimidating weapon of penetration
+  - flavor: "I will not sacrifice this city. We've made too many compromises already; too many retreats. They invade our fields, and we fall back. They eradicate entire towns, and we fall back. Not again. The line must be drawn HERE! This far, NO FURTHER! And I will make them pay for what they've done."
+- **Slingerang** _(1st Edition, 2nd Edition)_
+  - subtitle: wouldn't you?
+- **Slingerang** _(Open Beta)_
+  - subtitle: originally designed for walloping wallabies
+- **Smear Campaign** _(1st Edition Part 2, 2nd Edition; gear)_
+  - subtitle: eat them? no, I was...kissing them...with a fork.
+  - flavor: Despite his moderate populist stance on foreign policy and the sarcophyle problem, Senator Tysonburg's penchant for babymeat proved too much for voters to stomach.
+- **Spackle** _(1st Edition Part 2)_
+  - subtitle: whip it up thick, then spray it all over
+  - flavor: "What did you think I meant?"
+- **Spiky Pumpkin** _(Seed 2, Seed Saga)_
+  - subtitle: first the slaughter. then the pie.
+- **Splattergun** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: the room looks better in red
+- **Sticky Stealy Hand** _(Shade of the Devoured Emperor)_
+  - subtitle: for all your sticky stealy needs
+- **Subversion Matrix** _(2nd Edition; gear)_
+  - subtitle: no one can be told what it is
+- **Super Shiny Caltrops of DOOM!** _(Shade of the Devoured Emperor; gear)_
+  - subtitle: watch where you step
+- **Super Slingerang XL200** _(Holy Heist)_
+  - subtitle: found the new model on a dead 31f!
+- **Swordchucks** _(1st Edition Part 2; gear)_
+  - subtitle: i know you're angry, but don't lose your head
+- **Symmetrical Scimitar** _(Ungodly Mess; gear)_
+  - subtitle: equally deadly at both ends
+- **The Deranger** _(2nd Edition)_
+  - subtitle: commercial crazyfier
+- **The Enemy's Head** _(Seed Saga)_
+  - subtitle: stuffed, pickled, mounted on a pike
+  - flavor: Made into a goblet, encased in a bowling ball.
+- **The Stone of Shame** _(Seed 3)_
+  - subtitle: as a final humiliation, you must walk home naked
+- **The Stone of Triumph** _(Seed 3)_
+  - flavor: A half ton of pure popularity.
+- **The Whatever Device** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: it's an easy fix
+- **Tremor Engine** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: enormous tool of mass plunder
+- **Tri-Pole Magnet** _(1st Edition, 2nd Edition, Open Beta; gear)_
+  - subtitle: tuning the forces of nature and ambiguity
+- **Trickster's Globe** _(Ungodly Mess)_
+  - subtitle: shake it up and lose your mind
+- **Tumescent Guilt Bladder** _(Seed 2, Seed Saga)_
+  - subtitle: repository of self deprecation
+- **Two-Headed Coin** _(1st Edition Part 2)_
+  - flavor: "78 in a row. A new record, I imagine."
+- **Two-Headed Coin** _(2nd Edition)_
+  - subtitle: fixing the odds
+  - flavor: "78 in a row. A new record, I imagine."
+- **Verrucose Brains** _(Seed 2, Seed Saga)_
+  - subtitle: now with cream filling!
+- **Very Big Hat of Invisibility** _(1st Edition, Open Beta; gear)_
+  - subtitle: as fashionable as it is unseeable
+- **Visible Loaf** _(Holy Heist)_
+  - subtitle: sometimes a sandwich just isn't enough
+  - flavor: We could make a joke about an 31f hiding a loaf in his pants, but that would just be poor taste.
+- **Voidal Trinket** _(Shade of the Devoured Emperor)_
+  - subtitle: not sure what it does
+- **Vorpal Sword** _(Seed Saga; gear)_
+  - subtitle: surprisingly effective versuses Jabberwocks
+- **Wand of Possession** _(Seed)_
+  - flavor: No, they don't gain the "evil" subtype.
+- **Wand of Possession** _(Seed Saga)_
+  - subtitle: making micromajigs better one zap at a time
+  - flavor: No, they don't gain the "evil" subtype.
+- **Waylay Blade** _(Seed Saga; gear)_
+  - subtitle: a flash of mist, a spray of red
+- **Zenobia's Spyglass** _(1st Edition, Open Beta)_
+  - subtitle: for gazing upon the mysteries of the void
+  - flavor: And for gazing upon Millicent Holcroft's juicy caboose when Zenobia's not home.

@@ -1,0 +1,315 @@
+# Characters — Arcanist
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+117 entries.
+
+- **Anxious Imp** _(Shade of the Devoured Emperor; familiar)_
+  - subtitle: conduit of compulsion
+- **Arcanology Recruitment Officer** _(2nd Edition; muddler)_
+  - subtitle: a warning and a promise
+  - flavor: Ladies love a chitinous monstrosity.
+- **Arrakis Eternity** _(Ungodly Mess; monstrosity)_
+  - subtitle: horror of the sands
+- **Bewilderbeast** _(Holy Heist; beast, monstrosity)_
+  - subtitle: it's a moose-shark-bear-a-pede!
+  - flavor: I think.
+- **Cloaked Creeper** _(1st Edition Part 2, 2nd Edition; lurker)_
+  - subtitle: "try to get to the buffet table"
+  - flavor: "Ah, Lord Frothingslosh...don't you look...dashing..."
+- **Compulsive Creeper** _(1st Edition, Open Beta; lurker)_
+  - subtitle: let me get that...please...please...
+  - flavor: "It appears that after the victim was murdered, the suspect cleaned the room, did the dishes, and organized his books alphabetically."
+- **Confounding Conjurer** _(Seed Saga; wizard)_
+  - subtitle: look at all the nostalgia!
+  - flavor: #freeuse
+- **Deceptive Muddler** _(1st Edition Part 2, 2nd Edition; muddler)_
+  - subtitle: invite him in for a drink and look what happens
+  - flavor: An Arcanist keeps his things "just so" with good reason. Nothing annoys him more than repositioning.
+- **Defiler of Innocence** _(Seed Saga; wizard)_
+  - subtitle: ugh, wizards
+- **Ecto-Agriolimax** _(Ungodly Mess; insect)_
+  - subtitle: voidal mind-control slugs
+- **Eldridge Gosche** _(2nd Edition; ritualist)_
+  - subtitle: lurid Lugubrian leader
+- **Eldridge Gosche, Godstealer** _(Holy Heist; ritualist, eldridge)_
+  - subtitle: a great mind bent beneath the weight of its own greatness
+- **Elementary Elemental** _(Shade of the Devoured Emperor; lurker)_
+  - subtitle: adorably horrible
+  - flavor: Little Suzy suspected that today would have been a good day to stay home from the Arcanology Academy.
+- **Emphatic Ecto-Manipulator** _(1st Edition Part 2, 2nd Edition; ecto-manipulator)_
+  - subtitle: sinister fondler of voidal boogers
+  - flavor: Never be the first to put your hand in a viscous fluid.
+- **Ensorcelled Familiar** _(Seed, Seed Saga; familiar)_
+  - subtitle: it's helpful, but the stench is kinda crazy-making
+- **Flagitious Denunciator** _(Seed Saga; wizard)_
+  - subtitle: come to papa
+- **Foul Diviner** _(Seed; wizard)_
+  - subtitle: i hear he's actually a pretty nice guy
+  - flavor: "Your blood will paint the way to the future."
+- **Gargantuan Garbler** _(1st Edition; lurker)_
+  - flavor: Steve Bentley hates children.
+- **Gargantuan Garbler** _(2nd Edition; lurker)_
+  - subtitle: lurkers hate children
+  - flavor: "Ambush by voidal abomination" is the leading cause of child mortality in Lugubria. Authorities remain unconcerned.
+- **Geiseric, the Souleater** _(Seed 3; geiseric, demon knight)_
+  - subtitle: he's on a diet
+- **Gilda, Mother of Gideon** _(Seed Saga; sorceress)_
+  - subtitle: it's a wierd family
+  - flavor: Did you know the father is a [REDACTED]?
+- **Gnat** _(1st Edition Part 2, 2nd Edition; lurker)_
+  - subtitle: they don't. but they should.
+  - flavor: "I told her it was the annotated edition. And she believed me! Now I have to do them all."
+- **Gruesome Sand Beaver** _(Holy Heist; beast)_
+  - subtitle: feeds on the bones of men
+  - flavor: Sand beavers are known for random acts of violence upon the unsuspecting traveler. They live in the desert to avoid the whole dam business.
+- **Guardbeast of Thabbash** _(Holy Heist; warbeast)_
+  - subtitle: the leash is just for show
+  - flavor: These large animals can be surprisingly stealthy. Do not let a guardbeast catch you unaware... it will be the last thing you do. Unless you are a sand beaver.
+- **Hate of Man** _(Holy Heist; god)_
+  - subtitle: thabbashites worship even the lowest of living gods
+- **Hextilda, the Exiled Crone** _(Seed 2, Seed Saga; sorceress)_
+  - subtitle: i've been wanting one with a beard
+  - flavor: ...I like to be tickled...just a bit...just a bit...
+- **Hideous Hexapede of Horror** _(Seed 2, Seed Saga; insect, monstrosity)_
+  - flavor: You don't want to know what the sixth effect is.
+- **High-Priest of Thabbash** _(Seed; gloamspike, priest)_
+  - subtitle: as ruthless as he is compromising
+  - flavor: "Something something something daaark siiide. Something something something compleeete."
+- **High-Priest of Thabbash** _(Seed Saga; gloamspike, priest)_
+  - subtitle: it's like worshipping a giant land squid
+  - flavor: A giant land squid that does nothing but let its tentacles drift silently in the sway of invisible tides.
+- **Horrendous Behemoth** _(Seed, Seed Saga; monstrosity)_
+  - subtitle: just relax and go with it, man
+  - flavor: In his belly you will find a new definition of pain and suffering as you are slowly digested over a thousand years.
+- **Horrifying Brain-Monkey** _(Seed, Seed Saga; monstrosity, brain)_
+  - subtitle: i have a mind to kick your ass
+  - flavor: "Horrifying brain-monkey, I choose you!"
+- **Hungermaw Deephate** _(Seed Saga; seraphim, dragon)_
+  - subtitle: and you thought all seraphim were pretty and noble
+- **Ignatius Gloamspike** _(Holy Heist; ignatius, blade of questionable morality)_
+  - subtitle: not nearly as evil as the other gloamspikes
+  - flavor: Maybe. Hopefully.
+- **Imperial Thaumaturge** _(Seed 2, Seed Saga; wizard)_
+  - subtitle: what's that over there?
+  - flavor: "Coochie, coochie, COO!"
+- **Infatuated Armchair** _(1st Edition Part 2; lurker)_
+  - subtitle: mecka-lecka-hi, mecka-heiny-ho!
+  - flavor: The armchair's thirst for heiny was boundless and unfathomable. We eventually had to put it down.
+- **Insect Appreciator** _(1st Edition Part 2; obsessor)_
+  - subtitle: i always pick one out before bed
+  - flavor: He gets mad when people confuse him with the incest appreciator.
+- **Insidious Ecto-Manipulator** _(1st Edition, 2nd Edition, Open Beta; ecto-manipulator)_
+  - subtitle: twisted master of magical energy
+- **Kinky Asp** _(1st Edition Part 2, 2nd Edition; lurker)_
+  - subtitle: like a garden hose, only more bitey
+  - flavor: Only slightly less deadly than the dreaded bent mamba.
+- **Land Shark** _(1st Edition; lurker)_
+  - flavor: Kenfoo likes drawing the hairy man-butts. Just be glad he didn't use his design for the front. There are some things you can't un-see.
+- **Land Shark** _(2nd Edition; lurker)_
+  - subtitle: who is it?
+  - flavor: Plumber... telegram... flowers... candygram... I'm only a dolphin ma'am.
+- **Lingamite Torture Monk** _(Seed Saga; priest)_
+  - subtitle: we call this "enhanced interrogation"
+- **Little God of Answers** _(Ungodly Mess; god)_
+  - subtitle: we call it bob
+  - flavor: Bob is what we call it.
+- **Living God of Thabbash** _(Seed; god)_
+  - subtitle: that is god. respect accordingly.
+- **Living God of Thabbash** _(Seed Saga; god)_
+  - subtitle: inscrutable, immutable, immortal
+- **Lugubrian Octopod** _(1st Edition, 2nd Edition, Open Beta; lurker)_
+  - subtitle: it's watching you
+- **Lugubrian Poacher** _(Shade of the Devoured Emperor; lurker)_
+  - subtitle: hoarse hunter of horrors
+  - flavor: The wastelands of Lugubria were never hospitable, but decades of voidal pollution have made them host to many dangerous monsters. In a strange twist, the arcanists have begun to find uses for these beasts and will pay bounties to anyone foolish enough to pursue them. He who fights with monsters might take care lest he thereby become a monster.
+- **Man Shark** _(Shade of the Devoured Emperor; lurker)_
+  - subtitle: distant relative of the land shark
+  - flavor: The blur is intentional, we know there are just some things you can't un-see...
+- **Master Ritualist** _(1st Edition, Open Beta; ritualist)_
+  - subtitle: scheduler of obsession
+  - flavor: "I thought he was supposed to bring the marmalade!"
+- **Meh, another Living God** _(Holy Heist; god)_
+  - subtitle: le sigh
+  - flavor: bleh / I mean, what more is there to say about it?
+- **Mephitic Nullifier** _(1st Edition, Open Beta; ritualist)_
+  - subtitle: sinister and cowardly
+- **Mesmerizing Enchantress** _(Seed, Seed Saga; sorceress)_
+  - subtitle: disarmingly charming
+- **Minion of Thabbash** _(Seed 2, Seed Saga; wizard)_
+  - subtitle: salad isn't the only thing you'll be tossing
+  - flavor: A dead dog in a gnarled old tree. Decapitated orphan. Spiral staircase, evil queen, scarecrows, spiders, pumpkins, clowns.
+- **Monstrous Lassitude** _(Shade of the Devoured Emperor; monstrosity)_
+  - subtitle: ennui embodied
+  - flavor: The Thabbashite mages of Lugubria have been known to "enlist" the services of horrific creatures of titanic proportions to do their bidding.
+- **Mr. Chesterton** _(Seed Saga; advisor, couch)_
+  - subtitle: wisdom couched in metaphor
+  - flavor: Every once in a while we feed him an upholsterer.
+- **Nattering Stoopswaggler** _(Seed 2, Seed Saga; monstrosity)_
+  - subtitle: that's not water
+- **Nearby Serpent** _(1st Edition, 2nd Edition, Open Beta; lurker)_
+  - subtitle: well, at least i'm safe...
+- **Nefarious Horror** _(Seed, Seed Saga; monstrosity)_
+  - subtitle: watching and waiting
+- **Neuralyzer Agent** _(Shade of the Devoured Emperor; muddler)_
+  - subtitle: please look here
+  - flavor: There was no ectoplasmic voidal horror, only a pocket of swamp gas that reflected the light of a celestial sphere.
+- **Night-basking Basilisk** _(Holy Heist; beast)_
+  - subtitle: petrifying quietus of the dark
+  - flavor: I am the terror that craps in the night.
+- **Obscene Astrologer** _(Seed 2; wizard)_
+  - subtitle: your "moons" are in apex
+  - flavor: "When are women going to learn? Every plural noun means boobs."
+- **Obscene Astrologer** _(Seed Saga; wizard)_
+  - subtitle: you can see anything in the stars
+  - flavor: ...but it's mostly boobs.
+- **Odious Diva** _(1st Edition Part 2, 2nd Edition; diva)_
+  - subtitle: ô rage! ô désespoir! ô vieillesse ennemie!
+  - flavor: "Honestly, Gertrude...just because we're out of mustard... There's no reason to make a scene!"
+- **Officially Offensive Overseer** _(Shade of the Devoured Emperor; ritualist)_
+  - subtitle: more offensive than official
+  - flavor: but less officious than offensive.
+- **Ominous Oozling** _(1st Edition, 2nd Edition; lurker)_
+  - subtitle: squishing is the last thing you'll hear
+  - flavor: Ms. Clotidia Dowdy, the first female explorer to successfully mount an expedition to the ephemeral North Ridge of Mt. Mulrich, seen here outside Blortingshire Manor a mere four hours before her tragic demise.
+- **Ominous Oozling** _(Open Beta; lurker)_
+  - subtitle: squishing is the last thing you'll hear
+  - flavor: Bred in the depths of darkest Lugubria, these creatures were never meant to come into contact with those outside the Arcana field.
+- **Perturbatious Warlock** _(Seed, Seed Saga; wizard)_
+  - subtitle: ting-tang wadda-wadda bing-bang
+  - flavor: "I'm sorry but I still can't love you. I don't want to get hurt again."
+- **Ping Konk** _(Shade of the Devoured Emperor; monstrosity)_
+  - subtitle: hargantuan gorror
+  - flavor: Don't kill it... it just wants to hug its mommy!
+- **Predatory Lamp** _(Holy Heist; lurker)_
+  - subtitle: gotcha!
+  - flavor: Bringing light to where the sun don't shine in all kinds of nasty ways. / I should have been sad when the lamp went out, but instead I was delighted.
+- **Puddle of Goo** _(1st Edition Part 2; lurker)_
+  - subtitle: out of the drainpipe and into our tummies!
+  - flavor: According to Meldring's "Edible Slimes of Lugubria," the role of the human digestive system in the reproductive cycle of the hallucinogenic sewerslime is as vital as it is ambiguous.
+- **Puerile Ecto-Manipulator** _(Holy Heist; ecto-manipulator)_
+  - subtitle: kid's play
+  - flavor: Thirty days in the dungeon! Everyone in this room! Mmmlluuuuuuugh! / It wasn't school he disliked - it was just the principal of it.
+- **Quipster D'Genie** _(Ungodly Mess; muddler)_
+  - subtitle: phenomenal cosmic power
+- **Quotidian Concealer** _(Shade of the Devoured Emperor; ritualist)_
+  - subtitle: look what I had for breakfast
+  - flavor: Being able to actually see inside people was a massive step forward in Luridian medicine - and Imperical torture.
+- **Quotidian Ejector** _(1st Edition, 2nd Edition, Open Beta; ritualist)_
+  - subtitle: trivially rejecting whatever he chooses
+- **Quotidian Virtuoso** _(1st Edition Part 2, 2nd Edition; ritualist)_
+  - subtitle: and...checkmate
+  - flavor: Queen to L5 and the tower falls. Your move.
+- **Rummaging Millipede** _(1st Edition Part 2, 2nd Edition; lurker)_
+  - subtitle: it's right in front of you, fool!
+  - flavor: I should have sent the centipede.
+- **Seance Ritualist** _(Ungodly Mess; ritualist)_
+  - subtitle: arcanist lords harbor untold power
+- **Sequestered Hellion** _(Seed; monstrosity)_
+  - subtitle: not very frightening
+  - flavor: ...until it EATS you! Rarrrrr!
+- **Sequestered Hellion** _(Seed Saga; monstrosity)_
+  - subtitle: not very frightening
+  - flavor: ...until it EATS you! Rarrrrrr!
+- **Servile Centipede** _(1st Edition, 2nd Edition, Open Beta; lurker)_
+  - subtitle: your slithering servant
+- **Shrouded Demon** _(Seed, Seed Saga; demon)_
+  - subtitle: it grabs them then eats their heads
+  - flavor: Except on Tuesdays, when it takes them bowling.
+- **Sin Against Nature** _(Seed, Seed Saga; monstrosity)_
+  - subtitle: i should not exist
+  - flavor: "Every moment I live is agony! Bleaurgghhhh!"
+- **Skimping Ecto-Manipulator** _(1st Edition, 2nd Edition, Open Beta; ecto-manipulator)_
+  - subtitle: he's paid less, and it shows
+- **Sneaking Spitspider** _(1st Edition, 2nd Edition, Open Beta; lurker)_
+  - subtitle: lurking in the shadows
+  - flavor: "Actually honey...why don't you take care of this one."
+- **Sneaky Mansion** _(1st Edition; lurker)_
+  - flavor: Kenfoo was bitten by a mansion when he was little. He hasn't eaten ice cream since.
+- **Sneaky Mansion** _(2nd Edition; lurker)_
+  - subtitle: did you hear that?
+  - flavor: Not a creature was stirring, not even a house.
+- **Spastic Tentacles** _(1st Edition, Open Beta; lurker)_
+  - subtitle: embarrassing domestic mishap
+  - flavor: "For the last time, Myrtle! Lock the bedroom door when we have company over!"
+- **Swarm of Gnats** _(1st Edition, 2nd Edition; lurker)_
+  - subtitle: in Darkest Lugubria, gnat swats you!
+  - flavor: "Yes, gnats! Vicious, nasty gnats with big, pointy stingers! To stick in your skin! And sting you! And they'll swarm all over you and fly in your face and plug up your nose and bite you in the...what do you mean 'gnats don't have stingers'...?" / — Millicent Holcroft to General J.G. Blargington III.
+- **Swarm of Gnats** _(Open Beta; lurker)_
+  - subtitle: in Darkest Lugubria, gnat swats you!
+  - flavor: "Yes, gnats! Vicious, nasty gnats with big, pointy stingers! To stick in your skin! And sting you! And they'll swarm all over you and fly in your face and plug up your nose and bite you in the... what do you mean 'gnats don't have stingers'...?" / — Millicent Holcroft to General J.G. Blargington III.
+- **Thabbashite Chemist** _(Shade of the Devoured Emperor; ritualist)_
+  - subtitle: the living gods call for potent magics
+- **Thabbashite Communicant** _(Holy Heist; ritualist)_
+  - subtitle: pierced peace
+  - flavor: The women of the Muelon tribe believe that heart's blood, properly prepared and served, satiates the living gods. There are notable risks involved in the feeding, primarily, being eaten.
+- **Thabbashite Desert Creature** _(Ungodly Mess; monstrosity)_
+  - subtitle: powered by the souls of its victims
+- **Thabbashite Haruspex** _(Seed, Seed Saga; priest)_
+  - subtitle: your future is looking brown and veiny
+  - flavor: ...and it doesn't smell very good, either.
+- **Thabbashite Penumbra** _(Ungodly Mess; sorceress)_
+  - subtitle: shadow assassin
+  - flavor: Geroam tribeswomen prefer poison darts to blowguns. They're just as effective as their male counterparts.
+- **Thabbashite Priest of Zig** _(Ungodly Mess; priest)_
+  - subtitle: protector of the stolen god
+  - flavor: Not all Living Gods have priests, but all are as worshipped as they are misunderstood.
+- **Thabbashite Wizard** _(Seed, Seed Saga; wizard)_
+  - subtitle: i love a good potions book and a bodice ripper
+  - flavor: "The philosopher's draught must be cured for three fortnights with a jewel of amber and the bile of a green tree-hen. His strong manly hands probed every crevice of her silken femininity, their undulating bodies writhing in sensual rhythm, as he thrust his purple-headed warrior into her quivering mound of love pudding."
+- **The Abominable Hamster** _(Seed, Seed Saga; monstrosity, hamster)_
+  - subtitle: unholy fiend shat from the bowels of death
+  - flavor: Though Death's publicist has since denied the entire incident.
+- **The Lugubrian Council of Quotidian Affairs** _(Shade of the Devoured Emperor; advisor)_
+  - subtitle: we need a god to study and exploit... all in favor say "aye"!
+- **Theological Opportunist** _(Ungodly Mess; priest)_
+  - subtitle: i have the answers you seek
+  - flavor: For I have seen what you haven't seen, and know what you cannot know.
+- **Titillated Mooncalf** _(Seed Saga; monstrosity)_
+  - subtitle: secret languages are so Seed II
+- **Toxic Cultivator** _(1st Edition Part 2, 2nd Edition; cultivator)_
+  - subtitle: this'll show those bastards at the fair!
+  - flavor: People laugh at my toxic pusgourd. But did they slave for countless hours, rubbing it with fat and feeding it weasel paste?
+- **Twisted Marionette** _(Ungodly Mess; doll)_
+  - subtitle: horribly deplorable
+  - flavor: Little Suzy's teachers told her not to stare too deep into the Void. She should've listened.
+- **Uhluhtc Niudla** _(Holy Heist; uhluhtc, seraphim, dragon)_
+  - subtitle: ph'nglui mglw'nafh uhluhtc r'lyeh wgah'nagl fhtagn
+- **Undevoted Gargantuan** _(Shade of the Devoured Emperor; monstrosity)_
+  - subtitle: disloyal devourer
+  - flavor: What the hell man? Same team, same team!
+- **Unimportant Wizard** _(Seed, Seed Saga; wizard)_
+  - subtitle: he was known as "the boy who was"
+  - flavor: No one was very impressed.
+- **Venomous Sacspider** _(1st Edition Part 2, 2nd Edition; lurker)_
+  - subtitle: oh, here comes woogums now!
+  - flavor: As pets they're surprisingly affectionate, but fragile. Slip-ups are always bad news; just a drop of their juice is enough to liquefy a cow.
+- **Vexing Nullifier** _(Holy Heist; ritualist)_
+  - subtitle: viciously vexing the vivacious
+- **Violating Anomaly** _(1st Edition Part 2, 2nd Edition; muddler, lurker)_
+  - subtitle: i think one got into my pants
+  - flavor: "I thought I was a goner, but turns out they only wanted my tobacco."
+- **Virulent Dogmatist** _(Seed, Seed Saga; wizard)_
+  - subtitle: BLARG!!!
+  - flavor: "Shame on you youngsters an' your saggy collars!"
+- **Voidal Bask** _(Ungodly Mess; dragon)_
+  - subtitle: poisoned by proximity to the fount
+  - flavor: Living Gods are founts of Voidal Humour-- the raw stuff of magick. Voidal Humour is extremely volatile, and can result in mutation, mutilation, and mutitilation.
+- **Voidal Tactician** _(Ungodly Mess; advisor)_
+  - subtitle: gosche's trusted advisor
+- **Wanton Wizard** _(Seed; wizard)_
+  - subtitle: sometimes i can't control my groin
+  - flavor: "Oh, Clem! You randy old cad!"
+- **Wanton Wizard** _(Seed Saga; wizard)_
+  - subtitle: wizards are the worst
+  - flavor: They're just the worst.
+- **Witty Worm** _(Seed Saga; monstrosity)_
+  - subtitle: bookworm plus magic book
+- **Woadenworm Gloamspike, Thabbashite Prince** _(Seed 2; prince, advisor)_
+  - flavor: "I don't make threats...I just tell it like it is."
+- **Woadenworm Gloamspike, Thabbashite Prince** _(Seed Saga; prince, advisor)_
+  - flavor: Betrayer, assassin, cult leader, loving husband and father of three children.
+- **Wrinkly Rabbit** _(Seed; monstrosity, rabbit)_
+  - flavor: Expands up to 8 times!
+- **Wrinkly Rabbit** _(Seed Saga; monstrosity, rabbit)_
+  - subtitle: taking the bugsy out of bunny

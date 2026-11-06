@@ -1,0 +1,916 @@
+# Tactics
+
+Verbatim flavor text and subtitles from `data/cards.json`, de-duplicated by card name + text (sets listed per entry). Card-credit subtitles ("limited edition artwork by…", "original Open R&D concept by…") are omitted here and summarised in `../meta/credits-and-meta-jokes.md`. Spelling, punctuation and leetspeak are exactly as printed. In `/` -separated flavor, `/` marks a line break on the card.
+
+363 entries.
+
+- **0p3r4710n 1337 H4x0rz** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: been outside lately?
+  - flavor: "No. Now go away...we are playing for the title of Ch4mp10n 0f teh Un1v3r53."
+- **12 Man Brunch of Doom** _(1st Edition, 2nd Edition)_
+  - subtitle: very well sir, human head stuffed with tacos
+  - flavor: "If even one thing is wrong, even the slightest thing, a bad phrase, spilt salt, weak posture, anything at all...the consequences can be horrific. Exploded, melted, turned inside out, consumed by fire, filled with pudding...the 12 Man Brunch has finished many a cocksure arcanist." / — Werner Geisen, Master Ritualist
+- **12 Man Brunch of Doom** _(Open Beta)_
+  - subtitle: a morning well spent
+  - flavor: "If even one thing is wrong, even the slightest thing, a bad phrase, spilt salt, weak posture, anything at all...the consequences can be horrific. Exploded, melted, turned inside out, consumed by fire, filled with pudding...the 12 Man Brunch has finished many a cocksure arcanist." / — Werner Geisen, Master Ritualist
+- **1337!** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: m4d.sk1llz
+- **73ch!** _(Holy Heist)_
+  - subtitle: will it fly?
+  - flavor: 533 7h053 C48135 J0? 7h47's 4 n0. 8u7 w17h 7h3 r1gh7 73ch...
+- **94r913 My 908570pp3r5** _(Seed 3)_
+  - flavor: That's not what we meant by "Flip Up"...
+- **A Blazing Zero** _(Seed Saga)_
+  - subtitle: the collision of magic and antimagic
+  - flavor: "Battles raged long before war came to Marduun, but when war came, the sky stayed lit for half a century with brilliant blazes of might and destruction." / — Marduun, a Forgotten History authored by the Right Honorable Basel E. Corgington, Esq
+- **A Death Fit for a King** _(Seed Saga)_
+  - subtitle: no emperor should outlive his empire
+- **Accidental Invention** _(Seed 2)_
+  - subtitle: 100|<5 1i|<3 W3'r3 g0|\||\|4 |\|33d 4|\|07h3r 7i|V||V|y!
+- **Accidental Invention** _(Seed Saga)_
+  - subtitle: 100|<5 1i|<3 W3'r3 g0|\||\|4 |\|33d 4|\|07h3r 7i|V|y!
+- **Acidic Phlegm** _(Seed 2)_
+  - subtitle: it's not poison. it's got juice in it.
+- **Acidic Phlegm** _(Seed Saga)_
+  - subtitle: great for removing skin imperfections
+  - flavor: Like your face.
+- **Additional Tribute** _(Holy Heist)_
+  - subtitle: a little extra tribute goes a long way
+  - flavor: The plumes on the top of their hoods become erect in the presence of voidal energy. Run away before they completely straighten...
+- **Air Travel** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: to the air!
+- **All-Nighter** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: the dawn is your enemy
+  - flavor: "Isn't it a little bit late in the game to be making changes? You should have worked smarter, not harder. If only you had planned better...now get off your lazy ass and help us move this furniture!"
+- **Alluring Quicksand** _(Seed 2, Seed Saga)_
+  - subtitle: like taking a baby from its candy
+- **Ambuscade** _(1st Edition, 2nd Edition)_
+  - subtitle: i've been saving this all day!
+- **Ambuscade** _(Open Beta)_
+  - subtitle: fight smarter, not harder
+- **Ameliorate** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i love the smell of booby in the morning!
+- **Anathematize** _(Seed, Seed Saga)_
+  - subtitle: didn't see that coming!
+  - flavor: Curiously enough, the only thing that went through his mind as he was pulled up was "Oh no, not again."
+- **Anatidaephobia** _(Seed 3)_
+  - flavor: "It's the quacking of that hideous heart!"
+- **Anesthetizing Opulence** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i could get used to this
+  - flavor: Wasn't I supposed to kill somebody? Ooh! Erotic cakes!
+- **Arcana Experiment** _(1st Edition, Open Beta)_
+  - subtitle: on the cutting edge of compulsion
+- **Arcana Experiment** _(2nd Edition)_
+  - subtitle: on the cutting edge of compulsion
+  - flavor: "Stand back, I'm going to try science!"
+- **Arcane Ambush** _(Ungodly Mess)_
+  - subtitle: "it's going to explode!"
+  - flavor: Whew!
+- **Arcane Monkey Ritual** _(Seed Saga)_
+  - subtitle: they said two rituals couldn't be done
+- **Arcane Research** _(Seed)_
+  - subtitle: oh, my missing aggie!
+  - flavor: I told him we could play for keepsies, but I didn't think he'd eat them.
+- **Architectural Restitution** _(Seed, Seed Saga)_
+  - subtitle: it's all good, we had a spare
+- **Asbestos Drywall** _(Holy Heist)_
+  - subtitle: you said you wanted drywall, right?
+  - flavor: Well, it's drywall.
+- **Audacious Appraisal** _(Shade of the Devoured Emperor)_
+  - subtitle: whatever the market will bear
+  - flavor: Buy when it whines, sell when it roars.
+- **Auditory Adulation** _(Ungodly Mess)_
+  - subtitle: "i'm coming for you, brother!"
+- **Auspicious Arrival** _(Shade of the Devoured Emperor)_
+  - subtitle: a red carpet reception...
+  - flavor: ...of Questionable Morality.
+- **B.A.S.E. Jump** _(Shade of the Devoured Emperor)_
+  - subtitle: Geronimo!
+  - flavor: You do not need a parachute to B.A.S.E. Jump. You only need a parachute to B.A.S.E. Jump twice.
+- **Bank Rolled** _(Ungodly Mess)_
+  - subtitle: siluriformes flaxenscale's ultimate attack
+- **Barrier of Benevolence** _(Seed 2, Seed Saga)_
+  - subtitle: the higher, the fewer.
+- **Bask Bile** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: for the melting of troops and stuff
+  - flavor: Available in french onion, barbeque ranch, or original nacho cheese flavor.
+- **Battle Surge** _(1st Edition Part 2)_
+  - subtitle: unleash the killer in you
+  - flavor: Its smell alone can drive sane men into a murderous frenzy.
+- **Because God Said So!** _(Seed)_
+  - subtitle: thou shalt cast out yon lepers
+  - flavor: Thou shalt stone not once but thrice in the head those who blaspheme against god, and mash yon girly men with ye giant masher, and rend unto fire those unloved by the children of god, yea, and death unto fat chicks.
+- **Because God Said So!** _(Seed Saga)_
+  - subtitle: i have it on good authority
+  - flavor: Thou shalt stone not once but thrice in the head those who blaspheme against god, and mash yon girly men with ye giant masher, and rend unto fire those unloved by the children of god, yea, and death unto fat chicks.
+- **Blitz of Destruction** _(Holy Heist)_
+  - subtitle: nice gold you got there
+  - flavor: Burn it!
+- **Blow Up** _(1st Edition Part 2)_
+  - subtitle: i make boom
+- **Blow Up** _(2nd Edition)_
+  - subtitle: and boom goes the dynamite
+- **Boilstorm** _(Seed)_
+  - subtitle: melting away the unworthy
+- **Boilstorm** _(Seed Saga)_
+  - subtitle: melting away the unworthy
+  - flavor: Like shouting fire in a crowded galley.
+- **Brainbath** _(Seed, Seed Saga)_
+  - subtitle: relaxing and revitalizing for a fresher, younger you
+- **Breath of the Barduse** _(Ungodly Mess)_
+  - subtitle: indiscriminate carnage
+- **Brilliant Insight** _(Seed, Seed Saga)_
+  - subtitle: pain is inspiration
+  - flavor: "Eureka! ...I mean, OUCH!!!"
+- **Bug Bite** _(Shade of the Devoured Emperor)_
+  - subtitle: once a drug, now a nuisance
+- **Burly Assailment** _(Seed 2)_
+  - subtitle: waaaiiit for iiittt... waaaiiit for iiittt...
+- **Burly Assailment** _(Seed Saga)_
+  - subtitle: waaaiiiit for iiittt... waaaiiiit for iiittt...
+- **Cash Out** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: the best investment he ever made
+  - flavor: In case of emergency, sell wife.
+- **Catastrophic Betrayal** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: we thought you were dead...and on our side!
+- **Catastrophic Caper** _(Holy Heist)_
+  - subtitle: hide yo kids, hide yo wife!
+  - flavor: There's a thief from Clockman named Pluck, who is often found running amuck, but when under duress, he slipped under her dress, sometimes thieves are lucky as fu... all get-out.
+- **Chain Reaction** _(Seed)_
+  - subtitle: i totally meant to do that
+- **Chain Reaction** _(Seed Saga)_
+  - subtitle: lucky shot
+- **Change of Tactics** _(Holy Heist)_
+  - subtitle: well that didn't work
+- **Clam Hash** _(Seed 2, Seed Saga)_
+  - subtitle: mmm...claaam haaash...
+- **Clockman City Shuffle** _(Shade of the Devoured Emperor)_
+  - subtitle: oh, I say!
+  - flavor: It's a blindfold kick back type of a game / Called the Clockman City Shuffle. / Whereas you look left and they fall right / Into the Clockman City Shuffle. / It's a they-think you-think they don't know type of Clockman city hustle. / Where you take your time, wait your turn, and hang them up and out to dry. / — Pluck
+- **Close Call** _(Holy Heist)_
+  - subtitle: but its got no eyes or ears! how did it know?
+  - flavor: You said steal a living god. You said nothing about me getting dead!
+- **Cock Block** _(Seed Saga)_
+  - subtitle: just what the name says
+  - flavor: Nothing Else.
+- **Concentriculation** _(Shade of the Devoured Emperor)_
+  - subtitle: on the frontier of focus
+  - flavor: Take a picture, it'll last longer!
+- **Confessions of Countless Souls** _(Holy Heist)_
+  - subtitle: some walls can speak even when you're not listening
+  - flavor: The punishment of heretics is to suffer the Ritual of Eternal Mortarization.
+- **Confrontational Conflagration** _(Shade of the Devoured Emperor)_
+  - subtitle: a real barnburner
+- **Contractual Execution** _(Shade of the Devoured Emperor)_
+  - subtitle: sleep with the fishes
+- **Counter Attack** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: do you see what happens, Larry?
+- **Cowslaw** _(Seed 3)_
+  - flavor: Also known as ruminant hash, or salmagundi stew.
+- **Crushing Usury** _(Seed, Seed Saga)_
+  - subtitle: no, no, the usury part comes later
+  - flavor: ...after they get the clothes off.
+- **Cunning Ruse** _(Ungodly Mess)_
+  - subtitle: abram ka-darbo's greatest trick...
+  - flavor: Step right up to the Abram Ka-Darbo show, where today I'll be making your living god device disappear.
+- **Dark Awakening** _(Seed 2)_
+  - subtitle: welcome back to the land of the living
+- **Day of the Tentacle** _(Seed, Seed Saga)_
+  - subtitle: we may not live to see yesterday
+  - flavor: What possible harm could one insane, mutant tentacle do?
+- **Death of the Demon Knights** _(Seed Saga)_
+  - subtitle: in a rage, Gideon killed them both
+  - flavor: "...what came next consumed the Empire and changed the world forever." — Marduun, A Forgotten History
+- **Defenestrate** _(1st Edition, Open Beta)_
+  - subtitle: look it up
+  - flavor: "I'm making great time! Usually I'm just sniffing my model's underwear by now."
+- **Degenerate Molestation** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: giggity giggity
+- **Deicidal Detonation** _(Ungodly Mess)_
+  - subtitle: BOOOOOOOM
+- **Delectable Boon** _(Seed Saga)_
+  - subtitle: MINE!
+  - flavor: Get your own.
+- **Delicious Strawberry Flavored Death** _(Seed 3)_
+  - flavor: "I don't understand it. James Coco went mad in fifteen minutes!"
+- **Demolition Investment** _(Ungodly Mess)_
+  - subtitle: never hit so hard
+- **Desolate** _(Seed 2)_
+  - subtitle: from whence you came
+- **Desolate** _(Seed Saga)_
+  - subtitle: i didn't know it was a verb either
+- **Desserted Island** _(Seed)_
+  - flavor: Nothing but fudge, cookies, and the bleached white bones of diabetic castaways.
+- **Desserted Island** _(Seed Saga)_
+  - subtitle: where witches outgrow their gingerbread houses
+  - flavor: Nothing but fudge, cookies, and the bleached white bones of diabetic castaways.
+- **Devastating Mockery** _(1st Edition)_
+  - subtitle: rofl.n00b.sux0r
+- **Devastating Mockery** _(Open Beta)_
+  - subtitle: rofl.n00b.sux0r
+  - flavor: Mirgla thought that at last the secret plans for the self-starting toastmajig millennium would be his, but the mocking he received from the elves of Bay 13 proved so mind-bendingly cruel that he wet his pants and ran away like a scared little girl.
+- **Difference of Opinion** _(Ungodly Mess)_
+  - subtitle: a pluck and a chum walk onto a battlefield
+- **Discommodiousness** _(2nd Edition)_
+  - subtitle: not actually a word
+  - flavor: "Bad news, the Clockman Arcanology branch canceled the rest of their order of toiletmajigs... no, I can't imagine why."
+- **Distraction** _(1st Edition Part 2)_
+  - subtitle: ohh noes!!!!1
+  - flavor: "I keep an extra severed head handy for just such an occasion..."
+- **Dizzying Blow** _(Holy Heist)_
+  - subtitle: a fistful of fists
+  - flavor: You made me bleed my own blood!
+- **Don't Trip** _(Holy Heist)_
+  - subtitle: one faceplant coming up
+- **Downsizing** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: look busy or you could be next
+  - flavor: "The terms of our severance package ensure a high rate of employee retention."
+- **Dragon Juice** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: what did you think the catheter was for?
+- **Dragon's Anthem** _(1st Edition)_
+  - subtitle: inspirational and inflammatory
+  - flavor: Crush your enemies. / See them driven before you. / Hear the lamentations of the women.
+- **Dragon's Anthem** _(Open Beta)_
+  - subtitle: inspirational and inflammatory
+- **Dragon's Strategy** _(1st Edition, Open Beta)_
+  - subtitle: brilliant and perverse
+  - flavor: "When the fathers see their disemboweled children, they'll lose heart and that is the time to strike."
+- **Drive By Boobing** _(Shade of the Devoured Emperor)_
+  - subtitle: hooters, honkers, jibbly-jubblies!
+  - flavor: In other news, tits!
+- **Drygulch** _(Seed Saga)_
+  - subtitle: why am I getting wet?
+- **Early Investment** _(Holy Heist)_
+  - subtitle: i think this will be a great money relationship
+  - flavor: If we're going to make this journey, we'll need money. And lots of it.
+- **Early Retirement** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: doing the bull dance, feeling the flow, working it
+  - flavor: "Oh, Señor John! You are hairy like beast!"
+- **Eccentric Inquisition** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: [imagine inevitable Spanish Inquisition joke here]
+- **Ecto-Distillation** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: complex magical process
+- **Elite Team Registration** _(1st Edition Part 2)_
+  - flavor: There is no theory of evolution. Only a list of creatures Teckchin allows to live.
+- **Elite Team Registration** _(2nd Edition)_
+  - subtitle: |\|0 |\|0065 4110W3|
+  - flavor: The game tournaments of Acrolos are legendary in their frivolity and ferocity.
+- **Encumber** _(Seed, Seed Saga)_
+  - subtitle: he should have brought crackers for everyone
+- **Entangle** _(2nd Edition)_
+  - subtitle: i've forgotten who ties up whom
+- **Enter The Demon Knights** _(Seed Saga)_
+  - subtitle: sick guitar solo goes here
+  - flavor: WAAAUUWAUBLEDLELBLEDLEBLEEEEEEE
+- **Epic Smackdown** _(Seed 2, Seed Saga)_
+  - subtitle: whoa! i can see my house. gnarly.
+- **Epic Turncoat Maneuver** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: curse your sudden but inevitable betrayal!
+  - flavor: He'd be such a good Lieutenant if he'd just stop stabbing us!
+- **EPM (Extra Powerful Magnetic) Pulse** _(Shade of the Devoured Emperor)_
+  - subtitle: yes, yes it is
+- **Essence of Deception** _(Seed, Seed Saga)_
+  - subtitle: dude, this stuff is not
+- **Essence of Elitism** _(Seed, Seed Saga)_
+  - subtitle: the game is a hit, yet no one knows the rules
+- **Essence of Greed** _(Seed, Seed Saga)_
+  - subtitle: take one down, pass it around
+- **Essence of Obsession** _(Seed, Seed Saga)_
+  - subtitle: filled with bombs and/or keys
+- **Essence of Rage** _(Seed, Seed Saga)_
+  - subtitle: just like mom used to make
+- **Evanesce** _(Seed, Seed Saga)_
+  - subtitle: you're melting! you're melting! what a world!
+- **Executive Poaching** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: get 'em? that was your plan?
+  - flavor: "He's putting for eagle...this is for the entire tournament...Oh! He was stolen by a necromorph! That's got to be disappointing!"
+- **Expedition Endeavour** _(Shade of the Devoured Emperor)_
+  - subtitle: is that a bear?
+  - flavor: A group of bad men looking for a very bad thing.
+- **Exploding Sock Puppet!** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: taxi apple sponge!
+  - flavor: Skunks playing poker, basketball cheesesteak!
+- **Explosive Fury** _(1st Edition Part 2)_
+  - flavor: We really wish Patrick Meehan would wear pants in the office. Any pants. We've tried asking him nicely, but he won't listen. And frankly, we're tired of getting poked in the eye.
+- **Explosive Fury** _(2nd Edition)_
+  - subtitle: a spontaneous event
+  - flavor: Warning: dragon juice may cause indigestion, fever, rage, unexplained weight gain, turgidity, and sudden onset auto-combustion.
+- **Extortify** _(1st Edition Part 2)_
+  - flavor: Jack Heng is the most electrifying, dynamorphic, pontificated, exastabatory individual in the whole wide world.
+- **Extortify** _(2nd Edition)_
+  - subtitle: also not actually a word
+  - flavor: Involuntary donations are a well-established part of Mau social doctrine.
+- **Extravagant Contusion** _(Seed)_
+  - subtitle: zip! pow!
+  - flavor: "Lil' ainjil, always fetfull..."
+- **Extravagant Contusion** _(Seed Saga)_
+  - subtitle: brained with a bling brick
+  - flavor: It's the things we love most that destroy us.
+- **Eye Gouge** _(1st Edition, 2nd Edition)_
+  - subtitle: less talking, more screaming
+  - flavor: "Ach! My eyes! The goggles, they do nothing!"
+- **Eye Gouge** _(Open Beta)_
+  - subtitle: less talking, more screaming
+  - flavor: "Ach! My eyes! The goggles do nothing!"
+- **Fecal Urgency** _(Seed 3)_
+  - flavor: When you gotta go, you gotta go.
+- **Final Countdown** _(Holy Heist)_
+  - subtitle: the mission: steal a stolen god
+  - flavor: We have six things to do.
+- **Fire Tail Kocktail** _(Holy Heist)_
+  - subtitle: no minimum age
+  - flavor: You smell that? Smells like victory! / ...and bacon.
+- **Fistfight** _(Shade of the Devoured Emperor)_
+  - subtitle: round one... fight!
+  - flavor: Like a food fight, except the only thing on the menu are knuckle sandwiches.
+- **Flesh Deliquesce** _(Ungodly Mess)_
+  - subtitle: touched by god
+- **Foment** _(Seed 2)_
+  - subtitle: quite the showman
+  - flavor: "I have a reputation to live up to. If my show does not make people vomit, and have an erection at the same time, then I've let my audience down."
+- **Forbidden Knowledge** _(Seed, Seed Saga)_
+  - subtitle: i never knew thrush-bugs could be so filthy
+- **Forced Recruitment** _(1st Edition, Open Beta)_
+  - subtitle: busty sarcophyles...my only weakness!
+  - flavor: Bored with her pallid harem, the sarcophyle mistress is always hungry for handsome new playthings.
+- **Forced Recruitment** _(2nd Edition)_
+  - subtitle: putting the "sensual" back in "non-consensual"
+  - flavor: Bored with her pallid harem, the sarcophyle mistress is always hungry for handsome new playthings.
+- **Forget** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: i almost never do that
+- **Forgotten Tentacle** _(Shade of the Devoured Emperor)_
+  - subtitle: an appendaged afterthought
+- **Frantic Jerryrigging** _(Ungodly Mess)_
+  - subtitle: god transporter: doubles as a blaster cannon
+  - flavor: Because you never know when a cannon will come in handy.
+- **Fwing!** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: fly, little brother! bring us back a shiny!
+- **Gathering of Unlikely Heroes** _(Holy Heist)_
+  - subtitle: i'll be there for you
+  - flavor: Well, mostly for me – but also for you... sort of.
+- **God's Blessing of Boost** _(Ungodly Mess; mutation)_
+  - subtitle: the living god empowers
+- **God's Blessing of Foresight** _(Ungodly Mess; mutation)_
+  - subtitle: the living god divinates
+- **God's Blessing of Moola** _(Ungodly Mess; mutation)_
+  - subtitle: the living god enriches
+- **God's Blessing of Readiness** _(Ungodly Mess; mutation)_
+  - subtitle: the living god enlivens
+- **God's Blessing of Transfiguration** _(Ungodly Mess; mutation)_
+  - subtitle: the living god endows
+- **Gosche's Voidal Frequency Emission** _(Ungodly Mess)_
+  - subtitle: like shrievers to an emission device
+  - flavor: Gosche always says that.
+- **Grand Theft All** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: should have locked the door
+- **Guileful Astucion** _(Shade of the Devoured Emperor)_
+  - subtitle: disappearances can be deceiving
+  - flavor: Does putting on dem shades really help that much?!
+- **Hammer Smash** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: if your head gets in the way, too bad
+- **Hasty Pursuit** _(Holy Heist)_
+  - subtitle: thabbashites do not play around when you steal their gods
+- **Haunting Execution** _(Ungodly Mess)_
+  - subtitle: hauntingly well executed
+- **Headhunting** _(Seed)_
+  - subtitle: it kinda tickles
+- **Headhunting** _(Seed Saga)_
+  - subtitle: it kinda tickles
+  - flavor: in a PLEASE GET OFF ME kinda way
+- **Headshot** _(Ungodly Mess)_
+  - subtitle: boom! (x4)
+- **Heroic Deed** _(Seed)_
+  - subtitle: i regret nothinnnggg!
+- **Hidden Ruins** _(Seed 2, Seed Saga)_
+  - subtitle: covered by the desert sands
+- **Hilarious Refrigerator Alarm** _(Seed 3)_
+  - subtitle: uh uh uh! You didn't say the magic word
+- **Hustler's Comeuppance** _(Seed, Seed Saga)_
+  - subtitle: never con a con-man, especially when he's better than you
+  - flavor: "But I love my hands! That's where my fingers live!"
+- **I Drink Your Milkshake!** _(Seed 2)_
+  - flavor: Don't trust anyone. Not even yourself.
+- **I Drink Your Milkshake!** _(Seed Saga)_
+  - subtitle: it will bring boys to my yard
+  - flavor: But do I really want them?
+- **I Got the Gear!** _(1st Edition)_
+  - subtitle: 1t.|/\|@5.1|\|.|V|y.A55.t3h.|/\|h013.t1|V|3!!!
+  - flavor: Elves can construct any tool you need. However, their unintelligible language makes special orders particularly difficult.
+- **I Got the Gear!** _(Open Beta)_
+  - subtitle: a11.j00.n33d
+  - flavor: Elves can construct any tool you need. However, their unintelligible language makes special orders particularly difficult.
+- **I See You!** _(Holy Heist)_
+  - subtitle: voidal magic fused with 31v15h ingenuity
+- **Impeccable Timing** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i'm sorry sandwich!
+  - flavor: This happens more often than you'd think.
+- **Implosive Explosion** _(Seed 2, Seed Saga)_
+  - subtitle: two great tastes that taste great together
+- **Improvised Blowtorch** _(Seed, Seed Saga)_
+  - subtitle: feel the burn
+- **Inconvenient Roadblock** _(Seed, Seed Saga)_
+  - subtitle: i think it's like, cultural or something
+  - flavor: "Far be it from me to criticize your stupid civilization with its dumb customs."
+- **Industrious Usage** _(Shade of the Devoured Emperor)_
+  - subtitle: don't just sit there looking shiny
+  - flavor: Oh, I'm sorry, did you need that to do something helpful?
+- **Inebriated Defenestration** _(Holy Heist)_
+  - subtitle: two hits: me hitting you. you hitting the window.
+  - flavor: Have a nice trip. See you next fall.
+- **Infectious Pustulio** _(Holy Heist; mutation)_
+  - subtitle: you should've seen him before
+  - flavor: He is part of the collective now.
+- **Inhibit** _(Seed)_
+  - subtitle: i will love him and hug him and name him George
+- **Inhibit** _(Seed Saga)_
+  - subtitle: stifling stifle of sir stiflopolis
+- **Interpret the Void** _(Ungodly Mess)_
+  - subtitle: possible side-effects include insanity
+  - flavor: Whirlwinds, tornados, purple eyes, burst livers, organ failure, and tail growth.
+- **Invade!** _(Seed Saga)_
+  - flavor: "In a fury, Adriel and the newly born Barduse descended on the capital for revenge." / — Marduun, A Forgotten History
+- **Invent** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: that's the best one of those I've ever seen
+- **Irresistible Bribe** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: dissecting moral code with diamond-like precision
+  - flavor: Drugging the audience? Three month's salary. Bumping off last year's winner? A small fortune. Buying the judge? A king's ransom. The smile on my little girl's face? Priceless.
+- **It's a Trap!** _(Shade of the Devoured Emperor)_
+  - subtitle: see what we did there?
+  - flavor: It just works on so many levels.
+- **Jackmove** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: he gets what he wants, even if it's yours
+  - flavor: "What do you mean you're Baron Unfigeld? The Baron arrived almost two hours ago! Oswaldo, throw this lunatic out onto the street at once."
+- **Jocular Stupefaction** _(Seed, Seed Saga)_
+  - subtitle: 6l4rg4l3ghor6l3r6l34rgh!!!
+- **Juice Sale!** _(Shade of the Devoured Emperor)_
+  - subtitle: deep discounts, limited time only
+  - flavor: The law of supply demands you buy this juice.
+- **Kaiser Wave** _(1st Edition Part 2, 2nd Edition; kaiser)_
+  - subtitle: behold the kaiser ultimate attack!
+- **Karmic Cake** _(Seed)_
+  - subtitle: an oversized reward for a small sacrifice
+  - flavor: It's a piece of cake to bake a karmic cake.
+- **Karmic Cake** _(Seed Saga)_
+  - subtitle: frosted with righteousness
+  - flavor: Filled with delicious cream filling.
+- **Keen Stratagem** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: if you want money, you'll have to pay for it
+  - flavor: "It is well that the people of the nation do not understand our banking and monetary system, for if they did, I believe there would be a revolution before tomorrow morning."
+- **Keep Pushing** _(Holy Heist)_
+  - subtitle: onward, for glory
+  - flavor: Showing off is the fool's idea of glory. Well, I loooove being a fool!
+- **Last Minute Weaponization** _(Ungodly Mess)_
+  - subtitle: god transport cannon to the face
+- **Late Addition** _(2nd Edition)_
+  - subtitle: am I interrupting?
+- **Lead the Assault** _(Ungodly Mess)_
+  - subtitle: the horn thundered and the thabbashites came
+- **Limited Liability** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: in the finest print money can buy
+  - flavor: "Alright, already. There's one for each arm, one for the head and one for the leg. But if you want a new shoehorn you'll have to buy it yourself. What do I look like? The charity department?"
+- **Lost on Floor 3** _(Ungodly Mess)_
+  - subtitle: you thought I was done?
+- **Low-hanging Clothesline** _(Holy Heist)_
+  - subtitle: the bigger they are...
+  - flavor: "I'm taller than you! I'm taller!" / "Yeah? Well I'm smarter."
+- **Maladjustment** _(2nd Edition)_
+  - subtitle: just let me put on my face
+- **Manful Skirmish** _(Seed Saga)_
+  - subtitle: the way wars were meant to be decided
+- **Manifest** _(Seed 2, Seed Saga)_
+  - subtitle: we are the weavers of shadowy phantasms
+- **Mass Confusion** _(Seed, Seed Saga)_
+  - subtitle: these ones won't fight back!
+- **Mass Subjugation** _(Holy Heist)_
+  - subtitle: kiss my paws? you should be so lucky
+- **Mau Party** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: it's not a party until somebody gets devoured
+  - flavor: After we run them over, we stop the car and eat them.
+- **Meager Research** _(1st Edition)_
+  - subtitle: ! g07 r00t 0n j00, f055!1
+  - flavor: This isn't going to end pretty...
+- **Meager Research** _(Open Beta)_
+  - subtitle: don't laugh...it gets bigger!
+  - flavor: Oh I've got one of those. But mine has 3.2 gigasnargles and a wireless greegalox. gg pwnt.
+- **Micromajig Avalanche** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: cute and crushing
+- **Miraculous Regeneration** _(Seed 2)_
+  - subtitle: i can haz braaaiiinnnz!?
+- **Miraculous Regeneration** _(Seed Saga)_
+  - subtitle: remember when you said you could sleep when you're dead?
+  - flavor: You were wrong.
+- **Mistaken Identity** _(Seed Saga)_
+  - subtitle: breathe the wall. be the wall.
+- **Moment of Annihilation** _(Ungodly Mess)_
+  - subtitle: annihilation means something different to each thing
+- **Muddle** _(Seed Saga)_
+  - subtitle: now where were you
+- **Mutilated** _(Seed Saga)_
+  - subtitle: not coming back from that one
+  - flavor: "Elzibeth's madness knew no bounds. All became her victim, even her own son." — Marduun, A Forgotten History
+- **Mutineer's Hiatus** _(Seed, Seed Saga)_
+  - subtitle: a lovely view and all the seagulls you can eat
+- **Mutiny Grant** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: whatever you make, i'll double it
+- **Needless Beating** _(2nd Edition)_
+  - subtitle: a typical Direstock birthday celebration
+- **Negotiation Ceremonies** _(Shade of the Devoured Emperor)_
+  - subtitle: more talking than I care to discuss
+  - flavor: "Ten." "Sixty." "Twenty." "Forty five." / "Thirty two and three quarters." / "Thirty six and not a micromajig less." / "Thirty three and I'll toss in my grandmother's corpse." / "Isn't she alive?" / "Presently."
+- **Noble Sacrifice** _(Seed)_
+  - subtitle: he no nuts...he's crazy!
+- **Notion Sickness** _(Seed 3)_
+  - flavor: Sometimes the mother of invention is madness.
+- **Obscure** _(Seed, Seed Saga)_
+  - subtitle: the shroud of invisibility is worth the vomitous stench
+- **Obsessive Compulsion** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: a place for everything and everything in its place
+- **Ocular Dispersal** _(Holy Heist; mutation)_
+  - subtitle: colorblind in all but one
+  - flavor: Considered a blessing by Thabbashites. / Good thing he isn't a teacher, he would have a hard time controlling his pupils.
+- **Offering of False Friendship** _(Holy Heist)_
+  - subtitle: enjoy your beads!
+  - flavor: You can't fake sincerity - you have to make it up on the spot.
+- **Orgy Den Smoke Out** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: gold and finery, just slightly soiled
+- **Otter Floss** _(Seed 2, Seed Saga)_
+  - subtitle: not to be confused with "flossing the otter"
+- **Overindulge** _(Seed, Seed Saga)_
+  - subtitle: do a little dance. drink a little booze. get down tonight.
+- **Overzealous Excavation** _(Seed 2, Seed Saga)_
+  - subtitle: those ruins were only getting in the way
+- **Palm Glom** _(Seed Saga)_
+  - subtitle: I always wanted an extra hand
+  - flavor: Can now steal from extra-distance.
+- **Pant Swipe** _(Seed, Seed Saga)_
+  - subtitle: it ain't stealing if you take it fast
+- **Patent Enforcement** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: stop! imposter! i already invented that!
+  - flavor: "That, too! And that!"
+- **Peculate** _(Seed 2)_
+  - subtitle: i find something that is not black, and i paint it black.
+- **Peculate** _(Seed Saga)_
+  - subtitle: to purloin public purses or property
+- **Penetrate** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: sometimes a ram is just a ram
+- **Perforate** _(Seed)_
+  - subtitle: steeck ahrownd
+- **Perforate** _(Seed Saga)_
+  - subtitle: sheeesh que-babb
+- **Perturb** _(Seed 2, Seed Saga)_
+  - subtitle: that's starting to get annoying
+- **Pinch** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i peench
+  - flavor: Maybe just a little peench?
+- **Postmortem Debenture** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: secured by corporeal collateral
+  - flavor: It took Jesse Doverspike 10 years to save the down payment for his funeral. It may take him 100 to pay off the debt.
+- **Precise Sabotage** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: and they said it'd be useless
+- **Prestige Inversion** _(Seed 3)_
+  - subtitle: you never waste time. time wastes you.
+- **Profane Proposal** _(Holy Heist)_
+  - subtitle: everybody needs a retirement plan
+  - flavor: "... and this my friends, is how we obtain ultimate voidal power."
+- **Purloining Performance** _(Ungodly Mess)_
+  - subtitle: ...stealing a stolen god.
+- **Pyramid Scheme** _(1st Edition)_
+  - subtitle: Meowphistopheles wants you to fail
+  - flavor: A mau always comes out on top. / Yes, I know it's a bad pun. Deal with it.
+- **Pyramid Scheme** _(Open Beta)_
+  - subtitle: but the letter told me to!
+  - flavor: A mau always comes out on top. / Yes, I know it's a bad pun. Deal with it.
+- **Quotidian Assassination** _(1st Edition, 2nd Edition)_
+  - subtitle: a convenient and cowardly solution
+  - flavor: When the shattering glass shatters, shatters, the cords are drawn slow, again again again, draw the cords, shatter the glass, draw the cords, shatter the glass, wait, silence, with care. Again...
+- **Quotidian Assassination** _(Open Beta)_
+  - subtitle: a convenient and cowardly solution
+  - flavor: When the shattering glass shatters, shatters, the chords are drawn slow, again again again, draw the chords, shatter the glass, draw the chords, shatter the glass, wait, silence, with care. Again...
+- **Quotidian Disappearance** _(1st Edition Part 2)_
+  - subtitle: don't know where they go, but i hope they stay there
+  - flavor: Political enemies of Amalforact often attract the unwanted attentions of the firm's public compliance officers, who do their job with perverted glee.
+- **Quotidian Misfire** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: hey, it happens
+  - flavor: If only I'd remembered to turn the knob 17 times instead of 16 and a half!
+- **Quotidian Quagmire** _(Ungodly Mess)_
+  - subtitle: you push! we'll pull!
+  - flavor: "Guys! GUYS! WH47 4BOU7 M3!?"
+- **Quotidian Transposition** _(Shade of the Devoured Emperor)_
+  - subtitle: whoops
+- **Rapine** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: you'll be coming with us now
+- **Rate Hike** _(1st Edition, Open Beta)_
+  - subtitle: it's only up to 63.2%...cheap!
+  - flavor: All money belongs to a Mau somewhere, whether the money realizes it or not.
+- **Reality Shift** _(Seed)_
+  - flavor: I reject your reality and substitute my own.
+- **Reality Shift** _(Seed Saga)_
+  - subtitle: wat
+  - flavor: I reject your reality and substitute my own.
+- **Red Tape** _(1st Edition)_
+  - subtitle: plentiful and pointless
+  - flavor: "Forrrmmmssss..."
+- **Red Tape** _(2nd Edition, Open Beta)_
+  - subtitle: plentiful and pointless
+  - flavor: "Forrmmmssss..."
+- **Redonkulous** _(Seed 2)_
+  - subtitle: it's better than turning into a rooster, or a guy named Richard.
+- **Redonkulous** _(Seed Saga)_
+  - subtitle: mortal enemy of the drama llama
+- **Regroup & Reassess** _(Ungodly Mess)_
+  - subtitle: "you're going to destroy the world!"
+  - flavor: "Listen, I--" "You don't know--" "Stop talking over--" "I AM TOO PRETTY TO BE IGNORED!"
+- **Religious Rejection** _(Holy Heist)_
+  - subtitle: agreeing to disagree
+  - flavor: "False man, now you pay in blood" / "Don't just stand there! Throw me a spear!"
+- **Reluctant Reconciliation** _(Shade of the Devoured Emperor)_
+  - subtitle: i'll get it up and working again!
+  - flavor: To help close a deal that was quickly going south, Jo offered her skillful services to Eustace by restoring his broken majig.
+- **Remember** _(1st Edition, 2nd Edition)_
+  - subtitle: my memory is infallable...when it works
+- **Remember** _(Open Beta)_
+  - subtitle: blast! better leave another note...
+- **Repurpose** _(Seed, Seed Saga)_
+  - subtitle: everything has purpose or is given purpose
+  - flavor: Especially when there's poop involved.
+- **Research Investment** _(1st Edition, 2nd Edition)_
+  - subtitle: not quite as much as last time
+  - flavor: After we invented the autoerotic pleasuremajig, the moneybags upstairs decided we were having a little too much fun!
+- **Research Investment** _(Open Beta)_
+  - subtitle: pennies from heaven (a.k.a. upstairs)
+  - flavor: The money is great...now if they'd only let us outside to spend it.
+- **Retreat to Mount Mulrich** _(Ungodly Mess)_
+  - subtitle: demoralized, beaten, broken
+  - flavor: Overwhelmed after the first battle, the Unlikely Heroes escaped to the surrounding mountains, seeking shelter and a way to defeat the Expedition before they could deliver the Living God to Eldridge Gosche. They couldn't shake the feeling of being watched...
+- **Revivatate** _(1st Edition Part 2)_
+  - flavor: If you didn't have Jack Heng, you'd have to invent him.
+- **Revivatate** _(2nd Edition)_
+  - subtitle: almost actually a word
+  - flavor: In Clockman, they used to have a saying, "Only two things are certain in life: death and taxes." Then the Mau arrived.
+- **Rewarding Salvage** _(Seed 2, Seed Saga)_
+  - subtitle: five minutes ahead of schedule...
+  - flavor: ...right on schedule.
+- **Ritual of the Double Monkey** _(Seed 2)_
+  - subtitle: monkey see...monkey do...
+  - flavor: ...monkey pee all over you!
+- **Ritual of the Knob & Pull** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: no, no, you're off tempo, Mortimer!
+  - flavor: "Twist to the left dammit! Don't you remember what happened to Jenkins!?"
+- **Ritual of the Ominous Urn** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: pretty damn epic
+  - flavor: The nameless one twisted his inhuman appendage unspeakably, as an ineffable sound filled the unfathomable, indescribable sky...
+- **Ritual of the Screaming Cheese** _(1st Edition, Open Beta)_
+  - subtitle: the second strangest sound we've ever heard
+  - flavor: "Is the cheese screaming, Clarice?"
+- **Ritual of the Shattering Teeth** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: a painful but effective measure
+  - flavor: "I want you to know, this hurts you more than it hurts me."
+- **Ritual of the Sucking Skull** _(Ungodly Mess)_
+  - subtitle: mmm, brains
+- **Ritualized Destruction** _(Ungodly Mess)_
+  - subtitle: quotidian is for the mundane
+  - flavor: True ritualists are anything but.
+- **Roulette Wheel of DOOM!** _(Seed, Seed Saga)_
+  - subtitle: who wants to play?
+  - flavor: Always bet on death!
+- **Rouse** _(Seed, Seed Saga)_
+  - subtitle: wise from your gwabe!
+- **Rumply Ruse** _(Seed, Seed Saga)_
+  - subtitle: works every time
+  - flavor: The old moon-and-trip-on-the-covered-hole trick. That's the second time I've fallen for that this month.
+- **Runic Flee** _(Seed Saga)_
+  - subtitle: 1|\|1714- oh, whatever, initiating dive sequence
+  - flavor: "During the final confrontation, Gloamspike emerged in a bid for power but, rejected by the masses, fled to Lugubria. The Gloamspike name, however, would not disappear from history; his sons would one day discover Voidal Humour ushering in the modern age of commerce and industry." / — Marduun, A Forgotten History
+- **Runic Reinforcement** _(Seed)_
+  - subtitle: lasts as long as the glue sticks
+  - flavor: "You're still going to pay me, right?"
+- **Runic Reinforcement** _(Seed Saga)_
+  - subtitle: don't worry
+  - flavor: I'm from the internet.
+- **Sarcophyle Matriculation** _(1st Edition, Open Beta)_
+  - subtitle: some choices can never be undone
+  - flavor: Those seeking cultured notoriety and a bohemian lifestyle beg Sarcophyle lords to share their essence.
+- **Scorching Runicution** _(1st Edition Part 2)_
+  - subtitle: that's not good...i'm not happy...ohhh nooo!
+  - flavor: The boiling fat drains out of this special chute.
+- **Scrag** _(1st Edition, Open Beta)_
+  - subtitle: quick and painful
+  - flavor: N.E.D.M.
+- **Scrag** _(2nd Edition)_
+  - subtitle: quick and painful
+  - flavor: N.E.D.M. — Yeah, I know it's not timeless.
+- **Secret Handshake** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: its secrecy is exceeded only by its overtness
+- **Selective Gluttony** _(1st Edition, Open Beta)_
+  - subtitle: tell the bakers we're going to need more cake
+  - flavor: "Only fifteen courses?! Outrage!"
+- **Seraphim Magic** _(Seed, Seed Saga)_
+  - subtitle: go forth and DIE!
+- **Servers Unavailable** _(Ungodly Mess)_
+  - subtitle: 4RRGRGHGHG4RGHG4RGH!!!!!111111
+- **Shocking Reappearance** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: allow me to speak posthumously
+  - flavor: "Moving on to the subject of our former chairman's unfortunate demise...Great Scott! Our former chairman!"
+- **Shriever Attack** _(1st Edition, Open Beta)_
+  - subtitle: they'll creatively assist you in dying
+  - flavor: "I ascended the peak towards Avery's Hern. The shear nervy demeanor of the raven shyer filled my soul with a rasher envy. But alas, the sound of the haver syren from Neva Sherry foretold the dangers of these hills...a cancer these shrievers be!" — Henry Raves, nailer of The Style
+- **Shriever Attack** _(2nd Edition)_
+  - subtitle: they'll creatively assist you in dying
+  - flavor: "I ascended the peak towards Avery's Hem. The shear nervy demeanor of the raven shyer filled my soul with a rasher envy. But alas, the sound of the haver syren from Neva Sherry foretold the dangers of these hills...a cancer these shrievers be!" — Henry Raves, nailer of The Style
+- **Shriever Breeding Program** _(Shade of the Devoured Emperor)_
+  - subtitle: building a better shriever
+  - flavor: and by "better" we mostly mean "less impossibly vicious and stubborn."
+- **Single Combat** _(Ungodly Mess)_
+  - subtitle: rudo vs. gor-blach: FIGHT!
+- **Skewer** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: everyone gets a turn
+  - flavor: "Eww... looks like that one had corn for dinner."
+- **Skin Suit** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: wear it while it's wet
+- **Smothering Corpulence** _(Seed 2, Seed Saga)_
+  - subtitle: that's how i want to go
+- **Snake Eyes** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: take him away!
+  - flavor: "Oh, too bad sir."
+- **Sneaker Attack!** _(Shade of the Devoured Emperor)_
+  - subtitle: a classic
+- **Spatchcocking** _(Seed 3)_
+  - subtitle: life itself is the proper binge
+- **Spontaneous Displacement** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: it's going to get worse before it gets better
+  - flavor: Or maybe it's just going to get worse.
+- **Sprint** _(Seed 2, Seed Saga)_
+  - subtitle: she was hot. it would have been wrong not to hit it.
+  - flavor: You don't plan sincerity, you've gotta make it up on the spot.
+- **Stern But Fair Backhand** _(Holy Heist)_
+  - subtitle: high five to the face
+  - flavor: Low five to the ground.
+- **Stolen Inspiration** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: i was just thinking that
+- **Storm the Gates** _(Seed Saga)_
+  - subtitle: this is how the Empire ends
+  - flavor: "In the end, it came down to Thabbashites versus Adriel and the newly formed Barduse versus Lingamites, Swords and the Seraphim. The winner? Don't be naïve." / — Marduun, A Forgotten History
+- **Strangulate** _(Seed, Seed Saga)_
+  - subtitle: the price of good fortune
+- **Strategic Vision** _(Ungodly Mess)_
+  - subtitle: we will steal gosche's gold!
+  - flavor: And rule the waters from the Ironic Ocean to the Nidian Sea, free of the Countess at last!
+- **Strength In Numbers** _(1st Edition)_
+  - subtitle: they can't kill us all! attack!
+- **Strength In Numbers** _(Open Beta)_
+  - subtitle: they can't kill us all!  attack!
+- **Study Disturbance** _(Shade of the Devoured Emperor)_
+  - subtitle: glomp
+  - flavor: There's been a change of priorities.
+- **Stupidify** _(Seed, Seed Saga)_
+  - subtitle: when i snap my fingers you will be...stupid!
+- **Subdermal Micromajig** _(Holy Heist)_
+  - subtitle: less cute than some say
+  - flavor: He started throwing trash at us, next thing we knew was Larry's chest exploded and this thing is calling me boss.
+- **Subordinate Demotivation** _(Seed)_
+  - subtitle: go on... lick the toe!
+  - flavor: "You have to earn the right to mop my floor."
+- **Subordinate Demotivation** _(Seed Saga)_
+  - subtitle: go on... lick the toe!
+  - flavor: "You have to *earn* the right to mop my floor."
+- **Subsection 5, Paragraph 12** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: that's the one with the monster in it
+- **Suicide Smash** _(Holy Heist)_
+  - subtitle: me found meself a hammer of destruction
+  - flavor: One body. You only get one body. How hard is that remember?
+- **Summary Judgment** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: pay your fine to the clerk downstairs
+- **Surprise!** _(Seed Saga)_
+  - subtitle: we're here to relieve you of your possessions
+- **Surprising Dudes** _(Holy Heist)_
+  - subtitle: i think i found something
+- **Surprising Nuisance** _(Seed)_
+  - subtitle: there's a bug in my soup!
+  - flavor: 0|\|3 – 195/200, 130/200, 139/165, 113/200, 143/165, 199/200
+- **Surprising Nuisance** _(Seed Saga)_
+  - subtitle: there's a bug in my soup!
+  - flavor: Soup-rising nuisance... haha, get it?!
+- **Surreptitious Larceny** _(Shade of the Devoured Emperor)_
+  - subtitle: just ignore the menacing robot army
+- **Swindle** _(Shade of the Devoured Emperor)_
+  - subtitle: steal of the century
+  - flavor: There's a sucker born every minute.
+- **Tactician Vacation** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: effective immediately
+  - flavor: In fact, take the rest of the week off too.
+- **Tamper** _(Seed, Seed Saga)_
+  - subtitle: can't stand it
+  - flavor: I know you planned it.
+- **Target Practice** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: drunken pastime of the cruel
+  - flavor: "I like to nail 'em right after they take the first bite. Whammo! Right between the eyes, granny!"
+- **Tedious TriAdic Truculence** _(Shade of the Devoured Emperor)_
+  - subtitle: touch them with terror
+  - flavor: They try to teach the truth through the training of threes.
+- **Thabbashite Barbeque** _(Holy Heist)_
+  - subtitle: you want a burger or a weenie? ...uhhhh
+  - flavor: The expedition grew silent when it was announced the Thabbashites would be serving finger foods.
+- **The Emperor Born** _(Seed Saga)_
+  - subtitle: inside every Gideon...
+  - flavor: ...there's a demonic dragon-despot waiting to be let out.
+- **Theological Theft** _(Holy Heist)_
+  - subtitle: that's how you steal a god
+  - flavor: Eldridge's therapist suggested he take something for his kleptomania, so he took a god.
+- **This, That, and the Other Thing** _(Shade of the Devoured Emperor)_
+  - subtitle: too much pot spoils the cook
+  - flavor: Ooh! one of these, and one of those... Yuck! that one is rotten.
+- **Thorough Sanitization** _(Seed 2, Seed Saga)_
+  - subtitle: clean it? oh yeah...i will "clean" it...
+- **Time to Retire** _(Shade of the Devoured Emperor)_
+  - subtitle: or just get shot
+  - flavor: I like work. It fascinates me. I sit and look at it for hours.
+- **Tiny Shiny** _(Seed 2, Seed Saga)_
+  - subtitle: i want it! i want it!
+- **Trip Wire** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: always good for a chuckle
+- **Unaccustomed Inspection** _(Ungodly Mess)_
+  - subtitle: staring into the god transport device isn't advised
+- **Unbearable Torture** _(Seed Saga)_
+  - subtitle: no one withstands the machine
+  - flavor: Do you hear that? That is the sound of ultimate suffering.
+- **Underwhelming Performance** _(Shade of the Devoured Emperor)_
+  - subtitle: the fix is in
+  - flavor: Sometimes the Mau have the right idea. (but don't tell them we said that!)
+- **Undesirable Intrusion** _(Ungodly Mess)_
+  - subtitle: your robot needs more tinkering
+- **Unexpected Codicil** _(Shade of the Devoured Emperor)_
+  - subtitle: cleverly concealed clause
+- **Unexpected Transformation** _(Holy Heist)_
+  - subtitle: this isn't even my final form
+  - flavor: Wait, maybe it is. Is it? Let me check. No yeah, sorry guys. This is totally my final form. My bad.
+- **Unnatural Alteration** _(2nd Edition)_
+  - subtitle: nom nom nom
+- **Unrelenting Ridicule** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: just ignore them
+  - flavor: They'll get tired of it in a few hundred years or so...
+- **Unscrupuls of Victory** _(Seed 3)_
+  - subtitle: i don't think that's a word
+- **Unstable Modification** _(Holy Heist; mutation)_
+  - subtitle: the leg-bone is connected to the... hip-bone?
+- **Unwise Encirclement** _(Ungodly Mess)_
+  - subtitle: game time
+- **Violating Ritual** _(Shade of the Devoured Emperor)_
+  - subtitle: this may sting a little
+- **Voidal Humour Redistribution** _(Holy Heist)_
+  - subtitle: top men toiling away
+  - flavor: One day, unless we find ourselves a source, Voidal Humour may run out. That's where the god comes in.
+- **Voidal Interference** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: shiggity shiggity shwa
+  - flavor: I would say to them, "You want ice cream cone?"...and both of them say "Yes."
+- **Voidal Perversion** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: keep that up and you're bound to go blind
+- **Voidal Poisoning** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: magical hazard
+- **Voidal Replication** _(1st Edition, Open Beta)_
+  - subtitle: corrupting magical experience
+- **Voidal Replication** _(2nd Edition)_
+  - subtitle: corrupting magical experience
+  - flavor: If you hit a copy of yourself, is it still considered assault?
+- **Voidal Webbing** _(1st Edition)_
+  - subtitle: vexing residue of quotidian ritual
+  - flavor: "Missing? What do you mean I went missing? I was right here the whole time!"
+- **Voidal Webbing** _(Open Beta)_
+  - subtitle: vexing residue of quotidian ritual
+- **Volatile Communion** _(Ungodly Mess)_
+  - subtitle: muelon tribeswomen: heartbreakers, the lot of 'em
+- **Walk the Plank** _(Seed, Seed Saga)_
+  - subtitle: lol w3 c4n7 sw1m!!!!!!1
+  - flavor: "Slather me parrot? Piss in me rum? Blastcakes an' barnacles! Into the brine, ye stinkin' blue scallywags!"
+- **Warehouse Raid** _(1st Edition, Open Beta)_
+  - subtitle: it was almost worth it
+- **Wary Reunion** _(Ungodly Mess)_
+  - subtitle: teamwork will get us there!
+- **Wasted Wickedness** _(Ungodly Mess)_
+  - subtitle: the god is gone
+  - flavor: "But the Seraphim remain..."
+- **Well Laid Plans** _(Seed Saga)_
+  - subtitle: responsible for the whole bloody thing
+  - flavor: "Now is the part where we throw our heads back in laughter."
+- **Whistleblower Policy** _(Ungodly Mess)_
+  - subtitle: maybe we should think about this!
+- **Will of a Living God** _(Holy Heist; mutation)_
+  - subtitle: to some a blessing, to others a curse
+- **Wily Circumvention** _(Ungodly Mess)_
+  - subtitle: have brains
+  - flavor: Can't travel.
+- **Words of Glory** _(Shade of the Devoured Emperor)_
+  - subtitle: virulent outbreak of violence
+  - flavor: "ahm.. from this day to the... ahm... ending of the world... ahm... or... ahm... tomorrow or something... we shall be remembered or... uh, Anyway... We few, we happy few, we band of brothers... errr... or cousins... or other relatives... Anyway... I am sure they will remember us if you guys die with me today... Are you in?"
+- **Writ of Reclamation** _(1st Edition Part 2, 2nd Edition)_
+  - subtitle: i don't care where you took it, it's still mine!
+  - flavor: "...and said thieves shall return the property to its original foundation, at their own expense."
+- **Yoink!** _(1st Edition, 2nd Edition, Open Beta)_
+  - subtitle: haugh haugh!
+- **Zenobia's Intervention** _(Ungodly Mess)_
+  - subtitle: "i cannot let these unlikely heroes be defeated"
+  - flavor: "Your destiny," Zenobia told them, "is to save this world from falling into total darkness like the Swords of Great Justice before." "Great Justice?" Pluck said. "More like Questionable Morality."
+- **Zenobia's Succor** _(Ungodly Mess)_
+  - subtitle: "i've been expecting you. you are our only hope."
+- **Zenobian Mechanics Explained** _(Ungodly Mess)_
+  - subtitle: "i will tell you how to kill a god"
+  - flavor: "The rest is up to you."
