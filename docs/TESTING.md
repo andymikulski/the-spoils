@@ -10,6 +10,7 @@ The engine is checked from four directions. Every suite runs under `npm test`
 | Per-card suite | `src/engine/__tests__/per-card/<set>.test.ts` | Every catalog card plays its main effect on a small mid-game board, with concrete picks and outcomes. |
 | Clause suite | `src/engine/__tests__/clauses/<batch>.test.ts` | Every printed clause of every card does what the printed text says. |
 | Rules suite | `src/engine/__tests__/rules/<batch>.test.ts` | Every numbered rule of the Comprehensive Rules v2.5 and every FAQ v2.0 ruling is followed, independent of any real card. |
+| Classic oracle | `src/engine/__tests__/oracle/classic-oracle.test.ts` | Classic 2-player games play out exactly as recorded: 31 seeded real-catalog games (see below). |
 
 Run one file while working on it:
 
@@ -43,6 +44,30 @@ node --import tsx --test src/engine/__tests__/battle.test.ts
   paired in the same test with a positive control that differs only in the
   condition under test. A bare throw check also passes on "It is not your
   priority", an unknown id or a `TypeError`.
+
+## Classic regression oracle
+
+`src/engine/__tests__/oracle/` pins classic 2-player behavior. Each of 31
+games builds two seeded decks from the real catalog (12 faction pairings,
+including The Knitting Coalition and The Union of Unextraordinary Miners) and
+plays them to completion with the random self-play bot in `support/autoplay.ts`.
+A run is reduced to a stable projection (the actions the bot performed, the
+public game-log lines, per-turn influence and zone-size snapshots, and the
+winner) that does not depend on `GameState`'s shape. The test replays every
+game and compares it with `classic-oracle.snapshots.json` (a sha256 per game
+and per turn, plus the full projection for four games), and on a mismatch names
+the first differing turn. Only game construction, the winner read and the
+per-turn counters touch engine API; they are the three `ADAPT HERE` functions in
+`classic-oracle.ts`.
+
+A failure means a classic game no longer plays out the same. Fix the engine
+unless the change is intended; if it is, re-record and review the JSON diff:
+
+```
+npx tsx scripts/record-classic-oracle.ts
+```
+
+Card or catalog changes (`data/cards.json`) also change the recording.
 
 ## Clause suite
 
