@@ -149,6 +149,36 @@ describe("turns counted ahead are re-counted after an elimination", () => {
   });
 });
 
+describe("an effect bound to an opponent who is gone", () => {
+  test("a delayed 'your opponent loses 1' bound to an eliminated player reaches nobody else", () => {
+    const LATER = character({
+      name: "Later",
+      behavior: {
+        abilities: [
+          {
+            id: "later",
+            type: "activated",
+            costs: [],
+            effects: [{ type: "scheduleEffect", when: "endOfTurn", effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }] }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      players: ["p1", "p2", "p3"].map(seat => ({ id: seat, faction: noDevelopFaction() })),
+      cards: [{ key: "l", def: LATER, owner: "p1" }]
+    });
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("l"), abilityId: "later", opponentId: "p2" });
+    resolvePendingResponses(engine);
+    engine.state.players.p2.influence = 0;
+    const p3Before = engine.state.players.p3.influence;
+    engine.perform({ type: "endTurn", playerId: "p1" });
+    resolvePendingResponses(engine);
+    assert.equal(isLiving(engine.state, "p2"), false);
+    assert.equal(engine.state.players.p3.influence, p3Before, "p3 is not hit in p2's place");
+  });
+});
+
 describe("classic two-player results", () => {
   test("a faction at 0 ends the game at once — nobody is merely eliminated", () => {
     const engine = game(["p1", "p2"]);

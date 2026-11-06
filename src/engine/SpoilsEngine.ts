@@ -24239,8 +24239,10 @@ export class SpoilsEngine {
    * game), or every opponent of its controller when nothing is bound.
    */
   private opponentIdsFor(context: Pick<ResolutionContext, "controllerId" | "opponentId">): PlayerId[] {
-    if (context.opponentId !== undefined && isLiving(this.state, context.opponentId)) {
-      return [context.opponentId];
+    if (context.opponentId !== undefined) {
+      // Bound to a player who has since left the game: the text still names
+      // them, so it reaches nobody else (D8).
+      return isLiving(this.state, context.opponentId) ? [context.opponentId] : [];
     }
     return opponentsOf(this.state, context.controllerId);
   }
@@ -24251,6 +24253,8 @@ export class SpoilsEngine {
    * cannot resolve while several opponents are unbound.
    */
   private soleOpponentFor(context: Pick<ResolutionContext, "controllerId" | "opponentId">): PlayerId {
+    // An eliminated bound opponent is still the one named; acting on them does nothing (their cards are gone).
+    if (context.opponentId !== undefined && !isLiving(this.state, context.opponentId)) return context.opponentId;
     const ids = this.opponentIdsFor(context);
     assert(
       ids.length === 1,
