@@ -17,6 +17,8 @@
 // table changes.
 
 import type { GameAction, GameFormat, GameResult, PlayerId, SpoilsEngine } from "../../../engine.js";
+import { handlePendingChoice, type AutoplayReport } from "./autoplay.js";
+import { mulberry32 } from "./prng.js";
 
 export type TableMode = "classic" | "ffa3" | "ffa4" | "showdown";
 
@@ -62,31 +64,55 @@ export function withBystanders(engine: SpoilsEngine, first: PlayerId, second: Pl
     return winners.length > 0 ? { outcome: "victory", winners } : { outcome: "draw", winners: [] };
   };
 
+  const botRandom = mulberry32(7);
+  const botReport = { pendingChoicesResolved: {} } as unknown as AutoplayReport;
+  let settling = false;
+
   const settle = (): void => {
     for (let guard = 0; guard < 400; guard++) {
       const state = engine.state;
       if (state.result) return;
       const pending = state.pendingChoice;
       if (pending?.kind === "chooseOpponent") {
+        // An original player names the other original player; an extra seat
+        // prefers another extra seat, keeping the original two out of it.
         const wanted = classicOpponent(pending.playerId);
-        const opponentId = wanted !== undefined && pending.candidates.includes(wanted) ? wanted : pending.candidates[0];
+        const opponentId =
+          wanted !== undefined && pending.candidates.includes(wanted)
+            ? wanted
+            : (pending.candidates.find(id => extra.has(id)) ?? pending.candidates[0]);
         real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "chooseOpponent", opponentId } });
         continue;
       }
-      if (pending && extra.has(pending.playerId)) {
+      // During an extra seat's turn — a turn the two-player game never has —
+      // every prompt is answered for whoever it asks.
+      if (pending && (extra.has(pending.playerId) || extra.has(state.activePlayerId))) {
+        // Payment offers are declined outright; anything else an extra seat
+        // must decide (its own start-of-turn prompts) is answered as the
+        // autoplay bot would.
         if (pending.kind === "anyPlayerMayPay" || pending.kind === "mayPay") {
           real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: pending.kind, pay: false } as never });
-          continue;
-        }
-        if (pending.kind === "orderTriggers") {
-          real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "orderTriggers", next: pending.triggers[0] } });
           continue;
         }
         if (pending.kind === "auctionBid") {
           real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "auctionBid", bid: 0 } });
           continue;
         }
-        return;
+        // An original player asked something during an extra seat's turn
+        // declines whatever it may, so its board stays as in the two-player game.
+        if (!extra.has(pending.playerId) && pending.kind === "chooserSelectsTarget" && pending.declaration.optional) {
+          real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "chooserSelectsTarget", selected: [] } });
+          continue;
+        }
+        const before = pending.id;
+        settling = true;
+        try {
+          handlePendingChoice(engine, pending, botRandom, botReport);
+        } finally {
+          settling = false;
+        }
+        if (engine.state.pendingChoice?.id === before) return;
+        continue;
       }
       if (pending) return;
       const window = state.responseWindow;
@@ -124,7 +150,7 @@ export function withBystanders(engine: SpoilsEngine, first: PlayerId, second: Pl
       if (opponentId !== undefined) next = { ...next, target: { type: "faction", playerId: opponentId } };
     }
     real(next);
-    settle();
+    if (!settling) settle();
   };
   return engine;
 }

@@ -601,7 +601,7 @@ function handleBattleChoice(
   engine.perform({ type: "assignBattleDamage", playerId: actingPlayerId, assignments });
 }
 
-function handlePendingChoice(
+export function handlePendingChoice(
   engine: SpoilsEngine,
   pending: PendingChoice,
   rng: () => number,
