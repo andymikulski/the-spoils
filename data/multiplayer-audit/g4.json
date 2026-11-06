@@ -72,7 +72,8 @@
       "Whenever an opponent forms an attacking party"
     ],
     "notes": "Trigger is battleStarted with battleRole defender: fires only when this card's controller is attacked. Printed 'Whenever an opponent forms an attacking party' also fires for a party aimed at a third player. The battleStarted event names no attacker, so E3 cannot bind from it either: needs the trigger keyed on an attacking party controlled by an opponent regardless of defender.",
-    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix"
+    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix",
+    "resolved": "Trigger condition is now not(battleRole attacker) ('an opponent forms an attacking party', whoever is attacked). Identical in classic. Test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Carnival Funhouse",
@@ -108,7 +109,8 @@
       "characters your opponents control lose 1 strength and 1 life"
     ],
     "notes": "forEach selector controller:opponent inside a resolving block would resolve to the bound opponent only; must hit every opponent's characters (wrap in forEachPlayer over opponents or use an all-opponents selector scope). Own-character boost unchanged.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. Only the opponents' sweep is fanned out."
   },
   {
     "name": "Confrontational Conflagration",
@@ -158,7 +160,8 @@
       "Each opponent destroys a character they control"
     ],
     "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Cunning Ruse",
@@ -207,7 +210,8 @@
       "each opponent loses 1 influence"
     ],
     "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent. The controller +1 stays outside.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. The controller's +1 stays outside."
   },
   {
     "name": "Escort Ally",
@@ -269,7 +273,8 @@
       "Any player may use this ability"
     ],
     "notes": "fc-boom modifyInfluence player:opponent must be wrapped in forEachPlayer over every opponent. CONTROL THE FLAME (usableBy anyPlayer, selector controller:self) is correct for any seat provided 'self'/'controller' = the activating player.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. The destroying player's own token / controller stays the cube's controller."
   },
   {
     "name": "Flesh Deliquesce",
@@ -379,7 +384,8 @@
       "each opponent must destroy a character they control"
     ],
     "notes": "Death trigger encodes a single chooserSelectsTarget with chooser/selector opponent; wrap in forEachPlayer over every opponent (each destroys one of their own).",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Illusionist's Trick",
@@ -404,7 +410,8 @@
       "each opponent loses 3 influence"
     ],
     "notes": "Wrap modifyInfluence player:opponent in forEachPlayer over every opponent.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Juice Sale!",
@@ -454,7 +461,8 @@
       "all opponents must destroy 4 non-staple cards they control"
     ],
     "notes": "Wrap the chooser/selector opponent effect in forEachPlayer over every opponent (each destroys 4 of their own non-staple cards).",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Man Shark",
@@ -479,7 +487,8 @@
       "If you control more characters than any opponent"
     ],
     "notes": "The continuous condition is count(self) > count(controller:\"opponent\"). With nothing bound, E4 makes it existential ('more than at least one opponent'), but printed 'more than any opponent' means more than every opponent. Re-encode as not(count(opponent) >= count(self)): the nested condition is then judged existentially under the not, which gives 'no opponent has as many'.",
-    "recheck": "unchanged (c); E4's existential reading is the wrong quantifier for 'more than any opponent'"
+    "recheck": "unchanged (c); E4's existential reading is the wrong quantifier for 'more than any opponent'",
+    "resolved": "Condition re-encoded as not(count(opponent characters) >= count(your characters)): under the existential reading of a condition about an opponent that is 'no opponent has as many', i.e. more than every opponent; identical in classic. Tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Master General",
@@ -569,7 +578,8 @@
       "Pick a card in an opponent's discard pile"
     ],
     "notes": "The 'hide' static compares count(owner:\"opponent\" discard) >= 10 (existential under E4: some opponent has 10+) but then applies cannotBePickedByOpponents to every opponent. Printed 'that player cannot pick this card' bars only the opponent whose own pile has 10+ cards: needs a restriction scoped to those players. FLEX binds one opponent (ok).",
-    "recheck": "unchanged (c); E4 fixes the count but the restriction still bars every opponent"
+    "recheck": "unchanged (c); E4 fixes the count but the restriction still bars every opponent",
+    "resolved": "Left: the static condition is now existential and correct for the count, but cannotBePickedByOpponents is judged only against the picker being a non-controller; barring just the opponent(s) whose own discard pile has 10+ needs a restriction scoped to the picking player's piles. Engine gap: a picker-conditional pick restriction."
   },
   {
     "name": "Opportunistic Pirate",
@@ -658,7 +668,8 @@
       "member of an opponent's attacking party"
     ],
     "notes": "The 'theirs' pick binds the block's opponent X (E2), but the party check uses isActivePlayer player:\"opponent\", i.e. only X's turn. Printed 'an opponent's attacking party' is any opponent's party (e.g. your own stolen character attacking for opponent Y). Replace with not(isActivePlayer controller). No ruling needed for the indefinite 'an opponent's'.",
-    "recheck": "changed from d because 'an opponent's attacking party' is indefinite (any non-controller party), so it needs a plain re-encoding, not a ruling"
+    "recheck": "changed from d because 'an opponent's attacking party' is indefinite (any non-controller party), so it needs a plain re-encoding, not a ruling",
+    "resolved": "isActivePlayer opponent replaced by not(isActivePlayer controller) ('an opponent's attacking party' is any party but yours). Test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Runic Junker",
@@ -710,7 +721,8 @@
       "destroy all characters your opponents control"
     ],
     "notes": "Both forEach selectors controller:opponent would hit only the bound opponent inside a block; both effects must cover every opponent (forEachPlayer over opponents, or all-opponents selector scope).",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. Both opponent sweeps (life loss; destroy) fanned out."
   },
   {
     "name": "Shriever General",
@@ -723,7 +735,8 @@
       "inflict 2 damage to that faction and pick a character that opponent controls"
     ],
     "notes": "The trigger's condition lostInfluenceThisTurn player:\"opponent\" is existential at trigger time (E4), but the later 'that faction' / 'that opponent' (factionOf opponent, selector controller:\"opponent\") resolve against the opponent the controller is asked for (no event names one), who need not be the one whose faction lost influence. Bind the qualifying opponent: prompt only among opponents who satisfy the condition, or move the check inside the block so it binds the same opponent.",
-    "recheck": "unchanged (c); binding does not tie the existential condition to the opponent used afterwards"
+    "recheck": "unchanged (c); binding does not tie the existential condition to the opponent used afterwards",
+    "resolved": "Re-encoded: the controller first picks a faction of an opponent that lost influence this turn (selector condition lostInfluenceThisTurn controllerOf candidate; nothing happens with no candidate, no prompt with one), then the usual 'you may' (yes/no, 2 damage to that faction, pick a character controlled by that faction's controller). Classic prompts are unchanged (mayPay, then the character pick). Tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Silencer",
@@ -761,7 +774,8 @@
       "for each influence gained this way"
     ],
     "notes": "Wrap modifyInfluence (player opponent, +1) in forEachPlayer over every opponent. The optional Micromajig token is 'for each influence gained' = number of opponents (currently creates exactly 1): token count must become the total influence gained (N-1), still one 'may' decision.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent); also the Micromajig count must follow total influence gained"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent); also the Micromajig count must follow total influence gained",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. The Micromajig count now follows the influence gained (one per opponent) via a bind variable; option label updated."
   },
   {
     "name": "Swindle",
@@ -774,7 +788,8 @@
       "Each opponent must attach a resource to their faction"
     ],
     "notes": "noResponse already covers all other players. The attach effect (chooser/selector owner:opponent, attachTo factionOf opponent) addresses one opponent; wrap in forEachPlayer over every opponent. Draw/discard stay outside the fan-out.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts. Only the attach is fanned out; draw/discard stay the controller's."
   },
   {
     "name": "Tedious TriAdic Truculence",
@@ -786,7 +801,8 @@
       "Any opponent may pay 3"
     ],
     "notes": "'Any opponent' is encoded as mayPay player:opponent (one bound opponent). Should be any-of-the-opponents may pay (anyPlayerMayPay restricted to opponents, first payer wins), not just the bound one. The picks and X effects need no change.",
-    "recheck": "unchanged (c): printed 'Any opponent may pay 3' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")"
+    "recheck": "unchanged (c): printed 'Any opponent may pay 3' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")",
+    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Tempered Rage",
@@ -835,7 +851,8 @@
       "inflict X damage to each opponent's faction"
     ],
     "notes": "The forEach selector faction controller:opponent in a resolving block resolves to the bound opponent only; must damage every opponent's faction (forEachPlayer over opponents or all-opponents selector scope).",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "The Lugubrian Council of Quotidian Affairs",
@@ -934,7 +951,8 @@
       "each opponent may detach up to 3 resources from their faction"
     ],
     "notes": "Wrap the chooserSelectsTarget (chooser/selector opponent) in forEachPlayer over every opponent; each opponent decides separately.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Violating Ritual",
@@ -1000,7 +1018,8 @@
       "the total strength of all characters your opponents control"
     ],
     "notes": "sumStat selector controller:opponent inside a block would sum only the bound opponent's characters; X must sum over every opponent (e.g. accumulate across forEachPlayer over opponents, or an all-opponents selector scope). Damage to all characters unchanged.",
-    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)"
+    "recheck": "unchanged (b): printed all/each opponent still needs forEachPlayer players:\"opponents\" (engine E1 exists; card data still single-opponent)",
+    "resolved": "X now sums the strength of every opponent's characters (bind variable accumulated over forEachPlayer opponents). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Yenassa Shipping, LLP",

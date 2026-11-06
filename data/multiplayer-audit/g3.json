@@ -21,7 +21,8 @@
       "Any opponent may pay 1"
     ],
     "notes": "mayPay player:\"opponent\" offers the payment only to the one bound opponent. 'Any opponent' means each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents (offer in seat order, first payer pays; the controller is never offered). Also settle who draws ('they' = the payer) since the encoding draws for the controller.",
-    "recheck": "unchanged (c): printed 'Any opponent may pay 1' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")"
+    "recheck": "unchanged (c): printed 'Any opponent may pay 1' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")",
+    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Akashic Coin",
@@ -117,7 +118,8 @@
       "All opponents discard a card"
     ],
     "notes": "Printings differ. Seed a037259c 'Your opponent discards a card' and Seed Saga b9677697 / Ungodly Mess 2bf6045a 'An opponent discards a card' work by binding (a). Decade of Deckadence 3bd6878a prints 'All opponents discard a card' but its recur ability encodes one chooser:\"opponent\" discard: wrap in forEachPlayer players:\"opponents\" (E1) for that printing only.",
-    "recheck": "printings differ: 3bd6878a (Decade of Deckadence) needs fan-out (b); a037259c, b9677697, 2bf6045a are a"
+    "recheck": "printings differ: 3bd6878a (Decade of Deckadence) needs fan-out (b); a037259c, b9677697, 2bf6045a are a",
+    "resolved": "Decade of Deckadence 3bd6878a: RECUR's discard wrapped in forEachPlayer opponents (all opponents discard). The Seed / Seed Saga / Ungodly Mess printings (a) are unchanged. Test covers 3bd6878a (3p + 2p) and Seed (binding)."
   },
   {
     "name": "Caboodling Gladhander",
@@ -173,7 +175,8 @@
       "their discard pile"
     ],
     "notes": "onPlay picks a faction target 'opp' (owner:\"opponent\"), which binds the play block's opponent (E2), but the printed 'search that player's deck' is in a separate cardEnteredPlay trigger. Its context inherits the picked selection, not opponentId, and nothing on the entering event names an opponent, so with 3+ players the engine would prompt chooseOpponent and the search/shuffle could hit a different opponent than the picked one. Make the trigger use ownerOf the picked faction (or persist the play's opponentId to the entry trigger).",
-    "recheck": "unchanged (c); binding settles the pick but not the ETB trigger's opponent"
+    "recheck": "unchanged (c); binding settles the pick but not the ETB trigger's opponent",
+    "resolved": "The entry trigger's search and shuffle now use ownerOf the faction picked as part of the cost (targetOwnedBy condition on the deck pick, shuffleDeck ownerOf) instead of 'opponent', so no chooseOpponent prompt and no other opponent's deck. 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Chum, the Ugliest Sarume",
@@ -373,7 +376,8 @@
     ],
     "notes": "scheduleEffect when:\"startOfOpponentNextTurn\" still fires 'the turn right after scheduling, if an opponent's' (fireScheduledEffects), not the bound opponent's next turn (tracked in the plan's Known follow-ups). Ruling stands: bind the opponent chosen for the casting block and fire at the start of that opponent's next turn; drop if they are eliminated (D8).",
     "ruling": "Per D4, binds the opponent chosen for the casting block (prompted only if more than one candidate) and the delayed effect fires at the start of that opponent's next turn; if that opponent is eliminated first it is dropped (D8).",
-    "recheck": "unchanged (d); binding exists but the delayed-effect scheduler does not use it yet"
+    "recheck": "unchanged (d); binding exists but the delayed-effect scheduler does not use it yet",
+    "resolved": "Left: the ruling (bind the casting block's opponent; fire at the start of that opponent's next turn; drop if eliminated) is not representable. scheduleEffect only offers startOfNextTurn (controller), startOfOpponentNextTurn (the turn right after scheduling, if an opponent's) and startOfTheNextTurn; fireScheduledEffects ignores the bound opponent. Needs an engine change (a scheduled effect keyed on its bound opponent's next turn) -- tracked in the plan's Known follow-ups."
   },
   {
     "name": "Flagitious Denunciator",
@@ -401,7 +405,8 @@
       "Each opponent discards 2 cards"
     ],
     "notes": "Check Out encodes one opponent (chooserSelectsTarget chooser/selector \"opponent\", bound). Printed 'Each opponent discards 2 cards': wrap in forEachPlayer players:\"opponents\" (E1 now exists in the engine) with chooser/selector rebound to the iterated player.",
-    "recheck": "unchanged (b); engine E1 opponents scope exists, card data still single-opponent"
+    "recheck": "unchanged (b); engine E1 opponents scope exists, card data still single-opponent",
+    "resolved": "Wrapped in forEachPlayer players:\"opponents\" (each opponent resolved in turn, opponent bound per iteration). 3-player + 2-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Forbidden Knowledge",
@@ -581,7 +586,8 @@
       "where Y is the number of characters that player controls minus the number of characters you control"
     ],
     "notes": "Printings differ. Seed 48c4d2f0 ('Pick X characters ... characters your opponent controls') is encoded as any X characters with Y = count(controller:\"opponent\" characters): works by binding (a). Seed Saga da25a463 prints 'Pick a player. Pick X characters that player controls ... Y ... that player controls' and encodes a free faction pick 'pl' (any faction) and characters controlled by ownerOf(pl), but Y still counts controller:\"opponent\" characters, which is the separately bound opponent, not the picked player. Re-encode Y as the count of characters controlled by ownerOf(pl) (or make the faction pick owner:\"opponent\" so E2 binds it, losing the 'pick yourself' branch).",
-    "recheck": "printings differ: da25a463 (Seed Saga) needs re-encoding (c) because the bound opponent can differ from the picked player; 48c4d2f0 (Seed) is a"
+    "recheck": "printings differ: da25a463 (Seed Saga) needs re-encoding (c) because the bound opponent can differ from the picked player; 48c4d2f0 (Seed) is a",
+    "resolved": "Seed Saga da25a463: Y now counts the characters controlled by ownerOf the picked faction (targetControlledBy per candidate) instead of 'opponent'; Seed 48c4d2f0 (a) unchanged. 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Master Mud Whisperer",
@@ -674,7 +680,8 @@
       "Any opponent may pay 2"
     ],
     "notes": "mayPay player:\"opponent\" asks only the bound opponent. Printed 'Any opponent may pay 2' = each opponent in turn may pay: re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it); the elseEffects run only if all decline, a payer terminates the card.",
-    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay"
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay",
+    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "P3pp3r 0f 1n54n17y",
@@ -772,7 +779,8 @@
       "X is number of resources that player controls"
     ],
     "notes": "The picked player is any faction (fac) but the damage amount counts controller:\"opponent\" resources, i.e. the separately bound opponent, while the damage goes to the picked faction. Printed 'Pick a player. X is number of resources that player controls': re-encode X as the count of resources controlled by ownerOf(fac). (Making the pick owner:\"opponent\" would bind via E2 but drop picking yourself, which the printed text allows.)",
-    "recheck": "unchanged (c); binding does not tie the free faction pick to the opponent used in the count"
+    "recheck": "unchanged (c); binding does not tie the free faction pick to the opponent used in the count",
+    "resolved": "X now counts the resources controlled by ownerOf the picked faction instead of 'opponent'. 3-player test in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Rigged Tables",
@@ -816,7 +824,8 @@
       "When an opponent attacks"
     ],
     "notes": "Encoded as battleStarted + battleRole defender ('you are attacked'). Printed 'If your opponent attacks' / 'When an opponent attacks' also covers an opponent attacking someone else in 3+ players (and Showdown, where Heroes attack each other). E3 binds opponentId to an attacker's player but cannot repair the condition: change it to 'attacker is controlled by an opponent'.",
-    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix"
+    "recheck": "unchanged (c); the defender-role condition is a 2-player proxy that binding does not fix",
+    "resolved": "Both printings: the trigger condition is now not(battleRole attacker) ('an opponent attacks', whoever is attacked) instead of battleRole defender. Identical in classic (the attacker is then the opponent). Tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Shadowy Mugger",
@@ -940,7 +949,8 @@
       "Look at an opponent's hand"
     ],
     "notes": "'Any opponent may pay 2' is encoded as mayPay player:\"opponent\" (bound only): re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it). The later 'Look at an opponent's hand ... That player discards' sentence is fine with the bound opponent.",
-    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay"
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay",
+    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts. The later 'look at an opponent's hand' pick now spans every opponent's hand (nothing binds one opponent any more); no chooseOpponent effect exists to restore that."
   },
   {
     "name": "Thabbashite Urchin",
@@ -1036,7 +1046,8 @@
     ],
     "notes": "Printings differ. The use condition (count(opponent) > count(self)) now works by binding: the activation names one opponent who must individually control more characters (E4 / opponentId). Seed 8c111617 then prints an unconditional 'cannot be blocked', which the encoded grantKeyword cannotBeBlocked matches (a). Seed Saga 8bed01de prints 'cannot be blocked by those players': the encoding is still unconditional, so it needs a restriction scoped to the opponent(s) who qualify.",
     "ruling": "For Seed Saga 8bed01de: the ability's block binds one opponent who must individually control more characters than you (unavailable if none qualifies); this card cannot be blocked by that opponent's characters this turn and can still be blocked by others. Seed 8c111617 stays as printed (unblockable by everyone).",
-    "recheck": "printings differ: 8c111617 (Seed) is a; 8bed01de (Seed Saga) is still d (needs a scoped cannotBeBlockedBy restriction and a ruling on 'those players'); the condition itself is fixed by binding/E4"
+    "recheck": "printings differ: 8c111617 (Seed) is a; 8bed01de (Seed Saga) is still d (needs a scoped cannotBeBlockedBy restriction and a ruling on 'those players'); the condition itself is fixed by binding/E4",
+    "resolved": "Seed 8c111617: unchanged (a). Seed Saga 8bed01de left: the ruling (cannot be blocked by the opponent bound by the use condition, still blockable by others) needs a restriction scoped to a blocking player; the engine has only the cannotBeBlocked keyword and restrictBlockers (party-size / speed), so the data still grants unconditional unblockability. Engine gap: a per-player 'cannot be blocked by <player>' grant."
   },
   {
     "name": "Unloyal Necromorph",
@@ -1049,7 +1060,8 @@
       "that player takes control of this card"
     ],
     "notes": "Replacement uses chooser:\"opponent\" (one bound opponent). Printed 'any opponent may pay 2 ... that player takes control' needs each opponent offered in seat order (anyPlayerMayPay players:\"opponents\", engine E5 exists); the payer becomes the new controller (takeControl to that payer, not the controller ref).",
-    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent"
+    "recheck": "unchanged (c); engine E5 exists, card data still single-opponent",
+    "resolved": "Left: the replacement's chooser resolves 'opponent' to one player (the first) when the card is destroyed, so only that opponent is ever offered the payment; offering each opponent in seat order and giving control to the payer needs an engine change (an optional replacement whose chooser fans out like anyPlayerMayPay). Data unchanged."
   },
   {
     "name": "Watchtower",
