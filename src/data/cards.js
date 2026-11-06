@@ -53111,25 +53111,122 @@ export default [
               ]
             },
             {
-              "type": "mayPay",
-              "player": "opponent",
-              "costs": [
-                {
-                  "type": "payResources",
-                  "amount": 1
-                }
-              ],
+              "type": "bind",
+              "id": "anyOpponentPaid",
+              "value": 0
+            },
+            {
+              "type": "bind",
+              "id": "opponentsToAsk",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "draw",
-                  "player": "controller",
-                  "amount": 1
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      1
+                    ]
+                  }
                 }
-              ],
-              "elseEffects": [
+              ]
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
                 {
-                  "type": "terminate",
-                  "scope": "respondedItem"
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      -1
+                    ]
+                  }
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "anyOpponentPaid"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [
+                        {
+                          "type": "payResources",
+                          "amount": 1
+                        }
+                      ],
+                      "effects": [
+                        {
+                          "type": "bind",
+                          "id": "anyOpponentPaid",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "opponentsToAsk"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "if",
+                      "condition": {
+                        "type": "numberCompare",
+                        "left": {
+                          "type": "variable",
+                          "id": "anyOpponentPaid"
+                        },
+                        "operator": "=",
+                        "right": 0
+                      },
+                      "effects": [
+                        {
+                          "type": "terminate",
+                          "scope": "respondedItem"
+                        }
+                      ],
+                      "elseEffects": [
+                        {
+                          "type": "draw",
+                          "player": "controller",
+                          "amount": 1
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
             }
@@ -53810,28 +53907,34 @@ export default [
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "od",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand"
-                },
-                "count": 2
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "od",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "od",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "hand"
+                    },
+                    "count": 2
+                  },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "od",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -54386,44 +54489,141 @@ export default [
           ],
           "effects": [
             {
-              "type": "mayPay",
-              "player": "opponent",
-              "costs": [
+              "type": "bind",
+              "id": "anyOpponentPaid",
+              "value": 0
+            },
+            {
+              "type": "bind",
+              "id": "opponentsToAsk",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
                 {
-                  "type": "payResources",
-                  "amount": 2
-                }
-              ],
-              "effects": [],
-              "elseEffects": [
-                {
-                  "type": "forEach",
-                  "selector": {
-                    "zone": "play",
-                    "type": "character",
-                    "conditions": [
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
                       {
-                        "type": "cardNameEquals",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
-                        },
-                        "other": {
-                          "type": "selected",
-                          "id": "c"
-                        }
-                      }
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      1
                     ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      -1
+                    ]
+                  }
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "anyOpponentPaid"
+                    },
+                    "operator": "=",
+                    "right": 0
                   },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [
+                        {
+                          "type": "payResources",
+                          "amount": 2
+                        }
+                      ],
+                      "effects": [
+                        {
+                          "type": "bind",
+                          "id": "anyOpponentPaid",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "opponentsToAsk"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "if",
+                      "condition": {
+                        "type": "numberCompare",
+                        "left": {
+                          "type": "variable",
+                          "id": "anyOpponentPaid"
+                        },
+                        "operator": "=",
+                        "right": 0
                       },
-                      "to": "deck",
-                      "position": "bottom"
+                      "effects": [
+                        {
+                          "type": "forEach",
+                          "selector": {
+                            "zone": "play",
+                            "type": "character",
+                            "conditions": [
+                              {
+                                "type": "cardNameEquals",
+                                "target": {
+                                  "type": "selected",
+                                  "id": "__candidate"
+                                },
+                                "other": {
+                                  "type": "selected",
+                                  "id": "c"
+                                }
+                              }
+                            ]
+                          },
+                          "effects": [
+                            {
+                              "type": "moveCard",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "to": "deck",
+                              "position": "bottom"
+                            }
+                          ]
+                        }
+                      ],
+                      "elseEffects": []
                     }
                   ]
                 }
@@ -55168,62 +55368,159 @@ export default [
           ],
           "effects": [
             {
-              "type": "mayPay",
-              "player": "opponent",
-              "costs": [
-                {
-                  "type": "payResources",
-                  "amount": 2
-                }
-              ],
+              "type": "bind",
+              "id": "anyOpponentPaid",
+              "value": 0
+            },
+            {
+              "type": "bind",
+              "id": "opponentsToAsk",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "moveCard",
-                  "target": "source",
-                  "to": "hand"
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      1
+                    ]
+                  }
                 }
-              ],
-              "elseEffects": [
+              ]
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
                 {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "picked"
-                  },
-                  "to": "hand"
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      -1
+                    ]
+                  }
                 },
                 {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "d",
-                    "selector": {
-                      "owner": "opponent",
-                      "zone": "hand",
-                      "conditions": [
-                        {
-                          "type": "not",
-                          "condition": {
-                            "type": "cardTypeIs",
-                            "target": {
-                              "type": "selected",
-                              "id": "__candidate"
-                            },
-                            "cardType": "resource"
-                          }
-                        }
-                      ]
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "anyOpponentPaid"
                     },
-                    "count": 1
+                    "operator": "=",
+                    "right": 0
                   },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "d"
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [
+                        {
+                          "type": "payResources",
+                          "amount": 2
+                        }
+                      ],
+                      "effects": [
+                        {
+                          "type": "bind",
+                          "id": "anyOpponentPaid",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "opponentsToAsk"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "if",
+                      "condition": {
+                        "type": "numberCompare",
+                        "left": {
+                          "type": "variable",
+                          "id": "anyOpponentPaid"
+                        },
+                        "operator": "=",
+                        "right": 0
                       },
-                      "to": "discard"
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "picked"
+                          },
+                          "to": "hand"
+                        },
+                        {
+                          "type": "chooserSelectsTarget",
+                          "chooser": "controller",
+                          "declaration": {
+                            "id": "d",
+                            "selector": {
+                              "owner": "opponent",
+                              "zone": "hand",
+                              "conditions": [
+                                {
+                                  "type": "not",
+                                  "condition": {
+                                    "type": "cardTypeIs",
+                                    "target": {
+                                      "type": "selected",
+                                      "id": "__candidate"
+                                    },
+                                    "cardType": "resource"
+                                  }
+                                }
+                              ]
+                            },
+                            "count": 1
+                          },
+                          "effects": [
+                            {
+                              "type": "moveCard",
+                              "target": {
+                                "type": "selected",
+                                "id": "d"
+                              },
+                              "to": "discard"
+                            }
+                          ]
+                        }
+                      ],
+                      "elseEffects": [
+                        {
+                          "type": "moveCard",
+                          "target": "source",
+                          "to": "hand"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -61206,7 +61503,6 @@ export default [
                   "declaration": {
                     "id": "loot",
                     "selector": {
-                      "owner": "opponent",
                       "zone": "deck",
                       "conditions": [
                         {
@@ -61218,6 +61514,20 @@ export default [
                               "id": "__candidate"
                             },
                             "cardType": "resource"
+                          }
+                        },
+                        {
+                          "type": "targetOwnedBy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "player": {
+                            "type": "ownerOf",
+                            "target": {
+                              "type": "selected",
+                              "id": "opp"
+                            }
                           }
                         }
                       ]
@@ -61270,7 +61580,13 @@ export default [
                 },
                 {
                   "type": "shuffleDeck",
-                  "player": "opponent"
+                  "player": {
+                    "type": "ownerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "opp"
+                    }
+                  }
                 }
               ]
             }
@@ -66113,9 +66429,24 @@ export default [
                     {
                       "type": "count",
                       "selector": {
-                        "controller": "opponent",
                         "zone": "play",
-                        "type": "resource"
+                        "type": "resource",
+                        "conditions": [
+                          {
+                            "type": "targetControlledBy",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            },
+                            "player": {
+                              "type": "ownerOf",
+                              "target": {
+                                "type": "selected",
+                                "id": "fac"
+                              }
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -92826,8 +93157,11 @@ export default [
           "type": "triggered",
           "event": "battleStarted",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "not",
+            "condition": {
+              "type": "battleRole",
+              "role": "attacker"
+            }
           },
           "effects": [
             {
@@ -136364,8 +136698,11 @@ export default [
           "type": "triggered",
           "event": "battleStarted",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "not",
+            "condition": {
+              "type": "battleRole",
+              "role": "attacker"
+            }
           },
           "effects": [
             {
@@ -149039,8 +149376,23 @@ export default [
                     {
                       "type": "count",
                       "selector": {
-                        "controller": "opponent",
-                        "type": "character"
+                        "type": "character",
+                        "conditions": [
+                          {
+                            "type": "targetControlledBy",
+                            "target": {
+                              "type": "selected",
+                              "id": "__candidate"
+                            },
+                            "player": {
+                              "type": "ownerOf",
+                              "target": {
+                                "type": "selected",
+                                "id": "pl"
+                              }
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -154245,46 +154597,143 @@ export default [
           ],
           "effects": [
             {
-              "type": "mayPay",
-              "player": "opponent",
-              "costs": [
-                {
-                  "type": "payResources",
-                  "amount": 3
-                }
-              ],
+              "type": "bind",
+              "id": "anyOpponentPaid",
+              "value": 0
+            },
+            {
+              "type": "bind",
+              "id": "opponentsToAsk",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "lookAndReorder",
-                  "player": "controller",
-                  "chooser": "controller",
-                  "count": 3
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      1
+                    ]
+                  }
                 }
-              ],
-              "elseEffects": [
+              ]
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "picks",
+                  "type": "bind",
+                  "id": "opponentsToAsk",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "opponentsToAsk"
+                      },
+                      -1
+                    ]
+                  }
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "anyOpponentPaid"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [
+                        {
+                          "type": "payResources",
+                          "amount": 3
+                        }
+                      ],
+                      "effects": [
+                        {
+                          "type": "bind",
+                          "id": "anyOpponentPaid",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "opponentsToAsk"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
                   "effects": [
                     {
                       "type": "if",
                       "condition": {
-                        "type": "statCompare",
-                        "target": {
-                          "type": "selected",
-                          "id": "__candidate"
+                        "type": "numberCompare",
+                        "left": {
+                          "type": "variable",
+                          "id": "anyOpponentPaid"
                         },
-                        "stat": "strength",
-                        "operator": "<=",
-                        "value": 3
+                        "operator": "=",
+                        "right": 0
                       },
                       "effects": [
                         {
-                          "type": "destroy",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          }
+                          "type": "forEach",
+                          "selected": "picks",
+                          "effects": [
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "statCompare",
+                                "target": {
+                                  "type": "selected",
+                                  "id": "__candidate"
+                                },
+                                "stat": "strength",
+                                "operator": "<=",
+                                "value": 3
+                              },
+                              "effects": [
+                                {
+                                  "type": "destroy",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "elseEffects": [
+                        {
+                          "type": "lookAndReorder",
+                          "player": "controller",
+                          "chooser": "controller",
+                          "count": 3
                         }
                       ]
                     }
@@ -154874,30 +155323,36 @@ export default [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "det",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": true
-                },
-                "count": 3,
-                "optional": true
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "det",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "det",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": true
+                    },
+                    "count": 3,
+                    "optional": true
+                  },
                   "effects": [
                     {
-                      "type": "detach",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "det",
+                      "effects": [
+                        {
+                          "type": "detach",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -156080,24 +156535,30 @@ export default [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "opDestroy",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "character"
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "destroy",
-                  "target": {
-                    "type": "selected",
-                    "id": "opDestroy"
-                  }
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "opDestroy",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "play",
+                      "type": "character"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": {
+                        "type": "selected",
+                        "id": "opDestroy"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -157233,29 +157694,35 @@ export default [
           "type": "activated",
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "r",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": false
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "attachTo",
-                  "target": {
-                    "type": "selected",
-                    "id": "r"
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "r",
+                    "selector": {
+                      "owner": "opponent",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": false
+                    },
+                    "count": 1
                   },
-                  "to": {
-                    "type": "factionOf",
-                    "player": "opponent"
-                  }
+                  "effects": [
+                    {
+                      "type": "attachTo",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "to": {
+                        "type": "factionOf",
+                        "player": "opponent"
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -159543,8 +160010,11 @@ export default [
                 "type": "and",
                 "conditions": [
                   {
-                    "type": "isActivePlayer",
-                    "player": "opponent"
+                    "type": "not",
+                    "condition": {
+                      "type": "isActivePlayer",
+                      "player": "controller"
+                    }
                   },
                   {
                     "type": "or",
@@ -160080,9 +160550,34 @@ export default [
           },
           "effects": [
             {
-              "type": "modifyInfluence",
-              "player": "opponent",
-              "amount": 1
+              "type": "bind",
+              "id": "gained",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "modifyInfluence",
+                  "player": "opponent",
+                  "amount": 1
+                },
+                {
+                  "type": "bind",
+                  "id": "gained",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "gained"
+                      },
+                      1
+                    ]
+                  }
+                }
+              ]
             },
             {
               "type": "chooserSelectsOption",
@@ -160093,12 +160588,15 @@ export default [
                   "effects": []
                 },
                 {
-                  "label": "Put a Micromajig token into play",
+                  "label": "Put Micromajig tokens into play",
                   "effects": [
                     {
                       "type": "createTokens",
                       "controller": "controller",
-                      "count": 1,
+                      "count": {
+                        "type": "variable",
+                        "id": "gained"
+                      },
                       "token": {
                         "name": "Micromajig",
                         "cardType": "character",
@@ -161221,38 +161719,44 @@ export default [
               ]
             },
             {
-              "type": "forEach",
-              "selector": {
-                "controller": "opponent",
-                "zone": "play",
-                "type": "character"
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "createModifier",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
+                  "type": "forEach",
+                  "selector": {
+                    "controller": "opponent",
+                    "zone": "play",
+                    "type": "character"
                   },
-                  "stat": "strength",
-                  "operation": "add",
-                  "value": -1,
-                  "duration": {
-                    "type": "untilEndOfTurn"
-                  }
-                },
-                {
-                  "type": "createModifier",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
-                  },
-                  "stat": "life",
-                  "operation": "add",
-                  "value": -1,
-                  "duration": {
-                    "type": "untilEndOfTurn"
-                  }
+                  "effects": [
+                    {
+                      "type": "createModifier",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "stat": "strength",
+                      "operation": "add",
+                      "value": -1,
+                      "duration": {
+                        "type": "untilEndOfTurn"
+                      }
+                    },
+                    {
+                      "type": "createModifier",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "stat": "life",
+                      "operation": "add",
+                      "value": -1,
+                      "duration": {
+                        "type": "untilEndOfTurn"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -161706,22 +162210,25 @@ export default [
           "id": "maw-hide",
           "type": "continuous",
           "condition": {
-            "type": "numberCompare",
-            "left": {
-              "type": "count",
-              "selector": {
-                "controller": "self",
-                "zone": "play",
-                "type": "character"
-              }
-            },
-            "operator": ">",
-            "right": {
-              "type": "count",
-              "selector": {
-                "controller": "opponent",
-                "zone": "play",
-                "type": "character"
+            "type": "not",
+            "condition": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "zone": "play",
+                  "type": "character"
+                }
+              },
+              "operator": ">=",
+              "right": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "zone": "play",
+                  "type": "character"
+                }
               }
             }
           },
@@ -162181,25 +162688,31 @@ export default [
                   },
                   "effects": [
                     {
-                      "type": "forEach",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "play",
-                        "type": "character"
-                      },
+                      "type": "forEachPlayer",
+                      "players": "opponents",
                       "effects": [
                         {
-                          "type": "createModifier",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
+                          "type": "forEach",
+                          "selector": {
+                            "controller": "opponent",
+                            "zone": "play",
+                            "type": "character"
                           },
-                          "stat": "life",
-                          "operation": "add",
-                          "value": -1,
-                          "duration": {
-                            "type": "permanent"
-                          }
+                          "effects": [
+                            {
+                              "type": "createModifier",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "stat": "life",
+                              "operation": "add",
+                              "value": -1,
+                              "duration": {
+                                "type": "permanent"
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -162258,19 +162771,25 @@ export default [
                       "target": "attachedTo"
                     },
                     {
-                      "type": "forEach",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "play",
-                        "type": "character"
-                      },
+                      "type": "forEachPlayer",
+                      "players": "opponents",
                       "effects": [
                         {
-                          "type": "destroy",
-                          "target": {
-                            "type": "selected",
-                            "id": "__candidate"
-                          }
+                          "type": "forEach",
+                          "selector": {
+                            "controller": "opponent",
+                            "zone": "play",
+                            "type": "character"
+                          },
+                          "effects": [
+                            {
+                              "type": "destroy",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
+                            }
+                          ]
                         }
                       ]
                     }
@@ -164554,9 +165073,15 @@ export default [
               "target": "source"
             },
             {
-              "type": "modifyInfluence",
-              "player": "opponent",
-              "amount": -6
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "modifyInfluence",
+                  "player": "opponent",
+                  "amount": -6
+                }
+              ]
             }
           ]
         },
@@ -165900,15 +166425,35 @@ export default [
             {
               "type": "bind",
               "id": "x",
-              "value": {
-                "type": "sumStat",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "character"
-                },
-                "stat": "strength"
-              }
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "bind",
+                  "id": "x",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "x"
+                      },
+                      {
+                        "type": "sumStat",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "play",
+                          "type": "character"
+                        },
+                        "stat": "strength"
+                      }
+                    ]
+                  }
+                }
+              ]
             },
             {
               "type": "forEach",
@@ -175604,8 +176149,11 @@ export default [
           "type": "triggered",
           "event": "battleStarted",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "not",
+            "condition": {
+              "type": "battleRole",
+              "role": "attacker"
+            }
           },
           "effects": [
             {
@@ -179524,23 +180072,29 @@ export default [
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "k",
-                "selector": {
-                  "type": "character",
-                  "controller": "opponent"
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "destroy",
-                  "target": {
-                    "type": "selected",
-                    "id": "k"
-                  }
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "k",
+                    "selector": {
+                      "type": "character",
+                      "controller": "opponent"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": {
+                        "type": "selected",
+                        "id": "k"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -181813,22 +182367,28 @@ export default [
                       "label": "Damage each opposing faction",
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selector": {
-                            "type": "faction",
-                            "controller": "opponent"
-                          },
+                          "type": "forEachPlayer",
+                          "players": "opponents",
                           "effects": [
                             {
-                              "type": "dealDamage",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
+                              "type": "forEach",
+                              "selector": {
+                                "type": "faction",
+                                "controller": "opponent"
                               },
-                              "amount": {
-                                "type": "variable",
-                                "id": "x"
-                              }
+                              "effects": [
+                                {
+                                  "type": "dealDamage",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "amount": {
+                                    "type": "variable",
+                                    "id": "x"
+                                  }
+                                }
+                              ]
                             }
                           ]
                         }
@@ -184515,29 +185075,35 @@ export default [
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "__od",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "hand"
-                },
-                "count": 1,
-                "optional": false
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "__od",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "__od",
+                    "selector": {
+                      "owner": "opponent",
+                      "zone": "hand"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "__od",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -186204,9 +186770,15 @@ export default [
               "amount": 1
             },
             {
-              "type": "modifyInfluence",
-              "player": "opponent",
-              "amount": -1
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "modifyInfluence",
+                  "player": "opponent",
+                  "amount": -1
+                }
+              ]
             }
           ]
         }
@@ -188113,9 +188685,15 @@ export default [
           },
           "effects": [
             {
-              "type": "modifyInfluence",
-              "player": "opponent",
-              "amount": -3
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "modifyInfluence",
+                  "player": "opponent",
+                  "amount": -3
+                }
+              ]
             }
           ]
         }
@@ -188697,28 +189275,34 @@ export default [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "lose",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "staple": false
-                },
-                "count": 4
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "lose",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "lose",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "play",
+                      "staple": false
+                    },
+                    "count": 4
+                  },
                   "effects": [
                     {
-                      "type": "destroy",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "lose",
+                      "effects": [
+                        {
+                          "type": "destroy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -192936,51 +193520,83 @@ export default [
           "type": "triggered",
           "event": "cardEnteredPlay",
           "condition": {
-            "type": "and",
-            "conditions": [
-              {
-                "type": "sourceIsEventCard"
-              },
-              {
-                "type": "lostInfluenceThisTurn",
-                "player": "opponent"
-              }
-            ]
+            "type": "sourceIsEventCard"
           },
           "effects": [
             {
-              "type": "mayPay",
-              "player": "controller",
-              "costs": [],
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "autoWhenForced": true,
+              "declaration": {
+                "id": "f",
+                "selector": {
+                  "type": "faction",
+                  "controller": "opponent",
+                  "conditions": [
+                    {
+                      "type": "lostInfluenceThisTurn",
+                      "player": {
+                        "type": "controllerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "count": 1
+              },
               "effects": [
                 {
-                  "type": "dealDamage",
-                  "target": {
-                    "type": "factionOf",
-                    "player": "opponent"
-                  },
-                  "amount": 2
-                },
-                {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "controller",
-                  "declaration": {
-                    "id": "c",
-                    "selector": {
-                      "controller": "opponent",
-                      "zone": "play",
-                      "type": "character"
-                    },
-                    "count": 1
-                  },
+                  "type": "mayPay",
+                  "player": "controller",
+                  "costs": [],
                   "effects": [
                     {
                       "type": "dealDamage",
                       "target": {
                         "type": "selected",
-                        "id": "c"
+                        "id": "f"
                       },
                       "amount": 2
+                    },
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "controller",
+                      "declaration": {
+                        "id": "c",
+                        "selector": {
+                          "type": "character",
+                          "conditions": [
+                            {
+                              "type": "targetControlledBy",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "player": {
+                                "type": "controllerOf",
+                                "target": {
+                                  "type": "selected",
+                                  "id": "f"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "count": 1
+                      },
+                      "effects": [
+                        {
+                          "type": "dealDamage",
+                          "target": {
+                            "type": "selected",
+                            "id": "c"
+                          },
+                          "amount": 2
+                        }
+                      ]
                     }
                   ]
                 }
