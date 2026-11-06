@@ -8,6 +8,7 @@ import {
   createGame,
   SpoilsEngine
 } from "../../../engine.js";
+import { BYSTANDER, bystanderModeOn, withBystander } from "./bystander.js";
 import type {
   BattleDamageAssignment,
   CardDefinition,
@@ -184,9 +185,12 @@ export interface BuiltGame {
 }
 
 export function buildGame(options: BuildGameOptions = {}): BuiltGame {
+  const bystander = !options.players && bystanderModeOn();
   const seats: PlayerSetup[] = options.players ?? [
     { id: P1, name: "Alice", ...options.playerA },
-    { id: P2, name: "Bob", ...options.playerB }
+    { id: P2, name: "Bob", ...options.playerB },
+    // SPOILS_BYSTANDER=1: a third, passive seat (support/bystander.ts).
+    ...(bystander ? [{ id: BYSTANDER, name: "Bystander", faction: noDevelopFaction({ name: "bystander-faction" }), influence: 99 }] : [])
   ];
   const factionDefs = seats.map(seat => seat.faction ?? factionCard({ name: `${seat.id}-faction` }));
   const factionKey = (i: number) => (i === 0 ? "__factionA" : i === 1 ? "__factionB" : `__faction_${seats[i].id}`);
@@ -257,6 +261,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   state.responseWindow = options.responseWindow;
 
   const engine = new SpoilsEngine(definitions, state, options.random);
+  if (bystander) withBystander(engine, seats[0].id, seats[1].id);
 
   // createGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for

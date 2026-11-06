@@ -418,6 +418,8 @@ export interface PendingMayPayChoice {
   elseEffects: Effect[];
   /** The `mayPay` effect's `payAndPick`. */
   payAndPick?: boolean;
+  /** `anyOf: "opponents"`: the opponents still to be offered it if this one declines, in turn order. */
+  remainingPayers?: PlayerId[];
   context: ResolutionContext;
 }
 

@@ -1342,6 +1342,14 @@ export type Effect =
        * (Q19). Executive Order #6370u7.
        */
       payAndPick?: boolean;
+      /**
+       * "Any opponent may pay <costs>. If they do, <effects>; otherwise
+       * <elseEffects>." (E5): offered to each opponent of the controller in
+       * turn order who can afford it, `player` ignored; the first to pay
+       * decides it ("they" in `effects` is that opponent, bound as the
+       * block's opponent). Nobody pays (or can): `elseEffects`.
+       */
+      anyOf?: "opponents";
     }
   | {
       /**

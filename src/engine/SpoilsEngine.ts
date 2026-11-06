@@ -16116,6 +16116,28 @@ export class SpoilsEngine {
       }
 
       case "mayPay": {
+        if (effect.anyOf === "opponents") {
+          // "Any opponent may pay ..." (E5): every opponent who can afford it, in turn order.
+          const payers = opponentsOf(this.state, context.controllerId).filter(id => {
+            const payCtx = { ...context, controllerId: id };
+            return this.canPayCosts(this.withPendingReductions(effect.costs, payCtx).costs, payCtx);
+          });
+          if (payers.length === 0) {
+            for (const e of effect.elseEffects ?? []) this.resolveEffect(e, context);
+            return;
+          }
+          this.state.pendingChoice = {
+            kind: "mayPay",
+            id: this.nextId("choice"),
+            playerId: payers[0],
+            cost: structuredClone(effect.costs),
+            effects: effect.effects,
+            elseEffects: effect.elseEffects ?? [],
+            remainingPayers: payers.slice(1),
+            context
+          };
+          return;
+        }
         const player = this.resolvePlayerRef(effect.player, context);
         // The prospective payer isn't always the ability's controller
         // ("that player may pay 2", "any opponent may pay 3") — check
@@ -18783,6 +18805,17 @@ export class SpoilsEngine {
       case "mayPay": {
         assert(pending.kind === "mayPay", "This choice does not match the pending decision.");
 
+        // "Any opponent may pay": a decline passes the offer to the next opponent.
+        if (!choice.pay && pending.remainingPayers && pending.remainingPayers.length > 0) {
+          this.state.pendingChoice = {
+            ...pending,
+            id: this.nextId("choice"),
+            playerId: pending.remainingPayers[0],
+            remainingPayers: pending.remainingPayers.slice(1)
+          };
+          return;
+        }
+
         this.state.pendingChoice = undefined;
 
         // Pay from the decider's resources ("that player may pay 2"), while
@@ -18809,10 +18842,13 @@ export class SpoilsEngine {
               })()
             : pending.elseEffects;
 
+        // "If they do, ..." after "any opponent may pay": "they" is the payer.
+        const paidByAnOpponent =
+          pending.remainingPayers !== undefined && branch !== pending.elseEffects && pending.playerId !== pending.context.controllerId;
         this.state.pendingEffectFrames.push({
           effects: branch,
           index: 0,
-          context: pending.context
+          context: paidByAnOpponent ? { ...pending.context, opponentId: pending.playerId } : pending.context
         });
         this.resumeEffectFrames();
         // A sibling trigger from the same "fires at once" batch (one

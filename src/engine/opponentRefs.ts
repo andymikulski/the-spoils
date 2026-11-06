@@ -72,7 +72,13 @@ function walk(node: unknown, inPick: boolean, refs: OpponentRefs): void {
   // Effects that resolve their body once per player rebind "opponent" for it
   // themselves ("each opponent ...", "any player may pay ..."): the body's
   // references are not the enclosing block's.
-  const rebindsBody = record.type === "forEachPlayer" || record.type === "anyPlayerMayPay";
+  const anyOpponentMayPay = record.type === "mayPay" && record.anyOf === "opponents";
+  const rebindsBody = record.type === "forEachPlayer" || record.type === "anyPlayerMayPay" || anyOpponentMayPay;
+  if (anyOpponentMayPay) {
+    // The payer is whichever opponent pays; only the "otherwise" branch speaks for the block.
+    walk(record.elseEffects, inPick, refs);
+    return;
+  }
   // "Both players" names the block's opponent itself (MP 3), as does "at the
   // start of your opponent's next turn".
   if (
