@@ -12,7 +12,7 @@
 //     the printed abilities and the coin-flip side swap.
 
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import {
   buildGame,
@@ -1094,10 +1094,10 @@ clause(CTR, "4:rule:CONSTANT IN-FIGHTING", "(other side starts face-up): a game 
   // Both sides must be registered for the flip; the real catalog always has both.
   const mine = [RAGE, RAGE, ...repeat(FILLER, 40)];
   const theirs = oppDeck();
-  const engine = createTwoPlayerFactionGame(
+  const engine = createFactionGame(
     [printing(CTR), printing(IMP), PLAIN_OPP, ...mine, ...theirs],
-    { id: P1, name: "Alice", deckDefinitionIds: [CTR, ...mine.map((d) => d.id)] },
-    { id: P2, name: "Bob", deckDefinitionIds: [PLAIN_OPP.id, ...theirs.map((d) => d.id)] },
+    [{ id: P1, name: "Alice", deckDefinitionIds: [CTR, ...mine.map((d) => d.id)] },
+    { id: P2, name: "Bob", deckDefinitionIds: [PLAIN_OPP.id, ...theirs.map((d) => d.id)] }],
     { firstPlayerId: P1, seed: 7 }
   );
   assert.equal(sideName(engine, P1), "Imperial Army", "the printing's note says the OTHER side starts face-up");
@@ -1108,10 +1108,10 @@ clause(CTR, "4:rule:CONSTANT IN-FIGHTING", "(other side starts face-up): a game 
 function ctrSetup(first: PlayerId): SpoilsEngine {
   const mine = [GREED, IDOL, RAGE, DECEPTION, RAGE, RAGE, ...repeat(FILLER, 40)];
   const theirs = oppDeck();
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     [printing(CTR), printing(IMP), PLAIN_OPP, ...mine, ...theirs],
-    { id: P1, name: "Alice", deckDefinitionIds: [CTR, ...mine.map((d) => d.id)] },
-    { id: P2, name: "Bob", deckDefinitionIds: [PLAIN_OPP.id, ...theirs.map((d) => d.id)] },
+    [{ id: P1, name: "Alice", deckDefinitionIds: [CTR, ...mine.map((d) => d.id)] },
+    { id: P2, name: "Bob", deckDefinitionIds: [PLAIN_OPP.id, ...theirs.map((d) => d.id)] }],
     { firstPlayerId: first, seed: 7 }
   );
 }

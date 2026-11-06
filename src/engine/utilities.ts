@@ -24,7 +24,7 @@ export function nextId(prefix: string): string {
 /**
  * The highest numeric `_<n>` suffix found anywhere in a serialized
  * `GameState`, or 0 if none. Used to backfill `GameState.idSeq` for a state
- * built (or saved) before that field existed — a fresh `createTwoPlayerGame`
+ * built (or saved) before that field existed — a fresh `createGame`
  * state, a hand-built test fixture, or a pre-migration save — so
  * `SpoilsEngine.nextId` starts past every id already in play. Scans the
  * whole serialized state (rather than enumerating each id-bearing

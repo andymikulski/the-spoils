@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import cardsJson from "../../data/cards.js";
 import {
   createCardInstance,
-  createTwoPlayerGame,
+  createGame,
   SpoilsEngine
 } from "../../engine.js";
 import type {
@@ -148,9 +148,9 @@ function richGame(subject: CardDefinition, subjectZone: "hand" | "play"): { engi
   const attachGear = add(bodyDef(`ex-attach-${uniq}`, "item", { subtype: ["gear"], attachTo: "character" }), P1, "play");
   if (attachHost) attachGear.attachedTo = attachHost.id;
 
-  const state: GameState = createTwoPlayerGame(
-    { id: P1, name: "P1", influence: 40 },
-    { id: P2, name: "P2", influence: 40 },
+  const state: GameState = createGame(
+    [{ id: P1, name: "P1", influence: 40 },
+    { id: P2, name: "P2", influence: 40 }],
     instances
   );
   state.players[P1].factionId = fAi.id;

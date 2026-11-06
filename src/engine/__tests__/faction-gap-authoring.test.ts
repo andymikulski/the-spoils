@@ -27,7 +27,7 @@ import {
   P2,
   resolvePendingResponses
 } from "./support/fixtures.js";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import type { CardDefinition } from "../../engine.js";
 
 const CATALOG = cardsJson as CardDefinition[];
@@ -82,10 +82,10 @@ describe("faction setup/vocabulary additions (RULES.md §3.6)", () => {
     const rage = resourceCard({ id: "fdown-rage", name: "Rage", resource: { provides: ["rage"], staple: true } });
     const filler = character({ id: "fdown-filler", name: "Filler" });
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [faction, obsession, rage, filler],
-      { id: P1, name: "Alice", deckDefinitionIds: [faction.id, obsession.id, rage.id, filler.id, filler.id] },
-      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, obsession.id, rage.id, filler.id, filler.id] },
+      [{ id: P1, name: "Alice", deckDefinitionIds: [faction.id, obsession.id, rage.id, filler.id, filler.id] },
+      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, obsession.id, rage.id, filler.id, filler.id] }],
       { firstPlayerId: P1 }
     );
 
@@ -255,10 +255,10 @@ describe("faction setup/vocabulary additions (RULES.md §3.6)", () => {
     const rage = resourceCard({ id: "sds-rage", name: "Rage", resource: { provides: ["rage"], staple: true } });
     const greed = resourceCard({ id: "sds-greed", name: "Greed", resource: { provides: ["greed"], staple: true } });
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [faction, rage, greed],
-      { id: P1, name: "Alice", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
-      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
+      [{ id: P1, name: "Alice", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
+      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] }],
       { firstPlayerId: P1 }
     );
 
@@ -310,10 +310,10 @@ describe("Faction gap authoring: real catalog data end-to-end", () => {
     const rage = resourceCard({ id: "pt-rage", name: "Rage", resource: { provides: ["rage"], staple: true } });
     const filler = character({ id: "pt-filler", name: "Filler" });
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [factionDef, obsession, rage, filler],
-      { id: P1, name: "Alice", deckDefinitionIds: [factionDef.id, obsession.id, rage.id, filler.id, filler.id] },
-      { id: P2, name: "Bob", deckDefinitionIds: [factionDef.id, obsession.id, rage.id, filler.id, filler.id] },
+      [{ id: P1, name: "Alice", deckDefinitionIds: [factionDef.id, obsession.id, rage.id, filler.id, filler.id] },
+      { id: P2, name: "Bob", deckDefinitionIds: [factionDef.id, obsession.id, rage.id, filler.id, filler.id] }],
       { firstPlayerId: P1 }
     );
     const obsessionInPlay = engine.state.players[P1].play
@@ -378,10 +378,10 @@ describe("Faction gap authoring: real catalog data end-to-end", () => {
       ...Array.from({ length: 10 }, () => filler.id)
     ];
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [factionDef, rage, greed, obsession, filler],
-      { id: P1, name: "Alice", deckDefinitionIds: deck },
-      { id: P2, name: "Bob", deckDefinitionIds: deck },
+      [{ id: P1, name: "Alice", deckDefinitionIds: deck },
+      { id: P2, name: "Bob", deckDefinitionIds: deck }],
       { firstPlayerId: P1 }
     );
 
@@ -505,10 +505,10 @@ describe("Faction gap authoring: real catalog data end-to-end", () => {
     const filler = character({ id: "dm-filler", name: "Filler" });
     const deck = [factionDef.id, rage.id, greed.id, ...Array.from({ length: 10 }, () => filler.id)];
 
-    const setupEngine = createTwoPlayerFactionGame(
+    const setupEngine = createFactionGame(
       [factionDef, rage, greed, filler],
-      { id: P1, name: "Alice", deckDefinitionIds: deck },
-      { id: P2, name: "Bob", deckDefinitionIds: deck },
+      [{ id: P1, name: "Alice", deckDefinitionIds: deck },
+      { id: P2, name: "Bob", deckDefinitionIds: deck }],
       { firstPlayerId: P1 }
     );
     const startingNames = setupEngine.state.players[P1].play

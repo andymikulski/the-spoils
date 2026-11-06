@@ -1,12 +1,12 @@
 // Batch r08-turn-deploy, part 1 (docs/TESTING.md): CR 601 Starting a Game.
 // Written from the wording of the Comprehensive Rules, not from the engine.
 //
-// Setup tests drive `createTwoPlayerFactionGame` (the faction card carries the Starting Resources,
+// Setup tests drive `createFactionGame` (the faction card carries the Starting Resources,
 // Starting Draw and mulligan entries).
 
 import { describe } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import { character, defaultFactionDefinition, factionCard, P1, P2, resourceCard } from "../support/fixtures.js";
 import { refused, rule, ruleOpen } from "./_rule.js";
@@ -75,10 +75,10 @@ function newGame(options: SetupOptions = {}): SpoilsEngine {
   const a = options.a ?? FACTION;
   const b = options.b ?? FACTION;
   const defs = [...new Map([a, b, RAGE, GREED, ODDITY, FILL].map((def) => [def.id, def])).values()];
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     defs,
-    { id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: options.deckA ?? deckOf(3, 0) },
-    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: options.deckB ?? deckOf(3, 0) },
+    [{ id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: options.deckA ?? deckOf(3, 0) },
+    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: options.deckB ?? deckOf(3, 0) }],
     { firstPlayerId: options.first ?? P1, seed: options.seed ?? 11 }
   );
 }
@@ -88,10 +88,10 @@ function decidingGame(options: SetupOptions & { chooseStartingResources?: boolea
   const a = options.a ?? FACTION;
   const b = options.b ?? FACTION;
   const defs = [...new Map([a, b, RAGE, GREED, ODDITY, FILL].map((def) => [def.id, def])).values()];
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     defs,
-    { id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: options.deckA ?? deckOf(3, 0) },
-    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: options.deckB ?? deckOf(3, 0) },
+    [{ id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: options.deckA ?? deckOf(3, 0) },
+    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: options.deckB ?? deckOf(3, 0) }],
     {
       chooseFirstPlayer: true,
       seed: options.seed ?? 11,
@@ -151,10 +151,10 @@ describe("CR 601.1a — factions start in play", () => {
 
   rule("CR 601.1a", "a faction card listed inside the deck list still starts in play, not in the deck", () => {
     const defs = [FACTION, RAGE, FILL];
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      { id: P1, name: "Alice", deckDefinitionIds: [FACTION.id, ...deckOf(3, 0, 12)] },
-      { id: P2, name: "Bob", deckDefinitionIds: [FACTION.id, ...deckOf(3, 0, 12)] },
+      [{ id: P1, name: "Alice", deckDefinitionIds: [FACTION.id, ...deckOf(3, 0, 12)] },
+      { id: P2, name: "Bob", deckDefinitionIds: [FACTION.id, ...deckOf(3, 0, 12)] }],
       { firstPlayerId: P1, seed: 3 }
     );
     const factionId = engine.state.players[P1].factionId!;
@@ -248,10 +248,10 @@ describe("CR 601.1c — who goes first", () => {
   rule("CR 601.1c", "the first-turn choice is exactly one of the two players: an unknown player cannot be chosen to go first", () => {
     assert.throws(
       () =>
-        createTwoPlayerFactionGame(
+        createFactionGame(
           [FACTION, RAGE, FILL],
-          { id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(3, 0) },
-          { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(3, 0) },
+          [{ id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(3, 0) },
+          { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(3, 0) }],
           { firstPlayerId: "p3" }
         ),
       /firstPlayerId/

@@ -4,7 +4,7 @@
 //   npx tsx examples/basic.ts
 //
 // A consumer imports the same names from "the-spoils" and "the-spoils/data".
-import { SpoilsEngine, createTwoPlayerFactionGame, loadGame, saveGame } from "../src/engine.js";
+import { SpoilsEngine, createFactionGame, loadGame, saveGame } from "../src/engine.js";
 import { CARD_CATALOG } from "../src/data.js";
 // The package ships no decklists; a deck is your own list of catalog card
 // ids, including one faction card. This example borrows the two real-card
@@ -16,10 +16,10 @@ import { ARCANIST_DECK_IDS, WARLORD_DECK_IDS } from "../src/engine/__tests__/sup
 // -----------------------------------------------------------------------------
 
 export function exampleGame(): SpoilsEngine {
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     CARD_CATALOG,
-    { id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK_IDS },
-    { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK_IDS }
+    [{ id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK_IDS },
+    { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK_IDS }]
   );
 }
 

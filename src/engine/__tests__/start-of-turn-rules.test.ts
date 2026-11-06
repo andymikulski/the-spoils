@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame, type CardDefinition, type SpoilsEngine } from "../../engine.js";
+import { createFactionGame, type CardDefinition, type SpoilsEngine } from "../../engine.js";
 import {
   character,
   defaultFactionDefinition,
@@ -97,10 +97,10 @@ function newGame(options: GameOptions = {}): SpoilsEngine {
   const a = withSetup(options.factionA ?? FACTION);
   const b = withSetup(options.factionB ?? FACTION);
   const definitions = [a, b, ...new Map(deck.map(card => [card.id, card])).values()];
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     definitions,
-    { id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: deck.map(card => card.id) },
-    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: deck.map(card => card.id) },
+    [{ id: P1, name: "Alice", factionDefinitionId: a.id, deckDefinitionIds: deck.map(card => card.id) },
+    { id: P2, name: "Bob", factionDefinitionId: b.id, deckDefinitionIds: deck.map(card => card.id) }],
     { firstPlayerId: P1, seed: 7 }
   );
 }

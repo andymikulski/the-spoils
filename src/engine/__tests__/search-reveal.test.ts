@@ -21,7 +21,7 @@ import {
   tactic
 } from "./support/fixtures.js";
 import cardsJson from "../../data/cards.js";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import type { CardDefinition, Effect, GameEvent } from "../../engine.js";
 
 type Built = ReturnType<typeof buildGame>;
@@ -350,10 +350,10 @@ describe("faction startingDrawSearch.reveal", () => {
     });
     const rage = resourceCard({ id: "sr-rage", name: "Rage", resource: { provides: ["rage"], staple: true } });
     const greed = resourceCard({ id: "sr-greed", name: "Greed", resource: { provides: ["greed"], staple: true } });
-    return createTwoPlayerFactionGame(
+    return createFactionGame(
       [faction, rage, greed],
-      { id: P1, name: "Alice", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
-      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
+      [{ id: P1, name: "Alice", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] },
+      { id: P2, name: "Bob", deckDefinitionIds: [faction.id, rage.id, rage.id, greed.id] }],
       { firstPlayerId: P1 }
     );
   }

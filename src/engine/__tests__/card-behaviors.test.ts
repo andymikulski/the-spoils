@@ -28,7 +28,7 @@ import {
 } from "./support/fixtures.js";
 import { chooseDevelopOption, developDraw, developPlay, developPlayAtTurnStart, openDevelop, settleTurnStart } from "./support/develop.js";
 import type { CardDefinition } from "../../engine.js";
-import { createTwoPlayerFactionGame, TOURNAMENT_FACTION_BEHAVIOR } from "../../engine.js";
+import { createFactionGame, TOURNAMENT_FACTION_BEHAVIOR } from "../../engine.js";
 
 // "When this card enters play, your faction gains 4 influence."
 function nastyButler(overrides: Partial<CardDefinition> = {}): CardDefinition {
@@ -10729,10 +10729,10 @@ describe("parity: cross-faction-rule-override (The Knitting Coalition)", () => {
       ...Array.from({ length: 20 }, (_, i) => filler(i))
     ];
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      { id: P1, name: "P1", deckDefinitionIds: ["kc-fac", ...fillerIds] },
-      { id: P2, name: "P2", deckDefinitionIds: ["nf-fac", ...fillerIds] },
+      [{ id: P1, name: "P1", deckDefinitionIds: ["kc-fac", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["nf-fac", ...fillerIds] }],
       { firstPlayerId: P1, seed: 1 }
     );
 
@@ -10747,7 +10747,7 @@ describe("parity: cross-faction-rule-override (The Knitting Coalition)", () => {
 });
 
 describe("parity: mixed-starting-resources (The Society of Magical Propriety / The Union of Unextraordinary Miners)", () => {
-  const inPlayResourceCount = (engine: ReturnType<typeof createTwoPlayerFactionGame>, pid: string) =>
+  const inPlayResourceCount = (engine: ReturnType<typeof createFactionGame>, pid: string) =>
     engine.state.players[pid].play.filter(cid => engine.isResource(cid)).length;
 
   test("slots: a specific-resource slot plus an any-card slot (face-down when not a resource)", () => {
@@ -10780,10 +10780,10 @@ describe("parity: mixed-starting-resources (The Society of Magical Propriety / T
       ...Array.from({ length: 12 }, (_, i) => filler(i))
     ];
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      { id: P1, name: "P1", deckDefinitionIds: ["soc-fac", "soc-res", "soc-char", ...fillerIds] },
-      { id: P2, name: "P2", deckDefinitionIds: ["soc-opp-fac", ...fillerIds] },
+      [{ id: P1, name: "P1", deckDefinitionIds: ["soc-fac", "soc-res", "soc-char", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["soc-opp-fac", ...fillerIds] }],
       { firstPlayerId: P1, seed: 1 }
     );
 
@@ -10840,9 +10840,9 @@ describe("parity: mixed-starting-resources (The Society of Magical Propriety / T
       ...Array.from({ length: 12 }, (_, i) => filler(i))
     ];
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      {
+      [{
         id: P1,
         name: "P1",
         deckDefinitionIds: [
@@ -10868,7 +10868,7 @@ describe("parity: mixed-starting-resources (The Society of Magical Propriety / T
           "uni-o-5",
           ...fillerIds
         ]
-      },
+      }],
       { firstPlayerId: P1, seed: 1, startingResourceX: { [P1]: 3 } }
     );
 
@@ -10913,10 +10913,10 @@ describe("parity: mixed-starting-resources (The Society of Magical Propriety / T
       resourceCard({ name: "Greed", id: "unid-o-1", resource: { provides: ["greed"], staple: true } }),
       ...Array.from({ length: 12 }, (_, i) => filler(i))
     ];
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      { id: P1, name: "P1", deckDefinitionIds: ["unid-fac", "unid-g-0", "unid-g-1", "unid-decep", ...fillerIds] },
-      { id: P2, name: "P2", deckDefinitionIds: ["unid-opp-fac", "unid-o-0", "unid-o-1", ...fillerIds] },
+      [{ id: P1, name: "P1", deckDefinitionIds: ["unid-fac", "unid-g-0", "unid-g-1", "unid-decep", ...fillerIds] },
+      { id: P2, name: "P2", deckDefinitionIds: ["unid-opp-fac", "unid-o-0", "unid-o-1", ...fillerIds] }],
       { firstPlayerId: P1, seed: 1 }
     );
     assert.equal(inPlayResourceCount(engine, P1), 2, "X defaults to min (1) -> 1 staple + 1 Deception");

@@ -1,0 +1,944 @@
+[
+  {
+    "name": "0v3rw0rk3d 31f",
+    "ids": [
+      "7dd26a5f-d0dc-4231-b70a-d11b189f28db"
+    ],
+    "category": "a",
+    "phrases": [
+      "Locations opponents control lose 1 structure"
+    ],
+    "notes": "Static modifier selector controller:\"opponent\" covers every opponent's locations."
+  },
+  {
+    "name": "Additional Tribute",
+    "ids": [
+      "a64326fe-e6a2-4398-ad70-88e4584fb7af"
+    ],
+    "category": "c",
+    "phrases": [
+      "Any opponent may pay 1"
+    ],
+    "notes": "mayPay player:\"opponent\" offers the payment only to the one bound opponent. 'Any opponent' means each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents (offer in seat order, first payer pays; the controller is never offered). Also settle who draws ('they' = the payer) since the encoding draws for the controller."
+  },
+  {
+    "name": "Akashic Coin",
+    "ids": [
+      "21274c5d-a966-4303-a9e6-9db01061d7a0"
+    ],
+    "category": "c",
+    "phrases": [
+      "enters play under an opponent's control, that player may pay 2"
+    ],
+    "notes": "Both triggers use mayPay player:\"opponent\" for 'that player'. In 3+ players the payer must be the opponent whose card entered, not a freshly bound/prompted opponent: use player {controllerOf eventCard} (as Phantasmagoric Tollbooth does) or auto-bind opponentId to the event player for triggers on an opponent's event."
+  },
+  {
+    "name": "Akashic Notes",
+    "ids": [
+      "27d42a55-adb9-43ca-95b6-6778af1648f0"
+    ],
+    "category": "a",
+    "phrases": [
+      "enters play under an opponent's control"
+    ],
+    "notes": "Trigger conditions eventPlayerIs / eventCardControlledBy opponent fire for any opponent; effects only reference the controller."
+  },
+  {
+    "name": "Architectural Restitution",
+    "ids": [
+      "b4c72134-5c83-4a88-af75-e16482ccd0b1",
+      "6b38d626-997f-4869-8ee8-8188785a02f4"
+    ],
+    "category": "a",
+    "phrases": [
+      "while an opponent is attacking you",
+      "that opponent's attack"
+    ],
+    "notes": "Gated by battleRole defender; the attacker is whichever opponent attacks you. No opponent selector is encoded."
+  },
+  {
+    "name": "Assistant Mud Whisperer",
+    "ids": [
+      "cf55d22c-3b57-4e63-bad2-4ec8ea6478d6",
+      "d6aaf1ff-0e80-48b4-b130-e023480d140c"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each opponent's turn"
+    ],
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+  },
+  {
+    "name": "Bewilderbeast",
+    "ids": [
+      "61af506c-d6e4-4b48-aa10-e959b670aaa3"
+    ],
+    "category": "a",
+    "phrases": [
+      "When an opponent discards any number of cards"
+    ],
+    "notes": "Static trigger condition eventPlayerIs opponent: fires for any opponent's discard."
+  },
+  {
+    "name": "Blitz of Destruction",
+    "ids": [
+      "3f5aab3e-81e1-46be-98e7-b55fbd60c047"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick a player that controls more resources than you",
+      "That player destroys a face-down resource they control"
+    ],
+    "notes": "Text picks a player (any player with more resources than you); encoding uses condition count(opponent resources) > count(self) plus chooser/selector \"opponent\" (bound). With 3+ players candidates are the players with more resources than you: add a faction target restricted to those players and use the picked player as chooser and selector controller in the destroy step."
+  },
+  {
+    "name": "Brainbath",
+    "ids": [
+      "a037259c-6b3d-4e9a-ae5d-ca91c19c6817",
+      "b9677697-6bb4-4b29-bb47-97d527da8966",
+      "2bf6045a-5b3f-4189-ae91-28837c0d7b83",
+      "3bd6878a-1a14-402f-93eb-a23afac654b0"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Caboodling Gladhander",
+    "ids": [
+      "d75f8c4e-5fd7-4169-8daa-051c703fb089",
+      "32655b89-00e6-4a06-a187-3e987dd11954"
+    ],
+    "category": "c",
+    "phrases": [
+      "That character's controller's faction gains X influence"
+    ],
+    "notes": "Encoded as modifyInfluence player:\"opponent\" (wrong even in 2 players if the picked character is yours). Re-encode with player {controllerOf: selected c}, captured before the destroy, so the picked character's controller gains the influence regardless of the bound opponent."
+  },
+  {
+    "name": "Canny Bailiff",
+    "ids": [
+      "efac6670-d61f-42ba-aee9-e897b774e395"
+    ],
+    "category": "a",
+    "phrases": [
+      "While an opponent is deploying a tactic"
+    ],
+    "notes": "Static costModifiers affects:\"opponent\": applies to every opponent."
+  },
+  {
+    "name": "Chain Reaction",
+    "ids": [
+      "2630e650-a402-4646-af6a-e8a47b033c5c",
+      "f84bb22e-e599-4eb5-88ed-03519f86366b",
+      "5332f878-57a2-46dd-ab1e-f7ab6113a5bd"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Cheats, the Dirty Rotten",
+    "ids": [
+      "6d385d6a-39e5-4b8f-b68b-3519ca99268a"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick an opponent",
+      "search that player's deck",
+      "their discard pile"
+    ],
+    "notes": "onPlay picks a faction target 'opp' but the search/shuffle use owner/player \"opponent\" (bound). The EXTRA COST pick must be the opponent the ETB resolves against (opponentId := owner of the picked faction, persisted to the ETB trigger). 'if you picked an opponent' stays targetExists."
+  },
+  {
+    "name": "Chum, the Ugliest Sarume",
+    "ids": [
+      "30b358cd-6c60-4e9e-b341-7d04fd80e135"
+    ],
+    "category": "a",
+    "phrases": [
+      "Search an opponent's deck"
+    ],
+    "notes": "Discard-pile pick is any owner; the 'an opponent's deck' search is a separate sentence bound to one opponent."
+  },
+  {
+    "name": "Craniata Nester",
+    "ids": [
+      "1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7"
+    ],
+    "category": "a",
+    "phrases": [
+      "you may pick an opponent",
+      "each opponent's discard pile"
+    ],
+    "notes": "Mill uses the bound opponent (matches 'pick an opponent'); the static strength/life count over owner:\"opponent\" discard characters sums every opponent, matching 'each opponent's discard pile'."
+  },
+  {
+    "name": "Cryptic Athenaeum",
+    "ids": [
+      "12b6d2a3-5b34-4914-bcc4-20ddb1ad39ba",
+      "746d863d-9b90-4cca-8896-a111523d4f7a"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent may draw a card",
+      "an opponent discards a card"
+    ],
+    "notes": "Each sentence is an 'an opponent' bound to one opponent for the block; 'pick a character' is any-owner."
+  },
+  {
+    "name": "Day of the Tentacle",
+    "ids": [
+      "038bef7e-0d08-4751-ab48-0d1de31e3195",
+      "d5690716-c88f-4297-8a2a-54392c6ac1b5"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's hand",
+      "that opponent's control"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Defiler of Innocence",
+    "ids": [
+      "0f0e1fc8-b7e1-462f-a912-60d2ca99d458",
+      "48097f03-931c-4241-bfed-2ccd8e731546"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's hand",
+      "That player discards that character"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Department of Rejections",
+    "ids": [
+      "0b6dc892-f833-4ab1-b1c5-c185ff0ca0f1",
+      "a3a69878-9f2a-49d3-9c4b-81887058890a"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents must pay 2 to search their deck"
+    ],
+    "notes": "Static searchTax / abilityCostModifiers opponentCharacters apply to every opponent."
+  },
+  {
+    "name": "Dizzying Blow",
+    "ids": [
+      "b6b6b202-7629-49e6-a451-7b2e3feb6c11"
+    ],
+    "category": "c",
+    "phrases": [
+      "attacking your faction"
+    ],
+    "notes": "Target selector controller:\"opponent\" + inBattle attacker; the attacker can be any opponent in 3+ players, not only a pre-bound one. Bind opponentId to the attacker's controller (or replace controller:\"opponent\" with not-controlled-by-self)."
+  },
+  {
+    "name": "Drill Garrison",
+    "ids": [
+      "0dfc144b-12b2-472c-b7af-8c7bbf815a0e",
+      "6d4b0079-550c-4cea-a2a0-ff889c523ab2",
+      "ecf19d3f-857f-4a62-8c29-dd293164c495"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Drivey Car",
+    "ids": [
+      "16a1de58-a23b-49c4-a3da-c696b92a74c6",
+      "d74d373d-baab-4886-b893-93cc0f1f84ed"
+    ],
+    "category": "a",
+    "phrases": [
+      "the number of characters an opponent controls minus the number of characters you control"
+    ],
+    "notes": "Resolving trigger: the bound opponent's character count (MP 2). Not a static comparison."
+  },
+  {
+    "name": "Drowned Catacombs",
+    "ids": [
+      "9d0ed925-fc2d-4745-82c0-68f90bf5d576",
+      "a896049a-e01d-4cd6-a9e6-aa04bcf6534c"
+    ],
+    "category": "d",
+    "phrases": [
+      "the number of characters your opponent controls"
+    ],
+    "notes": "SNEAK cost X and the strength cap both count controller:\"opponent\" characters; the cost needs the opponent chosen before payment.",
+    "ruling": "The opponent is selected at activation (before the cost is computed); X is that opponent's character count, used for both the cost and the strength limit."
+  },
+  {
+    "name": "Encumber",
+    "ids": [
+      "f32de0a3-6f08-47c4-a798-679c5be50631",
+      "55946c3c-d213-4948-9656-53bb189e4d49"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's hand",
+      "That opponent discards that card"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Essence of Deception",
+    "ids": [
+      "01005d53-34a2-4a29-99f9-9a71dc23cdf0",
+      "6bccbbec-9b1d-4091-b711-33e05c00446c"
+    ],
+    "category": "a",
+    "phrases": [
+      "Search an opponent's deck"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Essence of Obsession",
+    "ids": [
+      "e4260352-6b62-41dc-a031-6dbc0faccb73",
+      "629788f8-2303-4e43-be24-719ef508dc4e"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Final Countdown",
+    "ids": [
+      "66238cd1-a654-4900-8cb0-775bb6df6c17"
+    ],
+    "category": "d",
+    "phrases": [
+      "At the start of your opponent's next turn"
+    ],
+    "notes": "scheduleEffect when:\"startOfOpponentNextTurn\" is ambiguous with 3+ players (next opponent in seat order, earliest turn of any opponent, or a chosen opponent's).",
+    "ruling": "Per D4, binds the opponent chosen for the casting block (prompted only if more than one candidate) and the delayed effect fires at the start of that opponent's next turn; if that opponent is eliminated first it is dropped (D8)."
+  },
+  {
+    "name": "Flagitious Denunciator",
+    "ids": [
+      "cae163fe-b4bb-4dde-9227-05359c5961ac",
+      "7599bef0-0817-4597-b58b-b4903cd54069"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's hand",
+      "That player discards that character"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Forbidden Bibliotheca",
+    "ids": [
+      "dd781007-94ae-48b3-a0dc-7a3a3d983bcf"
+    ],
+    "category": "b",
+    "phrases": [
+      "Each opponent discards 2 cards"
+    ],
+    "notes": "Check Out encodes one opponent (chooserSelectsTarget chooser/selector opponent). Wrap the chooserSelectsTarget in forEachPlayer scoped to opponents (needs an opponents-only scope; forEachPlayer is all players today), with chooser/selector rebound to the iterated player (self)."
+  },
+  {
+    "name": "Forbidden Knowledge",
+    "ids": [
+      "40a1b99a-a5b6-4356-b84c-3cc41a5e6db2",
+      "6242776d-806e-4e6b-a360-30c791143c36"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's hand"
+    ],
+    "notes": "Only the draw is encoded (the look is informational); 'an opponent' = the bound opponent."
+  },
+  {
+    "name": "Gallant Commander",
+    "ids": [
+      "53178e50-33bf-47f7-ace0-20f9e7e88c52",
+      "256a568b-8fe3-4eee-b50a-52026ccd5b5a"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Gambling Den",
+    "ids": [
+      "ee8821d4-4933-4e4b-a632-c4db1b91ea95",
+      "0a6c2548-8c2a-4352-a8ea-b97257aa2ac7"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player may draw a card",
+      "each player may play a resource"
+    ],
+    "notes": "Already forEachPlayer for both 'each player' branches; fans out to all players."
+  },
+  {
+    "name": "Gathering of Unlikely Heroes",
+    "ids": [
+      "b8166db8-01ba-4103-bfee-dfece934c330"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "That player names 2 non-Universal trades"
+    ],
+    "notes": "Namer is ownerOf(picked faction); no other opponent refs, so the picked opponent is used consistently."
+  },
+  {
+    "name": "Gideon, the Ultimate Warrior",
+    "ids": [
+      "fefe5571-41c7-4a9b-844e-88e2232f6c28",
+      "7d2c17ee-25ba-4523-813c-145587e15cae"
+    ],
+    "category": "a",
+    "phrases": [
+      "When an opponent's faction loses influence"
+    ],
+    "notes": "Static influenceModifiers player:\"opponent\": every opponent's faction loses 1 more."
+  },
+  {
+    "name": "Heist Training Grounds",
+    "ids": [
+      "8791105b-7df3-4998-aa65-ab966d007869",
+      "6da2fd15-6bc5-4b73-b21c-d281e6b9b544"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's deck",
+      "an opponent discards a card at random"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "High Court of Demands",
+    "ids": [
+      "61688c92-96d1-40ae-ac64-2975d292b0d9",
+      "47bfebb7-3e70-4011-b960-9409a7d6dbfe"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot attack your faction"
+    ],
+    "notes": "preventsAttackOnFaction player:self applies against every opponent."
+  },
+  {
+    "name": "Inebriated Defenestration",
+    "ids": [
+      "ebac9b53-26af-491e-b251-a43a908d992f"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's deck"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Leaping Sarume",
+    "ids": [
+      "3a90b12f-8ecf-42eb-b67b-9b1c5abf0ddf"
+    ],
+    "category": "a",
+    "phrases": [
+      "all your opponent's characters"
+    ],
+    "notes": "Single 'your opponent' = the bound opponent for the block; 'all characters' is unrestricted."
+  },
+  {
+    "name": "Living God of Thabbash",
+    "ids": [
+      "bc206d76-e136-4096-8ebb-a3abe1288b83",
+      "f0bbd413-27be-4fb1-ac4a-f12f0dc29860"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent discards a card"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Lucky Charm",
+    "ids": [
+      "209f6903-153c-455b-b211-b7fa87571220",
+      "9db2e287-ca92-4304-814f-10b7eb99ef4b"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents must pay 1 to pick a character you control"
+    ],
+    "notes": "Static pickTax affects:\"opponent\": every opponent pays."
+  },
+  {
+    "name": "Lunk Nut",
+    "ids": [
+      "f2e09c65-9f7c-4826-bec1-d1cdb59fa0ea"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each opponent's turn"
+    ],
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+  },
+  {
+    "name": "Mass Confusion",
+    "ids": [
+      "48c4d2f0-8d0f-4203-a6ae-b81d9ebce2eb",
+      "da25a463-78da-4428-8d6b-eab6a76ade7c"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick a player",
+      "that player controls"
+    ],
+    "notes": "Encoded with no player pick: targets are any X characters and Y counts controller:\"opponent\" (bound/sum). Needs a faction pick, X characters restricted to ownerOf(that faction), and Y = count of that player's characters minus yours."
+  },
+  {
+    "name": "Master Mud Whisperer",
+    "ids": [
+      "3256cb1c-e1b5-4b46-b7a7-7c5fad249ef4",
+      "d105de07-198b-4f0d-a8e6-681f0afb9e61"
+    ],
+    "category": "a",
+    "phrases": [
+      "each opponent's turn"
+    ],
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+  },
+  {
+    "name": "Mirthless Altar",
+    "ids": [
+      "9e0f839e-f482-42b1-b6d4-4c19dbdcd70a",
+      "199ea254-6854-43bc-a336-83e5127b10bb"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player's turn"
+    ],
+    "notes": "Trigger turnStarted has no player condition (any player's turn); no opponent reference."
+  },
+  {
+    "name": "Mountainous Golem",
+    "ids": [
+      "c5262c5b-9ef2-40ed-9f16-29b391b39a11",
+      "fe48adc4-e74d-46ce-9b4c-c94ff00f932b"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot take control of this card"
+    ],
+    "notes": "cannotBeTakenControl restriction must reject any player other than the controller (engine must not compare against a single opponent)."
+  },
+  {
+    "name": "Nefarious Horror",
+    "ids": [
+      "287fad39-5bc3-499b-9099-f95294af36e6",
+      "6a568b43-e53e-4c0f-915d-df90aa61872e"
+    ],
+    "category": "d",
+    "phrases": [
+      "While an opponent controls more characters than you"
+    ],
+    "notes": "Static comparison encoded as count(controller:\"opponent\" characters) > count(own), i.e. the SUM over all opponents, which is too easy to satisfy in 3+ players.",
+    "ruling": "Static and cannot bind: true while at least one opponent individually controls more characters than you (compare you to each opponent separately, not the combined total)."
+  },
+  {
+    "name": "Noble Sacrifice",
+    "ids": [
+      "f013f5ae-5301-4cd1-9504-b2e50f1e4a48"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent owns"
+    ],
+    "notes": "Target selector owner:\"opponent\" for a single pick; the bound opponent's character."
+  },
+  {
+    "name": "Obscene Communion",
+    "ids": [
+      "604a992d-9d16-41db-b9f7-7face9e9a3da",
+      "65721d28-4626-40df-a980-d153c8e5fd15"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player's turn",
+      "Each player draws a card"
+    ],
+    "notes": "Already uses forEachPlayer for every 'each player' step and chooser activePlayer; works for N players."
+  },
+  {
+    "name": "Offering of False Friendship",
+    "ids": [
+      "7e7c80fc-1697-426e-b962-768196f6f2da"
+    ],
+    "category": "c",
+    "phrases": [
+      "Any opponent may pay 2"
+    ],
+    "notes": "mayPay player:\"opponent\" only asks the bound opponent. 'Any opponent may pay' = each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents; the elseEffects (put the character and same-name characters on the deck bottom) run only if all decline, the first payer terminates the card."
+  },
+  {
+    "name": "P3pp3r 0f 1n54n17y",
+    "ids": [
+      "85f2ffda-8d98-4da2-80c6-3d7f0d0b0a6b",
+      "3cd39b3f-5db3-4d53-95de-16b2b502890c"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each opponent's turn"
+    ],
+    "notes": "Trigger eventPlayerIs opponent fires on every opponent's turn start."
+  },
+  {
+    "name": "Pant Swipe",
+    "ids": [
+      "0fae8376-e4e6-4f0c-ae33-8be60ca717a9",
+      "3a9ab0e7-b3f3-4956-8f82-be8f0916a9da"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's deck"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Perturbatious Warlock",
+    "ids": [
+      "7d385558-dd68-4c00-9c20-0a60daf86d86",
+      "82b1ad07-d0b7-4a8a-820e-f4587d4ec574"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent puts a card from their hand"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Phalludrix, the Impotenator",
+    "ids": [
+      "b0ad296c-f76a-4df7-be3a-639662c664b5",
+      "513334b0-8ed9-4d1b-9eea-86af96f9247e"
+    ],
+    "category": "a",
+    "phrases": [
+      "When an effect controlled by an opponent causes you to discard",
+      "At the start of each opponent's turn"
+    ],
+    "notes": "Replacement by:\"opponent\" and the restore trigger apply for any opponent."
+  },
+  {
+    "name": "Phantasmagoric Tollbooth",
+    "ids": [
+      "d70efc6c-9a6e-41ab-92a2-cb97662f172f"
+    ],
+    "category": "a",
+    "phrases": [
+      "under an opponent's control",
+      "a character an opponent owns"
+    ],
+    "notes": "Both triggers already read the event card's controller/owner (mayPay player controllerOf eventCard), so they cover every opponent."
+  },
+  {
+    "name": "Profane Proposal",
+    "ids": [
+      "7f75ce4c-b81e-45a9-973a-1bbe50fb43e4",
+      "1d036bac-7c09-4e1d-981b-15999d6f623f"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "That player separates those cards into two piles"
+    ],
+    "notes": "The opponent is picked via a faction target and the splitter is ownerOf(picked faction), so it already reads the picked opponent in 3+ players. Engine note: the picked faction should also be the block's bound opponent (no other opponent refs here)."
+  },
+  {
+    "name": "Raging Ferocity",
+    "ids": [
+      "9192b2fa-b568-4ac1-bfd9-b9cb31d8fa42"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick a player",
+      "X is number of resources that player controls"
+    ],
+    "notes": "The picked player is any faction (fac), but the damage amount counts controller:\"opponent\" resources (bound/sum) and compares ownerOf only to self. Re-encode X as the count of resources controlled by ownerOf(fac) so a picked non-bound opponent is used."
+  },
+  {
+    "name": "Rigged Tables",
+    "ids": [
+      "48f100ed-f3bb-4dcd-b4b7-78ac791fe579",
+      "4c1790d7-4cc7-4df5-aa33-2e7369bd960d"
+    ],
+    "category": "c",
+    "phrases": [
+      "any deck"
+    ],
+    "notes": "Size Up / Rig offer only 'Your deck' and 'Opponent deck' (bound). 'Any deck' with 3+ players means any player's deck: replace the two options with a player pick (an option per player's deck, or a faction pick feeding lookAndReorder / deckPosition with that player)."
+  },
+  {
+    "name": "Robustical Badass",
+    "ids": [
+      "1855fff6-56b5-45df-8792-3436ebb5c3ba",
+      "c1cc2de0-3430-42e2-af02-ff9418a3bdd5"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Runivoltaic Accumulator",
+    "ids": [
+      "6f9876af-52c0-46e5-a06f-22e488ba54a8",
+      "c21dbc74-cf52-4375-a701-14c5052cf13e"
+    ],
+    "category": "c",
+    "phrases": [
+      "When an opponent attacks"
+    ],
+    "notes": "Encoded as battleStarted + battleRole defender ('you are attacked'); that equals 'an opponent attacks' only in 2 players. In 3+ players (and Showdown, where Heroes attack each other) an opponent attacking someone else should also trigger: change the condition to 'attacker is controlled by an opponent'."
+  },
+  {
+    "name": "Shadowy Mugger",
+    "ids": [
+      "8c9857e6-ba59-4e6d-9459-148426e2bb4a",
+      "eda064a7-e82c-4939-81f1-9cf4896327b3"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's deck"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Sly Bilker",
+    "ids": [
+      "36815079-5262-4a87-b922-cd06177f6ba5",
+      "aaa0bc63-7333-4855-a8e2-3251497e0b47"
+    ],
+    "category": "a",
+    "phrases": [
+      "either deck"
+    ],
+    "notes": "'Either deck' = your deck or the bound opponent's deck (opponent chosen for the block); no change."
+  },
+  {
+    "name": "Spitting Sarume",
+    "ids": [
+      "47d63dba-085e-4cbc-ab0c-ecdbe65fded0",
+      "ece06645-25f1-4680-9785-30a0a22b7837"
+    ],
+    "category": "a",
+    "phrases": [
+      "all characters an opponent controls"
+    ],
+    "notes": "'An opponent' = the single bound opponent whose characters all take damage."
+  },
+  {
+    "name": "Stupidify",
+    "ids": [
+      "baef7715-05a4-4082-b546-c458ce97eeb2",
+      "f76b5c48-1fab-4235-8279-9785524413b0"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards 2 cards"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Subdermal Micromajig",
+    "ids": [
+      "7a303331-f7dd-4abc-b223-ef0b033db6b9"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick an opponent",
+      "an attacking character that player controls",
+      "That player puts a Micromajig token"
+    ],
+    "notes": "The picked faction p is used for the token (ownerOf p) but the attacker selector is controller:\"opponent\" (bound opponent). Both must be the same picked player: make the 'Pick an opponent' cost set the block's opponentId (or replace with a chooseOpponent cost) so the selector resolves to p's owner."
+  },
+  {
+    "name": "Subordinate Demotivation",
+    "ids": [
+      "e99994ea-71f1-4143-98dd-c2782fc38ff7",
+      "4d54e821-c642-4b77-86a2-58514c2f1173"
+    ],
+    "category": "a",
+    "phrases": [
+      "the character an opponent controls with the lowest numeric cost"
+    ],
+    "notes": "One bound opponent; isExtremum among that opponent's characters."
+  },
+  {
+    "name": "Suicide Smash",
+    "ids": [
+      "519a6b1a-f64e-4fe1-b586-39b32f7b328a"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction"
+    ],
+    "notes": "Resolving block: the single bound opponent; no change."
+  },
+  {
+    "name": "Surprise!",
+    "ids": [
+      "95ad5456-4279-4481-848b-933036e72684",
+      "82f7c006-8b9f-4668-b3db-9507ce0bd479"
+    ],
+    "category": "c",
+    "phrases": [
+      "attacking your faction"
+    ],
+    "notes": "Target selector controller:\"opponent\" + inBattle attacker: the attacker may be any opponent in 3+ players. Bind opponentId to the attacker's controller (or use not-controlled-by-self) instead of a separately bound opponent. (Printed 'or a location you control' alternative is not encoded.)"
+  },
+  {
+    "name": "Thabbashite Barbeque",
+    "ids": [
+      "cb0c54e5-f40b-4fb7-aeb2-01d0ab697f4f"
+    ],
+    "category": "c",
+    "phrases": [
+      "Any opponent may pay 2",
+      "Look at an opponent's hand"
+    ],
+    "notes": "'Any opponent may pay 2' is encoded as mayPay player:\"opponent\" (bound only): re-encode as anyPlayerMayPay restricted to opponents. The later 'Look at an opponent's hand ... That player discards' sentence is fine with the bound opponent."
+  },
+  {
+    "name": "Thabbashite Urchin",
+    "ids": [
+      "e4730213-75fc-4614-9466-1b3c1e42e630"
+    ],
+    "category": "a",
+    "phrases": [
+      "While an opponent controls an item"
+    ],
+    "notes": "Static count over controller:\"opponent\" items >= 1 means any opponent controls an item."
+  },
+  {
+    "name": "Thabbashite Wizard",
+    "ids": [
+      "2c419c3a-cd05-4d6c-b6c4-6d2e64655218",
+      "9470335e-1d2b-46a5-861e-04527371ffb2"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player may draw up to 2 cards"
+    ],
+    "notes": "Already wrapped in forEachPlayer; fans out to all players (not just 'both')."
+  },
+  {
+    "name": "Theocratic Senate of Marduun",
+    "ids": [
+      "9f06b372-48a0-49eb-a2df-a4c5c923694b",
+      "01fc9f16-7ec3-4ace-a6f4-47689cb8e3ed"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot attack your faction"
+    ],
+    "notes": "preventsAttackOnFaction player:self applies against every opponent."
+  },
+  {
+    "name": "Theological Theft",
+    "ids": [
+      "9d9b004f-6491-4e6e-a79b-dd2a479c637f"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick X players",
+      "Each of those players",
+      "an opponent's discard pile"
+    ],
+    "notes": "Players are picked via unrestricted faction targets (x up to total players), already N-player. 'an opponent's discard pile' uses the bound opponent, independent of the picked players."
+  },
+  {
+    "name": "Thieving Casino",
+    "ids": [
+      "c1fdf3be-4790-4560-a4a0-920a951833a4"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a player",
+      "an opponent's discard pile"
+    ],
+    "notes": "'Pick a player' is an unrestricted faction pick (works for N players); Cash Out's 'an opponent's discard pile' target is the bound opponent."
+  },
+  {
+    "name": "Underdog",
+    "ids": [
+      "d000169f-1416-41e4-a603-3fc3bed83e46"
+    ],
+    "category": "a",
+    "phrases": [
+      "that your opponents own"
+    ],
+    "notes": "Static count owner:\"opponent\" sums every opponent, matching 'your opponents'."
+  },
+  {
+    "name": "Underhanded Gamer",
+    "ids": [
+      "8c111617-ef44-42a4-a79e-b895dd8005c3",
+      "8bed01de-3627-4ae9-92dc-fc065e9e5de7"
+    ],
+    "category": "d",
+    "phrases": [
+      "an opponent controls more characters than you",
+      "those players"
+    ],
+    "notes": "Activation condition compares you against the SUM of opponents' characters, and Outsmart grants unconditional cannotBeBlocked, so it would apply against every player. Also needs a scoped unblockable restriction (cannotBeBlockedBy the chosen player).",
+    "ruling": "The ability's block binds one opponent who must individually control more characters than you (not the combined total; unavailable if none qualifies); this card cannot be blocked by that opponent's characters this turn, and can still be blocked by others."
+  },
+  {
+    "name": "Unloyal Necromorph",
+    "ids": [
+      "420418bb-f8a7-435a-a0eb-1dec094e3805"
+    ],
+    "category": "c",
+    "phrases": [
+      "any opponent may pay 2",
+      "that player takes control of this card"
+    ],
+    "notes": "Replacement uses chooser:\"opponent\" (one bound opponent). 'Any opponent may pay 2' needs each opponent offered in seat order (anyPlayerMayPay-style offer restricted to opponents); the opponent who pays becomes the new controller (takeControl to that payer, not the controller ref)."
+  },
+  {
+    "name": "Watchtower",
+    "ids": [
+      "b92743d8-0593-4d1a-87c2-9dc5b4520945",
+      "59b277a8-0b23-4bc6-8325-eca973a06a2e",
+      "7cd6fd03-2ea0-4ebd-9149-822503c814de"
+    ],
+    "category": "a",
+    "phrases": [
+      "under an opponent's control"
+    ],
+    "notes": "Static trigger eventCardControlledBy opponent: any opponent."
+  },
+  {
+    "name": "iDumb De-Itemizer",
+    "ids": [
+      "a0403283-f513-4822-9e8d-afc862ff08b3"
+    ],
+    "category": "a",
+    "phrases": [
+      "Only an opponent may use this ability"
+    ],
+    "notes": "usableBy:\"opponent\" is a standing permission: every opponent of the controller may use Reset (resolved under the activator)."
+  }
+]

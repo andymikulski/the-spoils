@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import {
   buildGame,
   character,
@@ -45,10 +45,10 @@ function deckOf(count: number) {
 }
 
 function newFactionGame() {
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     [FACTION, RAGE, FILLER],
-    { id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(10) },
-    { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(10) },
+    [{ id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(10) },
+    { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(10) }],
     { firstPlayerId: P1 }
   );
 }

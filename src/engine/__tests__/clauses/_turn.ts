@@ -3,7 +3,7 @@
 // your turn ..."), DEVELOP / RESTORE rules, and faction setup clauses
 // (STARTING RESOURCES / STARTING DRAW), which only the real setup path runs.
 
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import { bank, developFaction, isDevelopPrompt, P1, P2, resolvePendingResponses, settleStartFirst } from "../per-card/_harness.js";
 import type { CardPlacement } from "../support/fixtures.js";
@@ -29,7 +29,7 @@ export interface SetupOptions {
 }
 
 /**
- * A game through the REAL setup path (`createTwoPlayerFactionGame`): faction
+ * A game through the REAL setup path (`createFactionGame`): faction
  * setup rules, starting resources, opening hands and mulligan state all come
  * from the faction cards. Use it for STARTING RESOURCES / STARTING DRAW and
  * anything else that happens during setup.
@@ -37,10 +37,10 @@ export interface SetupOptions {
 export function setupGame(p1: Seat, p2: Seat, options: SetupOptions = {}): SpoilsEngine {
   const defs = new Map<string, CardDefinition>();
   for (const def of [p1.faction, p2.faction, ...p1.deck, ...p2.deck]) defs.set(def.id, def);
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     [...defs.values()],
-    { id: P1, name: "Alice", deckDefinitionIds: [p1.faction.id, ...p1.deck.map((def) => def.id)] },
-    { id: P2, name: "Bob", deckDefinitionIds: [p2.faction.id, ...p2.deck.map((def) => def.id)] },
+    [{ id: P1, name: "Alice", deckDefinitionIds: [p1.faction.id, ...p1.deck.map((def) => def.id)] },
+    { id: P2, name: "Bob", deckDefinitionIds: [p2.faction.id, ...p2.deck.map((def) => def.id)] }],
     {
       firstPlayerId: options.first ?? P1,
       seed: options.seed ?? 7,

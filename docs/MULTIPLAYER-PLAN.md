@@ -183,6 +183,56 @@ Categories, judged against D4:
   turn", "if your opponent controls more…", effects that compare you to
   "your opponent" as a whole).
 
+## Card audit results (2026-11-06)
+
+`data/multiplayer-audit/g1..g4.json`: 318 distinct cards — **a 228 · b 19 ·
+c 62 · d 9**. Generic engine capabilities the audit calls for (handle these
+before per-card fixes; most c-cards collapse onto one of them):
+
+- **E1 `forEachPlayer` opponents-only scope.** `forEachPlayer` includes the
+  controller today; "each opponent" cards proxy it with `not isActivePlayer`
+  (Free Trade Agreement, 3p1ph4ny 31f). Add a `players: "opponents"` scope.
+  Existing fan-outs (Quotidian Transposition, Breath of the Barduse, Tempered
+  Rage) rely on `controller` / `owner:"self"` rebinding to the iterated
+  player — test that.
+- **E2 Opponent bound by a pick.** "Pick an opponent" / a pick of an
+  opponent's card or faction (`owner:"opponent"` target, `otherPlayerChooses`
+  cost) should *set* the block's `opponentId` (before costs / X evaluate)
+  instead of prompting separately. Lazy binding: a block whose only opponent
+  reference is a target selector binds from the pick.
+- **E3 Event-player binding.** Triggers on an opponent's event
+  (`eventPlayerIs: opponent`, `eventCardControlledBy: opponent`, "when an
+  opponent attacks") bind `opponentId` to the event's player, no prompt
+  (Sadistic Colonel, Meat of the Mountain, Akashic Coin, Lugubrian Octopod,
+  Master General). Attack-related triggers bind the attacker/defender
+  (Bask Bomb, Wyrmfang Deathskull, Candy Skull Commander, Runivoltaic
+  Accumulator — whose `battleRole: defender` proxy is 2-player-only).
+- **E4 Existential vs per-opponent quantifiers in statics / conditions.**
+  `count` over `controller:"opponent"` sums all opponents — right for "your
+  opponents' X", wrong for "an opponent controls ≥ N" or "more than you"
+  (Adroit Marauder, Face in the Crowd, Nefarious Horror, Omahkapi'si Pi'kssii,
+  Martial Arts Wannabe, Recreant Cad, Trophy Collector, Slingerang,
+  Shriever General). Need an "any opponent satisfies" quantifier; when later
+  effects say "that opponent", bind the qualifying one.
+- **E5 `anyPlayerMayPay` opponents-only mode / "any opponent may pay"** in
+  seat order (Additional Tribute, Offering of False Friendship, Thabbashite
+  Barbeque, Unloyal Necromorph, Tedious TriAdic Truculence, Recycling Scheme
+  Facility).
+- **E6 Two-party constructs → N-party where the text says so.** Auction
+  House: every living player bids in seat order. `partitionAndPick`
+  (Mustache Aficionado / Showdown): controller + bound opponent. Emergency
+  Obfuscation seat swap: controller + bound opponent.
+- **E7 `emptyDeckLoses` → elimination** under D3 (Trickster's Globe).
+
+**Suspected latent 2-player bugs** (auditor claims — verify with a classic
+test before fixing): Irresistible Bribe, Scrag, Caboodling Gladhander (bound
+opponent used where the *target's controller* is meant — wrong when you
+target your own card), Needless Beating (unrestricted character pick),
+Lecram (look at an opponent's top card — unencoded). Equivalent-in-2p but
+should move to `controllerOf` the picked/event card for N players: Blow Up,
+Splattergun, Redonkulous, Ritual of the Knob & Pull, Smothering Corpulence,
+Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
+
 ## Open questions
 
 - Q-MP1: Allegiance deck composition (D2 placeholder default: Heroes − 1

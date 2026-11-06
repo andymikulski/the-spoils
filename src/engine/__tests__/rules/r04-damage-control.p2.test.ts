@@ -4,7 +4,7 @@
 import { describe } from "node:test";
 import assert from "node:assert/strict";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine, TargetDeclaration } from "../../../engine.js";
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import {
   autoResolveBattle,
   buildGame,
@@ -653,10 +653,10 @@ describe("CR 407.7 / 407.8 — ownership", () => {
     const fillersA = Array.from({ length: 10 }, (_, i) => filler(i));
     const fillersB = Array.from({ length: 10 }, (_, i) => filler(100 + i));
     const defs: CardDefinition[] = [facA, facB, ...fillersA, ...fillersB];
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       defs,
-      { id: P1, name: "A", deckDefinitionIds: [facA.id, ...fillersA.map((d) => d.id)] },
-      { id: P2, name: "B", deckDefinitionIds: [facB.id, ...fillersB.map((d) => d.id)] },
+      [{ id: P1, name: "A", deckDefinitionIds: [facA.id, ...fillersA.map((d) => d.id)] },
+      { id: P2, name: "B", deckDefinitionIds: [facB.id, ...fillersB.map((d) => d.id)] }],
       { firstPlayerId: P1, seed: 7 }
     );
     const owners = (player: PlayerId, ids: string[]) =>

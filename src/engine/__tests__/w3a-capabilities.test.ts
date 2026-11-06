@@ -22,7 +22,7 @@ import {
 } from "./per-card/_harness.js";
 import { resolvePendingResponses, defaultFactionDefinition, factionCard } from "./support/fixtures.js";
 import { settleTurnStart } from "./support/develop.js";
-import { createTwoPlayerFactionGame, CREATED_ABILITY_ID } from "../../engine.js";
+import { createFactionGame, CREATED_ABILITY_ID } from "../../engine.js";
 import type { ActivatedAbility, CardDefinition, CreatedAbilitySpec, Effect } from "../../engine.js";
 
 const pend = (engine: { state: { pendingChoice?: unknown } }) =>
@@ -320,10 +320,10 @@ describe("W3a: a faction ability both players write (FactionDefinition.playerCre
   const createdText = "COST: Lose 1 influence. EFFECT: Your faction gains 3 influence.";
 
   const game = (withAbility: boolean) =>
-    createTwoPlayerFactionGame(
+    createFactionGame(
       [rd, plain, filler],
-      { id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
-      { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] },
+      [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
+      { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
       { seed: 3, ...(withAbility ? { createdAbility: created } : {}) }
     );
 

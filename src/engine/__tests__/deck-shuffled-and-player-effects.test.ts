@@ -4,7 +4,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import {
   banks,
   buildGame,
@@ -92,10 +92,10 @@ describe("deckShuffled (log-only)", () => {
   test("not emitted for the game-setup shuffles", () => {
     const filler = fxCharacter({ name: "Filler", life: 2 });
     const faction = factionCard({ name: "Plain", faction: defaultFactionDefinition() });
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [faction, filler],
-      { id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
-      { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
+      [{ id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
+      { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) }],
       { firstPlayerId: P1, seed: 99 }
     );
     assert.equal(shuffles(engine).length, 0);

@@ -6,6 +6,7 @@ import type {
   CardDefinitionId,
   CardInstance,
   CardInstanceId,
+  GameFormat,
   GameState,
   PlayerId,
   PlayerState,
@@ -20,7 +21,7 @@ import { randomSeed } from "./rng.js";
  * different id depending on how many instances this process minted before
  * it. Anything that must rebuild the *same* game later (saved/resumed games,
  * networked peers, replays — every `GameAction` names cards by instance id)
- * passes its own per-game ids instead; see `createTwoPlayerFactionGame`.
+ * passes its own per-game ids instead; see `createFactionGame`.
  */
 export function createCardInstance(
   definitionId: CardDefinitionId,
@@ -43,22 +44,60 @@ export function createCardInstance(
   };
 }
 
-export function createTwoPlayerGame(
-  playerA: {
-    id: PlayerId;
-    name: string;
-    influence?: number;
-  },
-  playerB: {
-    id: PlayerId;
-    name: string;
-    influence?: number;
-  },
-  cards: CardInstance[]
-): GameState {
-  const players: Record<PlayerId, PlayerState> = {};
+/** One seat passed to `createGame`. */
+export interface GamePlayerSeat {
+  id: PlayerId;
+  name: string;
+  influence?: number;
+}
 
-  for (const player of [playerA, playerB]) {
+/** Options for `createGame`. */
+export interface CreateGameOptions {
+  /**
+   * The table format. Defaults to `classic` for two seats and `freeForAll`
+   * for more.
+   */
+  format?: GameFormat;
+}
+
+/**
+ * The table format implied by `seats` when the caller names none, checked
+ * against the seat count either way.
+ */
+export function resolveGameFormat(seats: readonly PlayerId[], format?: GameFormat): GameFormat {
+  const resolved: GameFormat = format ?? (seats.length === 2 ? { kind: "classic" } : { kind: "freeForAll" });
+  assert(new Set(seats).size === seats.length, "Every seat needs a distinct player id.");
+  switch (resolved.kind) {
+    case "classic":
+      assert(seats.length === 2, `A classic game seats exactly two players (got ${seats.length}).`);
+      break;
+    case "freeForAll":
+      assert(seats.length >= 2, `A free-for-all game seats at least two players (got ${seats.length}).`);
+      break;
+    case "showdown":
+      assert(seats.includes(resolved.villainId), `The Villain '${resolved.villainId}' is not seated at this table.`);
+      assert(seats.length >= 3, `A Showdown game seats one Villain and at least two Heroes (got ${seats.length} seats).`);
+      break;
+  }
+  return resolved;
+}
+
+/**
+ * A started game state for `seats` (in turn order — the first seat takes
+ * turn 1) with `cards` already placed in their zones. The low-level
+ * constructor used by tests and tools that lay out a board directly; real
+ * games come from `createFactionGame`.
+ */
+export function createGame(
+  seats: readonly GamePlayerSeat[],
+  cards: CardInstance[],
+  options: CreateGameOptions = {}
+): GameState {
+  const format = resolveGameFormat(seats.map(seat => seat.id), options.format);
+  const players: Record<PlayerId, PlayerState> = {};
+  const first = seats[0];
+
+  for (const player of seats) {
     players[player.id] = {
       id: player.id,
       name: player.name,
@@ -119,13 +158,15 @@ export function createTwoPlayerGame(
 
   const state: GameState = {
     turn: 1,
-    activePlayerId: playerA.id,
-    priorityPlayerId: playerA.id,
+    activePlayerId: first.id,
+    priorityPlayerId: first.id,
     setup: { phase: "complete" },
     started: true,
     rngState: randomSeed(),
     // Placeholder — set for real just below, once `cardMap` is in its final form.
     idSeq: 0,
+    format,
+    turnOrder: seats.map(seat => seat.id),
     players,
     cards: cardMap,
     modifiers: [],
@@ -176,7 +217,7 @@ export function createTwoPlayerGame(
 
   // Anything already in play before turn 1 began counts as having started
   // the turn in play under the first player's control.
-  for (const cardId of players[playerA.id].play) {
+  for (const cardId of players[first.id].play) {
     cardMap[cardId].attackEligibleTurn = 1;
   }
 

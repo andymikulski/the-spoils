@@ -1,7 +1,7 @@
 // GameState.rngState makes the engine's single RNG stream (deck shuffles,
 // coin flips, `{type:"random"}` expressions/targets) a first-class,
 // serializable part of the game rather than a side channel:
-//   - createTwoPlayerFactionGame's `seed` option seeds one continuous stream
+//   - createFactionGame's `seed` option seeds one continuous stream
 //     that both faction setup *and* subsequent real gameplay draw from.
 //   - a dry-run legality/affordability probe (canPayCosts's simulate-on-a-
 //     clone pattern) must never advance the real game's stream.
@@ -10,7 +10,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 
-import { createTwoPlayerFactionGame, randomSeed, SpoilsEngine } from "../../engine.js";
+import { createFactionGame, randomSeed, SpoilsEngine } from "../../engine.js";
 import {
   buildGame,
   character,
@@ -67,10 +67,10 @@ function shufflePattern(deck: string[]): number[] {
 
 /** Builds a game with the given seed and flips the faction's own coin once, returning the roll. */
 function seededCoinFlip(seed: number): number {
-  const engine = createTwoPlayerFactionGame(
+  const engine = createFactionGame(
     [COIN_FLIP_FACTION, FILLER],
-    { id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
-    { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+    [{ id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+    { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }],
     { firstPlayerId: P1, seed }
   );
 
@@ -85,17 +85,17 @@ function seededCoinFlip(seed: number): number {
 }
 
 describe("seeded RNG (GameState.rngState)", () => {
-  test("createTwoPlayerFactionGame's seed determines deck shuffle order", () => {
-    const a = createTwoPlayerFactionGame(
+  test("createFactionGame's seed determines deck shuffle order", () => {
+    const a = createFactionGame(
       [COIN_FLIP_FACTION, FILLER],
-      { id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
-      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      [{ id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }],
       { firstPlayerId: P1, seed: 12345 }
     );
-    const b = createTwoPlayerFactionGame(
+    const b = createFactionGame(
       [COIN_FLIP_FACTION, FILLER],
-      { id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
-      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      [{ id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }],
       { firstPlayerId: P1, seed: 12345 }
     );
 
@@ -104,17 +104,17 @@ describe("seeded RNG (GameState.rngState)", () => {
   });
 
   test("the same seed produces the same in-game coin flip, through the real gameplay path (not just setup)", () => {
-    // Before the fix, createTwoPlayerFactionGame seeded only the setup-time
+    // Before the fix, createFactionGame seeded only the setup-time
     // shuffle; the engine constructed underneath it fell back to raw
     // Math.random for everything else, so this would be flaky.
     assert.equal(seededCoinFlip(777), seededCoinFlip(777));
   });
 
   test("a freshly built game always carries a usable rngState, even without an explicit seed", () => {
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [COIN_FLIP_FACTION, FILLER],
-      { id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
-      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }
+      [{ id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }]
     );
 
     assert.equal(typeof engine.state.rngState, "number");
@@ -152,10 +152,10 @@ describe("seeded RNG (GameState.rngState)", () => {
   });
 
   test("cloning GameState (save) and resuming a fresh engine from it continues the same random sequence", () => {
-    const live = createTwoPlayerFactionGame(
+    const live = createFactionGame(
       [COIN_FLIP_FACTION, FILLER],
-      { id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
-      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      [{ id: P1, name: "Alice", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) },
+      { id: P2, name: "Bob", factionDefinitionId: COIN_FLIP_FACTION.id, deckDefinitionIds: deckOf(10) }],
       { firstPlayerId: P1, seed: 99 }
     );
     settleTurnStart(live, "draw");

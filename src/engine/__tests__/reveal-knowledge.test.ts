@@ -10,7 +10,7 @@
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import {
   buildGame,
   character,
@@ -393,10 +393,10 @@ describe("Community Chest reveals itself when bottomed in the opening mulligan",
     const faction = factionWith(resource);
     const deck = [DECEPTION.id, DECEPTION.id, RAGE.id, RAGE.id, CHEST.id, ...Array.from({ length: 8 }, () => FILLER.id)];
     for (let seed = 1; seed < 200; seed++) {
-      const engine = createTwoPlayerFactionGame(
+      const engine = createFactionGame(
         [faction, DECEPTION, RAGE, FILLER, CHEST],
-        { id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: deck },
-        { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: deck },
+        [{ id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: deck },
+        { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: deck }],
         { firstPlayerId: P1, seed }
       );
       const chestId = engine.state.players[P1].hand.find(cardId => engine.getDefinition(cardId).name === "Community Chest");

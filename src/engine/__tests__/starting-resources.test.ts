@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { createTwoPlayerFactionGame } from "../../engine.js";
+import { createFactionGame } from "../../engine.js";
 import {
   character,
   defaultFactionDefinition,
@@ -80,12 +80,12 @@ function deck(factionId: string, rage: number, greed: number, size = 14): string
 function newGame(
   p1Deck: string[],
   p2Deck: string[],
-  opts: Parameters<typeof createTwoPlayerFactionGame>[3] = {}
+  opts: Parameters<typeof createFactionGame>[2] = {}
 ) {
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     DEFS,
-    { id: P1, name: "Alice", deckDefinitionIds: p1Deck },
-    { id: P2, name: "Bob", deckDefinitionIds: p2Deck },
+    [{ id: P1, name: "Alice", deckDefinitionIds: p1Deck },
+    { id: P2, name: "Bob", deckDefinitionIds: p2Deck }],
     { firstPlayerId: P1, ...opts }
   );
 }
@@ -287,10 +287,10 @@ describe("chooseStartingResources setup phase", () => {
       })
     });
 
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [MINER, plain, RAGE, GREED, FILLER],
-      { id: P1, name: "Alice", deckDefinitionIds: deck(MINER.id, 4, 4) },
-      { id: P2, name: "Bob", deckDefinitionIds: deck(plain.id, 6, 0) },
+      [{ id: P1, name: "Alice", deckDefinitionIds: deck(MINER.id, 4, 4) },
+      { id: P2, name: "Bob", deckDefinitionIds: deck(plain.id, 6, 0) }],
       { firstPlayerId: P1, chooseStartingResources: true, startingResourceX: { [P1]: 3 } }
     );
 

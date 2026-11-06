@@ -9,7 +9,8 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
-const SRC_ROOT = path.join(__dirname, '..', 'src');
+const REPO_ROOT = path.join(__dirname, '..');
+const SRC_ROOT = path.join(REPO_ROOT, 'src');
 
 function findTestFiles(dir) {
   const results = [];

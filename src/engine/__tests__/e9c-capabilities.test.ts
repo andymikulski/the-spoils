@@ -290,16 +290,16 @@ describe("E9c engine capabilities", () => {
   });
 
   test("FactionDefinition.setup.startsFlipped starts the game on the flipsTo side", async () => {
-    const { createTwoPlayerFactionGame } = await import("../../engine.js");
+    const { createFactionGame } = await import("../../engine.js");
     const side = (id: string, name: string, flipsTo: string, startsFlipped?: boolean) =>
       developFaction({ id, name, faction: { ...developFaction().faction!, flipsTo, setup: { ...developFaction().faction!.setup, ...(startsFlipped ? { startsFlipped } : {}) } } } as never);
     const a = side("fa", "Front", "fb", true);
     const b = side("fb", "Back", "fa");
     const plain = developFaction({ id: "fp", name: "Plain" } as never);
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [a, b, plain],
-      { id: P1, name: "A", deckDefinitionIds: ["fa"] },
-      { id: P2, name: "B", deckDefinitionIds: ["fp"] },
+      [{ id: P1, name: "A", deckDefinitionIds: ["fa"] },
+      { id: P2, name: "B", deckDefinitionIds: ["fp"] }],
       { firstPlayerId: P1, seed: 1 }
     );
     assert.equal(engine.state.cards[engine.state.players[P1].factionId!].definitionId, "fb");

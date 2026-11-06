@@ -17,7 +17,7 @@ import {
   buildCreatedAbility,
   CREATED_ABILITY_ID,
   CREATED_ABILITY_MENU,
-  createTwoPlayerFactionGame,
+  createFactionGame,
   validateCreatedAbilitySpec
 } from "../../engine.js";
 import type {
@@ -233,10 +233,10 @@ describe("Q51B: invalid specs are refused", () => {
     const rd = rdFaction();
     assert.throws(
       () =>
-        createTwoPlayerFactionGame(
+        createFactionGame(
           [rd, plain, filler],
-          { id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
-          { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] },
+          [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
+          { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
           { seed: 1, createdAbility: bad }
         ),
       /Invalid player-created ability/
@@ -271,10 +271,10 @@ describe("Q51B: the built ability, in play", () => {
     const rd = rdFaction();
     const spec: CreatedAbilitySpec = { costs: [{ kind: "discardCard", amount: 1 }], effect: { kind: "lookAtTop", amount: 3 } };
     const make = () =>
-      createTwoPlayerFactionGame(
+      createFactionGame(
         [rd, plain, filler],
-        { id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
-        { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] },
+        [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
+        { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
         { seed: 7, createdAbility: spec }
       );
     const a = make();

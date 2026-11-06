@@ -5,7 +5,7 @@
 
 import {
   createCardInstance,
-  createTwoPlayerGame,
+  createGame,
   SpoilsEngine
 } from "../../../engine.js";
 import type {
@@ -226,9 +226,9 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
     instancesByKey.get(placement.key)!.attachedTo = target.id;
   }
 
-  const state = createTwoPlayerGame(
-    { id: playerA.id, name: playerA.name ?? playerA.id, influence: playerA.influence ?? factionDefA.faction?.startingInfluence },
-    { id: playerB.id, name: playerB.name ?? playerB.id, influence: playerB.influence ?? factionDefB.faction?.startingInfluence },
+  const state = createGame(
+    [{ id: playerA.id, name: playerA.name ?? playerA.id, influence: playerA.influence ?? factionDefA.faction?.startingInfluence },
+    { id: playerB.id, name: playerB.name ?? playerB.id, influence: playerB.influence ?? factionDefB.faction?.startingInfluence }],
     [...instancesByKey.values()]
   );
 
@@ -244,7 +244,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
 
   const engine = new SpoilsEngine(definitions, state, options.random);
 
-  // createTwoPlayerGame forces attackEligibleTurn = 1 for anything already
+  // createGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for
   // every placement rather than conditionally skipping, so `attackEligible`
   // is authoritative regardless of which player owns the card or what

@@ -53,9 +53,35 @@ export {
   CREATED_ABILITY_MENU,
   CREATED_ABILITY_ID
 } from "./engine/createdAbility.js";
-export { createCardInstance, createTwoPlayerGame } from "./engine/setup.js";
 export {
-  createTwoPlayerFactionGame,
+  createCardInstance,
+  createGame,
+  resolveGameFormat,
+  type GamePlayerSeat,
+  type CreateGameOptions
+} from "./engine/setup.js";
+export {
+  isLiving,
+  seatsFrom,
+  livingSeats,
+  livingSeatsFrom,
+  otherLivingSeats,
+  nextLivingSeat,
+  opponentsOf,
+  isOpponentOf
+} from "./engine/seating.js";
+export {
+  villainOf,
+  isVillain,
+  isHero,
+  heroesOf,
+  getLoyalty,
+  isAllegianceRevealed,
+  canSeeAllegiance,
+  defaultAllegianceDeck
+} from "./engine/showdown.js";
+export {
+  createFactionGame,
   findFactionDeckIssues,
   type FactionPlayerSetup,
   type FactionGameSetupOptions

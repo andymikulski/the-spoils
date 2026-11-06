@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import {
-  createTwoPlayerFactionGame,
+  createFactionGame,
   findDeckConstructionIssues,
   type CardDefinition,
   type Effect,
@@ -69,12 +69,12 @@ function newGame(
   definitions: CardDefinition[],
   deckA: string[],
   deckB: string[],
-  options: Parameters<typeof createTwoPlayerFactionGame>[3] = {}
+  options: Parameters<typeof createFactionGame>[2] = {}
 ): SpoilsEngine {
-  return createTwoPlayerFactionGame(
+  return createFactionGame(
     definitions,
-    { id: P1, name: "Alice", deckDefinitionIds: deckA },
-    { id: P2, name: "Bob", deckDefinitionIds: deckB },
+    [{ id: P1, name: "Alice", deckDefinitionIds: deckA },
+    { id: P2, name: "Bob", deckDefinitionIds: deckB }],
     { firstPlayerId: P1, seed: 11, ...options }
   );
 }

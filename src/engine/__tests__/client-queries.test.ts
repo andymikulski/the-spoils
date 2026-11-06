@@ -10,7 +10,7 @@ import {
   isStapleResourceDefinition,
   SpoilsEngine,
   withBuiltInFactionDefaults,
-  createTwoPlayerFactionGame
+  createFactionGame
 } from "../../engine.js";
 import type {
   ActivatedAbility,
@@ -341,10 +341,10 @@ describe("getCardActivatedAbilities / getActivatedAbilityStatuses", () => {
     let compared = 0;
     let nonEmpty = 0;
     for (const [seed, first] of [[3, "arcanist"], [11, "warlord"]] as const) {
-      const engine = createTwoPlayerFactionGame(
+      const engine = createFactionGame(
         needed,
-        { id: "arcanist", name: "A", deckDefinitionIds: arcanistDeckIds },
-        { id: "warlord", name: "W", deckDefinitionIds: warlordDeckIds },
+        [{ id: "arcanist", name: "A", deckDefinitionIds: arcanistDeckIds },
+        { id: "warlord", name: "W", deckDefinitionIds: warlordDeckIds }],
         { firstPlayerId: first, seed }
       );
       const flowOf = engine.getFlowView.bind(engine);
@@ -873,10 +873,10 @@ describe("GameFlowView.actingPlayerId", () => {
       })
     });
     const deck = [FACTION.id, ...Array(4).fill(RAGE.id), ...Array(4).fill(GREED.id), ...Array(5).fill(FILLER.id)] as string[];
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [FACTION, RAGE, GREED, FILLER],
-      { id: P1, name: "Alice", deckDefinitionIds: deck },
-      { id: P2, name: "Bob", deckDefinitionIds: deck },
+      [{ id: P1, name: "Alice", deckDefinitionIds: deck },
+      { id: P2, name: "Bob", deckDefinitionIds: deck }],
       { firstPlayerId: P1, chooseStartingResources: true }
     );
     assert.equal(engine.state.setup.phase, "chooseStartingResources");

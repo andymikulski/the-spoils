@@ -1,0 +1,933 @@
+[
+  {
+    "name": "Ambiguity Embiggener",
+    "ids": [
+      "88ddad6c-4df5-4baa-b1b8-c7492f67d42e"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each player's turn, that player chooses a number for X",
+      "Each player puts X cards from their hand on the bottom of their deck"
+    ],
+    "notes": "Already fans out with forEachPlayer inside a chooserSelectsNumber (chooser activePlayer); each player's pass rebinds controller. Just keep forEachPlayer iterating all N seats in turn order."
+  },
+  {
+    "name": "Anesthetizing Opulence",
+    "ids": [
+      "9540ce6d-7f45-4fd9-8f71-093a8e438d50",
+      "b14cafa4-8d3d-45eb-bd01-c13842a5bac4"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent draws a card."
+    ],
+    "notes": "Single resolving-block opponent; the bound opponent draws."
+  },
+  {
+    "name": "Arcanology Recruitment Officer",
+    "ids": [
+      "7b05e4a8-cff1-441c-91bc-de6f671f8b12",
+      "b15e9fc9-b7ab-4f63-8e64-9351338ee763"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a character an opponent controls"
+    ],
+    "notes": "Pick restricted to the block's bound opponent's characters; the COVERT grant lasts until the controller's next turn start, unaffected by seat count."
+  },
+  {
+    "name": "Ass",
+    "ids": [
+      "e3fae5c4-c6ed-4c28-af91-2d85d11fceb1"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent picks a character they control and own if they can",
+      "an opponent takes control of this card"
+    ],
+    "notes": "Two separate triggered abilities = two blocks, each binds its own opponent (they may differ in 3+ players); each reads fine as 'an opponent'."
+  },
+  {
+    "name": "Auction House",
+    "ids": [
+      "71886432-9edb-44a6-b9aa-7890b3267cf3",
+      "ae9ae5db-e784-4193-ad45-400f7ba900bc"
+    ],
+    "category": "c",
+    "phrases": [
+      "players take turns bidding on the character (starting with the active player)",
+      "Whichever player makes the winning bid",
+      "Shuffle all other revealed cards into their owners's deck"
+    ],
+    "notes": "auctionForCard is a two-party construct today; with 3+ players every living player bids in seat order starting with the active player (not controller + bound opponent), unspent bids/shuffles apply to all. Engine-side change, no data change expected."
+  },
+  {
+    "name": "Barbaric Rifleman",
+    "ids": [
+      "ad4fc0ee-cc07-4927-93ab-c1daeb97798c",
+      "08bd93bd-8b78-48e0-95fb-b1ad35d5a8df"
+    ],
+    "category": "a",
+    "phrases": [
+      "inflict 1 damage to an opponent's faction"
+    ],
+    "notes": "Bound opponent's faction."
+  },
+  {
+    "name": "Blow Up",
+    "ids": [
+      "efa9c2c1-5448-4733-a6c4-471f7d625c02",
+      "be0aa55a-b127-4a2c-af8e-dca2724e15b6"
+    ],
+    "category": "c",
+    "phrases": [
+      "That item's controller's faction loses 3 influence."
+    ],
+    "notes": "modifyInfluence uses player:\"opponent\" but the text means the destroyed item's controller (could be the caster, or a non-bound opponent). Re-encode as player {type:\"controllerOf\", target selected it}, captured before the destroy."
+  },
+  {
+    "name": "Braggadocian Aide",
+    "ids": [
+      "0c2563df-d5fa-4444-a48e-9506e158f5b8",
+      "23bc4bf8-9ea9-486a-8fcb-24ed798a3f11"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each opponent's turn"
+    ],
+    "notes": "Trigger condition eventPlayerIs opponent must match any opponent; the effect only touches the controller's own resources, so no binding needed."
+  },
+  {
+    "name": "Clockman Pickpocket",
+    "ids": [
+      "cc55231b-da46-435a-95ef-d26fc8de31c0",
+      "e7a5575f-c91c-4ae5-afc7-3368a860ea56"
+    ],
+    "category": "c",
+    "phrases": [
+      "While an opponent controls an item, this card cannot be blocked by that player.",
+      "that faction's controller picks an item they control if they can"
+    ],
+    "notes": "(1) Static cannotBeBlocked keys off 'an opponent controls an item' (sum across all opponents); it should test the defending player's items only (the blocker, D7). (2) steal chooser/selector use opponent; should be controllerOf(eventCard) (the damaged faction's controller), which may differ from the bound opponent."
+  },
+  {
+    "name": "Counter Attack",
+    "ids": [
+      "65bd9386-5d61-415a-be45-5d50b5b369a5",
+      "17565f9a-fdd4-488c-889f-03fa430f358b"
+    ],
+    "category": "a",
+    "phrases": [
+      "Deploy this only during an opponent's turn",
+      "Attack that player."
+    ],
+    "notes": "Condition not-isActivePlayer(controller) = any opponent's turn; initiateAttack target is activePlayer, so 'that player' is derived, not bound. Ensure binding never prompts or diverges from the active player here."
+  },
+  {
+    "name": "Cute Cutpurse",
+    "ids": [
+      "46d4519b-b2ff-4306-9489-9ce28ecc3a5b",
+      "db118e14-f80e-4895-96b6-ec2eab18e0cc"
+    ],
+    "category": "c",
+    "phrases": [
+      "While an opponent controls an item, this card cannot be blocked by that player.",
+      "pick an item that faction's controller controls"
+    ],
+    "notes": "Same as Clockman Pickpocket: unblock condition should test the defending player's items; smash selector controller:opponent should be controllerOf(eventCard), the damaged faction's controller."
+  },
+  {
+    "name": "Deadly Striker",
+    "ids": [
+      "46d213bf-f9f2-4e68-93c5-07e004b72e50",
+      "ca2d7f86-1ef2-494e-b3d0-ae6f883cb593",
+      "e26eb079-952b-4396-bb5d-79894ac5417e"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent's faction loses 4 influence"
+    ],
+    "notes": "Bound opponent loses 4."
+  },
+  {
+    "name": "Deceptive Muddler",
+    "ids": [
+      "b28841ab-18e2-4a2e-aeb1-94b124f7baae",
+      "47d266d5-3281-4b0a-85c5-b5f37e7a862f"
+    ],
+    "category": "c",
+    "phrases": [
+      "that faction's controller puts a card from their hand on the top of their deck"
+    ],
+    "notes": "Chooser is already controllerOf(eventCard) but the selector is owner:opponent (bound opponent's hand). Selector should be the chooser's own hand (owner self relative to chooser) / the damaged faction's controller, which may not be the bound opponent."
+  },
+  {
+    "name": "Dethmürderblüdgeon, the Craghammer",
+    "ids": [
+      "43a51ff8-16f5-4752-aa41-94d0977d219d",
+      "4451d916-1994-4429-b7f6-cef245cf8a5a"
+    ],
+    "category": "a",
+    "phrases": [
+      "When the attached character is blocked, an opponent's faction loses 2 influence."
+    ],
+    "notes": "Text says 'an opponent'; bound opponent loses 2 (the blocker's controller would be a nicer choice but is not required)."
+  },
+  {
+    "name": "Discommodiousness",
+    "ids": [
+      "42334135-ad09-4e14-b243-597d4a44384e",
+      "02d85379-a5cb-40ae-bbd4-dd6337f680a1"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent reveals their hand.",
+      "That player draws X cards"
+    ],
+    "notes": "Whole effect resolves against one bound opponent."
+  },
+  {
+    "name": "Eccentric Inquisition",
+    "ids": [
+      "847cd807-e515-4c1f-8c4d-fa0ffd7b217d",
+      "9dadce7a-caff-45f9-9c42-a4b0a38e6298"
+    ],
+    "category": "a",
+    "phrases": [
+      "Reveal the top 7 cards of an opponent's deck",
+      "For the rest of the game, you may deploy tactics voided by this card"
+    ],
+    "notes": "Single bound opponent; voided cards are tracked by voidedBySource, no opponent persistence needed."
+  },
+  {
+    "name": "Eldridge Gosche",
+    "ids": [
+      "11f9caf2-79de-478a-a87f-c2fcfb90e11a",
+      "5529932d-de79-4d8d-bc55-c5240e86bd09"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and choose a card in it. That player discards that card."
+    ],
+    "notes": "Disrupt binds one opponent per activation."
+  },
+  {
+    "name": "Embezzling Bookkeeper",
+    "ids": [
+      "56c1a7f7-7146-43d5-8bd4-2bad9e9522e7",
+      "c9b04a74-1b18-4e07-9155-085a62f42525"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent draws a card"
+    ],
+    "notes": "Bound opponent draws."
+  },
+  {
+    "name": "Epic Smackdown",
+    "ids": [
+      "0642737a-cb86-402f-bca9-293ea6c252cc",
+      "74da08f9-ea6b-4ac6-af80-2734f1860cae"
+    ],
+    "category": "b",
+    "phrases": [
+      "Each opponent that controls at least X characters, destroys X characters they control.",
+      "Otherwise, destroy all of that opponent's characters."
+    ],
+    "notes": "Wrap the oppHad bind + both `if` blocks in a forEachPlayer limited to opponents (needs an 'each opponent' / exclude-controller variant); inside, controller/owner rebind so selectors become self and the chooser is the iterated opponent. Keep the final 'draw a card' outside the fan-out."
+  },
+  {
+    "name": "Epiphany Ball",
+    "ids": [
+      "5f6c7c41-3be8-44ce-9293-454a35772c0f",
+      "601204ef-80f0-4bc6-85f3-9282aa9a4c5a"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent takes control of this card."
+    ],
+    "notes": "Bound opponent takes control."
+  },
+  {
+    "name": "Exploding Sock Puppet!",
+    "ids": [
+      "ab111049-6ba1-430e-8d27-f647bcd5ac35",
+      "300ab3d1-3214-4fa5-9000-d657e6e7816d"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot respond to this card."
+    ],
+    "notes": "noResponse must suppress every other player's priority in the rotation (D6), not just one; no data change."
+  },
+  {
+    "name": "Fool's Gold",
+    "ids": [
+      "d2ef3385-bff6-42cf-8045-e5568e59efdf",
+      "de8ebafc-aab1-4486-9f3a-92f53f9d6848"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an item an opponent controls."
+    ],
+    "notes": "Activation-time pick of an item any opponent controls; derive the bound opponent from the picked item's controller (or prompt first) so pick and takeControl agree."
+  },
+  {
+    "name": "Forcible Depredator",
+    "ids": [
+      "a1716f04-f2d4-454f-917f-0b55eb9fbb73",
+      "af3fef4d-2ace-434f-a906-780ce43e9ef0"
+    ],
+    "category": "a",
+    "phrases": [
+      "Put the top 3 cards of an opponent's deck into their discard pile."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Gnat",
+    "ids": [
+      "d65c3554-ba90-45e8-ab26-4f8d42d498b7",
+      "c11290da-e135-4b78-a132-303469bfe855"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent discards a card"
+    ],
+    "notes": "Bound opponent chooses and discards."
+  },
+  {
+    "name": "Guardforce Morphmajig",
+    "ids": [
+      "6af508e9-b4a9-473d-80fc-4c1ecbdd5781",
+      "0b06764e-d38c-4c62-bb15-7a71e79e1e2c"
+    ],
+    "category": "a",
+    "phrases": [
+      "When an opponent deploys a card, remove a token from this card."
+    ],
+    "notes": "Static trigger on eventPlayerIs opponent = any opponent; removes a token per deploy by any opponent, which is the intended reading."
+  },
+  {
+    "name": "Hideous Hexapede of Horror",
+    "ids": [
+      "de6f188a-119d-4da0-9965-70b258c40ec5",
+      "0aaa4b25-4774-48c8-89ee-6c6884d96435"
+    ],
+    "category": "a",
+    "phrases": [
+      "All players remove 6 cards in their hand from the game.",
+      "Inflict 6 damage to all factions."
+    ],
+    "notes": "Already fans out with forEachPlayer for hand/discard/deck removal and forEach over all factions; works for N players."
+  },
+  {
+    "name": "Hired Goons",
+    "ids": [
+      "b4d02b5b-bfb5-4384-addd-ba8f738b9940",
+      "487ced33-5106-457b-8d0b-c2325c857929"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent takes control of this card"
+    ],
+    "notes": "Bound opponent takes control."
+  },
+  {
+    "name": "Hollow Moose",
+    "ids": [
+      "9fb327c0-257b-4685-98ca-de282c1dc6d7",
+      "b181338b-fdd8-4da2-8d16-e7d578f84d37"
+    ],
+    "category": "a",
+    "phrases": [
+      "This card enters play under an opponent's control.",
+      "Pick an opponent."
+    ],
+    "notes": "ETB takeControl and Infiltrate each bind one opponent (Infiltrate's 'Pick an opponent' is the binding prompt)."
+  },
+  {
+    "name": "I Drink Your Milkshake!",
+    "ids": [
+      "6f1bdb80-2506-4724-bf83-950a81cc531a",
+      "83807d38-2e87-4c3e-9167-5488979e4267"
+    ],
+    "category": "c",
+    "phrases": [
+      "search an opponent's deck",
+      "when that opponent deploys a card",
+      "terminate the opponent's card"
+    ],
+    "notes": "The lingering milkshake-echo trigger matches eventPlayerIs opponent (any) and owner:opponent voided cards. It must be bound to the opponent searched by the tactic: store chosenOpponentId (on the tactic/voided card) and test eventPlayerIs that player; otherwise another opponent playing a same-named card triggers it."
+  },
+  {
+    "name": "Imperial Thaumaturge",
+    "ids": [
+      "e2126c92-6654-406e-9bcc-c2682df3696f",
+      "7c5a0e32-65ca-4f3d-937e-91df2737cdd1"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Infatuated Armchair",
+    "ids": [
+      "ab4bed28-7665-4017-b829-4c95c366a61e"
+    ],
+    "category": "a",
+    "phrases": [
+      "look at the top 2 cards of any one deck"
+    ],
+    "notes": "'Any one deck' is encoded as own deck or an opponent's deck; with binding the second option prompts for one opponent, which covers any other player's deck. Prefer prompting for the opponent lazily (only if that option is chosen)."
+  },
+  {
+    "name": "Inside Information",
+    "ids": [
+      "ce20a6a6-4cf6-4b28-96d1-8b68c1441c10"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent takes control of this card."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Lucky Bastard",
+    "ids": [
+      "85fcf752-5566-427e-a993-49531a2f38b0",
+      "4513085a-6185-4ef5-ba9c-7af3c3af30d4"
+    ],
+    "category": "b",
+    "phrases": [
+      "each player removes the top card of their deck from the game instead",
+      "greater than or equal to the numeric cost of all opponent's"
+    ],
+    "notes": "Replacement effect removes only controller's and one opponent's top card. Fan out removal with forEachPlayer, record each player's cost, and compare myCost >= max(cost of every other player's card) instead of a single oppCost."
+  },
+  {
+    "name": "Martial Artist",
+    "ids": [
+      "b2ceefd9-cf5e-459b-adba-6c0f3a806c58",
+      "f103ff8e-97b5-49a4-96ff-4b87b8c6204c"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot pick this card."
+    ],
+    "notes": "Static restriction cannotBePickedByOpponents applies to every opponent."
+  },
+  {
+    "name": "Martial Arts Trainee",
+    "ids": [
+      "3142de68-bfda-45ce-b3a6-c1b085f51664",
+      "e5f5308e-f2be-430e-aa7a-af6c264eb6c4"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot pick this card."
+    ],
+    "notes": "Static restriction cannotBePickedByOpponents applies to every opponent."
+  },
+  {
+    "name": "Master Thief",
+    "ids": [
+      "bfe0fbb0-079e-4f9a-ada8-b0d18e2be880",
+      "94abdced-81ec-4f6e-bf99-cd6d9d5b87fe"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a non-tactic card in an opponent's discard pile"
+    ],
+    "notes": "Bound opponent's discard pile."
+  },
+  {
+    "name": "Meat of the Mountain",
+    "ids": [
+      "60eab41e-55d8-428c-991a-de347296fa4f"
+    ],
+    "category": "c",
+    "phrases": [
+      "When a player draws any number of cards, that player",
+      "That player's choses an opponent to discard a card."
+    ],
+    "notes": "Opponent branch is the mirror image (controller discards) which is only right in 2 players. Collapse into one trigger for any drawing player, resolved as that player (controller := event player) with that player binding their own opponent for the 0-token discard, and eventPlayerIs matching any seat."
+  },
+  {
+    "name": "Mendacious Brigand",
+    "ids": [
+      "fd6ca900-19ab-4786-b4db-7e3c7dbac204"
+    ],
+    "category": "c",
+    "phrases": [
+      "a character that character's controller controls that is not in a battle"
+    ],
+    "notes": "Second target uses controller:opponent; it must be the blocking character's controller (the defender, which may differ from the bound opponent). Re-encode the 'add' selector with controllerOf(blk)."
+  },
+  {
+    "name": "Mercenary's Creed",
+    "ids": [
+      "837d5a93-213d-4e5d-af65-0a6c14c55c7c",
+      "82b3462a-12d5-463b-8984-25059e30ac9a"
+    ],
+    "category": "a",
+    "phrases": [
+      "Any player may use this ability."
+    ],
+    "notes": "usableBy:anyPlayer must accept every seat; takeControl controller:controller gives it to the activating player. No data change."
+  },
+  {
+    "name": "Misappropriation Machine",
+    "ids": [
+      "5afd2312-a6aa-4aca-bc1e-2fb4eb78183d",
+      "1d6b7c46-9c8e-4f15-a1df-4bb781f95697"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character or item in an opponent's discard pile",
+      "That card's owner takes control of this card."
+    ],
+    "notes": "Bound opponent's discard; ownerOf(pick) is that same opponent."
+  },
+  {
+    "name": "Mistaken Identity",
+    "ids": [
+      "e38f4972-a3c7-47b4-adb2-25177eda9065",
+      "da95244d-134d-4648-bb5d-c4e1e4fbd6ff"
+    ],
+    "category": "a",
+    "phrases": [
+      "as though your opponent had picked the other character instead"
+    ],
+    "notes": "Encoding uses retargetExtraCost and never names an opponent; 'your opponent' is whoever picked, so no binding is needed."
+  },
+  {
+    "name": "Murderous Commander",
+    "ids": [
+      "84515285-34dc-4b75-95d4-51a6c072b970",
+      "d347e63b-9eae-45ca-89e3-be051195a400"
+    ],
+    "category": "a",
+    "phrases": [
+      "Inflict 2 damage to an opponent's faction."
+    ],
+    "notes": "Bound opponent's faction."
+  },
+  {
+    "name": "Mustache Aficionado",
+    "ids": [
+      "1dffc074-b158-4134-b52e-9e6e56541cf0",
+      "f276a0be-6c30-4276-a743-30e63619dc41"
+    ],
+    "category": "c",
+    "phrases": [
+      "You and an opponent look at the top 3 cards of your decks",
+      "Each of you choose one of their opponent's piles."
+    ],
+    "notes": "partitionAndPick is a two-party construct: participants must be controller + bound opponent (MP 3), not hardwired seats. Engine-side, no data change."
+  },
+  {
+    "name": "Mutiny Grant",
+    "ids": [
+      "1dc62434-5a69-44ce-acde-488436a14de8",
+      "9d3a3181-3167-4534-baf2-f5c31764c7d3"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent controls."
+    ],
+    "notes": "Cost-time pick of any opponent's character; takeControl is for the turn."
+  },
+  {
+    "name": "Needless Beating",
+    "ids": [
+      "3ea9bbe2-4b32-4f04-9e2c-7a1201b655b9",
+      "06b104b7-eb32-4a44-9b33-587c0345715d"
+    ],
+    "category": "c",
+    "phrases": [
+      "Pick an opponent. Pick a character that player controls.",
+      "If that player's faction has 15 influence or less"
+    ],
+    "notes": "Target selector has no controller restriction (can pick own character) and the faction/each-character checks use 'opponent'. Add an explicit chosen-opponent pick as part of the extra cost (store as opponentId), restrict the character pick to controller:opponent, keep factionOf opponent referring to it."
+  },
+  {
+    "name": "Odious Diva",
+    "ids": [
+      "b7c7b011-86ef-46db-8b26-c659ad1f24c1",
+      "f2335a40-bdc9-4cf0-9487-b42d424e06fc"
+    ],
+    "category": "a",
+    "phrases": [
+      "Each opponent's hand is revealed at all times."
+    ],
+    "notes": "Static grantsReveal of:opponent covers every opponent (D4). Disapprove binds one."
+  },
+  {
+    "name": "Orgy Den Smoke Out",
+    "ids": [
+      "92083650-6785-4b9a-ba1c-542a348b22aa",
+      "e6a43a11-e448-42fa-a45a-856116077af9"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card at random.",
+      "Put the top 2 cards of their deck into their discard pile."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Padamose, Emperor of Marduun",
+    "ids": [
+      "1be3f538-efa8-4269-ace1-af5a0ddcdefd",
+      "12d2de99-a2f3-4038-b897-8405931d892e"
+    ],
+    "category": "a",
+    "phrases": [
+      "All your opponent's \"mau\" characters and Arcanist characters lose 1 strength and 1 life."
+    ],
+    "notes": "Static selector controller:opponent applies to every opponent's mau/Arcanist characters (D4)."
+  },
+  {
+    "name": "Peculate",
+    "ids": [
+      "2db3791b-3472-44b9-ad9b-ea65743ea4fc",
+      "613fbe92-3cd5-479e-9381-438f6455f76a"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character, item, or location in an opponent's discard pile."
+    ],
+    "notes": "Cost-time pick from any opponent's discard; derive binding from the pick."
+  },
+  {
+    "name": "Perturb",
+    "ids": [
+      "35c6055b-db4e-428b-ab6a-7caaf564f62f",
+      "7b12a2d9-6874-4141-8028-66581431090a"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and pick a non-resource card in it. That player discards that card."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Plunging Shriever",
+    "ids": [
+      "afecc5f2-5714-46ee-9279-b6827de2ee46",
+      "ec2a5b27-94ff-4b64-912b-b4fef8895da7",
+      "8ca591c5-d7d1-47d2-87a7-cf0a04edb205"
+    ],
+    "category": "a",
+    "phrases": [
+      "Remove an item in an opponent's discard pile from the game."
+    ],
+    "notes": "Cost-time pick from any opponent's discard pile."
+  },
+  {
+    "name": "Quotidian Disappearance",
+    "ids": [
+      "7c522a1a-aa18-4afa-955e-2a047ff91ecb"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent picks a non-resource card they control if they can."
+    ],
+    "notes": "Bound opponent chooses among their cards."
+  },
+  {
+    "name": "Quotidian Virtuoso",
+    "ids": [
+      "b1f959d9-c5cd-4a7c-9b1b-dfcac62fd6a6",
+      "01a6dcbe-e7ad-41a9-87f7-8e22f1cc11ef"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and choose a card in it."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Recreant Cad",
+    "ids": [
+      "bad0a682-9807-466b-8d9b-3ac48a34cdb2"
+    ],
+    "category": "c",
+    "phrases": [
+      "Use this only if an opponent has at least 10 cards in their discard pile.",
+      "Remove 2 cards in that player's discard pile from the game."
+    ],
+    "notes": "Activation condition counts owner:opponent discard cards, which would sum across opponents. Needs existential per-opponent evaluation ('some opponent has >= 10'), and the cost pick restricted to that same opponent (bind opponentId to the satisfying opponent)."
+  },
+  {
+    "name": "Redonkulous",
+    "ids": [
+      "464b99b7-c1b7-43ae-9248-68f7614fd2cb",
+      "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
+      "95277828-2708-4a76-b7ae-2615d898a7e1"
+    ],
+    "category": "c",
+    "phrases": [
+      "that character's controller discards 2 cards",
+      "If that character's controller has 3 or fewer cards in their hand"
+    ],
+    "notes": "Encoding uses opponent for the picked character's controller (and the pick is unrestricted). Replace chooser/selector/count with controllerOf(selected char), which may not be the bound opponent."
+  },
+  {
+    "name": "Resistance Fighter",
+    "ids": [
+      "54acfe5d-ccfe-4f8e-b324-65b65e6d927f",
+      "49efade2-8228-4691-8553-22735d20319c"
+    ],
+    "category": "a",
+    "phrases": [
+      "While you control a character you don't own"
+    ],
+    "notes": "Static selector owner:opponent must mean any other owner (any non-self player); count >= 1 works for N players."
+  },
+  {
+    "name": "Ritual of the Double Monkey",
+    "ids": [
+      "e93a6fc4-da98-4698-b44f-3d1269903dfb",
+      "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card.",
+      "that player discards another card"
+    ],
+    "notes": "All three discards hit the same bound opponent."
+  },
+  {
+    "name": "Ritual of the Knob & Pull",
+    "ids": [
+      "dbc439b3-5628-43ef-bbc1-ea7523e85fb0",
+      "87b8eec4-0dec-4ab0-a8da-c7cf70740890"
+    ],
+    "category": "c",
+    "phrases": [
+      "that character's controller controls at least X face-down resources"
+    ],
+    "notes": "Condition reads resourceIcons player:opponent; should be controllerOf(selected c) (the picked character may be yours or a non-bound opponent's)."
+  },
+  {
+    "name": "Ritual of the Ominous Urn",
+    "ids": [
+      "8bdf8634-d49d-43f6-b267-15978fab6227",
+      "0d9750c3-d284-4097-88bd-8c20bb922900"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Rosy Palmer, and Her Five Friends",
+    "ids": [
+      "4d801a32-d054-413d-9eaf-d915a82139b1",
+      "fdfd2018-584b-4fa7-b9d9-e29f7961337a"
+    ],
+    "category": "a",
+    "phrases": [
+      "reveal the top 5 cards of an opponent's deck",
+      "That player puts the remaining cards on the bottom of their deck"
+    ],
+    "notes": "Single bound opponent for the whole trigger."
+  },
+  {
+    "name": "Sadistic Colonel",
+    "ids": [
+      "9bb9052b-c497-4c4c-a22e-e0c2f0edf534",
+      "12e70bc4-48ef-4c07-8add-846decf2ea1b"
+    ],
+    "category": "c",
+    "phrases": [
+      "When an opponent deploys a tactic, inflict 2 damage to their faction."
+    ],
+    "notes": "Trigger matches any opponent, but dealDamage targets factionOf opponent (the bound one). Needs the deploying player's faction: bind opponentId := event player for this trigger (or add a PlayerRef for the event player). Generic pattern for eventPlayerIs-opponent triggers that reference the opponent in effects."
+  },
+  {
+    "name": "Skin Suit",
+    "ids": [
+      "421c7d4c-d711-4a05-9955-d3834655f5fa",
+      "c553043b-2514-42cf-9fa9-f2524b4a1ee2"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent controls.",
+      "Inflict X damage to that opponent's character"
+    ],
+    "notes": "Pick determines the opponent; both pairs resolve against that one player."
+  },
+  {
+    "name": "Smothering Corpulence",
+    "ids": [
+      "48ac4062-dca5-469f-8b39-54f4519e137d",
+      "6c49725e-d71b-43b3-a85f-38ec7396911d"
+    ],
+    "category": "c",
+    "phrases": [
+      "You and that character's controller remove the top card of your decks from the game."
+    ],
+    "notes": "Opponent deck refs use player:opponent but the text means the picked character's controller, and the pick is unrestricted. Restrict pick to controller:opponent and use controllerOf(selected c) for deckPosition."
+  },
+  {
+    "name": "Splattergun",
+    "ids": [
+      "69c99fee-c4fd-45ff-9d04-da0cc01ecd54",
+      "324adb64-5b1e-4e8f-bd5c-f21a4f03f197"
+    ],
+    "category": "c",
+    "phrases": [
+      "That faction's or character's controller takes control of this card."
+    ],
+    "notes": "takeControl uses controller:opponent; should be controllerOf(selected tgt) (captured before damage, since the target may be destroyed). Wrong for own-character picks and non-bound opponents."
+  },
+  {
+    "name": "Spry Archer",
+    "ids": [
+      "98321c0c-3aef-4820-8636-9353e3c8a3b0"
+    ],
+    "category": "a",
+    "phrases": [
+      "inflict 1 damage to an opponent's faction"
+    ],
+    "notes": "Text says an opponent; bound opponent's faction (not necessarily the defender)."
+  },
+  {
+    "name": "Subsection 5, Paragraph 12",
+    "ids": [
+      "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a",
+      "23fe59c9-9bf1-49d1-bfc4-084c556aca80"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot respond to this card."
+    ],
+    "notes": "noResponse must suppress every other player's priority in the rotation (D6)."
+  },
+  {
+    "name": "Swinish Elder",
+    "ids": [
+      "414bcffa-7213-40f1-810f-9563a33cc619"
+    ],
+    "category": "a",
+    "phrases": [
+      "When an opponent plays a resource",
+      "attach that resource to that opponent's faction"
+    ],
+    "notes": "Trigger matches any opponent; the attach target already derives from ownerOf(eventCard), so no binding is needed."
+  },
+  {
+    "name": "The Deranger",
+    "ids": [
+      "cebf2a7c-905e-433d-b6ab-bcdc2aafacbf",
+      "98836f41-4b3b-400b-b63b-45878afff2fb"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and choose 2 or fewer non-resource cards in it. That player discards those cards. That player takes control of this card."
+    ],
+    "notes": "Bound opponent for discard and takeControl (both the same player)."
+  },
+  {
+    "name": "Time Traveler Tourist Trap",
+    "ids": [
+      "95faefae-3b2a-454b-a2a5-f10544095ff8",
+      "03441b15-b428-4453-9d12-89fd64e73c58"
+    ],
+    "category": "a",
+    "phrases": [
+      "the number of cards in an opponent's deck"
+    ],
+    "notes": "Count within a resolving block uses the bound opponent's deck."
+  },
+  {
+    "name": "Trophy Collector",
+    "ids": [
+      "33e392bd-4d5d-475c-9cfe-a5dac86bfd2f",
+      "03a38d6e-6d31-4bff-8d68-28ba850ffa53"
+    ],
+    "category": "c",
+    "phrases": [
+      "Deploy this only if an opponent's faction has 10 influence or less."
+    ],
+    "notes": "onPlay condition uses factionOf opponent before any binding. Needs existential 'some opponent's faction has <= 10' legality check (no sum/first-opponent shortcut)."
+  },
+  {
+    "name": "Tumescent Guilt Bladder",
+    "ids": [
+      "0b790bde-153c-42d9-8038-feb93e327764",
+      "a7351707-259c-4414-b734-962d4dc33634"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent takes control of it"
+    ],
+    "notes": "Turn-start trigger; bound opponent takes control."
+  },
+  {
+    "name": "Unexpected Boobysnake",
+    "ids": [
+      "19cf503e-f872-4199-beef-e832d1ee833c",
+      "0da66705-4bbd-49c7-981a-3bf32eb437b7"
+    ],
+    "category": "a",
+    "phrases": [
+      "if you deployed it during an opponent's turn"
+    ],
+    "notes": "'An opponent's turn' = any non-own turn, so reading is unambiguous. Note the encoding is the proxy deployedAsResponse (a response window was open); consider not(isActivePlayer controller) if priority rotation (D6) makes that proxy diverge."
+  },
+  {
+    "name": "Vast Mastabatorium",
+    "ids": [
+      "ab1abe6e-7428-492b-8eb1-0f0ceef7e512",
+      "6f8bd62f-fdaa-49b6-8de8-d66c0ec28437"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent takes control of it"
+    ],
+    "notes": "The end-of-turn scheduled takeControl stays bound to the opponent chosen when the ability resolved (D4 created effect)."
+  },
+  {
+    "name": "Venomous Sacspider",
+    "ids": [
+      "b374445f-2ac5-40b2-bfc5-5ee47771db6c",
+      "25467632-34e7-4eca-b5f0-9b5c50a05d1f"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent discards their hand"
+    ],
+    "notes": "Bound opponent discards hand."
+  },
+  {
+    "name": "Violating Anomaly",
+    "ids": [
+      "973827cb-fb59-4ce8-9681-1263a14d2e62",
+      "4d2d797d-30ea-4b54-9826-b0140b03b9ff"
+    ],
+    "category": "a",
+    "phrases": [
+      "look at an opponent's hand and choose a card in it. That player discards that card."
+    ],
+    "notes": "Bound opponent."
+  },
+  {
+    "name": "Wyrmfang Deathskull",
+    "ids": [
+      "b5fbadf6-df3d-42bd-b55a-daaa1321b076",
+      "97177f3a-80ff-480f-a12e-385472acf43b"
+    ],
+    "category": "c",
+    "phrases": [
+      "the controller of the faction or location you are attacking picks any number of characters they control"
+    ],
+    "notes": "Chooser is opponent (bound), but the text means the attacked player (the defender); with 3+ players those can differ. Chooser should be the defending player (controller of the attacked faction/location)."
+  }
+]

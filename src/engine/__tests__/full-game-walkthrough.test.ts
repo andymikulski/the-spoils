@@ -9,7 +9,7 @@
 // exactly what happens and why at every step without reverse-engineering a
 // bot's decision process.
 //
-// The two hands/decks below come from createTwoPlayerFactionGame with a
+// The two hands/decks below come from createFactionGame with a
 // fixed seed (2) — the resulting shuffle is deterministic, so every draw
 // referenced here (via handCard(), which looks a card up by name rather
 // than by a hardcoded id) is reproducible. Card lookups go by name, not
@@ -31,7 +31,7 @@ import {
   tactic
 } from "./support/fixtures.js";
 import {
-  createTwoPlayerFactionGame,
+  createFactionGame,
   type CardDefinition,
   type CardInstanceId,
   type SpoilsEngine
@@ -149,10 +149,10 @@ function handCard(engine: SpoilsEngine, playerId: string, name: string): CardIns
 }
 
 test("full game: a hand-scripted walkthrough from mulligan to a decided winner", () => {
-  const engine = createTwoPlayerFactionGame(
+  const engine = createFactionGame(
     DEFINITIONS,
-    { id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf() },
-    { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf() },
+    [{ id: P1, name: "Alice", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf() },
+    { id: P2, name: "Bob", factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf() }],
     { firstPlayerId: P1, seed: 2 }
   );
 

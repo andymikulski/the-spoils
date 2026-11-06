@@ -4,7 +4,7 @@
 import { describe } from "node:test";
 import assert from "node:assert/strict";
 import type { CardDefinition, Effect, GameEvent, SpoilsEngine, TargetDeclaration } from "../../../engine.js";
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import { logMessageFor } from "../../../types/log.js";
 import {
   buildGame,
@@ -54,10 +54,10 @@ describe("CR 403.1 — deck", () => {
   rule("CR 403.1a", "the deck is the pile of cards brought to the game EXCLUDING the faction: the faction starts in play, not in the deck", () => {
     const filler = character({ name: "Filler", life: 2 });
     const faction = factionCard({ name: "Plain", faction: defaultFactionDefinition() });
-    const engine = createTwoPlayerFactionGame(
+    const engine = createFactionGame(
       [faction, filler],
-      { id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
-      { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
+      [{ id: P1, name: "Alice", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) },
+      { id: P2, name: "Bob", factionDefinitionId: faction.id, deckDefinitionIds: Array(10).fill(filler.id) }],
       { firstPlayerId: P1, seed: 99 }
     );
     for (const player of [P1, P2]) {

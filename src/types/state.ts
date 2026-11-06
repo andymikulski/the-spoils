@@ -27,6 +27,8 @@ import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
 import type { CardSelector, NumberExpression } from "./expressions.js";
 import type { CreatedAbilitySpec } from "./createdAbility.js";
+import type { GameFormat, PlayerElimination } from "./format.js";
+import type { ShowdownState } from "./showdown.js";
 
 export interface CardInstance {
   id: CardInstanceId;
@@ -179,6 +181,9 @@ export interface PlayerState {
   void: CardInstanceId[];
   /** "Removed from the game" (RULES.md §2). Owner-tracked, like discard/void. */
   removed: CardInstanceId[];
+
+  /** Set once the player is out of a game with three or more players (their faction reached 0 influence). */
+  eliminated?: PlayerElimination;
 }
 
 export interface RuntimeModifier {
@@ -1237,8 +1242,21 @@ export interface GameState {
    */
   idSeq: number;
 
+  /** The table format, fixed at setup (`classic`, `freeForAll`, `showdown`). */
+  format: GameFormat;
+
+  /**
+   * Every seat in turn order, starting with the seat that took the first
+   * turn. Eliminated players keep their seat here (and are skipped); the
+   * order never changes after setup.
+   */
+  turnOrder: PlayerId[];
+
   players: Record<PlayerId, PlayerState>;
   cards: Record<CardInstanceId, CardInstance>;
+
+  /** Showdown's shared table state; present exactly when `format.kind === "showdown"`. */
+  showdown?: ShowdownState;
 
   modifiers: RuntimeModifier[];
   /** Standing "this turn" stat changes over a selector's cards (`createAreaModifier` — Rasputin Unleashed). */

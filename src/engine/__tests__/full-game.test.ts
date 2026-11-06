@@ -30,7 +30,7 @@ import {
   type CardDefinition,
   type CardDefinitionId,
   type PlayerId,
-  createTwoPlayerFactionGame
+  createFactionGame
 } from "../../engine.js";
 import { mulberry32 } from "./support/prng.js";
 import { playGameToCompletion, type AutoplayReport } from "./support/autoplay.js";
@@ -55,10 +55,10 @@ function definitionsFor(...deckIdLists: CardDefinitionId[][]): CardDefinition[] 
 function playGame(seed: number, firstPlayerId: PlayerId): AutoplayReport {
   const definitions = definitionsFor(arcanistDeckIds, warlordDeckIds);
 
-  const engine = createTwoPlayerFactionGame(
+  const engine = createFactionGame(
     definitions,
-    { id: "arcanist", name: "Arcanist Player", deckDefinitionIds: arcanistDeckIds },
-    { id: "warlord", name: "Warlord Player", deckDefinitionIds: warlordDeckIds },
+    [{ id: "arcanist", name: "Arcanist Player", deckDefinitionIds: arcanistDeckIds },
+    { id: "warlord", name: "Warlord Player", deckDefinitionIds: warlordDeckIds }],
     { firstPlayerId, seed }
   );
 

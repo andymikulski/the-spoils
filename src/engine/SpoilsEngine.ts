@@ -105,6 +105,15 @@ import {
 import { cardTextToPlain } from "../cardText.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
+import { resolveGameFormat } from "./setup.js";
+import {
+  isLiving,
+  isOpponentOf,
+  livingSeats,
+  nextLivingSeat,
+  opponentsOf,
+  otherLivingSeats
+} from "./seating.js";
 import type {
   DeclarationRequirement,
   PickStep,
@@ -764,6 +773,8 @@ export class SpoilsEngine {
     this.state = initialState;
 
     // Normalize partially-specified states (test fixtures, hand-built saves).
+    this.state.turnOrder ??= Object.keys(this.state.players);
+    this.state.format ??= resolveGameFormat(this.state.turnOrder);
     this.state.responseStack ??= [];
     this.state.gameLog ??= [];
     this.state.setup ??= { phase: "complete" };

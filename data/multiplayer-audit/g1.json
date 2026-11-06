@@ -1,0 +1,1034 @@
+[
+  {
+    "name": "3p1ph4ny 31f",
+    "ids": [
+      "579cf37c-1b99-47a8-b090-96bc06ea81b9",
+      "3398fc6e-d1fd-487d-85f2-59486e3256eb",
+      "0de292e7-cc1a-481a-ad01-697f928caac1"
+    ],
+    "category": "a",
+    "phrases": [
+      "each opponent may do the same"
+    ],
+    "notes": "Already fans out via forEachPlayer + not isActivePlayer. Minor: relies on controller being the active player; an opponents-only forEachPlayer scope would be more robust."
+  },
+  {
+    "name": "A Death Fit for a King",
+    "ids": [
+      "605554df-72a7-4b72-91cc-f6983165d620"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a character in an opponent's discard pile"
+    ],
+    "notes": "Target union selector (unique in play, or owner:opponent discard) works with a bound opponent. Pattern: opponent only appears in a target selector."
+  },
+  {
+    "name": "Adroit Marauder",
+    "ids": [
+      "462aa66d-96bd-4a16-96c4-a18de9f96c88",
+      "f1bdb798-4336-433c-8186-1ea18e12754b",
+      "936d6c91-46c0-4f03-a48e-e64e20e1194b"
+    ],
+    "category": "c",
+    "phrases": [
+      "While an opponent has at least 10 cards in their discard pile"
+    ],
+    "notes": "Static condition counts selector owner:opponent zone:discard >= 10. If static 'opponent' sums over all opponents this is wrong: the text means some single opponent has >=10. Needs an existential per-opponent condition (any opponent satisfies count>=10) instead of an aggregate count."
+  },
+  {
+    "name": "Arcana Experiment",
+    "ids": [
+      "1d8d7483-283a-45d5-b04f-5edaf7c9fe78",
+      "4300e226-bceb-4fcc-b9d0-097971b17dc4",
+      "6e63449c-4363-494b-b90a-db1147b4b9a1"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent chooses X of those cards"
+    ],
+    "notes": "Single 'An opponent' chooser in one resolving block; binds one opponent."
+  },
+  {
+    "name": "Ashara, Gideon's Twin",
+    "ids": [
+      "5d139b84-9808-49e5-8779-667c0ae91a29",
+      "d20fc7d2-f04a-404b-a9f4-0266150620cd"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a character in an opponent's discard pile with 3 life or less"
+    ],
+    "notes": "Optional extra-cost target from one opponent's discard pile; binding works."
+  },
+  {
+    "name": "Ashes of Zenobia",
+    "ids": [
+      "7a368a4d-0aa8-42bc-83d9-7bd529db7d62",
+      "b175a535-2a58-4df1-806d-6828e76d2868",
+      "b3c323b0-c7ea-4970-a286-92df7d2fe2f3"
+    ],
+    "category": "a",
+    "phrases": [
+      "Each player puts a character they control into its owner's hand"
+    ],
+    "notes": "Already fans out via forEachPlayer over all players; matches 'Each player'."
+  },
+  {
+    "name": "Bask Bomb",
+    "ids": [
+      "a67ac7f3-66f3-4c84-ab2a-761c577fe776"
+    ],
+    "category": "c",
+    "phrases": [
+      "an opponent is blocking",
+      "Inflict Y damage divided however that opponent wants to the attacking party"
+    ],
+    "notes": "'that opponent' is the blocking player. distributeAmong chooser:opponent must resolve to the player whose party is blocking (the defender), not a prompted pick; bind opponentId to the battle's blocking player for this ability (no prompt) and have the condition check that player blocked."
+  },
+  {
+    "name": "Card Counter",
+    "ids": [
+      "60343f52-31c1-45fb-9809-d1f6ee8190e9",
+      "93fe1f56-4619-4b79-a41e-7c8067fca386",
+      "6120a36b-4cbf-423a-b667-b6ca1df81879"
+    ],
+    "category": "a",
+    "phrases": [
+      "Put the top X cards of an opponent's deck into their discard pile"
+    ],
+    "notes": "One bound opponent for the ETB block."
+  },
+  {
+    "name": "Catastrophic Betrayal",
+    "ids": [
+      "6e480d86-521e-4d16-b1a1-abac69d4bd38",
+      "a2c972fc-f5de-4976-a2c6-a0518fa1a0e4",
+      "8a59c571-2e1d-4d25-8627-befb70cf925e"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character in an opponent's discard pile"
+    ],
+    "notes": "Target owner:opponent; works with a bound opponent. Pattern: when 'opponent' is only used in a target selector, the picked target could derive the binding (no prompt)."
+  },
+  {
+    "name": "Community Chest",
+    "ids": [
+      "fe7095e0-d918-420c-9303-fbc5054d2564"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each player's turn, each player may draw a card or play a resource"
+    ],
+    "notes": "Already forEachPlayer over all players."
+  },
+  {
+    "name": "Death of the Demon Knights",
+    "ids": [
+      "053823cb-77ae-494e-83a1-b19084e9038d"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent controls",
+      "that character's controller picks another character they control"
+    ],
+    "notes": "Mark and the second pick both use the one bound opponent (the marked character's controller)."
+  },
+  {
+    "name": "Defenestrate",
+    "ids": [
+      "df57b23c-8f1a-4743-8b7c-1b2a1ceaf52c",
+      "d74f6b0f-58d5-4e07-b5bc-dbd1a17df192"
+    ],
+    "category": "a",
+    "phrases": [
+      "Put the top 2 cards of an opponent's deck into their discard pile"
+    ],
+    "notes": "One bound opponent."
+  },
+  {
+    "name": "Degenerate Molestation",
+    "ids": [
+      "d0f8ae01-7941-4b39-9292-1ad30f8eec9d",
+      "12cfc4e1-e8f7-431e-a37a-593210181b0c",
+      "f77f9b48-ebfb-4f8f-a32d-46a0309da781"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot respond to this card",
+      "Pick an opponent",
+      "That player discards a card"
+    ],
+    "notes": "'Pick an opponent' = the D4 binding; repeatWhile and chooser use that one opponent. noResponse must block every opponent (matches plural text)."
+  },
+  {
+    "name": "Devilfang Thunderhoof",
+    "ids": [
+      "186b8e6c-7c64-42e9-b885-bf7b26fdf387",
+      "e1d91071-20c5-4eac-9dec-5b147de9804e"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "That player discards a card"
+    ],
+    "notes": "Disrupt binds one opponent (explicit pick)."
+  },
+  {
+    "name": "Downsizing",
+    "ids": [
+      "c4b2deed-022b-40ce-abed-20c5abba750d",
+      "040213b2-7931-48c4-bf89-f8d45eaa98be",
+      "43425eec-287e-44b7-8bff-60c2b58feb9f"
+    ],
+    "category": "b",
+    "phrases": [
+      "Each opponent's faction gains X influence"
+    ],
+    "notes": "modifyInfluence player:opponent hits only the bound opponent. Wrap that modifyInfluence (not the destroy/bind of X) in an opponents-only forEachPlayer (plain forEachPlayer includes the controller) with player:controller."
+  },
+  {
+    "name": "Draconarius Slitherform",
+    "ids": [
+      "b6a07adb-0334-454a-a8d4-019dabbdcc8b"
+    ],
+    "category": "c",
+    "phrases": [
+      "your opponents' characters"
+    ],
+    "notes": "Death trigger uses controller:opponent targets, i.e. the single bound opponent's characters; the text is plural: damage is divided among all opponents' characters (one distribution across every opponent's characters). Needs a selector scope spanning every opponent for this block instead of the bound opponent. Block trigger ('the blocking party') is unaffected."
+  },
+  {
+    "name": "Dragon Tank",
+    "ids": [
+      "261002dc-bb50-4fbb-946d-59cafc5f8a51",
+      "3e949563-8af2-40f0-8dde-212932256134",
+      "e055ac0a-49d8-4bb0-914b-b039336c5e97"
+    ],
+    "category": "a",
+    "phrases": [
+      "you may pick a character an opponent controls"
+    ],
+    "notes": "Trigger binds one opponent; 'no opponent characters' check uses the same one. Minor: a player may bind an opponent with no characters and lose the Tank, which is their choice."
+  },
+  {
+    "name": "Dragon's Strategy",
+    "ids": [
+      "b737b07a-6d80-47cd-b27e-c0406883ca20",
+      "463d51ef-13f3-4c9c-a90b-a1e1d63b8e98"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent's faction loses 2 influence"
+    ],
+    "notes": "One bound opponent."
+  },
+  {
+    "name": "Ecto-Distillation",
+    "ids": [
+      "b9551400-f15c-4a8f-a2e1-a35a202e773d",
+      "ab9cdd87-c394-4108-a787-805193911891",
+      "37f34e7c-dbb2-4393-ad6a-bac2a3571ba9"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent may search your deck for any number of copies of the card"
+    ],
+    "notes": "One bound opponent is the chooser; no change."
+  },
+  {
+    "name": "Emergency Obfuscation",
+    "ids": [
+      "9df5c987-d2c0-45d4-86ae-1d487cc7f937",
+      "1999770c-5f2d-415d-8da1-8efe44ef3e41"
+    ],
+    "category": "c",
+    "phrases": [
+      "each player moves 1 seat to the left",
+      "Each player is in control of that opponent's side",
+      "the owner of the winning deck wins the game"
+    ],
+    "notes": "swapsSides is a 2-player swap. For N players it must rotate every player's side one seat left (each player controls the side of the player now in their former seat, by turnOrder), and winner attribution stays with the deck owner. Needs an N-seat rotation definition and turnOrder-aware control mapping."
+  },
+  {
+    "name": "Enter The Demon Knights",
+    "ids": [
+      "1848963f-93a8-4eae-8977-f76b2547bce5"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "That opponent chooses one of those characters"
+    ],
+    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player."
+  },
+  {
+    "name": "Executive Order #6370u7",
+    "ids": [
+      "f3d514d8-0d1d-4796-97e5-7640bcffae6a"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of an opponent's turn"
+    ],
+    "notes": "Trigger condition is 'not the controller's turn' = any opponent's turn; no player binding needed."
+  },
+  {
+    "name": "Executive Poaching",
+    "ids": [
+      "1b3ecf99-3be5-43ae-9727-77ce4b1e2c62",
+      "84b53a95-38ae-487f-8b8a-4109409d829b",
+      "1d851c52-991f-4c24-9a1d-b56575677bfb"
+    ],
+    "category": "a",
+    "phrases": [
+      "the character an opponent controls with the highest numeric cost"
+    ],
+    "notes": "'highest' is computed among the one bound opponent's characters (MP 2 reading); acceptable, no change."
+  },
+  {
+    "name": "Face in the Crowd",
+    "ids": [
+      "9eefa81d-6214-47bf-af77-7bb5ca92c8d4",
+      "10b2d3fb-c61b-4c10-99ed-7d81de0c6b7e"
+    ],
+    "category": "c",
+    "phrases": [
+      "While an opponent controls at least 4 characters"
+    ],
+    "notes": "Static condition counts selector controller:opponent characters >= 4. Text means some single opponent controls >=4; an aggregate sum over opponents would be wrong. Needs an existential per-opponent condition."
+  },
+  {
+    "name": "Forget",
+    "ids": [
+      "c8ecd7ab-d7d8-4749-b821-980f09c58edc",
+      "a4f1535c-b3fa-46fa-93cd-d0b9f3abb10c",
+      "ea9b719e-c8ee-4911-9dfd-dd4ecfa842ce"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and choose a card in it"
+    ],
+    "notes": "Single opponent's hand via the block binding."
+  },
+  {
+    "name": "Free Trade Agreement",
+    "ids": [
+      "72056e1f-62f5-41e1-865f-6a40a18a609e",
+      "6a09105b-8cde-488e-ae5b-89ebc81beade",
+      "234559f8-329c-4c05-bc09-c34e087a4182"
+    ],
+    "category": "a",
+    "phrases": [
+      "At the start of each player's turn, that player chooses",
+      "their opponents may play a resource",
+      "their opponents may draw a card",
+      "Each player may draw up to 2 cards",
+      "Each player may play up to 2 resources"
+    ],
+    "notes": "Already fans out via forEachPlayer; 'opponents' encoded as every non-active player, which is correct for N players. (Pattern: forEachPlayer + not isActivePlayer as 'each opponent'.)"
+  },
+  {
+    "name": "Geiseric, the Souleater",
+    "ids": [
+      "c9801386-03b5-4348-8706-f81fec9819bd"
+    ],
+    "category": "a",
+    "phrases": [
+      "If a character would be put into an opponent's hand from play"
+    ],
+    "notes": "Static replacement controlledBy:opponent: applies for every opponent's characters."
+  },
+  {
+    "name": "Giada, the Elegant",
+    "ids": [
+      "0b67c755-4053-4bfb-9aef-e3a990501e0d"
+    ],
+    "category": "a",
+    "phrases": [
+      "by an opposing card or effect"
+    ],
+    "notes": "Static replacement by:opponent matches any opponent's source."
+  },
+  {
+    "name": "Gideon's Legacy",
+    "ids": [
+      "05cfbc47-195f-4da5-81d0-f6e7f1da6b15"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a player",
+      "Each other player's faction gains X influence"
+    ],
+    "notes": "Picked card's owner is the picked player; the forEachPlayer fan-out gives influence to every player who does not own the card, matching 'each other player'."
+  },
+  {
+    "name": "Goutflame Talonclaw",
+    "ids": [
+      "cb503376-78b8-447c-9119-734f992429c9"
+    ],
+    "category": "a",
+    "phrases": [
+      "Opponents cannot take control of this card"
+    ],
+    "notes": "cannotBeTakenControl is unconditional; fine for all opponents. In Showdown check that a fellow Hero's TEAMWORK is not treated as an opponent taking control."
+  },
+  {
+    "name": "Grand Theft All",
+    "ids": [
+      "1ab9bf0e-37bc-4faa-bf3b-44a03aefd58b",
+      "799e4e63-e1ab-4f7e-bd5c-f5534b770686",
+      "3f6972bf-88bd-4b14-af92-d6356979c155"
+    ],
+    "category": "a",
+    "phrases": [
+      "Put up to 4 non-tactic cards in an opponent's discard pile into play under your control"
+    ],
+    "notes": "All cards come from one bound opponent's discard pile."
+  },
+  {
+    "name": "Heist Planner",
+    "ids": [
+      "89a84630-93c8-4461-b625-5f32380b3ed4",
+      "65ebb568-f0c8-4bd4-a75a-209ff0c36a7e",
+      "5f93b923-bd32-4591-9a90-67c68a1e7c88"
+    ],
+    "category": "a",
+    "phrases": [
+      "search an opponent's deck for up to 3 cards with different names"
+    ],
+    "notes": "One bound opponent; shuffleDeck player:opponent is the same one."
+  },
+  {
+    "name": "Hilarious Refrigerator Alarm",
+    "ids": [
+      "febadb33-11cf-4dec-815b-5e86d03488f0"
+    ],
+    "category": "b",
+    "phrases": [
+      "If an opponent deployed at least 2 cards with the same name this turn",
+      "each opponent may put 3 Micromajig tokens into play under their control"
+    ],
+    "notes": "The 'Otherwise' branch uses mayPay player:opponent (single bound player); wrap it in an opponents-only forEachPlayer so every opponent may make 3 tokens. The deploySameNameThisTurn player:opponent condition should also be existential across all opponents ('an opponent'), not just the bound one."
+  },
+  {
+    "name": "Ipsighast, the Lustful",
+    "ids": [
+      "3b6e1bd0-98bb-423e-adcd-eda67697c487",
+      "2a7f9474-5265-4804-865f-f4c3b63b6651"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character in an opponent's discard pile",
+      "the top 3 cards of that opponent's deck"
+    ],
+    "notes": "The picked target fixes the opponent; mill uses ownerOf(selected), which is correct for any opponent."
+  },
+  {
+    "name": "Irresistible Bribe",
+    "ids": [
+      "5b3672b9-2bfe-4b64-87a0-eb3a1dfb085e",
+      "4779dd8b-22b8-45ea-adfc-aaf6c9ce11d8",
+      "8e36b4a0-419d-413d-9512-b539e37681aa"
+    ],
+    "category": "c",
+    "phrases": [
+      "That character’s controller's faction gains X influence"
+    ],
+    "notes": "Target is any character, but influence goes to player:'opponent' (bound opponent). Re-encode to {controllerOf: selected c}; this is also wrong in classic when the picked character is your own, and wrong in MP when its controller is not the bound opponent."
+  },
+  {
+    "name": "Jackmove",
+    "ids": [
+      "66b79f2b-629d-4f94-9b59-598b2abfd05b",
+      "37c534eb-781f-4386-b0be-afdb268efd05",
+      "63358d71-4e67-40e8-811c-6d1d8ce36f3f"
+    ],
+    "category": "a",
+    "phrases": [
+      "Reveal up to the top X cards of an opponent's deck"
+    ],
+    "notes": "One bound opponent."
+  },
+  {
+    "name": "Knobby Stave",
+    "ids": [
+      "4d8cc96d-318f-436d-aaa6-5a39c574b8d8",
+      "bb153366-ff1b-44f8-8e82-f005d31120a2"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card"
+    ],
+    "notes": "Activated ability binds one opponent."
+  },
+  {
+    "name": "Land Shark",
+    "ids": [
+      "7c9b4275-fb54-4426-bbf5-9290accc9892",
+      "de015040-fac3-40c4-a4d7-27d8b40fe814"
+    ],
+    "category": "a",
+    "phrases": [
+      "each face-down resource each opponent controls"
+    ],
+    "notes": "Static selector owner:opponent; count must sum over every opponent (static opponent = all opponents), which matches 'each opponent'."
+  },
+  {
+    "name": "Lecram, Silent Advisor",
+    "ids": [
+      "52575cdb-9125-474c-8dea-0506f28f8ee0"
+    ],
+    "category": "a",
+    "phrases": [
+      "look at the top card of an opponent's deck"
+    ],
+    "notes": "The look effect is not encoded (empty winEffects), so there is nothing to change; when encoded it binds one opponent for that trigger."
+  },
+  {
+    "name": "Lugubrian Octopod",
+    "ids": [
+      "2cc329ba-d703-4dc5-99ee-9c1c145856bf",
+      "f54b6b5c-7d76-441f-a521-7d2e65b31d0b",
+      "9637226d-3115-48cd-bf92-b6946d7eafed"
+    ],
+    "category": "c",
+    "phrases": [
+      "that faction's controller discards 2 cards"
+    ],
+    "notes": "The discarder is the damaged faction's controller (chooser ownerOf eventCard) but the hand selector is owner:opponent, i.e. the bound opponent. With 3+ players the trigger's opponentId must be set from the event (the damaged faction's controller, no prompt), or the selector must be re-expressed relative to the chooser."
+  },
+  {
+    "name": "Master Scavenger",
+    "ids": [
+      "1e8aead1-d6ce-470f-ad4a-5d7bb2b35ae7",
+      "3af8c17c-428e-4037-a0df-bf591220668b",
+      "93b8631a-c2f2-4c9b-8c22-c5d12672a329"
+    ],
+    "category": "a",
+    "phrases": [
+      "Remove 3 cards in an opponent's discard pile from the game"
+    ],
+    "notes": "Cost pick from one opponent's discard; works with binding."
+  },
+  {
+    "name": "Meager Research",
+    "ids": [
+      "300b1274-898a-4769-8422-ab07c00ca51e",
+      "d25a15e6-3f64-484a-bc42-5121528329c7"
+    ],
+    "category": "a",
+    "phrases": [
+      "Reveal the top card of an opponent's deck"
+    ],
+    "notes": "One bound opponent's deck."
+  },
+  {
+    "name": "Mud Prison",
+    "ids": [
+      "73aa24ca-a9d9-480b-a83e-efa6571a5307"
+    ],
+    "category": "a",
+    "phrases": [
+      "pick a character an opponent controls",
+      "Treat characters your opponents control with a token on them"
+    ],
+    "notes": "Trigger binds one opponent for the pick; the static suppressAllAbilities selector controller:opponent covers every opponent's marked characters."
+  },
+  {
+    "name": "Octo-Ba-Ba, the Devourer",
+    "ids": [
+      "60ce2f1b-bb70-4195-a6db-e0caa629ce2a"
+    ],
+    "category": "a",
+    "phrases": [
+      "When a character an opponent controls is destroyed"
+    ],
+    "notes": "Static trigger on any opponent's character."
+  },
+  {
+    "name": "Pillaging Pirate",
+    "ids": [
+      "dbc87e0e-53f7-424f-882d-1f5eb0491157",
+      "91e2b83d-3950-4e22-9f20-5552580eb482",
+      "ca14cfec-3ab4-4da6-af9b-2966b31b6716"
+    ],
+    "category": "a",
+    "phrases": [
+      "put the top 2 cards of an opponent's deck into their discard pile"
+    ],
+    "notes": "One bound opponent."
+  },
+  {
+    "name": "Pluck",
+    "ids": [
+      "f4ccc8f6-f59d-47f3-8972-48d83770de94",
+      "75283e13-7791-475a-af8d-de8e62925cd2",
+      "428fa533-f143-4d22-8069-13695bfc6763",
+      "d221684d-f8d0-46ef-ad0d-458dedc13ca8"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a non-tactic card in an opponent's discard pile"
+    ],
+    "notes": "Target owner:opponent with binding."
+  },
+  {
+    "name": "Pony Slaystation",
+    "ids": [
+      "d1fc04ec-fef0-4031-8e4c-9ce7c1273015"
+    ],
+    "category": "a",
+    "phrases": [
+      "under an opponent's control"
+    ],
+    "notes": "Static trigger eventCardControlledBy:opponent: any opponent."
+  },
+  {
+    "name": "Port Manteau",
+    "ids": [
+      "e2f64e14-2f97-4905-8bb0-8bea33994928"
+    ],
+    "category": "a",
+    "phrases": [
+      "Players must pay 2 to deploy cards with the named subtype"
+    ],
+    "notes": "costModifiers affecting controller and opponent: opponent covers every opponent."
+  },
+  {
+    "name": "Rabid Sarume",
+    "ids": [
+      "1529df2e-4d94-4c8a-be82-4490d7b32189",
+      "3e67d5b0-20a2-4453-b9e9-0e80babf7133",
+      "06dceb26-b7b7-49c4-b66c-9fd1b93ef09a"
+    ],
+    "category": "a",
+    "phrases": [
+      "inflict 1 damage to all your opponent's characters"
+    ],
+    "notes": "Singular 'your opponent' = the bound opponent (MP 2); the selector controller:opponent hits only that player's characters."
+  },
+  {
+    "name": "Ravenous Wolf",
+    "ids": [
+      "dd3e5e68-1f1c-478a-a743-992b59b6b847",
+      "8ccb3e92-e728-48e0-a631-c2b87c06e5f6"
+    ],
+    "category": "a",
+    "phrases": [
+      "if you deployed it during an opponent's turn"
+    ],
+    "notes": "'An opponent's turn' = any turn that is not yours; encoding uses deployedAsResponse as the proxy and has no player reference, so no MP change."
+  },
+  {
+    "name": "Research Investment",
+    "ids": [
+      "ec646752-561a-4ba7-9c0c-69eb41457d56",
+      "8debcbf9-ef88-4e7a-b25e-5b7d69629a96",
+      "828a6b95-9e5f-4035-b348-6258c1937c87"
+    ],
+    "category": "a",
+    "phrases": [
+      "Each player may search their deck for up to 3 staple resources"
+    ],
+    "notes": "Already forEachPlayer over all players."
+  },
+  {
+    "name": "Ritual of the Screaming Cheese",
+    "ids": [
+      "6b2f22f0-755f-4418-84bd-cb8d44746980",
+      "0f2fc8b5-c078-4ccb-b7c1-8c34b62413e4"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "That player chooses one of the following"
+    ],
+    "notes": "Explicit 'Pick an opponent' = block binding; chooser:opponent is that player."
+  },
+  {
+    "name": "Ritual of the Shattering Teeth",
+    "ids": [
+      "18b1ad96-1445-4be4-b14f-8c17958e8a1d",
+      "a4e9bfdd-dc54-40ec-ac20-374ca334f6e6",
+      "a9d3f161-920e-4d8c-aa3d-9b1174f2fb6a"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand"
+    ],
+    "notes": "One bound opponent's hand."
+  },
+  {
+    "name": "Sarcophyle Matriculation",
+    "ids": [
+      "4c74c015-d20e-4558-95d0-e5d31d414b5b",
+      "e53172ad-eba1-453f-949d-910e4aba0bd6"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent controls"
+    ],
+    "notes": "Bound opponent; only useful if it is the attacker, but any choice is legal. Optionally default the binding to the attacking player."
+  },
+  {
+    "name": "Scrag",
+    "ids": [
+      "98f6844e-bafe-43e9-9782-9c45b40339fb",
+      "a41131b1-d9ab-404b-bd55-1fa9d9c77dcf",
+      "c0b6851e-1ad8-4079-8f81-5e5ff07f9187",
+      "fb663668-19d6-4f14-a48f-6e9ae04e8875"
+    ],
+    "category": "c",
+    "phrases": [
+      "If that character's controller has at least X cards in their discard pile"
+    ],
+    "notes": "Counts owner:opponent discard but the picked character may be anyone's; text means the character's controller. Re-encode with the discard of controllerOf(selected c) (pre-existing 2-player bug when targeting your own character; with 3+ players it is wrong whenever the controller is not the bound opponent)."
+  },
+  {
+    "name": "Shieldmane Grandchest",
+    "ids": [
+      "452bed36-af64-4986-905b-6074fd01437b"
+    ],
+    "category": "a",
+    "phrases": [
+      "When battle damage is inflicted to a character an opponent controls, increase the amount by 2"
+    ],
+    "notes": "Static damageModifiers selector controller:opponent covers every opponent's characters."
+  },
+  {
+    "name": "Siege Machine",
+    "ids": [
+      "6167b5f8-5c3e-4426-8e30-afcd756ffbcb",
+      "3e5a5552-6106-4c69-8c8e-9aa3376f0330",
+      "5c02a5f8-543e-456b-8ee2-075fd1f6bff9"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent's faction loses 1 influence"
+    ],
+    "notes": "One bound opponent."
+  },
+  {
+    "name": "Sleeping Guard",
+    "ids": [
+      "e2fd3c94-526a-4bbf-a27c-822d6ad1b2b0",
+      "1b6600af-3910-4cb2-9899-5fbe3006e6ee"
+    ],
+    "category": "a",
+    "phrases": [
+      "While an opponent controls a character"
+    ],
+    "notes": "Static >=1 count; summing over all opponents is equivalent to 'any opponent controls a character'."
+  },
+  {
+    "name": "Slightly Less Evil Alliance",
+    "ids": [
+      "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb"
+    ],
+    "category": "c",
+    "phrases": [
+      "All Heroes can use abilities on this card",
+      "Pick a character another Hero controls",
+      "The Villain takes control of the character",
+      "Choose another player",
+      "all Heroes turn their Allegiance cards face-up"
+    ],
+    "notes": "Currently encoded as a bare setup with no abilities. Needs the full Showdown encoding (SD-SLE 1-5): usableBy:'heroes' shared faction, GIVE IN TO TEMPTATION (pick character another Hero controls, takeControl to the Villain, claim Temptation Pile card), SPRING FORTH (Hero deck claim), TEAMWORK ('another player' = any other player chosen as target player, not the bound opponent), and the token/7-token allegiance reveal."
+  },
+  {
+    "name": "Slingerang",
+    "ids": [
+      "1760cfe7-261b-4f7a-a5c8-b37ff52099a1",
+      "b67c8587-63f7-4562-a6f9-f4ffabd1f843",
+      "93ebda5d-c273-4c97-a5c2-29202057b6e0"
+    ],
+    "category": "c",
+    "phrases": [
+      "When an opponent deploys a character",
+      "only if an opponent deployed a character this turn"
+    ],
+    "notes": "The trigger ('When an opponent deploys') is a static any-opponent and fine. The CHEAP SHOT activation condition uses deploysThisTurn player:opponent, which is evaluated before/outside a resolving block binding: it must mean 'any opponent deployed a character this turn' (aggregate across all opponents), not the bound opponent."
+  },
+  {
+    "name": "Spastic Tentacles",
+    "ids": [
+      "b817ac26-bdd5-4f11-8c48-e71cb58ef421",
+      "9b955719-5c5a-4401-8a40-d41c7390829e"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player puts a resource they control into its owner's hand"
+    ],
+    "notes": "Already forEachPlayer over all players; matches 'each player'."
+  },
+  {
+    "name": "Spatchcocking",
+    "ids": [
+      "d23a3fbd-0bf3-4937-9b29-570c55a418b8"
+    ],
+    "category": "b",
+    "phrases": [
+      "Each player chooses a card of each non-resource type they control",
+      "Each opponent reveals their hand, chooses a card of each non-resource type in it, and discards the remaining non-resource cards"
+    ],
+    "notes": "Main effect already forEachPlayer (correct). RECUR effect uses reveal of:opponent and chooser:opponent for a single player: wrap the reveal, the four chooserSelectsTarget and the discard forEach in an opponents-only forEachPlayer (selectors rewritten to controller:self per iterated opponent)."
+  },
+  {
+    "name": "Stolen Inspiration",
+    "ids": [
+      "977b96ef-93fb-4902-bde1-24469e94d9ab",
+      "7a32d945-fe61-448f-9cc7-d6aac8312c57",
+      "36a4611a-f7c9-4390-930c-46cd0f82569b"
+    ],
+    "category": "a",
+    "phrases": [
+      "Look at an opponent's hand and choose a non-resource card in it"
+    ],
+    "notes": "One bound opponent's hand."
+  },
+  {
+    "name": "Storm the Gates",
+    "ids": [
+      "6e733b56-222d-4d95-9be4-9c0a2056b1fa",
+      "c9e7ce3d-fe0f-441b-ad8d-94529bde25e4"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character your opponent owns"
+    ],
+    "notes": "Target owner:opponent with the bound opponent."
+  },
+  {
+    "name": "Summary Judgment",
+    "ids": [
+      "0856732d-4e78-48b5-84aa-7aedcaec99f0",
+      "40c6d3c3-98bd-4fb0-a5aa-7ffa0f6e8019",
+      "191e0731-b609-4ab3-a62b-8d6c21ed9e2b"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick a character an opponent controls",
+      "That character's controller may destroy the character"
+    ],
+    "notes": "Target selector uses the bound opponent; the mayPay player is controllerOf the target. Works."
+  },
+  {
+    "name": "Swarm of Gnats",
+    "ids": [
+      "e0abaa9e-7077-451b-a7e0-48d2f603dc28",
+      "88855760-2a12-4d04-8e88-213f36effba4",
+      "a082e30f-1c66-46ff-97fa-77ca89b0076f"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent discards a card"
+    ],
+    "notes": "Enter and leave triggers are separate blocks, each binds its own opponent (a fresh pick per MP 4)."
+  },
+  {
+    "name": "Swashbuckler",
+    "ids": [
+      "d155ea8f-1e46-4d6d-957e-e3724f5014f0",
+      "fe02c9ec-9a72-48dd-ba29-7167e16d3823",
+      "ae5a510d-db82-4c4f-83b5-eb2878145280"
+    ],
+    "category": "a",
+    "phrases": [
+      "you may remove 4 cards in an opponent's discard pile from the game"
+    ],
+    "notes": "Condition and removal both use the one opponent bound for the ETB block."
+  },
+  {
+    "name": "Tactician Vacation",
+    "ids": [
+      "f5b4db56-d972-48de-b1b5-7f16b7d427aa",
+      "4181e922-7ffb-4c71-aef6-17adf4f006c7",
+      "5ca25182-e910-4f21-97d0-b30298e7d4af"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot respond to this card"
+    ],
+    "notes": "noResponse covers every opponent; the 'tactics cannot be deployed' restriction already uses forEachPlayer over all players."
+  },
+  {
+    "name": "The Billionaire",
+    "ids": [
+      "ff195e18-a459-4594-b155-8572b869f368",
+      "fb604d54-0aa5-40b5-9430-9d163e03fcc9",
+      "2ec131a8-26eb-4dd7-914d-ced1ca9e770c"
+    ],
+    "category": "d",
+    "phrases": [
+      "You may use abilities on your opponent's cards",
+      "as though your opponent is using the ability",
+      "as if your opponent used it"
+    ],
+    "notes": "canUseOpponentAbilities asOpponent: static (every opponent's cards usable), but 'as though your opponent is using' needs a defined acting player and opponent binding for the borrowed ability's own 'opponent' references.",
+    "ruling": "You may use abilities on any opponent's cards (static, all opponents). The borrowed ability resolves as if the card's controller activated it (that player is 'controller' for the block), but you pay numeric costs from your own resources. Inside the borrowed block, 'opponent' is bound to the Billionaire's controller (the real user), so the 2-player relationship is preserved; no extra prompt."
+  },
+  {
+    "name": "The Enemy's Head",
+    "ids": [
+      "bfd10394-2019-4c7c-87b5-11cf033a2869"
+    ],
+    "category": "a",
+    "phrases": [
+      "When a character an opponent controls is destroyed"
+    ],
+    "notes": "Static trigger on any opponent's character."
+  },
+  {
+    "name": "The Evil Alliance",
+    "ids": [
+      "9dc309f4-d43f-4515-841e-ed982ce026e7"
+    ],
+    "category": "c",
+    "phrases": [
+      "X is the number of opponents you have at the start of the game",
+      "Any 1+X staple resources",
+      "Repeat this X-1 times",
+      "Draw X-1 cards"
+    ],
+    "notes": "Encoded for X=1 only (startingInfluence 25, 2 starting staples, 1 develop choice). Needs expression-valued startingInfluence = 15+10X, starting resources 1+X, develop repeated X-1 more times (X total), and X resolved from opponent count at setup (D1/D9/Phase 4). ENTICEMENT, DARING GAMBIT, Hero deck/Temptation Pile and the 'going second' draw for seats 2..N are not encoded yet."
+  },
+  {
+    "name": "The Knitting Coalition",
+    "ids": [
+      "c58d0e3c-4f76-4665-aca4-2ba01a42d863"
+    ],
+    "category": "c",
+    "phrases": [
+      "Your opponent ignores their faction's STARTING DRAW rule",
+      "Your opponent ignores their faction's DEVELOP RULE",
+      "Both players may use this ability"
+    ],
+    "notes": "overridesOpponent (startingDraw, suppressDevelop) must apply to every opponent per D9. usableBy:'anyPlayer' on DRAW/RESOURCE must mean every player at the table (each pays from their own resources) rather than a two-seat pair."
+  },
+  {
+    "name": "The Ministry of Other Smaller Ministries",
+    "ids": [
+      "5ae38ba3-9369-4d01-9ee3-3359406a007f",
+      "ad487c7d-d286-44f4-8532-085ad2a851f1",
+      "c8f335c2-c065-4e48-befe-ce99752073f1"
+    ],
+    "category": "a",
+    "phrases": [
+      "Each opponent must pay 2 to attack"
+    ],
+    "notes": "Static attackTax player:opponent applies to every opponent per D4."
+  },
+  {
+    "name": "The Open R&D Faction",
+    "ids": [
+      "ebef8b79-0dcb-401f-81e9-eafd9235fd7d"
+    ],
+    "category": "d",
+    "phrases": [
+      "both players create the rules text for an ability",
+      "both players can use it"
+    ],
+    "notes": "playerCreatedAbility is a pre-game setup rule; no block exists to bind an opponent, so 'both players' is ambiguous with 3+ players.",
+    "ruling": "Every player creates one ability before the game begins, and the faction (and every ability written for it) is usable by every player. (Engine: playerCreatedAbility becomes one ability per player, usableBy anyPlayer.)"
+  },
+  {
+    "name": "The Union of Unextraordinary Miners",
+    "ids": [
+      "71038369-24cc-48d9-a58c-e658edc01944"
+    ],
+    "category": "c",
+    "phrases": [
+      "Your opponent starts with their usual resources plus enough staple resources so that both players have the same number of starting resources"
+    ],
+    "notes": "matchOpponentCount must apply per opponent (D9): each opponent is topped up with staples until their starting resource count equals the Union player's (X+1 staples/Deception total). The X choice is made once by the Union player."
+  },
+  {
+    "name": "Tremor Engine",
+    "ids": [
+      "37a2c6f2-a2aa-434c-92d3-0d5e7ab38cbc",
+      "de074019-381e-4229-85db-46d2d7c30eb4",
+      "f58d1a64-ffe6-44e6-a0fb-7fee920c215d"
+    ],
+    "category": "a",
+    "phrases": [
+      "each player puts the top 2 cards of their deck into their discard pile"
+    ],
+    "notes": "Already forEachPlayer over all players."
+  },
+  {
+    "name": "Unscrupuls of Victory",
+    "ids": [
+      "b91d33d1-aeed-4953-b57b-463204b25bc6"
+    ],
+    "category": "a",
+    "phrases": [
+      "an opponent discards 1 card",
+      "search an opponent's deck for 1 card"
+    ],
+    "notes": "Both clauses are in one block, so the same bound opponent is used; acceptable under MP 2."
+  },
+  {
+    "name": "Vilghame Manewaft",
+    "ids": [
+      "3534079d-0983-4521-a905-589de7d4b9d8"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents must pay 1 to deploy a tactic",
+      "The first resource each opponent plays each turn"
+    ],
+    "notes": "Static costModifier affects:opponent = all opponents; eventOrdinal is tallied per event type and player, so 'first each turn' is per opponent."
+  },
+  {
+    "name": "Voidal Poisoning",
+    "ids": [
+      "c8fa3d3a-aec1-473d-aa27-c40ceeb561d6",
+      "19153f74-edc7-4fdf-bce9-925f4ec5cdff",
+      "fed9a0cc-cd8d-4633-ba92-d05a94e6acda"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards a card"
+    ],
+    "notes": "Whole tactic is one block; the 2-token option uses the single bound opponent."
+  },
+  {
+    "name": "Voidal Replication",
+    "ids": [
+      "7416a581-63a8-495f-a845-f79eeddf2eea",
+      "63369e53-e89b-4b7d-beb0-7110cb1290ce",
+      "b9e94612-3cbd-44ff-9aac-a553a49c0955"
+    ],
+    "category": "a",
+    "phrases": [
+      "Your opponents cannot respond to this card"
+    ],
+    "notes": "noResponse blocks all opponents; matches plural text."
+  },
+  {
+    "name": "Warehouse Raid",
+    "ids": [
+      "85c0b848-9bca-4d6a-89e7-f43e39e22c84",
+      "3e634264-918f-44bd-bcd5-340220566f8e"
+    ],
+    "category": "a",
+    "phrases": [
+      "An opponent discards X cards at random"
+    ],
+    "notes": "One bound opponent for both random picks."
+  },
+  {
+    "name": "Well Laid Plans",
+    "ids": [
+      "5989ea37-35f7-443c-9b79-64ce0475309c"
+    ],
+    "category": "a",
+    "phrases": [
+      "Pick an opponent",
+      "Search that player's deck for a card and reveal it"
+    ],
+    "notes": "Explicit 'Pick an opponent' = the binding."
+  }
+]
