@@ -68,6 +68,21 @@ const SHARED_FACTION = factionCard({
 });
 
 const HERO_CHAMPION = character({ name: "Champion", strength: 4, life: 4 });
+/** "Destroy a location." — with no location in play it cannot be played. */
+const NEEDS_TARGET = tactic({
+  name: "Wrecker",
+  behavior: {
+    abilities: [
+      {
+        id: "wreck",
+        type: "activated",
+        costs: [],
+        targets: [{ id: "l", selector: { type: "location" }, count: 1 }],
+        effects: [{ type: "destroy", target: { type: "selected", id: "l" } }]
+      }
+    ]
+  }
+});
 const HERO_TRICK = tactic({ name: "Trick", behavior: { abilities: [{ id: "trick", type: "activated", costs: [], effects: [{ type: "draw", player: "controller", amount: 1 }] }] } });
 
 /** "Deal 7 damage to another Hero's faction." */
@@ -86,7 +101,7 @@ const BRUTE: CardDefinition = character({
   }
 });
 
-const DEFS = [RAGE, FILLER, VILLAIN_FACTION, HERO_FACTION, SHARED_FACTION, HERO_CHAMPION, HERO_TRICK, BRUTE];
+const DEFS = [RAGE, FILLER, VILLAIN_FACTION, HERO_FACTION, SHARED_FACTION, HERO_CHAMPION, HERO_TRICK, NEEDS_TARGET, BRUTE];
 
 function deck(...extra: string[]) {
   return [RAGE.id, RAGE.id, RAGE.id, RAGE.id, ...extra, ...Array.from({ length: 10 }, () => FILLER.id)];
@@ -194,13 +209,26 @@ describe("Hero cards (SD 8–11, SD-SLE 1)", () => {
     assert.equal(engine.state.cards[top].zone, "removed");
   });
 
-  test("a claimed tactic is offered to play for free; declined, it is removed from the game", () => {
+  test("a claimed tactic that can be played must be played for free; once resolved it is removed from the game", () => {
     const engine = showdownGame({ heroDeck: [HERO_TRICK.id] });
     const [top] = engine.state.showdown!.heroDeck;
     use(engine, "h1", "spring");
     const pending = engine.state.pendingChoice;
     assert.equal(pending?.kind, "deployForFree");
-    engine.perform({ type: "resolvePendingChoice", playerId: "h1", choice: { kind: "deployForFree" } });
+    assert.throws(
+      () => engine.perform({ type: "resolvePendingChoice", playerId: "h1", choice: { kind: "deployForFree" } }),
+      /must be played/
+    );
+    engine.perform({ type: "resolvePendingChoice", playerId: "h1", choice: { kind: "deployForFree", cardId: top } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[top].zone, "removed");
+  });
+
+  test("a claimed tactic that cannot be played is removed from the game at once (SD 10)", () => {
+    const engine = showdownGame({ heroDeck: [NEEDS_TARGET.id] });
+    const [top] = engine.state.showdown!.heroDeck;
+    use(engine, "h1", "spring");
+    assert.notEqual(engine.state.pendingChoice?.kind, "deployForFree");
     assert.equal(engine.state.cards[top].zone, "removed");
   });
 

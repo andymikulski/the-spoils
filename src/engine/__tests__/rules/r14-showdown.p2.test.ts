@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import type { ActivatedAbility, CardDefinition, SpoilsEngine } from "../../../engine.js";
 import { redactStateFor } from "../../../engine.js";
 import { character, item, location, resolvePendingResponses, tactic } from "../support/fixtures.js";
-import { refused, rule, ruleMismatch } from "./_rule.js";
+import { refused, rule } from "./_rule.js";
 import {
   CHAMPION,
   giveResources,
@@ -256,9 +256,7 @@ describe("SD 9 - claiming a Hero tactic", () => {
     assert.equal(zoneOf(engine, tacticId), "removed");
   });
 
-  ruleMismatch(
-    ["SD 8", "SD 9"],
-    "RF-r14-showdown-3",
+  rule(["SD 8", "SD 9"],
     "claimed together, a tactic and then a character: the tactic is played and the character still enters play (none of the claim is lost)",
     () => {
       const { engine } = withTactic([PEP_TALK, CHAMPION, RELIC]);
@@ -274,9 +272,7 @@ describe("SD 9 - claiming a Hero tactic", () => {
     }
   );
 
-  ruleMismatch(
-    ["SD 9", "SD 10"],
-    "RF-r14-showdown-2",
+  rule(["SD 9", "SD 10"],
     "a claimed tactic that cannot be played (its required pick has no character to take) is removed from the game at once",
     () => {
       const { engine } = withTactic([SMITE]);
@@ -293,10 +289,7 @@ describe("SD 9 - claiming a Hero tactic", () => {
     }
   );
 
-  ruleMismatch(
-    "SD 9",
-    "RF-r14-showdown-1",
-    "a claimed tactic that can be played must be played: the claimer cannot decline it",
+  rule("SD 9", "a claimed tactic that can be played must be played: the claimer cannot decline it",
     () => {
       const { engine } = withTactic([PEP_TALK]);
       const [top] = engine.state.showdown!.heroDeck;

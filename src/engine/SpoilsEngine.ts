@@ -19398,14 +19398,15 @@ export class SpoilsEngine {
         assert(pending.kind === "deployForFree", "This choice does not match the pending decision.");
 
         if (!choice.cardId) {
+          assert(
+            !pending.heroClaim ||
+              !pending.candidates.some(cardId => this.claimedTacticPlayable(cardId, pending.playerId)),
+            "A claimed Hero tactic that can be played must be played (SD 9)."
+          );
           this.state.pendingChoice = undefined;
           // A claimed Hero tactic that is not played is removed from the game
           // (SD 10); the rest of the claim carries on.
           if (pending.heroClaim) {
-            assert(
-              !pending.candidates.some(cardId => this.claimedTacticPlayable(cardId, pending.playerId)),
-              "A claimed Hero tactic that can be played must be played (SD 9)."
-            );
             for (const cardId of pending.candidates) {
               const card = this.state.cards[cardId];
               if (card && card.zone === "table") this.moveCard(cardId, "removed");
