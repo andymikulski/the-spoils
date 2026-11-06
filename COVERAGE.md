@@ -23,7 +23,7 @@ Card implementation status for the data-driven engine. Sets are listed in rollou
 | **Total** | **2257** | 127 | 0 | 0 | 0 | 2130 | 0 | 0 | 100% |
 
 _Rules-audited: 2176/2257._
-_Fidelity to printed text: 2255 full · 2 partial · 0 stub._
+_Fidelity to printed text: 2257 full · 0 partial · 0 stub._
 
 ## Engine capability backlog
 
@@ -227,6 +227,7 @@ _Fidelity to printed text: 2255 full · 2 partial · 0 stub._
 | `self-disposition` | implemented | cards, engine | 7 | CardDefinition/behavior marker selfDisposition?: 'faceDownResource' | 'hand' — where a resolving tactic goes AFTER its effects instead of the discard pile ('Put this card into play under its owner's control as a face-down resource instead of into their discard pile'; Clam Hash: '...into its owner's hand instead...'). Consulted by the post-resolution bookkeeping (finishStackItem / finishFlipUp). Distinct from flip-face-down which is the general effect; this is the disposition-override for the tactic itself and interacts with 'if you deployed this using FLIP UP' riders. |
 | `separate-into-piles` | implemented | choice, effect | 1 | Effect { type:'separateIntoPiles', splitter, selected, pile1, pile2 } + a `pileAssignment` pending choice — `splitter` partitions an existing `selected` set into two piles (either may be empty), then `pile1` effects run per card in the first pile and `pile2` per card in the second (card bound to __candidate). Profane Proposal ('separates into two piles; one pile to your hand, shuffle the other into your deck'). |
 | `shares-trade-with-any` | implemented | condition | 1 | Condition { type: "sharesTradeWithAny", target?, among: CardSelector } — true when target's printed trade equals the printed trade of at least one card matching among (target excluded). Legions of Chaos — "a character that does not share a trade with any characters you control" is not + this. |
+| `showdown` | implemented | cards | 2 | Showdown (1 Villain vs N Heroes; docs/rules/showdown-rules.md). Faction numbers scaled by the opponents at the start (FactionDefinition.influencePerOpponent, setup.startingResources.countPerOpponent, turn.develop.usesPerOpponent, NumberExpression opponentCountAtStart); FactionDefinition.daringGambit; ActivatedAbility.usableBy 'heroes'; PlayerRef 'villain'; CardSelector controller 'otherHero' and showdownPile ('heroDeck' | 'temptationPile', zone 'table'); effects claimHeroCards, heroDeckToTemptationPile, revealAllegiances. |
 | `skip-next-restore` | implemented | effect, state | 1 | Effect { type:'skipNextRestore', target:TargetRef } — a one-shot flag on a card so its controller's NEXT faction Restore Rule skips it once (then clears), unlike setRestoreLock which persists while in play. 'that character does not restore during its controller's next RESTORE RULE.' Numba 1 Stunna!. |
 | `skip-restore-rule` | implemented | effect, state | 1 | Effect { type:'skipRestoreRule', player:PlayerRef, turns?:number (default 1) } — the player's faction Restore Rule is skipped on their next N turns (a per-player counter consulted in applyFactionStartOfTurn). 'On your next turn, skip your faction's RESTORE RULE.' Monstrous Lassitude. |
 | `source-depleted-condition` | implemented | condition | 1 | Condition { type:'cardDepleted', target } (default 'source') — true when target is depleted. 'At the end of your turn, if this card is depleted, inflict 1 damage to it.' (Dying Hero). |
@@ -258,22 +259,3 @@ _Fidelity to printed text: 2255 full · 2 partial · 0 stub._
 | `use-any-ability` | implemented | effect, choice | 1 | Effect { type:'useAnyAbility', chooser, selector? } — chooser picks any one activatable ability of a card matching selector (default: any card they control) and resolves it as a nested sub-resolution. Generalises useTargetAbility (which needs a fixed target). 'At the start of your turn, you may use an ability.' (The Poshernacle). |
 | `variable-bounds` | implemented | ability | 1 | ActivatedAbility.variableBounds?: Record<string, { min?: NumberExpression; max?: NumberExpression }> validated when the playCard/activateAbility action supplies variables[id] — a chosen number capped by something OTHER than affordability. 'Pick a number for X, where X is less than or equal to the number of [O] you control.' (Desolate). |
 | `ward-redirect` | implemented | ability, effect | 1 | An EXTRA-COST pick + a continuous, unbounded redirect: while both the picked card and this card are in play, (a) damage that would be dealt to the picked card is dealt to this card instead, and (b) if the picked card would leave play by any means, THIS card leaves play in that way instead. Distinct from preventDamage (bounded/self), the redirectDamage keyword (battle-only), and setCardType. Needs ContinuousAbility.damageRedirects?: [{ from, to }] hooked in dealDamage AND a replacement that mirrors any leave-play of `from` onto `to`. 6r4wny 60dy9u4rd5. |
-
-## Parity gaps
-
-_Printed clauses deliberately left unmodelled — each needs a large engine / format refactor. The affected cards are still `verified` for their in-scope parts._
-
-| Gap | Scope | Cards | Summary |
-|---|---|--:|---|
-| `showdown-multiplayer` | xlarge | 2 | The multiplayer "Showdown" format — 1 Villain vs. N Heroes, shared Temptation Pile, a separate Hero deck, Allegiance cards, and faction values that scale with X = the number of opponents. |
-
-### `showdown-multiplayer`
-
-- **Clause:** The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and "INFLUENCE = 15 + 10*X" / "repeat X-1 times".
-- **Needs:** N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.
-- **Cards:** Slightly Less Evil Alliance (Seed 3), The Evil Alliance (Seed 3)
-
-## Partial fidelity (2)
-
-- **Slightly Less Evil Alliance** (Seed 3) — Showdown-format companion to The Evil Alliance ('All Heroes can use abilities on this card'). Every ability (GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, TEAMWORK, YOUR TRUE COLORS ARE REVEALED) is Showdown multiplayer — Villain/Heroes/Temptation Pile/Allegiance cards — with no 2-player equivalent. Carries a structurally-valid placeholder faction block (influence 25 / standard setup) only so it can be instantiated; it is not a real 2-player faction. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported.
-- **The Evil Alliance** (Seed 3) — Showdown-format faction; setup resolved for 2-player (X = 1 opponent). Influence 25 (15+10X), 7/8 opening hand, 2 staple starting resources, restore-all + detach, standard develop (its 'repeat X-1 times' is 0 extra at X=1). OMNIPOTENCE = FactionDefinition.meetsAllThresholds. Abilities: DRAW (pay 3), RESOURCE (pay 3). Unmodelled: ENTICEMENT / DARING GAMBIT (Showdown multiplayer — Hero deck, Temptation Pile) — out of scope for a 2-player engine. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported.

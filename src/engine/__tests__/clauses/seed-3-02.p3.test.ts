@@ -6,10 +6,11 @@ import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../
 import { buildGame, activate, bank, character, developFaction, item, killTactic, location, P1, P2, play, resolvePendingResponses, resourceCard, tactic, volition } from "../per-card/_harness.js";
 import { declareAttackOpenWindow, fight, fightThrough } from "./_battle.js";
 import { answerPending, pending, zoneOf } from "./_board.js";
-import { clause, exempt, printing, refused, clauseUnimplemented, flipUpNow, holdResourceFace } from "./_clause.js";
+import { clause, exempt, printing, refused, flipUpNow, holdResourceFace } from "./_clause.js";
 import { defaultFactionDefinition, factionCard } from "../support/fixtures.js";
 import { attachedCount, developDraw, developResource, endTurn, factionOf, readyCount, setupGame, spentResources, developOffers, endTurnRaw } from "./_turn.js";
-import { settleTurnStart } from "../support/develop.js";
+import { chooseDevelopOption, isDevelopChoice, settleTurnStart } from "../support/develop.js";
+import * as sd from "./_showdown.js";
 
 type Cards = NonNullable<NonNullable<Parameters<typeof buildGame>[0]>["cards"]>;
 
@@ -862,9 +863,14 @@ clause(EVIL, "0:rule", "in a two-player game I have one opponent, so X = 1 and I
   assert.equal(influence(both, P2), 25);
 });
 
-clauseUnimplemented(EVIL, "0:rule", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-2", "X is the number of opponents: with two opponents (X = 2) I start with 15 + 10 x 2 = 35 influence", () => {
-  const engine = setupGame(evilSeat(), oppSeat(), { x: { [P1]: 2, [P2]: 1 } });
-  assert.equal(influence(engine, P1), 35);
+clause(EVIL, "0:rule", "X is the number of opponents: with two opponents (X = 2) I start with 15 + 10 x 2 = 35 influence, with three (X = 3) 45; the Heroes keep their own faction's 20", () => {
+  const two = sd.showdownGame({ heroes: 2 });
+  assert.equal(influence(two, sd.VILLAIN), 35);
+  assert.equal(influence(two, sd.H1), 20);
+  assert.equal(influence(two, sd.H2), 20);
+  const three = sd.showdownGame({ heroes: 3 });
+  assert.equal(influence(three, sd.VILLAIN), 45);
+  assert.equal(influence(three, sd.H3), 20);
 });
 
 // --- 1:rule:STARTING RESOURCES  "Any 1+X staple resources" ---------------------------------------
@@ -909,10 +915,14 @@ clause(EVIL, "1:rule:STARTING RESOURCES", "'Any' staples: when my deck has sever
   assert.equal(engine.getThresholds(P1).elitism, 1);
 });
 
-clauseUnimplemented(EVIL, "1:rule:STARTING RESOURCES", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-2", "X is the number of opponents: with two opponents (X = 2) I start with 1 + 2 = 3 staple resources", () => {
-  const deck = [RAGE, GREED, DECEPTION, ELITISM, ...repeat(FILLER, 40)];
-  const engine = setupGame(evilSeat(deck), oppSeat(), { x: { [P1]: 2, [P2]: 1 } });
-  assert.equal(playCards(engine, P1).length, 3);
+clause(EVIL, "1:rule:STARTING RESOURCES", "X is the number of opponents: with two opponents (X = 2) I start with 1 + 2 = 3 staple resources, with three (X = 3) 4 -- all staples, face-up", () => {
+  const two = sd.showdownGame({ heroes: 2 });
+  const mine = playCards(two, sd.VILLAIN);
+  assert.deepEqual(namesIn(two, mine), ["Deception", "Greed", "Rage"], "the first three staples of the deck, in deck order");
+  assert.ok(mine.every((id) => !two.state.cards[id].faceDown), "face-up");
+  assert.equal(playCards(sd.showdownGame({ heroes: 3 }), sd.VILLAIN).length, 4);
+  // The Heroes' own faction says six (not scaled by their one opponent, the Villain).
+  assert.equal(playCards(two, sd.H1).length, 6);
 });
 
 // --- 2:rule:STARTING DRAW  "7 going first, 8 going second" ---------------------------------------
@@ -1095,16 +1105,51 @@ clause(EVIL, "4:rule:DEVELOP RULE", "only on my own turn, optional, and availabl
   assert.equal(handSize(engine, P1), hand + 2, "renews every turn");
 });
 
-clauseUnimplemented(EVIL, "4:rule:DEVELOP RULE", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-2", "X is the number of opponents: with two opponents (X = 2) the Develop Rule repeats X - 1 = 1 time, so I develop twice per turn", () => {
-  const engine = setupGame(
-    evilSeat([RAGE, GREED, ...repeat(FILLER, 40)]),
-    oppSeat(),
-    { x: { [P1]: 2, [P2]: 1 } }
-  );
-  startGame(engine);
-  assert.equal(engine.state.activePlayerId, P1);
-  developDraw(engine, P1);
-  assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsOption", "a second draw-or-resource is still allowed this turn");
+/** Orders the turn start's triggers (Restore first) until the Develop Rule's option prompt is pending. */
+function toDevelopPrompt(engine: SpoilsEngine): void {
+  for (let guard = 0; guard < 10; guard++) {
+    const prompt = engine.state.pendingChoice;
+    if (prompt?.kind !== "orderTriggers") return;
+    const next = prompt.triggers.find((t) => t.abilityId === "restoreRule") ?? prompt.triggers[0];
+    engine.perform({ type: "resolvePendingChoice", playerId: prompt.playerId, choice: { kind: "orderTriggers", next } });
+  }
+}
+
+clause(EVIL, "4:rule:DEVELOP RULE", "X is the number of opponents: with two opponents (X = 2) the Develop Rule repeats X - 1 = 1 time, so I develop twice per turn: a draw and then a resource play, and no third", () => {
+  const engine = sd.showdownGame({ heroes: 2, rawStart: true });
+  assert.equal(engine.state.activePlayerId, sd.VILLAIN);
+  const hand = handSize(engine, sd.VILLAIN);
+  const inPlay = playCards(engine, sd.VILLAIN).length;
+  toDevelopPrompt(engine);
+  assert.ok(isDevelopChoice(engine.state.pendingChoice), "the first draw-or-resource");
+  chooseDevelopOption(engine, sd.VILLAIN, /^Draw /);
+  assert.ok(isDevelopChoice(engine.state.pendingChoice), "a second draw-or-resource is offered");
+  chooseDevelopOption(engine, sd.VILLAIN, /^Play /);
+  const played = engine.state.players[sd.VILLAIN].hand[0];
+  engine.perform({ type: "resolvePendingChoice", playerId: sd.VILLAIN, choice: { kind: "chooserSelectsTarget", selected: [played], faceDown: true } });
+  toDevelopPrompt(engine);
+  assert.ok(!isDevelopChoice(engine.state.pendingChoice), "no third develop (X - 1 = 1 repeat)");
+  assert.equal(handSize(engine, sd.VILLAIN), hand, "one card drawn, one played");
+  assert.equal(playCards(engine, sd.VILLAIN).length, inPlay + 1, "and the resource is in play");
+});
+
+clause(EVIL, "4:rule:DEVELOP RULE", "with three opponents (X = 3) I develop three times (draw a card or play a resource, repeated twice); a Hero's own Develop Rule is still once", () => {
+  const engine = sd.showdownGame({ heroes: 3, rawStart: true });
+  const hand = handSize(engine, sd.VILLAIN);
+  toDevelopPrompt(engine);
+  for (let i = 0; i < 3; i++) {
+    assert.ok(isDevelopChoice(engine.state.pendingChoice), `develop ${i + 1} of 3 is offered`);
+    chooseDevelopOption(engine, sd.VILLAIN, /^Draw /);
+  }
+  toDevelopPrompt(engine);
+  assert.ok(!isDevelopChoice(engine.state.pendingChoice), "no fourth develop");
+  assert.equal(handSize(engine, sd.VILLAIN), hand + 3);
+  // A Hero: one opponent (the Villain), a plain Develop Rule.
+  const hero = sd.showdownGame({ heroes: 3, first: sd.H1, rawStart: true });
+  toDevelopPrompt(hero);
+  chooseDevelopOption(hero, sd.H1, /^Draw /);
+  assert.ok(!isDevelopChoice(hero.state.pendingChoice), "a Hero develops once");
+  assert.equal(handSize(hero, sd.H1), 1);
 });
 
 // --- 5:ability DRAW  "Pay 3. Draw a card." ---------------------------------------------------------
@@ -1311,36 +1356,33 @@ clause(EVIL, "6:ability", "'Play a resource' is not a 'may': after paying 3 with
 
 // --- 7:ability ENTICEMENT -------------------------------------------------------------------------
 
-/** The ENTICEMENT ability as the engine offers it on P1's faction (undefined if the engine has none). */
-function enticement(engine: SpoilsEngine) {
-  const fid = factionOf(engine, P1);
-  return engine
-    .getAvailableActivatedAbilities(P1)
-    .find((a) => a.cardId === fid && /enticement/i.test(String((a as unknown as { abilityName?: string; name?: string; abilityId?: string }).abilityName ?? (a as unknown as { name?: string }).name ?? (a as unknown as { abilityId?: string }).abilityId ?? "")));
+/** The printed ENTICEMENT ability on `pid`'s faction card, found by its name. */
+function enticement(engine: SpoilsEngine, pid: PlayerId = P1) {
+  return (engine.getFactionDefinition(pid)?.abilities ?? []).find((a) => (a.name ?? "").toLowerCase() === "enticement");
 }
 
-clauseUnimplemented(EVIL, "7:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-3", "ENTICEMENT exists on the faction and, during my turn, plays a resource from my hand (drawing X-1 = 0 cards with one opponent)", () => {
+clause(EVIL, "7:ability", "ENTICEMENT exists on the faction and, during my turn, plays a resource from my hand (drawing X-1 = 0 cards with one opponent)", () => {
   const { engine, id } = abilityBoard(0);
   const ability = enticement(engine);
   assert.ok(ability, "the Evil Alliance has no ENTICEMENT ability");
   const hand = handSize(engine, P1);
-  activateFaction(engine, P1, (ability as unknown as { abilityId: string }).abilityId);
+  activateFaction(engine, P1, ability.id);
   pickFromHand(engine, P1, id("handRes"));
   assert.equal(engine.state.cards[id("handRes")].zone, "play");
   assert.equal(handSize(engine, P1), hand - 1, "X - 1 = 0 cards drawn");
+  assert.equal(engine.state.showdown, undefined, "a two-player game has no Hero Deck or Temptation Pile: that step does nothing");
 });
 
-clauseUnimplemented(EVIL, "7:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-3", "ENTICEMENT can be used only once per turn", () => {
+clause(EVIL, "7:ability", "ENTICEMENT can be used only once per turn", () => {
   const { engine, id } = abilityBoard(0);
   const ability = enticement(engine);
   assert.ok(ability, "the Evil Alliance has no ENTICEMENT ability");
-  const abilityId = (ability as unknown as { abilityId: string }).abilityId;
-  activateFaction(engine, P1, abilityId);
+  activateFaction(engine, P1, ability.id);
   pickFromHand(engine, P1, id("handRes"));
-  refused(() => activateFaction(engine, P1, abilityId), "once per turn", /once|per turn|times/i);
+  refused(() => activateFaction(engine, P1, ability.id), "once per turn", /each turn/i);
 });
 
-clauseUnimplemented(EVIL, "7:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-3", "ENTICEMENT can be used only during my own turn", () => {
+clause(EVIL, "7:ability", "ENTICEMENT can be used only during my own turn", () => {
   const { engine } = buildGame({
     playerA: { faction: printing(EVIL) },
     playerB: { faction: developFaction() },
@@ -1350,23 +1392,134 @@ clauseUnimplemented(EVIL, "7:ability", "Showdown (3+ player) is unsupported (use
   });
   const ability = enticement(engine);
   assert.ok(ability, "the Evil Alliance has no ENTICEMENT ability");
-  refused(() => activateFaction(engine, P1, (ability as unknown as { abilityId: string }).abilityId), "not my turn", /your turn|my turn|during/i);
+  refused(() => activateFaction(engine, P1, ability.id), "not my turn", /timing/i);
 });
 
-clauseUnimplemented(EVIL, "7:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-3", "ENTICEMENT puts the top card of the Hero deck into the Temptation Pile", () => {
-  const { engine } = abilityBoard(0);
-  const keys = Object.keys(engine.state as unknown as Record<string, unknown>).join(",");
-  assert.match(keys, /temptation/i, "the engine has no Temptation Pile");
-  assert.match(keys, /hero/i, "the engine has no Hero deck");
+/** The Villain uses ENTICEMENT and plays the first card of their hand as the resource. */
+function enticeNow(engine: SpoilsEngine): void {
+  const ability = enticement(engine, sd.VILLAIN);
+  assert.ok(ability, "the Evil Alliance has no ENTICEMENT ability");
+  const card = engine.state.players[sd.VILLAIN].hand[0];
+  sd.useAbility(engine, sd.VILLAIN, ability.id, undefined, sd.factionOfPlayer(engine, sd.VILLAIN));
+  pickFromHand(engine, sd.VILLAIN, card);
+}
+
+clause(EVIL, "7:ability", "ENTICEMENT draws X-1 cards: one with two Heroes (X = 2), two with three (X = 3), and then plays a resource", () => {
+  for (const heroes of [2, 3]) {
+    const engine = sd.showdownGame({ heroes });
+    const hand = handSize(engine, sd.VILLAIN);
+    const inPlay = playCards(engine, sd.VILLAIN).length;
+    enticeNow(engine);
+    assert.equal(handSize(engine, sd.VILLAIN), hand + (heroes - 1) - 1, `${heroes} Heroes: X - 1 = ${heroes - 1} drawn, one played as a resource`);
+    assert.equal(playCards(engine, sd.VILLAIN).length, inPlay + 1, `${heroes} Heroes: one more resource in play`);
+  }
+});
+
+clause(EVIL, "7:ability", "ENTICEMENT puts the top card of the Hero deck into the Temptation Pile (one card per use, the pile keeps growing)", () => {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [sd.CHAMPION, sd.CHAMPION, sd.BOON] });
+  assert.deepEqual(sd.pileOf(engine), [], "the Temptation Pile starts empty");
+  const [top, second, third] = sd.heroDeckOf(engine);
+  enticeNow(engine);
+  assert.deepEqual(sd.pileOf(engine), [top], "the top card of the Hero deck is in the pile");
+  assert.deepEqual(sd.heroDeckOf(engine), [second, third], "and no longer in the Hero deck");
+  refused(() => enticeNow(engine), "once per turn, in a Showdown game too", /each turn/i);
+  sd.advanceTo(engine, sd.VILLAIN);
+  enticeNow(engine);
+  assert.deepEqual(sd.pileOf(engine), [top, second], "my next turn adds the next card");
+  assert.deepEqual(sd.heroDeckOf(engine), [third]);
+});
+
+clause(EVIL, "7:ability", "ENTICEMENT with an empty Hero deck still draws and plays its resource: the Temptation Pile step finds no card", () => {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [] });
+  const hand = handSize(engine, sd.VILLAIN);
+  enticeNow(engine);
+  assert.deepEqual(sd.pileOf(engine), []);
+  assert.equal(handSize(engine, sd.VILLAIN), hand, "drew X - 1 = 1, played one");
+});
+
+clause(EVIL, "7:ability", "only the Villain can use ENTICEMENT, and only on their own turn: a Hero cannot use it from the Villain's faction", () => {
+  const engine = sd.showdownGame({ heroes: 2, first: sd.H1 });
+  const ability = enticement(engine, sd.VILLAIN)!;
+  refused(
+    () => sd.useAbility(engine, sd.H1, ability.id, undefined, sd.factionOfPlayer(engine, sd.VILLAIN)),
+    "a Hero doesn't control the Villain's faction",
+    /do not control/i
+  );
+  refused(
+    () => sd.useAbility(engine, sd.VILLAIN, ability.id, undefined, sd.factionOfPlayer(engine, sd.VILLAIN)),
+    "it is a Hero's turn",
+    /timing/i
+  );
+  assert.deepEqual(sd.pileOf(engine), []);
 });
 
 // --- 8:rule:DARING GAMBIT --------------------------------------------------------------------------
 
-clauseUnimplemented(EVIL, "8:rule:DARING GAMBIT", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-02-p3-4", "a Hero that inflicts at least 7 damage to another Hero this turn claims the entire Temptation Pile", () => {
-  const { engine } = abilityBoard(0);
-  const keys = Object.keys(engine.state as unknown as Record<string, unknown>).join(",");
-  assert.match(keys, /temptation/i, "the engine has no Temptation Pile to claim");
-  assert.match(keys, /hero/i, "the engine has no Heroes");
+/**
+ * Two Heroes, a Hero deck of two Champions, and Hero 1's whole deck is Brutes ("pick a faction you don't control:
+ * inflict 4 damage to it"). The Villain has used ENTICEMENT `pile` times (one per Villain turn); it is Hero 1's turn
+ * with a Brute in play.
+ */
+function gambitTable(pile: number) {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [sd.CHAMPION, sd.CHAMPION], heroFill: { [sd.H1]: sd.BRUTE } });
+  for (let i = 0; i < pile; i++) {
+    if (i > 0) sd.advanceTo(engine, sd.VILLAIN);
+    enticeNow(engine);
+  }
+  sd.advanceTo(engine, sd.H1);
+  const brute = engine.state.players[sd.H1].hand[0];
+  play(engine, sd.H1, brute);
+  assert.equal(engine.state.cards[brute].zone, "play");
+  return { engine, brute };
+}
+const smash = (engine: SpoilsEngine, brute: CardInstanceId, victim: PlayerId): void =>
+  activate(engine, sd.H1, brute, "smash", { selected: { f: [sd.factionOfPlayer(engine, victim)] } });
+const claimedBy = (engine: SpoilsEngine, ids: CardInstanceId[], owner: PlayerId): boolean =>
+  ids.every((c) => engine.state.cards[c].zone === "play" && engine.state.cards[c].controllerId === owner);
+
+clause(EVIL, "8:rule:DARING GAMBIT", "a Hero that inflicts at least 7 damage to another Hero this turn claims the entire Temptation Pile: 4 is not enough, 4 + 4 is", () => {
+  const { engine, brute } = gambitTable(1);
+  const pile = [...sd.pileOf(engine)];
+  assert.equal(pile.length, 1);
+  smash(engine, brute, sd.H2);
+  assert.equal(engine.state.players[sd.H2].influence, 16, "4 damage to the other Hero's faction");
+  assert.deepEqual(sd.pileOf(engine), pile, "4 damage is below 7: the pile is untouched");
+  smash(engine, brute, sd.H2);
+  assert.equal(engine.state.players[sd.H2].influence, 12);
+  assert.deepEqual(sd.pileOf(engine), [], "8 damage in a turn: the pile is claimed");
+  assert.ok(claimedBy(engine, pile, sd.H1), "by the damaging Hero, who now controls the card in play");
+  smash(engine, brute, sd.H2);
+  assert.deepEqual(sd.pileOf(engine), [], "nothing left to claim");
+});
+
+clause(EVIL, "8:rule:DARING GAMBIT", "the damaging Hero claims the ENTIRE Temptation Pile (every card in it)", () => {
+  const { engine, brute } = gambitTable(2);
+  const pile = [...sd.pileOf(engine)];
+  assert.equal(pile.length, 2);
+  smash(engine, brute, sd.H2);
+  smash(engine, brute, sd.H2);
+  assert.deepEqual(sd.pileOf(engine), []);
+  assert.ok(claimedBy(engine, pile, sd.H1), "both cards are Hero 1's");
+});
+
+clause(EVIL, "8:rule:DARING GAMBIT", "damage to the Villain is not damage to another Hero: even 8 claims nothing", () => {
+  const { engine, brute } = gambitTable(1);
+  const pile = [...sd.pileOf(engine)];
+  smash(engine, brute, sd.VILLAIN);
+  smash(engine, brute, sd.VILLAIN);
+  assert.equal(engine.state.players[sd.VILLAIN].influence, 27, "35 - 8: the damage was dealt");
+  assert.deepEqual(sd.pileOf(engine), pile);
+});
+
+clause(EVIL, "8:rule:DARING GAMBIT", "'this turn': 4 damage on one turn and 4 on a later turn do not add up", () => {
+  const { engine, brute } = gambitTable(1);
+  const pile = [...sd.pileOf(engine)];
+  smash(engine, brute, sd.H2);
+  sd.advanceTo(engine, sd.H1);
+  assert.equal(engine.state.cards[brute].zone, "play");
+  smash(engine, brute, sd.H2);
+  assert.equal(engine.state.players[sd.H2].influence, 12, "8 damage in all");
+  assert.deepEqual(sd.pileOf(engine), pile, "but never 7 in one turn");
 });
 
 // --- 9:rule:OMNIPOTENCE ----------------------------------------------------------------------------

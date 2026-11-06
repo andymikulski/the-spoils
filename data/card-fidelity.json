@@ -2,8 +2,7 @@
   "generatedBy": "scripts/build-coverage.cjs",
   "note": "How faithfully the engine reproduces each card's printed text. full = every mechanically-meaningful clause obeyed; partial = a documented concession changes a line; stub = core function unmodelled.",
   "counts": {
-    "full": 2255,
-    "partial": 2
+    "full": 2257
   },
   "fidelity": {
     "9bc47884-f956-41d4-8a57-e6c3e377b8d9": "full",
@@ -37,9 +36,9 @@
     "4189d9eb-5a42-4fd6-bc2b-efd9e6f40ccb": "full",
     "a8c219b9-9d83-4015-aa1b-38c741c67a7a": "full",
     "452bed36-af64-4986-905b-6074fd01437b": "full",
-    "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb": "partial",
+    "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb": "full",
     "d23a3fbd-0bf3-4937-9b29-570c55a418b8": "full",
-    "9dc309f4-d43f-4515-841e-ed982ce026e7": "partial",
+    "9dc309f4-d43f-4515-841e-ed982ce026e7": "full",
     "8866ccbf-a8dc-4c2f-8dbc-4d879b5b10cf": "full",
     "c58d0e3c-4f76-4665-aca4-2ba01a42d863": "full",
     "ebef8b79-0dcb-401f-81e9-eafd9235fd7d": "full",
@@ -2264,8 +2263,5 @@
     "2fddabff-271a-463f-be1d-bfe4463eb2dc": "full",
     "bfb8ec6b-b33e-4e25-9d65-7b64f5a43c87": "full"
   },
-  "notes": {
-    "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb": "Showdown-format companion to The Evil Alliance ('All Heroes can use abilities on this card'). Every ability (GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, TEAMWORK, YOUR TRUE COLORS ARE REVEALED) is Showdown multiplayer — Villain/Heroes/Temptation Pile/Allegiance cards — with no 2-player equivalent. Carries a structurally-valid placeholder faction block (influence 25 / standard setup) only so it can be instantiated; it is not a real 2-player faction. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported.",
-    "9dc309f4-d43f-4515-841e-ed982ce026e7": "Showdown-format faction; setup resolved for 2-player (X = 1 opponent). Influence 25 (15+10X), 7/8 opening hand, 2 staple starting resources, restore-all + detach, standard develop (its 'repeat X-1 times' is 0 extra at X=1). OMNIPOTENCE = FactionDefinition.meetsAllThresholds. Abilities: DRAW (pay 3), RESOURCE (pay 3). Unmodelled: ENTICEMENT / DARING GAMBIT (Showdown multiplayer — Hero deck, Temptation Pile) — out of scope for a 2-player engine. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported."
-  }
+  "notes": {}
 }

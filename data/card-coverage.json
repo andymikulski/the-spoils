@@ -2653,16 +2653,20 @@
         "c47c8579-7fdc-49e7-b934-f3e86c37dc13"
       ],
       "rulesRef": "RULES.md §1"
+    },
+    "showdown": {
+      "status": "implemented",
+      "kind": [
+        "cards"
+      ],
+      "spec": "Showdown (1 Villain vs N Heroes; docs/rules/showdown-rules.md). Faction numbers scaled by the opponents at the start (FactionDefinition.influencePerOpponent, setup.startingResources.countPerOpponent, turn.develop.usesPerOpponent, NumberExpression opponentCountAtStart); FactionDefinition.daringGambit; ActivatedAbility.usableBy 'heroes'; PlayerRef 'villain'; CardSelector controller 'otherHero' and showdownPile ('heroDeck' | 'temptationPile', zone 'table'); effects claimHeroCards, heroDeckToTemptationPile, revealAllegiances.",
+      "cards": [
+        "9dc309f4-d43f-4515-841e-ed982ce026e7",
+        "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb"
+      ]
     }
   },
-  "parityGaps": {
-    "showdown-multiplayer": {
-      "summary": "The multiplayer \"Showdown\" format — 1 Villain vs. N Heroes, shared Temptation Pile, a separate Hero deck, Allegiance cards, and faction values that scale with X = the number of opponents.",
-      "clause": "The Evil Alliance / Slightly Less Evil Alliance — ENTICEMENT, DARING GAMBIT, GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, YOUR TRUE COLORS ARE REVEALED, and \"INFLUENCE = 15 + 10*X\" / \"repeat X-1 times\".",
-      "needs": "N-player game state, a Temptation Pile + Hero-deck zone, Allegiance-card tracking, and X-scaled faction values. The engine is 2-player only; this is a different game mode. In 2-player these clauses collapse to X = 1 (already handled) or are inert.",
-      "scope": "xlarge"
-    }
-  },
+  "parityGaps": {},
   "cards": [
     {
       "id": "9bc47884-f956-41d4-8a57-e6c3e377b8d9",
@@ -3540,9 +3544,10 @@
       "status": "verified",
       "textHash": "3c41b7c690d2",
       "behavior": {
-        "needed": false,
+        "needed": true,
         "shapes": [
-          "faction setup block (createTwoPlayerFactionGame)"
+          "FactionDefinition.abilities with usableBy: 'heroes' (GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, TEAMWORK)",
+          "behavior.abilities triggered turnStarted + addCounter + counterCompare -> revealAllegiances (YOUR TRUE COLORS ARE REVEALED)"
         ],
         "reusesProvenShape": null,
         "newTestNeeded": false
@@ -3553,15 +3558,14 @@
         "resourceProvides": null,
         "keywords": []
       },
-      "engineCapability": [],
+      "engineCapability": [
+        "showdown"
+      ],
       "display": {},
       "confidence": "medium",
-      "notes": "Showdown-format companion to The Evil Alliance ('All Heroes can use abilities on this card'). Every ability (GIVE IN TO TEMPTATION, SPRING FORTH MY BURLY PROTECTOR!, TEAMWORK, YOUR TRUE COLORS ARE REVEALED) is Showdown multiplayer — Villain/Heroes/Temptation Pile/Allegiance cards — with no 2-player equivalent. Carries a structurally-valid placeholder faction block (influence 25 / standard setup) only so it can be instantiated; it is not a real 2-player faction. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported.",
+      "notes": "Showdown shared faction, fully modelled (SD-SLE 1-5). abilities carry usableBy 'heroes' (SD-SLE 1; classic games offer none). GIVE IN TO TEMPTATION: own turn (isActivePlayer), usesPerTurn 1, pay 2, pick a character controller 'otherHero'; takeControl by the 'villain', then a chooserSelectsTarget over the Temptation Pile (showdownPile) -> claimHeroCards. SPRING FORTH: pay 6, claimHeroCards from heroDeckTop. TEAMWORK: pay 2, pick a card you control and another player's faction card; takeControl with controllerOf that pick. YOUR TRUE COLORS: triggered on turnStarted for the card's controller (the shared card is the Villain's; 'villain' itself would throw in a classic game), a token each time, revealAllegiances when the count is 7.",
       "rulesAudited": true,
-      "parityGaps": [
-        "showdown-multiplayer"
-      ],
-      "fidelity": "partial"
+      "fidelity": "full"
     },
     {
       "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
@@ -3603,8 +3607,8 @@
       "behavior": {
         "needed": false,
         "shapes": [
-          "faction setup block (createTwoPlayerFactionGame)",
-          "FactionDefinition.abilities: faction-abilities, faction-omnithreshold"
+          "FactionDefinition: influencePerOpponent, setup.startingResources.countPerOpponent, turn.develop.usesPerOpponent, daringGambit, meetsAllThresholds",
+          "FactionDefinition.abilities: faction-abilities (DRAW, RESOURCE, ENTICEMENT)"
         ],
         "reusesProvenShape": null,
         "newTestNeeded": false
@@ -3617,16 +3621,14 @@
       },
       "engineCapability": [
         "faction-abilities",
-        "faction-omnithreshold"
+        "faction-omnithreshold",
+        "showdown"
       ],
       "display": {},
       "confidence": "high",
-      "notes": "Showdown-format faction; setup resolved for 2-player (X = 1 opponent). Influence 25 (15+10X), 7/8 opening hand, 2 staple starting resources, restore-all + detach, standard develop (its 'repeat X-1 times' is 0 extra at X=1). OMNIPOTENCE = FactionDefinition.meetsAllThresholds. Abilities: DRAW (pay 3), RESOURCE (pay 3). Unmodelled: ENTICEMENT / DARING GAMBIT (Showdown multiplayer — Hero deck, Temptation Pile) — out of scope for a 2-player engine. PARTIAL (user decision 2026-10-21): Showdown is a 3+ player mode the engine doesn't support yet (2-player first), so this faction's Showdown-only text (Hero/Villain roles, Hero deck, Temptation Pile, X = number of opponents beyond 1) is known-unsupported.",
+      "notes": "Showdown villain faction, fully modelled (SD-EA 1-11). X = opponents at the start of the game: INFLUENCE 15+10X (influencePerOpponent), STARTING RESOURCES 1+X staples (countPerOpponent), DEVELOP RULE X develops (usesPerOpponent: 'repeat X-1 times'). ENTICEMENT: own turn only (isActivePlayer), usesPerTurn 1, draws X-1 (opponentCountAtStart - 1), plays a resource, heroDeckToTemptationPile. DARING GAMBIT = FactionDefinition.daringGambit {damage: 7} (engine-run: the damaging Hero claims the Temptation Pile). OMNIPOTENCE = meetsAllThresholds. In a classic two-player game X = 1 (influence 25, 2 staples, one develop, ENTICEMENT draws 0) and the Hero Deck / Temptation Pile steps do nothing.",
       "rulesAudited": true,
-      "parityGaps": [
-        "showdown-multiplayer"
-      ],
-      "fidelity": "partial"
+      "fidelity": "full"
     },
     {
       "id": "8866ccbf-a8dc-4c2f-8dbc-4d879b5b10cf",

@@ -127,12 +127,12 @@
     }
   },
   "evil-vs-lessevil#501": {
-    "meta": {"label":"evil-vs-lessevil#501","winner":"a","actionCount":258,"logLines":386,"sha256":"3b64c64ebe63f774eefa80b43ab460054b6f138027e42400ca80a9d7e9c187f2"},
-    "turnSha": ["4f4d7fdf4f2e6ce9","5dc92a4341b0699c","ce3e32e76bb5cf4a","d19a31edd343ae78","2d717d85fbcea14e","6b4f3e8e1123b368","98b82496f98aa153","1f2d376c8c96ab83","1e5b8cd9f39236d9","770df8505431e401","6e8cf22bfaca9121","70a5eca1fba77a01","086b92b06b45b42f","aa22aff0239efede","78846bc05af17fde","c85238a2bc552b8a","9b377ee960a2575b"]
+    "meta": {"label":"evil-vs-lessevil#501","winner":"a","actionCount":334,"logLines":477,"sha256":"4d0bf4c19a9f259e935b4e884192ae38edf55a62b0be560000899f8f8e5ff77c"},
+    "turnSha": ["b15c95b1180c8f2d","d775b9c57b89825d","384ffb63372b30af","f92418eac5bc33a6","ef2ca93b10a8cbb2","78f6b24c98e037f7","00e8d4957f266577","a35066535949df5c","218057e929b2b511","6374c4cf237de52a","1d72f5d7ac32ac8a","ef3294cceb3505f2","bd6c776b2cc4aa78","858ece89977d4e7d","158e66fad48eb86f","80040954ae1ea73a","9b057604a3018ffe"]
   },
   "evil-vs-lessevil#502": {
-    "meta": {"label":"evil-vs-lessevil#502","winner":"a","actionCount":988,"logLines":1544,"sha256":"c30a9af0983da6f98ae20cb0de7f528c75888eab32db14a811538f70e478739b"},
-    "turnSha": ["4e65ce2ef52a147c","524072f2eabc54d9","32a349810db03d80","2bbd28498f0debb7","5ec67f1a1940dede","454e683ded0a14a2","1f93ce7250fe3fe7","31d1fbfbf5735266","cda13f9985f552a0","29bbe4c2e9cf05fa","9625751d4533920e","64063bdb4a83925f","e10d83667d7b8649","aeba199127bf9062","ec9345f66fcf9309","f1d17cd370c06ae7","4b8974d1a9c15a97","3132191b84135cbc","d2eb4c88322873ac","92842fa0d0297215","5313904c2c9af0d4","f162f1c6e558f5a3","58efccb75db801c1","9b53cc0cdfd7f134","729a783dc2b39231","d89fe2c145cfad49","d08572bd4bd091fe","02f10a8005f61fae","e749957626a191ef","0ccea766222d457f","db6c79ab472d76dd","d10845ccbac64f33","763f0227327abd0f","d506669b5bad5237"]
+    "meta": {"label":"evil-vs-lessevil#502","winner":"a","actionCount":694,"logLines":1081,"sha256":"eddbdafff0867c3878033f528aa5817c35b0f9dd00bf7d63e19c5bca3bd36649"},
+    "turnSha": ["534c1def24222fd7","10c0f9fc737d84c1","56b2ce94fe938533","8811d7f3a606845c","e89d724475009088","77614591a6584a5f","c0d30e8de3bcf2e2","3882dc9621ccd763","347f710fd990507d","54bfb2e550133657","cf4425f16b996614","aefe5c12756850ff","59dfe3f62dc9d663","75112947c5db8ea0","7e1e27679afa2f8d","e6f58cb6c9f3da2d","ede789adabea3dd9","3a2de6bf8df9ed9b","0164f6f790a4016a","067e5780ae5e0cc6","5e715359ead9dc59","18f555fde9494672","8d6249e838782e52","c473f27849b0832c"]
   },
   "hall-vs-catacombs#601": {
     "meta": {"label":"hall-vs-catacombs#601","winner":"b","actionCount":492,"logLines":739,"sha256":"f727403b7f7336d8424de177f9b7c4d2d379d4204fbfea7d39c8794bdb1b164a"},
