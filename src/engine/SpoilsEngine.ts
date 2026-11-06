@@ -4574,8 +4574,8 @@ export class SpoilsEngine {
     if (playerId !== undefined) this.requirePlayer(playerId);
     const result: PendingDelayedEffect[] = [];
     const activeId = this.state.activePlayerId;
-    // The next turn belonging to `owner` (turns strictly alternate); the current turn's start has already passed.
-    const nextTurnOf = (owner: PlayerId): number => this.state.turn + (owner === activeId ? 2 : 1);
+    // The next turn belonging to `owner`; the current turn's start has already passed.
+    const nextTurnOf = (owner: PlayerId): number => this.turnNumberOfNextTurn(owner);
 
     for (const s of this.state.scheduledEffects) {
       const affected = new Set<CardInstanceId>();
@@ -14411,10 +14411,8 @@ export class SpoilsEngine {
         const player = this.resolvePlayerRef(effect.player, context);
         // "On your next turn" names a specific turn: the player's next one.
         // Several skips naming the same turn skip it once (Q32).
-        const first =
-          this.state.turn + (this.state.activePlayerId === player.id ? 2 : 1);
         const skips = new Set(this.state.restoreRuleSkips[player.id] ?? []);
-        for (let i = 0; i < (effect.turns ?? 1); i++) skips.add(first + 2 * i);
+        for (let i = 0; i < (effect.turns ?? 1); i++) skips.add(this.turnNumberOfNextTurn(player.id, i + 1));
         this.state.restoreRuleSkips[player.id] = [...skips].sort((a, b) => a - b);
         return;
       }
@@ -21050,15 +21048,13 @@ export class SpoilsEngine {
     if (duration.type === "untilStartOfNextTurn" && duration.untilTurn === undefined) {
       duration = {
         type: "untilStartOfNextTurn",
-        untilTurn:
-          this.state.turn + (this.state.activePlayerId === context.controllerId ? 2 : 1)
+        untilTurn: this.turnNumberOfNextTurn(context.controllerId)
       };
     }
     if (duration.type === "untilEndOfNextTurn" && duration.untilTurn === undefined) {
       duration = {
         type: "untilEndOfNextTurn",
-        untilTurn:
-          this.state.turn + (this.state.activePlayerId === context.controllerId ? 3 : 2)
+        untilTurn: this.turnNumberOfNextTurn(context.controllerId) + 1
       };
     }
     if (duration === raw) return effect;
@@ -24001,6 +23997,19 @@ export class SpoilsEngine {
         : `'${context.controllerId}' has ${ids.length} opponents and none is chosen for this rules text.`
     );
     return ids[0];
+  }
+
+  /**
+   * The `GameState.turn` number on which `playerId`'s `nth` next turn
+   * begins, counting the living seats in turn order from the active player
+   * (the current turn's start has already passed). In a two-player game:
+   * two turns on for the active player, one for the other.
+   */
+  private turnNumberOfNextTurn(playerId: PlayerId, nth = 1): number {
+    const seats = livingSeats(this.state);
+    const offset = seats.indexOf(playerId);
+    assert(offset >= 0, `'${playerId}' is not in the game.`);
+    return this.state.turn + (offset === 0 ? seats.length : offset) + (nth - 1) * seats.length;
   }
 
   /** Sets the game's result and announces it. */

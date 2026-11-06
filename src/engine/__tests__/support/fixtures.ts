@@ -15,6 +15,7 @@ import type {
   CardInstanceId,
   CardType,
   FactionDefinition,
+  GameFormat,
   PlayerId,
   ResponseWindowState,
   Trade,
@@ -159,6 +160,14 @@ export interface PlayerSetup {
 export interface BuildGameOptions {
   playerA?: Partial<PlayerSetup>;
   playerB?: Partial<PlayerSetup>;
+  /**
+   * Every seat, in turn order, for a table of any size. Replaces
+   * `playerA` / `playerB` when given. Seat i's faction instance is keyed
+   * `__faction_<id>` (the first two also answer to `__factionA` / `__factionB`).
+   */
+  players?: PlayerSetup[];
+  /** The table format; defaults from the seat count (see `resolveGameFormat`). */
+  format?: GameFormat;
   cards?: CardPlacement[];
   turn?: number;
   activePlayerId?: PlayerId;
@@ -175,15 +184,15 @@ export interface BuiltGame {
 }
 
 export function buildGame(options: BuildGameOptions = {}): BuiltGame {
-  const playerA: PlayerSetup = { id: P1, name: "Alice", ...options.playerA };
-  const playerB: PlayerSetup = { id: P2, name: "Bob", ...options.playerB };
-
-  const factionDefA = playerA.faction ?? factionCard({ name: `${playerA.id}-faction` });
-  const factionDefB = playerB.faction ?? factionCard({ name: `${playerB.id}-faction` });
+  const seats: PlayerSetup[] = options.players ?? [
+    { id: P1, name: "Alice", ...options.playerA },
+    { id: P2, name: "Bob", ...options.playerB }
+  ];
+  const factionDefs = seats.map(seat => seat.faction ?? factionCard({ name: `${seat.id}-faction` }));
+  const factionKey = (i: number) => (i === 0 ? "__factionA" : i === 1 ? "__factionB" : `__faction_${seats[i].id}`);
 
   const placements: CardPlacement[] = [
-    { key: "__factionA", def: factionDefA, owner: playerA.id, zone: "play" },
-    { key: "__factionB", def: factionDefB, owner: playerB.id, zone: "play" },
+    ...seats.map((seat, i) => ({ key: factionKey(i), def: factionDefs[i], owner: seat.id, zone: "play" as const })),
     ...(options.cards ?? [])
   ];
 
@@ -227,16 +236,21 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   }
 
   const state = createGame(
-    [{ id: playerA.id, name: playerA.name ?? playerA.id, influence: playerA.influence ?? factionDefA.faction?.startingInfluence },
-    { id: playerB.id, name: playerB.name ?? playerB.id, influence: playerB.influence ?? factionDefB.faction?.startingInfluence }],
-    [...instancesByKey.values()]
+    seats.map((seat, i) => ({
+      id: seat.id,
+      name: seat.name ?? seat.id,
+      influence: seat.influence ?? factionDefs[i].faction?.startingInfluence
+    })),
+    [...instancesByKey.values()],
+    options.format ? { format: options.format } : {}
   );
 
-  state.players[playerA.id].factionId = instancesByKey.get("__factionA")!.id;
-  state.players[playerB.id].factionId = instancesByKey.get("__factionB")!.id;
+  seats.forEach((seat, i) => {
+    state.players[seat.id].factionId = instancesByKey.get(factionKey(i))!.id;
+  });
 
   state.turn = options.turn ?? 1;
-  state.activePlayerId = options.activePlayerId ?? playerA.id;
+  state.activePlayerId = options.activePlayerId ?? seats[0].id;
   state.priorityPlayerId = options.priorityPlayerId ?? state.activePlayerId;
   state.setup = { phase: "complete" };
   state.started = true;
