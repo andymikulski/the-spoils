@@ -32,6 +32,18 @@ TypeScript shape is `CardDefinition` in `src/types/cards.ts`.
 5. **Names use the printed spelling.** Misprinted subtypes on a single
    printing (e.g. "nercomorph") are not reproduced.
 
+## Rarity
+
+`rarity` is a lowercase string: `common`, `uncommon`, `rare`, `super-rare`,
+`ultra-rare`, `uber`, `fixed`, `promo`, or empty. Two values mark an **epic** card (EP 1): `epic` and
+`e-sle` (the two Showdown factions, printed E-SLE). Exactly seven definitions
+are epic, all factions: The Society of Magical Propriety, The Knitting
+Coalition, The Union of Unextraordinary Miners, Imperial Army,
+Counter-Imperial Army, The Evil Alliance and Slightly Less Evil Alliance.
+`isEpicCard` reads the field, and `findDeckConstructionIssues` enforces the
+epic deck rules from it (1 copy in Constructed, none in Limited, none in a
+non-epic tournament); a new epic card needs only the right `rarity`.
+
 ## Text fields
 
 - `text` — archival rules text, ` -- ` between printed lines.

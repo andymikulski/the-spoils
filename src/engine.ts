@@ -64,9 +64,11 @@ export {
   findDeckConstructionIssues,
   getMaxCopies,
   getMinimumDeckSize,
+  isEpicCard,
   deckFactionFace,
   resolveDeckCards,
   DEFAULT_MAX_COPIES,
+  EPIC_MAX_COPIES,
   type DeckConstructionIssue,
   type DeckConstructionIssueKind,
   type DeckConstructionOptions
