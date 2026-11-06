@@ -11,7 +11,8 @@
       "If you do, your opponent may do the same."
     ],
     "notes": "Printed singular: only the bound opponent may deploy a free non-tactic card. Current encoding offers it to every opponent. Re-encode the follow-up deployForFree with player:opponent (bound, prompted when >1) instead of the forEachPlayer fan-out.",
-    "recheck": "changed from a because all 3 printings say singular \"your opponent\" (one bound opponent), but behavior fans out to every non-active player via forEachPlayer+not isActivePlayer"
+    "recheck": "changed from a because all 3 printings say singular \"your opponent\" (one bound opponent), but behavior fans out to every non-active player via forEachPlayer+not isActivePlayer",
+    "resolved": "Fixed (all 3 printings): the \"your opponent may do the same\" deploy is now deployForFree player:\"opponent\" (the one bound opponent, prompted via chooseOpponent when >1) instead of a forEachPlayer + not isActivePlayer fan-out. Also fixes a latent 2-player case where it was offered to the wrong player when the card entered on the opponent's turn. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "A Death Fit for a King",
@@ -80,7 +81,8 @@
       "Both players put a character they control into its owner's hand."
     ],
     "notes": "All printings say \"Both players\" (1st/Open Beta add \"must\"). D4: both players in a block = controller + the bound opponent. Current forEachPlayer makes every player in the game bounce a character. Re-encode as controller + bound opponent (a players scope of controller+opponent, or two explicit steps).",
-    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
+    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player",
+    "resolved": "Fixed: forEachPlayer players:\"controllerAndOpponent\" (MP 3: the controller and the one opponent the block binds; classic unchanged). All three printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Bask Bomb",
@@ -93,7 +95,8 @@
       "Inflict Y damage divided however your opponent wants to the attacking party."
     ],
     "notes": "Printed \"your opponent\" is the opponent who is blocking, i.e. the defending player of this battle. Bind opponentId to the battle's blocking player (no prompt) so the chooser/condition use the defender, not a prompted pick; battleRole attacker proxy is 2-player-only.",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Fixed: the Y-damage chooser (\"divided however your opponent wants\") is controllerOf the first picked blocker (the blocking player of this battle) instead of the unbound \"opponent\", so no opponent need be named and a bystander never divides it. 2-player identical (the existing clause tests pin it). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Card Counter",
@@ -134,7 +137,8 @@
     ],
     "notes": "Which two players? D4 reads \"both players\" as controller + bound opponent, but this is a trigger on every player's turn start with no natural opponent to bind (E3 binds the turn's player, who may be the controller). Current encoding gives every player the option.",
     "ruling": "Engine-derived reading: every player (each living player may draw or play a resource at every player's turn start) -- keep the current forEachPlayer.",
-    "recheck": "changed from a because printed text is \"both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players"
+    "recheck": "changed from a because printed text is \"both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players",
+    "resolved": "d ruling implemented as proposed (every living player is offered the draw / resource play at each player's turn start): data unchanged (forEachPlayer all), pinned by a 3-player test. Note: this reads \"both players\" of a trigger with no bound block as every player, which is wider than the MP 3 wording. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Death of the Demon Knights",
@@ -177,7 +181,8 @@
     ],
     "notes": "Discard/repeat parts bind one opponent (a). But \"Your opponent cannot respond\" is singular: strictly only the bound opponent is denied a response, while the noResponse flag resolves the card with no response window at all (all opponents denied).",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the card's intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
-    "recheck": "changed from a because printed text is singular \"your opponent\" everywhere (not plural opponents/pick an opponent): noResponse is a card-level flag that denies every opponent"
+    "recheck": "changed from a because printed text is singular \"your opponent\" everywhere (not plural opponents/pick an opponent): noResponse is a card-level flag that denies every opponent",
+    "resolved": "d ruling implemented as proposed (keep noResponse: no response window for anyone): data unchanged; engine resolves a noResponse card at once (SpoilsEngine playCard). The discard / repeat binds one opponent (opponentId). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Devilfang Thunderhoof",
@@ -218,7 +223,8 @@
       "Inflict X damage divided however you want to your opponents' characters."
     ],
     "notes": "Death trigger uses controller:opponent targets, i.e. the single bound opponent's characters; the printed text is plural, so the damage is divided among every opponent's characters in one distribution. Needs a selector scope spanning every opponent (not the bound opponent) for this trigger. The block trigger (\"the blocking party\") is unaffected.",
-    "recheck": "unchanged (printed plural \"your opponents' characters\")"
+    "recheck": "unchanged (printed plural \"your opponents' characters\")",
+    "resolved": "Fixed: the death trigger's pick (and its count) uses controller:\"any\" minus targetControlledBy controller, spanning every opponent's characters with no opponent binding, instead of controller:\"opponent\" (which E2 would pin to the first picked opponent). Block trigger unchanged. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Dragon Tank",
@@ -275,7 +281,8 @@
       "Both players are in control of their opponent's side"
     ],
     "notes": "Printed text is a swap between \"both players\" (D4: controller + bound opponent), not an N-seat rotation. swapsSides is a continuous flag that swaps the only two seats; re-define it as a swap of controller and the bound/chosen opponent (E6), with control mapping and winner attribution (owner of the winning deck wins) carried per pair.",
-    "recheck": "unchanged (printed \"both players switch seats\": controller + bound opponent swap)"
+    "recheck": "unchanged (printed \"both players switch seats\": controller + bound opponent swap)",
+    "resolved": "Left (engine-side, no data change): swapsSides is a seat swap of exactly two living players; with 3+ it does nothing (RULES.md Q-MP2, engine-derived). A controller + bound-opponent swap needs engine work. Pinned: no swap at 3 players, swap at 2. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Enter The Demon Knights",
@@ -361,7 +368,8 @@
     ],
     "notes": "\"Their opponent\" / \"both players\" is relative to the active player (each player's turn), and under D4 would be one opponent of that player. There is no natural binding (the card's controller is not the chooser), so which opponent is not determined. Current encoding gives every non-active player the benefit (and 'both players' = every player).",
     "ruling": "Engine-derived reading: \"their opponent\" = every other player; \"both players\" = every player. Keep the forEachPlayer + not isActivePlayer encoding.",
-    "recheck": "changed from a because printed text is singular \"their opponent\" / \"Both players\" relative to the turn's player, not \"opponents\"; ambiguous in 3+ players"
+    "recheck": "changed from a because printed text is singular \"their opponent\" / \"Both players\" relative to the turn's player, not \"opponents\"; ambiguous in 3+ players",
+    "resolved": "d ruling implemented as proposed (their opponent = every other player; both players = every player): data unchanged (forEachPlayer + not isActivePlayer / all), pinned by 3-player tests for options 1 and 3. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Geiseric, the Souleater",
@@ -453,7 +461,8 @@
       "Otherwise, each opponent may put 3 Micromajig tokens into play under their control."
     ],
     "notes": "The 'Otherwise' branch uses mayPay player:opponent (one bound player) but the printed text says each opponent: wrap it in an opponents-only forEachPlayer so every opponent may make 3 tokens. The deploySameNameThisTurn player:opponent condition (printed \"an opponent\") is judged existentially by E4, no change needed.",
-    "recheck": "unchanged (single printing; printed \"each opponent\" still needs fan-out)"
+    "recheck": "unchanged (single printing; printed \"each opponent\" still needs fan-out)",
+    "resolved": "Fixed: the Otherwise branch is forEachPlayer players:\"opponents\" around the mayPay, so each opponent is offered the 3 Micromajig tokens (in turn order) and decides for themselves. The \"an opponent played 2 same-name cards\" condition still references an opponent, so the controller must name one when playing (the condition is judged for that opponent): a limitation, there is no existential-condition binding for a played tactic. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Ipsighast, the Lustful",
@@ -694,7 +703,8 @@
       "Both players may search their deck for up to 5 staple resources and put them into play."
     ],
     "notes": "Printings ec6467/8debcb say up to 3, 828a6b says up to 5 (behavior already matches each). D4: \"both players\" in a block = controller + the bound opponent; forEachPlayer lets every player in a 3+ game fetch staples. Re-encode as controller + bound opponent.",
-    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
+    "recheck": "changed from a because printed text is \"Both players\" (not \"each player\"); D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player",
+    "resolved": "Fixed: forEachPlayer players:\"controllerAndOpponent\" (MP 3: the controller and the one opponent the block binds; classic unchanged). All three printings (up to 3 staples; 828a6b up to 5). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Ritual of the Screaming Cheese",
@@ -834,7 +844,8 @@
       "both players must put a resource they control into its owner's hand."
     ],
     "notes": "On enter, only you and the bound opponent bounce a resource (D4 \"both players\"); forEachPlayer makes every player do it in a 3+ game. Re-encode as controller + bound opponent.",
-    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player"
+    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer iterates every player",
+    "resolved": "Fixed: forEachPlayer players:\"controllerAndOpponent\" (MP 3: the controller and the one opponent the block binds; classic unchanged). Both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Spatchcocking",
@@ -847,7 +858,8 @@
       "Each opponent reveals their hand, chooses a card of each non-resource type in it, and discards the remaining non-resource cards."
     ],
     "notes": "Main effect already forEachPlayer (correct). RECUR effect uses reveal of:opponent and chooser:opponent for a single player: wrap the reveal, the four chooserSelectsTarget and the discard forEach in an opponents-only forEachPlayer (selectors rewritten to controller:self per iterated opponent).",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Fixed: the RECUR effects (reveal hand, four chooser picks, discard) are wrapped in forEachPlayer players:\"opponents\" (selectors keep \"opponent\"; the iteration binds each opponent in turn). The play effect already used forEachPlayer. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Stolen Inspiration",
@@ -933,7 +945,8 @@
     ],
     "notes": "The 'no tactics can be played' restriction already fans out over all players (fine). \"Your opponent cannot respond\" is singular: strictly only the bound opponent is denied; the noResponse flag resolves it with no response window for anyone.",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
-    "recheck": "changed from a because every printing says singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent"
+    "recheck": "changed from a because every printing says singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent",
+    "resolved": "d ruling implemented as proposed (keep noResponse for every printing): data unchanged. The tactic restriction fans out over every player. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "The Billionaire",
@@ -950,7 +963,8 @@
     ],
     "notes": "canUseOpponentAbilities is a static (every opponent's cards usable), but the borrowed ability's acting player and its own 'opponent' references need a defined binding. ff195e/2ec131 use canUseOpponentAbilities:'asOpponent', fb604d uses true; the same ruling applies to both.",
     "ruling": "You may use abilities on any opponent's cards (static, all opponents). The borrowed ability resolves as if the card's controller activated it (that player is 'controller' for the block), but you pay numeric costs from your own resources. Inside the borrowed block, 'opponent' is bound to the Billionaire's controller (the real user), so the 2-player relationship is preserved; no extra prompt.",
-    "recheck": "unchanged (printings differ in wording: ff195e/2ec131 'as though you were your opponent', fb604d own numeric costs + 'as if your opponent used it'; both d)"
+    "recheck": "unchanged (printings differ in wording: ff195e/2ec131 'as though you were your opponent', fb604d own numeric costs + 'as if your opponent used it'; both d)",
+    "resolved": "Left (not implemented): the ruling binds the borrowed ability's \"opponent\" to the Billionaire's controller with no prompt. The engine resolves a borrowed ability as the card's controller and asks the borrower to name that controller's opponent (any of them), so the ruling needs an engine change (fix the bound opponent to the borrower). Data unchanged; behavior probed at 3 players (borrower names any of the owner's opponents)."
   },
   {
     "name": "The Enemy's Head",
@@ -991,7 +1005,8 @@
       "Both players may use this ability."
     ],
     "notes": "overridesOpponent (startingDraw, suppressDevelop) must apply to every opponent per D9. usableBy:'anyPlayer' on DRAW/RESOURCE must mean every player at the table (each pays from their own resources) rather than a two-seat pair.",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Engine-side, already implemented (D9): overridesOpponent.startingDraw / suppressDevelop reach every opponent; usableBy anyPlayer lets any player use DRAW / RESOURCE. No data change; verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "The Ministry of Other Smaller Ministries",
@@ -1021,7 +1036,8 @@
     ],
     "notes": "playerCreatedAbility is a pre-game setup rule; no block exists to bind an opponent, so 'both players' is ambiguous with 3+ players.",
     "ruling": "Every player creates one ability before the game begins, and the faction (and every ability written for it) is usable by every player. (Engine: playerCreatedAbility becomes one ability per player, usableBy anyPlayer.)",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Left (not implemented): the ruling needs one created ability per player (engine: FactionGameSetupOptions.createdAbility / CardInstance.createdAbility hold a single spec). Data unchanged; the table writes one ability that every player may use."
   },
   {
     "name": "The Union of Unextraordinary Miners",
@@ -1033,7 +1049,8 @@
       "Your opponent starts with their usual resources plus enough staple resources so that both players have the same number of starting resources."
     ],
     "notes": "matchOpponentCount must apply per opponent (D9): each opponent is topped up with staples until their starting resource count equals the Union player's (X+1 staples/Deception total). The X choice is made once by the Union player.",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Engine-side, already implemented (D9): matchOpponentCount tops up every opponent. No data change; verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Tremor Engine",
@@ -1048,7 +1065,8 @@
       "At the start of your turn, both players put the top 2 cards of their deck into their discard pile."
     ],
     "notes": "On your turn start only you and the bound opponent mill 2 (D4 \"both players\"); forEachPlayer mills every player in a 3+ game. Re-encode as controller + bound opponent (the trigger has no event opponent, so it prompts for one).",
-    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer mills every player"
+    "recheck": "changed from a because printed text is \"both players\"; D4/MP3 reads that as controller + bound opponent, but behavior forEachPlayer mills every player",
+    "resolved": "Fixed: forEachPlayer players:\"controllerAndOpponent\" (MP 3: the controller and the one opponent the block binds; classic unchanged). All three printings; the turn-start trigger has no event opponent, so its controller is asked which opponent (chooseOpponent). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Unscrupuls of Victory",
@@ -1105,7 +1123,8 @@
     ],
     "notes": "printings differ: b9e946 (plural \"opponents\") is fine as is (a). 7416a5 and 63369e are singular: strictly only the bound opponent is denied; noResponse resolves with no response window for anyone.",
     "ruling": "Keep noResponse for all three printings (no window for anyone); strict D4 would let non-bound opponents respond to the singular printings.",
-    "recheck": "changed from a because printings 7416a5 and 63369e print singular \"Your opponent cannot respond\" (b9e946 prints plural \"Your opponents\"), and noResponse is a card-level flag that denies every opponent"
+    "recheck": "changed from a because printings 7416a5 and 63369e print singular \"Your opponent cannot respond\" (b9e946 prints plural \"Your opponents\"), and noResponse is a card-level flag that denies every opponent",
+    "resolved": "d ruling implemented as proposed (keep noResponse for all three printings, singular and plural): data unchanged. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Warehouse Raid",

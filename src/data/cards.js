@@ -568,7 +568,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -2579,7 +2580,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -6695,42 +6697,25 @@ export default [
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -9261,7 +9246,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -13462,7 +13448,8 @@ export default [
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -14107,7 +14094,13 @@ export default [
             },
             {
               "type": "distributeAmong",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "controllerOf",
+                "target": {
+                  "type": "selected",
+                  "id": "bl"
+                }
+              },
               "selected": "at",
               "amount": {
                 "type": "variable",
@@ -30321,7 +30314,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -39265,42 +39259,25 @@ export default [
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -42802,7 +42779,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -48542,7 +48520,8 @@ export default [
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -68448,7 +68427,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -70124,7 +70104,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -73932,42 +73913,25 @@ export default [
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -76165,7 +76129,8 @@ export default [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -79988,7 +79953,8 @@ export default [
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -102385,7 +102351,8 @@ export default [
                   "count": 6,
                   "to": "removed"
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -102785,866 +102752,450 @@ export default [
     "behavior": {
       "abilities": [
         {
-          "id": "meat-draw-controller",
+          "id": "meat-draw",
           "type": "triggered",
           "event": "cardsDrawn",
-          "condition": {
-            "type": "eventPlayerIs",
-            "player": "controller"
-          },
           "effects": [
             {
-              "type": "chooserSelectsOption",
-              "chooser": "controller",
-              "options": [
+              "type": "forEachPlayer",
+              "effects": [
                 {
-                  "label": "Do nothing",
-                  "effects": []
-                },
-                {
-                  "label": "Add a token to this card",
-                  "effects": [
-                    {
-                      "type": "addCounter",
-                      "target": "source",
-                      "counter": "token",
-                      "amount": 1
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 0
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-controller-d0",
-                            "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
-                            },
-                            "count": 1
-                          },
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "meat-controller-d0"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "mayPay",
-                          "player": "controller",
-                          "costs": [],
-                          "effects": [
-                            {
-                              "type": "lookAndReorder",
-                              "player": "controller",
-                              "count": 2
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "controller",
-                                "from": "top"
-                              },
-                              "to": "hand"
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "controller",
-                                "from": "top"
-                              },
-                              "to": "deck",
-                              "position": "bottom"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-controller-p2",
-                            "count": 1,
-                            "optional": true,
-                            "selector": {
-                              "zone": "play",
-                              "conditions": [
-                                {
-                                  "type": "or",
-                                  "conditions": [
-                                    {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
-                                      },
-                                      "cardType": "character"
-                                    },
-                                    {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
-                                      },
-                                      "cardType": "location"
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          },
-                          "effects": [
-                            {
-                              "type": "if",
-                              "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-controller-p2"
-                                }
-                              },
-                              "effects": [
-                                {
-                                  "type": "moveCard",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-controller-p2"
-                                  },
-                                  "to": "hand"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": ">=",
-                        "value": 3
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-controller-r3",
-                            "selector": {
-                              "controller": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "if",
-                              "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-controller-r3"
-                                }
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-controller-r3"
-                                  },
-                                  "faceDown": "auto"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "label": "Remove a token from this card",
+                  "type": "if",
                   "condition": {
-                    "type": "counterCompare",
-                    "target": "source",
-                    "counter": "token",
-                    "operator": ">=",
-                    "value": 1
+                    "type": "eventPlayerIs",
+                    "player": "controller"
                   },
                   "effects": [
                     {
-                      "type": "removeCounter",
-                      "target": "source",
-                      "counter": "token",
-                      "amount": 1
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 0
-                      },
-                      "effects": [
+                      "type": "chooserSelectsOption",
+                      "chooser": "controller",
+                      "options": [
                         {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-controller-d0",
-                            "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
-                            },
-                            "count": 1
-                          },
+                          "label": "Do nothing",
+                          "effects": []
+                        },
+                        {
+                          "label": "Add a token to this card",
                           "effects": [
                             {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "meat-controller-d0"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "mayPay",
-                          "player": "controller",
-                          "costs": [],
-                          "effects": [
-                            {
-                              "type": "lookAndReorder",
-                              "player": "controller",
-                              "count": 2
+                              "type": "addCounter",
+                              "target": "source",
+                              "counter": "token",
+                              "amount": 1
                             },
                             {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "controller",
-                                "from": "top"
+                              "type": "if",
+                              "condition": {
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 0
                               },
-                              "to": "hand"
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "controller",
-                                "from": "top"
-                              },
-                              "to": "deck",
-                              "position": "bottom"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-controller-p2",
-                            "count": 1,
-                            "optional": true,
-                            "selector": {
-                              "zone": "play",
-                              "conditions": [
+                              "effects": [
                                 {
-                                  "type": "or",
-                                  "conditions": [
+                                  "type": "forEachPlayer",
+                                  "players": "opponents",
+                                  "effects": [
                                     {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
+                                      "type": "chooserSelectsTarget",
+                                      "chooser": "opponent",
+                                      "declaration": {
+                                        "id": "meat-controller-d0",
+                                        "selector": {
+                                          "controller": "opponent",
+                                          "zone": "hand"
+                                        },
+                                        "count": 1
                                       },
-                                      "cardType": "character"
+                                      "effects": [
+                                        {
+                                          "type": "moveCard",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-d0"
+                                          },
+                                          "to": "discard"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 1
+                              },
+                              "effects": [
+                                {
+                                  "type": "mayPay",
+                                  "player": "controller",
+                                  "costs": [],
+                                  "effects": [
+                                    {
+                                      "type": "lookAndReorder",
+                                      "player": "controller",
+                                      "count": 2
                                     },
                                     {
-                                      "type": "cardTypeIs",
+                                      "type": "moveCard",
                                       "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
+                                        "type": "deckPosition",
+                                        "player": "controller",
+                                        "from": "top"
                                       },
-                                      "cardType": "location"
+                                      "to": "hand"
+                                    },
+                                    {
+                                      "type": "moveCard",
+                                      "target": {
+                                        "type": "deckPosition",
+                                        "player": "controller",
+                                        "from": "top"
+                                      },
+                                      "to": "deck",
+                                      "position": "bottom"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 2
+                              },
+                              "effects": [
+                                {
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "meat-controller-p2",
+                                    "count": 1,
+                                    "optional": true,
+                                    "selector": {
+                                      "zone": "play",
+                                      "conditions": [
+                                        {
+                                          "type": "or",
+                                          "conditions": [
+                                            {
+                                              "type": "cardTypeIs",
+                                              "target": {
+                                                "type": "selected",
+                                                "id": "__candidate"
+                                              },
+                                              "cardType": "character"
+                                            },
+                                            {
+                                              "type": "cardTypeIs",
+                                              "target": {
+                                                "type": "selected",
+                                                "id": "__candidate"
+                                              },
+                                              "cardType": "location"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "effects": [
+                                    {
+                                      "type": "if",
+                                      "condition": {
+                                        "type": "targetExists",
+                                        "target": {
+                                          "type": "selected",
+                                          "id": "meat-controller-p2"
+                                        }
+                                      },
+                                      "effects": [
+                                        {
+                                          "type": "moveCard",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-p2"
+                                          },
+                                          "to": "hand"
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": ">=",
+                                "value": 3
+                              },
+                              "effects": [
+                                {
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "meat-controller-r3",
+                                    "selector": {
+                                      "controller": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
+                                  },
+                                  "effects": [
+                                    {
+                                      "type": "if",
+                                      "condition": {
+                                        "type": "targetExists",
+                                        "target": {
+                                          "type": "selected",
+                                          "id": "meat-controller-r3"
+                                        }
+                                      },
+                                      "effects": [
+                                        {
+                                          "type": "playResource",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-r3"
+                                          },
+                                          "faceDown": "auto"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
                               ]
                             }
+                          ]
+                        },
+                        {
+                          "label": "Remove a token from this card",
+                          "condition": {
+                            "type": "counterCompare",
+                            "target": "source",
+                            "counter": "token",
+                            "operator": ">=",
+                            "value": 1
                           },
                           "effects": [
+                            {
+                              "type": "removeCounter",
+                              "target": "source",
+                              "counter": "token",
+                              "amount": 1
+                            },
                             {
                               "type": "if",
                               "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-controller-p2"
-                                }
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 0
                               },
                               "effects": [
                                 {
-                                  "type": "moveCard",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-controller-p2"
-                                  },
-                                  "to": "hand"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": ">=",
-                        "value": 3
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-controller-r3",
-                            "selector": {
-                              "controller": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "if",
-                              "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-controller-r3"
-                                }
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-controller-r3"
-                                  },
-                                  "faceDown": "auto"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "meat-draw-opponent",
-          "type": "triggered",
-          "event": "cardsDrawn",
-          "condition": {
-            "type": "eventPlayerIs",
-            "player": "opponent"
-          },
-          "effects": [
-            {
-              "type": "chooserSelectsOption",
-              "chooser": "opponent",
-              "options": [
-                {
-                  "label": "Do nothing",
-                  "effects": []
-                },
-                {
-                  "label": "Add a token to this card",
-                  "effects": [
-                    {
-                      "type": "addCounter",
-                      "target": "source",
-                      "counter": "token",
-                      "amount": 1
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 0
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-opponent-d0",
-                            "selector": {
-                              "controller": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1
-                          },
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "meat-opponent-d0"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "mayPay",
-                          "player": "opponent",
-                          "costs": [],
-                          "effects": [
-                            {
-                              "type": "lookAndReorder",
-                              "player": "opponent",
-                              "count": 2
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "opponent",
-                                "from": "top"
-                              },
-                              "to": "hand"
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "opponent",
-                                "from": "top"
-                              },
-                              "to": "deck",
-                              "position": "bottom"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-opponent-p2",
-                            "count": 1,
-                            "optional": true,
-                            "selector": {
-                              "zone": "play",
-                              "conditions": [
-                                {
-                                  "type": "or",
-                                  "conditions": [
+                                  "type": "forEachPlayer",
+                                  "players": "opponents",
+                                  "effects": [
                                     {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
+                                      "type": "chooserSelectsTarget",
+                                      "chooser": "opponent",
+                                      "declaration": {
+                                        "id": "meat-controller-d0",
+                                        "selector": {
+                                          "controller": "opponent",
+                                          "zone": "hand"
+                                        },
+                                        "count": 1
                                       },
-                                      "cardType": "character"
-                                    },
-                                    {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
-                                      },
-                                      "cardType": "location"
+                                      "effects": [
+                                        {
+                                          "type": "moveCard",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-d0"
+                                          },
+                                          "to": "discard"
+                                        }
+                                      ]
                                     }
                                   ]
                                 }
                               ]
-                            }
-                          },
-                          "effects": [
+                            },
                             {
                               "type": "if",
                               "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-opponent-p2"
-                                }
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 1
                               },
                               "effects": [
                                 {
-                                  "type": "moveCard",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-opponent-p2"
-                                  },
-                                  "to": "hand"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": ">=",
-                        "value": 3
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-opponent-r3",
-                            "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
-                            },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
-                            {
-                              "type": "if",
-                              "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-opponent-r3"
-                                }
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-opponent-r3"
-                                  },
-                                  "faceDown": "auto",
-                                  "player": "opponent"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "label": "Remove a token from this card",
-                  "condition": {
-                    "type": "counterCompare",
-                    "target": "source",
-                    "counter": "token",
-                    "operator": ">=",
-                    "value": 1
-                  },
-                  "effects": [
-                    {
-                      "type": "removeCounter",
-                      "target": "source",
-                      "counter": "token",
-                      "amount": 1
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 0
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "meat-opponent-d0",
-                            "selector": {
-                              "controller": "self",
-                              "zone": "hand"
-                            },
-                            "count": 1
-                          },
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "meat-opponent-d0"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 1
-                      },
-                      "effects": [
-                        {
-                          "type": "mayPay",
-                          "player": "opponent",
-                          "costs": [],
-                          "effects": [
-                            {
-                              "type": "lookAndReorder",
-                              "player": "opponent",
-                              "count": 2
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "opponent",
-                                "from": "top"
-                              },
-                              "to": "hand"
-                            },
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "deckPosition",
-                                "player": "opponent",
-                                "from": "top"
-                              },
-                              "to": "deck",
-                              "position": "bottom"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": "=",
-                        "value": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-opponent-p2",
-                            "count": 1,
-                            "optional": true,
-                            "selector": {
-                              "zone": "play",
-                              "conditions": [
-                                {
-                                  "type": "or",
-                                  "conditions": [
+                                  "type": "mayPay",
+                                  "player": "controller",
+                                  "costs": [],
+                                  "effects": [
                                     {
-                                      "type": "cardTypeIs",
-                                      "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
-                                      },
-                                      "cardType": "character"
+                                      "type": "lookAndReorder",
+                                      "player": "controller",
+                                      "count": 2
                                     },
                                     {
-                                      "type": "cardTypeIs",
+                                      "type": "moveCard",
                                       "target": {
-                                        "type": "selected",
-                                        "id": "__candidate"
+                                        "type": "deckPosition",
+                                        "player": "controller",
+                                        "from": "top"
                                       },
-                                      "cardType": "location"
+                                      "to": "hand"
+                                    },
+                                    {
+                                      "type": "moveCard",
+                                      "target": {
+                                        "type": "deckPosition",
+                                        "player": "controller",
+                                        "from": "top"
+                                      },
+                                      "to": "deck",
+                                      "position": "bottom"
                                     }
                                   ]
                                 }
                               ]
-                            }
-                          },
-                          "effects": [
+                            },
                             {
                               "type": "if",
                               "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-opponent-p2"
-                                }
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": "=",
+                                "value": 2
                               },
                               "effects": [
                                 {
-                                  "type": "moveCard",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-opponent-p2"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "meat-controller-p2",
+                                    "count": 1,
+                                    "optional": true,
+                                    "selector": {
+                                      "zone": "play",
+                                      "conditions": [
+                                        {
+                                          "type": "or",
+                                          "conditions": [
+                                            {
+                                              "type": "cardTypeIs",
+                                              "target": {
+                                                "type": "selected",
+                                                "id": "__candidate"
+                                              },
+                                              "cardType": "character"
+                                            },
+                                            {
+                                              "type": "cardTypeIs",
+                                              "target": {
+                                                "type": "selected",
+                                                "id": "__candidate"
+                                              },
+                                              "cardType": "location"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
                                   },
-                                  "to": "hand"
+                                  "effects": [
+                                    {
+                                      "type": "if",
+                                      "condition": {
+                                        "type": "targetExists",
+                                        "target": {
+                                          "type": "selected",
+                                          "id": "meat-controller-p2"
+                                        }
+                                      },
+                                      "effects": [
+                                        {
+                                          "type": "moveCard",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-p2"
+                                          },
+                                          "to": "hand"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "counterCompare",
-                        "target": "source",
-                        "counter": "token",
-                        "operator": ">=",
-                        "value": 3
-                      },
-                      "effects": [
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
-                          "declaration": {
-                            "id": "meat-opponent-r3",
-                            "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
                             },
-                            "count": 1,
-                            "optional": true
-                          },
-                          "effects": [
                             {
                               "type": "if",
                               "condition": {
-                                "type": "targetExists",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "meat-opponent-r3"
-                                }
+                                "type": "counterCompare",
+                                "target": "source",
+                                "counter": "token",
+                                "operator": ">=",
+                                "value": 3
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "meat-opponent-r3"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "meat-controller-r3",
+                                    "selector": {
+                                      "controller": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "opponent"
+                                  "effects": [
+                                    {
+                                      "type": "if",
+                                      "condition": {
+                                        "type": "targetExists",
+                                        "target": {
+                                          "type": "selected",
+                                          "id": "meat-controller-r3"
+                                        }
+                                      },
+                                      "effects": [
+                                        {
+                                          "type": "playResource",
+                                          "target": {
+                                            "type": "selected",
+                                            "id": "meat-controller-r3"
+                                          },
+                                          "faceDown": "auto"
+                                        }
+                                      ]
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -110093,15 +109644,56 @@ export default [
             },
             {
               "type": "bind",
-              "id": "oppCost",
-              "value": {
-                "type": "cardCost",
-                "target": {
-                  "type": "deckPosition",
-                  "player": "opponent",
-                  "from": "top"
+              "id": "beaten",
+              "value": 0
+            },
+            {
+              "type": "setDamage",
+              "target": {
+                "type": "selected",
+                "id": "__candidate"
+              },
+              "amount": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "cardCost",
+                      "target": {
+                        "type": "deckPosition",
+                        "player": "opponent",
+                        "from": "top"
+                      }
+                    },
+                    "operator": ">",
+                    "right": {
+                      "type": "variable",
+                      "id": "mineCost"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "bind",
+                      "id": "beaten",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "removeFromGame",
+                  "target": {
+                    "type": "deckPosition",
+                    "player": "opponent",
+                    "from": "top"
+                  }
                 }
-              }
+              ]
             },
             {
               "type": "removeFromGame",
@@ -110112,40 +109704,21 @@ export default [
               }
             },
             {
-              "type": "removeFromGame",
-              "target": {
-                "type": "deckPosition",
-                "player": "opponent",
-                "from": "top"
-              }
-            },
-            {
               "type": "if",
               "condition": {
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "beaten"
                 },
-                "operator": ">=",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": "=",
+                "right": 0
               },
               "effects": [
                 {
                   "type": "draw",
                   "player": "controller",
                   "amount": 1
-                },
-                {
-                  "type": "setDamage",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
-                  },
-                  "amount": 0
                 }
               ]
             },
@@ -110155,13 +109728,10 @@ export default [
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "beaten"
                 },
-                "operator": "<",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": "=",
+                "right": 1
               },
               "effects": [
                 {
@@ -114817,142 +114387,148 @@ export default [
           ],
           "effects": [
             {
-              "type": "reveal",
-              "of": "opponent",
-              "zone": "hand",
-              "viewer": "all"
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepC",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "character"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepI",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "item"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepL",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "location"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepT",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "tactic"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "forEach",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand",
-                "conditions": [
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "cardTypeIs",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "cardType": "resource"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepC"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepI"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepL"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepT"
-                    }
-                  }
-                ]
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
+                  "type": "reveal",
+                  "of": "opponent",
+                  "zone": "hand",
+                  "viewer": "all"
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "keepC",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "hand",
+                      "type": "character"
+                    },
+                    "count": 1,
+                    "optional": false
                   },
-                  "to": "discard"
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "keepI",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "hand",
+                      "type": "item"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "keepL",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "hand",
+                      "type": "location"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "opponent",
+                  "declaration": {
+                    "id": "keepT",
+                    "selector": {
+                      "controller": "opponent",
+                      "zone": "hand",
+                      "type": "tactic"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "forEach",
+                  "selector": {
+                    "controller": "opponent",
+                    "zone": "hand",
+                    "conditions": [
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "cardTypeIs",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "cardType": "resource"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepC"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepI"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepL"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepT"
+                        }
+                      }
+                    ]
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ]
                 }
               ]
             }
@@ -115792,27 +115368,33 @@ export default [
               },
               "effects": [
                 {
-                  "type": "mayPay",
-                  "player": "opponent",
-                  "costs": [],
+                  "type": "forEachPlayer",
+                  "players": "opponents",
                   "effects": [
                     {
-                      "type": "createTokens",
-                      "controller": "opponent",
-                      "count": 3,
-                      "token": {
-                        "name": "Micromajig",
-                        "cardType": "character",
-                        "subtype": [
-                          "majig"
-                        ],
-                        "strength": 1,
-                        "life": 1,
-                        "speed": 3
-                      }
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [],
+                      "effects": [
+                        {
+                          "type": "createTokens",
+                          "controller": "opponent",
+                          "count": 3,
+                          "token": {
+                            "name": "Micromajig",
+                            "cardType": "character",
+                            "subtype": [
+                              "majig"
+                            ],
+                            "strength": 1,
+                            "life": 1,
+                            "speed": 3
+                          }
+                        }
+                      ],
+                      "elseEffects": []
                     }
-                  ],
-                  "elseEffects": []
+                  ]
                 }
               ]
             }
@@ -140770,15 +140352,56 @@ export default [
             },
             {
               "type": "bind",
-              "id": "oppCost",
-              "value": {
-                "type": "cardCost",
-                "target": {
-                  "type": "deckPosition",
-                  "player": "opponent",
-                  "from": "top"
+              "id": "beaten",
+              "value": 0
+            },
+            {
+              "type": "setDamage",
+              "target": {
+                "type": "selected",
+                "id": "__candidate"
+              },
+              "amount": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "cardCost",
+                      "target": {
+                        "type": "deckPosition",
+                        "player": "opponent",
+                        "from": "top"
+                      }
+                    },
+                    "operator": ">",
+                    "right": {
+                      "type": "variable",
+                      "id": "mineCost"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "bind",
+                      "id": "beaten",
+                      "value": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "removeFromGame",
+                  "target": {
+                    "type": "deckPosition",
+                    "player": "opponent",
+                    "from": "top"
+                  }
                 }
-              }
+              ]
             },
             {
               "type": "removeFromGame",
@@ -140789,40 +140412,21 @@ export default [
               }
             },
             {
-              "type": "removeFromGame",
-              "target": {
-                "type": "deckPosition",
-                "player": "opponent",
-                "from": "top"
-              }
-            },
-            {
               "type": "if",
               "condition": {
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "beaten"
                 },
-                "operator": ">=",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": "=",
+                "right": 0
               },
               "effects": [
                 {
                   "type": "draw",
                   "player": "controller",
                   "amount": 1
-                },
-                {
-                  "type": "setDamage",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
-                  },
-                  "amount": 0
                 }
               ]
             },
@@ -140832,13 +140436,10 @@ export default [
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "beaten"
                 },
-                "operator": "<",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": "=",
+                "right": 1
               },
               "effects": [
                 {
@@ -146899,16 +146500,42 @@ export default [
             {
               "id": "foes",
               "selector": {
-                "controller": "opponent",
+                "controller": "any",
                 "zone": "play",
-                "type": "character"
+                "type": "character",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetControlledBy",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "player": "controller"
+                    }
+                  }
+                ]
               },
               "count": {
                 "type": "count",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "any",
                   "zone": "play",
-                  "type": "character"
+                  "type": "character",
+                  "conditions": [
+                    {
+                      "type": "not",
+                      "condition": {
+                        "type": "targetControlledBy",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
+                        },
+                        "player": "controller"
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -147716,43 +147343,79 @@ export default [
           ],
           "effects": [
             {
-              "type": "bind",
-              "id": "oppHad",
-              "value": {
-                "type": "count",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "character"
-                }
-              }
-            },
-            {
-              "type": "if",
-              "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "variable",
-                  "id": "oppHad"
-                },
-                "operator": ">=",
-                "right": {
-                  "type": "variable",
-                  "id": "x"
-                }
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
-                  "declaration": {
-                    "id": "oppSac",
+                  "type": "bind",
+                  "id": "oppHad",
+                  "value": {
+                    "type": "count",
                     "selector": {
                       "controller": "opponent",
                       "zone": "play",
                       "type": "character"
+                    }
+                  }
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "oppHad"
                     },
-                    "count": {
+                    "operator": ">=",
+                    "right": {
+                      "type": "variable",
+                      "id": "x"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "oppSac",
+                        "selector": {
+                          "controller": "opponent",
+                          "zone": "play",
+                          "type": "character"
+                        },
+                        "count": {
+                          "type": "variable",
+                          "id": "x"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "type": "forEach",
+                          "selected": "oppSac",
+                          "effects": [
+                            {
+                              "type": "destroy",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "oppHad"
+                    },
+                    "operator": "<",
+                    "right": {
                       "type": "variable",
                       "id": "x"
                     }
@@ -147760,7 +147423,11 @@ export default [
                   "effects": [
                     {
                       "type": "forEach",
-                      "selected": "oppSac",
+                      "selector": {
+                        "controller": "opponent",
+                        "zone": "play",
+                        "type": "character"
+                      },
                       "effects": [
                         {
                           "type": "destroy",
@@ -147770,40 +147437,6 @@ export default [
                           }
                         }
                       ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "if",
-              "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "variable",
-                  "id": "oppHad"
-                },
-                "operator": "<",
-                "right": {
-                  "type": "variable",
-                  "id": "x"
-                }
-              },
-              "effects": [
-                {
-                  "type": "forEach",
-                  "selector": {
-                    "controller": "opponent",
-                    "zone": "play",
-                    "type": "character"
-                  },
-                  "effects": [
-                    {
-                      "type": "destroy",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
                     }
                   ]
                 }

@@ -12,7 +12,8 @@
     ],
     "notes": "The turn's player picks X, then \"both players\" act: D4 reads that as controller + bound opponent, but this is a trigger on every player's turn with no natural opponent to bind. Current encoding (forEachPlayer inside the active player's number choice) makes every player do it.",
     "ruling": "Engine-derived reading: every player (each living player puts X on the bottom and draws that many) -- keep the current forEachPlayer.",
-    "recheck": "changed from a because printed text is \"Both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players"
+    "recheck": "changed from a because printed text is \"Both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players",
+    "resolved": "d ruling implemented as proposed (every living player bottoms X and draws): data unchanged (forEachPlayer all inside the turn player's number choice), pinned by a 3-player test. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Anesthetizing Opulence",
@@ -68,7 +69,8 @@
       "Shuffle all other revealed cards into their owner's deck."
     ],
     "notes": "auctionForCard is a two-party construct today; with 3+ players every living player bids in seat order starting with the active player (not controller + bound opponent), unspent bids/shuffles apply to all. Engine-side change, no data change expected.",
-    "recheck": "unchanged (ae9ae5 omits 'starting with the active player'; same behavior)"
+    "recheck": "unchanged (ae9ae5 omits 'starting with the active player'; same behavior)",
+    "resolved": "Engine-side, already implemented (RULES.md §16): every living player bids in seat order from the active player. No data change; verified at 3 players for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Barbaric Rifleman",
@@ -191,7 +193,8 @@
       "If the attached character is blocked, your opponent's faction loses 2 influence."
     ],
     "notes": "Engine-side, no card data change: the attack-event binding (attackerBlocked / characterAttacked / battleStarted -> the battle's defender) is not covered by eventOpponent, which reads playerId/attackerPlayerId/defenderPlayerId from the event record or the event card's controller (the attacker here). Add the defender to those events or bind from the active battle.",
-    "recheck": "changed from a because \"your opponent\" here is the blocking (defending) player, but the attackerBlocked event carries no player, so E3 cannot bind it and the trigger would prompt for an arbitrary opponent"
+    "recheck": "changed from a because \"your opponent\" here is the blocking (defending) player, but the attackerBlocked event carries no player, so E3 cannot bind it and the trigger would prompt for an arbitrary opponent",
+    "resolved": "No data change needed: E3 binds the battle's sides for attack events, so \"your opponent\" is the blocking player (the audit's concern was out of date). Verified at 3 players for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Discommodiousness",
@@ -260,7 +263,8 @@
       "Each opponent that controls at least X characters, destroys X characters they control. Otherwise, destroy all of that opponent's characters."
     ],
     "notes": "Only 74da08 needs a data change: wrap the oppHad bind + both `if` blocks in an opponents-only forEachPlayer (selectors become self per iterated opponent, chooser the iterated opponent) and keep the final draw outside the fan-out. 064273 stays as is (one bound opponent).",
-    "recheck": "printings differ: 064273 (Seed 2) prints singular \"your opponent\" (a, binding is faithful); 74da08 (Seed Saga) prints \"Each opponent that controls at least X characters\" (b, needs fan-out); both carry the same single-opponent behavior"
+    "recheck": "printings differ: 064273 (Seed 2) prints singular \"your opponent\" (a, binding is faithful); 74da08 (Seed Saga) prints \"Each opponent that controls at least X characters\" (b, needs fan-out); both carry the same single-opponent behavior",
+    "resolved": "Fixed 74da08 (Seed Saga, \"Each opponent that controls at least X characters\"): the opponent-count bind and both ifs are wrapped in forEachPlayer players:\"opponents\" (chooser and selectors stay \"opponent\", bound per iteration); the draw stays outside. 0642737a (Seed 2, singular \"your opponent\") unchanged (one named opponent). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Epiphany Ball",
@@ -287,7 +291,8 @@
     ],
     "notes": "Strictly only the bound opponent is denied a response, but noResponse resolves the card with no response window for anyone (D6 rotation skipped).",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
-    "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent"
+    "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent",
+    "resolved": "d ruling implemented as proposed (keep noResponse): data unchanged; verified at 3 players that it resolves at once with no response window for the third player. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Fool's Gold",
@@ -354,7 +359,8 @@
       "Inflict 6 damage to all factions."
     ],
     "notes": "printings differ: 0aaa4b says \"All players\" and the forEachPlayer encoding already matches (a); de6f18 says \"Both players remove 6 cards in their hand / discard pile / top of deck\", which per D4 should be controller + bound opponent only (re-encode that printing). \"all factions\" damage is already all.",
-    "recheck": "changed from a because printing de6f18 (Seed 2) prints \"Both players\" (D4/MP3: controller + bound opponent) while behavior forEachPlayer hits every player; printing 0aaa4b (Seed Saga) prints \"All players\" (a, fan-out correct)"
+    "recheck": "changed from a because printing de6f18 (Seed 2) prints \"Both players\" (D4/MP3: controller + bound opponent) while behavior forEachPlayer hits every player; printing 0aaa4b (Seed Saga) prints \"All players\" (a, fan-out correct)",
+    "resolved": "Fixed de6f188a (Seed 2, \"Both players remove ...\"): the removal forEachPlayer is players:\"controllerAndOpponent\". 0aaa4b25 (Seed Saga, \"All players\") unchanged. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Hired Goons",
@@ -398,7 +404,8 @@
       "terminate the opponent's card"
     ],
     "notes": "The lingering milkshake-echo trigger matches eventPlayerIs:opponent (any opponent) and owner:opponent voided cards. It must be tied to the opponent whose deck was searched: store chosenOpponentId (on the tactic / voided card) and test eventPlayerIs that player; otherwise another opponent playing a same-named card triggers it. 83807d says \"that opponent\" outright; 6f1bdb says \"your opponent\" but the removed card is that opponent's, so the same fix applies.",
-    "recheck": "unchanged (printings differ in wording: 6f1bdb 'your opponent', 83807d 'an opponent' / 'that opponent'; same behavior shape, both need the searched opponent remembered)"
+    "recheck": "unchanged (printings differ in wording: 6f1bdb 'your opponent', 83807d 'an opponent' / 'that opponent'; same behavior shape, both need the searched opponent remembered)",
+    "resolved": "No data change needed: E2 binds the searched opponent from the pick of their deck's card and E3 binds the player of a later cardPlayed event, so the echo's owner:\"opponent\" selector only reaches the card voided from that player (the audit's concern was out of date). Verified at 3 players for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Imperial Thaumaturge",
@@ -452,7 +459,8 @@
       "greater than or equal to the numeric cost of each opponents'"
     ],
     "notes": "Only 451308 needs a data change: fan the removal out with forEachPlayer, record each player's cost, and compare myCost >= max(cost of every other player's removed card) instead of the single oppCost. 85fcf7 stays as is.",
-    "recheck": "printings differ: 85fcf7 (Seed 2) prints \"both players\" / \"your opponent's\" (a: the controller + bound opponent encoding is exactly D4); 451308 (Seed Saga) prints \"each player\" / \"each opponents'\" (b, needs fan-out); same behavior"
+    "recheck": "printings differ: 85fcf7 (Seed 2) prints \"both players\" / \"your opponent's\" (a: the controller + bound opponent encoding is exactly D4); 451308 (Seed Saga) prints \"each player\" / \"each opponents'\" (b, needs fan-out); same behavior",
+    "resolved": "Fixed 451308 (Seed Saga, \"each player\" / \"each opponents'\"): every opponent's top card is removed in forEachPlayer players:\"opponents\" and the card survives only if its removed card's cost is >= every opponent's (the damage is reduced to 0 before the fan-out: a forEachPlayer inside a replacement settles state-based actions, which would re-destroy a card still carrying lethal damage). 85fcf752 (Seed 2, \"both players\" / \"your opponent's\") was NOT correct as encoded: a replacement binds no opponent and cannot ask, so at 3 players it threw (\"has 2 opponents and none is chosen\"); it now takes the same every-opponent comparison as an interim (engine gap: replacements should bind or ask for an opponent). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Martial Artist",
@@ -508,7 +516,8 @@
       "That player may play a resource."
     ],
     "notes": "Opponent branch is the mirror image (controller discards) which is only right in 2 players. Collapse into one trigger for any drawing player, resolved as that player (controller := event player) with that player binding their own opponent for the 0-token discard, and eventPlayerIs matching any seat.",
-    "recheck": "unchanged"
+    "recheck": "unchanged",
+    "resolved": "Fixed: one cardsDrawn trigger for ANY player's draw (forEachPlayer all, acting only for the drawer via eventPlayerIs controller), so the drawing player makes the token choice and gets the token effects; replaces the mirror controller / opponent pair. Approximation: \"that player's opponent discards a card\" (0 tokens) makes each of the drawer's opponents discard (identical in 2 players); one chosen opponent needs a mid-effect opponent choice, which the engine lacks. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Mendacious Brigand",
@@ -520,7 +529,8 @@
       "If this card is blocked, you may pick a blocking character and a character your opponent controls that is not in a battle."
     ],
     "notes": "Engine-side, no card data change: bind the battle's defender (the blocking character's controller) for attackerBlocked / characterAttacked / battleStarted triggers; eventOpponent cannot see it today (events carry no player, the event card is the attacker). The second pick's selector controller:opponent then resolves to that defender.",
-    "recheck": "unchanged (c) but for a different reason: the printing says \"your opponent\" (not \"that character's controller\"), so no card re-encoding, but the opponent must be the defending player and attackerBlocked carries no player for E3 to bind"
+    "recheck": "unchanged (c) but for a different reason: the printing says \"your opponent\" (not \"that character's controller\"), so no card re-encoding, but the opponent must be the defending player and attackerBlocked carries no player for E3 to bind",
+    "resolved": "No data change needed: E3 binds the battle's defender for attackerBlocked, so the second pick is restricted to the blocking player's characters (the audit's concern was out of date). Verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Mercenary's Creed",
@@ -534,7 +544,8 @@
     ],
     "notes": "usableBy:anyPlayer lets every seat use the Bribe ability; the printed \"both players\" has no block to bind a pair, so it is a ruling whether that means every player. Takeover goes to the activating player either way.",
     "ruling": "Engine-derived reading: every living player may use it (usableBy anyPlayer, each pays from their own resources); no data change.",
-    "recheck": "changed from a because the printed text is \"Both players may use this ability\" (not \"any player\"): which players is ambiguous in 3+ players"
+    "recheck": "changed from a because the printed text is \"Both players may use this ability\" (not \"any player\"): which players is ambiguous in 3+ players",
+    "resolved": "d ruling implemented as proposed (every living player may use Bribe): data unchanged (usableBy anyPlayer), pinned by a 3-player test for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Misappropriation Machine",
@@ -590,7 +601,8 @@
       "Each of you choose one of their opponent's piles."
     ],
     "notes": "partitionAndPick is a two-party construct: participants must be controller + bound opponent (D4 \"both players\" / \"you and an opponent\"; E6), not hardwired seats. Engine-side change, no card data change.",
-    "recheck": "unchanged (printings differ in wording: 1dffc0 'Both players', f276a0 'You and an opponent'; same behavior, both mean controller + bound opponent)"
+    "recheck": "unchanged (printings differ in wording: 1dffc0 'Both players', f276a0 'You and an opponent'; same behavior, both mean controller + bound opponent)",
+    "resolved": "Engine-side, already implemented: partitionAndPick involves the controller and the bound opponent only. No data change; verified at 3 players for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Mutiny Grant",
@@ -893,7 +905,8 @@
       "If this card attacks, inflict 1 damage to your opponent's faction."
     ],
     "notes": "Engine-side, no card data change: bind the battle's defender for attack-event triggers (characterAttacked / battleStarted / attackerBlocked). Without it the controller is asked which opponent, and may pick one who is not being attacked.",
-    "recheck": "changed from a because \"your opponent\" here is the defending player, but characterAttacked carries no player (the event card is the attacker), so E3 cannot bind it and the trigger would prompt for an arbitrary opponent"
+    "recheck": "changed from a because \"your opponent\" here is the defending player, but characterAttacked carries no player (the event card is the attacker), so E3 cannot bind it and the trigger would prompt for an arbitrary opponent",
+    "resolved": "No data change needed: E3 binds the battle's defender for characterAttacked, so the damage goes to the attacked player's faction (the audit's concern was out of date). Verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Subsection 5, Paragraph 12",
@@ -907,7 +920,8 @@
     ],
     "notes": "Strictly only the bound opponent is denied a response, but noResponse resolves the card with no response window for anyone (D6 rotation skipped).",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
-    "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent"
+    "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent",
+    "resolved": "d ruling implemented as proposed (keep noResponse): data unchanged; verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Swinish Elder",
@@ -1041,6 +1055,7 @@
       "If you attack, your opponent picks any number of characters they control."
     ],
     "notes": "Chooser is opponent (bound), but the printed \"your opponent\" must be the attacked player (defender). Engine-side, no card data change: bind the battle's defender for battleStarted / characterAttacked triggers; events carry no player today, so the trigger would prompt for any opponent.",
-    "recheck": "unchanged (printed \"your opponent\" is the defending player, which a prompt would not guarantee)"
+    "recheck": "unchanged (printed \"your opponent\" is the defending player, which a prompt would not guarantee)",
+    "resolved": "No data change needed: E3 binds the battle's defender for battleStarted, so the attacked player picks the characters that must block (the audit's concern was out of date). Verified at 3 players for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
   }
 ]
