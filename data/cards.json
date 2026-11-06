@@ -123455,82 +123455,40 @@
               },
               "effects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
+                  "type": "chooserSelectsTarget",
+                  "chooser": {
+                    "type": "controllerOf",
                     "target": {
                       "type": "selected",
                       "id": "char"
-                    },
-                    "player": "controller"
-                  },
-                  "effects": [
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "controller",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "self",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
                     }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
-                    "target": {
-                      "type": "selected",
-                      "id": "char"
+                  },
+                  "declaration": {
+                    "id": "redonk-d",
+                    "selector": {
+                      "controller": {
+                        "type": "controllerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "char"
+                        }
+                      },
+                      "zone": "hand"
                     },
-                    "player": "opponent"
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
+                      "type": "forEach",
+                      "selected": "redonk-d",
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
                         }
                       ]
                     }
@@ -123541,59 +123499,22 @@
             {
               "type": "if",
               "condition": {
-                "type": "or",
-                "conditions": [
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "controller"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "self",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": {
+                      "type": "controllerOf",
+                      "target": {
+                        "type": "selected",
+                        "id": "char"
                       }
-                    ]
-                  },
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "opponent"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "opponent",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
-                      }
-                    ]
+                    },
+                    "zone": "hand"
                   }
-                ]
+                },
+                "operator": "<=",
+                "right": 3
               },
               "effects": [
                 {
@@ -140481,6 +140402,24 @@
       ],
       "abilities": [
         {
+          "id": "peek",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "isActivePlayer",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "lookAndReorder",
+              "player": "controller",
+              "count": 1,
+              "to": "top",
+              "upTo": true
+            }
+          ]
+        },
+        {
           "id": "spy",
           "type": "triggered",
           "event": "turnEnding",
@@ -140492,7 +140431,15 @@
             {
               "type": "flipCoin",
               "player": "controller",
-              "winEffects": [],
+              "winEffects": [
+                {
+                  "type": "lookAndReorder",
+                  "player": "opponent",
+                  "count": 1,
+                  "to": "top",
+                  "chooser": "controller"
+                }
+              ],
               "loseEffects": []
             }
           ]
@@ -143064,7 +143011,13 @@
                 "type": "cardCost",
                 "target": {
                   "type": "deckPosition",
-                  "player": "opponent",
+                  "player": {
+                    "type": "controllerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "c"
+                    }
+                  },
                   "from": "top"
                 }
               }
@@ -143088,7 +143041,13 @@
                   "type": "removeFromGame",
                   "target": {
                     "type": "deckPosition",
-                    "player": "opponent",
+                    "player": {
+                      "type": "controllerOf",
+                      "target": {
+                        "type": "selected",
+                        "id": "c"
+                      }
+                    },
                     "from": "top"
                   }
                 },
@@ -192008,82 +191967,40 @@
               },
               "effects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
+                  "type": "chooserSelectsTarget",
+                  "chooser": {
+                    "type": "controllerOf",
                     "target": {
                       "type": "selected",
                       "id": "char"
-                    },
-                    "player": "controller"
-                  },
-                  "effects": [
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "controller",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "self",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
                     }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
-                    "target": {
-                      "type": "selected",
-                      "id": "char"
+                  },
+                  "declaration": {
+                    "id": "redonk-d",
+                    "selector": {
+                      "controller": {
+                        "type": "controllerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "char"
+                        }
+                      },
+                      "zone": "hand"
                     },
-                    "player": "opponent"
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
+                      "type": "forEach",
+                      "selected": "redonk-d",
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
                         }
                       ]
                     }
@@ -192094,59 +192011,22 @@
             {
               "type": "if",
               "condition": {
-                "type": "or",
-                "conditions": [
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "controller"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "self",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": {
+                      "type": "controllerOf",
+                      "target": {
+                        "type": "selected",
+                        "id": "char"
                       }
-                    ]
-                  },
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "opponent"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "opponent",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
-                      }
-                    ]
+                    },
+                    "zone": "hand"
                   }
-                ]
+                },
+                "operator": "<=",
+                "right": 3
               },
               "effects": [
                 {

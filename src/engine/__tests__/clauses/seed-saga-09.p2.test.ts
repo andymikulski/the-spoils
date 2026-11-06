@@ -1954,29 +1954,46 @@ clause(LECRAM, "0:unique", "a character with a different name conflicts with not
   assert.equal(zoneOf(engine, id("lec")), "play");
 });
 
-clause(LECRAM, "1:rule", "at the start of my turn the look is information only: nothing is asked, nothing moves, my deck keeps its order, nothing is drawn", () => {
+/** Answers an open look (`reorderDeck`) by leaving the looked-at cards where they are; `order: []` declines an "up to" look. */
+function answerLook(engine: SpoilsEngine, order: "keep" | "decline"): { playerId: string; deckOwnerId: string; cardIds: string[]; upTo?: boolean } {
+  const pc = engine.state.pendingChoice as unknown as { kind: string; playerId: string; deckOwnerId: string; cardIds: string[]; upTo?: boolean };
+  assert.equal(pc?.kind, "reorderDeck", "a look is open");
+  engine.perform({ type: "resolvePendingChoice", playerId: pc.playerId, choice: { kind: "reorderDeck", order: order === "keep" ? pc.cardIds : [] } } as never);
+  return pc;
+}
+
+clause(LECRAM, "1:rule", "at the start of my turn I may look at the top card of my deck: an optional look, nothing moves, nothing is drawn", () => {
   const { engine } = lecramBoard();
   const mine = deckOf(engine, P1);
   const theirs = deckOf(engine, P2);
   endTurn(engine, P1);
   endTurn(engine, P2);
   assert.equal(engine.state.activePlayerId, P1, "it is my turn again");
-  assert.equal(engine.state.pendingChoice, undefined, "a 'may look' forces nothing");
+  const look = answerLook(engine, "decline");
+  assert.equal(look.playerId, P1, "I look");
+  assert.equal(look.deckOwnerId, P1, "at my own deck");
+  assert.equal(look.upTo, true, "a 'may look': I can decline");
+  assert.deepEqual(look.cardIds, mine.slice(0, 1), "its top card");
+  assert.equal(engine.state.pendingChoice, undefined);
   assert.deepEqual(deckOf(engine, P1), mine, "looking does not change my deck");
   assert.deepEqual(deckOf(engine, P2), theirs, "the opponent's deck is not touched");
   assert.equal(handOf(engine, P1).length, 0, "looking does not draw");
 });
 
-clause(LECRAM, "2:rule", "at the end of MY turn a coin is flipped (won and lost); winning forces nothing and moves nothing (the look is information only)", () => {
+clause(LECRAM, "2:rule", "at the end of MY turn a coin is flipped; winning lets me look at the top card of an opponent's deck, losing looks at nothing", () => {
   const won = lecramBoard({ random: () => 0 });
   const a = deckOf(won.engine, P1);
   const b = deckOf(won.engine, P2);
-  endTurn(won.engine, P1);
+  won.engine.perform({ type: "endTurn", playerId: P1 });
+  resolvePendingResponses(won.engine);
   const flips = eventsOf(won.engine, "coinFlipped");
   assert.equal(flips.length, 1, "exactly one coin is flipped");
   assert.equal(flips[0].won, true, "random() = 0 wins the flip");
   assert.equal(flips[0].playerId, P1, "I flip the coin");
-  assert.equal(won.engine.state.pendingChoice, undefined, "winning forces no choice");
+  const look = answerLook(won.engine, "keep");
+  assert.equal(look.playerId, P1, "I look");
+  assert.equal(look.deckOwnerId, P2, "at the opponent's deck");
+  assert.deepEqual(look.cardIds, b.slice(0, 1), "its top card");
   assert.deepEqual(deckOf(won.engine, P2), b, "looking leaves the opponent's deck as it was");
   assert.deepEqual(deckOf(won.engine, P1), a, "my deck is untouched");
   assert.equal(handOf(won.engine, P2).length, 0);
@@ -1986,18 +2003,19 @@ clause(LECRAM, "2:rule", "at the end of MY turn a coin is flipped (won and lost)
   assert.equal(lostFlips.length, 1);
   assert.equal(lostFlips[0].won, false, "random() = 0.99 loses the flip");
   assert.equal(lostFlips[0].playerId, P1, "I flip the coin");
-  assert.equal(lost.engine.state.pendingChoice, undefined);
+  assert.equal(lost.engine.state.pendingChoice, undefined, "a lost flip looks at nothing");
 });
 
 clause(LECRAM, "2:rule", "the coin is flipped only at the end of its controller's turn: not at the end of the opponent's turn, and not for the opponent's Lecram at the end of MY turn", () => {
-  const mine = lecramBoard({ random: () => 0 });
+  const mine = lecramBoard({ random: () => 0.99 });
   endTurn(mine.engine, P1);
   assert.equal(eventsOf(mine.engine, "coinFlipped").length, 1, "end of my turn: one flip");
   endTurn(mine.engine, P2);
   assert.equal(eventsOf(mine.engine, "coinFlipped").length, 1, "end of the opponent's turn: no further flip for my Lecram");
-  const theirs = lecramBoard({ random: () => 0, owner: P2 });
+  const theirs = lecramBoard({ random: () => 0.99, owner: P2 });
   endTurn(theirs.engine, P1);
   assert.equal(eventsOf(theirs.engine, "coinFlipped").length, 0, "the opponent's Lecram does not flip at the end of MY turn");
+  answerLook(theirs.engine, "decline"); // its controller's start-of-turn look
   endTurn(theirs.engine, P2);
   assert.equal(eventsOf(theirs.engine, "coinFlipped").length, 1, "it flips at the end of ITS controller's turn");
   assert.equal(eventsOf(theirs.engine, "coinFlipped")[0].playerId, P2, "its controller flips");
