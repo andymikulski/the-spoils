@@ -5,12 +5,11 @@
 //
 // A consumer imports the same names from "the-spoils" and "the-spoils/data".
 import { SpoilsEngine, createTwoPlayerFactionGame, loadGame, saveGame } from "../src/engine.js";
-import {
-  CARD_CATALOG,
-  ARCANIST_DECK,
-  WARLORD_DECK,
-  SEED3_SAMPLER_DECK
-} from "../src/data.js";
+import { CARD_CATALOG } from "../src/data.js";
+// The package ships no decklists; a deck is your own list of catalog card
+// ids, including one faction card. This example borrows the two real-card
+// decks the test suite plays with.
+import { ARCANIST_DECK_IDS, WARLORD_DECK_IDS } from "../src/engine/__tests__/support/decks.js";
 
 // -----------------------------------------------------------------------------
 // Example game bootstrap
@@ -19,21 +18,8 @@ import {
 export function exampleGame(): SpoilsEngine {
   return createTwoPlayerFactionGame(
     CARD_CATALOG,
-    { id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK },
-    { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK }
-  );
-}
-
-/**
- * Same bootstrap, but both players run the Seed 3 sampler (see
- * `SEED3_SAMPLER_DECK`) — every Seed 3 mechanic on the table for
- * UI / feature testing.
- */
-export function seed3SamplerGame(): SpoilsEngine {
-  return createTwoPlayerFactionGame(
-    CARD_CATALOG,
-    { id: "p1", name: "Player 1", deckDefinitionIds: SEED3_SAMPLER_DECK },
-    { id: "p2", name: "Player 2", deckDefinitionIds: SEED3_SAMPLER_DECK }
+    { id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK_IDS },
+    { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK_IDS }
   );
 }
 

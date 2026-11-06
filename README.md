@@ -47,20 +47,25 @@ module resolution. Legacy `node10` resolution is also supported via
 | Import | What you get |
 |---|---|
 | `the-spoils` | The engine: `SpoilsEngine`, game setup, deck construction checks, save / load, hidden-information redaction, and every type (`GameState`, `GameAction`, `CardDefinition`, …). Contains no card data. |
-| `the-spoils/data` | The real catalog (`CARD_CATALOG`), preconstructed decks (`ARCANIST_DECK`, `WARLORD_DECK`, `SEED3_SAMPLER_DECK`) and per-card fidelity (`CARD_FIDELITY`, `cardFidelity`). Several MB; import it only if you need the real cards. |
+| `the-spoils/data` | The real catalog (`CARD_CATALOG`) and per-card fidelity (`CARD_FIDELITY`, `cardFidelity`). Several MB; import it only if you need the real cards. |
 | `the-spoils/card-text` | `parseCardText` / `cardTextToPlain`: turn a card's `markup` into a typed tree or plain text for rendering. |
 | `the-spoils/assets` | Image URL conventions (`DEFAULT_ASSET_ROOT`, `CARD_BACK_ASSET_ID`, `resolveCardBackUrl`). The image files themselves are under `the-spoils/images/`; see [Card images](#card-images). |
 
 ## Quick start
 
 ```ts
-import { createTwoPlayerFactionGame, saveGame, loadGame } from "the-spoils";
-import { CARD_CATALOG, ARCANIST_DECK, WARLORD_DECK } from "the-spoils/data";
+import { createTwoPlayerFactionGame, saveGame, loadGame, type CardDefinitionId } from "the-spoils";
+import { CARD_CATALOG } from "the-spoils/data";
+
+// No decklists ship with the package. A deck is a list of card ids from
+// CARD_CATALOG, including one faction card.
+const deckA: CardDefinitionId[] = [/* … */];
+const deckB: CardDefinitionId[] = [/* … */];
 
 const game = createTwoPlayerFactionGame(
   CARD_CATALOG,
-  { id: "p1", name: "Player 1", deckDefinitionIds: ARCANIST_DECK },
-  { id: "p2", name: "Player 2", deckDefinitionIds: WARLORD_DECK }
+  { id: "p1", name: "Player 1", deckDefinitionIds: deckA },
+  { id: "p2", name: "Player 2", deckDefinitionIds: deckB }
 );
 
 // Setup has already run: factions are in play, decks shuffled, hands drawn.

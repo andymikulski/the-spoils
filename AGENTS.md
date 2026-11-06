@@ -106,10 +106,11 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   `src/engine/` or `src/types/` directly. Pure: no data, no DOM/Node
   globals — only `src/types/` and `src/engine/`.
 - `src/data.ts` — the package's `"./data"` export: the real card catalog
-  (`CARD_CATALOG`) and preconstructed decklists (`ARCANIST_DECK`,
-  `WARLORD_DECK`). Deliberately separate from `src/engine.ts` — a consumer
-  that only wants the rules engine (e.g. to run it against synthetic cards)
-  never pulls in the multi-megabyte card database.
+  (`CARD_CATALOG`) and per-card fidelity (`CARD_FIDELITY`). No decklists
+  ship in the package; decks belong to the consumer. Deliberately separate
+  from `src/engine.ts` — a consumer that only wants the rules engine (e.g. to
+  run it against synthetic cards) never pulls in the multi-megabyte card
+  database.
 - `src/assets.ts` — the package's `"./assets"` export: the renderer-agnostic
   image conventions (`DEFAULT_ASSET_ROOT`, the reserved card-back id
   `CARD_BACK_ASSET_ID`, `CARD_BACK_SIZE`, `resolveCardBackUrl`). Constants
@@ -133,9 +134,6 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   back under a reserved id (`card-back`) that no real card uses, served and
   resolved (`<root>/<id>.jpg`) exactly like every card face. Renderers serve
   the directory themselves.
-- `src/data/decks/*.json` / `*-ids.js` — preconstructed decklists (e.g.
-  `arcanist`, `warlord`), each a list of `CardDefinitionId`s including one
-  copy of the faction card.
 
 ### Engine control flow
 

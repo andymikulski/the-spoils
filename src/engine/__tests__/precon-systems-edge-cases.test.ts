@@ -1,5 +1,5 @@
 // Hand-scripted (not bot-driven — see full-game.test.ts for that) games built
-// from the real arcanist/warlord precon card definitions, aimed squarely at
+// from the real card definitions in the arcanist/warlord test decks, aimed squarely at
 // engine *systems* that a bot playing towards a win rarely exercises deeply:
 // several independent battles inside one main phase (including a direct
 // attack on a location), a response window with a long back-and-forth chain
@@ -9,8 +9,8 @@
 // rather than pre-placed board state, a continuous attachment moving between
 // bearers mid-turn, and a turn-start trigger recurring correctly across
 // several turns (and staying quiet on the turns that aren't its
-// controller's). Every card used here is a real card from
-// src/data/decks/{arcanist,warlord}-ids.js — this is deliberately not about
+// controller's). Every card used here is a real card from the Arcanist /
+// Warlord test decks in support/decks.ts — this is deliberately not about
 // whether any *one* of these cards behaves correctly in isolation (that's
 // card-behaviors.test.ts/keywords.test.ts's job), it's about whether the
 // engine holds up when several of them collide in the same battle/turn.
@@ -39,8 +39,8 @@ function card(id: CardDefinitionId): CardDefinition {
   return definition!;
 }
 
-// Both precons' faction card (src/data/decks/{arcanist,warlord}.json list the
-// same id) — identical setup/turn/behavior for either side.
+// Both test decks' faction card (support/decks.ts lists the same id in
+// each) — identical setup/turn/behavior for either side.
 const TOURNAMENT_FACTION = card("c6ea7e77-6ac0-4baa-9ba2-866726230426" as CardDefinitionId);
 const OBSESSION = card("0c287282-82cf-4602-b37d-35d1bbea519c" as CardDefinitionId); // arcanist resource ("o")
 const RAGE = card("3be26b3f-2c78-4d0c-8849-0b4ca48951fd" as CardDefinitionId); // warlord resource ("r")

@@ -6,8 +6,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import cardsJson from "../../data/cards.js";
-import { CARD_CATALOG, SEED3_SAMPLER_DECK } from "../../data.js";
-import { createTwoPlayerFactionGame } from "../../engine.js";
 import { buildGame, character, item, noDevelopFaction, resourceCard, tactic, P1, P2, resolvePendingResponses } from "./support/fixtures.js";
 import { settleTurnStart } from "./support/develop.js";
 import type { CardDefinition } from "../../engine.js";
@@ -241,39 +239,6 @@ describe("Seed 3 smoke: authored behavior drives the engine", () => {
       if (engine.state.pendingChoice) break;
       engine.perform({ type: "endTurn", playerId: engine.state.activePlayerId });
       resolvePendingResponses(engine);
-    }
-  });
-
-  test("SEED3_SAMPLER_DECK builds a real faction game and reaches turn 1", () => {
-    assert.equal(SEED3_SAMPLER_DECK.length, 40);
-    const known = new Set(CARD_CATALOG.map(c => c.id));
-    assert.deepEqual(
-      SEED3_SAMPLER_DECK.filter(id => !known.has(id)),
-      [],
-      "every sampler id is a real catalog id"
-    );
-
-    const engine = createTwoPlayerFactionGame(
-      CARD_CATALOG,
-      { id: P1, name: "P1", deckDefinitionIds: SEED3_SAMPLER_DECK },
-      { id: P2, name: "P2", deckDefinitionIds: SEED3_SAMPLER_DECK },
-      { seed: 3 }
-    );
-
-    // The Evil Alliance offers a mulligan — clear both, then turn 1 begins.
-    engine.perform({ type: "mulligan", playerId: engine.state.setup.phase === "mulligan" ? engine.state.setup.order[0] : P1, cardIds: [] });
-    engine.perform({ type: "mulligan", playerId: P2, cardIds: [] });
-
-    assert.equal(engine.state.setup.phase, "complete");
-    assert.equal(engine.state.turn, 1);
-    // Turn 1's start-of-turn triggers are waiting to be ordered.
-    assert.equal(engine.state.pendingChoice?.kind, "orderTriggers");
-    // 2 staple resources found + moved to play for each side.
-    for (const pid of [P1, P2]) {
-      const inPlay = engine.state.players[pid].play
-        .map(cid => engine.getDefinition(cid))
-        .filter(d => d.type === "resource").length;
-      assert.equal(inPlay, 2);
     }
   });
 

@@ -1,6 +1,6 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { CARD_CATALOG, ARCANIST_DECK, WARLORD_DECK, SEED3_SAMPLER_DECK } from "../../data.js";
+import { CARD_CATALOG } from "../../data.js";
 import {
   DEFAULT_MAX_COPIES,
   deckFactionFace,
@@ -16,11 +16,6 @@ import { isStapleResourceDefinition } from "../utilities.js";
 const byName = (name: string, set?: string): CardDefinition => {
   const card = CARD_CATALOG.find(c => c.name === name && (!set || c.set === set));
   assert.ok(card, `${name} (${set ?? "any"}) is in the catalog`);
-  return card;
-};
-const byId = (id: string): CardDefinition => {
-  const card = CARD_CATALOG.find(c => c.id === id);
-  assert.ok(card, `${id} is in the catalog`);
   return card;
 };
 const times = (card: CardDefinition, n: number): CardDefinition[] => Array.from({ length: n }, () => card);
@@ -242,29 +237,6 @@ describe("copy limit agrees with the printed-text rule", () => {
   test("getMaxCopies equals the printed-text rule on every printing", () => {
     for (const card of CARD_CATALOG) {
       assert.equal(getMaxCopies(card), expectedMax(card), `${card.name} (${card.set})`);
-    }
-  });
-
-  test("the bundled decks are constructible (size aside) and report the same copy-limit verdict as the printed-text rule", () => {
-    for (const [name, ids] of [
-      ["ARCANIST_DECK", ARCANIST_DECK],
-      ["WARLORD_DECK", WARLORD_DECK],
-      ["SEED3_SAMPLER_DECK", SEED3_SAMPLER_DECK]
-    ] as const) {
-      const { cards, unknownCardIds } = resolveDeckCards(ids, CARD_CATALOG);
-      assert.deepEqual(unknownCardIds, [], `${name} ids all known`);
-      const issues = findDeckConstructionIssues(cards, { minimumSize: false });
-      // expected verdict
-      const tally = new Map<string, number>();
-      for (const c of cards) tally.set(c.id, (tally.get(c.id) ?? 0) + 1);
-      const expectedOver = [...tally].filter(([id, n]) => {
-        const max = expectedMax(byId(id));
-        return max !== null && n > max;
-      }).map(([id]) => id);
-      assert.deepEqual(issues.filter(i => i.kind === "copyLimit").map(i => i.cardId), expectedOver, `${name} copy limit`);
-      const factions = cards.filter(c => c.type === "faction").length;
-      assert.equal(issues.some(i => i.kind === "factionCount"), factions !== 1, `${name} faction count`);
-      assert.ok(!issues.some(i => i.kind === "unknownCard" || i.kind === "empty"), `${name}`);
     }
   });
 });

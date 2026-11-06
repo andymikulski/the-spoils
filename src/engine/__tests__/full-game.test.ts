@@ -1,11 +1,11 @@
-// End-to-end proof that a real preconstructed-deck game can be played
+// End-to-end proof that a game between two real-card decks can be played
 // through the public engine surface (perform()/getFlowView()) from faction
 // setup all the way to a winner — not just the individual rules unit tests
 // elsewhere in this directory exercise in isolation.
 //
 // This is the engine's "ready to port to a UI/3D renderer" gate: if a full
-// game between the two real precon decks (with their real, converted
-// behaviors) can't be driven to completion — mulligans, develop, main-phase
+// game between the Arcanist and Warlord test decks (support/decks.ts, real
+// cards with their real, converted behaviors) can't be driven to completion — mulligans, develop, main-phase
 // play, activated/triggered abilities, multi-round battles with response
 // windows on both sides, and every kind of GameState.pendingChoice — through
 // nothing but GameAction objects, the engine isn't done yet.
@@ -25,8 +25,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import cardsJson from "../../data/cards.js";
-import arcanistDeckIds from "../../data/decks/arcanist-ids.js";
-import warlordDeckIds from "../../data/decks/warlord-ids.js";
+import { ARCANIST_DECK_IDS as arcanistDeckIds, WARLORD_DECK_IDS as warlordDeckIds } from "./support/decks.js";
 import {
   type CardDefinition,
   type CardDefinitionId,
@@ -38,7 +37,7 @@ import { playGameToCompletion, type AutoplayReport } from "./support/autoplay.js
 
 const CARD_CATALOG = cardsJson as CardDefinition[];
 
-/** Trim the 2101-card catalog down to just what these two precons reference — the game only needs these, and it keeps every simulate-on-a-clone probe the bot runs cheap. */
+/** Trim the 2101-card catalog down to just what these two decks reference — the game only needs these, and it keeps every simulate-on-a-clone probe the bot runs cheap. */
 function definitionsFor(...deckIdLists: CardDefinitionId[][]): CardDefinition[] {
   const needed = new Set(deckIdLists.flat());
   const byId = new Map(CARD_CATALOG.map(card => [card.id, card]));
@@ -66,7 +65,7 @@ function playGame(seed: number, firstPlayerId: PlayerId): AutoplayReport {
   return playGameToCompletion(engine, { botRandom: mulberry32(seed ^ 0x5eed) });
 }
 
-test("full game: arcanist vs warlord precons play to completion through the public engine surface", () => {
+test("full game: arcanist vs warlord decks play to completion through the public engine surface", () => {
   const report = playGame(1, "arcanist");
 
   assert.ok(

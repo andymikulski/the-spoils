@@ -334,14 +334,6 @@ function renderCoverageMd(manifest, cards) {
     e => e.confidence === "low" && e.status !== "verified"
   );
 
-  lines.push("---");
-  lines.push("");
-  lines.push(
-    "_Unused: `src/data/decks/{arcanist,warlord}.json` (full-object form) are " +
-      "imported nowhere — only the `-ids.js` lists are. Delete or regenerate " +
-      "from the catalog when convenient._"
-  );
-  lines.push("");
   return lines.join("\n");
 }
 

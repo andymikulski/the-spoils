@@ -47,8 +47,7 @@ import { playGameToCompletion } from "./support/autoplay.js";
 import { chooseDevelopOption, developPlay, openDevelop } from "./support/develop.js";
 import { mulberry32 } from "./support/prng.js";
 import cardsJson from "../../data/cards.js";
-import arcanistDeckIds from "../../data/decks/arcanist-ids.js";
-import warlordDeckIds from "../../data/decks/warlord-ids.js";
+import { ARCANIST_DECK_IDS as arcanistDeckIds, WARLORD_DECK_IDS as warlordDeckIds } from "./support/decks.js";
 
 // --- helpers ------------------------------------------------------------------------------------------------
 
