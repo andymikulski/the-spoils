@@ -8,7 +8,7 @@ import {
   createGame,
   SpoilsEngine
 } from "../../../engine.js";
-import { BYSTANDER, bystanderModeOn, withBystander } from "./bystander.js";
+import { tableMode, tableSeats, withBystanders } from "./bystander.js";
 import type {
   BattleDamageAssignment,
   CardDefinition,
@@ -185,13 +185,25 @@ export interface BuiltGame {
 }
 
 export function buildGame(options: BuildGameOptions = {}): BuiltGame {
-  const bystander = !options.players && bystanderModeOn();
-  const seats: PlayerSetup[] = options.players ?? [
+  // SPOILS_TABLE=ffa3|ffa4|showdown re-seats a two-player board at a bigger table (support/bystander.ts).
+  const mode = options.players ? "classic" : tableMode();
+  const original: PlayerSetup[] = [
     { id: P1, name: "Alice", ...options.playerA },
-    { id: P2, name: "Bob", ...options.playerB },
-    // SPOILS_BYSTANDER=1: a third, passive seat (support/bystander.ts).
-    ...(bystander ? [{ id: BYSTANDER, name: "Bystander", faction: noDevelopFaction({ name: "bystander-faction" }), influence: 99 }] : [])
+    { id: P2, name: "Bob", ...options.playerB }
   ];
+  const table = tableSeats(mode, original[0].id, original[1].id);
+  const seats: PlayerSetup[] =
+    options.players ??
+    table.seats.map(
+      id =>
+        original.find(seat => seat.id === id) ?? {
+          id,
+          name: `Extra ${id}`,
+          faction: noDevelopFaction({ name: `${id}-faction` }),
+          influence: 99
+        }
+    );
+  const format = options.format ?? (mode === "classic" ? undefined : table.format);
   const factionDefs = seats.map(seat => seat.faction ?? factionCard({ name: `${seat.id}-faction` }));
   const factionKey = (i: number) => (i === 0 ? "__factionA" : i === 1 ? "__factionB" : `__faction_${seats[i].id}`);
 
@@ -246,7 +258,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
       influence: seat.influence ?? factionDefs[i].faction?.startingInfluence
     })),
     [...instancesByKey.values()],
-    options.format ? { format: options.format } : {}
+    format ? { format } : {}
   );
 
   seats.forEach((seat, i) => {
@@ -261,7 +273,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   state.responseWindow = options.responseWindow;
 
   const engine = new SpoilsEngine(definitions, state, options.random);
-  if (bystander) withBystander(engine, seats[0].id, seats[1].id);
+  if (mode !== "classic") withBystanders(engine, original[0].id, original[1].id);
 
   // createGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for

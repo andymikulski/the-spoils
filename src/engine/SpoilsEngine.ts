@@ -7814,9 +7814,12 @@ export class SpoilsEngine {
       ...(action.named ? { named: action.named } : {})
     };
 
-    // The opponent this ability's rules text is about (MP 2).
+    // The opponent this ability's rules text is about (MP 2). A borrowed ability
+    // (The Billionaire: "as if your opponent used it") is about the borrower.
+    const namedOpponent =
+      borrowed && isOpponentOf(this.state, abilityControllerId, action.playerId) ? action.playerId : action.opponentId;
     assert(
-      !this.bindBlockOpponent(context, ability, ability.targets ?? [], action.opponentId),
+      !this.bindBlockOpponent(context, ability, ability.targets ?? [], namedOpponent),
       `Choose which opponent '${ability.name ?? ability.id}' is about (opponentId).`
     );
 
