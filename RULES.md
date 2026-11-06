@@ -616,7 +616,14 @@ phase until that player's `chooseFirstPlayer` action names either player
 player's opening draw for either answer. The draw is not a card's coin flip:
 nothing that reacts to `coinFlipped` sees it. A caller that already knows the
 first player passes `firstPlayerId` instead (no draw, no prompt); with
-neither, player A goes first.
+neither, the first seat goes first. With three or more seats the decider is
+drawn uniformly from every seat, and it may name any seat.
+
+**(engine-derived, D5)** Seats are fixed at setup in `GameState.turnOrder`;
+play passes from each seat to the next. With three or more players the first
+player draws the *going first* count and every other seat the *going second*
+count, and the setup choices (starting resources, the STARTING DRAW search,
+mulligans) run in turn order from the first player.
 
 **(engine-derived)** Which cards each player set aside is recorded on
 `GameState.mulligan` and read by the `bottomedInMulligan` condition.
@@ -1958,3 +1965,18 @@ pending choices) and sets `winner: "draw"` (emitting `gameEnded`).
 **(CR §413)** A few effects have players *bid*: take turns naming an
 increasing number or passing; a player who passes is out; the last player
 in wins the bid. Bidding starts with the active player and goes clockwise.
+
+## 15. Deck legality: epic cards (docs/rules/epic-rules.md)
+
+**(EP 1)** A card is *epic* if its printed rarity mark (bottom of the card,
+next to the set icon) reads EPIC — catalog `rarity: "epic"` — or E-SLE, the
+two Showdown faction cards (`rarity: "e-sle"`). In the catalog these are the
+seven Seed 3 epic factions (`isEpicCard`).
+
+**(EP 2)** A Constructed deck may include at most 1 copy of each epic card
+(`epicCopyLimit`, which replaces the ordinary `copyLimit` issue for that
+card). **(EP 3)** Epic cards may not be used in Limited play (`play:
+"limited"` → `epicInLimited`). **(EP 4)** Epic cards may not be used in
+tournament play (`tournament: {}` → `epicInTournament`) unless it is an
+"epic tournament" (`tournament: { epic: true }`). Casual Constructed play —
+the default — allows them. Epic legality is independent of the table format.
