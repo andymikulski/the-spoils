@@ -88,6 +88,11 @@ export type PlayRequirement =
       kind: "flipUpOption";
       options: Array<{ index: number; cost: number; threshold: string | number; available: boolean; reason?: string }>;
     }
+  /**
+   * The rules text refers to "your opponent" and the player has several (three or more players, MP 2): send
+   * `opponent` with one of `candidates`. Listed only when no pick already settles which opponent it is.
+   */
+  | { kind: "opponent"; candidates: PlayerId[] }
   /** "Choose a number for X": every id in `variables` must be sent (0 is legal; negative / fractional is refused). */
   | { kind: "variables"; variables: Array<{ id: string; min: number; max: number }> }
   | PickStep;
@@ -96,6 +101,7 @@ export type PlayRequirement =
 export type PlayAnswer =
   | { kind: "mode"; index: number }
   | { kind: "flipUpOption"; index: number }
+  | { kind: "opponent"; playerId: PlayerId }
   | { kind: "variables"; values: Record<string, number> }
   | { kind: "pick"; id: string; cardIds: CardInstanceId[]; declined?: boolean };
 
@@ -151,6 +157,8 @@ export function answerPlayRequirement(action: PlayAction, answer: PlayAnswer): P
       return action.type === "activateAbility" ? action : { ...action, mode: answer.index };
     case "flipUpOption":
       return action.type === "flipUp" ? { ...action, flipUpOption: answer.index } : action;
+    case "opponent":
+      return { ...action, opponentId: answer.playerId };
     case "variables":
       return { ...action, variables: { ...(action.variables ?? {}), ...answer.values } };
     case "pick": {

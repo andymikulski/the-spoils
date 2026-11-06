@@ -109,6 +109,7 @@ import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
 import { resolveGameFormat } from "./setup.js";
 import { getLoyalty } from "./showdown.js";
+import { conditionNodeRefersToOpponent, opponentRefsOf } from "./opponentRefs.js";
 import {
   isLiving,
   isOpponentOf,
@@ -6111,10 +6112,22 @@ export class SpoilsEngine {
       }
     }
 
+    // "Your opponent" with several to choose from (MP 2): ask, unless the picks already settle it.
+    if (action.opponentId === undefined) {
+      const probeContext: ResolutionContext = {
+        sourceId: card.id,
+        controllerId,
+        selected: { ...(action.selected ?? {}) }
+      };
+      const unsettled = this.bindBlockOpponent(probeContext, { source, targets: declarations, costs }, declarations);
+      if (unsettled) gates.push({ kind: "opponent", candidates: unsettled });
+    }
+
     const supplied = action.variables ?? {};
     const baseContext: ResolutionContext = {
       sourceId: card.id,
       controllerId,
+      ...(action.opponentId !== undefined ? { opponentId: action.opponentId } : {}),
       ...(abilityId ? { abilityId } : {}),
       selected: { ...(action.selected ?? {}) },
       variables: { ...supplied },
@@ -6838,6 +6851,30 @@ export class SpoilsEngine {
     );
 
     const targetDeclarations = this.getPlayTargetDeclarations(definition, mode);
+
+    // The opponent this play's rules text is about (MP 2): named by the play
+    // action, or settled by its picks. A deploy an effect makes, with nobody
+    // to ask, takes the first candidate in turn order.
+    {
+      const resumed = this.costResume;
+      const announced =
+        (resumed?.type === "playCard" || resumed?.type === "flipUp") && resumed.cardId === cardId ? resumed : undefined;
+      const unsettled = this.bindBlockOpponent(
+        context,
+        {
+          targets: targetDeclarations,
+          costs: this.getTacticCosts(definition, mode),
+          condition: tacticCondition,
+          effects: definition.type === "tactic" ? this.getTacticEffects(definition, mode) : []
+        },
+        targetDeclarations,
+        announced?.opponentId
+      );
+      if (unsettled) {
+        assert(!announced, `Choose which opponent '${definition.name}' is about (opponentId).`);
+        context.opponentId = unsettled[0];
+      }
+    }
 
     // "Flip a coin; if you win, X is 2, otherwise 1. Pick X or fewer
     // items." (Hammer Smash) — the only card today whose target count
@@ -7762,6 +7799,12 @@ export class SpoilsEngine {
       ...(action.named ? { named: action.named } : {})
     };
 
+    // The opponent this ability's rules text is about (MP 2).
+    assert(
+      !this.bindBlockOpponent(context, ability, ability.targets ?? [], action.opponentId),
+      `Choose which opponent '${ability.name ?? ability.id}' is about (opponentId).`
+    );
+
     this.assertChosenVariablesPresent(
       this.playerChosenVariableIds(ability),
       action.variables,
@@ -8217,6 +8260,24 @@ export class SpoilsEngine {
       ...(action.named ? { named: action.named } : {}),
       deployedViaFlipUp: true
     };
+    // The opponent the flipped card's rules text is about (MP 2).
+    {
+      const declarations = this.getPlayTargetDeclarations(definition, action.mode);
+      assert(
+        !this.bindBlockOpponent(
+          context,
+          {
+            flipUp,
+            targets: declarations,
+            costs: this.getTacticCosts(definition, action.mode),
+            effects: definition.type === "tactic" ? this.getTacticEffects(definition, action.mode) : []
+          },
+          declarations,
+          action.opponentId
+        ),
+        `Choose which opponent '${definition.name}' is about (opponentId).`
+      );
+    }
     // The card being flipped up cannot be picked or used by its own costs (CR 604.1; it is Being Deployed).
     this.beingDeployedId = card.id;
 
@@ -9601,6 +9662,12 @@ export class SpoilsEngine {
           !ability.condition ||
           this.evaluateCondition(ability.condition, context)
         ) {
+          // An opponent's action names the opponent this trigger is about (E3).
+          if (opponentsOf(this.state, context.controllerId).length > 1) {
+            const refs = opponentRefsOf(ability);
+            const fromEvent = refs.inPicks || refs.elsewhere ? this.eventOpponent(event, context.controllerId) : undefined;
+            if (fromEvent !== undefined) context.opponentId = fromEvent;
+          }
           // Spent when it fires (queued), not when it resolves: a second
           // matching event before this one resolves must not fire it again.
           if (usesKey !== undefined) {
@@ -10109,6 +10176,21 @@ export class SpoilsEngine {
         }
       }
 
+      // Its picks are made: the opponent its rules text is about, if neither
+      // the event nor a pick named one (MP 2).
+      const opponentCandidates = this.bindBlockOpponent(trigger.context, trigger.ability, declarations);
+      if (opponentCandidates) {
+        this.state.pendingChoice = {
+          kind: "chooseOpponent",
+          id: this.nextId("choice"),
+          playerId: trigger.context.controllerId,
+          sourceId: trigger.sourceId,
+          abilityId: trigger.ability.id,
+          candidates: opponentCandidates
+        };
+        return;
+      }
+
       // Committed: remove before resolving effects. An effect can itself
       // emit an event (e.g. dealDamage → damageDealt), reentrantly calling
       // processImmediateQueue — this trigger must not still be at the head
@@ -10192,6 +10274,23 @@ export class SpoilsEngine {
   // ---------------------------------------------------------------------------
 
   evaluateCondition(
+    condition: Condition,
+    context: ResolutionContext
+  ): boolean {
+    // E4: with no opponent bound and several to consider, a condition about
+    // "your opponent" ("an opponent controls more characters than you", "an
+    // opponent lost influence this turn") holds when it holds for some one of
+    // them — each opponent judged on their own, not all of them summed.
+    if (context.opponentId === undefined && conditionNodeRefersToOpponent(condition)) {
+      const opponents = opponentsOf(this.state, context.controllerId);
+      if (opponents.length > 1) {
+        return opponents.some(opponentId => this.evaluateConditionNode(condition, { ...context, opponentId }));
+      }
+    }
+    return this.evaluateConditionNode(condition, context);
+  }
+
+  private evaluateConditionNode(
     condition: Condition,
     context: ResolutionContext
   ): boolean {
@@ -18047,6 +18146,21 @@ export class SpoilsEngine {
         return;
       }
 
+      case "chooseOpponent": {
+        assert(pending.kind === "chooseOpponent", "This choice does not match the pending decision.");
+        const trigger = this.immediateQueue[0];
+        assert(
+          trigger && trigger.sourceId === pending.sourceId && trigger.ability.id === pending.abilityId,
+          "The pending trigger is no longer waiting to resolve."
+        );
+        assert(pending.candidates.includes(choice.opponentId), `'${choice.opponentId}' is not one of the opponents on offer.`);
+        trigger.context.opponentId = choice.opponentId;
+        this.state.pendingChoice = undefined;
+        this.processImmediateQueue();
+        if (!this.state.pendingChoice) this.resumeEffectFrames();
+        return;
+      }
+
       case "selectTargets": {
         assert(pending.kind === "selectTargets", "This choice does not match the pending decision.");
 
@@ -24010,6 +24124,78 @@ export class SpoilsEngine {
     const offset = seats.indexOf(playerId);
     assert(offset >= 0, `'${playerId}' is not in the game.`);
     return this.state.turn + (offset === 0 ? seats.length : offset) + (nth - 1) * seats.length;
+  }
+
+  /**
+   * Binds the opponent a block of rules text is about (MP 2; D4), once its
+   * picks are known. Nothing to do when the block names no opponent, or its
+   * controller has at most one: "opponent" then already means that player (or
+   * nobody). Otherwise, in order: `explicit` (the action's `opponentId`, which
+   * must be one of the candidates); the owner / controller of a card picked
+   * through an "opponent" selector (E2: "pick a character an opponent
+   * controls" settles which). Returns the candidates when the block still needs
+   * the opponent chosen — some reference outside its picks — and nothing
+   * settled it.
+   */
+  private bindBlockOpponent(
+    context: ResolutionContext,
+    block: unknown,
+    declarations: readonly TargetDeclaration[],
+    explicit?: PlayerId
+  ): PlayerId[] | undefined {
+    const candidates = opponentsOf(this.state, context.controllerId);
+    if (explicit !== undefined) {
+      assert(candidates.includes(explicit), `'${explicit}' is not one of your opponents.`);
+      context.opponentId = explicit;
+      return undefined;
+    }
+    if (context.opponentId !== undefined && candidates.includes(context.opponentId)) return undefined;
+    if (candidates.length <= 1) return undefined;
+    const refs = opponentRefsOf(block);
+    if (!refs.inPicks && !refs.elsewhere) return undefined;
+    const picked = this.opponentFromPicks(declarations, context, candidates);
+    if (picked !== undefined) {
+      context.opponentId = picked;
+      return undefined;
+    }
+    return refs.elsewhere ? candidates : undefined;
+  }
+
+  /** The first candidate opponent who controls (or, for an `owner` selector, holds) a card picked through an "opponent" selector. */
+  private opponentFromPicks(
+    declarations: readonly TargetDeclaration[],
+    context: ResolutionContext,
+    candidates: readonly PlayerId[]
+  ): PlayerId | undefined {
+    for (const declaration of declarations) {
+      const selector = declaration.selector as { controller?: unknown; owner?: unknown };
+      const byController = selector.controller === "opponent";
+      const byOwner = selector.owner === "opponent";
+      if (!byController && !byOwner) continue;
+      for (const cardId of context.selected[declaration.id] ?? []) {
+        const card = this.state.cards[cardId];
+        if (!card) continue;
+        const playerId = byController ? card.controllerId : this.zoneHolderId(card);
+        if (candidates.includes(playerId)) return playerId;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * E3: the opponent a triggering event is about — the player who acted, or
+   * the controller of the card it concerns — when that player is one of
+   * `controllerId`'s opponents ("when an opponent deploys a character, that
+   * player ...").
+   */
+  private eventOpponent(event: GameEvent | undefined, controllerId: PlayerId): PlayerId | undefined {
+    if (!event) return undefined;
+    const candidates = opponentsOf(this.state, controllerId);
+    const record = event as unknown as Record<string, unknown>;
+    const players: unknown[] = [record.playerId, record.attackerPlayerId, record.defenderPlayerId];
+    const cardId = this.getEventCardId(event);
+    if (cardId !== undefined && this.state.cards[cardId]) players.push(this.state.cards[cardId].controllerId);
+    return players.find((id): id is PlayerId => typeof id === "string" && candidates.includes(id));
   }
 
   /** Sets the game's result and announces it. */

@@ -83,6 +83,8 @@ export function answerFirst(engine: SpoilsEngine, action: PlayAction, requiremen
       const option = requirement.options.find((entry) => entry.available) ?? requirement.options[0];
       return answerPlayRequirement(action, { kind: "flipUpOption", index: option.index });
     }
+    case "opponent":
+      return answerPlayRequirement(action, { kind: "opponent", playerId: requirement.candidates[0] });
     case "variables":
       return answerPlayRequirement(action, {
         kind: "variables",

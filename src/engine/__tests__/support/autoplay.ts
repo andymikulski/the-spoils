@@ -953,6 +953,11 @@ function handlePendingChoice(
       return;
     }
 
+    case "chooseOpponent": {
+      engine.perform(resolveAction(pending.playerId, { kind: "chooseOpponent", opponentId: pending.candidates[0] }));
+      return;
+    }
+
     default: {
       // A prompt kind this driver doesn't know: fail loudly instead of looping forever on it.
       const unhandled: never = pending;

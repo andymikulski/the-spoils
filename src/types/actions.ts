@@ -34,6 +34,14 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /**
+       * The opponent this card's / ability's rules text is about, with three
+       * or more players (MP 2): every "opponent" in it names this player. Only
+       * needed when the text refers to an opponent, the player has several, and
+       * the picks do not already settle which (see the `opponent` play
+       * requirement). Must be one of the player's opponents.
+       */
+      opponentId?: PlayerId;
     }
   | {
       type: "activateAbility";
@@ -56,6 +64,14 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /**
+       * The opponent this card's / ability's rules text is about, with three
+       * or more players (MP 2): every "opponent" in it names this player. Only
+       * needed when the text refers to an opponent, the player has several, and
+       * the picks do not already settle which (see the `opponent` play
+       * requirement). Must be one of the player's opponents.
+       */
+      opponentId?: PlayerId;
     }
   | {
       /**
@@ -94,6 +110,14 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /**
+       * The opponent this card's / ability's rules text is about, with three
+       * or more players (MP 2): every "opponent" in it names this player. Only
+       * needed when the text refers to an opponent, the player has several, and
+       * the picks do not already settle which (see the `opponent` play
+       * requirement). Must be one of the player's opponents.
+       */
+      opponentId?: PlayerId;
     }
   | {
       type: "passPriority";
@@ -163,6 +187,8 @@ export type GameAction =
       choice:
         | { kind: "uniqueSurvivor"; keep: CardInstanceId }
         | { kind: "selectTargets"; selected: Record<string, CardInstanceId[]> }
+        /** Answers a `PendingChooseOpponentChoice`: one of its `candidates`. */
+        | { kind: "chooseOpponent"; opponentId: PlayerId }
         /** Answers a `PendingDeployTargetChoice` (Hammer Smash's "pick X or fewer" once the roll is known). */
         | { kind: "selectDeployTargets"; selected: Record<string, CardInstanceId[]> }
         /**

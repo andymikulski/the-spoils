@@ -71,6 +71,23 @@ export interface PendingDeployTargetChoice {
   mode?: number;
 }
 
+/**
+ * A triggered ability whose rules text refers to "your opponent" while its
+ * controller has several (three or more players, MP 2): the controller picks
+ * which opponent this block of rules text is about before it resolves. Not
+ * raised when the triggering event or the trigger's picks already name the
+ * opponent (an opponent's action, a pick of an opponent's card).
+ */
+export interface PendingChooseOpponentChoice {
+  kind: "chooseOpponent";
+  id: string;
+  playerId: PlayerId;
+  sourceId: CardInstanceId;
+  abilityId?: AbilityId;
+  /** The players that may be chosen, in turn order after the chooser. */
+  candidates: PlayerId[];
+}
+
 /** Identifies one queued trigger: the card it came from and which ability. */
 export interface TriggerRef {
   sourceId: CardInstanceId;
@@ -600,6 +617,7 @@ export type PendingChoice =
   | PendingResourceRevealChoice
   | PendingUniqueSurvivorChoice
   | PendingTargetChoice
+  | PendingChooseOpponentChoice
   | PendingDeployTargetChoice
   | PendingTriggerOrderChoice
   | PendingChooserTargetChoice
