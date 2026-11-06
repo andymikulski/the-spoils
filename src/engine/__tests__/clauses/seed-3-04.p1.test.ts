@@ -1328,8 +1328,14 @@ clause(SLE, "2:ability", "SPRING FORTH MY BURLY PROTECTOR! claims a tactic as a 
   const [top] = sd.heroDeckOf(engine);
   sd.useAbility(engine, sd.H1, sdIds.spring);
   assert.equal(engine.state.pendingChoice?.kind, "deployForFree", "the claimed tactic is offered to me to play for free");
-  engine.perform({ type: "resolvePendingChoice", playerId: sd.H1, choice: { kind: "deployForFree" } });
-  assert.equal(engine.state.cards[top].zone, "removed", "removed from the game");
+  refused(
+    () => engine.perform({ type: "resolvePendingChoice", playerId: sd.H1, choice: { kind: "deployForFree" } }),
+    "a playable claimed tactic must be played (SD 9)",
+    /must be played/
+  );
+  engine.perform({ type: "resolvePendingChoice", playerId: sd.H1, choice: { kind: "deployForFree", cardId: top } });
+  resolvePendingResponses(engine);
+  assert.equal(engine.state.cards[top].zone, "removed", "removed from the game once it is done resolving");
   assert.deepEqual(sd.heroDeckOf(engine), []);
 });
 
