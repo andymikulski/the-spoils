@@ -117366,10 +117366,11 @@ export default [
     "set": "Seed 3",
     "type": "faction",
     "faction": {
-      "startingInfluence": 25,
+      "startingInfluence": 15,
       "setup": {
         "startingResources": {
-          "count": 2,
+          "count": 1,
+          "countPerOpponent": 1,
           "stapleOnly": true
         },
         "openingHand": {
@@ -117396,7 +117397,8 @@ export default [
               "type": "playResource",
               "count": 1
             }
-          ]
+          ],
+          "usesPerOpponent": true
         }
       },
       "meetsAllThresholds": true,
@@ -117466,8 +117468,76 @@ export default [
               ]
             }
           ]
+        },
+        {
+          "id": "evil-enticement",
+          "name": "Enticement",
+          "type": "activated",
+          "condition": {
+            "type": "isActivePlayer"
+          },
+          "usesPerTurn": 1,
+          "costs": [],
+          "effects": [
+            {
+              "type": "draw",
+              "player": "controller",
+              "amount": {
+                "type": "add",
+                "values": [
+                  {
+                    "type": "opponentCountAtStart"
+                  },
+                  -1
+                ]
+              }
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "r",
+                "selector": {
+                  "controller": "self",
+                  "zone": "hand"
+                },
+                "count": 1,
+                "optional": false
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "r"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "playResource",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "faceDown": "auto"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "heroDeckToTemptationPile",
+              "count": 1
+            }
+          ]
         }
-      ]
+      ],
+      "influencePerOpponent": 10,
+      "daringGambit": {
+        "damage": 7
+      }
     },
     "trade": "Universal",
     "rarity": "e-sle",
@@ -118387,7 +118457,159 @@ export default [
             }
           ]
         }
-      }
+      },
+      "abilities": [
+        {
+          "id": "give-in-to-temptation",
+          "name": "Give In To Temptation",
+          "type": "activated",
+          "usableBy": "heroes",
+          "condition": {
+            "type": "isActivePlayer"
+          },
+          "usesPerTurn": 1,
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "targets": [
+            {
+              "id": "c",
+              "selector": {
+                "type": "character",
+                "controller": "otherHero"
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "takeControl",
+              "target": {
+                "type": "selected",
+                "id": "c"
+              },
+              "controller": "villain"
+            },
+            {
+              "type": "chooserSelectsTarget",
+              "chooser": "controller",
+              "declaration": {
+                "id": "t",
+                "selector": {
+                  "zone": "table",
+                  "showdownPile": "temptationPile"
+                },
+                "count": 1,
+                "optional": false
+              },
+              "effects": [
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "targetExists",
+                    "target": {
+                      "type": "selected",
+                      "id": "t"
+                    }
+                  },
+                  "effects": [
+                    {
+                      "type": "claimHeroCards",
+                      "claimer": "controller",
+                      "from": "selected",
+                      "selected": "t"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "spring-forth-my-burly-protector",
+          "name": "Spring Forth My Burly Protector!",
+          "type": "activated",
+          "usableBy": "heroes",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 6
+            }
+          ],
+          "effects": [
+            {
+              "type": "claimHeroCards",
+              "claimer": "controller",
+              "from": "heroDeckTop",
+              "count": 1
+            }
+          ]
+        },
+        {
+          "id": "teamwork",
+          "name": "Teamwork",
+          "type": "activated",
+          "usableBy": "heroes",
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            }
+          ],
+          "targets": [
+            {
+              "id": "card",
+              "selector": {
+                "controller": "self"
+              },
+              "count": 1
+            },
+            {
+              "id": "player",
+              "selector": {
+                "type": "faction",
+                "controller": "any",
+                "conditions": [
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "targetControlledBy",
+                      "player": "controller"
+                    }
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "isCard",
+                      "other": "source"
+                    }
+                  }
+                ]
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "takeControl",
+              "target": {
+                "type": "selected",
+                "id": "card"
+              },
+              "controller": {
+                "type": "controllerOf",
+                "target": {
+                  "type": "selected",
+                  "id": "player"
+                }
+              }
+            }
+          ]
+        }
+      ]
     },
     "trade": "Universal",
     "rarity": "e-sle",
@@ -118403,6 +118625,43 @@ export default [
       ],
       "credit": "Art: Jamie Littler",
       "source": "printed"
+    },
+    "behavior": {
+      "abilities": [
+        {
+          "id": "true-colors",
+          "name": "Your True Colors Are Revealed",
+          "type": "triggered",
+          "event": "turnStarted",
+          "condition": {
+            "type": "eventPlayerIs",
+            "player": "controller"
+          },
+          "effects": [
+            {
+              "type": "addCounter",
+              "target": "source",
+              "counter": "token",
+              "amount": 1
+            },
+            {
+              "type": "if",
+              "condition": {
+                "type": "counterCompare",
+                "target": "source",
+                "counter": "token",
+                "operator": "=",
+                "value": 7
+              },
+              "effects": [
+                {
+                  "type": "revealAllegiances"
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   },
   {

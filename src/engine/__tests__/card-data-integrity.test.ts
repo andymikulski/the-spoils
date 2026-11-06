@@ -172,6 +172,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "healDamage", "suppressAbilities", "suppressKeyword", "grantKeywordToPlayer",
   "transformBattleDamage", "randomFromSelection", "separateIntoPiles",
   "grantVoidPlay", "repeatWhile",
+  // Showdown (docs/rules/showdown-rules.md)
+  "claimHeroCards", "heroDeckToTemptationPile", "revealAllegiances", "opponentCountAtStart",
   // 1st Edition Part 2 effects
   "lockAbilityThisTurn", "flipCoin", "restrictBlockers",
   "restrictBlockersToChosen", "grantAbilitiesFrom", "initiateAttack",

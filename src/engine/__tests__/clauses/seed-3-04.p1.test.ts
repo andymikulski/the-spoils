@@ -12,7 +12,7 @@
 //     the printed abilities and the coin-flip side swap.
 
 import assert from "node:assert/strict";
-import { createFactionGame } from "../../../engine.js";
+import { createFactionGame, getLoyalty, opponentsOf } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import {
   buildGame,
@@ -32,10 +32,11 @@ import {
 } from "../per-card/_harness.js";
 import { defaultFactionDefinition, factionCard } from "../support/fixtures.js";
 import type { CardPlacement } from "../support/fixtures.js";
-import { clause, clauseMismatch, exempt, printing, refused, clauseUnimplemented, holdResourceFace } from "./_clause.js";
+import { clause, clauseMismatch, exempt, printing, refused, holdResourceFace } from "./_clause.js";
 import type { Seat } from "./_turn.js";
 import { attachedCount, developDraw, developResource, endTurn, factionOf, readyCount, setupGame, spentResources, developOffers, endTurnRaw, settleStartFirst } from "./_turn.js";
 import { settleTurnStart } from "../support/develop.js";
+import * as sd from "./_showdown.js";
 
 // --- the three printings ---------------------------------------------------
 
@@ -1135,9 +1136,10 @@ exempt(CTR, "5:rule", "Tournament legality is a format rule outside the game eng
 
 // =============================================================================
 // SLIGHTLY LESS EVIL ALLIANCE
-// A Showdown (multiplayer: Heroes, a Villain, a Temptation Pile, a Hero deck,
-// Allegiance cards) faction. RULES.md §3.6 declares that format out of scope for
-// the two-player engine, and the faction has no abilities or rules modelled.
+// The Showdown faction every Hero shares (Heroes, a Villain, a Temptation Pile, a Hero deck, Allegiance cards).
+// The Showdown clauses run on a REAL Showdown game (`createFactionGame`, format `showdown`: the Villain plays The
+// Evil Alliance, this card sits on the table); the classic two-player board only shows what a non-Showdown game
+// does with it. See `_showdown.ts` for the fixtures.
 // =============================================================================
 
 const sleBoard = (extra: CardPlacement[] = [], active?: PlayerId) =>
@@ -1148,59 +1150,303 @@ const sleBoard = (extra: CardPlacement[] = [], active?: PlayerId) =>
     cards: [...bank("rage", 8, P1), ...bank("rage", 8, P2), ...topOfDeck("mydeck", P1), ...topOfDeck("theirdeck", P2), ...extra]
   });
 
-/** The printed ability named `name` (case-insensitive) on the Alliance faction card, if the engine has one. */
-function sleAbility(engine: SpoilsEngine, name: string) {
-  return (engine.getFactionDefinition(P1)?.abilities ?? []).find((a) => (a.name ?? "").toLowerCase() === name.toLowerCase());
+const sdIds = {
+  give: "give-in-to-temptation",
+  spring: "spring-forth-my-burly-protector",
+  teamwork: "teamwork"
+};
+const counters = (engine: SpoilsEngine): Record<string, number> => engine.state.cards[sd.sharedFaction(engine)].counters;
+const controller = (engine: SpoilsEngine, card: CardInstanceId): PlayerId => engine.state.cards[card].controllerId;
+const ready = sd.readyResources;
+const charactersIn = (engine: SpoilsEngine, pid: PlayerId): CardInstanceId[] =>
+  engine.state.players[pid].play.filter((c) => engine.getDefinition(c).type === "character");
+
+/**
+ * Hero 2 plays a Filler on their (first) turn. The Villain then puts `pile` Hero cards into the Temptation Pile
+ * (ENTICEMENT, once per Villain turn) and, when `pawns` is 2, Hero 2 plays a second Filler on their next turn. It ends
+ * on Hero 1's turn.
+ */
+function temptationTable(options: { pawns: 1 | 2; pile: 0 | 1 | 2 }) {
+  const engine = sd.showdownGame({ heroes: 2, first: sd.H2, heroDeck: [sd.CHAMPION, sd.CHAMPION, sd.CHAMPION] });
+  const pawns: CardInstanceId[] = [];
+  const playPawn = () => {
+    const pawn = engine.state.players[sd.H2].hand[0];
+    play(engine, sd.H2, pawn);
+    pawns.push(pawn);
+  };
+  playPawn();
+  sd.advanceTo(engine, sd.VILLAIN);
+  if (options.pile >= 1) sd.entice(engine);
+  sd.advanceTo(engine, sd.H1);
+  if (options.pawns === 2 || options.pile === 2) {
+    sd.advanceTo(engine, sd.H2);
+    if (options.pawns === 2) playPawn();
+    sd.advanceTo(engine, sd.VILLAIN);
+    if (options.pile === 2) sd.entice(engine);
+    sd.advanceTo(engine, sd.H1);
+  }
+  assert.equal(engine.state.activePlayerId, sd.H1);
+  return { engine, pawns };
 }
 
-clauseUnimplemented(SLE, "0:rule", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-04-p1-4", "All Heroes can use abilities on this card: a player other than the controller can use the Alliance's abilities", () => {
-  // The closest two-player reading: the other seat is also a Hero, so it may use TEAMWORK on my faction card.
-  const { engine, id } = sleBoard([{ key: "mine", def: character({ name: "Mine" }), owner: P2 }], P2);
-  const teamwork = sleAbility(engine, "TEAMWORK");
-  assert.ok(teamwork, "the faction has the printed TEAMWORK ability (and the engine has no Hero / Villain roles to say who may use it)");
-  activate(engine, P2, factionOf(engine, P1), teamwork.id, { selected: { pick: [id("mine")] } });
-  assert.equal(engine.state.cards[id("mine")].controllerId, P1, "the Hero who used it gave the card to the other player");
+/** Hero 1 uses GIVE IN TO TEMPTATION on `target` and, when asked, claims `claim` from the Temptation Pile. */
+function giveIn(engine: SpoilsEngine, target: CardInstanceId, claim?: CardInstanceId): void {
+  sd.useAbility(engine, sd.H1, sdIds.give, { c: [target] });
+  if (engine.state.pendingChoice?.kind === "chooserSelectsTarget") sd.pickPending(engine, sd.H1, claim ?? sd.pileOf(engine)[0]);
+}
+
+// ---- 0:rule  All Heroes can use abilities on this card --------------------------------------------
+
+clause(SLE, "0:rule", "All Heroes can use abilities on this card: every Hero can use them, paying from their own resources", () => {
+  const engine = sd.showdownGame({ heroes: 3, heroDeck: [sd.CHAMPION, sd.CHAMPION, sd.CHAMPION] });
+  sd.advanceTo(engine, sd.H1);
+  sd.useAbility(engine, sd.H1, sdIds.spring);
+  assert.equal(ready(engine, sd.H1), 0, "Hero 1 paid 6 of their own");
+  assert.equal(ready(engine, sd.H2), 6, "nobody else paid");
+  sd.advanceTo(engine, sd.H3);
+  sd.useAbility(engine, sd.H3, sdIds.spring);
+  assert.equal(ready(engine, sd.H3), 0, "Hero 3 paid 6 of their own");
+  assert.equal(sd.heroDeckOf(engine).length, 1, "each Hero claimed a Hero card");
+  assert.equal(ready(engine, sd.VILLAIN), 4, "the Villain's own resources are untouched (the Evil Alliance's four staples)");
 });
 
-clauseUnimplemented(SLE, "1:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-04-p1-5", "GIVE IN TO TEMPTATION: the faction offers it (Showdown: pick a character another Hero controls, the Villain takes it, claim a Temptation Pile card)", () => {
+clause(SLE, "0:rule", "the Villain is not a Hero: they cannot use abilities on this card, and are not offered them", () => {
+  const engine = sd.showdownGame({ heroes: 2 });
+  assert.equal(engine.state.activePlayerId, sd.VILLAIN);
+  refused(() => sd.useAbility(engine, sd.VILLAIN, sdIds.spring), "the Villain on their own turn", /Only a Hero/);
+  refused(() => sd.useAbility(engine, sd.VILLAIN, sdIds.teamwork, { card: [], player: [] }), "TEAMWORK either", /Only a Hero/);
+  const offered = engine.getAvailableActivatedAbilities(sd.VILLAIN).filter((a) => a.cardId === sd.sharedFaction(engine));
+  assert.deepEqual(offered, [], "nothing is offered to the Villain from the shared faction");
+  assert.equal(sd.heroDeckOf(engine).length, 1, "nothing was claimed");
+});
+
+clause(SLE, "0:rule", "outside Showdown nobody is a Hero: in a two-player game the faction offers no abilities and refuses them", () => {
   const { engine } = sleBoard();
-  const ability = sleAbility(engine, "GIVE IN TO TEMPTATION");
-  assert.ok(ability, "the Alliance has no GIVE IN TO TEMPTATION ability: the engine has no Hero / Villain roles or Temptation Pile to express it");
+  const offered = engine.getAvailableActivatedAbilities(P1).filter((a) => a.cardId === factionOf(engine, P1));
+  assert.deepEqual(offered, []);
+  refused(() => activate(engine, P1, factionOf(engine, P1), "spring-forth-my-burly-protector"), "no Hero", /Only a Hero/);
 });
 
-clauseUnimplemented(SLE, "2:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-04-p1-6", "SPRING FORTH MY BURLY PROTECTOR!: the faction offers it (Showdown: pay 6, reveal the top card of the Hero deck and claim it)", () => {
-  const { engine } = sleBoard();
-  const ability = sleAbility(engine, "SPRING FORTH MY BURLY PROTECTOR!");
-  assert.ok(ability, "the Alliance has no SPRING FORTH MY BURLY PROTECTOR! ability: the engine has no Hero deck to reveal from");
+// ---- 1:ability GIVE IN TO TEMPTATION -------------------------------------------------------------
+
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION: pay 2, pick a character another Hero controls; the Villain takes control of it and I claim one card in the Temptation Pile", () => {
+  const { engine, pawns } = temptationTable({ pawns: 1, pile: 1 });
+  const [pawn] = pawns;
+  const [card] = sd.pileOf(engine);
+  assert.equal(controller(engine, pawn), sd.H2);
+  assert.equal(ready(engine, sd.H1), 6);
+  giveIn(engine, pawn);
+  assert.equal(ready(engine, sd.H1), 4, "COST: pay 2");
+  assert.equal(controller(engine, pawn), sd.VILLAIN, "the Villain takes control of the character");
+  assert.equal(engine.state.cards[pawn].ownerId, sd.H2, "ownership doesn't change");
+  assert.equal(engine.state.cards[card].zone, "play", "the claimed card is in play");
+  assert.equal(controller(engine, card), sd.H1, "under my control");
+  assert.deepEqual(sd.pileOf(engine), [], "and out of the Temptation Pile");
 });
 
-clauseUnimplemented(SLE, "3:ability", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-04-p1-7", "TEAMWORK: pay 2, pick a card I control, choose another player, who takes control of it", () => {
-  const { engine, id } = sleBoard([
-    { key: "gift", def: character({ name: "Gift" }), owner: P1 },
-    { key: "theirs", def: character({ name: "Theirs" }), owner: P2 }
-  ]);
-  const teamwork = sleAbility(engine, "TEAMWORK");
-  assert.ok(teamwork, "the Alliance has no TEAMWORK ability, although two players are enough to express it");
-  activate(engine, P1, factionOf(engine, P1), teamwork.id, { selected: { pick: [id("gift")] } });
-  assert.equal(attachedCount(engine, P1), 2, "COST: pay 2");
-  assert.equal(engine.state.cards[id("gift")].controllerId, P2, "the other player takes control of the card");
-  assert.equal(engine.state.cards[id("gift")].ownerId, P1, "ownership doesn't change");
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION claims ONE card: with two in the Temptation Pile I choose which and the other stays", () => {
+  const { engine, pawns } = temptationTable({ pawns: 1, pile: 2 });
+  const [first, second] = sd.pileOf(engine);
+  giveIn(engine, pawns[0], second);
+  assert.equal(controller(engine, second), sd.H1, "the one I chose");
+  assert.deepEqual(sd.pileOf(engine), [first], "the other stays in the pile");
+  assert.equal(engine.state.cards[first].zone, "table");
+});
+
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION with an empty Temptation Pile still costs 2 and gives the Villain the character; there is just nothing to claim", () => {
+  const { engine, pawns } = temptationTable({ pawns: 1, pile: 0 });
+  assert.deepEqual(sd.pileOf(engine), []);
+  giveIn(engine, pawns[0]);
+  assert.equal(engine.state.pendingChoice, undefined, "nothing to choose");
+  assert.equal(ready(engine, sd.H1), 4);
+  assert.equal(controller(engine, pawns[0]), sd.VILLAIN);
+});
+
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION can pick only a character ANOTHER Hero controls: not my own, not the Villain's, not a non-character", () => {
+  const { engine, pawns } = temptationTable({ pawns: 1, pile: 1 });
+  const mine = engine.state.players[sd.H1].hand[0];
+  play(engine, sd.H1, mine);
+  assert.equal(controller(engine, mine), sd.H1);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [mine] }), "my own character", /Illegal target/);
+  const hero2Resource = engine.state.players[sd.H2].play.find((c) => engine.getDefinition(c).type === "resource")!;
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [hero2Resource] }), "another Hero's resource isn't a character", /Illegal target/);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [sd.factionOfPlayer(engine, sd.H2)] }), "nor is their faction", /Illegal target/);
+  assert.equal(ready(engine, sd.H1), 6, "nothing was paid");
+  assert.equal(sd.pileOf(engine).length, 1, "nothing was claimed");
+  // The Villain's own character, once the Villain holds one, is not another Hero's either.
+  giveIn(engine, pawns[0]);
+  sd.advanceTo(engine, sd.H1);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [pawns[0]] }), "a character the Villain controls", /Illegal target/);
+});
+
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION is refused when the 2 can't be paid", () => {
+  const { engine, pawns } = temptationTable({ pawns: 1, pile: 1 });
+  sd.useAbility(engine, sd.H1, sdIds.spring);
+  assert.equal(ready(engine, sd.H1), 0);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [pawns[0]] }), "nothing left to pay with");
+  assert.equal(controller(engine, pawns[0]), sd.H2);
+});
+
+clause(SLE, "1:ability", "GIVE IN TO TEMPTATION can be used only during my own turn, and only once per turn", () => {
+  const { engine, pawns } = temptationTable({ pawns: 2, pile: 2 });
+  giveIn(engine, pawns[0]);
+  assert.equal(controller(engine, pawns[0]), sd.VILLAIN);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [pawns[1]] }), "once per turn", /each turn/i);
+  assert.equal(controller(engine, pawns[1]), sd.H2);
+  assert.equal(ready(engine, sd.H1), 4, "only one use was paid");
+  // On the next Hero's turn I may not use it (it is not my turn) ...
+  sd.advanceTo(engine, sd.H2);
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.give, { c: [pawns[1]] }), "not my turn", /timing/i);
+  // ... and in a later turn of mine it is available again.
+  sd.advanceTo(engine, sd.H1);
+  giveIn(engine, pawns[1]);
+  assert.equal(controller(engine, pawns[1]), sd.VILLAIN, "available again on my next turn");
+});
+
+// ---- 2:ability SPRING FORTH MY BURLY PROTECTOR! --------------------------------------------------
+
+clause(SLE, "2:ability", "SPRING FORTH MY BURLY PROTECTOR!: pay 6, reveal the top card of the Hero deck and claim it (a character enters play under my control)", () => {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [sd.CHAMPION, sd.CHAMPION] });
+  sd.advanceTo(engine, sd.H1);
+  const [top, next] = sd.heroDeckOf(engine);
+  assert.equal(ready(engine, sd.H1), 6);
+  sd.useAbility(engine, sd.H1, sdIds.spring);
+  const reveals = engine.getLog().flatMap((entry) => (entry.event?.type === "cardsRevealed" ? [entry.event] : []));
+  assert.deepEqual(reveals.map((event) => event.cardIds), [[top]], "the top card of the Hero deck was revealed (to everyone), and only it");
+  assert.equal(reveals[0].viewerId, "all");
+  assert.equal(ready(engine, sd.H1), 0, "COST: pay 6");
+  assert.equal(engine.state.cards[top].zone, "play", "the top card is in play");
+  assert.equal(controller(engine, top), sd.H1, "under my control");
+  assert.equal(engine.state.cards[top].ownerId, sd.H1, "and mine");
+  assert.deepEqual(sd.heroDeckOf(engine), [next], "the Hero deck lost exactly its top card");
+  assert.equal(engine.state.cards[next].zone, "table", "the next card is still face-down on the table");
+});
+
+clause(SLE, "2:ability", "SPRING FORTH MY BURLY PROTECTOR! claims a tactic as a free play; a Hero card leaves the game once it is done", () => {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [sd.BOON] });
+  sd.advanceTo(engine, sd.H1);
+  const [top] = sd.heroDeckOf(engine);
+  sd.useAbility(engine, sd.H1, sdIds.spring);
+  assert.equal(engine.state.pendingChoice?.kind, "deployForFree", "the claimed tactic is offered to me to play for free");
+  engine.perform({ type: "resolvePendingChoice", playerId: sd.H1, choice: { kind: "deployForFree" } });
+  assert.equal(engine.state.cards[top].zone, "removed", "removed from the game");
+  assert.deepEqual(sd.heroDeckOf(engine), []);
+});
+
+clause(SLE, "2:ability", "SPRING FORTH MY BURLY PROTECTOR! is refused when the 6 can't be paid and claims nothing; with the Hero deck empty it costs 6 and claims nothing", () => {
+  const engine = sd.showdownGame({ heroes: 2, heroDeck: [sd.CHAMPION, sd.CHAMPION] });
+  sd.advanceTo(engine, sd.H1);
+  sd.useAbility(engine, sd.H1, sdIds.spring);
+  const deck = [...sd.heroDeckOf(engine)];
+  refused(() => sd.useAbility(engine, sd.H1, sdIds.spring), "no resources left");
+  assert.deepEqual(sd.heroDeckOf(engine), deck, "nothing claimed");
+  const empty = sd.showdownGame({ heroes: 2, heroDeck: [] });
+  sd.advanceTo(empty, sd.H1);
+  sd.useAbility(empty, sd.H1, sdIds.spring);
+  assert.equal(ready(empty, sd.H1), 0, "the cost was paid");
+  assert.equal(charactersIn(empty, sd.H1).length, 0, "and no card was claimed");
+});
+
+// ---- 3:ability TEAMWORK ---------------------------------------------------------------------------
+
+/** Hero 1 (first player) has a Filler in play. */
+function teamworkTable(heroes: 2 | 3 = 2) {
+  const engine = sd.showdownGame({ heroes, first: sd.H1 });
+  const pawn = engine.state.players[sd.H1].hand[0];
+  play(engine, sd.H1, pawn);
+  return { engine, pawn };
+}
+const teamwork = (engine: SpoilsEngine, card: CardInstanceId, player: PlayerId): void =>
+  sd.useAbility(engine, sd.H1, sdIds.teamwork, { card: [card], player: [sd.factionOfPlayer(engine, player)] });
+
+clause(SLE, "3:ability", "TEAMWORK: pay 2, pick a card I control, choose another player, who takes control of it", () => {
+  const { engine, pawn } = teamworkTable();
+  teamwork(engine, pawn, sd.H2);
+  assert.equal(ready(engine, sd.H1), 4, "COST: pay 2");
+  assert.equal(controller(engine, pawn), sd.H2, "the other player takes control of the card");
+  assert.equal(engine.state.cards[pawn].ownerId, sd.H1, "ownership doesn't change");
+  assert.ok(engine.state.players[sd.H2].play.includes(pawn), "it is in their play area");
+});
+
+clause(SLE, "3:ability", "TEAMWORK can choose any other player: a third Hero, or the Villain", () => {
+  const { engine, pawn } = teamworkTable(3);
+  teamwork(engine, pawn, sd.H3);
+  assert.equal(controller(engine, pawn), sd.H3);
+  const villain = teamworkTable();
+  teamwork(villain.engine, villain.pawn, sd.VILLAIN);
+  assert.equal(controller(villain.engine, villain.pawn), sd.VILLAIN, "the Villain is another player too");
+});
+
+clause(SLE, "3:ability", "TEAMWORK can give away any card I control, not only a character (a resource), and never the one I don't control", () => {
+  const { engine } = teamworkTable();
+  const resource = engine.state.players[sd.H1].play.find((c) => engine.getDefinition(c).type === "resource")!;
+  teamwork(engine, resource, sd.H2);
+  assert.equal(controller(engine, resource), sd.H2);
+  const theirs = engine.state.players[sd.H2].play.find((c) => engine.getDefinition(c).type === "resource")!;
+  const villainsResource = engine.state.players[sd.VILLAIN].play.find((c) => engine.getDefinition(c).type === "resource")!;
+  refused(() => teamwork(engine, theirs, sd.H2), "another player's card", /Illegal target/);
+  refused(() => teamwork(engine, villainsResource, sd.H2), "the Villain's card", /Illegal target/);
+});
+
+clause(SLE, "3:ability", "TEAMWORK must choose ANOTHER player: not myself, and the shared Alliance card is not a player", () => {
+  const { engine, pawn } = teamworkTable();
+  refused(() => teamwork(engine, pawn, sd.H1), "myself", /Illegal target/);
   refused(
-    () => activate(engine, P1, factionOf(engine, P1), teamwork.id, { selected: { pick: [id("theirs")] } }),
-    "a card the opponent controls can't be picked",
+    () => sd.useAbility(engine, sd.H1, sdIds.teamwork, { card: [pawn], player: [sd.sharedFaction(engine)] }),
+    "the shared faction card",
     /Illegal target/
   );
+  assert.equal(ready(engine, sd.H1), 6, "nothing was paid");
+  assert.equal(controller(engine, pawn), sd.H1);
 });
 
-clauseUnimplemented(SLE, "4:rule:YOUR TRUE COLORS ARE REVEALED", "Showdown (3+ player) is unsupported (user decision 2026-10-21); was seed-3-04-p1-8", "at the start of the Villain's turn a token is put on this card", () => {
-  const { engine } = buildGame({
-    playerA: { faction: printing(SLE) },
-    playerB: { faction: developFaction() },
-    activePlayerId: P2,
-    cards: [...topOfDeck("mydeck", P1), ...topOfDeck("theirdeck", P2)]
-  });
-  endTurn(engine, P2); // P1's turn starts (the closest two-player reading: P1 is the Villain)
-  assert.equal(engine.state.cards[factionOf(engine, P1)].counters.token ?? 0, 1, "a token is put on the Alliance card (the engine has no Villain role or Allegiance cards)");
+clause(SLE, "3:ability", "TEAMWORK is refused when the 2 can't be paid, and can be used again (no printed limit)", () => {
+  const { engine, pawn } = teamworkTable();
+  const resources = engine.state.players[sd.H1].play.filter((c) => engine.getDefinition(c).type === "resource");
+  teamwork(engine, pawn, sd.H2);
+  teamwork(engine, resources[0], sd.H2);
+  assert.equal(ready(engine, sd.H1), 2, "4 paid in two uses");
+  teamwork(engine, resources[1], sd.H2);
+  assert.equal(ready(engine, sd.H1), 0);
+  refused(() => teamwork(engine, resources[2], sd.H2), "nothing left to pay with");
+  assert.equal(controller(engine, resources[2]), sd.H1);
+});
+
+// ---- 4:rule:YOUR TRUE COLORS ARE REVEALED ---------------------------------------------------------
+
+clause(SLE, "4:rule:YOUR TRUE COLORS ARE REVEALED", "at the start of the Villain's turn a token is put on this card, and only then", () => {
+  const engine = sd.showdownGame({ heroes: 2 });
+  assert.equal(counters(engine).token, 1, "the Villain's first turn has started");
+  sd.advanceTo(engine, sd.H1);
+  assert.equal(counters(engine).token, 1, "not at the start of a Hero's turn");
+  sd.advanceTo(engine, sd.H2);
+  assert.equal(counters(engine).token, 1);
+  sd.advanceTo(engine, sd.VILLAIN);
+  assert.equal(counters(engine).token, 2, "the Villain's next turn");
+  assert.equal(engine.state.cards[sd.factionOfPlayer(engine, sd.VILLAIN)].counters.token ?? 0, 0, "on this card, not on the Villain's faction");
+});
+
+clause(SLE, "4:rule:YOUR TRUE COLORS ARE REVEALED", "if there are 7 tokens on this card, all Heroes turn their Allegiance cards face-up (not before)", () => {
+  const engine = sd.showdownGame({ heroes: 3 });
+  const faceUp = () => Object.values(engine.state.showdown!.allegiance).map((card) => card.faceUp);
+  assert.deepEqual(faceUp(), [false, false, false]);
+  for (let tokens = 2; tokens <= 6; tokens++) {
+    sd.advanceTo(engine, sd.VILLAIN);
+    assert.equal(counters(engine).token, tokens);
+    assert.deepEqual(faceUp(), [false, false, false], `${tokens} tokens: still hidden`);
+  }
+  sd.advanceTo(engine, sd.VILLAIN);
+  assert.equal(counters(engine).token, 7);
+  assert.deepEqual(faceUp(), [true, true, true], "7 tokens: every Hero's Allegiance card is face-up");
+});
+
+clause(SLE, "4:rule:YOUR TRUE COLORS ARE REVEALED", "a revealed Villain-loyal Hero must then pick another Hero as their opponent", () => {
+  const engine = sd.showdownGame({ heroes: 2, allegiance: ["villain", "villain"] });
+  assert.deepEqual(opponentsOf(engine.state, sd.H1), [sd.VILLAIN], "hidden: opposes the Villain");
+  for (let tokens = 2; tokens <= 7; tokens++) sd.advanceTo(engine, sd.VILLAIN);
+  assert.equal(getLoyalty(engine.state, sd.H1), "villain");
+  assert.deepEqual(opponentsOf(engine.state, sd.H1), [sd.H2], "revealed: opposes the other Hero");
+  assert.deepEqual(opponentsOf(engine.state, sd.H2), [sd.H1]);
 });
 
 exempt(SLE, "5:rule", "Reminder text only (\"See the included Showdown rules card for more details\"): it points at a physical rules card and prints no game behavior of its own.");

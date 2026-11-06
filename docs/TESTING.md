@@ -95,7 +95,7 @@ Card or catalog changes (`data/cards.json`) also change the recording.
     `data/card-tests/findings/<batch>.md`.
   - `clauseUnimplemented(printingId, keys, reason, title, fn)` — only for
     printings whose fidelity is `stub` / `partial` (`data/card-fidelity.json`;
-    today the two Showdown factions). Runs as `todo`.
+    none today). Runs as `todo`.
   - `exempt(printingId, keys, reason)` — a clause with nothing for the engine
     to do (deck construction, tournament legality).
 - **Gate.** `clauses/_coverage.test.ts` checks that the manifest is current,

@@ -11,9 +11,9 @@ collectible card game.
   closed vocabulary of costs, conditions, effects and expressions. There is no
   per-card code. The engine owns all state; you feed it actions and read its
   state back. It has no UI, no DOM, and no I/O.
-- **Checked against the printed cards and the official rules**: 2,255 of
-  2,257 printings play exactly as printed. The other two are the Showdown
-  factions, whose multiplayer-only text isn't supported. Roughly 43,000 tests
+- **Checked against the printed cards and the official rules**: all
+  2,257 printings play exactly as printed, the two Showdown factions
+  included. Roughly 43,000 tests
   cover every printed clause of every card and every rule in the
   Comprehensive Rules v2.5 and the Rules FAQ v2.0.
 

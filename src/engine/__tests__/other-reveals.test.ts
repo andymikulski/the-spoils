@@ -623,7 +623,8 @@ const REVEAL_MECHANISMS = [
   '"grantsReveal"',
   '"fromFaceDown":true',
   '"reveal":true',
-  '"type":"revealSelf"'
+  '"type":"revealSelf"',
+  '"from":"heroDeckTop"'
 ];
 
 const hasMechanism = (card: CatalogCard): boolean => {
@@ -632,9 +633,7 @@ const hasMechanism = (card: CatalogCard): boolean => {
 };
 
 /** Printed reveals the engine does not model yet, with the reason. */
-const UNMODELED: Record<string, string> = {
-  "Slightly Less Evil Alliance": "Showdown (hero/villain) rules are not modeled; the faction has no abilities"
-};
+const UNMODELED: Record<string, string> = {};
 
 describe("every printed reveal has a mechanism", () => {
   test("each printing whose text says reveal emits a reveal somewhere, bar the documented gaps", () => {
