@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** Phase 2 — elimination + `GameResult` (replaces `winner`; save format v2 migration; codemod tests), then battle defender selection, turn-parity scheduling, `buildGame({ players })` fixture. Classic oracle agent still running in a worktree; merge its branch when it reports.
+**Next action:** D4 created-effect capture (runtime modifiers / scheduled / replacements / redirects carry the binding block's `opponentId`); E1 `forEachPlayer` opponents scope; E5 opponents-only `anyPlayerMayPay`; then Phase 4 Showdown setup (allegiance dealing, Hero Deck, Temptation Pile, shared SLE faction, Evil Alliance X-scaling). Agents: audit re-check against printed text; r13-multiplayer rules tests.
 
 ## Sources
 
@@ -92,14 +92,14 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] Rules-suite atom source `data/rule-tests/source/multiplayer.txt` +
       `_atoms.ts` / CLI support + batches `r13-multiplayer`, `r14-showdown`,
       `r15-epic`
-- [ ] Classic regression oracle: seeded autoplay transcripts recorded from
+- [x] Classic regression oracle: seeded autoplay transcripts recorded from
       the pre-refactor engine + replay test asserting identical output
 
 ### Phase 1 — Types (`src/types/`)
 - [x] `GameFormat`, `GameState.format`, `turnOrder`
-- [ ] `PlayerState.eliminated`, `turnsBegun`, Showdown `side` / allegiance
-- [ ] `GameResult` replaces `GameWinner`
-- [ ] `ResolutionContext.opponentId`; `opponentId` on `playCard` /
+- [x] `PlayerState.eliminated`, `turnsBegun`, Showdown `side` / allegiance
+- [x] `GameResult` replaces `GameWinner`
+- [x] `ResolutionContext.opponentId`; `opponentId` on `playCard` /
       `activateAbility`; `chooseOpponent` pending choice
 - [ ] `alternatingPay` tuple → arrays / records
 - [ ] `forEachPlayer` fan-out effect; `chooseOpponent` effect;
@@ -114,19 +114,19 @@ Photos of the cards: `docs/rules/source/*.jpg`.
 - [x] Seats & opponents: replace `getOpponent` (29 callers) with
       `nextSeat` / `opponentsOf` / `boundOpponent`; unify
       `scopeMatchesPlayer`, `selectorPlayerMatch` and inline copies
-- [ ] Turn order + turn-parity arithmetic → per-player turn scheduling
+- [x] Turn order + turn-parity arithmetic → per-player turn scheduling
 - [x] Priority rotation (D6)
 - [x] Setup: `createFactionGame(defs, players[], { format })`,
       `createGame(players[], cards)`; fixture `buildGame({ players })`
 - [ ] Battle defender selection
-- [ ] Elimination + `GameResult` (D3, D8)
+- [x] Elimination + `GameResult` (D3, D8)
 - [ ] Two-party constructs bound to controller + bound opponent
       (alternatingPay, auction, partitionAndPick, seat swap);
       `forEachPlayer` / `anyPlayerMayPay` rotate all seats
 - [ ] Persistence version bump; redaction of Allegiance
 
 ### Phase 3 — Opponent binding & card audit
-- [ ] Static "references an opponent" analysis per block; binding at play /
+- [x] Static "references an opponent" analysis per block; binding at play /
       activate / trigger; created effects capture `opponentId`
 - [ ] Card audit → `data/multiplayer-audit/*.json` (spec below)
 - [ ] Apply category (b)/(c) fixes; 3-player tests for (b)/(c)/(d)
@@ -236,6 +236,16 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 ## Progress log
 
 - 2026-11-06 — Phase 0 sources + tracker. Card audit (318 cards). Epic legality (`deckRules.ts`, RULES.md §15, r15-epic done). Rarity sweep: OCR + visual over all 2257 printings — exactly the 7 known epic printings, no data change needed. Rules suite gains the MULTIPLAYER source (40 atoms, batches r13–r15). N-seat setup (`createGame`, `createFactionGame`, `seating.ts`, `showdown.ts`). `getOpponent` removed: opponent set semantics, `ResolutionContext.opponentId`, priority rotation via `ResponseWindowState.stackResponders`, battle responders, N-bidder auction. `scripts/run-tests.cjs` passes relative paths (Windows command-line limit in deep worktrees). Agent worktrees branch from `main` — brief agents to `git merge --ff-only multiplayer` first.
+
+- 2026-11-06 (cont.) — Classic oracle merged (31 real-catalog games; replays identically after every engine step so far). `GameResult` replaces `winner` (save format 2 + v1 migration). Elimination (D3/D8) incl. Showdown sides and eliminated-turn passing. Seat-aware next-turn numbering (`turnNumberOfNextTurn`). `buildGame({ players, format })` fixture. Opponent binding: `opponentId` on playCard / activateAbility / flipUp, `opponent` play requirement, E2 (pick), E3 (event), `chooseOpponent` prompt for triggers, E4 existential condition evaluation (`conditionNodeRefersToOpponent`). Multiplayer tests: `src/engine/__tests__/multiplayer/{seating,elimination,binding}.test.ts`.
+- **Audit caveat (2026-11-06):** the auditors judged the archival `text` field; each printing plays as *printed* (`markup` / `data/card-audit/corrections.json`). The latent-bug agent found most "classic bugs" were faithful to the printed "your opponent" wording. Real fixes merged: Lecram (both looks were unencoded), Redonkulous + Smothering Corpulence (Seed Saga / DoD printings say "that character's controller" → `controllerOf`). Audit entries are being re-checked against printed text.
+
+## Known follow-ups
+
+- Predicted turn numbers (`untilTurn`, `restoreRuleSkips`) are stamped from the seating at creation; an elimination afterwards can shift them by a turn. Re-stamp on elimination.
+- A deploy made by an effect (no action to name an opponent) whose text needs one takes the first candidate in turn order; should prompt.
+- An eliminated player's own in-flight pending choice is still theirs to answer (not cleared).
+- `startOfOpponentNextTurn` scheduling still means "the turn right after scheduling, if an opponent's"; with a bound opponent it should be that opponent's next turn.
 
 ## Open questions
 
