@@ -23,9 +23,19 @@ collectible card game.
 
 ## Install
 
+The package isn't on the npm registry. Install it from GitHub, pinned to a
+release tag:
+
 ```
-npm install the-spoils
+npm install github:andymikulski/the-spoils#v1.0.0
 ```
+
+(`yarn add` and `pnpm add` take the same specifier.) The package name is
+`the-spoils`, so imports look the same as for any other dependency. Installing
+compiles the package from source with its own `prepare` script. The package
+includes every card image (about 380MB), so the first install takes a while.
+To upgrade, change the tag; the available versions are listed on the
+[tags page](https://github.com/andymikulski/the-spoils/tags).
 
 The package ships ESM with TypeScript declarations and has no runtime
 dependencies. It works with TypeScript's `nodenext`, `node16` and `bundler`
@@ -39,7 +49,7 @@ module resolution. Legacy `node10` resolution is also supported via
 | `the-spoils` | The engine: `SpoilsEngine`, game setup, deck construction checks, save / load, hidden-information redaction, and every type (`GameState`, `GameAction`, `CardDefinition`, …). Contains no card data. |
 | `the-spoils/data` | The real catalog (`CARD_CATALOG`), preconstructed decks (`ARCANIST_DECK`, `WARLORD_DECK`, `SEED3_SAMPLER_DECK`) and per-card fidelity (`CARD_FIDELITY`, `cardFidelity`). Several MB; import it only if you need the real cards. |
 | `the-spoils/card-text` | `parseCardText` / `cardTextToPlain`: turn a card's `markup` into a typed tree or plain text for rendering. |
-| `the-spoils/assets` | Image URL conventions (`DEFAULT_ASSET_ROOT`, `CARD_BACK_ASSET_ID`, `resolveCardBackUrl`). No image files; see [Card images](#card-images). |
+| `the-spoils/assets` | Image URL conventions (`DEFAULT_ASSET_ROOT`, `CARD_BACK_ASSET_ID`, `resolveCardBackUrl`). The image files themselves are under `the-spoils/images/`; see [Card images](#card-images). |
 
 ## Quick start
 
@@ -98,9 +108,25 @@ The card-behavior vocabulary is documented in [BEHAVIORS.md](BEHAVIORS.md).
 ## Card images
 
 `data/assets/<card id>.jpg` holds one scan per printing, plus the shared card
-back at `data/assets/card-back.jpg`. The images are in this repository, not
-in the npm package. To show them, serve that directory yourself and build
-URLs as `<root>/<id>.jpg`.
+back at `data/assets/card-back.jpg`. The images ship with the package and are
+exported as `the-spoils/images/<card id>.jpg`.
+
+With a bundler (Vite, webpack, etc.), import an image to get its URL:
+
+```ts
+import cardBack from "the-spoils/images/card-back.jpg";
+```
+
+To serve the whole directory, find it on disk and point your static file
+server at it. Then build URLs as `<root>/<id>.jpg` (`DEFAULT_ASSET_ROOT` is
+`/cards`):
+
+```ts
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const imagesDir = dirname(fileURLToPath(import.meta.resolve("the-spoils/images/card-back.jpg")));
+```
 
 ## Repository layout
 

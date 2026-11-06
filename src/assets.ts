@@ -7,8 +7,9 @@
  * these constants doesn't pull in the multi-megabyte card catalog, and separate
  * from ./engine.ts so the rules engine stays UI-free.
  *
- * Nothing under `data/assets/` (card art, ~380MB, plus the shared card
- * back) is published — renderers serve that directory themselves. The card
+ * The image files under `data/assets/` (card art, ~380MB, plus the shared
+ * card back) ship in the package as the `./images/*` export; renderers serve
+ * or bundle them themselves. The card
  * back is not special-cased: it's one more file in `data/assets/`, under a
  * reserved id (`card-back`) that no real card uses, resolved at the same
  * `<root>/<id>.jpg` URL as any card face.

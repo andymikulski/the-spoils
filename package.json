@@ -55,11 +55,13 @@
       "types": "./build/src/cardText.d.ts",
       "default": "./build/src/cardText.js"
     },
+    "./images/*": "./data/assets/*",
     "./package.json": "./package.json"
   },
   "files": [
     "build/src",
     "data/cards.json",
+    "data/assets",
     "LEGAL.md"
   ],
   "engines": {

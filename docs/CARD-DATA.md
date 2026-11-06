@@ -12,7 +12,7 @@ TypeScript shape is `CardDefinition` in `src/types/cards.ts`.
 | `data/card-coverage.json` | Per-card implementation status. Generates `COVERAGE.md` and `data/card-fidelity.json` (`node scripts/build-coverage.cjs`; CI fails if they're stale). |
 | `data/card-fidelity.json` | How faithfully the engine reproduces each card (`full` / `partial` / `stub`), exported as `CARD_FIDELITY` from `the-spoils/data`. |
 | `data/raw-database.json` | The original card database dump the catalog was bootstrapped from. Kept for reference only; nothing reads it. |
-| `data/assets/<id>.jpg` | One image per printing, plus the shared card back (`card-back.jpg`). Not part of the npm package. |
+| `data/assets/<id>.jpg` | One image per printing, plus the shared card back (`card-back.jpg`). Ships in the installed package, importable as `the-spoils/images/<id>.jpg`. |
 
 ## Ground rules
 

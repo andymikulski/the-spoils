@@ -113,7 +113,8 @@ The package must stay usable from TypeScript consumers under `nodenext`,
 - `src/assets.ts` — the package's `"./assets"` export: the renderer-agnostic
   image conventions (`DEFAULT_ASSET_ROOT`, the reserved card-back id
   `CARD_BACK_ASSET_ID`, `CARD_BACK_SIZE`, `resolveCardBackUrl`). Constants
-  and URL helpers only — it ships no image binaries. Separate from both
+  and URL helpers only; the image files themselves ship as the
+  `"./images/*"` export (mapped to `data/assets/*`). Separate from both
   other entry points for the same reason they're separate from each other —
   a renderer that wants these shouldn't pull in the catalog, and the engine
   shouldn't know images exist.
@@ -126,9 +127,9 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   fields, the markup vocabulary, `data/card-audit/corrections.json` (printed
   text per printing) and data provenance. `data/raw-database.json` is the
   original upstream dump, kept for reference only.
-  `data/assets/` (card images, ~380MB) is not part of the published package —
-  it's a repo-local static asset directory, not something a library consumer
-  imports. `data/assets/card-back.jpg` is no exception: it's the shared card
+  `data/assets/` (card images, ~380MB) ships in the package, exported as
+  `the-spoils/images/<id>.jpg`; consumers serve or bundle the files
+  themselves. `data/assets/card-back.jpg` is the shared card
   back under a reserved id (`card-back`) that no real card uses, served and
   resolved (`<root>/<id>.jpg`) exactly like every card face. Renderers serve
   the directory themselves.

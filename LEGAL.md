@@ -33,7 +33,7 @@ project claims no rights in them and does not license them to you:
 - **Card content** — card names, rules text, subtitles, flavor text and other
   printed card information in `data/cards.json`, `data/raw-database.json`,
   `data/card-audit/corrections.json` and the generated `src/data/cards.js`
-  (which also ships in the npm package).
+  (which also ships in the installed package).
 - **Card images** — everything under `data/assets/`, including the card back.
   Card artwork is the work of the credited artists and the publisher.
 - **Official rules documents** — `docs/Comprehensive-Rules-2.5.pdf`,
