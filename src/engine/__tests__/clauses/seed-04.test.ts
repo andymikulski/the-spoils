@@ -280,7 +280,7 @@ clause(HIGH_COURT, "0:rule", "an empty deck: nothing is drawn and it is not a lo
   play(engine, P1, id("court"));
   assert.equal(zoneOf(engine, id("court")), "play");
   assert.equal(handOf(engine, P1).length, handBefore - 1, "there was nothing to draw");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(HIGH_COURT, "0:rule", "entering play by an effect (put into play, not deployed) still triggers 'enters play': one card is drawn", () => {
@@ -646,11 +646,11 @@ clause(IDOL, "0:ability:feed", "with 2 influence it leaves 1 influence and the g
   const two = idolBoard({ influence: 2 });
   feed(two.engine, two.id, "mine");
   assert.equal(influenceOf(two.engine, P1), 1);
-  assert.equal(two.engine.state.winner, undefined);
+  assert.equal(two.engine.state.result, undefined);
   const one = idolBoard({ influence: 1 });
   feed(one.engine, one.id, "mine");
   assert.equal(influenceOf(one.engine, P1), 0);
-  assert.equal(one.engine.state.winner, P2, "a faction at 0 influence loses (CR 102)");
+  assert.deepEqual(one.engine.state.result, { outcome: "victory", winners: [P2] }, "a faction at 0 influence loses (CR 102)");
 });
 
 clause(IDOL, "0:ability:feed", "if the picked character is destroyed in response, the faction still loses its influence (the ability resolves as far as it can)", () => {
@@ -946,7 +946,7 @@ clause(ROADBLOCK, "0:ability", "with an empty deck the damage is still reduced a
   declareBlockers(engine, P1, []);
   autoResolveBattle(engine);
   assert.equal(influenceOf(engine, P1), START);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(ROADBLOCK, "0:ability", "damage already inflicted earlier in the battle stays: only damage inflicted after it is played is reduced to 0", () => {
@@ -1370,7 +1370,7 @@ clause(CAKE, "0:rule", "an empty deck: it resolves, nothing is found, and it is 
   drain(engine, pickTargets([]));
   assert.equal(engine.state.pendingChoice, undefined);
   assert.equal(zoneOf(engine, id("cake")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(CAKE, "0:rule", "it is a tactic: it can be played in response to the opponent's attack", () => {
@@ -1913,7 +1913,7 @@ clause(BAITINGS, "2:rule@ggggg", "an empty deck: nothing is drawn (not a loss) b
   const game = baitBoard({ greed: 5, deck: 0 });
   const { engine } = game;
   startMyTurn(game);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(handOf(engine, P1).length, 2, "no card was drawn, one was discarded");
   assert.equal(discardOf(engine, P1).length, 1);
 });
@@ -2006,7 +2006,7 @@ clause(BAITINGS, "3:rule@ggggggg", "an empty deck: nothing is drawn by the plain
   const game = baitBoard({ greed: 7, deck: 0 });
   const { engine } = game;
   startMyTurn(game);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(handOf(engine, P1).length, 2, "nothing drawn, one discarded");
 });
 
@@ -2583,7 +2583,7 @@ clause(HIATUS, "0:ability", "a deck of 1 card draws that card; an empty deck dra
   const handBefore = handOf(empty.engine, P1).length;
   hiPlay(empty, "victim");
   assert.equal(handOf(empty.engine, P1).length, handBefore - 1);
-  assert.equal(empty.engine.state.winner, undefined);
+  assert.equal(empty.engine.state.result, undefined);
 });
 
 clause(HIATUS, "0:ability", "if the tactic is terminated, the cost stays paid (the character is destroyed) but I draw nothing", () => {
@@ -2683,7 +2683,7 @@ clause(HIATUS, "1:ability:recur", "an empty deck: the character is destroyed, no
   const game = hiatusBoard({ hiatus: "discard", deck: 0 });
   hiRecur(game, "victim");
   assert.equal(zoneOf(game.engine, game.id("victim")), "discard");
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(HIATUS, "1:ability:recur", "'use this only if this card is in your discard pile': refused from the hand, the deck, in play and once removed", () => {
@@ -3128,14 +3128,14 @@ clause(TRADESMAU, "0:rule", "a short deck draws what it has (not a loss); an emp
   declareBlockers(short.engine, P1, [short.id("trade")]);
   drain(short.engine, declineAll);
   assert.equal(deckOf(short.engine, P1).length, 0);
-  assert.equal(short.engine.state.winner, undefined);
+  assert.equal(short.engine.state.result, undefined);
   const empty = tradeBoard({ attackers: 2, deck: 0 });
   tradeAttack(empty, 2);
   const handBefore = handOf(empty.engine, P1).length;
   declareBlockers(empty.engine, P1, [empty.id("trade")]);
   drain(empty.engine, declineAll);
   assert.equal(handOf(empty.engine, P1).length, handBefore);
-  assert.equal(empty.engine.state.winner, undefined);
+  assert.equal(empty.engine.state.result, undefined);
 });
 
 clause(TRADESMAU, "0:rule", "a depleted Tradesmau cannot block, so nothing is drawn; a face-down one is not a character", () => {
@@ -4478,7 +4478,7 @@ clause(ORATOR, "0:ability:recur", "an empty deck: the Orator is still removed, n
   activate(game.engine, P1, game.id("orator"), "recur");
   assert.equal(zoneOf(game.engine, game.id("orator")), "removed");
   assert.equal(handOf(game.engine, P1).length, handBefore);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(ORATOR, "0:ability:recur", "it is an ability: it can be used on the opponent's turn in response to their attack", () => {
@@ -5148,7 +5148,7 @@ clause(BAZAAR, "0:ability:trade", "an empty deck: the cost is paid, nothing is f
   drain(engine, pickTargets([]));
   assert.equal(engine.state.pendingChoice, undefined);
   assert.equal(zoneOf(engine, id("hStaple")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(BAZAAR, "0:ability:trade", "the Bazaar is not depleted by TRADE: it can be used again and again in one turn, each use paying 1 and discarding a resource", () => {
@@ -5872,7 +5872,7 @@ clause(BROKERAGE, "0:rule", "an empty deck: I can still pay, nothing is found, a
   answerMayPay(game.engine, true);
   drain(game.engine, pickTargets([]));
   assert.equal(game.engine.state.pendingChoice, undefined);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(BROKERAGE, "0:rule", "the 1 is separate from the character's own cost: a cost-1 character with 2 resources leaves exactly 0 after paying both", () => {
@@ -7578,7 +7578,7 @@ clause(ARTIFICER, "0:ability:snub", "an empty deck: the cost is paid, nothing is
   snub(game);
   drain(game.engine, pickTargets([]));
   assert.equal(game.engine.state.pendingChoice, undefined);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(ARTIFICER, "0:ability:snub", "the opponent's deck, hand and discard pile are untouched, and their deck is not shuffled", () => {

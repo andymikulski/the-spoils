@@ -802,7 +802,7 @@ clause(AA, "0:ability", "a lethal X ends the game: their faction at 0 influence 
   const b = aaBoard({ p2: 5 });
   cast(b, "foe", 5, 0);
   assert.equal(infl(b, P2), 0);
-  assert.equal(b.engine.state.winner, P1, "the owner of a 0-influence faction immediately loses (CR 102.1)");
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P1] }, "the owner of a 0-influence faction immediately loses (CR 102.1)");
 });
 
 // =====================================================================================

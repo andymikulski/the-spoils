@@ -785,7 +785,7 @@ clause(SLOT, "0:ability:gamble", "with an empty deck there is nothing to reveal:
   assert.equal(before - ready(engine), 1, "the cost is paid");
   assert.deepEqual(stats(engine, id("slot")), { strength: 1, life: 2, speed: 4 }, "no card, so no match");
   assert.equal(influenceOf(engine, P1), 30, "running out of cards is not a loss");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(SLOT, "0:ability:gamble", "only its controller can use it: the opponent cannot use my Slotpuller's GAMBLE", () => {
@@ -1179,7 +1179,7 @@ clause(OVERINDULGE, "2:option:OPTION 2", "with an empty deck the life is still l
   overPlay(b, 1, "mine");
   assert.equal(b.engine.getStat(b.id("mine"), "life"), 2);
   assert.equal(handOf(b.engine, P1).length, 0, "nothing to draw");
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(OVERINDULGE, "2:option:OPTION 2", "if the picked character is destroyed in response, the tactic still resolves as far as it can: I still draw", () => {
@@ -1378,7 +1378,7 @@ clause(GLOM, "0:ability", "with an empty deck the control is still taken and not
   glomPlay(b, "foeC");
   assert.equal(controllerOf(b.engine, b.id("foeC")), P1);
   assert.equal(handOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // --- Pant Swipe --------------------------------------------------------------
@@ -1497,7 +1497,7 @@ clause(PANT, "0:rule", "with fewer than 4 cards in the opponent's deck, whatever
   const two = pantBoard({ deck: plainOpp(2) });
   pantPlay(two, 2);
   assert.equal(deckOf(two.engine, P2).length, 0);
-  assert.equal(two.engine.state.winner, undefined, "an empty deck is not a loss");
+  assert.equal(two.engine.state.result, undefined, "an empty deck is not a loss");
   assert.equal(zoneOf(two.engine, two.id("ps")), "discard");
 });
 
@@ -1506,7 +1506,7 @@ clause(PANT, "0:rule", "with an empty opponent deck it resolves and removes noth
   play(b.engine, P1, b.id("ps"), {});
   drain(b.engine, declineAll);
   assert.equal(zoneOf(b.engine, b.id("ps")), "discard");
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // "play the removed cards as though they were in your hand"
@@ -1945,7 +1945,7 @@ clause(TABLES, "0:ability:size-up", "it is only the top card: looking at a one-c
   chooseDeck(none, "theirs");
   drain(none.engine, declineAll);
   assert.equal(pending(none.engine), undefined, "nothing left to decide");
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(TABLES, "0:ability:size-up", "it cannot be used while depleted, and a depleted card can be used again once restored on my next turn", () => {
@@ -2052,7 +2052,7 @@ clause(TABLES, "1:ability:rig", "with a one-card deck the card stays, and with a
   chooseDeck(none, "theirs");
   drain(none.engine, declineAll);
   assert.equal(pending(none.engine), undefined);
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(TABLES, "1:ability:rig", "only its controller can use it", () => {
@@ -2113,7 +2113,7 @@ clause(TABLES, "2:ability:walk-away", "with an empty deck the card is still dest
   activate(b.engine, P1, b.id("rt"), "walk-away");
   assert.equal(zoneOf(b.engine, b.id("rt")), "discard");
   assert.equal(handOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(TABLES, "2:ability:walk-away", "only its controller can use it", () => {
@@ -2387,7 +2387,7 @@ clause(ROULETTE, "0:rule", "when I decline and the deck has only one card, I dra
   pickCards(b.engine, P1, []);
   assert.equal(handOf(b.engine, P1).length, 1);
   assert.equal(deckOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(ROULETTE, "0:rule", "with an empty deck nothing can be revealed: the tactic still resolves without error", () => {
@@ -2396,7 +2396,7 @@ clause(ROULETTE, "0:rule", "with an empty deck nothing can be revealed: the tact
   drain(b.engine, declineAll);
   assert.equal(pending(b.engine), undefined);
   assert.equal(zoneOf(b.engine, b.id("rw")), "discard");
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // --- Rumply Ruse -------------------------------------------------------------
@@ -2834,7 +2834,7 @@ clause(MUGGER, "1:rule", "with an empty opponent deck there is nothing to find: 
   drain(b.engine, declineAll);
   assert.equal(pending(b.engine), undefined);
   assert.equal(zoneOf(b.engine, b.id("mug")), "play");
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(MUGGER, "1:rule", "with a one-card opponent deck I can find that card and the deck is left empty", () => {
@@ -2843,7 +2843,7 @@ clause(MUGGER, "1:rule", "with a one-card opponent deck I can find that card and
   pickCards(b.engine, P1, [b.id("o0")]);
   assert.equal(deckOf(b.engine, P2).length, 0);
   assert.ok(discardOf(b.engine, P2).includes(b.id("o0")), "discardOf(b.engine, P2).includes(b.id(\"o0\"))");
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(MUGGER, "1:rule", "it triggers when it enters play by an effect, not only when deployed (put into play from my hand by another card)", () => {
@@ -3204,7 +3204,7 @@ clause(BILKER, "0:ability:size-up", "with a one-card deck or an empty deck it wo
   chooseDeck(none, "mine");
   drain(none.engine, declineAll);
   assert.equal(pending(none.engine), undefined);
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(BILKER, "0:ability:size-up", "only its controller can use it", () => {
@@ -3705,7 +3705,7 @@ clause(SURPRISE, "0:ability", "with an empty deck ('or no cards are left') it re
   surprisePlay(b, "atk1");
   assert.equal(zoneOf(b.engine, b.id("sp")), "discard");
   assert.equal(pending(b.engine), undefined);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(SURPRISE, "0:ability", "the cards it reveals are revealed: a reveal event names the cards turned over, in order", () => {
@@ -4704,7 +4704,7 @@ clause(TREACHERY, "1:rule", "a faction at 1 influence that plays Treachery goes 
   const b = treacheryBoard({ influence: 1 });
   developTreachery(b);
   assert.equal(influenceOf(b.engine, P1), 0);
-  assert.equal(b.engine.state.winner, P2);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(TREACHERY, "1:rule", "two Treacheries lose 2 influence in total, 1 each", () => {
@@ -5495,7 +5495,7 @@ clause(FOECRUSHER, "0:rule", "with an empty deck the damage is still inflicted a
   hitFoecrusher(b);
   assertOneDamageToAll(b, "empty deck");
   assert.equal(handOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(FOECRUSHER, "0:rule", "'all characters' includes another Foecrusher: a second one takes 1 damage when the first leaves play", () => {

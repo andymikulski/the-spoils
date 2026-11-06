@@ -1507,7 +1507,7 @@ clause(APPARATUS, "0:rule", "the influence loss can end the game: a faction at 1
   });
   deplete(engine, id, "foe");
   assert.equal(influenceOf(engine, P2), 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(APPARATUS, "0:rule", "is refused one resource short of its cost of 4, and without [R][R][R]", () => {
@@ -3117,7 +3117,7 @@ clause(SIEGE, "0:ability:ram", "the opponent's faction at 1 influence is reduced
   const { engine } = siegeBoard({ rage: 5, oppInfluence: 1 });
   ram(engine, myResources(engine)[0]);
   assert.equal(influenceOf(engine, P2), 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(SIEGE, "0:ability:ram", "may be used repeatedly (no limit is printed): each use destroys another resource and costs another influence", () => {
@@ -5017,7 +5017,7 @@ clause(TOURNAMENT, "4:ability:tournament-draw", "with an empty deck the cost is 
   activateFaction(engine, P1, "tournament-draw");
   assert.equal(attachedCount(engine, P1), 3, "the 3 were paid");
   assert.equal(handSize(engine, P1), 0, "there was nothing to draw");
-  assert.equal(engine.state.winner, undefined, "no one lost");
+  assert.equal(engine.state.result, undefined, "no one lost");
 });
 
 clause(TROPHIES, "0:rule", "with no character in play at all there is nothing to pick: nothing is asked and nothing happens", () => {

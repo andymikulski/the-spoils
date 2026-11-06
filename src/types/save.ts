@@ -14,7 +14,7 @@ import type { GameState } from "./state.js";
  * field's default from the constructor, the same way a hand-built test
  * fixture already does.
  */
-export const CURRENT_SAVE_FORMAT_VERSION = 1;
+export const CURRENT_SAVE_FORMAT_VERSION = 2;
 
 /**
  * The complete, JSON-serializable save for one game — round-trips through

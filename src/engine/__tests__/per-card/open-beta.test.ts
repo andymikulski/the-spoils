@@ -414,7 +414,7 @@ describe("Open Beta — Armored Keep", () => {
       ]
     });
     void id;
-    assert.equal(engine.state.winner ?? null, null);
+    assert.equal(engine.state.result ?? null, null);
   });
 });
 

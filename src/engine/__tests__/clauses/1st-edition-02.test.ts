@@ -1131,7 +1131,7 @@ clause(LAWYER, "0:rule", "losing influence is not capped by the faction: with 2 
   });
   play(engine, P1, id("law"));
   assert.equal(influenceOf(engine, P1), 0);
-  assert.equal(engine.state.winner, P2, "the faction at 0 influence loses");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the faction at 0 influence loses");
 });
 
 clause(LAWYER, "0:rule", "with 3 influence left it goes to 1 and the game continues", () => {
@@ -1141,7 +1141,7 @@ clause(LAWYER, "0:rule", "with 3 influence left it goes to 1 and the game contin
   });
   play(engine, P1, id("law"));
   assert.equal(influenceOf(engine, P1), 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(LAWYER, "0:rule", "is refused one resource short of its cost of 4, and without [G][G]", () => {
@@ -1833,7 +1833,7 @@ clause(RATE_HIKE, "0:rule", "with an empty deck the influence is still gained (f
   const { engine, id } = hikeBoard({ deck: 0 });
   play(engine, P1, id("rh"));
   assert.equal(influenceOf(engine, P1), START_INFLUENCE + 2);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(zoneOf(engine, id("rh")), "discard");
 });
 
@@ -2160,7 +2160,7 @@ clause(RED_TAPE, "0:ability", "with an empty deck the strength loss still happen
   playTape(engine, id, "foe");
   assert.equal(engine.getStat(id("foe"), "strength"), 1);
   assert.equal(zoneOf(engine, id("rt")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(RED_TAPE, "0:ability", "pays exactly 2 and the tactic goes to its owner's discard pile", () => {
@@ -2321,7 +2321,7 @@ clause(HANDSHAKE, "0:ability", "with an empty deck the life is still gained", ()
   const { engine, id } = handshakeBoard({ deck: 0 });
   playHandshake(engine, id, "mine");
   assert.equal(engine.getStat(id("mine"), "life"), 7);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(HANDSHAKE, "0:ability", "pays exactly 2 and the tactic goes to its owner's discard pile", () => {
@@ -2567,7 +2567,7 @@ for (const amount of [1, 2, 5, 9]) {
     samuelHitsFaction(engine, id);
     assert.equal(influenceOf(engine, P1), before);
     assert.equal(battleOf(engine), undefined, "the battle ran to the end");
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
   });
 }
 
@@ -2701,7 +2701,7 @@ clause(SAMUEL, "1:rule", "a faction at 1 influence survives any amount of damage
   });
   samuelHitsFaction(engine, id);
   assert.equal(influenceOf(engine, P1), 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(SAMUEL, "1:rule", "only the FACTION is protected: Samuel himself and other characters take battle damage normally", () => {
@@ -2892,7 +2892,7 @@ clause(GLUTTONY, "0:rule", "with fewer than 10 cards in the deck you draw as man
   assert.equal(engine.state.players[P1].deck.length, 0, "the whole deck was drawn");
   assert.equal(handOf(engine, P1).length, 6, "drawn 4 on top of the 2 in hand");
   assert.equal(gluttonyChoice(engine)?.kind, "chooserSelectsTarget", "then the discard decision");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 clause(GLUTTONY, "0:rule", "discarding 9 when you hold fewer than 9 cards: you discard as many as you can, i.e. your whole hand (CR 402.5)", () => {
@@ -2912,7 +2912,7 @@ clause(GLUTTONY, "0:rule", "with an empty deck and an empty hand it still resolv
   drain(engine, declineAll);
   assert.equal(zoneOf(engine, id("sg")), "discard");
   assert.equal(engine.state.pendingChoice, undefined);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GLUTTONY, "0:rule", "pays exactly 3 resources", () => {

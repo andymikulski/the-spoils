@@ -13,6 +13,7 @@ import type {
   Stat,
   Zone
 } from "./ids.js";
+import type { GameResult, PlayerElimination } from "./format.js";
 import type { ScheduledEffect } from "./state.js";
 
 export interface GameEventMap {
@@ -25,13 +26,23 @@ export interface GameEventMap {
   };
 
   /**
-   * The game reached a result — a faction hit 0 influence (or both did, a
-   * draw). `winnerId` is the surviving player, or `"draw"`. Emitted once,
-   * the instant `GameState.winner` is set. Informational; the win itself is
-   * a state-based check, not keyed off this event.
+   * The game reached a result — the last player (or side) standing won, or
+   * the last players fell together (a draw). Emitted once, the instant
+   * `GameState.result` is set. Informational; the win itself is a
+   * state-based check, not keyed off this event.
    */
   gameEnded: {
-    winnerId: PlayerId | "draw";
+    result: GameResult;
+  };
+
+  /**
+   * A player left a game that goes on without them (D3): their faction
+   * reached 0 influence (or their deck ran out under Trickster's Globe) while
+   * other players remain. Their cards have left the game (D8).
+   */
+  playerEliminated: {
+    playerId: PlayerId;
+    reason: PlayerElimination["reason"];
   };
 
   /**

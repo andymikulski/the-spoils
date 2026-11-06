@@ -462,7 +462,7 @@ describe("seat swap — combat and the win condition", () => {
 
     assert.ok(engine.state.players[P1].influence <= 0, "engine.state.players[P1].influence <= 0");
     // The faction at 0 is P2's (CR 102.1: its owner loses), so P1, the owner of Hero's deck, wins.
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
     assert.equal(engine.getFlowView().mode, "gameOver");
   });
 
@@ -481,7 +481,7 @@ describe("seat swap — combat and the win condition", () => {
     resolvePendingResponses(engine);
     engine.perform({ type: "declareBlockers", playerId: P2, blockerIds: [] });
     autoResolveBattle(engine);
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
   });
 
   test("a faction-damage effect lands on the faction the target player holds", () => {
@@ -551,7 +551,7 @@ describe("seat swap — mid-battle and tactic timing", () => {
     // Hero is no longer P1's (CR 407.4), so the party is empty, the battle is over at once and no battle damage is dealt.
     assert.equal(engine.state.battle, undefined);
     autoResolveBattle(engine);
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
     assert.equal(engine.state.players[P1].influence, 4, "P2's faction, now held by P1, took no damage");
     assert.equal(engine.getFlowView().mode, "main");
     assert.equal(engine.state.activePlayerId, P1);

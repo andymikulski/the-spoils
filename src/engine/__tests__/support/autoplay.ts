@@ -25,6 +25,7 @@ import {
   type Cost,
   type GameAction,
   type GameFlowView,
+  type GameResult,
   type PendingChoice,
   type PlayerId,
   type ResolutionContext,
@@ -56,7 +57,14 @@ export interface AutoplayReport {
   /** The most responses added to a single response window (proves multi-response battles/actions actually happened, not just open-then-immediately-close). */
   maxResponsesInWindow: number;
   pendingChoicesResolved: Record<string, number>;
+  /** How the game ended, once it has. */
+  result?: GameResult;
+  /** `result` flattened for quick assertions: the sole winner's id, the winners joined with "+", or "draw". */
   winner?: PlayerId | "draw";
+}
+
+function summarizeResult(result: GameResult): PlayerId | "draw" {
+  return result.outcome === "draw" ? "draw" : result.winners.join("+");
 }
 
 export interface AutoplayOptions {
@@ -838,8 +846,9 @@ export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOpti
     report.actions = i;
     report.turns = engine.state.turn;
 
-    if (engine.state.winner) {
-      report.winner = engine.state.winner;
+    if (engine.state.result) {
+      report.result = engine.state.result;
+      report.winner = summarizeResult(engine.state.result);
       return report;
     }
 
@@ -847,7 +856,8 @@ export function playGameToCompletion(engine: SpoilsEngine, options: AutoplayOpti
 
     switch (flow.mode) {
       case "gameOver": {
-        report.winner = flow.winner;
+        report.result = flow.result;
+        report.winner = flow.result ? summarizeResult(flow.result) : undefined;
         return report;
       }
 

@@ -953,7 +953,7 @@ clause(SNAKE, "0:ability", "with an empty deck the character is still destroyed 
   play(engine, P1, id("se"), { selected: { c: [id("foe")] } });
   assert.equal(engine.state.cards[id("foe")].zone, "discard");
   assert.equal(engine.state.players[P1].hand.length, handBefore - 1, "nothing to draw");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game (CR 102.1a)");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game (CR 102.1a)");
 });
 
 clause(SNAKE, "0:ability", "the picked card must be a character: an item, a location, a face-down card and a faction are refused", () => {
@@ -2114,7 +2114,7 @@ clause(TREMOR, "0:rule", "with fewer than 2 cards in a deck that player puts wha
   assert.equal(engine.state.players[P1].deck.length, 0);
   assert.ok(engine.state.players[P1].discard.includes(only), "engine.state.players[P1].discard.includes(only)");
   assert.equal(engine.state.players[P2].deck.length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(TREMOR, "0:rule", "two Engines both trigger: each deck loses 4", () => {
@@ -3095,7 +3095,7 @@ clause(BILE, "0:ability", "5 damage to a faction at 5 influence reduces it to 0 
   const { engine, id } = bileBoard({ p2Influence: 5 });
   play(engine, P1, id("bile"), { selected: { t: [engine.state.players[P2].factionId!] } });
   assert.equal(engine.state.players[P2].influence, 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(BILE, "0:ability", "only a character or a faction can be picked: an item, a location and a face-down card are refused", () => {
@@ -4666,7 +4666,7 @@ clause(STRATEGY, "0:rule", "an opponent at 2 influence is reduced to 0 and loses
   const { engine, id } = strategyBoard({ p2Influence: 2 });
   play(engine, P1, id("ds"));
   assert.equal(engine.state.players[P2].influence, 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(STRATEGY, "0:rule", "an opponent at 1 influence is reduced to 0, not below 0 (CR 410.4)", () => {
@@ -4678,7 +4678,7 @@ clause(STRATEGY, "0:rule", "an opponent at 1 influence is reduced to 0, not belo
 clause(STRATEGY, "0:rule", "an opponent at 1 influence loses the game", () => {
   const { engine, id } = strategyBoard({ p2Influence: 1 });
   play(engine, P1, id("ds"));
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(STRATEGY, "0:rule", "with an empty deck the influence is still lost and nothing is drawn", () => {
@@ -4688,7 +4688,7 @@ clause(STRATEGY, "0:rule", "with an empty deck the influence is still lost and n
   play(engine, P1, id("ds"));
   assert.equal(engine.state.players[P2].influence, p2 - 2);
   assert.equal(engine.state.players[P1].hand.length, hand - 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(STRATEGY, "0:rule", "influence loss is not damage: a 'prevent all damage' window does not stop it (CR 408.3b), though it does stop damage to the same faction", () => {

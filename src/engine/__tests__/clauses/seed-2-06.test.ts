@@ -2898,7 +2898,7 @@ clause(DARK, "0:ability", "with an empty deck the failed draw costs nothing (CR 
   assert.equal(deckOf(g.engine, P1).length, 0, "control: my deck is empty");
   darkAndPlay(g, "dChar");
   assert.equal(zoneOf(g.engine, g.id("dChar")), "play");
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(DARK, "0:ability", "an item in my discard pile can be picked and played: it enters play", () => {
@@ -3869,7 +3869,7 @@ clause(SMACK, "0:ability", "with an empty deck the failed draw costs nothing (CR
   assert.equal(deckOf(g.engine, P1).length, 0);
   smack(g, 1, ["m0"]);
   theyDestroy(g, ["t0"]);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
   assert.equal(zoneOf(g.engine, g.id("t0")), "discard");
 });
 
@@ -5659,7 +5659,7 @@ clause(SHRIEVER, "0:rule", "my faction loses exactly 2 influence: from 5 to 3", 
   const g = shrieverBoard({ influence: 5 });
   shriever(g, "theirItem");
   assert.equal(influenceOf(g.engine, P1), 3);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(SHRIEVER, "0:rule", "it is influence LOSS, not damage: nothing is inflicted to the faction card", () => {
@@ -5673,14 +5673,14 @@ clause(SHRIEVER, "0:rule", "my faction cannot lose more influence than it has: f
   const g = shrieverBoard({ influence: 1 });
   shriever(g, "theirItem");
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(SHRIEVER, "0:rule", "with exactly 2 influence the loss leaves me at 0 and my opponent wins", () => {
   const g = shrieverBoard({ influence: 2 });
   shriever(g, "theirItem");
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(SHRIEVER, "0:rule", "it deploys for 4 with [R][R] and has 3/4/1 stats (a dragon)", () => {

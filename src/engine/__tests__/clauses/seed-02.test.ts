@@ -1822,7 +1822,7 @@ clause(NEUROSIS, "1:rule", "at 1 influence the loss takes my faction to 0 and I 
   developResource(engine, P1, id("n"), false);
   resolvePendingResponses(engine);
   assert.equal(influenceOf(engine, P1), 0);
-  assert.equal(engine.state.winner, P2, "my faction is at 0 influence");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "my faction is at 0 influence");
 });
 
 clause(NEUROSIS, "1:rule", "it has no threshold, and as a resource it cannot be deployed from hand with playCard (CR 203.1): only the develop rule plays it", () => {
@@ -4701,7 +4701,7 @@ clause(TWIZARD, "0:rule", "a deck with fewer cards than chosen: draw what is the
   assert.equal(handOf(engine, P1).length, 2, "drew the one card there was");
   assert.equal(handOf(engine, P2).length, 1, "an empty deck draws nothing");
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game (CR 102.1a)");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game (CR 102.1a)");
 });
 
 clause(TWIZARD, "0:rule", "on my opponent's turn the opponent (the active player) decides first (put into play during their turn)", () => {

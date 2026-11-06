@@ -741,7 +741,7 @@ clause(POSH, "2:rule", "with an empty deck the draw simply fails: no loss, no cr
   driveStart(g, { draw: true });
   assert.equal(g.engine.state.pendingChoice, undefined);
   assert.equal(handOf(g.engine, P1).length, 0);
-  assert.equal(g.engine.state.winner, undefined, "running out of cards does not lose the game (CR 102.1a)");
+  assert.equal(g.engine.state.result, undefined, "running out of cards does not lose the game (CR 102.1a)");
 });
 
 clause(POSH, "2:rule", "it is at the start of MY turn: nothing is drawn at the start of the opponent's turn", () => {
@@ -6216,7 +6216,7 @@ clause(INVENTION, "0:ability", "'Draw a card' with an empty deck just fails to d
   const g = inventionBoard({ deck: 0 });
   invent(g, true);
   assert.equal(handOf(g.engine, P1).length, 0);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
   assert.equal(zoneOf(g.engine, g.id("ai")), "discard");
 });
 

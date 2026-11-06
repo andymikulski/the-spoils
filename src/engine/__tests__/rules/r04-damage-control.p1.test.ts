@@ -408,39 +408,39 @@ describe("CR 408.3 — damage to a faction", () => {
 
   rule("CR 408.3a", "once the faction has 0 influence its owner loses the game", () => {
     const { engine, id } = buildGame({ playerB: { influence: 3 }, cards: [{ key: "z", def: factionZapper("Zapper", 3), owner: P1 }] });
-    assert.equal(engine.state.winner, undefined, "nobody has won yet");
+    assert.equal(engine.state.result, undefined, "nobody has won yet");
     activate(engine, P1, id("z"), "zapOpp");
     assert.equal(influence(engine, P2), 0, "the faction is at 0 influence");
-    assert.equal(engine.state.winner, P1, "the opponent won");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the opponent won");
   });
 
   rule("CR 408.3a", "one influence short of 0 is not a loss; the next point is", () => {
     const { engine, id } = buildGame({ playerB: { influence: 3 }, cards: [{ key: "z", def: factionZapper("Zapper", 2), owner: P1 }] });
     activate(engine, P1, id("z"), "zapOpp");
     assert.equal(influence(engine, P2), 1, "1 influence is left");
-    assert.equal(engine.state.winner, undefined, "the game goes on");
+    assert.equal(engine.state.result, undefined, "the game goes on");
     activate(engine, P1, id("z"), "zapOpp");
     assert.equal(influence(engine, P2), 0, "now at 0 (never negative)");
-    assert.equal(engine.state.winner, P1, "the opponent won");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the opponent won");
   });
 
   rule("CR 408.3a", "damage beyond the faction's influence still leaves 0 and a loss", () => {
     const { engine, id } = buildGame({ playerB: { influence: 3 }, cards: [{ key: "z", def: factionZapper("Zapper", 7), owner: P1 }] });
     activate(engine, P1, id("z"), "zapOpp");
     assert.equal(influence(engine, P2), 0, "influence stops at 0");
-    assert.equal(engine.state.winner, P1, "the opponent won");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the opponent won");
   });
 
   rule("CR 408.3a", "damaging your own faction to 0 loses you the game", () => {
     const { engine, id } = buildGame({ playerA: { influence: 2 }, cards: [{ key: "z", def: factionZapper("Zapper", 2), owner: P1 }] });
     activate(engine, P1, id("z"), "zapOwn");
-    assert.equal(engine.state.winner, P2, "the other player won");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the other player won");
   });
 
   rule("CR 408.3a", "losing the last influence to battle damage loses the game", () => {
     const { engine, id } = buildGame({ playerB: { influence: 2 }, cards: [{ key: "raider", def: character({ name: "Raider", strength: 2 }), owner: P1 }] });
     fight(engine, [id("raider")], { type: "faction", playerId: P2 }, []);
-    assert.equal(engine.state.winner, P1, "the attacker won");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the attacker won");
   });
 
   rule("CR 408.3b", "Example: 'faction loses 2 influence' is not damage, so 'reduce damage to a faction by 1' does not affect it", () => {

@@ -702,7 +702,7 @@ for (const [ctrl, active] of ftaCombos) {
     ftaDrive(b.engine, { draws: { [active]: 2, [opp]: 2 } });
     assert.equal(deckOf(b.engine, active).length, 0);
     assert.equal(deckOf(b.engine, opp).length, 4);
-    assert.equal(b.engine.state.winner, undefined);
+    assert.equal(b.engine.state.result, undefined);
   });
 
   // OPTION 4 -- Both players may play up to 2 resources.
@@ -2243,12 +2243,12 @@ function etbInfluenceLoss(printingId: string, loss: number, icon: StapleIcon = "
   const exact = etbBoard(printingId, { influence: loss, icon });
   play(exact.engine, P1, exact.id("subject"));
   assert.equal(influenceOf(exact.engine, P1), 0);
-  assert.equal(exact.engine.state.winner, P2, "a faction at 0 influence loses (CR 102)");
+  assert.deepEqual(exact.engine.state.result, { outcome: "victory", winners: [P2] }, "a faction at 0 influence loses (CR 102)");
 
   const spare = etbBoard(printingId, { influence: loss + 1, icon });
   play(spare.engine, P1, spare.id("subject"));
   assert.equal(influenceOf(spare.engine, P1), 1);
-  assert.equal(spare.engine.state.winner, undefined, "one influence left: still in the game");
+  assert.equal(spare.engine.state.result, undefined, "one influence left: still in the game");
 }
 
 /** Played face-down as a resource (the Develop Rule), the card has no rules text: its enters-play effect does not happen. */
@@ -3000,7 +3000,7 @@ clause(MUTINY, "0:ability", "with exactly X influence the cost can be paid (and 
   const { engine, id } = mutinyBoard({ influence: 3 });
   play(engine, P1, id("mg"), { selected: { pick: [id("c3")] } });
   assert.equal(influenceOf(engine, P1), 0);
-  assert.equal(engine.state.winner, P2, "a faction at 0 influence loses (CR 102)");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "a faction at 0 influence loses (CR 102)");
 });
 
 clause(MUTINY, "0:ability", "the influence is lost directly, not paid: it does not use up resources, and it is lost in addition to the 2 resources", () => {
@@ -4484,7 +4484,7 @@ for (const amount of [1, 2, 5, 9]) {
     assert.equal(isDepleted(engine, id("atk")), true, "control: the battle happened");
     assert.equal(influenceOf(engine, P1), before);
     assert.equal(battleOf(engine), undefined, "the battle ran to the end");
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
   });
 }
 
@@ -4657,7 +4657,7 @@ clause(SAMUEL, "1:rule", "a faction at 1 influence survives any amount of damage
   });
   samuelHitsFaction(engine, id);
   assert.equal(influenceOf(engine, P1), 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(SAMUEL, "1:rule", "only the FACTION is protected: Samuel himself and other characters take battle damage normally", () => {
@@ -5310,7 +5310,7 @@ clause(SMEAR, "1:rule", "the damage to the faction can be lethal: a faction with
   const { engine, id } = smearBoard({ influenceA: 3, influenceB: 30 });
   hostHitsFaction(engine, id);
   assert.equal(influenceOf(engine, P1), 0);
-  assert.equal(engine.state.winner, P2, "the host's controller lost to their own Campaign");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the host's controller lost to their own Campaign");
 });
 
 clause(SMEAR, "1:rule", "damage the attached character inflicts to its OWN controller's faction also triggers the Campaign (it is 'damage', no exception)", () => {
@@ -6013,7 +6013,7 @@ clause(SUBSECTION, "1:ability", "with an empty deck the draw finds nothing and n
   playRaw(engine, P1, id("s5"));
   resolvePendingResponses(engine);
   assert.equal(damageOf(engine, id("mine")), 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   refused(() => actRaw(engine, P2, id("guy"), "zap", { t: [id("mine")] }), "locked", /cannot be used again/i);
 });
 
@@ -6149,7 +6149,7 @@ clause(JUDGMENT, "0:ability", "a deck with fewer than X cards: I draw what is th
   answerMayPay(engine, false);
   assert.equal(handOf(engine, P1).length, handBefore - 1 + 2);
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(JUDGMENT, "0:ability", "YOUR OPPONENT makes the choice, not me: it belongs to the opponent and I cannot answer it", () => {
@@ -6463,12 +6463,12 @@ clause(ATTORNEY, "0:rule", "it can save a faction: at 3 influence a 3-influence 
   const withAttorney = attorneyBoard({ influence: 3, extra: [{ key: "bleed3", def: bleedTactic("Bleed3", 3, "controller"), owner: P1, zone: "hand" }] });
   play(withAttorney.engine, P1, withAttorney.id("bleed3"), {});
   assert.equal(influenceOf(withAttorney.engine, P1), 1);
-  assert.equal(withAttorney.engine.state.winner, undefined, "still in the game");
+  assert.equal(withAttorney.engine.state.result, undefined, "still in the game");
 
   const without = attorneyBoard({ influence: 3, attorneyZone: "hand", extra: [{ key: "bleed3", def: bleedTactic("Bleed3", 3, "controller"), owner: P1, zone: "hand" }] });
   play(without.engine, P1, without.id("bleed3"), {});
   assert.equal(influenceOf(without.engine, P1), 0);
-  assert.equal(without.engine.state.winner, P2, "control: with no Attorney the same loss is lethal");
+  assert.deepEqual(without.engine.state.result, { outcome: "victory", winners: [P2] }, "control: with no Attorney the same loss is lethal");
 });
 
 clause(ATTORNEY, "0:rule", "Mafia Lawyer's 'your faction loses 2 influence' is reduced to 1 by the Attorney", () => {
@@ -6911,7 +6911,7 @@ clause(WRIT, "0:ability", "with an empty deck and X=0 there is nothing to draw, 
   playWrit(engine, id, 0, [], []);
   assert.equal(handOf(engine, P1).length, handBefore - 1);
   assert.equal(zoneOf(engine, id("writ")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(WRIT, "0:ability", "'cards': the removed cards can be any type (character, tactic, item, resource) and so can the picked others", () => {

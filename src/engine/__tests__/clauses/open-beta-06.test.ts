@@ -853,7 +853,7 @@ clause(DEFENESTRATE, "0:rule", "my own deck empty: the mill happens, I draw noth
   play(engine, P1, id("me"));
   assert.equal(engine.state.players[P2].discard.length, 2);
   assert.equal(engine.state.players[P1].hand.length, 0, "nothing to draw");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 clause(DEFENESTRATE, "0:rule", "is refused one resource short of 3, and without [D]", () => {
@@ -1187,7 +1187,7 @@ clause(OBFUSCATION, "1:rule", "if the game ends, the owner of the winning deck w
   resolvePendingResponses(control.engine);
   declareBlockers(control.engine, P2, []);
   autoResolveBattle(control.engine);
-  assert.equal(control.engine.state.winner, P1, "control: the attacker wins when the defender's faction hits 0");
+  assert.deepEqual(control.engine.state.result, { outcome: "victory", winners: [P1] }, "control: the attacker wins when the defender's faction hits 0");
 
   // With the Obfuscation in play the seats are swapped: P1 controls P2's character and attacks the faction P2
   // holds, which is the faction P1 OWNS. When it reaches 0 its owner (P1) loses, so P2 wins.
@@ -1201,7 +1201,7 @@ clause(OBFUSCATION, "1:rule", "if the game ends, the owner of the winning deck w
   resolvePendingResponses(engine);
   declareBlockers(engine, P2, []);
   autoResolveBattle(engine);
-  assert.equal(engine.state.winner, P2, "the faction of P1's deck hit 0, so the owner of the other deck wins");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the faction of P1's deck hit 0, so the owner of the other deck wins");
 });
 
 // -- 2:rule — upkeep -------------------------------------------------------------
@@ -4038,7 +4038,7 @@ clause(PIRATE, "0:rule", "an empty opponent deck: nothing happens (and nobody lo
   play(engine, P1, id("me"));
   drain(engine, declineAll);
   assert.equal(engine.state.players[P2].discard.length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(engine.state.cards[id("me")].zone, "play");
 });
 

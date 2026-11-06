@@ -4977,7 +4977,7 @@ clause(POISONING, "2:rule", "2 TOKENS: with an empty deck the tokens are spent a
   castPoisoning(b);
   spend(b, DRAW, 2, ["k1", "k1"]);
   assert.equal(handOf(b.engine, P1).length, handBefore - 1);
-  assert.equal(b.engine.state.winner ?? null, null);
+  assert.equal(b.engine.state.result ?? null, null);
   assert.equal(tokens(b.engine, b.id("k1")), 0);
 });
 
@@ -5739,21 +5739,21 @@ clause(KEEP, "2:rule", "control: without a Keep a faction that reaches 0 influen
   const b = keepBattleBoard(false);
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
   assert.equal(influence(b.engine, P1), 0);
-  assert.equal(b.engine.state.winner, P2, "P1 lost");
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] }, "P1 lost");
 });
 
 clause(KEEP, "2:rule", "with the Keep in play you do not lose at 0 influence: the game carries on", () => {
   const b = keepBattleBoard(true);
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
   assert.equal(influence(b.engine, P1), 0, "the faction is at 0 influence");
-  assert.equal(b.engine.state.winner, undefined, "and the game is not over");
+  assert.equal(b.engine.state.result, undefined, "and the game is not over");
   assert.notEqual(b.engine.getFlowView().mode, "gameOver");
 });
 
 clause(KEEP, "2:rule", "with the Keep in play and MORE damage than influence you still do not lose", () => {
   const b = keepBattleBoard(true, { influence: 2 });
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(KEEP, "2:rule", "overkill damage leaves the faction at exactly 0 influence (CR 410.4: a number reduced below 0 stays at 0), which is the state the Keep protects", () => {
@@ -5775,7 +5775,7 @@ clause(KEEP, "2:rule", "losing more influence than you have with a direct 'loses
   });
   play(b.engine, P1, b.id("drain"));
   assert.equal(influence(b.engine, P2), 0, "2 - 5 stays at 0");
-  assert.equal(b.engine.state.winner, undefined, "and the Keep keeps P2 in the game");
+  assert.equal(b.engine.state.result, undefined, "and the Keep keeps P2 in the game");
 });
 
 clause(KEEP, "2:rule", "the game goes on and play continues: the turn can end and the next turn starts normally", () => {
@@ -5783,7 +5783,7 @@ clause(KEEP, "2:rule", "the game goes on and play continues: the turn can end an
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
   endTurn(b.engine, P2);
   assert.equal(b.engine.state.activePlayerId, P1);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(KEEP, "2:rule", "when the Keep leaves play while you are at 0 influence you lose at once", () => {
@@ -5802,10 +5802,10 @@ clause(KEEP, "2:rule", "when the Keep leaves play while you are at 0 influence y
     turn: 2,
     activePlayerId: P2
   });
-  assert.equal(b.engine.state.winner ?? null, null, "protected while the Keep stands");
+  assert.equal(b.engine.state.result ?? null, null, "protected while the Keep stands");
   play(b.engine, P2, b.id("raze"), { selected: { t: [b.id("ak")] } });
   assert.equal(zoneOf(b.engine, b.id("ak")), "discard");
-  assert.equal(b.engine.state.winner, P2, "the Keep is gone, so P1 at 0 influence loses");
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] }, "the Keep is gone, so P1 at 0 influence loses");
 });
 
 clause(KEEP, "2:rule", "the protection starts when the Keep enters play: a faction already at 0 influence is saved once the Keep is in play", () => {
@@ -5816,7 +5816,7 @@ clause(KEEP, "2:rule", "the protection starts when the Keep enters play: a facti
   assert.equal(zoneOf(b.engine, b.id("ak")), "play");
   b.engine.state.players[P1].influence = 0;
   (b.engine as unknown as { checkStateBasedActions(): void }).checkStateBasedActions();
-  assert.equal(b.engine.state.winner ?? null, null, "at 0 influence with the Keep in play you stay in the game");
+  assert.equal(b.engine.state.result ?? null, null, "at 0 influence with the Keep in play you stay in the game");
 });
 
 clause(KEEP, "2:rule", "it protects only YOUR faction: the opponent at 0 influence loses even though you control a Keep", () => {
@@ -5831,32 +5831,32 @@ clause(KEEP, "2:rule", "it protects only YOUR faction: the opponent at 0 influen
   });
   fight(b.engine, P1, [b.id("attacker")], { type: "faction", playerId: P2 }, []);
   assert.equal(influence(b.engine, P2), 0);
-  assert.equal(b.engine.state.winner, P1, "P2 lost");
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P1] }, "P2 lost");
 });
 
 clause(KEEP, "2:rule", "both factions at 0 influence but only you have a Keep: the opponent loses and you win (not a draw)", () => {
   const b = keepBoard([{ key: "c", def: character({ name: "C" }), owner: P1, zone: "play" }], { p1Influence: 0, p2Influence: 0 });
   endTurn(b.engine, P1);
-  assert.equal(b.engine.state.winner, P1);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(KEEP, "2:rule", "a Keep the OPPONENT controls protects the opponent, not you", () => {
   const b = keepBattleBoard(true, { keepController: P2 });
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
   assert.equal(influence(b.engine, P1), 0);
-  assert.equal(b.engine.state.winner, P2, "the Keep under P2's control does not save P1");
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] }, "the Keep under P2's control does not save P1");
 });
 
 clause(KEEP, "2:rule", "a Keep in your hand does not protect you", () => {
   const b = keepBattleBoard(true, { keepZone: "hand" });
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
-  assert.equal(b.engine.state.winner, P2);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(KEEP, "2:rule", "a face-down Keep is only a resource and does not protect you", () => {
   const b = keepBattleBoard(true, { keepFaceDown: true });
   fight(b.engine, P2, [b.id("attacker")], { type: "faction", playerId: P1 }, []);
-  assert.equal(b.engine.state.winner, P2);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(KEEP, "2:rule", "both players with a Keep: both can sit at 0 influence and the game does not end", () => {
@@ -5870,7 +5870,7 @@ clause(KEEP, "2:rule", "both players with a Keep: both can sit at 0 influence an
     ]
   });
   endTurn(b.engine, P1);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
   assert.equal(b.engine.state.activePlayerId, P2);
 });
 
@@ -5879,7 +5879,7 @@ clause(KEEP, "2:rule", "gaining influence while at 0 works as usual and the Keep
   const b = keepBoard([{ key: "gain", def: gain, owner: P1, zone: "hand" }], { p1Influence: 0 });
   play(b.engine, P1, b.id("gain"));
   assert.equal(influence(b.engine, P1), 3);
-  assert.equal(b.engine.state.winner ?? null, null);
+  assert.equal(b.engine.state.result ?? null, null);
 });
 
 clause(KEEP, "2:rule", "damage to the Keep itself: it survives 4 damage and is destroyed by 5 (structure 5)", () => {
@@ -6196,7 +6196,7 @@ clause(BEATRIX, "1:rule", "a deck with fewer cards than the increased amount: yo
   developDrawFor(b.engine, P1);
   assert.equal(handOf(b.engine, P1).length, hand + 1, "only one card was available");
   assert.equal(deckOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner ?? null, null);
+  assert.equal(b.engine.state.result ?? null, null);
 });
 
 clause(BEATRIX, "1:rule", "the increase is added to a draw that happens, including from an empty-handed turn start: the Develop draw gives 2 from a 0-card hand", () => {
@@ -6756,7 +6756,7 @@ clause(CASH_OUT, "0:ability", "a deck with fewer cards than X+1: you draw what e
   for (const cardId of deckBefore) assert.equal(zoneOf(b.engine, cardId), "hand");
   assert.equal(deckOf(b.engine, P1).length, 0);
   assert.equal(zoneOf(b.engine, b.id("co")), "discard");
-  assert.equal(b.engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(b.engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 clause(CASH_OUT, "0:ability", "the cost is paid when it is played; the draw happens when it resolves, after the opponent may respond", () => {

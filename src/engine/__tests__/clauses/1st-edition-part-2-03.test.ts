@@ -278,18 +278,18 @@ clause(THUG, "0:rule", "the loss happens even when it would take the faction to 
   play(engine, P1, id("thug"));
   assert.equal(zoneOf(engine, id("thug")), "play");
   assert.equal(influence(engine, P1), 0, "a number reduced below 0 stays at 0");
-  assert.equal(engine.state.winner, P2, "a faction with 0 influence loses the game");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "a faction with 0 influence loses the game");
 });
 
 clause(THUG, "0:rule", "with exactly 3 influence the loss takes the faction to 0 and the owner loses; with 4 they survive on 1", () => {
   const survive = thugBoard({ influenceA: 4 });
   play(survive.engine, P1, survive.id("thug"));
   assert.equal(influence(survive.engine, P1), 1);
-  assert.equal(survive.engine.state.winner, undefined, "1 influence left: the game goes on");
+  assert.equal(survive.engine.state.result, undefined, "1 influence left: the game goes on");
   const lose = thugBoard({ influenceA: 3 });
   play(lose.engine, P1, lose.id("thug"));
   assert.equal(influence(lose.engine, P1), 0);
-  assert.equal(lose.engine.state.winner, P2, "0 influence: P1 loses");
+  assert.deepEqual(lose.engine.state.result, { outcome: "victory", winners: [P2] }, "0 influence: P1 loses");
 });
 
 clause(THUG, "0:rule", "is refused one resource short of its cost of 5, and without [G][G], and then the faction loses nothing", () => {
@@ -938,7 +938,7 @@ clause(RANDOLPH, "1:rule", "with an empty deck there is nothing to draw: it stil
   play(engine, P1, id("rand"));
   assert.equal(zoneOf(engine, id("rand")), "play");
   assert.equal(hand(engine, P1).length, handBefore - 1, "no card to draw");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game (CR 306.2)");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game (CR 306.2)");
 });
 
 clause(RANDOLPH, "1:rule", "with one card left in the deck the draw takes it", () => {
@@ -1195,7 +1195,7 @@ clause(RANDOLPH, "2:ability:payday", "with an empty deck the cost is still paid 
   activate(engine, P1, id("rand"), "payday", { selected: { d: [id("hres0")] } });
   assert.equal(zoneOf(engine, id("hres0")), "discard");
   assert.equal(hand(engine, P1).length, handBefore - 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(RANDOLPH, "2:ability:payday", "only Randolph's controller may use it", () => {
@@ -1406,11 +1406,11 @@ clause(AUCTIONEER, "0:ability:liquidate", "with fewer than 2 cards in the deck y
   activate(one.engine, P1, one.id("auc"), "liquidate", { selected: { d: [one.id("h0")] } });
   assert.equal(zoneOf(one.engine, only), "hand");
   assert.equal(hand(one.engine, P1).length, handBefore, "-1 discarded, +1 drawn");
-  assert.equal(one.engine.state.winner, undefined);
+  assert.equal(one.engine.state.result, undefined);
   const none = auctioneerBoard({ deckSize: 0 });
   activate(none.engine, P1, none.id("auc"), "liquidate", { selected: { d: [none.id("h0")] } });
   assert.equal(hand(none.engine, P1).length, 1, "nothing to draw");
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(AUCTIONEER, "0:ability:liquidate", "it can be used the turn the Auctioneer enters play (abilities have no summoning sickness, CR 204.3a)", () => {
@@ -2255,12 +2255,12 @@ clause(STI, "2:ability:return", "with fewer than 3 cards in the deck you draw wh
   activate(two.engine, P1, two.id("sti"), "return");
   assert.equal(hand(two.engine, P1).length, 2);
   assert.equal(deck(two.engine, P1).length, 0);
-  assert.equal(two.engine.state.winner, undefined);
+  assert.equal(two.engine.state.result, undefined);
   const none = stiBoard({ tokens: 0, deckSize: 0 });
   activate(none.engine, P1, none.id("sti"), "return");
   assert.equal(hand(none.engine, P1).length, 0);
   assert.equal(zoneOf(none.engine, none.id("sti")), "discard", "the cost is still paid");
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(STI, "2:ability:return", "it can only be used once: the card is destroyed, so a second use is impossible", () => {
@@ -2614,7 +2614,7 @@ clause(SMEAR, "1:rule", "the damage to the faction can be lethal: a faction with
   const { engine, id } = smearBoard({ influenceA: 3, influenceB: 30 });
   hostHitsFaction(engine, id);
   assert.equal(influence(engine, P1), 0);
-  assert.equal(engine.state.winner, P2, "the host's controller lost to their own Campaign");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the host's controller lost to their own Campaign");
 });
 
 clause(SMEAR, "1:rule", "damage the attached character inflicts to its OWN controller's faction also triggers the Campaign (it is 'any amount of damage')", () => {
@@ -3232,7 +3232,7 @@ clause(SUBSECTION, "1:ability", "with an empty deck the draw finds nothing and n
   playRaw(engine, P1, id("s5"));
   resolvePendingResponses(engine);
   assert.equal(damageOf(engine, id("mine")), 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.throws(() => activateRaw(engine, P2, id("guy"), "zap", { selected: { t: [id("mine")] } }));
 });
 
@@ -3629,7 +3629,7 @@ clause(GARBAGEMAN, "1:ability:sift", "with an empty deck nothing is drawn but th
   siftDiscard(engine, id("h0"));
   assert.equal(zoneOf(engine, id("h0")), "discard");
   assert.equal(hand(engine, P1).length, 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GARBAGEMAN, "1:ability:sift", "with an empty deck AND an empty hand there is nothing to draw or discard: it completes without trouble", () => {
@@ -3637,7 +3637,7 @@ clause(GARBAGEMAN, "1:ability:sift", "with an empty deck AND an empty hand there
   activate(engine, P1, id("gm"), "sift");
   assert.equal(engine.state.pendingChoice, undefined);
   assert.equal(engine.state.cards[id("gm")].depleted, true, "the cost was paid");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GARBAGEMAN, "1:ability:sift", "a depleted Garbageman can't use it: refused, and nothing is drawn", () => {
@@ -3950,7 +3950,7 @@ clause(WRIT, "0:ability", "with an empty deck and X=0 there is nothing to draw, 
   playWrit(engine, id, 0, [], []);
   assert.equal(hand(engine, P1).length, handBefore - 1);
   assert.equal(zoneOf(engine, id("writ")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(WRIT, "0:ability", "'any card': the removed cards can be any type (character, tactic, item, resource) and so can the picked others", () => {
@@ -5906,7 +5906,7 @@ clause(BALL, "0:ability:insight", "with an empty deck there is nothing to find, 
   if (pending(engine)) pick(engine, []);
   assert.equal(engine.state.pendingChoice, undefined);
   assert.equal(controllerOf(engine, id("ball")), P2, "control passes regardless");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(BALL, "0:ability:insight", "a depleted Ball can't be used: refused, nothing searched", () => {

@@ -200,7 +200,7 @@ export function redactStateFor(
 /**
  * Redacts an already-computed `GameFlowView` (`SpoilsEngine.getFlowView()`)
  * for `viewer`. Everything else on `GameFlowView` — `responseStack`,
- * `battle`, `revealed`, `winner`, `mode` — only ever carries ids/counts, not
+ * `battle`, `revealed`, `result`, `mode` — only ever carries ids/counts, not
  * card identities, so nothing else needs touching.
  */
 export function redactFlowViewFor(flow: GameFlowView, viewer: Viewer): GameFlowView {

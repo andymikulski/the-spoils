@@ -18,8 +18,8 @@ import type {
   CardDefinition,
   CardDefinitionId,
   GameFlowView,
+  GameResult,
   GameState,
-  GameWinner,
   PlayerId,
   SerializedGame
 } from "../types/index.js";
@@ -96,10 +96,23 @@ function migrate(save: SerializedGame): GameState {
       `(${CURRENT_SAVE_FORMAT_VERSION}). Load it with a newer version of this package.`
   );
 
-  // Format 1 is the initial format — nothing to migrate yet. Future
-  // migrations chain here, each rewriting `state` from one format version to
+  // Migrations chain here, each rewriting `state` from one format version to
   // the next, so `loadGame` always hands `SpoilsEngine` a current-shape state.
-  return save.state;
+  let state = save.state;
+  if (save.formatVersion < 2) state = migrateV1ToV2(state);
+  return state;
+}
+
+/**
+ * Format 2 replaced `GameState.winner` (a player id or `"draw"`) with
+ * `GameState.result` (a `GameResult`). Every format-1 save is a two-player
+ * game, so the table format and seating come from the constructor defaults.
+ */
+function migrateV1ToV2(state: GameState): GameState {
+  const { winner, ...rest } = state as GameState & { winner?: string };
+  if (winner === undefined) return rest as GameState;
+  const result: GameResult = winner === "draw" ? { outcome: "draw", winners: [] } : { outcome: "victory", winners: [winner] };
+  return { ...(rest as GameState), result };
 }
 
 function assertDefinitionsCoverState(state: GameState, definitions: CardDefinition[]): void {
@@ -123,13 +136,13 @@ export interface GameSaveSummary {
   activePlayerId: PlayerId;
   priorityPlayerId: PlayerId;
   mode: GameFlowView["mode"];
-  winner?: GameWinner;
+  result?: GameResult;
   players: Array<{ id: PlayerId; name: string; influence: number }>;
 }
 
 /**
  * A small, JSON-serializable extract of `engine`'s current state — turn
- * number, whose priority it is, the flow `mode`, the winner (once decided),
+ * number, whose priority it is, the flow `mode`, the result (once decided),
  * and each player's name/influence. Meant to live in indexed database
  * columns alongside the opaque `saveGame` blob (e.g. "list this player's
  * in-progress games", "find games awaiting a response from player X")
@@ -143,7 +156,7 @@ export function getSaveSummary(engine: SpoilsEngine): GameSaveSummary {
     activePlayerId: flow.activePlayerId,
     priorityPlayerId: flow.priorityPlayerId,
     mode: flow.mode,
-    winner: flow.winner,
+    result: flow.result,
     players: Object.values(engine.state.players).map(player => ({
       id: player.id,
       name: player.name,

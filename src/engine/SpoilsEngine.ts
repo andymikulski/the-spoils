@@ -75,6 +75,8 @@ import type {
   ResponseContinuation,
   ResponseWindowKind,
   ResponseWindowState,
+  GameResult,
+  PlayerElimination,
   Restriction,
   RuntimeCostReduction,
   RuntimeModifier,
@@ -106,6 +108,7 @@ import { cardTextToPlain } from "../cardText.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
 import { resolveGameFormat } from "./setup.js";
+import { getLoyalty } from "./showdown.js";
 import {
   isLiving,
   isOpponentOf,
@@ -879,9 +882,8 @@ export class SpoilsEngine {
     state.pendingReplacementPick = undefined;
     state.battle = undefined;
     this.endlessLoopFound = false;
-    if (state.winner) return;
-    state.winner = "draw";
-    this.emit({ type: "gameEnded", winnerId: "draw" });
+    if (state.result) return;
+    this.endGame({ outcome: "draw", winners: [] });
   }
 
   private performAndSettle(action: GameAction): void {
@@ -899,6 +901,8 @@ export class SpoilsEngine {
     this.completeTurnEnd();
     // A turn whose start-of-turn triggers waited on a choice finishes starting.
     this.completeTurnStart();
+    // The turn of a player knocked out mid-turn passes once things settle.
+    this.completeEliminatedTurn();
   }
 
   /**
@@ -917,7 +921,7 @@ export class SpoilsEngine {
       !!this.state.pendingChoice ||
       this.responseStack.length > 0;
 
-    if (this.state.winner && !isDraining) return "The game has already ended.";
+    if (this.state.result && !isDraining) return "The game has already ended.";
 
     if (this.state.pendingChoice && actionType !== "resolvePendingChoice") {
       return "A pending choice must be resolved before any other action.";
@@ -1054,7 +1058,7 @@ export class SpoilsEngine {
   getFlowView(): GameFlowView {
     let mode: GameFlowView["mode"] = "main";
 
-    if (this.state.winner) {
+    if (this.state.result) {
       mode = "gameOver";
     } else if (this.state.pendingChoice) {
       mode = "pendingChoice";
@@ -1087,7 +1091,7 @@ export class SpoilsEngine {
         : undefined,
       responseStack: structuredClone(this.state.responseStack),
       battle: battleView,
-      winner: this.state.winner,
+      result: this.state.result,
       pendingChoice: this.state.pendingChoice
         ? structuredClone(this.state.pendingChoice)
         : undefined,
@@ -1274,7 +1278,7 @@ export class SpoilsEngine {
       activePlayerId: this.state.activePlayerId,
       priorityPlayerId: this.state.priorityPlayerId,
       mode: this.getFlowView().mode,
-      ...(this.state.winner !== undefined ? { winner: this.state.winner } : {}),
+      ...(this.state.result !== undefined ? { result: this.state.result } : {}),
       ...(this.state.seatSwap ? { seatsSwapped: true as const } : {}),
       responseStack: this.state.responseStack.map(item => ({
         label: this.logStackItemLabel(item),
@@ -1537,9 +1541,15 @@ export class SpoilsEngine {
         return {
           kind: "turn",
           message:
-            event.winnerId === "draw"
+            event.result.outcome === "draw"
               ? `Game over — a draw`
-              : `Game over — ${this.logPlayerName(event.winnerId)} wins`
+              : `Game over — ${event.result.winners.map(id => this.logPlayerName(id)).join(" and ")} ${event.result.winners.length === 1 ? "wins" : "win"}`
+        };
+
+      case "playerEliminated":
+        return {
+          kind: "turn",
+          message: `${this.logPlayerName(event.playerId)} is out of the game`
         };
 
       case "cardPlayed": {
@@ -17909,7 +17919,7 @@ export class SpoilsEngine {
       // unless an in-play `preventsDefeat` ability shields that faction
       // (Armored Keep — "You do not lose the game because your faction has
       // 0 influence").
-      if (!this.state.winner) {
+      if (!this.state.result) {
         const shielded = new Set<PlayerId>();
         this.forEachActiveContinuous((source, ability) => {
           const rule = ability.preventsDefeat;
@@ -17926,12 +17936,12 @@ export class SpoilsEngine {
         // The loser is the faction's *owner* (CR §102.1), which differs from
         // the player holding it while the seats are swapped — "the owner of
         // the winning deck wins the game" (Emergency Obfuscation).
-        const losers = new Set(
-          Object.values(this.state.players)
-            .filter(player => player.influence <= 0)
-            .map(player => this.factionOwnerId(player))
-            .filter(loserId => !shielded.has(loserId))
-        );
+        const losers = new Map<PlayerId, PlayerElimination["reason"]>();
+        for (const player of Object.values(this.state.players)) {
+          if (player.influence > 0) continue;
+          const loserId = this.factionOwnerId(player);
+          if (!shielded.has(loserId)) losers.set(loserId, "influence");
+        }
 
         // "When a player has no cards in their deck, they lose the game."
         // (Trickster's Globe — overrides CR §102.1a while it is in play.)
@@ -17941,19 +17951,11 @@ export class SpoilsEngine {
         });
         if (emptyDeckLoses) {
           for (const player of Object.values(this.state.players)) {
-            if (player.deck.length === 0) losers.add(player.id);
+            if (player.deck.length === 0 && !losers.has(player.id)) losers.set(player.id, "emptyDeck");
           }
         }
 
-        if (losers.size >= 2) {
-          this.state.winner = "draw";
-        } else if (losers.size === 1) {
-          this.state.winner = this.soleOtherSeat([...losers][0]);
-        }
-
-        if (this.state.winner) {
-          this.emit({ type: "gameEnded", winnerId: this.state.winner });
-        }
+        this.settleDefeats(losers);
       }
     }
   }
@@ -21194,7 +21196,7 @@ export class SpoilsEngine {
     this.finishTurnEndTail();
     if (this.turnWaveBlocked()) return;
     this.state.endingTurnFor = undefined;
-    if (this.state.winner) return;
+    if (this.state.result) return;
     this.passTurn(playerId);
   }
 
@@ -21270,7 +21272,7 @@ export class SpoilsEngine {
     if (!playerId) return;
     if (this.turnWaveBlocked()) return;
     this.state.startingTurnFor = undefined;
-    if (this.state.winner) return;
+    if (this.state.result) return;
 
     // "At the start of your next turn, ..." delayed effects, after the
     // start-of-turn point and the turnStarted trigger wave.
@@ -23999,6 +24001,121 @@ export class SpoilsEngine {
         : `'${context.controllerId}' has ${ids.length} opponents and none is chosen for this rules text.`
     );
     return ids[0];
+  }
+
+  /** Sets the game's result and announces it. */
+  private endGame(result: GameResult): void {
+    this.state.result = result;
+    this.emit({ type: "gameEnded", result });
+  }
+
+  /**
+   * Applies the players who just lost (RULES.md §1; D3): ends the game if
+   * they leave a single player — or, in Showdown, a single side — standing
+   * (a draw if nobody is left), and otherwise eliminates them while the
+   * others play on.
+   */
+  private settleDefeats(losers: ReadonlyMap<PlayerId, PlayerElimination["reason"]>): void {
+    const out = [...losers.keys()].filter(id => isLiving(this.state, id));
+    if (out.length === 0) return;
+    const result = this.resultIfOut(out);
+    if (result) {
+      this.endGame(result);
+      return;
+    }
+    for (const playerId of out) this.eliminatePlayer(playerId, losers.get(playerId)!);
+  }
+
+  /** The game's result if every player in `out` left it now, or `undefined` if it would go on. */
+  private resultIfOut(out: readonly PlayerId[]): GameResult | undefined {
+    const living = livingSeats(this.state).filter(id => !out.includes(id));
+    if (this.state.format.kind === "showdown") {
+      // The Villain's side is the Villain and every Hero secretly loyal to
+      // them; a side wins once the other has no one left (D3), including its
+      // members already knocked out.
+      const villainSide = this.state.turnOrder.filter(id => getLoyalty(this.state, id) === "villain");
+      const heroSide = this.state.turnOrder.filter(id => getLoyalty(this.state, id) === "heroes");
+      const villainLeft = living.includes(this.state.format.villainId);
+      const heroesLeft = heroSide.some(id => living.includes(id));
+      if (!villainLeft && !heroesLeft) return { outcome: "draw", winners: [] };
+      if (!villainLeft) return { outcome: "victory", winners: heroSide };
+      if (!heroesLeft) return { outcome: "victory", winners: villainSide };
+      return undefined;
+    }
+    if (living.length === 0) return { outcome: "draw", winners: [] };
+    if (living.length === 1) return { outcome: "victory", winners: [living[0]] };
+    return undefined;
+  }
+
+  /**
+   * Takes `playerId` out of a game that goes on without them (D8): cards
+   * they control but do not own return to their owners, every card they own
+   * leaves the game, and their actions still on the response stack, their
+   * queued triggers and their delayed effects are dropped. They no longer
+   * respond, take turns or count as anyone's opponent. If it is their turn,
+   * the turn passes once whatever is still resolving settles
+   * (`completeEliminatedTurn`).
+   */
+  private eliminatePlayer(playerId: PlayerId, reason: PlayerElimination["reason"]): void {
+    const player = this.requirePlayer(playerId);
+    player.eliminated = { turn: this.state.turn, reason };
+
+    for (const card of Object.values(this.state.cards)) {
+      if (card.zone === "play" && card.controllerId === playerId && card.ownerId !== playerId) {
+        this.reassignControl(card.id, card.ownerId);
+      }
+    }
+    for (const card of Object.values(this.state.cards)) {
+      if (card.ownerId === playerId && card.zone !== "removed") {
+        this.moveCard(card.id, "removed", false, "bottom", true);
+      }
+    }
+
+    const stack = this.state.responseStack;
+    for (let i = stack.length - 1; i >= 0; i--) {
+      if (stack[i].controllerId === playerId) stack.splice(i, 1);
+    }
+    for (let i = this.immediateQueue.length - 1; i >= 0; i--) {
+      if (this.immediateQueue[i].context.controllerId === playerId) this.immediateQueue.splice(i, 1);
+    }
+    this.state.scheduledEffects = this.state.scheduledEffects.filter(entry => entry.controllerId !== playerId);
+
+    const battle = this.state.battle;
+    if (battle && (battle.attackerPlayerId === playerId || battle.defenderPlayerId === playerId)) {
+      this.state.battle = undefined;
+    }
+
+    const window = this.state.responseWindow;
+    if (window) {
+      window.pendingResponders = window.pendingResponders.filter(id => id !== playerId);
+      if (window.stackResponders) window.stackResponders = window.stackResponders.filter(id => id !== playerId);
+      if (window.priorityPlayerId === playerId) {
+        const next = (stack.length > 0 ? window.stackResponders : window.pendingResponders)?.[0];
+        if (next !== undefined && window.phase === "acceptingResponses") {
+          window.priorityPlayerId = next;
+        } else {
+          window.phase = "resolving";
+          window.priorityPlayerId = this.state.activePlayerId;
+        }
+        this.state.priorityPlayerId = window.priorityPlayerId;
+      }
+    }
+
+    this.emit({ type: "playerEliminated", playerId, reason });
+  }
+
+  /**
+   * Called after every action: an eliminated active player's turn passes to
+   * the next seat once nothing is left resolving — no choice, queued
+   * trigger, response window, stack item or battle.
+   */
+  private completeEliminatedTurn(): void {
+    const activeId = this.state.activePlayerId;
+    if (this.state.result || isLiving(this.state, activeId) || !this.state.started) return;
+    if (this.turnWaveBlocked() || this.state.responseWindow) return;
+    this.state.endingTurnFor = undefined;
+    this.state.startingTurnFor = undefined;
+    this.passTurn(activeId);
   }
 
   /** The one other seat at a table of two living players — for the two-player-only constructs (seat swaps). */

@@ -565,14 +565,14 @@ clause(ARROGANCE, "1:rule", "with 2 influence left it drops to 1 and the game go
   const { engine, id } = buildGame({ playerA: { faction: developFaction(), influence: 2 }, cards: [arrogance()] });
   developResource(engine, P1, id("arr"), false);
   assert.equal(influenceOf(engine, P1), 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(ARROGANCE, "1:rule", "with 1 influence left it drops to 0 and its controller loses the game (CR 102)", () => {
   const { engine, id } = buildGame({ playerA: { faction: developFaction(), influence: 1 }, cards: [arrogance()] });
   developResource(engine, P1, id("arr"), false);
   assert.equal(influenceOf(engine, P1), 0);
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(ARROGANCE, "1:rule", "the loss is an influence loss, not damage: the opponent's faction and characters are untouched, and nothing is dealt to my faction card", () => {
@@ -2260,7 +2260,7 @@ for (const [foes, mine] of [
     assert.equal(micromajigs(engine, P2).length, 0, "and none for the opponent either");
     assert.equal(charactersOf(engine, P1).length, mine, "my characters are untouched");
     assert.equal(engine.state.pendingChoice, undefined);
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
   });
 }
 

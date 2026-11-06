@@ -607,12 +607,12 @@ function etbInfluenceLoss(printingId: string, loss: number): void {
   const exact = etbBoard(printingId, { influence: loss });
   play(exact.engine, P1, exact.id("subject"));
   assert.equal(influence(exact.engine, P1), 0);
-  assert.equal(exact.engine.state.winner, P2, "a faction at 0 influence loses (CR 102)");
+  assert.deepEqual(exact.engine.state.result, { outcome: "victory", winners: [P2] }, "a faction at 0 influence loses (CR 102)");
 
   const spare = etbBoard(printingId, { influence: loss + 1 });
   play(spare.engine, P1, spare.id("subject"));
   assert.equal(influence(spare.engine, P1), 1);
-  assert.equal(spare.engine.state.winner, undefined, "one influence left: still in the game");
+  assert.equal(spare.engine.state.result, undefined, "one influence left: still in the game");
 }
 
 // --- Cash Out ---------------------------------------------------------------
@@ -714,7 +714,7 @@ clause(CASH_OUT, "0:ability", "with fewer than X+1 cards in the deck you draw al
   assert.equal(deckOf(b.engine, P1).length, 0);
   for (const cardId of deck) assert.equal(zoneOf(b.engine, cardId), "hand");
   assert.equal(zoneOf(b.engine, b.id("co")), "discard");
-  assert.equal(b.engine.state.winner, undefined, "running out of cards does not lose the game (CR 102.1a)");
+  assert.equal(b.engine.state.result, undefined, "running out of cards does not lose the game (CR 102.1a)");
 });
 
 clause(CASH_OUT, "0:ability", "the player who plays it is the one who draws: played by the opponent it draws for the opponent", () => {
@@ -2005,7 +2005,7 @@ for (const active of [P1, P2] as const) {
     ftaDrive(b.engine, { draws: { [active]: 2, [opp]: 2 } });
     assert.equal(deckOf(b.engine, active).length, 0);
     assert.equal(deckOf(b.engine, opp).length, 4);
-    assert.equal(b.engine.state.winner, undefined);
+    assert.equal(b.engine.state.result, undefined);
   });
 
   // OPTION 4 -- Both players may play up to 2 resources.
@@ -2325,7 +2325,7 @@ clause(AUDITOR, "1:rule", "with only one card left in the deck it draws that car
   fight(b.engine, P1, [b.id("ga")], { type: "faction", playerId: P2 }, []);
   assert.equal(handOf(b.engine, P1).length, 1);
   assert.equal(deckOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(AUDITOR, "1:rule", "an opponent's Auditor that hits my faction draws for the opponent, not for me", () => {
@@ -2596,7 +2596,7 @@ clause(INDEX, "0:ability:capitalize", "with an empty deck the cost is still paid
   assert.equal(before - ready(b.engine), 1);
   assert.equal(isDepleted(b.engine, b.id("idx")), true);
   assert.equal(handOf(b.engine, P1).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(INDEX, "0:ability:capitalize", "a face-down Index is just a resource and has no CAPITALIZE", () => {
@@ -3691,7 +3691,7 @@ clause(CONSULTANT, "0:rule", "with an empty deck nothing is drawn but the 2 infl
   const b = etbBoard(CONSULTANT, { deck: 0 });
   play(b.engine, P1, b.id("subject"));
   assert.equal(influence(b.engine, P1), 18);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 clause(CONSULTANT, "0:rule", "with exactly 2 influence you hit 0 and lose; with 3 you survive on 1", () => etbInfluenceLoss(CONSULTANT, 2));
 clause(CONSULTANT, "0:rule", "is refused one resource short of 4, and without [G]", () => {
@@ -3749,7 +3749,7 @@ clause(BUTLER, "0:rule", "it gains from any influence total, including a faction
   const b = etbBoard(BUTLER, { influence: 1 });
   play(b.engine, P1, b.id("subject"));
   assert.equal(influence(b.engine, P1), 5);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 clause(BUTLER, "0:rule", "is refused one resource short of 5, and without [G][G]", () => {
   const short = etbBoard(BUTLER, { greed: 4 });
@@ -4454,7 +4454,7 @@ clause(PYRAMID, "0:ability", "with a deck too short for X it draws what is left"
   play(win.engine, P1, win.id("ps"));
   assert.equal(deckOf(win.engine, P1).length, 0);
   assert.equal(handOf(win.engine, P1).length, 1 + 2);
-  assert.equal(win.engine.state.winner, undefined);
+  assert.equal(win.engine.state.result, undefined);
   const lose = pyramidBoard({ random: LOSE, deck: 1 });
   play(lose.engine, P1, lose.id("ps"));
   assert.equal(deckOf(lose.engine, P1).length, 0);
@@ -4537,7 +4537,7 @@ clause(RATE_HIKE, "0:rule", "with an empty deck the influence is still gained", 
   const b = rateHikeBoard({ deck: 0 });
   play(b.engine, P1, b.id("rh"));
   assert.equal(influence(b.engine, P1), 22);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(RATE_HIKE, "0:rule", "it works for the opponent too: played by P2 it gains P2's faction 2 and draws for P2", () => {
@@ -4706,7 +4706,7 @@ clause(RED_TAPE, "0:ability", "with an empty deck the strength is still lost and
   const b = redTapeBoard({ deck: 0 });
   tapePlay(b, "foe");
   assert.equal(b.engine.getStat(b.id("foe"), "strength"), 3);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(RED_TAPE, "0:ability", "pays the printed cost of 2 and needs [G][G]", () => {

@@ -182,7 +182,7 @@ clause(ANATHEMATIZE, "0:ability", "with an empty deck you simply fail to draw (C
   const { engine, id } = anathematizeBoard({ deck: 0 });
   play(engine, P1, id("an"), { selected: { c: [id("foe")] } });
   assert.equal(engine.getStat(id("foe"), "strength"), 2);
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 for (const [base, expected] of [
@@ -733,7 +733,7 @@ clause(BRAINBATH, "0:rule", "with only 1 card in the deck it draws that card (CR
 clause(BRAINBATH, "0:rule", "with an empty deck it draws nothing, and you still put a card from your hand on the (empty) deck", () => {
   const { engine, id } = brainbathBoard({ deck: 0 });
   play(engine, P1, id("bb"));
-  assert.equal(engine.state.winner, undefined, "no loss for an empty deck");
+  assert.equal(engine.state.result, undefined, "no loss for an empty deck");
   drainPicking(engine, [id("h0")]);
   assert.deepEqual(deckOf(engine, P1), [id("h0")]);
 });
@@ -859,7 +859,7 @@ clause(BRAINBATH, "1:ability:recur", "with an empty deck the opponent still disc
   resolvePendingResponses(engine);
   answerBy(engine, "chooserSelectsTarget", P2, { selected: [id("oh0")] });
   assert.equal(zoneOf(engine, id("oh0")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(BRAINBATH, "1:ability:recur", "can only be used when Brainbath is in your discard pile: from the hand, the deck, in play or already removed it is refused", () => {
@@ -4964,7 +4964,7 @@ clause(KNOWLEDGE, "0:rule", "with an empty deck I simply fail to draw (CR 306.2)
   const handBefore = handOf(engine, P1).length;
   play(engine, P1, id("fk"));
   assert.equal(handOf(engine, P1).length, handBefore - 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(zoneOf(engine, id("fk")), "discard");
 });
 
@@ -6328,7 +6328,7 @@ clause(INHIBIT, "0:ability", "with an empty deck I fail to draw (CR 306.2) but t
   });
   inhibit(engine, id, id("theirs"));
   assert.equal(engine.getStat(id("theirs"), "strength"), 2);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(INHIBIT, "0:ability", "is refused with no resources at all, allowed with exactly 1 [O]", () => {
@@ -6599,7 +6599,7 @@ clause(RELIQUARY, "0:ability:imbibe", "with a 1-card deck that is a tactic I can
   drain(none.engine, (pc) => (pc.kind === "reorderDeck" ? { kind: "reorderDeck", order: [] } : declineAll(pc)));
   assert.equal(none.engine.state.pendingChoice, undefined);
   assert.equal(none.engine.state.cards[none.id("rq")].depleted, true, "the cost was still paid");
-  assert.equal(none.engine.state.winner, undefined);
+  assert.equal(none.engine.state.result, undefined);
 });
 
 clause(RELIQUARY, "0:ability:imbibe", "the tactic is chosen when the effect resolves, after looking at the top 3 (the player is asked then), not named in advance when the ability is activated", () => {

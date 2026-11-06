@@ -48,14 +48,14 @@ describe("CR 101 — the most important rule", () => {
     });
     playAndResolve(withShield.engine, withShield.id, "ping");
     assert.equal(withShield.engine.state.players[P2].influence, 0, "the faction is at 0 influence");
-    assert.equal(withShield.engine.state.winner, undefined, "the card takes precedence over the rule that 0 influence loses");
+    assert.equal(withShield.engine.state.result, undefined, "the card takes precedence over the rule that 0 influence loses");
 
     const control = buildGame({
       playerB: { influence: 1 },
       cards: [{ key: "ping", def: pingOpponent("Ping", 1), owner: P1, zone: "hand" }]
     });
     playAndResolve(control.engine, control.id, "ping");
-    assert.equal(control.engine.state.winner, P1, "control: with no such card the same board ends the game");
+    assert.deepEqual(control.engine.state.result, { outcome: "victory", winners: [P1] }, "control: with no such card the same board ends the game");
   });
 
   rule("CR 101.1", "a card's text overrides CR 102.1a: with a card that says an empty deck loses, the player with no cards in their deck loses (control: no loss without it)", () => {
@@ -73,7 +73,7 @@ describe("CR 101 — the most important rule", () => {
     });
     // Both decks hold a card: nobody has run out, so the game goes on.
     playAndResolve(withGlobe.engine, withGlobe.id, "ping");
-    assert.equal(withGlobe.engine.state.winner, undefined, "no player has an empty deck");
+    assert.equal(withGlobe.engine.state.result, undefined, "no player has an empty deck");
 
     const empty = buildGame({
       cards: [
@@ -84,7 +84,7 @@ describe("CR 101 — the most important rule", () => {
     });
     playAndResolve(empty.engine, empty.id, "ping");
     assert.equal(empty.engine.state.players[P2].deck.length, 0, "the opponent has no cards in their deck");
-    assert.equal(empty.engine.state.winner, P1, "the card says the player with an empty deck loses");
+    assert.deepEqual(empty.engine.state.result, { outcome: "victory", winners: [P1] }, "the card says the player with an empty deck loses");
 
     const control = buildGame({
       cards: [
@@ -93,7 +93,7 @@ describe("CR 101 — the most important rule", () => {
       ]
     });
     playAndResolve(control.engine, control.id, "ping");
-    assert.equal(control.engine.state.winner, undefined, "control: without the card an empty deck does not lose (CR 102.1a)");
+    assert.equal(control.engine.state.result, undefined, "control: without the card an empty deck does not lose (CR 102.1a)");
   });
 
   rule("CR 101.1", "a card's text overrides the rule that any number of characters may attack together: Hangdog Alley limits an attacking party to 1 member (control: 2 attackers without it)", () => {
@@ -152,7 +152,7 @@ describe("CR 102 — object of the game", () => {
     });
     playAndResolve(engine, id, "ping");
     assert.equal(engine.state.players[P2].influence, 0, "influence is 0");
-    assert.equal(engine.state.winner, P1, "the owner of the 0-influence faction lost");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the owner of the 0-influence faction lost");
     assert.equal(engine.state.activePlayerId, P1, "the game ended right away, not at the end of the turn");
     assert.equal(engine.state.turn, 1, "no turn passed");
   });
@@ -167,10 +167,10 @@ describe("CR 102 — object of the game", () => {
     });
     playAndResolve(engine, id, "one");
     assert.equal(engine.state.players[P2].influence, 1);
-    assert.equal(engine.state.winner, undefined, "1 influence left: still in the game");
+    assert.equal(engine.state.result, undefined, "1 influence left: still in the game");
     playAndResolve(engine, id, "two");
     assert.equal(engine.state.players[P2].influence, 0);
-    assert.equal(engine.state.winner, P1, "0 influence: lost");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "0 influence: lost");
   });
 
   rule("CR 102.1", "the loser is the owner of the 0-influence faction, whoever caused it: a player who reduces their own faction to 0 loses", () => {
@@ -181,7 +181,7 @@ describe("CR 102 — object of the game", () => {
     });
     playAndResolve(engine, id, "harm");
     assert.equal(engine.state.players[P1].influence, 0);
-    assert.equal(engine.state.winner, P2, "the opponent of the player who hit 0 wins");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the opponent of the player who hit 0 wins");
   });
 
   rule("CR 102.1", "influence lost as a COST also ends the game when it reaches 0", () => {
@@ -195,7 +195,7 @@ describe("CR 102 — object of the game", () => {
     });
     playAndResolve(engine, id, "costly");
     assert.equal(engine.state.players[P1].influence, 0);
-    assert.equal(engine.state.winner, P2, "paying the last of your influence loses the game");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "paying the last of your influence loses the game");
   });
 
   rule("CR 102.1", "reducing the opponent's faction to 0 in battle wins the game; no further actions are accepted", () => {
@@ -226,7 +226,7 @@ describe("CR 102 — object of the game", () => {
       }
     }
     assert.equal(engine.state.players[P2].influence, 0);
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
     refused(() => engine.perform({ type: "endTurn", playerId: P1 }), "acting after the game has ended", /game|over|ended|winner/i);
   });
 
@@ -241,7 +241,7 @@ describe("CR 102 — object of the game", () => {
     playAndResolve(engine, id, "draw");
     assert.equal(engine.state.players[P1].deck.length, 0, "the deck ran out mid-draw");
     assert.equal(engine.state.cards[id("only")]!.zone, "hand", "the one card that was there was drawn");
-    assert.equal(engine.state.winner, undefined, "running out of cards is not a loss");
+    assert.equal(engine.state.result, undefined, "running out of cards is not a loss");
   });
 
   rule("CR 102.1a", "you simply cannot draw any more: with an empty deck a draw effect puts nothing in hand and the game continues", () => {
@@ -250,7 +250,7 @@ describe("CR 102 — object of the game", () => {
     const handBefore = engine.state.players[P1].hand.length;
     playAndResolve(engine, id, "draw");
     assert.equal(engine.state.players[P1].hand.length, handBefore - 1, "the tactic left the hand and nothing came in");
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
     assert.equal(engine.state.activePlayerId, P2, "play continues into the next turn");
@@ -274,7 +274,7 @@ describe("CR 102 — object of the game", () => {
     playAndResolve(engine, id, "mutual");
     assert.equal(engine.state.players[P1].influence, 0);
     assert.equal(engine.state.players[P2].influence, 0);
-    assert.equal(engine.state.winner, "draw", "both factions hit 0 together: a draw, not a win for either");
+    assert.deepEqual(engine.state.result, { outcome: "draw", winners: [] }, "both factions hit 0 together: a draw, not a win for either");
   });
 
   rule("CR 102.2", "a draw needs both to lose: when only one of the two reaches 0 the other wins (control)", () => {
@@ -285,7 +285,7 @@ describe("CR 102 — object of the game", () => {
     });
     playAndResolve(engine, id, "mutual");
     assert.equal(engine.state.players[P1].influence, 1);
-    assert.equal(engine.state.winner, P1, "only the opponent reached 0");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "only the opponent reached 0");
   });
 
   rule("CR 102.2", "a faction already at 0 that is shielded does not stop the other from losing: only the unshielded player loses (not a draw)", () => {
@@ -302,7 +302,7 @@ describe("CR 102 — object of the game", () => {
       ]
     });
     playAndResolve(engine, id, "mutual");
-    assert.equal(engine.state.winner, P1, "P2 lost alone, so P1 wins rather than a draw");
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "P2 lost alone, so P1 wins rather than a draw");
   });
 
   ruleOpen(
@@ -320,7 +320,7 @@ describe("CR 102 — object of the game", () => {
         cards: [{ key: "mutual", def: mutual, owner: P1, zone: "hand" }]
       });
       playAndResolve(engine, id, "mutual");
-      assert.equal(engine.state.winner, "draw", "both factions reached 0 within one resolving instruction");
+      assert.deepEqual(engine.state.result, { outcome: "draw", winners: [] }, "both factions reached 0 within one resolving instruction");
     }
   );
 });

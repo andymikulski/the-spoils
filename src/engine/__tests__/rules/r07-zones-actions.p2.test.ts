@@ -74,7 +74,7 @@ describe("CR 306 — draw", () => {
     assert.equal(engine.state.players[P1].deck.length, 0, "the deck is empty");
     assert.equal(engine.state.players[P1].hand.length, handBefore + 2, "only the two cards that existed were drawn");
     assert.ok(engine.state.players[P1].hand.includes(id("d0")) && engine.state.players[P1].hand.includes(id("d1")), "both are in hand");
-    assert.equal(engine.state.winner, undefined, "the game is still on");
+    assert.equal(engine.state.result, undefined, "the game is still on");
   });
 
   rule("CR 306.2", "drawing from an empty deck draws nothing, does not lose, and the player can keep acting", () => {
@@ -88,7 +88,7 @@ describe("CR 306 — draw", () => {
     const hand = engine.state.players[P1].hand.length;
     cast(built, "draw");
     assert.equal(engine.state.players[P1].hand.length, hand - 1, "nothing was drawn");
-    assert.equal(engine.state.winner, undefined, "no loss for running out of cards");
+    assert.equal(engine.state.result, undefined, "no loss for running out of cards");
     cast(built, "next");
     assert.equal(zone(engine, built.id("next")), "discard", "the player could keep playing");
   });
@@ -97,7 +97,7 @@ describe("CR 306 — draw", () => {
     const built = buildGame({ cards: [{ key: "draw", def: spell("Draw2", [{ type: "draw", player: "controller", amount: 2 }]), owner: P1, zone: "hand" }, ...deckOf(2)] });
     cast(built, "draw");
     assert.equal(built.engine.state.players[P1].deck.length, 0);
-    assert.equal(built.engine.state.winner, undefined);
+    assert.equal(built.engine.state.result, undefined);
     assert.equal(events(built.engine, "cardsDrawn").length, 1);
   });
 
@@ -161,14 +161,14 @@ describe("CR 306 — draw", () => {
     cast(built, "m");
     assert.equal(built.engine.state.players[P1].influence, 0);
     assert.equal(built.engine.state.players[P2].influence, 0);
-    assert.equal(built.engine.state.winner, "draw", "no winner: the game is a draw");
+    assert.deepEqual(built.engine.state.result, { outcome: "draw", winners: [] }, "no winner: the game is a draw");
   });
 
   rule("CR 306.4", "only one faction reaching 0 is a win for the other player, not a draw (control)", () => {
     const strike = spell("Strike", [{ type: "dealDamage", target: { type: "factionOf", player: "opponent" }, amount: 25 }]);
     const built = buildGame({ cards: [{ key: "s", def: strike, owner: P1, zone: "hand" }] });
     cast(built, "s");
-    assert.equal(built.engine.state.winner, P1, "P1 wins");
+    assert.deepEqual(built.engine.state.result, { outcome: "victory", winners: [P1] }, "P1 wins");
   });
 });
 

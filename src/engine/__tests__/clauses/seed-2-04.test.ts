@@ -4092,7 +4092,7 @@ clause(SANITIZE, "1:flipUp", "'draw a card' with an empty deck: there is nothing
   resolvePendingResponses(g.engine);
   assert.equal(handOf(g.engine, P1).length, handBefore);
   assert.equal(isFaceDown(g.engine, g.id("fi")), true);
-  assert.equal(g.engine.state.winner, undefined, "no one lost");
+  assert.equal(g.engine.state.result, undefined, "no one lost");
 });
 
 clause(SANITIZE, "1:flipUp", "a tactic's FLIP UP can be done whenever a tactic could be played: in response on the opponent's turn it works, outside a response window it does not", () => {
@@ -7955,7 +7955,7 @@ clause(BASTARD, "0:rule", "with an empty deck there is nothing to draw: no card,
   play(g.engine, P1, g.id("lb"));
   assert.equal(zoneOf(g.engine, g.id("lb")), "play");
   assert.equal(handOf(g.engine, P1).length, handBefore - 1);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(BASTARD, "0:rule", "its printed stats are 3 strength / 4 speed / 4 life", () => {

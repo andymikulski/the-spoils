@@ -222,7 +222,7 @@ describe("getSaveSummary", () => {
     assert.equal(summary.activePlayerId, P1);
     assert.equal(summary.priorityPlayerId, P1);
     assert.equal(summary.mode, "main");
-    assert.equal(summary.winner, undefined);
+    assert.equal(summary.result, undefined);
     assert.deepEqual(
       summary.players.sort((a, b) => a.id.localeCompare(b.id)),
       [

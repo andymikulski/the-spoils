@@ -78,6 +78,6 @@ describe("E10g engine capabilities", () => {
   test("repeatWhile loop guard: a condition that never becomes false ends the game as a draw instead of hanging (CR 414.1)", () => {
     const { engine, id } = board([{ type: "repeatWhile", condition: { type: "numberCompare", left: 1, operator: ">", right: 0 }, effects: [], maxPasses: 5 } as never], { hand: 0, deck: 0 });
     activate(engine, P1, id("src"), "go");
-    assert.equal(engine.state.winner, "draw");
+    assert.deepEqual(engine.state.result, { outcome: "draw", winners: [] });
   });
 });

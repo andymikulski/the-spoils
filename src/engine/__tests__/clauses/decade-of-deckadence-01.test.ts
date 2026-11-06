@@ -2370,7 +2370,7 @@ clause(BRAINBATH, "0:rule", "short decks: with 1 card it draws that card and sti
   assert.deepEqual(deckOf(one.engine, P1), [one.id("h0")]);
   const none = bathBoard({ deck: 0 });
   play(none.engine, P1, none.id("bb"));
-  assert.equal(none.engine.state.winner, undefined, "no loss for an empty deck");
+  assert.equal(none.engine.state.result, undefined, "no loss for an empty deck");
   drainPicking(none.engine, [none.id("h0")]);
   assert.deepEqual(deckOf(none.engine, P1), [none.id("h0")]);
   const bare = bathBoard({ deck: 0, hand: 0 });
@@ -2440,7 +2440,7 @@ clause(BRAINBATH, "1:ability:recur", "if the opponent has no cards in hand they 
   resolvePendingResponses(noDeck.engine);
   answerPending(noDeck.engine, "chooserSelectsTarget", { selected: [noDeck.id("oh0")] });
   assert.equal(zoneOf(noDeck.engine, noDeck.id("oh0")), "discard");
-  assert.equal(noDeck.engine.state.winner, undefined);
+  assert.equal(noDeck.engine.state.result, undefined);
 });
 
 clause(BRAINBATH, "1:ability:recur", "it draws exactly one and does not put a card back: my hand is otherwise left alone", () => {

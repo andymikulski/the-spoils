@@ -1906,7 +1906,7 @@ clause(BALTH, "1:ability:schmooze", "with an empty deck it still depletes, draws
   activate(game.engine, P1, game.id("b"), "schmooze");
   assert.equal(game.engine.state.cards[game.id("b")].depleted, true);
   assert.equal(handOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(BALTH, "1:ability:schmooze", "draws for its controller only: the opponent's hand and deck are untouched", () => {
@@ -3113,7 +3113,7 @@ clause(HIJACK, "1:ability:retreat", "with an empty deck it still destroys the Hi
   activate(game.engine, P1, game.id("hj"), "retreat");
   assert.equal(zoneOf(game.engine, game.id("hj")), "discard");
   assert.equal(handOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(HIJACK, "1:ability:retreat", "draws for its controller only and exactly one card", () => {
@@ -3266,21 +3266,21 @@ clause(USURY, "0:ability", "a faction cannot lose more influence than it has: fr
   finishUsury(game, ["foe"]);
   assert.equal(zoneOf(game.engine, game.id("foe")), "discard");
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(USURY, "0:ability", "from exactly 3 influence the loss brings it to 0 and I lose the game", () => {
   const game = usuryBoard({ influence: 3 });
   finishUsury(game, ["foe"]);
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(USURY, "0:ability", "from 4 influence I am left on 1 and the game goes on", () => {
   const game = usuryBoard({ influence: 4 });
   finishUsury(game, ["foe"]);
   assert.equal(influenceOf(game.engine, P1), 1);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(USURY, "0:ability", "'your faction' is the caster's: when the opponent casts their own Usury, THEIR faction loses 3", () => {
@@ -3523,21 +3523,21 @@ clause(WARDEN, "0:rule", "with exactly 2 influence left, the loss brings it to 0
   const game = wardenBoard({ influence: 2 });
   play(game.engine, P1, game.id("dw"));
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(WARDEN, "0:rule", "with 3 influence left it goes to 1 and the game goes on", () => {
   const game = wardenBoard({ influence: 3 });
   play(game.engine, P1, game.id("dw"));
   assert.equal(influenceOf(game.engine, P1), 1);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(WARDEN, "0:rule", "with only 1 influence left the loss stops at 0 (not -1) and I lose the game", () => {
   const game = wardenBoard({ influence: 1 });
   play(game.engine, P1, game.id("dw"));
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 // =============================================================================
@@ -4274,14 +4274,14 @@ clause(ISLAND, "0:rule", "with only 2 cards in the deck it draws those 2 and I d
   play(game.engine, P1, game.id("isl"));
   assert.equal(handOf(game.engine, P1).length, 2);
   assert.equal(deckOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(ISLAND, "0:rule", "with an empty deck it draws nothing and I do not lose", () => {
   const game = islandBoard({ deck: 0 });
   play(game.engine, P1, game.id("isl"));
   assert.equal(handOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
   assert.equal(zoneOf(game.engine, game.id("isl")), "discard");
 });
 
@@ -4420,7 +4420,7 @@ clause(ISLAND, "1:ability:recur", "with an empty deck it still removes the Islan
   resolvePendingResponses(game.engine);
   assert.equal(zoneOf(game.engine, game.id("isl")), "removed");
   assert.equal(handOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(ISLAND, "1:ability:recur", "it is an ability, usable at any time I could use one: on my own turn with no response window open and in response on the opponent's turn", () => {
@@ -4596,7 +4596,7 @@ clause(ESSENCE, "1:option:OPTION 1", "with an empty deck it draws nothing and I 
   const game = essenceBoard({ deck: 0 });
   finishEssence(game, 0);
   assert.equal(handOf(game.engine, P1).length, 0);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
   assert.equal(zoneOf(game.engine, game.id("es")), "discard");
 });
 
@@ -4908,14 +4908,14 @@ clause(EXPLOIT, "1:rule", "with exactly 1 influence left the loss brings it to 0
   const game = exploitBoard({ zone: "hand", influence: 1 });
   developResource(game.engine, P1, game.id("ex"), false);
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(EXPLOIT, "1:rule", "with 2 influence left it goes to 1 and the game goes on", () => {
   const game = exploitBoard({ zone: "hand", influence: 2 });
   developResource(game.engine, P1, game.id("ex"), false);
   assert.equal(influenceOf(game.engine, P1), 1);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(EXPLOIT, "1:rule", "played by a faction ability that plays a resource (not the Develop Rule) it still costs exactly 1 influence, not 2", () => {
@@ -6230,14 +6230,14 @@ clause(FRISKY, "0:rule", "with exactly 2 influence left the loss brings it to 0 
   const game = friskyBoard({ influence: 2 });
   play(game.engine, P1, game.id("fh"));
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(FRISKY, "0:rule", "with only 1 influence left the loss stops at 0 (not -1) and I lose the game", () => {
   const game = friskyBoard({ influence: 1 });
   play(game.engine, P1, game.id("fh"));
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 // --- When this card leaves play, your faction gains 4 influence ---------------------

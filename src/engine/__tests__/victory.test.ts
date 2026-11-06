@@ -21,8 +21,8 @@ describe("RULES.md §1 — victory", () => {
     autoResolveBattle(engine);
 
     assert.equal(engine.state.players[P2].influence, 0);
-    assert.equal(engine.state.winner, P1);
-    assert.equal(engine.getFlowView().winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
+    assert.deepEqual(engine.getFlowView().result, { outcome: "victory", winners: [P1] });
     assert.equal(engine.getFlowView().mode, "gameOver");
   });
 
@@ -43,7 +43,7 @@ describe("RULES.md §1 — victory", () => {
     autoResolveBattle(engine);
 
     assert.ok(engine.state.players[P2].influence <= 0, "engine.state.players[P2].influence <= 0");
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
   });
 
   test("no further actions can be performed once the game has ended", () => {
@@ -80,7 +80,7 @@ describe("RULES.md §1 — victory", () => {
       settleTurnStart(engine, "draw");
     }
 
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
     assert.equal(engine.getFlowView().mode, "main");
   });
 
@@ -100,6 +100,6 @@ describe("RULES.md §1 — victory", () => {
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("noop"), abilityId: "noop" });
     resolvePendingResponses(engine);
 
-    assert.equal(engine.state.winner, "draw");
+    assert.deepEqual(engine.state.result, { outcome: "draw", winners: [] });
   });
 });

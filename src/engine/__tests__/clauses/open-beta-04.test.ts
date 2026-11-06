@@ -239,7 +239,7 @@ clause(HANDSHAKE, "0:ability", "with an empty deck the life is still gained and 
   play(engine, P1, id("sh"), { selected: { c: [id("mine")] } });
   assert.equal(engine.getStat(id("mine"), "life"), 7);
   assert.equal(handOf(engine, P1).length, handBefore - 1, "no card to draw");
-  assert.equal(engine.state.winner, undefined, "the game goes on");
+  assert.equal(engine.state.result, undefined, "the game goes on");
 });
 
 clause(HANDSHAKE, "0:ability", "is refused one resource short of its cost of 2, and without [G] even with plenty of other resources", () => {
@@ -405,7 +405,7 @@ clause(GLUTTONY, "0:rule", "a deck of exactly 10 cards is drawn out completely (
   assert.equal(handOf(engine, P1).length, 10);
   pickCards(engine, P1, handOf(engine, P1).slice(0, 9));
   assert.equal(handOf(engine, P1).length, 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GLUTTONY, "0:rule", "a deck of 4 cards: only 4 are drawn, and then 9 cards are discarded only as far as the hand allows (2 + 4 = 6 cards, all discarded)", () => {
@@ -969,7 +969,7 @@ clause(JUDGMENT, "0:ability", "a deck with fewer than X cards: I draw what is th
   answerChoice(engine, "mayPay", P2, { pay: false });
   assert.equal(handOf(engine, P1).length, handBefore - 1 + 2);
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(JUDGMENT, "0:ability", "YOUR OPPONENT makes the pick, not me: the choice belongs to the opponent and I cannot answer it", () => {
@@ -1261,12 +1261,12 @@ clause(ATTORNEY, "0:rule", "it can save a faction: at 3 influence a 3-influence 
   const withAttorney = attorneyBoard({ influence: 3, extra: [{ key: "bleed3", def: bleedTactic("Bleed3", 3, "controller"), owner: P1, zone: "hand" }] });
   play(withAttorney.engine, P1, withAttorney.id("bleed3"), {});
   assert.equal(influenceOf(withAttorney.engine, P1), 1);
-  assert.equal(withAttorney.engine.state.winner, undefined, "still in the game");
+  assert.equal(withAttorney.engine.state.result, undefined, "still in the game");
 
   const without = attorneyBoard({ influence: 3, attorneyZone: "hand", extra: [{ key: "bleed3", def: bleedTactic("Bleed3", 3, "controller"), owner: P1, zone: "hand" }] });
   play(without.engine, P1, without.id("bleed3"), {});
   assert.equal(influenceOf(without.engine, P1), 0);
-  assert.equal(without.engine.state.winner, P2, "control: with no Attorney the same loss is lethal");
+  assert.deepEqual(without.engine.state.result, { outcome: "victory", winners: [P2] }, "control: with no Attorney the same loss is lethal");
 });
 
 clause(ATTORNEY, "0:rule", "influence my faction loses as an ability COST ('your faction loses N influence') is a loss too, so it is reduced by 1", () => {

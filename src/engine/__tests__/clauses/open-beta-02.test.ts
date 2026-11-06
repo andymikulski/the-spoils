@@ -2243,7 +2243,7 @@ clause(OBSERVATORY, "2:ability:voidal-observatory-study", "with an empty deck th
   activate(engine, P1, id("loc"), STUDY_OBS);
   assert.equal(tokens(engine, id("loc")), 0);
   assert.equal(handOf(engine, P1).length, handBefore);
-  assert.equal(engine.state.winner ?? null, null, "running out of cards does not lose the game");
+  assert.equal(engine.state.result ?? null, null, "running out of cards does not lose the game");
 });
 
 clause(OBSERVATORY, "2:ability:voidal-observatory-study", "its CONTROLLER draws: an Observatory the opponent controls draws for them, not for its owner", () => {
@@ -2441,7 +2441,7 @@ clause(PERVERSION, "0:ability", "with an empty deck the tokens are still placed 
   distribute(engine, id, { c1: 2 });
   assert.equal(tokens(engine, id("c1")), 2);
   assert.equal(handOf(engine, P1).length, handBefore - 1, "only the tactic left the hand");
-  assert.equal(engine.state.winner ?? null, null);
+  assert.equal(engine.state.result ?? null, null);
 });
 
 clause(PERVERSION, "0:ability", "you draw, the opponent does not", () => {
@@ -2750,7 +2750,7 @@ clause(POISONING, "2:rule", "2 TOKENS: with an empty deck the tokens are spent a
   castPoisoning(engine, id);
   spend(engine, id, DRAW, 2, ["k1", "k1"]);
   assert.equal(handOf(engine, P1).length, handBefore - 1);
-  assert.equal(engine.state.winner ?? null, null);
+  assert.equal(engine.state.result ?? null, null);
 });
 
 // --- 3:rule: 2 TOKENS - Your opponent must discard a card.
@@ -3930,7 +3930,7 @@ const poke = (engine: SpoilsEngine, id: Ids) => play(engine, P1, id("widget"));
 clause(KEEP, "2:rule", "with a Keep in play you do not lose at 0 influence: the game goes on and you can keep acting", () => {
   const { engine, id } = keepBoard({ keep: "play", p1Influence: 0 });
   poke(engine, id);
-  assert.equal(engine.state.winner ?? null, null, "no winner");
+  assert.equal(engine.state.result ?? null, null, "no winner");
   assert.equal(engine.state.players[P1].influence, 0);
   play(engine, P1, id("widget2"));
   assert.equal(zoneOf(engine, id("widget2")), "play", "you can still act");
@@ -3939,7 +3939,7 @@ clause(KEEP, "2:rule", "with a Keep in play you do not lose at 0 influence: the 
 clause(KEEP, "2:rule", "control: without the Keep you lose at 0 influence", () => {
   const { engine, id } = keepBoard({ keep: "hand", p1Influence: 0 });
   poke(engine, id);
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(KEEP, "2:rule", "the protection ends when the Keep leaves play: at 0 influence, destroying the Keep loses you the game", () => {
@@ -3950,10 +3950,10 @@ clause(KEEP, "2:rule", "the protection ends when the Keep leaves play: at 0 infl
   });
   const { engine, id } = keepBoard({ keep: "play", p1Influence: 0, extra: [{ key: "raze", def: raze, owner: P1, zone: "hand" }] });
   poke(engine, id);
-  assert.equal(engine.state.winner ?? null, null, "protected while the Keep stands");
+  assert.equal(engine.state.result ?? null, null, "protected while the Keep stands");
   play(engine, P1, id("raze"), { selected: { t: [id("keep")] } });
   assert.equal(zoneOf(engine, id("keep")), "discard");
-  assert.equal(engine.state.winner, P2, "no Keep, 0 influence: you lose");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "no Keep, 0 influence: you lose");
 });
 
 clause(KEEP, "2:rule", "the protection starts when the Keep enters play: a faction already at 0 influence is only saved once the Keep is in play", () => {
@@ -3964,25 +3964,25 @@ clause(KEEP, "2:rule", "the protection starts when the Keep enters play: a facti
   assert.equal(zoneOf(engine, id("keep")), "play");
   engine.state.players[P1].influence = 0;
   poke(engine, id);
-  assert.equal(engine.state.winner ?? null, null, "at 0 influence with the Keep in play you stay in the game");
+  assert.equal(engine.state.result ?? null, null, "at 0 influence with the Keep in play you stay in the game");
 });
 
 clause(KEEP, "2:rule", "the Keep protects ITS CONTROLLER only: the opponent's faction at 0 influence still loses, even while you control a Keep", () => {
   const { engine, id } = keepBoard({ keep: "play", p2Influence: 0 });
   poke(engine, id);
-  assert.equal(engine.state.winner, P1, "the opponent (no Keep) loses at 0 influence");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the opponent (no Keep) loses at 0 influence");
 });
 
 clause(KEEP, "2:rule", "both factions at 0 influence but only you have a Keep: the opponent loses and you win (not a draw)", () => {
   const { engine, id } = keepBoard({ keep: "play", p1Influence: 0, p2Influence: 0 });
   poke(engine, id);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(KEEP, "2:rule", "a Keep controlled by the opponent protects them, not its owner: the owner at 0 influence loses", () => {
   const { engine, id } = keepBoard({ keep: "play", keepController: P2, p1Influence: 0 });
   poke(engine, id);
-  assert.equal(engine.state.winner, P2, "P1 owns the Keep but P2 controls it, so P1 is unprotected");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "P1 owns the Keep but P2 controls it, so P1 is unprotected");
 });
 
 clause(KEEP, "2:rule", "damage that takes your faction to 0 influence does not lose you the game while you control the Keep (and does lose it without)", () => {
@@ -4004,8 +4004,8 @@ clause(KEEP, "2:rule", "damage that takes your faction to 0 influence does not l
     engine.perform({ type: "declareBlockers", playerId: P1, blockerIds: [] });
     autoResolveBattle(engine);
     assert.ok(engine.state.players[P1].influence <= 0, "the attack took the faction to 0");
-    if (withKeep) assert.equal(engine.state.winner ?? null, null, "Keep: still in the game");
-    else assert.equal(engine.state.winner, P2, "no Keep: lost");
+    if (withKeep) assert.equal(engine.state.result ?? null, null, "Keep: still in the game");
+    else assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "no Keep: lost");
   }
 });
 
@@ -4222,7 +4222,7 @@ clause(BEATRIX, "1:rule", "a deck with fewer cards than the increased amount: yo
   developDraw(engine, P1);
   assert.equal(handOf(engine, P1).length, hand + 1, "only one card was available");
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner ?? null, null);
+  assert.equal(engine.state.result ?? null, null);
 });
 
 // --- 2:rule: the 10-card hand cap
@@ -4405,18 +4405,18 @@ clause(BUTCHER, "0:rule", "a faction left at 0 influence loses the game: with 3 
   const three = butcherBoard({ influence: 3 });
   play(three.engine, P1, three.id("bb"));
   assert.equal(three.engine.state.players[P1].influence, 0);
-  assert.equal(three.engine.state.winner, P2, "0 influence: you lose");
+  assert.deepEqual(three.engine.state.result, { outcome: "victory", winners: [P2] }, "0 influence: you lose");
   const four = butcherBoard({ influence: 4 });
   play(four.engine, P1, four.id("bb"));
   assert.equal(four.engine.state.players[P1].influence, 1);
-  assert.equal(four.engine.state.winner ?? null, null);
+  assert.equal(four.engine.state.result ?? null, null);
 });
 
 clause(BUTCHER, "0:rule", "with fewer than 3 influence the faction goes to 0 (or below) and loses", () => {
   const { engine, id } = butcherBoard({ influence: 2 });
   play(engine, P1, id("bb"));
   assert.ok(engine.state.players[P1].influence <= 0, "engine.state.players[P1].influence <= 0");
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(BUTCHER, "0:rule", "is refused one resource short of its cost of 2, and without [G] even with enough other resources", () => {

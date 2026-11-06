@@ -11461,6 +11461,6 @@ describe("card behavior: Trickster's Globe (millInsteadOfFactionDamage + emptyDe
       activePlayerId: P1
     });
     (engine as unknown as { checkStateBasedActions(): void }).checkStateBasedActions();
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
   });
 });

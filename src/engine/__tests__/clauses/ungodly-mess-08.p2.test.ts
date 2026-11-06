@@ -404,7 +404,7 @@ clause(WASTE, "3:rule", "factions are not voided", () => {
   turnToP1(g);
   assert.equal(zoneOf(g.engine, faction(g.engine, P1)), "play");
   assert.equal(zoneOf(g.engine, faction(g.engine, P2)), "play");
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(WASTE, "3:rule", "cards in hand, deck and discard are not voided (the effect is on cards in play)", () => {

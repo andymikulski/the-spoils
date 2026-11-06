@@ -261,14 +261,14 @@ describe("capability: preventsDefeat", () => {
     });
     resolvePendingResponses(withBomb.engine);
     assert.ok(withBomb.engine.state.players[P1].influence <= 0, "withBomb.engine.state.players[P1].influence <= 0");
-    assert.equal(withBomb.engine.state.winner, undefined);
+    assert.equal(withBomb.engine.state.result, undefined);
 
     // Removing the keep lets the loss resolve.
     withBomb.engine.state.cards[withBomb.id("k")].zone = "discard";
     // trigger a state-based check via a harmless mutation
     withBomb.engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(withBomb.engine); // the turn actually ends (and state is checked) after the opponent's window
-    assert.equal(withBomb.engine.state.winner, P2);
+    assert.deepEqual(withBomb.engine.state.result, { outcome: "victory", winners: [P2] });
   });
 });
 

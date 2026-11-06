@@ -840,7 +840,7 @@ describe("GameFlowView.actingPlayerId", () => {
     }
     assert.ok(modes.has("battleChoice"), "saw a battle decision");
 
-    engine.state.winner = P1;
+    engine.state.result = { outcome: "victory", winners: [P1] };
     check(engine, "gameOver", undefined);
   });
 

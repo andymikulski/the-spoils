@@ -701,7 +701,7 @@ clause(FOMENT, "0:ability", "with an empty deck the resource still goes to my ha
   assert.equal(g.engine.state.pendingChoice, undefined);
   assert.equal(zoneOf(g.engine, g.id("o1")), "hand");
   assert.equal(influenceOf(g.engine, P1), inf);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(FOMENT, "0:ability", "only the picked resource moves: my other resources, my characters and the opponent's cards stay where they are", () => {
@@ -1775,7 +1775,7 @@ clause(HEXAPEDE, "0:ability:hellish-hex", "'Inflict 6 damage to all factions': B
   hexFully(g);
   assert.equal(influenceOf(g.engine, P1), 14, "my own faction takes 6 too");
   assert.equal(influenceOf(g.engine, P2), 19);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(HEXAPEDE, "0:ability:hellish-hex", "a faction taken to 0 influence loses: with 6 influence I lose and my opponent (25) wins", () => {
@@ -1783,7 +1783,7 @@ clause(HEXAPEDE, "0:ability:hellish-hex", "a faction taken to 0 influence loses:
   hexFully(g);
   assert.equal(influenceOf(g.engine, P1), 0);
   assert.equal(influenceOf(g.engine, P2), 19);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(HEXAPEDE, "0:ability:hellish-hex", "both factions taken to 0 at once is a draw (CR 102.2)", () => {
@@ -1791,14 +1791,14 @@ clause(HEXAPEDE, "0:ability:hellish-hex", "both factions taken to 0 at once is a
   hexFully(g);
   assert.equal(influenceOf(g.engine, P1), 0);
   assert.equal(influenceOf(g.engine, P2), 0);
-  assert.equal(g.engine.state.winner, "draw");
+  assert.deepEqual(g.engine.state.result, { outcome: "draw", winners: [] });
 });
 
 clause(HEXAPEDE, "0:ability:hellish-hex", "influence stops at 0 (CR 410.4): 6 damage to a 4-influence faction leaves 0, not -2", () => {
   const g = hexapedeBoard({ inf1: 30, inf2: 4 });
   hexFully(g);
   assert.equal(influenceOf(g.engine, P2), 0);
-  assert.equal(g.engine.state.winner, P1);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 // hands
@@ -2041,7 +2041,7 @@ clause(HEXAPEDE, "0:ability:hellish-hex", "a deck with fewer than 6 cards loses 
   drain(g.engine, removeFirst(g));
   assert.equal(deckOf(g.engine, P1).length, 0);
   for (const card of mine) assert.equal(zoneOf(g.engine, card), "removed");
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
   assert.equal(influenceOf(g.engine, P2), 24, "the rest of the effect still happened");
 });
 
@@ -2873,7 +2873,7 @@ clause(MANIFEST, "0:ability", "with an empty deck the failed draw costs nothing 
   manifest(g, g.id("hid"));
   manifestPlays(g, g.id("hid"));
   assert.equal(influenceOf(g.engine, P2), 27);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(MANIFEST, "0:ability", "once played, the revealed tactic is no longer a face-down resource: it stops providing Volition", () => {
@@ -3877,7 +3877,7 @@ clause(MEAT, "2:rule", "with an empty deck after the draw there is nothing to lo
   drain(g.engine, keepOrder);
   assert.equal(tokensOfMeat(g), 1);
   assert.equal(deckOf(g.engine, P1).length, 0);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 // --- 3:rule  2 TOKENS - may pick a character or location; put it into its owner's hand --------
@@ -5565,7 +5565,7 @@ clause(FLOSS, "0:rule", "with an empty deck nothing is drawn (no loss) and I sti
   bottomIt(g, "h0");
   assert.deepEqual(deckOf(g.engine, P1), [g.id("h0")]);
   assert.equal(influenceOf(g.engine, P1), inf);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(FLOSS, "0:rule", "with an empty deck and an empty hand nothing is asked, and Floss still ends in play face-down", () => {
@@ -7102,14 +7102,14 @@ clause(BLADDER, "0:rule", "the influence loss can take me to 0 and I lose the ga
   const g = bladderBoard({ inf1: 1 });
   endTurnDeclining(g, P1);
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(BLADDER, "0:rule", "influence stops at 0 (CR 410.4): losing 3 with only 1 influence left leaves 0, not -2", () => {
   const g = bladderBoard({ inf1: 1, tokens: 2 });
   endTurnDeclining(g, P1);
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(BLADDER, "0:rule", "it works only while the item is in play, face-up: nothing happens with it in my hand, my discard pile or face-down", () => {

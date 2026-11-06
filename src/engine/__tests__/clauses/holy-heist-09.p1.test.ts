@@ -1135,7 +1135,7 @@ clause(TOURNAMENT, "4:ability:tournament-draw", "with an empty deck the cost is 
   activateFaction(engine, P1, "tournament-draw");
   assert.equal(attachedCount(engine, P1), 3, "the 3 were paid");
   assert.equal(handSize(engine, P1), 0, "there was nothing to draw");
-  assert.equal(engine.state.winner, undefined, "no one lost");
+  assert.equal(engine.state.result, undefined, "no one lost");
 });
 
 // --- RESOURCE: "Pay 4. Play a resource."

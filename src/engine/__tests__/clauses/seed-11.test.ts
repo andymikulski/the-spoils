@@ -963,7 +963,7 @@ const developDrawFromEmptyDeck = (fac: Fac) => () => {
   const influence = engine.state.players[P1].influence;
   developDraw(engine, P1);
   assert.equal(handSize(engine, P1), 1, "there was nothing to draw");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game (RULES.md 1)");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game (RULES.md 1)");
   assert.equal(engine.state.players[P1].influence, influence, "and costs no influence");
 };
 
@@ -977,7 +977,7 @@ const drawFromEmptyDeck = (fac: Fac) => () => {
   activateFaction(engine, P1, fac.draw);
   assert.equal(attachedCount(engine, P1), 3, "the cost was paid");
   assert.equal(handSize(engine, P1), 0, "there was nothing to draw");
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game (RULES.md 1)");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game (RULES.md 1)");
 };
 
 const drawTakesTheTopCardOnly = (fac: Fac) => () => {
@@ -1254,7 +1254,7 @@ clause(MOIST, "6:ability", "with an empty deck there is nothing to look at: the 
   assert.equal(attachedCount(engine, P1), 1);
   assert.equal(engine.state.pendingChoice, undefined, "no card to look at, so nothing to decide");
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 clause(MOIST, "6:ability", "with a one-card deck, the only card is the top card and the bottom card", () => {
@@ -1503,7 +1503,7 @@ clause(GOLDEN, "6:ability", "with only one card left in the deck I draw that one
   pick(engine, [id("mydeck0")]);
   assert.equal(zoneOf(engine, id("mydeck0")), "discard");
   assert.equal(handSize(engine, P1), 0);
-  assert.equal(engine.state.winner, undefined, "drawing from a short deck does not lose the game");
+  assert.equal(engine.state.result, undefined, "drawing from a short deck does not lose the game");
 });
 
 clause(GOLDEN, "6:ability", "with an empty deck I draw nothing but still discard a card from my hand", () => {
@@ -1515,7 +1515,7 @@ clause(GOLDEN, "6:ability", "with an empty deck I draw nothing but still discard
   pick(engine, [id("hRes")]);
   assert.equal(zoneOf(engine, id("hRes")), "discard");
   assert.equal(handSize(engine, P1), 2);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GOLDEN, "6:ability", "with an empty deck and an empty hand nothing is drawn and nothing is discarded", () => {
@@ -1525,7 +1525,7 @@ clause(GOLDEN, "6:ability", "with an empty deck and an empty hand nothing is dra
   assert.equal(engine.state.pendingChoice, undefined, "no card to discard, so nothing to ask");
   assert.equal(handSize(engine, P1), 0);
   assert.equal(discardOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(GOLDEN, "6:ability", "the cost is paid when it is used; the cards are drawn when it resolves", () => {

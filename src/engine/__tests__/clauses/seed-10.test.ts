@@ -1627,7 +1627,7 @@ clause(NOBLE, "0:ability", "with an empty deck nothing is drawn and the game goe
   assert.equal(zoneOf(g.engine, g.id("m0")), "discard");
   assert.equal(zoneOf(g.engine, g.id("o0")), "discard");
   assert.equal(handOf(g.engine, P1).length, 0, "nothing to draw");
-  assert.equal(g.engine.state.winner, undefined, "no one lost");
+  assert.equal(g.engine.state.result, undefined, "no one lost");
 });
 
 clause(NOBLE, "0:ability", "an opponent can cast their own: the caster's own characters are 'mine' and the draw is the caster's", () => {
@@ -3157,7 +3157,7 @@ clause(BADASS, "0:rule@rrr", "the damage can win the game: the opponent at 1 inf
   startMyTurn(g);
   answerPending(g.engine, "chooserSelectsOption", { index: 1 });
   assert.equal(influenceOf(g.engine, P2), 0);
-  assert.equal(g.engine.state.winner, P1);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(BADASS, "0:rule@rrr", "a Badass that is face-down (only a resource) or in my hand does nothing", () => {
@@ -3415,7 +3415,7 @@ clause(SERAPHIM, "0:ability", "with an empty deck nothing is drawn, the bonus st
   smPlay(g, "m0");
   assert.equal(g.engine.getStat(g.id("m0"), "strength"), 4);
   assert.equal(handOf(g.engine, P1).length, 0);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(SERAPHIM, "0:ability", "a tactic: it goes to my discard pile once resolved, and can be played in response on the opponent's turn", () => {
@@ -4475,7 +4475,7 @@ clause(VIOLENCE, "1:rule", "losing influence is not damage, and can lose the gam
   const g = violenceBoard({ zone: "hand", influence: 1 });
   developResource(g.engine, P1, g.id("vio"), false);
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 // --- Virtuous Razer ---------------------------------------------------------------
@@ -5456,7 +5456,7 @@ clause(TOURNAMENT, "4:ability:tournament-draw", "with an empty deck the cost is 
   activateFaction(g.engine, P1, "tournament-draw");
   assert.equal(attachedCount(g.engine, P1), 3, "the 3 were paid");
   assert.equal(handSize(g.engine, P1), 0, "there was nothing to draw");
-  assert.equal(g.engine.state.winner, undefined, "no one lost");
+  assert.equal(g.engine.state.result, undefined, "no one lost");
 });
 
 // --- RESOURCE: "Pay 4. Play a resource."

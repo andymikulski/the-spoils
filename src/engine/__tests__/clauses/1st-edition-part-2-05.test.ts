@@ -2957,7 +2957,7 @@ clause(MOOSE, "1:rule", "a faction at 1 influence loses the game when the Moose 
   const { engine } = mooseBoard({ turn: 1, active: P1, influenceP2: 1 });
   endTurn(engine, P1);
   assert.equal(influence(engine, P2), 0);
-  assert.equal(engine.state.winner, P1, "P2's faction is at 0 influence: P1 wins");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "P2's faction is at 0 influence: P1 wins");
 });
 
 clause(MOOSE, "2:ability:infiltrate", "destroys another item I control (to its owner's discard pile) and the opponent takes control of the Moose", () => {

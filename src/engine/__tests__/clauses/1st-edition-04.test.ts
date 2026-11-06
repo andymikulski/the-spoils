@@ -354,7 +354,7 @@ clause(DEFENESTRATE, "0:rule", "the opponent's deck is empty: nothing is milled,
   const myTop = deckOf(engine, P1)[0];
   play(engine, P1, id("df"));
   assert.equal(deckOf(engine, P2).length, 0);
-  assert.equal(engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(engine.state.result, undefined, "running out of cards does not lose the game");
   assert.equal(zoneOf(engine, myTop), "hand", "the draw still happens");
 });
 
@@ -365,7 +365,7 @@ clause(DEFENESTRATE, "0:rule", "my own deck is empty: the 2 cards are still mill
   play(engine, P1, id("df"));
   assert.deepEqual(oppTop.map((cardId) => zoneOf(engine, cardId)), ["discard", "discard"]);
   assert.equal(handOf(engine, P1).length, handBefore - 1, "Defenestrate left the hand and nothing could be drawn");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(DEFENESTRATE, "0:rule", "its rules text is an effect, not a cost: nothing is milled or drawn while the opponent can still respond", () => {
@@ -1108,7 +1108,7 @@ clause(JACKMOVE, "0:ability", "X larger than the opponent's deck: every card the
   assert.equal(zoneOf(engine, id("d0")), "play");
   assert.equal(zoneOf(engine, id("d1")), "discard");
   assert.equal(deckOf(engine, P2).length, 0);
-  assert.equal(engine.state.winner, undefined, "an empty deck does not lose the game");
+  assert.equal(engine.state.result, undefined, "an empty deck does not lose the game");
 });
 
 clause(JACKMOVE, "0:ability", "an empty opponent deck: nothing happens, no error", () => {
@@ -1116,7 +1116,7 @@ clause(JACKMOVE, "0:ability", "an empty opponent deck: nothing happens, no error
   play(engine, P1, id("jm"), { variables: { x: 2 } });
   drain(engine, declineAll);
   assert.equal(zoneOf(engine, id("jm")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(JACKMOVE, "0:ability", "a taken character's enters-play trigger is mine (it enters play under my control)", () => {
@@ -2241,7 +2241,7 @@ clause(SNAKE_EYES, "0:ability", "draws even when my deck is empty (nothing to dr
   hurt(engine, id, "hurt");
   play(engine, P1, id("se"), { selected: { c: [id("hurt")] } });
   assert.equal(zoneOf(engine, id("hurt")), "discard");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(SNAKE_EYES, "0:ability", "is refused one resource short of 3, and allowed with exactly 3", () => {
@@ -2964,7 +2964,7 @@ clause(TREMOR, "0:rule", "a deck with only 1 card mills that card; an empty deck
   assert.equal(deckOf(one.engine, P1).length, 0);
   assert.equal(zoneOf(one.engine, one.id("a0")), "discard");
   assert.equal(deckOf(one.engine, P2).length, 0);
-  assert.equal(one.engine.state.winner, undefined);
+  assert.equal(one.engine.state.result, undefined);
 });
 
 clause(TREMOR, "0:rule", "two Engines each trigger: 4 cards from each deck", () => {
@@ -4468,14 +4468,14 @@ clause(STRATEGY, "0:rule", "an opponent on exactly 2 influence is reduced to 0 a
   const { engine, id } = strategyBoard({ oppInfluence: 2 });
   play(engine, P1, id("ds"));
   assert.equal(influence(engine, P2), 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(STRATEGY, "0:rule", "an opponent on 3 influence survives with 1", () => {
   const { engine, id } = strategyBoard({ oppInfluence: 3 });
   play(engine, P1, id("ds"));
   assert.equal(influence(engine, P2), 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(STRATEGY, "0:rule", "it is not damage: damage-reduction effects do not reduce it (CR 408.3b)", () => {
@@ -4492,7 +4492,7 @@ clause(STRATEGY, "0:rule", "the draw still happens when my deck is empty (no car
   const { engine, id } = strategyBoard({ myDeck: 0 });
   play(engine, P1, id("ds"));
   assert.equal(influence(engine, P2), 18);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(STRATEGY, "0:rule", "is refused one resource short of 3, and allowed with exactly 3", () => {
@@ -5781,7 +5781,7 @@ clause(SIEGE, "0:ability:ram", "an opponent on 1 influence loses the game", () =
   const { engine, id } = siegeBoard({ oppInfluence: 1 });
   ram(engine, id, lastResource(engine, P1));
   assert.equal(influence(engine, P2), 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(SIEGE, "0:ability:ram", "it can be used again: each use destroys another resource and costs the opponent another influence", () => {

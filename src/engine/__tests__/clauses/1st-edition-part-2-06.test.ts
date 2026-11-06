@@ -1209,14 +1209,14 @@ clause(BLOW_UP, "0:ability", "an opponent at 3 influence loses the game", () => 
   const b = blowUpBoard([], { influenceP2: 3 });
   play(b.engine, P1, b.id("bu"), { selected: { it: [b.id("theirItem")] } });
   assert.equal(influence(b.engine, P2), 0);
-  assert.equal(b.engine.state.winner, P1);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(BLOW_UP, "0:ability", "an opponent at 4 influence survives with 1", () => {
   const b = blowUpBoard([], { influenceP2: 4 });
   play(b.engine, P1, b.id("bu"), { selected: { it: [b.id("theirItem")] } });
   assert.equal(influence(b.engine, P2), 1);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // --- Brash Basher -------------------------------------------------------------
@@ -1503,11 +1503,11 @@ clause(STRIKER, "0:rule", "an opponent at 4 influence loses the game when it is 
   const lethal = strikerBoard([], { influenceP2: 4 });
   play(lethal.engine, P1, lethal.id("kill"), { selected: { t: [lethal.id("striker")] } });
   assert.equal(influence(lethal.engine, P2), 0);
-  assert.equal(lethal.engine.state.winner, P1);
+  assert.deepEqual(lethal.engine.state.result, { outcome: "victory", winners: [P1] });
   const survives = strikerBoard([], { influenceP2: 5 });
   play(survives.engine, P1, survives.id("kill"), { selected: { t: [survives.id("striker")] } });
   assert.equal(influence(survives.engine, P2), 1);
-  assert.equal(survives.engine.state.winner, undefined);
+  assert.equal(survives.engine.state.result, undefined);
 });
 
 clause(STRIKER, "0:rule", "destroyed as the COST of another card (Ruthless Platoon's CANNIBALIZE) it still counts as destroyed", () => {
@@ -1775,7 +1775,7 @@ clause(CRAG, "3:rule", "an opponent at 2 influence loses the game when the attac
   declareBlockers(b.engine, P2, [b.id("foe")]);
   resolvePendingResponses(b.engine);
   assert.equal(influence(b.engine, P2), 0);
-  assert.equal(b.engine.state.winner, P1);
+  assert.deepEqual(b.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 /** The host attacks unblocked and its battle damage reaches the faction; stops at the Craghammer's pick. */
@@ -3271,11 +3271,11 @@ clause(MURDEROUS, "0:ability:plan", "an opponent at 2 influence loses the game; 
   const lethal = commanderBoard([], { influenceP2: 2 });
   activate(lethal.engine, P1, lethal.id("mc"), "plan", { selected: { d: [lethal.id("h0")] } });
   assert.equal(influence(lethal.engine, P2), 0);
-  assert.equal(lethal.engine.state.winner, P1);
+  assert.deepEqual(lethal.engine.state.result, { outcome: "victory", winners: [P1] });
   const survives = commanderBoard([], { influenceP2: 3 });
   activate(survives.engine, P1, survives.id("mc"), "plan", { selected: { d: [survives.id("h0")] } });
   assert.equal(influence(survives.engine, P2), 1);
-  assert.equal(survives.engine.state.winner, undefined);
+  assert.equal(survives.engine.state.result, undefined);
 });
 
 clause(MURDEROUS, "0:ability:plan", "usable the turn the Commander enters play, and only by its controller", () => {
@@ -4211,7 +4211,7 @@ clause(COLONEL, "0:rule", "an opponent at 2 influence loses the game by playing 
   const lethal = board([{ key: "sc", def: printing(COLONEL), owner: P1, zone: "play" }, { key: "oppTac", def: plainTactic(), owner: P2, zone: "hand" }], { active: P2, turn: 2, influenceP2: 2 });
   play(lethal.engine, P2, lethal.id("oppTac"));
   assert.equal(influence(lethal.engine, P2), 0);
-  assert.equal(lethal.engine.state.winner, P1);
+  assert.deepEqual(lethal.engine.state.result, { outcome: "victory", winners: [P1] });
   const survive = board([{ key: "sc", def: printing(COLONEL), owner: P1, zone: "play" }, { key: "oppTac", def: plainTactic(), owner: P2, zone: "hand" }], { active: P2, turn: 2, influenceP2: 3 });
   play(survive.engine, P2, survive.id("oppTac"));
   assert.equal(influence(survive.engine, P2), 1);
@@ -4614,7 +4614,7 @@ clause(SPLATTERGUN, "0:ability:unload", "the faction damage is damage (a damage-
   const lethal = splatterBoard([], { influenceP2: 3 });
   activate(lethal.engine, P1, lethal.id("sg"), "unload", { selected: { tgt: [FACTION_OF(lethal.engine, P2)] } });
   assert.equal(influence(lethal.engine, P2), 0);
-  assert.equal(lethal.engine.state.winner, P1);
+  assert.deepEqual(lethal.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(SPLATTERGUN, "0:ability:unload", "the Splattergun is depleted when the ability is paid; damage and the change of control wait for resolution", () => {

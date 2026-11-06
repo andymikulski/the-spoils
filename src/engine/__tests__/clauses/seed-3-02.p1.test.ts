@@ -1037,14 +1037,14 @@ clause(STRAW, "1:flipUp", "'your faction loses 5 influence' down to exactly 0: t
   const { engine, id } = strawBoard({ faceDown: true, res: bank("deception", 1, P1), influence: 5 });
   flipRaw(engine, P1, id("sb"));
   assert.equal(engine.state.players[P1].influence, 0);
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(STRAW, "1:flipUp", "'your faction loses 5 influence' with only 3 influence: influence stops at 0 (never negative)", () => {
   const { engine, id } = strawBoard({ faceDown: true, res: bank("deception", 1, P1), influence: 3 });
   flipRaw(engine, P1, id("sb"));
   assert.equal(engine.state.players[P1].influence, 0);
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 // ===========================================================================================

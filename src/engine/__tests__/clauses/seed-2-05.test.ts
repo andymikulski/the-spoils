@@ -5591,7 +5591,7 @@ clause(VAST, "0:ability:you-know-you-want-to", "the damage is inflicted even whe
   vastUse(game);
   resolvePendingResponses(game.engine);
   assert.equal(influenceOf(game.engine, P1), 0);
-  assert.equal(game.engine.state.winner, P2, "my faction reached 0 influence");
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P2] }, "my faction reached 0 influence");
 });
 
 clause(VAST, "0:ability:you-know-you-want-to", "'Use this only 5 times each turn': five uses in one turn are allowed", () => {

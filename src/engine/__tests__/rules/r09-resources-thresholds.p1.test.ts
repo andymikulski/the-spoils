@@ -198,7 +198,7 @@ rule("CR 202.3", "a faction's influence is its player's score: the player holds 
   const engine = newGame([F_A, F_B, FILL], deckOf(F_A.id, ...copies(FILL.id, 6)), deckOf(F_B.id, ...copies(FILL.id, 6)));
   assert.equal(engine.state.players[P1].influence, 25);
   assert.equal(engine.state.players[P2].influence, 25);
-  assert.equal(engine.state.winner, undefined, "nobody has won yet");
+  assert.equal(engine.state.result, undefined, "nobody has won yet");
 });
 
 rule("CR 202.3", "once the influence runs out you lose: damage down to exactly 0 ends the game", () => {
@@ -208,7 +208,7 @@ rule("CR 202.3", "once the influence runs out you lose: damage down to exactly 0
   });
   cast(engine, P1, id("ping"));
   assert.equal(engine.state.players[P2].influence, 0);
-  assert.equal(engine.state.winner, P1, "the player whose influence ran out loses");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] }, "the player whose influence ran out loses");
   assert.equal(engine.getFlowView().mode, "gameOver");
 });
 
@@ -219,7 +219,7 @@ rule("CR 202.3", "with influence left (one short of running out) the player has 
   });
   cast(engine, P1, id("ping"));
   assert.equal(engine.state.players[P2].influence, 1);
-  assert.equal(engine.state.winner, undefined, "1 influence left is not out");
+  assert.equal(engine.state.result, undefined, "1 influence left is not out");
   assert.notEqual(engine.getFlowView().mode, "gameOver");
 });
 
@@ -229,7 +229,7 @@ rule("CR 202.3", "more damage than the influence left also runs it out", () => {
     cards: [{ key: "ping", def: damageToFaction("Ping Five", "opponent", 5), owner: P1, zone: "hand" }]
   });
   cast(engine, P1, id("ping"));
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 rule("CR 202.3", "the loser is whoever's influence ran out, including the active player's own faction", () => {
@@ -239,7 +239,7 @@ rule("CR 202.3", "the loser is whoever's influence ran out, including the active
   });
   cast(engine, P1, id("ouch"));
   assert.equal(engine.state.players[P1].influence, 0);
-  assert.equal(engine.state.winner, P2, "the opponent wins when your own influence runs out");
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] }, "the opponent wins when your own influence runs out");
 });
 
 rule("CR 202.3", "influence lost by an effect (not damage) also counts toward running out", () => {
@@ -250,7 +250,7 @@ rule("CR 202.3", "influence lost by an effect (not damage) also counts toward ru
   const { engine, id } = buildGame({ playerB: { influence: 3 }, cards: [{ key: "drain", def: drain, owner: P1, zone: "hand" }] });
   cast(engine, P1, id("drain"));
   assert.equal(engine.state.players[P2].influence, 0);
-  assert.equal(engine.state.winner, P1);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 rule("CR 202.3a", "every faction has its own starting influence: the printed number is what its player starts with", () => {

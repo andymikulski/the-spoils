@@ -991,29 +991,29 @@ clause(GLOBE, "0:rule", "control: without the Globe in play, my battle damage ju
 clause(GLOBE, "1:rule", "when a player has no cards in their deck, they lose the game", () => {
   const g = globeBoard({ oppDeck: 0 });
   settleState(g.engine);
-  assert.equal(g.engine.state.winner, P1, "the player with no deck cards loses, so the other player wins");
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P1] }, "the player with no deck cards loses, so the other player wins");
 });
 
 clause(GLOBE, "1:rule", "any player: my own empty deck loses me the game, and both at once is a draw", () => {
   const me = globeBoard({ myDeck: 0 });
   settleState(me.engine);
-  assert.equal(me.engine.state.winner, P2);
+  assert.deepEqual(me.engine.state.result, { outcome: "victory", winners: [P2] });
   const both = globeBoard({ myDeck: 0, oppDeck: 0 });
   settleState(both.engine);
-  assert.equal(both.engine.state.winner, "draw");
+  assert.deepEqual(both.engine.state.result, { outcome: "draw", winners: [] });
 });
 
 clause(GLOBE, "1:rule", "milling the opponent's last cards with the swap wins at once", () => {
   const g = globeBoard({ oppDeck: 2 });
   attackUnblocked(g);
   answerMill(g.engine, 2);
-  assert.equal(g.engine.state.winner, P1);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(GLOBE, "1:rule", "control: without the Globe in play an empty deck does not lose the game (CR 102.1a)", () => {
   const g = globeBoard({ oppDeck: 0, globe: false });
   settleState(g.engine);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 // =================================================================================

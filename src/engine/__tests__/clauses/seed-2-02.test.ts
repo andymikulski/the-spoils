@@ -1820,7 +1820,7 @@ clause(SEAFARER, "0:rule", "when it enters play my faction loses exactly 3 influ
 clause(SEAFARER, "0:rule", "it is 'your faction': the loss happens once, on entering, and only to its controller's faction", () => {
   const g = seaBoard();
   seaDeploy(g);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
   assert.equal(influenceOf(g.engine, P1), START - 3);
   endTurn(g.engine, P1);
   drain(g.engine, declineAll);
@@ -1922,7 +1922,7 @@ clause(SEAFARER, "0:rule", "with exactly 3 influence the loss takes my faction t
   const g = seaBoard({ influence: 3 });
   seaDeploy(g);
   assert.equal(influenceOf(g.engine, P1), 0);
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(SEAFARER, "0:rule", "with only 2 influence the loss stops at 0 (CR 410.4): influence is never below 0", () => {
@@ -1935,7 +1935,7 @@ clause(SEAFARER, "0:rule", "with only 2 influence the loss still ends the game: 
   const g = seaBoard({ influence: 2 });
   seaDeploy(g);
   assert.ok(influenceOf(g.engine, P1) <= 0, "influenceOf(g.engine, P1) <= 0");
-  assert.equal(g.engine.state.winner, P2);
+  assert.deepEqual(g.engine.state.result, { outcome: "victory", winners: [P2] });
 });
 
 clause(SEAFARER, "0:rule", "it happens when the card ENTERS play, however it gets there: put into play from the deck by another card's effect", () => {
@@ -2763,7 +2763,7 @@ clause(GRIMALKIN, "0:rule@gg", "with an empty deck the draw does nothing and not
   grimDeploy(g);
   assert.equal(g.engine.state.pendingChoice, undefined);
   assert.equal(zoneOf(g.engine, g.id("grim")), "play");
-  assert.equal(g.engine.state.winner, undefined, "running out of cards does not lose the game");
+  assert.equal(g.engine.state.result, undefined, "running out of cards does not lose the game");
 });
 
 // --- [G]x5 ---
@@ -6324,7 +6324,7 @@ clause(EXCAVATION, "0:rule", "a deck of exactly 8 is milled completely and the d
   for (const key of DECK_KEYS.slice(0, 8)) assert.equal(zoneOf(g.engine, g.id(key)), "discard");
   assert.equal(deckOf(g.engine, P1).length, 0);
   assert.equal(handOf(g.engine, P1).length, 0, "nothing to draw");
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(EXCAVATION, "0:rule", "a deck of 9: the 8 are milled and the last card is drawn", () => {
@@ -6719,7 +6719,7 @@ clause(ASSISTANT, "0:rule", "with an empty deck there is nothing to reveal and n
   paEnd(g, true);
   assert.equal(g.engine.state.pendingChoice, undefined);
   assert.equal(handOf(g.engine, P1).length, 0);
-  assert.equal(g.engine.state.winner, undefined);
+  assert.equal(g.engine.state.result, undefined);
 });
 
 clause(ASSISTANT, "0:rule", "it triggers at the end of MY turn only: my opponent's end of turn offers me nothing", () => {

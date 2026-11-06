@@ -592,11 +592,11 @@ clause(ARM, "1:ability:ta-tameshigiri", "'lose 2 influence' with exactly 2 influ
   tameshigiri(exact);
   assert.equal(influenceOf(exact.engine, P1), 0, "the 2 influence was paid, down to 0");
   assert.equal(ready(exact.engine), 6, "the 2 resources were paid too");
-  assert.equal(exact.engine.state.winner, P2, "my faction is at 0 influence, so I lose and the opponent wins");
+  assert.deepEqual(exact.engine.state.result, { outcome: "victory", winners: [P2] }, "my faction is at 0 influence, so I lose and the opponent wins");
   const spare = armBoard({ vol: 6, rage: 2, influence: 3 });
   tameshigiri(spare);
   assert.equal(influenceOf(spare.engine, P1), 1);
-  assert.equal(spare.engine.state.winner, undefined, "control: 1 influence left, the game goes on");
+  assert.equal(spare.engine.state.result, undefined, "control: 1 influence left, the game goes on");
 });
 
 clause(ARM, "1:ability:ta-tameshigiri", "pay 2 must be affordable: with one ready resource it is refused and no influence is lost", () => {

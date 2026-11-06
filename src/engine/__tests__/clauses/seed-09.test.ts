@@ -1247,7 +1247,7 @@ clause(CHAIN, "0:ability", "the opponent's faction at 1 influence: the chain's 1
   const game = chainBoard({ foeLife: 2, oppInfluence: 1 });
   chainRun(game, "foe");
   assert.equal(influenceOf(game.engine, P2), 0);
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(CHAIN, "0:ability", "with an empty deck nothing stalls and failing to draw does not lose the game (CR 102.1a)", () => {
@@ -1255,7 +1255,7 @@ clause(CHAIN, "0:ability", "with an empty deck nothing stalls and failing to dra
   chainRun(game, "foe");
   assert.equal(game.engine.state.pendingChoice, undefined);
   assert.equal(zoneOf(game.engine, game.id("foe")), "discard");
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
 });
 
 clause(CHAIN, "0:ability", "with an empty deck the card cannot be drawn but the 1 faction damage is still inflicted", () => {
@@ -1660,7 +1660,7 @@ clause(FLATTENER, "0:rule", "sent past the blocker at a faction with only 6 infl
   assignNow(game.engine, [{ sourceId: game.id("flat"), target: toFaction(P2), amount: 6 }]);
   settleBattle(game.engine);
   assert.equal(influenceOf(game.engine, P2), 0);
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(FLATTENER, "0:rule", "the blocker is not removed from the fight: it still deals its own damage to the Flattener after being bypassed", () => {
@@ -2577,7 +2577,7 @@ clause(GARRISON, "1:rule@rrr", "the opponent's faction at 1 influence: the damag
   startMyTurn(game);
   garrisonDrain(game, { accept: true });
   assert.equal(influenceOf(game.engine, P2), 0);
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(GARRISON, "1:rule@rrr", "only while the Garrison is in play: in my hand it does nothing", () => {
@@ -3581,7 +3581,7 @@ clause(ESSENCE, "1:option:OPTION 1", "1 damage to a faction with 1 influence lef
   factionCast(game, 0, P2);
   resolvePendingResponses(game.engine);
   assert.equal(influenceOf(game.engine, P2), 0);
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 for (const [key, why] of [
@@ -4270,12 +4270,12 @@ clause(COMMANDER, "0:ability:charge", "the damage is exact: from 4 influence the
   cmdCharge(four);
   resolvePendingResponses(four.engine);
   assert.equal(influenceOf(four.engine, P2), 1);
-  assert.equal(four.engine.state.winner, undefined);
+  assert.equal(four.engine.state.result, undefined);
   const three = cmdBoard({ oppInfluence: 3 });
   cmdCharge(three);
   resolvePendingResponses(three.engine);
   assert.equal(influenceOf(three.engine, P2), 0);
-  assert.equal(three.engine.state.winner, P1);
+  assert.deepEqual(three.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(COMMANDER, "0:ability:charge", "it is an ability: usable in response to the opponent's attack", () => {
@@ -4707,7 +4707,7 @@ clause(GIDEON, "2:rule", "the opponent's faction at 3 influence: Gideon's 2 dama
   declareBlockers(game.engine, P2, []);
   playOut(game.engine);
   assert.equal(influenceOf(game.engine, P2), 0);
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(GIDEON, "2:rule", "an influence floor: at 2 influence the 2 + 1 cannot take the faction below 0, and I win", () => {
@@ -4716,7 +4716,7 @@ clause(GIDEON, "2:rule", "an influence floor: at 2 influence the 2 + 1 cannot ta
   declareBlockers(game.engine, P2, []);
   playOut(game.engine);
   assert.equal(influenceOf(game.engine, P2), 0, "influence stops at 0 (CR 410.4)");
-  assert.equal(game.engine.state.winner, P1);
+  assert.deepEqual(game.engine.state.result, { outcome: "victory", winners: [P1] });
 });
 
 clause(GIDEON, "2:rule", "influence paid as a cost by the opponent's faction ('loses influence') is increased by 1 too (literal reading)", () => {
@@ -6833,7 +6833,7 @@ clause(SKIRMISH, "0:ability", "with an empty deck nothing stalls and failing to 
   const game = skirmishBoard({ deck: 0 });
   skirmishRun(game, ["a", "b", "c"], { deplete: "a", damage: "b", pump: "c" });
   assert.equal(game.engine.state.pendingChoice, undefined);
-  assert.equal(game.engine.state.winner, undefined);
+  assert.equal(game.engine.state.result, undefined);
   assert.equal(isDepleted(game.engine, game.id("a")), true);
 });
 

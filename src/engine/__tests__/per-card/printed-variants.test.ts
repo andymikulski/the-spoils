@@ -1541,7 +1541,7 @@ describe("Emergency Obfuscation — while it is in play the players switch seats
       assert.equal(owner(engine, id("hero")), P2);
       // The attack has no attackers left, so nobody is hurt. EO sits on P2's side, so P1 now controls it.
       for (let i = 0; engine.state.battle && i < 50; i++) engine.perform({ type: "advanceFlow" });
-      assert.equal(engine.state.winner, undefined);
+      assert.equal(engine.state.result, undefined);
       assert.equal(engine.state.players[P1].influence, 4, "P2's faction (held by P1) took no damage");
       assert.equal(owner(engine, id("eo")), P1);
     });

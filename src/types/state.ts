@@ -27,7 +27,7 @@ import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
 import type { CardSelector, NumberExpression } from "./expressions.js";
 import type { CreatedAbilitySpec } from "./createdAbility.js";
-import type { GameFormat, PlayerElimination } from "./format.js";
+import type { GameFormat, GameResult, PlayerElimination } from "./format.js";
 import type { ShowdownState } from "./showdown.js";
 
 export interface CardInstance {
@@ -917,8 +917,6 @@ export interface FirstPlayerChoice {
   openingDraw: Record<PlayerId, Record<PlayerId, number>>;
 }
 
-/** The player who won, or "draw" if both factions hit 0 influence together. */
-export type GameWinner = PlayerId | "draw";
 
 /**
  * Whether a hand card could be deployed right now, broken down by which gate it's failing —
@@ -1081,7 +1079,8 @@ export interface GameFlowView {
   responseWindow?: ResponseWindowState;
   responseStack: StackItem[];
   battle?: BattleView;
-  winner?: GameWinner;
+  /** How the game ended, once it has. */
+  result?: GameResult;
   pendingChoice?: PendingChoice;
 
   /**
@@ -1190,7 +1189,7 @@ export interface GameStateSnapshot {
   priorityPlayerId: PlayerId;
   /** `getFlowView().mode` at snapshot time. */
   mode: GameFlowView["mode"];
-  winner?: GameWinner;
+  result?: GameResult;
   /** Outermost (first-played) response-stack item first. */
   responseStack: Array<{ label: string; controllerId: PlayerId }>;
   pendingChoice?: { kind: string; playerId: PlayerId };
@@ -1468,8 +1467,12 @@ export interface GameState {
 
   battle?: BattleState;
 
-  /** Set once a player's faction reaches 0 influence (or both do, for a draw). */
-  winner?: GameWinner;
+  /**
+   * Set once the game is over: the last player standing (or, in Showdown,
+   * the last side standing) won, or the last players fell together (a
+   * draw). Players knocked out earlier carry `PlayerState.eliminated`.
+   */
+  result?: GameResult;
 
   /** Blocks perform() except resolvePendingChoice until a player answers it. */
   pendingChoice?: PendingChoice;

@@ -91,12 +91,12 @@ describe("2nd Edition smoke: reprinted behaviour drives the engine", () => {
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("bomb"), abilityId: "b" });
     settle(engine);
     assert.ok(engine.state.players[P1].influence <= 0, "engine.state.players[P1].influence <= 0");
-    assert.equal(engine.state.winner, undefined);
+    assert.equal(engine.state.result, undefined);
 
     engine.state.cards[id("keep")].zone = "discard";
     engine.perform({ type: "endTurn", playerId: P1 });
     settle(engine); // the turn actually ends (and state is checked) after the opponent's window (CR 610.1a)
-    assert.equal(engine.state.winner, P2);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
   });
 
   test("Gold Summit — drawing N cards gains your faction N influence", () => {

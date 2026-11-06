@@ -473,7 +473,7 @@ describe("game log — a running, toggleable record of everything that happens",
     engine.perform({ type: "playCard", playerId: P1, cardId: id("k") });
     resolvePendingResponses(engine);
 
-    assert.equal(engine.state.winner, P1);
+    assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P1] });
     const over = engine.getLog().find(e => e.event?.type === "gameEnded");
     assert.ok(over, "the game-over was logged");
     assert.equal(over.message, "Game over — Alice wins");

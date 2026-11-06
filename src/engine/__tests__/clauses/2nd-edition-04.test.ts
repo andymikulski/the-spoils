@@ -3317,7 +3317,7 @@ clause(BALL, "0:ability:insight", "with an empty deck there is nothing to find, 
   if (pending(engine)) pickCards(engine, []);
   assert.equal(pending(engine), undefined);
   assert.equal(controllerOf(engine, id("ball")), P2, "control passes regardless");
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(BALL, "0:ability:insight", "a depleted Ball can't be used: refused, nothing searched", () => {

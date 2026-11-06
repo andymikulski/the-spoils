@@ -343,9 +343,9 @@ test("full game: a hand-scripted walkthrough from mulligan to a decided winner",
 
   // 4 (after turn 4) - (1 + 3) unblocked damage = 0.
   assert.equal(engine.state.players[P1].influence, 0);
-  assert.equal(engine.state.winner, P2);
+  assert.deepEqual(engine.state.result, { outcome: "victory", winners: [P2] });
   assert.equal(engine.getFlowView().mode, "gameOver");
-  assert.equal(engine.getFlowView().winner, P2);
+  assert.deepEqual(engine.getFlowView().result, { outcome: "victory", winners: [P2] });
 
   // No further actions can be performed once the game has ended.
   assert.throws(() => engine.perform({ type: "passPriority", playerId: P2 }));

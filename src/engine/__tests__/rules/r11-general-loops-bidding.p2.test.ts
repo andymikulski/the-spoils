@@ -228,7 +228,7 @@ describe("CR 414 — action loops", () => {
       ]
     });
     playAndResolve(engine, id, "spark");
-    assert.equal(engine.state.winner, "draw", "a loop nobody can stop is a draw");
+    assert.deepEqual(engine.state.result, { outcome: "draw", winners: [] }, "a loop nobody can stop is a draw");
   });
 
   rule("CR 414.1", "a chain of effects that ends by itself is not a loop: it just resolves and the game goes on", () => {
@@ -257,7 +257,7 @@ describe("CR 414 — action loops", () => {
     });
     playAndResolve(engine, id, "spark");
     assert.equal(engine.state.players[P1].influence, 25 + 1 + 3, "the spark plus 3 re-triggers, then it stops");
-    assert.equal(engine.state.winner, undefined, "no draw");
+    assert.equal(engine.state.result, undefined, "no draw");
   });
 
   rule("CR 414.1", "a repetition that a player may voluntarily end is not a forced loop: it asks each time, declining ends it, and the game is not drawn", () => {
@@ -303,7 +303,7 @@ describe("CR 414 — action loops", () => {
     assert.equal(engine.state.pendingChoice?.kind, "chooserSelectsOption", "after 6 rounds it is still only asking");
     answer("Stop");
     assert.equal(engine.state.pendingChoice, undefined, "declining ended the repetition");
-    assert.equal(engine.state.winner, undefined, "the game is not a draw");
+    assert.equal(engine.state.result, undefined, "the game is not a draw");
     assert.equal(engine.state.players[P1].influence, 25 + 1 + 6, "one spark plus six accepted rounds");
   });
 
@@ -314,7 +314,7 @@ describe("CR 414 — action loops", () => {
       resolvePendingResponses(engine);
       settleTurnStart(engine);
     }
-    assert.equal(engine.state.winner, undefined, "twelve rule-driven turn cycles later the game is still on");
+    assert.equal(engine.state.result, undefined, "twelve rule-driven turn cycles later the game is still on");
     assert.equal(engine.state.turn, 13, "and the turns really did pass");
   });
 

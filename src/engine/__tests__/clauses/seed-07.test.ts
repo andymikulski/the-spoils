@@ -458,7 +458,7 @@ clause(WINDOW, "0:ability:cash-in", "with an empty deck the character is still d
   cashIn(engine, id, id("mine"));
   assert.equal(zoneOf(engine, id("mine")), "discard");
   assert.equal(handOf(engine, P1).length, handBefore);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(WINDOW, "0:ability:cash-in", "it works in response on the opponent's turn too (an ability may be used in a response window)", () => {
@@ -1453,7 +1453,7 @@ clause(GAMBLER, "0:rule", "with an empty deck there is nothing to reveal: no tok
   assert.equal(tokensOn(engine, id("g")), 0);
   assert.equal(revealEvents(engine).length, 0);
   assert.equal(deckOf(engine, P1).length, 0);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
   assert.equal(zoneOf(engine, id("g")), "play");
 });
 
@@ -2167,7 +2167,7 @@ clause(ESSENCE, "1:option:OPTION 1", "with an empty opponent's deck there is not
   assert.equal(b.engine.state.pendingChoice, undefined, "no pick to make");
   assert.equal(zoneOf(b.engine, b.id("eod")), "discard", "the tactic still resolved");
   assert.deepEqual(discardOf(b.engine, P2), oppDiscard);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // -- 2:option:OPTION 2 — +1 speed ------------------------------------------------
@@ -2820,7 +2820,7 @@ clause(KNIFE, "2:rule", "with an empty deck nothing is revealed, the Knife stays
   assert.equal(pending(b.engine), undefined);
   assert.equal(zoneOf(b.engine, b.id("knife")), "discard");
   assert.equal(revealEvents(b.engine).length, 0);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 // ==================================================================================
@@ -2983,7 +2983,7 @@ clause(FLIMFLAM, "0:rule", "with an empty deck there is nothing to reveal: nothi
   assert.equal(pending(engine), undefined);
   assert.equal(revealEvents(engine).length, 0);
   assert.equal(handOf(engine, P1).length, handBefore - 1);
-  assert.equal(engine.state.winner, undefined);
+  assert.equal(engine.state.result, undefined);
 });
 
 clause(FLIMFLAM, "0:rule", "it is MY deck: the opponent's deck, hand and discard pile are untouched", () => {
@@ -4550,7 +4550,7 @@ clause(HEIST, "2:rule@ddddd", "with an empty opponent's deck there is nothing to
   heistTurn(b, {});
   assert.deepEqual(discardOf(b.engine, P2), oppDiscard);
   assert.equal(b.engine.state.pendingChoice, undefined);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(HEIST, "2:rule@ddddd", "it fires only at the start of MY turn, and only while the Heist Training Grounds is in play", () => {
@@ -5928,7 +5928,7 @@ clause(CHARM, "0:rule", "with an empty deck the Charm still enters play, nothing
   play(b.engine, P1, b.id("charm"));
   assert.equal(zoneOf(b.engine, b.id("charm")), "play");
   assert.equal(handOf(b.engine, P1).length, myHand - 1);
-  assert.equal(b.engine.state.winner, undefined);
+  assert.equal(b.engine.state.result, undefined);
 });
 
 clause(CHARM, "0:rule", "nothing is drawn when the Charm leaves play", () => {
