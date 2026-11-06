@@ -2,7 +2,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { createFactionGame, isLiving, opponentsOf, type GameFormat, type SpoilsEngine } from "../../../engine.js";
-import { character, defaultFactionDefinition, factionCard, resourceCard } from "../support/fixtures.js";
+import { buildGame, character, defaultFactionDefinition, factionCard, noDevelopFaction, resolvePendingResponses, resourceCard } from "../support/fixtures.js";
 import { settleTurnStart } from "../support/develop.js";
 
 const RAGE = resourceCard({ name: "Rage", resource: { provides: ["rage"] } });
@@ -125,6 +125,27 @@ describe("free-for-all elimination (D3, D8)", () => {
     }
     assert.equal(isLiving(engine.state, "p1"), false);
     assert.equal(engine.state.activePlayerId, "p2");
+  });
+});
+
+describe("turns counted ahead are re-counted after an elimination", () => {
+  test("'your next turn' still means your next turn once a seat is gone", () => {
+    const SKIPPER = character({
+      name: "Skipper",
+      behavior: { abilities: [{ id: "skip", type: "activated", costs: [], effects: [{ type: "skipRestoreRule", player: "controller" }] }] }
+    });
+    const { engine, id } = buildGame({
+      players: ["p1", "p2", "p3"].map(seat => ({ id: seat, faction: noDevelopFaction() })),
+      cards: [{ key: "s", def: SKIPPER, owner: "p1" }]
+    });
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("s"), abilityId: "skip" });
+    resolvePendingResponses(engine);
+    assert.deepEqual(engine.state.restoreRuleSkips.p1, [4], "three seats: p1's next turn is turn 4");
+    engine.state.players.p2.influence = 0;
+    engine.perform({ type: "endTurn", playerId: "p1" });
+    resolvePendingResponses(engine);
+    assert.equal(isLiving(engine.state, "p2"), false);
+    assert.deepEqual(engine.state.restoreRuleSkips.p1, [3], "two seats left: p1's next turn is turn 3");
   });
 });
 

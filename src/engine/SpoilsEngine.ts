@@ -21373,6 +21373,10 @@ export class SpoilsEngine {
       }
       if (when === "endOfTurn") return s.turnScheduled === this.state.turn;
       if (when === "startOfOpponentNextTurn") {
+        // With an opponent bound (three or more players): that player's next turn.
+        if (s.opponentId !== undefined) {
+          return s.opponentId === forActivePlayer && this.state.turn > s.turnScheduled;
+        }
         // The turn immediately after it was scheduled, which (turns strictly
         // alternate) belongs to the scheduler's opponent = `forActivePlayer`.
         return (
@@ -24496,7 +24500,9 @@ export class SpoilsEngine {
    */
   private eliminatePlayer(playerId: PlayerId, reason: PlayerElimination["reason"]): void {
     const player = this.requirePlayer(playerId);
+    const seatsBefore = livingSeats(this.state);
     player.eliminated = { turn: this.state.turn, reason };
+    this.restampFutureTurns(seatsBefore, playerId);
 
     for (const card of Object.values(this.state.cards)) {
       if (card.zone === "play" && card.controllerId === playerId && card.ownerId !== playerId) {
@@ -24546,6 +24552,54 @@ export class SpoilsEngine {
     }
 
     this.emit({ type: "playerEliminated", playerId, reason });
+  }
+
+  /**
+   * Turn numbers stamped ahead of time ("until the start of your next turn" —
+   * `Duration.untilTurn`; skipped Restore Rules) were counted with
+   * `seatsBefore` in the rotation. With `outId` gone, each future turn number
+   * is moved to the turn on which the same seat (or, for the eliminated
+   * seat's own turn, the next seat after it) now comes up.
+   */
+  private restampFutureTurns(seatsBefore: readonly PlayerId[], outId: PlayerId): void {
+    const turn = this.state.turn;
+    const seatsAfter = seatsBefore.filter(id => id !== outId);
+    if (seatsAfter.length === 0) return;
+    const restamp = (future: number): number => {
+      const k = future - turn;
+      if (k <= 0) return future;
+      let cycle = Math.floor(k / seatsBefore.length);
+      let index = k % seatsBefore.length;
+      if (seatsBefore[index] === outId) {
+        index++;
+        if (index === seatsBefore.length) {
+          index = 0;
+          cycle++;
+        }
+      }
+      // When the active player is the one out, the next seat's turn is the next turn.
+      const shift = seatsBefore[0] === outId ? 1 : 0;
+      return turn + shift + cycle * seatsAfter.length + seatsAfter.indexOf(seatsBefore[index]);
+    };
+    const visit = (node: unknown): void => {
+      if (Array.isArray(node)) {
+        node.forEach(visit);
+        return;
+      }
+      if (!node || typeof node !== "object") return;
+      const record = node as Record<string, unknown>;
+      if (typeof record.untilTurn === "number") record.untilTurn = restamp(record.untilTurn);
+      for (const [key, value] of Object.entries(record)) {
+        if (key !== "untilTurn") visit(value);
+      }
+    };
+    for (const [key, value] of Object.entries(this.state)) {
+      if (key === "gameLog" || key === "cards" || key === "restoreRuleSkips") continue;
+      visit(value);
+    }
+    for (const [owner, turns] of Object.entries(this.state.restoreRuleSkips)) {
+      this.state.restoreRuleSkips[owner] = turns.map(restamp);
+    }
   }
 
   /**
