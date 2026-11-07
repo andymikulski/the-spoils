@@ -273,8 +273,8 @@ describe("getPlayRequirements agrees with perform on real cards", () => {
 });
 
 describe("checkAction leaves the live game alone", () => {
-  /** The whole live game, as it would be saved: state (rngState and log included) plus the trigger queue. */
-  const fingerprint = (engine: SpoilsEngine) => JSON.stringify({ state: engine.state, queue: engine.immediateQueue });
+  /** The whole live game, as it would be saved: state (rngState, log and trigger queue included). */
+  const fingerprint = (engine: SpoilsEngine) => JSON.stringify({ state: engine.state });
 
   function seeded() {
     // An action that flips a coin (Hammer Smash), one that shuffles a deck (an optional search), and a plain one.

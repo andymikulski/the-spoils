@@ -60,6 +60,7 @@ import type {
   GameFlowView,
   GameLogEntry,
   GameLogKind,
+  EngineBookkeeping,
   GameState,
   GameStateSnapshot,
   Keyword,
@@ -107,7 +108,7 @@ import {
 import { cardTextToPlain } from "../cardText.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
-import { resolveGameFormat, startingOpponentCountsOf } from "./setup.js";
+import { emptyBookkeeping, resolveGameFormat, startingOpponentCountsOf } from "./setup.js";
 import { getLoyalty, heroesOf, isHero, revealAllAllegiances, villainOf } from "./showdown.js";
 import { conditionNodeRefersToOpponent, opponentRefsOf } from "./opponentRefs.js";
 import {
@@ -386,8 +387,6 @@ export class SpoilsEngine {
   readonly definitions: Record<CardDefinitionId, CardDefinition>;
   readonly state: GameState;
 
-  readonly immediateQueue: TriggerResolution[] = [];
-
   /**
    * Event batches delay triggered-ability execution until a simultaneous group
    * of mutations is complete. Battle damage uses this so one damage event
@@ -422,17 +421,6 @@ export class SpoilsEngine {
 
   /** The replacements (by key) currently running their effects against a card: CR 506.5 — each applies at most once to the same thing, so a replacement already in a card's chain is not offered again for it. */
   private readonly appliedReplacements = new Map<CardInstanceId, Set<string>>();
-
-  /**
-   * Damage each card has taken, tallied per source (key: the source card id,
-   * `""` when unknown), so a replaced destruction can reduce only the damage
-   * from the source of that destruction (CR 506.6). `last` is the source(s) of
-   * the most recent damage. Starts afresh whenever the card holds no damage.
-   */
-  private readonly damageSources = new Map<
-    CardInstanceId,
-    { bySource: Map<string, number>; last: Set<string> }
-  >();
 
   /** The card the state check is destroying because of lethal damage right now; the source of that destruction is whoever dealt the last damage. */
   private destroyingByLethalDamage: CardInstanceId | undefined;
@@ -536,15 +524,6 @@ export class SpoilsEngine {
   private currentCauseSourceId: CardInstanceId | undefined;
 
   /**
-   * Per-card "who last dealt it damage" — set while battle damage is
-   * applied (which happens outside `resolveEffect`, so the `currentCause`
-   * hook there doesn't cover it), read by `checkStateBasedActions` so a
-   * character dying to *lethal battle damage* attributes the destruction to
-   * the attacker/blocker that dealt it. Non-battle `dealDamage` is already
-   * covered by the `resolveEffect` cause hook.
-   */
-  private readonly lethalDamageCause = new Map<CardInstanceId, PlayerId>();
-  /**
    * The card whose destruction (by lethal BATTLE damage) is being checked
    * for replacements right now — lets the `destroyedByBattleDamage`
    * condition answer before any `cardDestroyed` event exists.
@@ -557,8 +536,6 @@ export class SpoilsEngine {
    * attach it to X"), so the engine doesn't also ask for a host (CR 507.2b).
    */
   private followingEffect: Effect | undefined;
-  /** Cards the state check destroyed because of lethal damage; cleared when a `dealDamage` effect next targets the card (`destroyedByDamage`). */
-  private readonly destroyedByDamage = new Set<CardInstanceId>();
 
   /**
    * Snapshot of a card's `attachedTo` / `linkedTargets` taken the instant it
@@ -584,15 +561,6 @@ export class SpoilsEngine {
   >();
 
   /**
-   * Last-known stats of cards that left play, captured the instant they
-   * left (CR last-known information). Read only by a `stat` expression
-   * targeting the event card while that card is out of play — "a character
-   * with less strength than that character had" (Gosche's Restoration
-   * Fortress), whose self-buffs no longer apply once it has left.
-   */
-  private readonly lastKnownCounters = new Map<CardInstanceId, Record<string, number>>();
-
-  /**
    * Counters on `cardId` for a rules read: the live counters while it is in
    * play, the last-known counters it had in play once it has left. Counters
    * themselves are wiped when a card leaves play (CR 409.2), but "a character
@@ -606,38 +574,11 @@ export class SpoilsEngine {
   ): number {
     const card = this.state.cards[cardId];
     if (!card || card.zone !== "play") {
-      const known = this.lastKnownCounters.get(cardId);
+      const known = this.kept.lastKnown[cardId]?.counters;
       if (known) return known[counter] ?? 0;
     }
     return card?.counters?.[counter] ?? 0;
   }
-
-  private readonly lastKnownStats = new Map<CardInstanceId, Record<"strength" | "life" | "speed" | "structure", number>>();
-
-  /**
-   * Who controlled a card in play at the instant it left (CR last-known
-   * information). A card outside play is controlled by its holder, so "that
-   * character's controller" read after the card was destroyed ("destroy that
-   * character. That character's controller's faction gains X", Caboodling
-   * Gladhander) would otherwise see the owner. Forgotten when the card enters
-   * play again.
-   */
-  private readonly lastKnownController = new Map<CardInstanceId, PlayerId>();
-
-  /**
-   * Last-known information for token instances that have ceased to exist.
-   * A token leaving play is deleted from `state.cards` outright (see
-   * `moveCard`), but the `cardDestroyed` / `cardMoved` event about it is
-   * emitted *after* that — so a trigger whose condition inspects the event
-   * card ("when a character an opponent controls is destroyed": Octo-Ba-Ba,
-   * the Devourer) would otherwise read a card that is no longer there and
-   * throw, stalling the battle mid-resolution. Only `getDefinition` and the
-   * `eventCardControlledBy` condition consult it (reads of what the token
-   * *was*); nothing else treats a departed token as present. Kept for the
-   * whole game rather than per-`perform()`, since a queued trigger can
-   * resolve in a later action.
-   */
-  private readonly departedTokens = new Map<CardInstanceId, CardInstance>();
 
   /**
    * Cards whose `faceDown` flag a caller cleared *before* the `moveCard`
@@ -649,29 +590,11 @@ export class SpoilsEngine {
    */
   private readonly faceDownDeparture = new Set<CardInstanceId>();
   /**
-   * Cards that entered play during the current top-level action (and the
-   * choice answers continuing it). The UNIQUE rule treats a removed *new*
-   * copy as never having entered play (user ruling Q53 follow-up).
-   */
-  private readonly recentlyEntered = new Set<CardInstanceId>();
-  /**
-   * A new UNIQUE copy being removed by the rule: its departure (destroyed /
-   * leaves play) raises no triggers — its own or anyone else's — because it
-   * never entered play.
-   */
-  private readonly silentDepartures = new Set<CardInstanceId>();
-  /**
    * The copies a `uniqueSurvivor` answer is destroying right now: they no
    * longer count as controlled copies, so destroying the first of several
    * does not open a second question over the rest (CR 507.5a).
    */
   private readonly uniqueDoomed = new Set<CardInstanceId>();
-  /**
-   * Extra copies whose Unique destruction an effect replaced, with that
-   * effect's source. Unique does not try to destroy such a copy again while
-   * the source is still there (CR 507.5b).
-   */
-  private readonly uniquePrevented = new Map<CardInstanceId, { cardId?: CardInstanceId; runtimeId?: string }>();
   /** The source of the replacement that most recently took over an event in `applyReplacement`. */
   private lastReplacer: { cardId?: CardInstanceId; runtimeId?: string } | undefined;
 
@@ -781,6 +704,8 @@ export class SpoilsEngine {
     this.state.format ??= resolveGameFormat(this.state.turnOrder);
     this.state.startingOpponentCounts ??= startingOpponentCountsOf(this.state);
     this.state.responseStack ??= [];
+    this.state.triggerQueue ??= [];
+    this.state.bookkeeping ??= emptyBookkeeping();
     this.state.gameLog ??= [];
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
@@ -868,8 +793,7 @@ export class SpoilsEngine {
    * player can end ends the game as a draw. Whatever was still resolving is dropped.
    */
   private endGameAsEndlessLoop(): void {
-    this.immediateQueue.splice(0);
-    this.queueGuard = undefined;
+    this.state.triggerQueue.splice(0);
     this.eventBatchDepth = 0;
     this.triggerNesting = 0;
     const state = this.state;
@@ -956,8 +880,8 @@ export class SpoilsEngine {
     // A pending-choice answer continues the action that raised the choice,
     // so "entered play during this action" must survive it.
     if (action.type !== "resolvePendingChoice") {
-      this.recentlyEntered.clear();
-      this.silentDepartures.clear();
+      this.kept.enteredThisAction = [];
+      this.kept.silentDepartures = [];
     }
     this.beingDeployedId = undefined;
     this.costAnswers = {};
@@ -1863,7 +1787,7 @@ export class SpoilsEngine {
   }
 
   getDefinition(cardId: CardInstanceId): CardDefinition {
-    const card = this.state.cards[cardId] ?? this.departedTokens.get(cardId);
+    const card = this.state.cards[cardId] ?? this.kept.departedTokens[cardId];
     assert(card, `Card '${cardId}' not found.`);
     const definition = this.definitions[card.definitionId];
 
@@ -2795,13 +2719,6 @@ export class SpoilsEngine {
   }
 
   /**
-   * Zone a card was in when it began a deploy (hand, discard, play for a
-   * face-down card flipped up, ...), read when `cardEnteredPlay` is emitted
-   * so the event can report where the card came from (`from`).
-   */
-  private enterOrigin = new Map<CardInstanceId, Zone>();
-
-  /**
    * Hand cards of `playerId` that offer "reveal this card as you are playing
    * a resource" (`CardDefinition.revealFromHand`) and whose reveal-deploy
    * looks affordable now (icons met, enough ready resources for the flat
@@ -2851,7 +2768,7 @@ export class SpoilsEngine {
     // event queues resolve now, ahead of the move.
     let entersAttachedTo: CardInstanceId | undefined;
     if (emitPlayed) {
-      const waiting = this.immediateQueue.splice(0);
+      const waiting = this.state.triggerQueue.splice(0);
       const previousEntering = this.resourceEntering;
       this.resourceEntering = { cardId };
       try {
@@ -2865,7 +2782,7 @@ export class SpoilsEngine {
       } finally {
         entersAttachedTo = this.resourceEntering?.attachTo;
         this.resourceEntering = previousEntering;
-        this.immediateQueue.push(...waiting);
+        this.state.triggerQueue.push(...waiting);
       }
       if (card.zone !== playedFrom) return;
     }
@@ -6007,10 +5924,9 @@ export class SpoilsEngine {
    * and its log are untouched. (A prompt the action raises, such as a name still to be given, counts as accepted.)
    */
   checkAction(action: GameAction): { ok: true } | { ok: false; error: string } {
-    const probe = this.cloneForProbe();
     // The copy plays for real (it is `perform`ing, not rehearsing a payment), with the triggers waiting on the live game.
+    const probe = this.cloneForProbe({ withTriggerQueue: true });
     probe.dryRun = false;
-    probe.immediateQueue.push(...structuredClone(this.immediateQueue));
     try {
       probe.perform(action);
       return { ok: true };
@@ -6027,9 +5943,8 @@ export class SpoilsEngine {
    */
   getPaymentOptions(action: PlayAction): PaymentOptions | undefined {
     if (!this.state.cards[action.cardId]) return undefined;
-    const probe = this.cloneForProbe();
+    const probe = this.cloneForProbe({ withTriggerQueue: true });
     probe.dryRun = false;
-    probe.immediateQueue.push(...structuredClone(this.immediateQueue));
     probe.paymentCapture = { amount: 0, candidates: [] };
     const { payWith: _ignored, ...bare } = action;
     try {
@@ -7030,7 +6945,7 @@ export class SpoilsEngine {
       r => r.playerId !== playerId
     );
 
-    this.enterOrigin.set(card.id, card.zone);
+    this.kept.deployOrigin[card.id] = card.zone;
     this.moveCard(card.id, "deploying");
     // Its numeric cost while it is being played is the running total (CR 406.3): what the cards that respond
     // to it ("pay X, where X is its numeric cost") read.
@@ -8555,7 +8470,7 @@ export class SpoilsEngine {
     this.state.thresholdReductions = this.state.thresholdReductions.filter(
       r => r.playerId !== action.playerId
     );
-    this.enterOrigin.set(card.id, card.zone);
+    this.kept.deployOrigin[card.id] = card.zone;
     this.moveCard(card.id, "deploying");
     card.numericCostPaid = flipNumericCostPaid;
     (this.state.turnDeploys[action.playerId] ??= []).push({
@@ -8870,12 +8785,12 @@ export class SpoilsEngine {
    * card whose search this is) queued behind it.
    */
   private announceDeckSearch(searcherId: PlayerId): void {
-    const waiting = this.immediateQueue.splice(0);
+    const waiting = this.state.triggerQueue.splice(0);
     try {
       this.emit({ type: "deckSearched", playerId: searcherId });
       this.processImmediateQueue();
     } finally {
-      this.immediateQueue.unshift(...waiting);
+      this.state.triggerQueue.unshift(...waiting);
     }
   }
 
@@ -8951,8 +8866,8 @@ export class SpoilsEngine {
         this.entrySelections[card.id] = { ...item.context.selected };
         this.entryPickZones[card.id] = { ...item.context.pickZones };
         try {
-          const enteredFrom = this.enterOrigin.get(card.id) ?? "hand";
-          this.enterOrigin.delete(card.id);
+          const enteredFrom = this.kept.deployOrigin[card.id] ?? "hand";
+          delete this.kept.deployOrigin[card.id];
           this.emit({
             type: "cardEnteredPlay",
             cardId: card.id,
@@ -9114,7 +9029,7 @@ export class SpoilsEngine {
     }
     // Every parked frame of the trigger that was resolving has run: the
     // triggers that were queued behind it may go on now.
-    this.queueGuard = undefined;
+    this.releaseQueuedTriggers();
 
     // Triggers queued behind the one that just finished (two copies of the
     // same card, SYS-62) are still waiting: carry on with them before the
@@ -9455,10 +9370,15 @@ export class SpoilsEngine {
       (event.type === "cardMoved" && event.to === "play") ||
       event.type === "cardEnteredPlay"
     ) {
-      this.lastKnownCounters.delete(event.cardId);
-      this.lastKnownController.delete(event.cardId);
+      const known = this.kept.lastKnown[event.cardId];
+      if (known) {
+        delete known.counters;
+        delete known.controllerId;
+      }
     }
-    if (event.type === "cardEnteredPlay") this.recentlyEntered.add(event.cardId);
+    if (event.type === "cardEnteredPlay" && !this.kept.enteredThisAction.includes(event.cardId)) {
+      this.kept.enteredThisAction.push(event.cardId);
+    }
     // Same new object: its once-per-turn triggers have not fired yet this turn.
     if (
       (event.type === "cardMoved" && event.to === "play") ||
@@ -9526,7 +9446,7 @@ export class SpoilsEngine {
     }
 
     for (const trigger of triggers) {
-      this.immediateQueue.push(trigger);
+      this.state.triggerQueue.push(trigger);
     }
 
     if (this.eventBatchDepth === 0) {
@@ -9536,12 +9456,12 @@ export class SpoilsEngine {
 
   /** `event` is the departure (destroyed / leaves play) of a card in `silentDepartures`. */
   private isSilentDeparture(event: GameEvent): boolean {
-    if (this.silentDepartures.size === 0) return false;
-    if (event.type === "cardDestroyed") return this.silentDepartures.has(event.cardId);
+    if (this.kept.silentDepartures.length === 0) return false;
+    if (event.type === "cardDestroyed") return this.kept.silentDepartures.includes(event.cardId);
     return (
       event.type === "cardMoved" &&
       event.from === "play" &&
-      this.silentDepartures.has(event.cardId)
+      this.kept.silentDepartures.includes(event.cardId)
     );
   }
 
@@ -10118,14 +10038,20 @@ export class SpoilsEngine {
   }
 
   /**
-   * The triggers that were already queued when a trigger's effects paused on a
-   * player choice (two Mau Caravans: the sibling copy's trigger). While the
-   * paused trigger's parked frames are still being resumed, an event emitted by
-   * one of them (a cost paid, a card picked) must not start those siblings in
-   * the middle: they would prompt over the paused trigger's pick. Cleared when
-   * `resumeEffectFrames` has run every parked frame.
+   * Marks the triggers that were already queued when a trigger's effects paused on a player choice (two Mau
+   * Caravans: the sibling copy's trigger) with `TriggerResolution.heldForParkedFrames`. While the paused trigger's
+   * parked frames are still being resumed, an event emitted by one of them (a cost paid, a card picked) must not
+   * start those siblings in the middle: they would prompt over the paused trigger's pick. Released when
+   * `resumeEffectFrames` has run every parked frame. Kept on the queued triggers themselves (in the state), so a
+   * game saved or copied mid-pause holds them back the same way.
    */
-  private queueGuard: Set<TriggerResolution> | undefined;
+  private holdQueuedTriggers(): void {
+    for (const trigger of this.state.triggerQueue) trigger.heldForParkedFrames = true;
+  }
+
+  private releaseQueuedTriggers(): void {
+    for (const trigger of this.state.triggerQueue) delete trigger.heldForParkedFrames;
+  }
 
   private processImmediateQueue(): void {
     if (this.endlessLoopFound) return;
@@ -10147,7 +10073,7 @@ export class SpoilsEngine {
     // Triggers that keep re-triggering each other (two cards each reacting
     // to the other's damage) would loop here forever (CR 414.1).
     let resolvedHere = 0;
-    while (this.immediateQueue.length > 0) {
+    while (this.state.triggerQueue.length > 0) {
       if (++resolvedHere >= 5000) {
         this.endlessLoopFound = true;
         throw new EndlessLoopError("Triggered abilities are looping without end.");
@@ -10167,8 +10093,8 @@ export class SpoilsEngine {
       // Peeked, not shifted: if this trigger turns out to need a player
       // choice, it must stay at the head of the queue so resolvePendingChoice
       // can resume exactly here afterward.
-      const trigger = this.immediateQueue[0];
-      if (this.queueGuard?.has(trigger)) return;
+      const trigger = this.state.triggerQueue[0];
+      if (trigger.heldForParkedFrames) return;
 
       // CR §507.5 (Unique) is enforced immediately: a second copy that just
       // entered play makes its controller keep one BEFORE any queued trigger
@@ -10179,7 +10105,7 @@ export class SpoilsEngine {
         !this.state.cards[trigger.sourceId] &&
         trigger.context.event?.type !== "cardDestroyed"
       ) {
-        this.immediateQueue.shift();
+        this.state.triggerQueue.shift();
         continue;
       }
 
@@ -10244,7 +10170,7 @@ export class SpoilsEngine {
         // effects, so they are queued at the head and this trigger waits.
         if (!trigger.picksAnnounced) {
           trigger.picksAnnounced = true;
-          const queued = this.immediateQueue.length;
+          const queued = this.state.triggerQueue.length;
           this.beginEventBatch();
           try {
             this.emitCardPicked(
@@ -10255,9 +10181,9 @@ export class SpoilsEngine {
           } finally {
             this.eventBatchDepth--;
           }
-          const added = this.immediateQueue.splice(queued);
+          const added = this.state.triggerQueue.splice(queued);
           if (added.length > 0) {
-            this.immediateQueue.unshift(...added);
+            this.state.triggerQueue.unshift(...added);
             continue;
           }
         }
@@ -10282,7 +10208,7 @@ export class SpoilsEngine {
       // emit an event (e.g. dealDamage → damageDealt), reentrantly calling
       // processImmediateQueue — this trigger must not still be at the head
       // when that happens, or it gets resolved again and recurses forever.
-      this.immediateQueue.shift();
+      this.state.triggerQueue.shift();
 
       const triggerLabel = trigger.ability.name
         ? `"${trigger.ability.name}"`
@@ -10301,17 +10227,17 @@ export class SpoilsEngine {
       });
 
       if (!completed) {
-        this.queueGuard = new Set(this.immediateQueue);
+        this.holdQueuedTriggers();
         return;
       }
     }
   }
 
-  /** The leading run of immediateQueue entries sharing one batchId (same emitted event). */
+  /** The leading run of `state.triggerQueue` entries sharing one batchId (same emitted event). */
   private getUnorderedTriggerBatch(batchId: string): TriggerResolution[] {
     const batch: TriggerResolution[] = [];
 
-    for (const trigger of this.immediateQueue) {
+    for (const trigger of this.state.triggerQueue) {
       if (trigger.batchId !== batchId) break;
       batch.push(trigger);
     }
@@ -10453,7 +10379,7 @@ export class SpoilsEngine {
         // token for the "leaves play" trigger that asks (last-known information).
         return (
           !!cardId &&
-          (!!this.state.cards[cardId]?.isToken || this.departedTokens.has(cardId))
+          (!!this.state.cards[cardId]?.isToken || !!this.kept.departedTokens[cardId])
         );
       }
 
@@ -10496,7 +10422,7 @@ export class SpoilsEngine {
         // A destroyed token no longer exists — judge it by who controlled
         // it when it left play (see `departedTokens`).
         const eventCard =
-          this.state.cards[eventCardId] ?? this.departedTokens.get(eventCardId);
+          this.state.cards[eventCardId] ?? this.kept.departedTokens[eventCardId];
 
         if (!eventCard) {
           return false;
@@ -11094,7 +11020,7 @@ export class SpoilsEngine {
       case "destroyedByDamage": {
         const targetId = this.resolveTargetRef(condition.target, context);
         if (!targetId) return false;
-        if (this.destroyedByDamage.has(targetId)) return true;
+        if (this.kept.destroyedByDamage.includes(targetId)) return true;
         const card = this.state.cards[targetId];
         if (!card || card.zone !== "play") return false;
         const isChar = this.hasCardType(targetId, "character");
@@ -11153,7 +11079,7 @@ export class SpoilsEngine {
         // information, CR 503.1). That includes "this card" when this card
         // is the event card ("When this card is destroyed, X is this card's
         // strength"), whose attachments have already followed it out.
-        const lastKnown = this.lastKnownStats.get(cardId);
+        const lastKnown = this.kept.lastKnown[cardId]?.stats;
         if (
           (expression.target === "eventCard" ||
             cardId === this.getEventCardId(context.event)) &&
@@ -11174,7 +11100,7 @@ export class SpoilsEngine {
         );
 
         if (!cardId) return 0;
-        if (!this.state.cards[cardId] && !this.lastKnownCounters.has(cardId)) {
+        if (!this.state.cards[cardId] && !this.kept.lastKnown[cardId]?.counters) {
           return 0;
         }
 
@@ -12503,7 +12429,7 @@ export class SpoilsEngine {
       const target = this.requireCard(cardId);
       const known =
         target.zone !== "play" && target.zone !== "deploying"
-          ? this.lastKnownController.get(cardId)
+          ? this.kept.lastKnown[cardId]?.controllerId
           : undefined;
       return this.requirePlayer(known ?? target.controllerId);
     }
@@ -12602,7 +12528,6 @@ export class SpoilsEngine {
     }
     return false;
   }
-
 
   /** Re-runs a paused action with an answer merged in; a refused answer (nothing changed) leaves the question open. */
   private rerunPausedAction(pending: PendingChoice, action: GameAction): void {
@@ -12997,11 +12922,18 @@ export class SpoilsEngine {
     );
   }
 
+  /** The engine's own between-actions bookkeeping, kept in the state (see `EngineBookkeeping`). */
+  private get kept(): EngineBookkeeping {
+    return this.state.bookkeeping;
+  }
+
   /** A throw-away copy of the game that shares nothing with this one: payments are rehearsed on it. */
-  private cloneForProbe(): SpoilsEngine {
+  private cloneForProbe(options: { withTriggerQueue?: boolean } = {}): SpoilsEngine {
     // Drop `gameLog` before the deep clone — the probe never appends to it
-    // and it grows unbounded over a game.
-    const clone = structuredClone({ ...this.state, gameLog: [] });
+    // and it grows unbounded over a game. A payment rehearsal leaves out the
+    // triggers waiting to resolve (it must not resolve them); a probe that
+    // plays an action for real keeps them.
+    const clone = structuredClone({ ...this.state, gameLog: [], ...(options.withTriggerQueue ? {} : { triggerQueue: [] }) });
     // The clone draws from its own copy of rngState, so a rehearsal can never advance the real game's
     // stream. A caller-supplied random function (a scripted test stream) is shared state we cannot copy:
     // the rehearsal gets a fixed one, so it never eats the values the real payment is about to draw.
@@ -13124,8 +13056,8 @@ export class SpoilsEngine {
     // CR 503.3: a trigger caused by paying a cost step waits until every cost is satisfied, then the triggers
     // of the whole payment happen together as one batch (CR 604.1f, 606.1e). A payment that stops to ask a
     // question leaves them queued for the re-run; an illegal payment terminates them (CR 604.1e, 606.1d).
-    const queuedBefore = new Set(this.immediateQueue);
-    const mine = (): TriggerResolution[] => this.immediateQueue.filter(queued => !queuedBefore.has(queued));
+    const queuedBefore = new Set(this.state.triggerQueue);
+    const mine = (): TriggerResolution[] => this.state.triggerQueue.filter(queued => !queuedBefore.has(queued));
     this.beginEventBatch();
     try {
       for (let i = resume ? this.costCommitted() : 0; i < ordered.length; i++) {
@@ -13137,7 +13069,7 @@ export class SpoilsEngine {
       }
     } catch (error) {
       this.eventBatchDepth--;
-      for (const queued of mine()) this.immediateQueue.splice(this.immediateQueue.indexOf(queued), 1);
+      for (const queued of mine()) this.state.triggerQueue.splice(this.state.triggerQueue.indexOf(queued), 1);
       throw error;
     }
     const paymentBatchId = this.nextId("batch");
@@ -13700,7 +13632,7 @@ export class SpoilsEngine {
         } else {
           this.noteDamage(card, [{ sourceId: context.sourceId, amount }]);
           card.damage += amount;
-          if (amount > 0) this.lethalDamageCause.delete(targetId);
+          if (amount > 0) delete this.kept.lethalDamageCause[targetId];
         }
         if (emitEvents && amount > 0) {
           this.emit({
@@ -14080,7 +14012,7 @@ export class SpoilsEngine {
         // "If the picked character would be dealt damage, deal damage to
         // this card instead." (6r4wny 60dy9u4rd5).
         const targetId = this.redirectTargetFor(rawTargetId) ?? rawTargetId;
-        this.destroyedByDamage.delete(targetId);
+        this.kept.destroyedByDamage = this.kept.destroyedByDamage.filter(id => id !== targetId);
 
         const target = this.requireCard(targetId);
 
@@ -17118,16 +17050,16 @@ export class SpoilsEngine {
   ): void {
     const dealt = sources.filter(s => s.amount > 0);
     if (dealt.length === 0) return;
-    let tally = this.damageSources.get(card.id);
+    let tally = this.kept.damageSources[card.id];
     if (!tally || card.damage <= 0) {
-      tally = { bySource: new Map(), last: new Set() };
-      this.damageSources.set(card.id, tally);
+      tally = { bySource: {}, last: [] };
+      this.kept.damageSources[card.id] = tally;
     }
-    tally.last = new Set();
+    tally.last = [];
     for (const { sourceId, amount } of dealt) {
       const key = sourceId ?? "";
-      tally.bySource.set(key, (tally.bySource.get(key) ?? 0) + amount);
-      tally.last.add(key);
+      tally.bySource[key] = (tally.bySource[key] ?? 0) + amount;
+      if (!tally.last.includes(key)) tally.last.push(key);
     }
   }
 
@@ -17144,8 +17076,8 @@ export class SpoilsEngine {
   ): void {
     const card = this.state.cards[cardId];
     if (!card || card.damage <= 0) return;
-    const tally = this.damageSources.get(cardId);
-    if (lethal && (!tally || tally.last.size === 0)) {
+    const tally = this.kept.damageSources[cardId];
+    if (lethal && (!tally || tally.last.length === 0)) {
       // No record of who dealt it (damage the card was set up with): all of it.
       card.damage = 0;
       return;
@@ -17156,10 +17088,10 @@ export class SpoilsEngine {
         ? [destroyerId]
         : [];
     for (const key of sources) {
-      const dealt = Math.min(tally?.bySource.get(key) ?? 0, card.damage);
+      const dealt = Math.min(tally?.bySource[key] ?? 0, card.damage);
       if (dealt <= 0) continue;
       card.damage -= dealt;
-      tally!.bySource.set(key, 0);
+      tally!.bySource[key] = 0;
     }
     if (lethal) {
       // Still at or over its limit (the limit dropped since): it would re-die
@@ -18092,7 +18024,7 @@ export class SpoilsEngine {
       { controllerId: PlayerId; unique: string; cardIds: CardInstanceId[] }
     >();
 
-    for (const [cardId, replacer] of this.uniquePrevented) {
+    for (const [cardId, replacer] of Object.entries(this.kept.uniquePrevented)) {
       const copy = this.state.cards[cardId];
       const source = replacer.cardId ? this.state.cards[replacer.cardId] : undefined;
       const preventionLasts =
@@ -18100,12 +18032,12 @@ export class SpoilsEngine {
         (replacer.runtimeId
           ? this.state.runtimeReplacements.some(rr => rr.id === replacer.runtimeId)
           : source?.zone === "play" && !source.faceDown);
-      if (!preventionLasts) this.uniquePrevented.delete(cardId);
+      if (!preventionLasts) delete this.kept.uniquePrevented[cardId];
     }
 
     for (const card of Object.values(this.state.cards)) {
       if (card.zone !== "play" || card.faceDown) continue;
-      if (this.uniqueDoomed.has(card.id) || this.uniquePrevented.has(card.id)) continue;
+      if (this.uniqueDoomed.has(card.id) || !!this.kept.uniquePrevented[card.id]) continue;
 
       const unique = this.getEffectiveUnique(card.id);
       if (!unique) continue;
@@ -18220,7 +18152,7 @@ export class SpoilsEngine {
             // hit from an opposing character. Battle damage records this;
             // non-battle `dealDamage` leaves `currentCause` set from its
             // effect's controller.
-            const battleCause = this.lethalDamageCause.get(card.id);
+            const battleCause = this.kept.lethalDamageCause[card.id];
             if (card.damage === 0 && !battleCause) {
               // Dying with no damage at all (0 life): nothing damaged it, so
               // a stale cause from an earlier effect must not attribute it.
@@ -18231,7 +18163,7 @@ export class SpoilsEngine {
               this.currentCause = battleCause;
               this.currentCauseSourceId = undefined;
             }
-            this.destroyedByDamage.add(card.id);
+            if (!this.kept.destroyedByDamage.includes(card.id)) this.kept.destroyedByDamage.push(card.id);
             const previousLethal = this.destroyingByLethalDamage;
             this.destroyingByLethalDamage = card.id;
             try {
@@ -18239,7 +18171,7 @@ export class SpoilsEngine {
             } finally {
               this.destroyingByLethalDamage = previousLethal;
             }
-            this.lethalDamageCause.delete(card.id);
+            delete this.kept.lethalDamageCause[card.id];
             changed = true;
             break;
           }
@@ -18389,14 +18321,14 @@ export class SpoilsEngine {
         const liftedEntryTriggers: TriggerResolution[] = [];
         for (const cardId of pending.candidates) {
           if (cardId === choice.keep) continue;
-          for (let i = this.immediateQueue.length - 1; i >= 0; i--) {
-            const queued = this.immediateQueue[i];
+          for (let i = this.state.triggerQueue.length - 1; i >= 0; i--) {
+            const queued = this.state.triggerQueue[i];
             if (
               queued.sourceId === cardId &&
               queued.context.event?.type === "cardEnteredPlay" &&
               queued.context.event.cardId === cardId
             ) {
-              liftedEntryTriggers.unshift(...this.immediateQueue.splice(i, 1));
+              liftedEntryTriggers.unshift(...this.state.triggerQueue.splice(i, 1));
             }
           }
         }
@@ -18412,19 +18344,23 @@ export class SpoilsEngine {
               // its own or anyone else's (Q53 follow-up). The old copy is
               // destroyed normally. If its replacement paused for a choice the
               // mark stays until the next top-level action.
-              const isNewCopy = this.recentlyEntered.has(cardId);
-              if (isNewCopy) this.silentDepartures.add(cardId);
+              const isNewCopy = this.kept.enteredThisAction.includes(cardId);
+              if (isNewCopy && !this.kept.silentDepartures.includes(cardId)) this.kept.silentDepartures.push(cardId);
               this.lastReplacer = undefined;
               // CR 507.5: the Unique rule destroys it, no player or card does.
               this.destroyCardCausedBy(cardId, undefined, undefined);
               // CR 507.5b: an effect took over this destruction and the copy
               // stays; Unique tries again only once that effect is gone.
               const stays = this.state.cards[cardId];
-              if (this.lastReplacer && stays?.zone === "play") {
-                this.uniquePrevented.set(cardId, this.lastReplacer);
+              // (Set by the destruction above, which the narrowing to `undefined` cannot see.)
+              const replacer = this.lastReplacer as { cardId?: CardInstanceId; runtimeId?: string } | undefined;
+              if (replacer && stays?.zone === "play") {
+                this.kept.uniquePrevented[cardId] = { ...replacer };
               }
               this.lastReplacer = undefined;
-              if (isNewCopy && !this.state.pendingChoice) this.silentDepartures.delete(cardId);
+              if (isNewCopy && !this.state.pendingChoice) {
+                this.kept.silentDepartures = this.kept.silentDepartures.filter(id => id !== cardId);
+              }
             }
           }
         } finally {
@@ -18434,7 +18370,7 @@ export class SpoilsEngine {
         for (const lifted of liftedEntryTriggers) {
           const card = this.state.cards[lifted.sourceId];
           if (card && card.zone === "play" && !card.faceDown) {
-            this.immediateQueue.unshift(lifted);
+            this.state.triggerQueue.unshift(lifted);
           }
         }
 
@@ -18461,7 +18397,7 @@ export class SpoilsEngine {
           if (!this.state.pendingChoice) this.processImmediateQueue();
           return;
         }
-        const trigger = this.immediateQueue[0];
+        const trigger = this.state.triggerQueue[0];
         assert(
           trigger && trigger.sourceId === pending.sourceId && trigger.ability.id === pending.abilityId,
           "The pending trigger is no longer waiting to resolve."
@@ -18477,7 +18413,7 @@ export class SpoilsEngine {
       case "selectTargets": {
         assert(pending.kind === "selectTargets", "This choice does not match the pending decision.");
 
-        const trigger = this.immediateQueue[0];
+        const trigger = this.state.triggerQueue[0];
 
         assert(
           trigger &&
@@ -18624,7 +18560,7 @@ export class SpoilsEngine {
       case "orderTriggers": {
         assert(pending.kind === "orderTriggers", "This choice does not match the pending decision.");
 
-        const batchId = this.immediateQueue[0]?.batchId;
+        const batchId = this.state.triggerQueue[0]?.batchId;
         const batch = batchId ? this.getUnorderedTriggerBatch(batchId) : [];
 
         // CR §503.4a: the order is decided one trigger at a time — the
@@ -18650,7 +18586,7 @@ export class SpoilsEngine {
 
         // Queue head becomes: picked, then the still-unordered rest (their
         // shared batch id intact, so 2+ of them re-prompt after `picked`).
-        this.immediateQueue.splice(0, 1 + batch.length, picked, ...batch);
+        this.state.triggerQueue.splice(0, 1 + batch.length, picked, ...batch);
 
         this.state.pendingChoice = undefined;
         this.processImmediateQueue();
@@ -20114,14 +20050,16 @@ export class SpoilsEngine {
 
     if (from === "play" && to !== "play") {
       delete card.deployedAsResponse;
-      this.lastKnownCounters.set(cardId, { ...card.counters });
-      this.lastKnownController.set(cardId, card.controllerId);
-      this.lastKnownStats.set(cardId, {
-        strength: this.getStat(cardId, "strength"),
-        life: this.getStat(cardId, "life"),
-        speed: this.getStat(cardId, "speed"),
-        structure: this.getStat(cardId, "structure")
-      });
+      this.kept.lastKnown[cardId] = {
+        stats: {
+          strength: this.getStat(cardId, "strength"),
+          life: this.getStat(cardId, "life"),
+          speed: this.getStat(cardId, "speed"),
+          structure: this.getStat(cardId, "structure")
+        },
+        counters: { ...card.counters },
+        controllerId: card.controllerId
+      };
     }
 
     if (
@@ -20241,7 +20179,7 @@ export class SpoilsEngine {
       from === "play" && to !== "play" ? this.attachmentsFollowing(cardId) : [];
 
     if (card.isToken && from === "play" && to !== "play") {
-      this.departedTokens.set(cardId, { ...card, zone: to });
+      this.kept.departedTokens[cardId] = { ...card, zone: to };
       this.removeFromAllPlayerZones(cardId);
       for (const other of Object.values(this.state.cards)) {
         if (other.attachedTo === cardId) other.attachedTo = undefined;
@@ -20291,7 +20229,7 @@ export class SpoilsEngine {
       // back is a new object with none (CR 409.2).
       card.counters = {};
       delete card.chosenOpponentId;
-      this.lethalDamageCause.delete(cardId);
+      delete this.kept.lethalDamageCause[cardId];
       // Snapshot the card's own links before clearing them, so a "when this
       // card leaves play" trigger (which may resolve later, behind an event
       // batch) can still read `"attachedTo"` / `{ remembered }` via the
@@ -20943,7 +20881,7 @@ export class SpoilsEngine {
       target.damage += amount;
       // Non-battle damage supersedes an earlier battle-damage cause: a
       // card it then destroys was not "destroyed by battle damage".
-      if (amount > 0) this.lethalDamageCause.delete(targetId);
+      if (amount > 0) delete this.kept.lethalDamageCause[targetId];
 
       if (amount > 0) {
         this.emit({
@@ -21190,7 +21128,7 @@ export class SpoilsEngine {
     card.attackEligibleTurn = undefined;
     card.startedTurnInPlay = undefined;
     card.attachedTo = undefined;
-    this.lethalDamageCause.delete(cardId);
+    delete this.kept.lethalDamageCause[cardId];
 
     // Move it into the owner's play area (it may have been under opposing
     // control) and flip it.
@@ -21249,7 +21187,7 @@ export class SpoilsEngine {
     card.depleted = false;
     card.restoreLocked = undefined;
     card.attachedTo = undefined;
-    this.lethalDamageCause.delete(cardId);
+    delete this.kept.lethalDamageCause[cardId];
 
     card.faceDown = false;
     card.attackEligibleTurn = undefined;
@@ -21692,7 +21630,7 @@ export class SpoilsEngine {
     return !!(
       this.state.pendingChoice ||
       this.state.pendingEffectFrames.length > 0 ||
-      this.immediateQueue.length > 0 ||
+      this.state.triggerQueue.length > 0 ||
       this.state.responseWindow ||
       this.state.battle
     );
@@ -22730,10 +22668,9 @@ export class SpoilsEngine {
     attackerIds: CardInstanceId[],
     target: AttackTarget
   ): BlockOptions | undefined {
-    const probe = this.cloneForProbe();
     // The copy plays for real, with the triggers waiting on the live game (as `checkAction` does).
+    const probe = this.cloneForProbe({ withTriggerQueue: true });
     probe.dryRun = false;
-    probe.immediateQueue.push(...structuredClone(this.immediateQueue));
     try {
       probe.perform({ type: "declareAttack", playerId: attackerPlayerId, attackerIds: [...attackerIds], target });
       // Nobody responds: the attacker, then the defender, pass; the window closes into the blocking step.
@@ -23631,10 +23568,7 @@ export class SpoilsEngine {
               ?? group.contributors[0];
             const source = cause && this.state.cards[cause.sourceId];
             if (source) {
-              this.lethalDamageCause.set(
-                group.cardId!,
-                source.controllerId
-              );
+              this.kept.lethalDamageCause[group.cardId!] = source.controllerId;
             }
           }
         }
@@ -24895,8 +24829,8 @@ export class SpoilsEngine {
     for (let i = stack.length - 1; i >= 0; i--) {
       if (stack[i].controllerId === playerId) stack.splice(i, 1);
     }
-    for (let i = this.immediateQueue.length - 1; i >= 0; i--) {
-      if (this.immediateQueue[i].context.controllerId === playerId) this.immediateQueue.splice(i, 1);
+    for (let i = this.state.triggerQueue.length - 1; i >= 0; i--) {
+      if (this.state.triggerQueue[i].context.controllerId === playerId) this.state.triggerQueue.splice(i, 1);
     }
     // Their delayed effects go with them, and so does one waiting for their next turn ("at the start of your
     // opponent's next turn" bound to them): that turn never comes.

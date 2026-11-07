@@ -6,6 +6,7 @@ import type {
   CardDefinitionId,
   CardInstance,
   CardInstanceId,
+  EngineBookkeeping,
   GameFormat,
   GameState,
   PlayerId,
@@ -25,6 +26,21 @@ import { opponentsOf } from "./seating.js";
  * networked peers, replays — every `GameAction` names cards by instance id)
  * passes its own per-game ids instead; see `createFactionGame`.
  */
+/** Bookkeeping for a game in which nothing has happened yet. */
+export function emptyBookkeeping(): EngineBookkeeping {
+  return {
+    lastKnown: {},
+    departedTokens: {},
+    enteredThisAction: [],
+    silentDepartures: [],
+    uniquePrevented: {},
+    damageSources: {},
+    destroyedByDamage: [],
+    lethalDamageCause: {},
+    deployOrigin: {}
+  };
+}
+
 export function createCardInstance(
   definitionId: CardDefinitionId,
   ownerId: PlayerId,
@@ -214,6 +230,8 @@ export function createGame(
     responseStack: [],
     gameLog: [],
     pendingEffectFrames: [],
+    triggerQueue: [],
+    bookkeeping: emptyBookkeeping(),
     turnEventTally: {},
     turnDeploys: {},
     turnDestroyed: [],

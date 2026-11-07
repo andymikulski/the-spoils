@@ -45,4 +45,12 @@ export interface SerializedGame {
   formatVersion: number;
   state: GameState;
   runtimeDefinitions?: CardDefinition[];
+  /**
+   * Places in `state` that hold the very same object in the live game, which JSON writes out as separate copies:
+   * each entry is `[path, pathOfTheSameObject]`, paths as keys from `state` (array indices as strings). The engine
+   * relies on a few of these: the rest of an effect list waiting behind a prompt shares its resolution context with
+   * the prompt, so the pick the prompt gets is seen by the effects after it. `loadGame` links them up again.
+   * Omitted when nothing is shared.
+   */
+  sharedObjects?: Array<[string[], string[]]>;
 }

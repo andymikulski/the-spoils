@@ -11,6 +11,7 @@ The engine is checked from four directions. Every suite runs under `npm test`
 | Clause suite | `src/engine/__tests__/clauses/<batch>.test.ts` | Every printed clause of every card does what the printed text says. |
 | Rules suite | `src/engine/__tests__/rules/<batch>.test.ts` | Every numbered rule of the Comprehensive Rules v2.5 and every FAQ v2.0 ruling is followed, independent of any real card; also the multi-player, Showdown and epic rules cards. |
 | Classic oracle | `src/engine/__tests__/oracle/classic-oracle.test.ts` | Classic 2-player games play out exactly as recorded: 31 seeded real-catalog games (see below). |
+| Save / load | `src/engine/__tests__/oracle/save-load-equivalence-*.test.ts` | A game saved (through JSON) and loaded before any action plays on exactly as the original: every action of every oracle game (see below). |
 
 Run one file while working on it:
 
@@ -68,6 +69,12 @@ npx tsx scripts/record-classic-oracle.ts
 ```
 
 Card or catalog changes (`data/cards.json`) also change the recording.
+
+The same games check save and load (`save-load-equivalence.ts`, four files run in parallel): before every action the
+bot takes, the game is saved, put through JSON, loaded into a fresh engine, and the action is performed on both; they
+must agree on whether it is accepted and on the whole state afterwards. A failure means something the engine relies on
+between actions is not in `GameState` (keep it in `state.bookkeeping`, not on the engine instance), or a saved object
+lost an identity the engine relies on (`SerializedGame.sharedObjects`).
 
 ## Clause suite
 

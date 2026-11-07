@@ -154,7 +154,7 @@ Key mechanisms, all built on top of each other:
   `continuation` was — back to main, finishing a turn, entering battle
   blocking, etc).
 - **Event/trigger system**: engine mutations call `emit(event)`, which finds
-  matching triggered abilities and queues them (`immediateQueue`). Triggers
+  matching triggered abilities and queues them (`state.triggerQueue`). Triggers
   from the same event are resolved in an order that may require a player
   choice (`pendingChoice.kind === "orderTriggers"`) when their controllers
   differ. `beginEventBatch`/`endEventBatch` defer trigger processing across

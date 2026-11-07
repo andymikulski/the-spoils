@@ -17,7 +17,7 @@ import type {
   Stat,
   Zone
 } from "./ids.js";
-import type { ResolutionContext, StackItem } from "./resolution.js";
+import type { ResolutionContext, StackItem, TriggerResolution } from "./resolution.js";
 import type { GameLogEntry } from "./log.js";
 import type { GameEvent } from "./events.js";
 import type { PendingChoice, ReplacementTrigger } from "./choices.js";
@@ -1241,6 +1241,61 @@ export interface SeatSwapState {
   players?: [PlayerId, PlayerId];
 }
 
+/**
+ * What the engine still has to know between actions that is not on the board: last-known information about cards
+ * that left play, damage bookkeeping, and the like. Engine-internal (no client needs it; `redactStateFor` drops it),
+ * but kept in the state so a game saved, loaded or copied at any moment plays on exactly as the original would.
+ */
+export interface EngineBookkeeping {
+  /**
+   * CR last-known information, captured the instant a card left play: its stats then ("a character with less
+   * strength than that character had"), the counters on it ("a character with a token that leaves play") and who
+   * controlled it ("that character's controller"). `counters` and `controllerId` are forgotten when it enters play
+   * again.
+   */
+  lastKnown: Record<
+    CardInstanceId,
+    {
+      stats: Record<"strength" | "life" | "speed" | "structure", number>;
+      counters?: Record<string, number>;
+      controllerId?: PlayerId;
+    }
+  >;
+  /**
+   * Token instances that ceased to exist on leaving play, as they were. A token leaving play is deleted from
+   * `GameState.cards` before the event about it is emitted, so a trigger inspecting the event card ("when a character
+   * an opponent controls is destroyed") reads it here. Nothing else treats a departed token as present.
+   */
+  departedTokens: Record<CardInstanceId, CardInstance>;
+  /**
+   * Cards that entered play during the current action (and the choice answers continuing it): the UNIQUE rule treats
+   * a removed new copy as never having entered play.
+   */
+  enteredThisAction: CardInstanceId[];
+  /** New UNIQUE copies being removed by the rule: their departure raises no triggers, theirs or anyone else's. */
+  silentDepartures: CardInstanceId[];
+  /**
+   * Extra UNIQUE copies whose destruction an effect replaced, with that effect's source: the rule does not try to
+   * destroy such a copy again while the source is still there (CR 507.5b).
+   */
+  uniquePrevented: Record<CardInstanceId, { cardId?: CardInstanceId; runtimeId?: string }>;
+  /**
+   * Damage each card has taken, tallied per source (key: the source card id, `""` when unknown), so a replaced
+   * destruction reduces only the damage from the source of that destruction (CR 506.6). `last` is the source(s) of
+   * the most recent damage. Starts afresh whenever the card holds no damage.
+   */
+  damageSources: Record<CardInstanceId, { bySource: Record<string, number>; last: string[] }>;
+  /** Cards the state check destroyed because of lethal damage; a card leaves the list when a `dealDamage` effect next targets it. */
+  destroyedByDamage: CardInstanceId[];
+  /**
+   * Who last dealt battle damage to each card, so a character dying to lethal battle damage (possibly in a later
+   * action, after a prompt) is destroyed by battle damage, caused by that player.
+   */
+  lethalDamageCause: Record<CardInstanceId, PlayerId>;
+  /** The zone a card being deployed came from (hand, discard, ...), until it enters play: the `cardEnteredPlay` event's `from`. */
+  deployOrigin: Record<CardInstanceId, Zone>;
+}
+
 export interface GameState {
   turn: number;
   activePlayerId: PlayerId;
@@ -1493,6 +1548,18 @@ export interface GameState {
 
   /** Suspended effect-list resumption points — see PendingEffectFrame. Only the top of the stack is "live." */
   pendingEffectFrames: PendingEffectFrame[];
+
+  /**
+   * Triggered abilities that have triggered and are waiting to resolve, in
+   * order (RULES.md §7). Usually empty between actions; it holds entries
+   * while a choice is pending — the order of triggers that happened at once
+   * (`orderTriggers`), a trigger's own target pick — so a game saved or
+   * copied at that moment resumes with them.
+   */
+  triggerQueue: TriggerResolution[];
+
+  /** The engine's bookkeeping between actions — see `EngineBookkeeping`. */
+  bookkeeping: EngineBookkeeping;
 
   battle?: BattleState;
 

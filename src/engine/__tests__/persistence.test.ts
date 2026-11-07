@@ -127,6 +127,54 @@ describe("saveGame / loadGame", () => {
     assert.equal(restored.getDefinition(token!.id).name, "Blip");
   });
 
+  test("a token that has left play is still known after loading: what it was, and its definition", () => {
+    const kill = tactic({
+      name: "Kill",
+      cost: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "k",
+            type: "activated",
+            targets: [{ id: "t", selector: { zone: "play", type: "character", controller: "self" }, count: 1 }],
+            effects: [{ type: "destroy", target: { type: "selected", id: "t" } }]
+          }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({
+      cards: [
+        { key: "maker", def: TOKEN_MAKER, owner: P1 },
+        { key: "kill", def: kill, owner: P1, zone: "hand" }
+      ]
+    });
+    engine.perform({ type: "activateAbility", playerId: P1, cardId: id("maker"), abilityId: "mk" });
+    resolvePendingResponses(engine);
+    const token = Object.values(engine.state.cards).find(c => c.isToken)!;
+    engine.perform({ type: "playCard", playerId: P1, cardId: id("kill"), selected: { t: [token.id] } });
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.cards[token.id], undefined, "the token ceased to exist");
+
+    const save: SerializedGame = JSON.parse(JSON.stringify(saveGame(engine)));
+    assert.equal(save.runtimeDefinitions?.[0].name, "Blip", "its definition travels with the save");
+    const restored = loadGame(save, staticCatalogOf(engine));
+    assert.equal(restored.getDefinition(token.id).name, "Blip");
+    assert.equal(restored.state.bookkeeping.lastKnown[token.id]?.stats.strength, 1);
+  });
+
+  test("an object the live game shares between two places is one object again after loading", () => {
+    const { engine } = buildGame({ cards: [{ key: "front", def: character({ name: "Front Line" }), owner: P1 }] });
+    const shared = { sourceId: "x", controllerId: P1, selected: {} };
+    // As a paused effect list and the prompt it waits on share their resolution context.
+    engine.state.pendingEffectFrames.push({ effects: [], index: 0, context: shared } as never, { effects: [], index: 0, context: shared } as never);
+
+    const save: SerializedGame = JSON.parse(JSON.stringify(saveGame(engine)));
+    assert.deepEqual(save.sharedObjects, [[["pendingEffectFrames", "1", "context"], ["pendingEffectFrames", "0", "context"]]]);
+    const restored = loadGame(save, Object.values(engine.definitions));
+    const [first, second] = restored.state.pendingEffectFrames;
+    assert.equal(first.context, second.context);
+  });
+
   test("a fresh id minted after loading a save continues past every id already in it, never colliding", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "maker", def: TOKEN_MAKER, owner: P1 }]

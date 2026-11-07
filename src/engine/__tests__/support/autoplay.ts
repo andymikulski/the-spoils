@@ -100,9 +100,9 @@ function simulateLegal(engine: SpoilsEngine, action: GameAction): boolean {
 }
 
 function tryCommit(engine: SpoilsEngine, action: GameAction): boolean {
-  // `simulateLegal` rebuilds an engine from `state` alone, which has no queued triggers, so it can never answer a
-  // trigger's prompt. With three or more players such prompts are common (several opponents to pick among); there the
-  // engine's own dry run, which carries the queue, judges them. (Two-player games keep the decisions they always had.)
+  // `simulateLegal` rebuilds an engine from `state` alone, which holds everything the engine keeps between actions
+  // (the triggers waiting to resolve included). With three or more players a prompt's answer is judged by the
+  // engine's own dry run instead, as it always has been there.
   const legal =
     action.type === "resolvePendingChoice" && engine.state.turnOrder.length > 2
       ? engine.checkAction(action).ok

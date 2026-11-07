@@ -54,9 +54,8 @@ import { developPlay, openDevelop } from "./support/develop.js";
 
 const CATALOG = cardsJson as CardDefinition[];
 
-/** The whole live game as it would be saved, plus the trigger queue and the log length. */
-const fingerprint = (engine: SpoilsEngine): string =>
-  JSON.stringify({ state: engine.state, queue: engine.immediateQueue, log: engine.state.gameLog.length });
+/** The whole live game as it would be saved (the trigger queue included), plus the log length. */
+const fingerprint = (engine: SpoilsEngine): string => JSON.stringify({ state: engine.state, log: engine.state.gameLog.length });
 
 /** The query's verdict equals perform's on the same answer: same yes / no, and the same words when both refuse. */
 function sameVerdict(label: string, query: SelectionCheck, real: { ok: true } | { ok: false; error: string }, words = true): void {

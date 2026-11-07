@@ -36,12 +36,49 @@ import { assert } from "./utilities.js";
  */
 export function saveGame(engine: SpoilsEngine): SerializedGame {
   const runtimeDefinitions = collectRuntimeDefinitions(engine);
+  const state = structuredClone(engine.state);
+  const sharedObjects = sharedObjectsOf(state);
 
   return {
     formatVersion: CURRENT_SAVE_FORMAT_VERSION,
-    state: structuredClone(engine.state),
-    ...(runtimeDefinitions.length ? { runtimeDefinitions: structuredClone(runtimeDefinitions) } : {})
+    state,
+    ...(runtimeDefinitions.length ? { runtimeDefinitions: structuredClone(runtimeDefinitions) } : {}),
+    ...(sharedObjects.length ? { sharedObjects } : {})
   };
+}
+
+/**
+ * Every place in `state` that holds an object already reached at an earlier place, paired with that place
+ * (`SerializedGame.sharedObjects`). Walked depth-first in key order, so the earlier place and every place above
+ * either one hold objects of their own: both paths stay valid once JSON has made separate copies.
+ */
+function sharedObjectsOf(state: GameState): Array<[string[], string[]]> {
+  const firstSeen = new Map<object, string[]>();
+  const shared: Array<[string[], string[]]> = [];
+  const walk = (value: unknown, path: string[]): void => {
+    if (value === null || typeof value !== "object") return;
+    const seen = firstSeen.get(value);
+    if (seen) {
+      shared.push([path, seen]);
+      return;
+    }
+    firstSeen.set(value, path);
+    for (const [key, child] of Object.entries(value)) walk(child, [...path, key]);
+  };
+  walk(state, []);
+  return shared;
+}
+
+/** Links up again the places `sharedObjects` says held one object (see `SerializedGame.sharedObjects`). */
+function relinkSharedObjects(state: GameState, sharedObjects: Array<[string[], string[]]>): void {
+  const at = (path: string[]): unknown =>
+    path.reduce<unknown>((node, key) => (node as Record<string, unknown> | undefined)?.[key], state);
+  for (const [path, original] of sharedObjects) {
+    const parent = at(path.slice(0, -1)) as Record<string, unknown> | undefined;
+    const target = at(original);
+    assert(parent !== undefined && target !== undefined, `The save's shared object at '${path.join(".")}' is missing.`);
+    parent[path[path.length - 1]] = target;
+  }
 }
 
 /**
@@ -49,13 +86,15 @@ export function saveGame(engine: SpoilsEngine): SerializedGame {
  * permanent (`createTokens`) synthesized them at runtime — every card
  * currently on the board with `isToken: true` (a token vanishes entirely on
  * leaving play, so this is exactly the set still needed to reconstruct the
- * board; see `CardInstance.isToken`), deduped by `definitionId`.
+ * board; see `CardInstance.isToken`) and every token that has left play, deduped by `definitionId`.
  */
 function collectRuntimeDefinitions(engine: SpoilsEngine): CardDefinition[] {
   const seen = new Set<CardDefinitionId>();
   const result: CardDefinition[] = [];
 
-  for (const card of Object.values(engine.state.cards)) {
+  // The tokens that have left play too: what they were is still read (`EngineBookkeeping.departedTokens`).
+  const tokens = [...Object.values(engine.state.cards), ...Object.values(engine.state.bookkeeping.departedTokens)];
+  for (const card of tokens) {
     if (!card.isToken || seen.has(card.definitionId)) continue;
     seen.add(card.definitionId);
     const definition = engine.definitions[card.definitionId];
@@ -84,6 +123,7 @@ export function loadGame(
   cardCatalog?: readonly CardCatalogEntry[]
 ): SpoilsEngine {
   const state = migrate(save);
+  if (save.sharedObjects) relinkSharedObjects(state, save.sharedObjects);
   const fullDefinitions = [...definitions, ...(save.runtimeDefinitions ?? [])];
   assertDefinitionsCoverState(state, fullDefinitions);
   return new SpoilsEngine(fullDefinitions, state, random, cardCatalog);

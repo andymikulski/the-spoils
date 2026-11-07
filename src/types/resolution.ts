@@ -89,6 +89,11 @@ export interface TriggerResolution {
   batchId: string;
   /** Engine bookkeeping: this trigger's own target picks were already announced (`cardPicked`). */
   picksAnnounced?: boolean;
+  /**
+   * Engine bookkeeping: this trigger was already waiting when another trigger's effects paused on a player choice;
+   * it waits until every parked frame of that trigger has run.
+   */
+  heldForParkedFrames?: true;
 }
 
 export interface StackItem {
