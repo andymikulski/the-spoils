@@ -1,6 +1,6 @@
 // Phase 4 smoke test for the Shade of the Devoured Emperor set (the
 // Volition / Thabbash era): drives the AUTHORED behavior in
-// data/cards.json end-to-end through the public engine API — not synthetic
+// data/cards/ end-to-end through the public engine API — not synthetic
 // fixtures — to prove the JSON the coverage effort wrote actually works.
 // One scenario per representative new shape / capability.
 

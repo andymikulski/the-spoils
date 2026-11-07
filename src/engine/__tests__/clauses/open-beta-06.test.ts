@@ -3003,7 +3003,7 @@ clause(ABDUCTRESS, "0:ability:kidnap", "pays exactly the Abductress's printed co
 
 const PHOTOGRAPH = "e2e4ccac-ad74-483f-ae30-520a67cada44";
 
-/** What a host app passes as `cardCatalog`: the real cards' names and types (data/cards.json), plus the board's own made-up cards. */
+/** What a host app passes as `cardCatalog`: the real cards' names and types (data/cards/), plus the board's own made-up cards. */
 function photoBoard(opts: { deception?: number; extra?: CardPlacement[] } = {}) {
   const game = buildGameForPhoto(opts);
   game.engine.setCardCatalog([

@@ -1,5 +1,5 @@
 // Phase 4 smoke test for the Seed 2 set (the FLIP UP era): drives the
-// AUTHORED behavior in data/cards.json end-to-end through the public engine
+// AUTHORED behavior in data/cards/ end-to-end through the public engine
 // API — not synthetic fixtures — to prove the JSON the coverage effort
 // wrote actually works. One scenario per representative shape / flagged risk.
 

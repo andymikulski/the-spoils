@@ -8,7 +8,7 @@
 //
 // Part 1 proves the five small engine-vocabulary additions this authoring
 // needed, against synthetic fixtures (RULES.md §3.6). Part 2 drives each
-// faction's real authored data (data/cards.json) end-to-end through the
+// faction's real authored data (data/cards/) end-to-end through the
 // public API — this is the "verify" step (BEHAVIORS.md -> Coverage
 // workflow) for `reusesProvenShape: false` cards The Primitive Tribes of
 // Thabbash and Unlikely Heroes, and a smoke check for the other 8.

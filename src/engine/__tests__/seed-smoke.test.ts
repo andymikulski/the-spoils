@@ -1,4 +1,4 @@
-// Smoke test for Seed: drives the AUTHORED behavior in data/cards.json
+// Smoke test for Seed: drives the AUTHORED behavior in data/cards/
 // end-to-end through the public engine API (not synthetic fixtures). One
 // scenario per newShape card plus representative capability / idiom cards.
 

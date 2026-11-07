@@ -7,7 +7,7 @@
  * ~/.claude/plans/delegated-mapping-nautilus.md).
  *
  * What it does:
- *   - Reads data/cards.json (the catalog) and the existing
+ *   - Reads the catalog (data/cards/<set id>.json) and the existing
  *     data/card-coverage.json (if any).
  *   - Adds a skeleton entry for every catalog id that doesn't have one yet
  *     (status "vanilla" for text-free / keyword-only cards, "unclassified"
@@ -32,8 +32,9 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
+const { loadCatalog } = require("./lib/catalog.cjs");
+
 const ROOT = path.resolve(__dirname, "..");
-const CARDS_PATH = path.join(ROOT, "data", "cards.json");
 const COVERAGE_PATH = path.join(ROOT, "data", "card-coverage.json");
 const COVERAGE_MD_PATH = path.join(ROOT, "COVERAGE.md");
 const FIDELITY_PATH = path.join(ROOT, "data", "card-fidelity.json");
@@ -371,11 +372,7 @@ function buildFidelity(manifest) {
 
 function main() {
   const check = process.argv.includes("--check");
-  const cards = loadJson(CARDS_PATH, null);
-  if (!cards) {
-    console.error("data/cards.json not found");
-    process.exit(2);
-  }
+  const { cards } = loadCatalog();
   const prev = loadJson(COVERAGE_PATH, {});
   const { manifest, pruned } = buildManifest(cards, prev);
 

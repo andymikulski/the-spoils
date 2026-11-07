@@ -1,6 +1,6 @@
 // Guards the card-coverage system (data/card-coverage.json + COVERAGE.md,
 // built by scripts/build-coverage.cjs) and the hand-authored `behavior` data
-// in data/cards.json. See BEHAVIORS.md -> "Coverage workflow".
+// in data/cards/<set id>.json. See BEHAVIORS.md -> "Coverage workflow".
 //
 // This is a DATA test, not an engine-rules test: it doesn't build games, it
 // checks that the catalog and the coverage manifest agree, that authored
@@ -13,6 +13,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
+import { readCatalogFiles } from "./support/catalog-files.js";
 
 const ROOT = fileURLToPath(new URL("../../../", import.meta.url));
 const readJson = (rel: string) =>
@@ -85,7 +86,7 @@ interface Manifest {
   cards: CoverageEntry[];
 }
 
-const catalog: CardDef[] = readJson("data/cards.json");
+const catalog = readCatalogFiles<CardDef>();
 const manifest: Manifest = readJson("data/card-coverage.json");
 // A card flagged `reusesProvenShape: false` must be named by a test — in
 // `card-behaviors.test.ts` (the general convention) or a set-specific

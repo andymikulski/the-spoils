@@ -1,6 +1,6 @@
 # BEHAVIORS.md
 
-Quick reference for authoring `behavior` data on cards in `data/cards.json`.
+Quick reference for authoring `behavior` data on cards in `data/cards/<set id>.json`.
 The full type definitions live in `src/types/{cards,costs,conditions,
 effects,expressions,ids}.ts` — this file is a condensed index over them plus
 authoring patterns, so a session doesn't have to re-derive the vocabulary
@@ -1947,7 +1947,7 @@ proving, not for every additional card that reuses an existing shape.
 
 ## Coverage workflow
 
-Working the ~1900 not-yet-implemented cards in `data/cards.json` is tracked
+Working the ~1900 not-yet-implemented cards in `data/cards/` is tracked
 in `data/card-coverage.json` (source of truth) + the generated `COVERAGE.md`
 (status roll-up — never hand-edit). `scripts/build-coverage.cjs` maintains
 the manifest: it adds a skeleton entry per new catalog id, prunes dead ids,
@@ -2025,7 +2025,7 @@ well-formed, every per-card id resolves, and no gap is orphaned.
 `src/types/{costs,conditions,effects,expressions}.ts`; cite `RULES.md`;
 record ambiguities as `notes` + `confidence: "low"` rather than guessing) →
 `classified` → **author** (`behavior` + metadata onto the card in
-`data/cards.json`, `npm run sync-cards`) → `authored` → **verify** (tests +
+its set file in `data/cards/`, `npm run sync-cards`) → `authored` → **verify** (tests +
 a smoke game exercise it) → `verified`. `vanilla` = no `behavior` needed
 (text-free / keyword-only / plain resource). `blocked` = classified but
 cannot be authored until a capability lands. `wontImplement` = references a
@@ -2107,7 +2107,7 @@ For a card whose printed COST step is authored as an effect (or whose pick the c
 4. Delete the effect you moved (it must not run twice). A later effect that read the moved thing keeps working: it reads the locked variable (`{ "type": "variable", "id": "x" }`) or the same `selected` id.
 5. A pick written AFTER a cost step that changes what can be picked gets a `{ "type": "pick", "declarationId": "<id>" }` step right after that cost step. A pick written BEFORE the cost step, or with no cost step before it, gets none.
 6. Convert **every printing** of the card: the other editions are separate rules groups when their markup differs (`data/card-tests/clauses.json`); check the cost sentence order of each (Tri-Pole Magnet prints "Pick … Destroy this card" in 1st/2nd Edition and "Destroy this card, pick …" in Open Beta: only the second needs a `pick` step).
-7. Edit `data/cards.json` through a patch module keyed by printing id (`node scripts/patch-cards.cjs <patch.cjs>`; see `data/card-audit/other-reveals.patch.cjs` for the shape), which re-runs `npm run sync-cards`. Never hand-edit `src/data/cards.js`.
+7. Edit card data (`data/cards/<set id>.json`) through a patch module keyed by printing id (`node scripts/patch-cards.cjs <patch.cjs>`; see `data/card-audit/other-reveals.patch.cjs` for the shape), which re-runs `npm run sync-cards`. Never hand-edit `src/data/`.
 8. Run the card's test file. A test that used to answer the cost's question at resolution (a name, a card type) must now answer it at play: `play`/`activateRaw` stops at the `nameValue` prompt, `answerPending(engine, "nameValue", { value })` re-runs the play, then drain the responses. Changing how a test drives the engine is fine; changing what it asserts is not.
 
 #### Before / after, one per step kind

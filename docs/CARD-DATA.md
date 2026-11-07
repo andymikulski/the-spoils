@@ -1,13 +1,16 @@
 # Card data
 
-`data/cards.json` is the source of truth for the card catalog: one entry per
-**printing** (a card in a specific set), 12 sets in total. `src/data/cards.js`
-is a generated copy (`npm run sync-cards`) — never edit it by hand. The
+`data/cards/<set id>.json` is the source of truth for the card catalog: one
+file per set, one entry per **printing** (a card in a specific set), 12 sets in
+total. `data/sets.json` lists the sets in catalog order; the catalog is the
+set files concatenated in that order. `src/data/` is generated from them
+(`npm run sync-cards`) — never edit it by hand. The
 TypeScript shape is `CardDefinition` in `src/types/cards.ts`.
 
 | File | What it is |
 |---|---|
-| `data/cards.json` | The catalog: identity, stats, text, markup, flavor, art credits and engine `behavior` for every printing. |
+| `data/sets.json` | Every set's `id` and `name`, in catalog order. A set's id is its name lowercased with each run of other characters replaced by `-` (`Seed Saga` → `seed-saga`). Exported as `CARD_SETS` from `the-spoils/sets` (with card counts). |
+| `data/cards/<set id>.json` | One set's printings: identity, stats, text, markup, flavor, art credits and engine `behavior`. Every printing's `set` is that set's name. Exported as `the-spoils/sets/<set id>`, and as `CARDS_<SET_ID>` (upper snake case, e.g. `CARDS_SEED_SAGA`) from `the-spoils/data`. |
 | `data/card-audit/corrections.json` | Each printing's exact printed rules text, keyed by printing id, wherever it differs from the catalog `text` (with a reason). |
 | `data/card-coverage.json` | Per-card implementation status. Generates `COVERAGE.md` and `data/card-fidelity.json` (`node scripts/build-coverage.cjs`; CI fails if they're stale). |
 | `data/card-fidelity.json` | How faithfully the engine reproduces each card (`full` / `partial` / `stub`), exported as `CARD_FIDELITY` from `the-spoils/data`. |
@@ -28,7 +31,7 @@ TypeScript shape is `CardDefinition` in `src/types/cards.ts`.
    Typos are corrected there too, with the reason `typo`, never silently.
 4. **Stats are gameplay fields**, not archival (cost, threshold, strength /
    speed / life, structure, influence, type, subtypes, rarity). They are fixed
-   directly in `cards.json` for each printing whose card disagrees.
+   directly in the set file for each printing whose card disagrees.
 5. **Names use the printed spelling.** Misprinted subtypes on a single
    printing (e.g. "nercomorph") are not reproduced.
 
@@ -145,9 +148,14 @@ Caveats specific to this set:
 
 ## Editing card data
 
-- Edit `data/cards.json` through a patch module run by
+- Edit card data through a patch module run by
   `node scripts/patch-cards.cjs <patch.cjs>` (it takes a lock, applies the
-  patch, writes the file and re-runs `npm run sync-cards`).
+  patch to the whole catalog, rewrites only the set files whose contents
+  changed and re-runs `npm run sync-cards`). A patch may add or remove
+  printings; each is filed under the set its `set` field names.
+- To add a set, add it to `data/sets.json` (its position is its place in
+  catalog order) and patch its printings in; `sync-cards` generates its
+  module and entry point.
   `data/card-audit/other-reveals.patch.cjs` shows the shape; it is also kept
   as a regression check (`other-reveals.test.ts` re-applies it and expects no
   change).

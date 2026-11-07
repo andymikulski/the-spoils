@@ -30,6 +30,12 @@
       "data": [
         "./build/src/data.d.ts"
       ],
+      "sets": [
+        "./build/src/sets.d.ts"
+      ],
+      "sets/*": [
+        "./build/src/data/sets/*.d.ts"
+      ],
       "assets": [
         "./build/src/assets.d.ts"
       ],
@@ -47,6 +53,14 @@
       "types": "./build/src/data.d.ts",
       "default": "./build/src/data.js"
     },
+    "./sets": {
+      "types": "./build/src/sets.d.ts",
+      "default": "./build/src/sets.js"
+    },
+    "./sets/*": {
+      "types": "./build/src/data/sets/*.d.ts",
+      "default": "./build/src/data/sets/*.js"
+    },
     "./assets": {
       "types": "./build/src/assets.d.ts",
       "default": "./build/src/assets.js"
@@ -60,7 +74,8 @@
   },
   "files": [
     "build/src",
-    "data/cards.json",
+    "data/sets.json",
+    "data/cards",
     "data/assets",
     "LEGAL.md"
   ],

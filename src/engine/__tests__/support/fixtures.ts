@@ -1,5 +1,5 @@
 // Test fixtures and small synthetic decks/cards for exercising SpoilsEngine
-// through its public API only. Deliberately independent of data/cards.json:
+// through its public API only. Deliberately independent of data/cards/:
 // that dataset has real gaps (see RULES.md), and coupling rules tests to it
 // would make tests fail for data reasons instead of engine reasons.
 

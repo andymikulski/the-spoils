@@ -8,12 +8,26 @@
  * none ship here.
  */
 
-import cardsJson from "./data/cards.js";
+import cards from "./data/cards.js";
 import cardFidelityJson from "./data/card-fidelity.js";
 import type { CardDefinition, CardDefinitionId } from "./types/index.js";
 
-/** The full card database (every printing of every set), sourced from data/cards.json. */
-export const CARD_CATALOG = cardsJson as CardDefinition[];
+export { CARD_SETS, type CardSetInfo } from "./sets.js";
+
+/**
+ * Each set's printings as its own export, named `CARDS_` + the set id in
+ * upper snake case (`CARDS_SEED_SAGA`, `CARDS_1ST_EDITION`). These come from
+ * the same modules as `the-spoils/sets/<id>`; import that instead to load a
+ * single set without the rest of the catalog.
+ */
+export * from "./data/cards.js";
+
+/**
+ * The full card database: every printing of every set, sourced from
+ * data/cards/<set id>.json and concatenated in `CARD_SETS` order. To load a
+ * single set, import `the-spoils/sets/<id>` instead.
+ */
+export const CARD_CATALOG: CardDefinition[] = cards;
 
 /**
  * How faithfully the engine reproduces a card's printed text:

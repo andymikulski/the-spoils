@@ -47,7 +47,9 @@ module resolution. Legacy `node10` resolution is also supported via
 | Import | What you get |
 |---|---|
 | `the-spoils` | The engine: `SpoilsEngine`, game setup, deck construction checks, save / load, hidden-information redaction, and every type (`GameState`, `GameAction`, `CardDefinition`, …). Contains no card data. |
-| `the-spoils/data` | The real catalog (`CARD_CATALOG`) and per-card fidelity (`CARD_FIDELITY`, `cardFidelity`). Several MB; import it only if you need the real cards. |
+| `the-spoils/data` | The real catalog (`CARD_CATALOG`, every set), each set on its own (`CARDS_SEED_SAGA`, `CARDS_1ST_EDITION`, …: `CARDS_` + the set id in upper snake case), the set index (`CARD_SETS`) and per-card fidelity (`CARD_FIDELITY`, `cardFidelity`). Several MB; import it only if you need the real cards. |
+| `the-spoils/sets` | `CARD_SETS`: each set's `id`, `name` and `cardCount`, in catalog order. Loads no cards. |
+| `the-spoils/sets/<id>` | One set's printings (default export, `CardDefinition[]`), e.g. `the-spoils/sets/seed-saga`. Use it to load a single set instead of the whole catalog. |
 | `the-spoils/card-text` | `parseCardText` / `cardTextToPlain`: turn a card's `markup` into a typed tree or plain text for rendering. |
 | `the-spoils/assets` | Image URL conventions (`DEFAULT_ASSET_ROOT`, `CARD_BACK_ASSET_ID`, `resolveCardBackUrl`). The image files themselves are under `the-spoils/images/`; see [Card images](#card-images). |
 
@@ -84,6 +86,18 @@ const resumed = loadGame(JSON.parse(JSON.stringify(saveGame(game))), CARD_CATALO
 
 A runnable version is in [`examples/basic.ts`](examples/basic.ts)
 (`npx tsx examples/basic.ts`).
+
+To play with only some sets, build the catalog from their entry points. Any
+list of `CardDefinition`s works wherever `CARD_CATALOG` does:
+
+```ts
+import { CARD_SETS } from "the-spoils/sets";
+import seed from "the-spoils/sets/seed";
+import seed2 from "the-spoils/sets/seed-2";
+
+const catalog = [...seed, ...seed2];
+console.log(CARD_SETS.map((set) => set.id)); // ["1st-edition", …, "decade-of-deckadence"]
+```
 
 ## Driving a game
 
@@ -138,8 +152,8 @@ const imagesDir = dirname(fileURLToPath(import.meta.resolve("the-spoils/images/c
 | Path | Contents |
 |---|---|
 | `src/engine/`, `src/types/` | The engine and its data model |
-| `src/engine.ts`, `src/data.ts`, `src/cardText.ts`, `src/assets.ts` | The package entry points |
-| `data/cards.json` | The card catalog (source of truth; `src/data/cards.js` is generated from it) |
+| `src/engine.ts`, `src/data.ts`, `src/sets.ts`, `src/cardText.ts`, `src/assets.ts` | The package entry points |
+| `data/sets.json`, `data/cards/<set id>.json` | The card catalog, one file per set (source of truth; `src/data/` is generated from it) |
 | `data/assets/` | Card images |
 | `data/card-tests/`, `data/rule-tests/` | Manifests and rulings for the clause and rules test suites |
 | `docs/` | The official rules PDFs, [card data](docs/CARD-DATA.md) and [testing](docs/TESTING.md) guides |
@@ -157,7 +171,7 @@ npm test                # every *.test.ts under src/ (node:test + tsx)
 npm run typecheck       # tsc against the library and test configs
 npm run typecheck:consumer   # the built .d.ts compile in a strict consumer project
 npm run build           # emit build/ (JS + .d.ts)
-npm run sync-cards      # regenerate src/data/cards.js after editing data/cards.json
+npm run sync-cards      # regenerate src/data/ after editing data/cards/
 ```
 
 To run a single test file:

@@ -12,6 +12,7 @@ import {
   type CardTextBlock
 } from "../cardText.js";
 import type { CardDefinition } from "../engine.js";
+import { readCatalogFiles } from "../engine/__tests__/support/catalog-files.js";
 
 const ABRAM =
   '<keywords><unique>PLUCK</unique></keywords>' +
@@ -149,7 +150,7 @@ describe("normalizeCardTextForComparison", () => {
 
 describe("catalog markup", () => {
   const readData = <T>(path: string): T => JSON.parse(readFileSync(fileURLToPath(new URL(path, import.meta.url)), "utf8"));
-  const cards = readData<CardDefinition[]>("../../data/cards.json");
+  const cards = readCatalogFiles();
   /** Corrected rules text, by printing id, for printings whose archival `text` doesn't match their card (docs/CARD-DATA.md). */
   const corrections = readData<Record<string, { text: string; reason: string }>>("../../data/card-audit/corrections.json");
   const rulesText = (card: CardDefinition) => corrections[card.id]?.text ?? card.text;

@@ -1,7 +1,7 @@
-// Behavior data authored onto real cards in data/cards.json, exercised here
+// Behavior data authored onto real cards in data/cards/, exercised here
 // through synthetic fixtures shaped identically to that data (see
 // CLAUDE.md's "Development approach" — engine-rules tests stay independent
-// of data/cards.json itself, but should prove the exact ability shape that
+// of data/cards/ itself, but should prove the exact ability shape that
 // was written there is mechanically correct).
 //
 // One test per *new ability shape*, not per card — see BEHAVIORS.md's
@@ -240,7 +240,7 @@ describe("card behavior: Rate Hike (tactic, multiple effects)", () => {
 });
 
 describe("Universal faction behavior: Tournament Faction 'Resource' ability", () => {
-  // Regression test: data/cards.json carried a stale `playResourceFromHand`
+  // Regression test: data/cards/ carried a stale `playResourceFromHand`
   // effect (not a member of the Effect union — a silent no-op, since a
   // definition sourced from untyped JSON can name a case the resolveEffect
   // switch simply doesn't have) on every reflavored "tournament faction"

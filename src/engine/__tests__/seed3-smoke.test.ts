@@ -1,5 +1,5 @@
 // Phase 4 smoke test for the Seed 3 set: exercises the AUTHORED behavior in
-// data/cards.json (not synthetic fixtures) end-to-end through the public
+// data/cards/ (not synthetic fixtures) end-to-end through the public
 // engine API, to prove the JSON the coverage effort wrote actually drives
 // the engine. One scenario per representative card shape.
 

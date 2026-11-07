@@ -1,5 +1,5 @@
 // Phase 4 smoke test for 1st Edition Part 2: drives the AUTHORED behavior in
-// data/cards.json end-to-end through the public engine API (not synthetic
+// data/cards/ end-to-end through the public engine API (not synthetic
 // fixtures). One scenario per card flagged `reusesProvenShape: false` (a
 // genuinely novel composition), plus a few representative capability cards.
 

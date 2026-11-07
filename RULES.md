@@ -16,7 +16,7 @@ itself?"
 - **The Spoils USA™ Rules FAQ, v2.0**, Tenacious Games — judge-facing
   clarifications of common interactions. Copy in
   `docs/The-Spoils-Rules-FAQ-2.0.pdf`. Cited as **(FAQ)**.
-- `data/cards.json` — the real card database (every printing of every set). Used to verify
+- `data/cards/` — the real card database (every printing of every set). Used to verify
   and fill in mechanics the rules documents leave implicit (keyword names,
   ability shapes). Where a claim was cross-checked against real printed card
   text it is marked **(card-verified)**.

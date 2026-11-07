@@ -44,7 +44,7 @@ function definitionsFor(...deckIdLists: CardDefinitionId[][]): CardDefinition[] 
 
   const definitions = [...needed].map(id => {
     const definition = byId.get(id);
-    assert.ok(definition, `data/cards.json is missing referenced card '${id}'.`);
+    assert.ok(definition, `The card catalog (data/cards/) is missing referenced card '${id}'.`);
     return definition!;
   });
 

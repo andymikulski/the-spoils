@@ -34,7 +34,7 @@ the rules test suite (`data/rule-tests/source/multiplayer.txt`).
 
 ## Catalog note
 
-The only epic printings in `data/cards.json` are seven Seed 3 faction cards:
+The only epic printings in the catalog are seven Seed 3 faction cards:
 The Society of Magical Propriety, The Knitting Coalition, The Union of
 Unextraordinary Miners, Imperial Army, Counter-Imperial Army (`epic`), and
 The Evil Alliance, Slightly Less Evil Alliance (`e-sle`). Factions are already

@@ -32,10 +32,10 @@ import { settleTurnStart } from "./support/develop.js";
 const CARD_CATALOG = cardsJson as CardDefinition[];
 const CARDS_BY_ID = new Map(CARD_CATALOG.map(c => [c.id, c]));
 
-/** Look up a real card definition from data/cards.json by id (see full-game.test.ts's definitionsFor for the same pattern). */
+/** Look up a real card definition from data/cards/ by id (see full-game.test.ts's definitionsFor for the same pattern). */
 function card(id: CardDefinitionId): CardDefinition {
   const definition = CARDS_BY_ID.get(id);
-  assert.ok(definition, `data/cards.json is missing referenced card '${id}'.`);
+  assert.ok(definition, `The card catalog (data/cards/) is missing referenced card '${id}'.`);
   return definition!;
 }
 

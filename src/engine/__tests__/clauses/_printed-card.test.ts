@@ -19,6 +19,7 @@ import { buildGame, character, bank, volition, play, P1 } from "../per-card/_har
 import type { CardDefinition } from "../../../engine.js";
 import { buildRulesGroups, CATALOG } from "./_manifest.js";
 import { refused } from "./_clause.js";
+import { readCatalogFiles } from "../support/catalog-files.js";
 
 type Icon = "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
 const ICON: Record<string, Icon> = { r: "rage", g: "greed", d: "deception", e: "elitism", o: "obsession", v: "volition" };
@@ -132,9 +133,9 @@ let statCount = 0;
 
 // The card under test, as the engine loads it (this may be mutated by `card-tests mutate`) ...
 const BY_ID = new Map(CATALOG.map((c) => [c.id, c]));
-// ... and the printed numbers, read straight from the audited data file on disk (never mutated).
+// ... and the printed numbers, read straight from the audited data files on disk (never mutated).
 const PRINTED = new Map(
-  (JSON.parse(readFileSync(new URL("../../../../data/cards.json", import.meta.url), "utf8")) as CardDefinition[]).map((c) => [c.id, c])
+  readCatalogFiles().map((c) => [c.id, c])
 );
 
 for (const group of groups) {

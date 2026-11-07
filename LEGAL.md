@@ -20,7 +20,7 @@ purposes only.
 The [MIT license](LICENSE) applies to this project's own work:
 
 - the source code (`src/`, `scripts/`, `examples/`), including the tests;
-- the engine `behavior` encodings in `data/cards.json` and the other
+- the engine `behavior` encodings in `data/cards/` and the other
   project-authored data files (coverage, fidelity, test manifests);
 - the project's own documentation (`README.md`, `RULES.md`, `BEHAVIORS.md`,
   `COVERAGE.md`, `docs/*.md`, `data/**/*.md`).
@@ -31,8 +31,8 @@ The following are the property of their respective rights holders. This
 project claims no rights in them and does not license them to you:
 
 - **Card content** — card names, rules text, subtitles, flavor text and other
-  printed card information in `data/cards.json`, `data/raw-database.json`,
-  `data/card-audit/corrections.json` and the generated `src/data/cards.js`
+  printed card information in `data/cards/`, `data/raw-database.json`,
+  `data/card-audit/corrections.json` and the generated `src/data/sets/`
   (which also ships in the installed package).
 - **Card images** — everything under `data/assets/`, including the card back.
   Card artwork is the work of the credited artists and the publisher.

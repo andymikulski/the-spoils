@@ -21,6 +21,7 @@ import {
   tactic
 } from "./support/fixtures.js";
 import cardsJson from "../../data/cards.js";
+import { readCatalogFiles } from "./support/catalog-files.js";
 import { createTwoPlayerFactionGame } from "../../engine.js";
 import type { CardDefinition, Effect, GameEvent } from "../../engine.js";
 
@@ -391,7 +392,7 @@ interface CatalogCard {
   faction?: { setup?: { startingDrawSearch?: { reveal?: boolean } } };
 }
 
-const catalog = readJson("data/cards.json") as CatalogCard[];
+const catalog = readCatalogFiles<CatalogCard>();
 const corrections = readJson("data/card-audit/corrections.json") as Record<string, { text?: string }>;
 
 /** The text printed on this printing's own card: the audit correction when there is one. */

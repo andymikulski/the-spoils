@@ -1,5 +1,5 @@
 // Phase 4 smoke test for Open Beta: drives the AUTHORED behavior in
-// data/cards.json end-to-end through the public engine API (not synthetic
+// data/cards/ end-to-end through the public engine API (not synthetic
 // fixtures). One scenario per novel-composition card, plus representative
 // capability cards.
 

@@ -264,7 +264,7 @@ true while a card waits (e.g. that costs were already paid).
 4. If the wording is ambiguous, or `RULES.md` and the CR disagree, file an
    `RQ-n` with a `ruleOpen` test; don't pick a reading.
 5. Tests use synthetic fixtures (`support/fixtures.ts`, `buildGame`,
-   `createTwoPlayerFactionGame`), never `data/cards.json`. They must **not**
+   `createTwoPlayerFactionGame`), never the real catalog (`data/cards/`). They must **not**
    import `_clause.ts`, which auto-answers some prompts: a rule test sees every
    prompt and answers it itself.
 

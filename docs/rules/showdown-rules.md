@@ -56,7 +56,7 @@ rules test suite (`data/rule-tests/source/multiplayer.txt`).
 > *Questions? Check out the Comprehensive Rules at www.thespoils.com/rules,
 > or ask about it in our forums at www.thespoils.com/forums.*
 
-## Faction cards (printed text, from `data/cards.json`)
+## Faction cards (printed text, from `data/cards/seed-3.json`)
 
 ### The Evil Alliance (`9dc309f4-d43f-4515-841e-ed982ce026e7`)
 

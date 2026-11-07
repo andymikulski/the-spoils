@@ -23,6 +23,7 @@ import {
   resourceCard,
   tactic
 } from "./support/fixtures.js";
+import { readCatalogFiles } from "./support/catalog-files.js";
 import { chooseDevelopOption, openDevelop, settleTurnStart } from "./support/develop.js";
 import cardsJson from "../../data/cards.js";
 import type { CardDefinition, Effect, GameEvent } from "../../engine.js";
@@ -608,7 +609,7 @@ interface CatalogCard {
   revealFromHand?: unknown;
 }
 
-const catalog = readJson("data/cards.json") as CatalogCard[];
+const catalog = readCatalogFiles<CatalogCard>();
 const corrections = readJson("data/card-audit/corrections.json") as Record<string, { text?: string }>;
 const printedText = (card: CatalogCard): string => corrections[card.id]?.text ?? card.text ?? "";
 const behaviorJson = (card: CatalogCard): string => JSON.stringify([card.behavior, card.faction, card.revealFromHand]);

@@ -1,18 +1,21 @@
-// Locked read-modify-write of data/cards.json for behavior/field fixes, then sync-cards.
-// Concurrent edits are serialized by a lock file.
+// Locked read-modify-write of the card catalog (data/cards/<set id>.json) for
+// behavior/field fixes, then sync-cards. Concurrent edits are serialized by a
+// lock file.
 //
 //   node scripts/patch-cards.cjs <patch-module.cjs>
 //
 // The patch module exports `function (api) { ... }` where api is
-// { cards, byId, patch(id, fn), walk(node, fn) }. `patch` logs whether the
-// printing's behavior changed. Ids not found throw, and nothing is written.
+// { cards, byId, patch(id, fn), walk(node, fn) }. `cards` is the whole catalog
+// in data/sets.json order; a patch may edit, add or remove printings, and each
+// printing is filed under the set its `set` field names. `patch` logs whether
+// the printing changed. Ids not found throw, and nothing is written. Only set
+// files whose contents change are rewritten.
 
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
+const { ROOT, loadCatalog, writeCatalog } = require("./lib/catalog.cjs");
 
-const ROOT = path.join(__dirname, "..");
-const CARDS = path.join(ROOT, "data", "cards.json");
 const LOCK = path.join(ROOT, "data", ".cards-lock");
 
 function lock() {
@@ -46,7 +49,7 @@ function main() {
   const patchModule = require(path.resolve(modulePath));
   lock();
   try {
-    const cards = JSON.parse(fs.readFileSync(CARDS, "utf8"));
+    const { sets, cards } = loadCatalog();
     const byId = new Map(cards.map((card) => [card.id, card]));
     const patch = (id, fn) => {
       const card = byId.get(id);
@@ -56,9 +59,8 @@ function main() {
       console.log(`${card.name} (${card.set}) ${before === JSON.stringify(card) ? "unchanged" : "patched"}`);
     };
     patchModule({ cards, byId, patch, walk });
-    const temp = `${CARDS}.${process.pid}.tmp`;
-    fs.writeFileSync(temp, JSON.stringify(cards, null, 2).replace(/\n/g, "\r\n") + "\r\n");
-    fs.renameSync(temp, CARDS);
+    const written = writeCatalog(cards, sets);
+    console.log(written.length ? `Wrote data/cards/{${written.join(",")}}.json` : "No set files changed");
     execFileSync(process.execPath, [path.join(ROOT, "scripts", "sync-cards.cjs")], { stdio: "ignore" });
   } finally {
     fs.rmSync(LOCK, { recursive: true, force: true });

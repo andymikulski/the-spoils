@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1st-edition",
+    "name": "1st Edition"
+  },
+  {
+    "id": "1st-edition-part-2",
+    "name": "1st Edition Part 2"
+  },
+  {
+    "id": "2nd-edition",
+    "name": "2nd Edition"
+  },
+  {
+    "id": "holy-heist",
+    "name": "Holy Heist"
+  },
+  {
+    "id": "open-beta",
+    "name": "Open Beta"
+  },
+  {
+    "id": "seed",
+    "name": "Seed"
+  },
+  {
+    "id": "seed-2",
+    "name": "Seed 2"
+  },
+  {
+    "id": "seed-3",
+    "name": "Seed 3"
+  },
+  {
+    "id": "seed-saga",
+    "name": "Seed Saga"
+  },
+  {
+    "id": "shade-of-the-devoured-emperor",
+    "name": "Shade of the Devoured Emperor"
+  },
+  {
+    "id": "ungodly-mess",
+    "name": "Ungodly Mess"
+  },
+  {
+    "id": "decade-of-deckadence",
+    "name": "Decade of Deckadence"
+  }
+]

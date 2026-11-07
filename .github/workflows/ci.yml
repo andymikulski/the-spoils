@@ -24,12 +24,13 @@ jobs:
       - name: coverage manifest is up to date
         run: node scripts/build-coverage.cjs --check
 
-      # src/data/*.js are generated — fail if a data/*.json edit landed
-      # without `npm run sync-cards`.
+      # src/data/ is generated — fail if a data/ edit landed without
+      # `npm run sync-cards` (including a set module it adds or removes).
       - name: generated src/data is in sync
         run: |
           npm run sync-cards
-          git diff --exit-code -- src/data/cards.js src/data/card-fidelity.js
+          git add --intent-to-add -- src/data
+          git diff --exit-code -- src/data
 
       - run: npm run typecheck
 

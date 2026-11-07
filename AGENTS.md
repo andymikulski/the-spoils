@@ -34,7 +34,7 @@ Work interface-first, test-driven:
   on `GameState`, etc.) — get the data model right before writing the logic
   that interprets it.
 - Write the test(s) against that interface (in `src/engine/__tests__/`,
-  using the synthetic fixtures, not `data/cards.json`) before or alongside
+  using the synthetic fixtures, not the real catalog in `data/cards/`) before or alongside
   the `SpoilsEngine` implementation, and check them against `RULES.md`
   rather than against the engine's current behavior.
 - Prefer extending the closed cost/condition/effect/expression vocabulary
@@ -47,7 +47,7 @@ Work interface-first, test-driven:
 npm test        # runs every src/**/*.test.ts via node:test + tsx
 npm run typecheck   # tsc --noEmit against tsconfig.json and tsconfig.test.json
 npm run typecheck:consumer   # after build: types-test/ compiles against the published .d.ts (strict consumer settings)
-npm run sync-cards   # regenerate src/data/cards.js from data/cards.json
+npm run sync-cards   # regenerate src/data/ from data/sets.json + data/cards/*.json
 npm run build        # tsc -p tsconfig.json; emits build/ (declarations + JS)
 npm run card-tests -- <cmd>   # clause-suite manifest/coverage tooling (docs/TESTING.md)
 npm run rule-tests -- <cmd>   # rules-suite manifest/coverage tooling (docs/TESTING.md)
@@ -106,11 +106,18 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   `src/engine/` or `src/types/` directly. Pure: no data, no DOM/Node
   globals — only `src/types/` and `src/engine/`.
 - `src/data.ts` — the package's `"./data"` export: the real card catalog
-  (`CARD_CATALOG`) and per-card fidelity (`CARD_FIDELITY`). No decklists
+  (`CARD_CATALOG`, every set), each set as a named export (`CARDS_<ID>`,
+  e.g. `CARDS_SEED_SAGA`, generated into `src/data/cards.js`), the set index
+  (`CARD_SETS`) and per-card fidelity (`CARD_FIDELITY`). No decklists
   ship in the package; decks belong to the consumer. Deliberately separate
   from `src/engine.ts` — a consumer that only wants the rules engine (e.g. to
   run it against synthetic cards) never pulls in the multi-megabyte card
   database.
+- `src/sets.ts` — the package's `"./sets"` export: the set index
+  (`CARD_SETS`: id, name, card count) without any card data. Each set's
+  printings are their own entry point, `"./sets/*"` (`the-spoils/sets/<id>`,
+  mapped to the generated `src/data/sets/<id>.js`), so a consumer can load
+  one set without the rest of the catalog.
 - `src/assets.ts` — the package's `"./assets"` export: the renderer-agnostic
   image conventions (`DEFAULT_ASSET_ROOT`, the reserved card-back id
   `CARD_BACK_ASSET_ID`, `CARD_BACK_SIZE`, `resolveCardBackUrl`). Constants
@@ -121,10 +128,15 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   shouldn't know images exist.
 - `examples/basic.ts` — a runnable usage example (`npx tsx examples/basic.ts`),
   typechecked by `tsconfig.test.json`, not part of the package.
-- `data/cards.json` — source of truth for the real card database (every
-  printing of every set). `src/data/cards.js` is a **generated** copy
-  (`npm run sync-cards`); never hand-edit it. Edit `data/cards.json` through
-  `node scripts/patch-cards.cjs <patch.cjs>`. `docs/CARD-DATA.md` covers the
+- `data/sets.json` + `data/cards/<set id>.json` — source of truth for the
+  real card database: `sets.json` lists every set (id, name) in catalog
+  order, and each set file holds that set's printings. The catalog is the set
+  files concatenated in that order; `scripts/lib/catalog.cjs` loads, validates
+  and writes this layout, and every script goes through it. `src/data/`
+  (`sets/<id>.js`, `cards.js`, `set-index.js`, `card-fidelity.js`) is
+  **generated** (`npm run sync-cards`); never hand-edit it. Edit card data
+  through `node scripts/patch-cards.cjs <patch.cjs>`, which rewrites only
+  the set files a patch changes. `docs/CARD-DATA.md` covers the
   fields, the markup vocabulary, `data/card-audit/corrections.json` (printed
   text per printing) and data provenance. `data/raw-database.json` is the
   original upstream dump, kept for reference only.
@@ -183,8 +195,9 @@ Key mechanisms, all built on top of each other:
 `node:assert/strict` (no Jest/Vitest). `support/fixtures.ts` builds small
 synthetic card definitions and games (`character()`, `item()`, `location()`,
 `tactic()`, `resourceCard()`, `buildGame(...)`) — deliberately independent of
-`data/cards.json`, so engine-rules tests fail for engine reasons, not data
-gaps. Import engine types/exports via `../../../engine.js` (the public
+the real catalog, so engine-rules tests fail for engine reasons, not data
+gaps. Tests that check the source card data itself read it through
+`support/catalog-files.ts`, never `data/cards/` by path. Import engine types/exports via `../../../engine.js` (the public
 surface), matching how real consumers would. Test files are matched purely
 by the `*.test.ts` suffix anywhere under `src/` (`scripts/run-tests.cjs`
 walks the tree itself, since npm-script glob expansion isn't reliable across
