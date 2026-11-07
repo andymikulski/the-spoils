@@ -140,9 +140,8 @@ spoilsdigital.com; everything about them was transcribed from the images
 independently and the reads reconciled, with disagreements resolved by hand.
 Caveats specific to this set:
 
-- Fields that couldn't be read hold the literal `[MISSING]`
-  (currently three subtitles). Most artist footers were illegible at that
-  resolution, so about half the set has no `art`.
+- Subtitles and artist credits the scans left illegible (three subtitles,
+  78 art credits) were later filled in from physical copies of the cards.
 - No rarity or collector number is printed on these cards.
 - Dual-trade resources print two trades; `trade` holds the first.
 

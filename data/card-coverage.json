@@ -13476,7 +13476,7 @@
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": [],
+        "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
@@ -13819,7 +13819,7 @@
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": [],
+        "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],
@@ -14169,7 +14169,7 @@
       "metadata": {
         "unique": null,
         "attachTo": null,
-        "resourceProvides": [],
+        "resourceProvides": null,
         "keywords": []
       },
       "engineCapability": [],

@@ -518,6 +518,13 @@ describe("card-data-integrity: coverage invariants", () => {
     assert.deepEqual(drift, [], "run: node scripts/build-coverage.cjs");
   });
 
+  test("a printing's resource.provides, when present, is non-empty", () => {
+    const empty = catalog
+      .filter(c => c.resource && (c.resource.provides?.length ?? 0) === 0 && "provides" in c.resource)
+      .map(c => `${c.name} (${c.set})`);
+    assert.deepEqual(empty, [], "omit `resource` (or `provides`) instead of an empty provides list");
+  });
+
   test("authored/verified + reusesProvenShape === false => a card-behaviors.test.ts case names the card", () => {
     // Only bites once a card is actually authored; a classified/blocked card
     // may plan for a new test that doesn't exist yet.

@@ -665,6 +665,13 @@ const cards = [
     "text": "At the start of your turn, draw a card and gain 1 influence.",
     "markup": "<rule>At the start of your turn, draw a card and gain 1 influence.</rule>",
     "subtitle": "robbing grandma is a family affair",
+    "art": {
+      "artists": [
+        "Patricio Clarey"
+      ],
+      "credit": "ART: Patricio Clarey",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -821,6 +828,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [E] icon or [D] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [E] icon or [D] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Erikas Perlikovskis"
+      ],
+      "credit": "ART: Erikas Perlikovskis",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -888,6 +902,13 @@ const cards = [
     "text": "EXTRA COST: You may pick a non-staple resource. -- When this card enters play, if you picked a non-staple resource as part of its extra cost, destroy it and deal 2 damage to its controller's faction.",
     "markup": "<extra-cost>You may pick a non-staple resource.</extra-cost><rule>When this card enters play, if you picked a non-staple resource as part of its extra cost, destroy it and deal 2 damage to its controller's faction.</rule>",
     "subtitle": "one dude wrecking crew",
+    "art": {
+      "artists": [
+        "Ramón Pantoja Gómez"
+      ],
+      "credit": "ART: Ramón Pantoja Gómez",
+      "source": "printed"
+    },
     "behavior": {
       "onPlay": {
         "targets": [
@@ -958,6 +979,13 @@ const cards = [
     "text": "UNIQUE ARYA -- When this card enters play, if it was deployed from your hand, draw 3 cards. If you do, put 2 cards from your hand on the bottom of your deck in any order.",
     "markup": "<keywords><unique>ARYA</unique></keywords><rule>When this card enters play, if it was deployed from your hand, draw 3 cards. If you do, put 2 cards from your hand on the bottom of your deck in any order.</rule>",
     "subtitle": "depression exists for the rich to get richer",
+    "art": {
+      "artists": [
+        "Richard Sashigane"
+      ],
+      "credit": "ART: Richard Sashigane",
+      "source": "printed"
+    },
     "unique": "arya",
     "behavior": {
       "abilities": [
@@ -1143,6 +1171,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [O] icon or [G] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [O] icon or [G] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Geronimo Ribaya"
+      ],
+      "credit": "ART: Geronimo Ribaya",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -1294,6 +1329,13 @@ const cards = [
     "text": "Each resource you control that doesn't have \"PROVIDES: [D]\", gains \"PROVIDES: [D]\".",
     "markup": "<rule>Each resource you control that doesn't have \"<term>PROVIDES</term>: [D]\", gains \"<term>PROVIDES</term>: [D]\".</rule>",
     "subtitle": "he's got what you need",
+    "art": {
+      "artists": [
+        "Francisco Champac"
+      ],
+      "credit": "ART: Francisco Champac",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -1391,6 +1433,13 @@ const cards = [
     "text": "Search your deck for 2 cards named \"Elitism\" and reveal them. If you do, put them into play attached to your faction.",
     "markup": "<rule>Search your deck for 2 cards named \"<card>Elitism</card>\" and reveal them. If you do, put them into play attached to your faction.</rule>",
     "subtitle": "1 kn0w kun6 fu",
+    "art": {
+      "artists": [
+        "Cleveland Mosher"
+      ],
+      "credit": "ART: Cleveland Mosher",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -1916,6 +1965,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [G] -- When a card that provides [G] enters play under your control, gain 1 influence.",
     "markup": "<provides>[G]</provides><rule>When a card that provides [G] enters play under your control, gain 1 influence.</rule>",
+    "art": {
+      "artists": [
+        "Douglas Deri"
+      ],
+      "credit": "ART: Douglas Deri",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "greed"
@@ -2150,6 +2206,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [O] -- DISTRACTION -- COST: Pay 3. Pick a tactic in your discard pile. Destroy this card. -- EFFECT: Put the tactic into your hand.",
     "markup": "<provides>[O]</provides><ability name=\"DISTRACTION\" ref=\"distraction\"><cost>Pay 3. Pick a tactic in your discard pile. Destroy this card.</cost><effect>Put the tactic into your hand.</effect></ability>",
+    "art": {
+      "artists": [
+        "Starcat Games"
+      ],
+      "credit": "ART: Starcat Games",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "obsession"
@@ -2299,6 +2362,13 @@ const cards = [
     "text": "If this card would be destroyed, you may lose 1 influence, instead. If you do, put this card into its owner's hand.",
     "markup": "<rule>If this card would be destroyed, you may lose 1 influence, instead. If you do, put this card into its owner's hand.</rule>",
     "subtitle": "\"nothing like a shag on corpses, am I right?\"",
+    "art": {
+      "artists": [
+        "Maik Beiersdorf"
+      ],
+      "credit": "ART: Maik Beiersdorf",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -2350,6 +2420,13 @@ const cards = [
     "text": "At the start of each turn, put a token on this card. -- DOWN THE HATCH -- COST: Deplete this card. Destroy a character you control. -- EFFECT: Put a token on this card. -- CHURN -- COST: X is the number of tokens on this card. Pick a character or faction. Destroy this card. -- EFFECT: Inflict X damage to picked character or faction.",
     "markup": "<rule>At the start of each turn, put a token on this card.</rule><ability name=\"DOWN THE HATCH\" ref=\"down-the-hatch\"><cost>Deplete this card. Destroy a character you control.</cost><effect>Put a token on this card.</effect></ability><ability name=\"CHURN\" ref=\"churn\"><cost>X is the number of tokens on this card. Pick a character or faction. Destroy this card.</cost><effect>Inflict X damage to picked character or faction.</effect></ability>",
     "subtitle": "copyright imperial army, ltd.",
+    "art": {
+      "artists": [
+        "Tudor Morris"
+      ],
+      "credit": "ART: Tudor Morris",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -2963,6 +3040,13 @@ const cards = [
     "text": "EXTRA COST: Deploy this only if you inflicted damage to an opponent's faction this turn.",
     "markup": "<extra-cost>Deploy this only if you inflicted damage to an opponent's faction this turn.</extra-cost>",
     "subtitle": "known for his razor teeth and sharp blade",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "behavior": {
       "onPlay": {
         "condition": {
@@ -2984,6 +3068,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [D] icon or [R] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [D] icon or [R] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Geronimo Ribaya"
+      ],
+      "credit": "ART: Geronimo Ribaya",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3131,6 +3222,13 @@ const cards = [
     "text": "When this card is destroyed, pick an opponent. That opponent destroys a character they control.",
     "markup": "<rule>When this card is destroyed, pick an opponent. That opponent destroys a character they control.</rule>",
     "subtitle": "generally low powered, their blood is like lava",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3265,6 +3363,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [E] icon or [R] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [E] icon or [R] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Serpescu Razvan"
+      ],
+      "credit": "ART: Serpescu Razvan",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3396,6 +3501,13 @@ const cards = [
     "text": "TACTICAL -- If you deployed this card in response to a tactic or ability that picked a character you control as part of its extra cost, terminate that tactic or ability.",
     "markup": "<keywords><kw>TACTICAL</kw></keywords><rule>If you deployed this card in response to a tactic or ability that picked a character you control as part of its extra cost, terminate that tactic or ability.</rule>",
     "subtitle": "you suckers still got nothing",
+    "art": {
+      "artists": [
+        "Cenk Acan"
+      ],
+      "credit": "ART: Cenk Acan",
+      "source": "printed"
+    },
     "behavior": {
       "keywords": [
         "tactical"
@@ -3469,6 +3581,13 @@ const cards = [
     "text": "SUBSTITUTE -- COST: Destroy this card. -- EFFECT: This turn, characters you control cannot be destroyed by cards or abilities your opponents control.",
     "markup": "<ability name=\"SUBSTITUTE\" ref=\"escort-ally-substitute\"><cost>Destroy this card.</cost><effect>This turn, characters you control cannot be destroyed by cards or abilities your opponents control.</effect></ability>",
     "subtitle": "war tours, coming to a warzone near you",
+    "art": {
+      "artists": [
+        "Tudor Morris"
+      ],
+      "credit": "ART: Tudor Morris",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3640,6 +3759,13 @@ const cards = [
     "text": "IMBUE -- COST: Use this ability only once each turn. Pay 1. -- EFFECT: This turn, this card gains \"PROVIDES: [V][V]\".",
     "markup": "<ability name=\"IMBUE\" ref=\"faceless-seer-imbue\"><cost>Use this ability only once each turn. Pay 1.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [V][V]\".</effect></ability>",
     "subtitle": "seeing the unseen",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3686,6 +3812,13 @@ const cards = [
     "text": "When this card enters play, you may pick a card in your discard pile. If you do, put that card into your hand.",
     "markup": "<rule>When this card enters play, you may pick a card in your discard pile. If you do, put that card into your hand.</rule>",
     "subtitle": "but I'm not dead yet!",
+    "art": {
+      "artists": [
+        "Boris Stoyanov"
+      ],
+      "credit": "ART: Boris Stoyanov",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3744,6 +3877,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [G] icon or [R] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [G] icon or [R] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Rai Cáraan"
+      ],
+      "credit": "ART: Rai Cáraan",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3806,6 +3946,13 @@ const cards = [
     "text": "When this card enters play, you may pick a character. If you do, deplete that character. -- That character cannot be restored by a faction's RESTORE RULE. If the character is COVERT, destroy it.",
     "markup": "<rule>When this card enters play, you may pick a character. If you do, deplete that character.</rule><rule>That character cannot be restored by a faction's <term>RESTORE RULE</term>. If the character is <kw>COVERT</kw>, destroy it.</rule>",
     "subtitle": "body augmentation gone awry",
+    "art": {
+      "artists": [
+        "Richard Sashigane"
+      ],
+      "credit": "ART: Richard Sashigane",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -3896,6 +4043,13 @@ const cards = [
     "text": "ATTACH TO CHARACTER -- The attached character gains 3 strength. -- Once per turn, when the attached character attacks, restore it at the end of battle. -- When the attached character attacks, pick a character and inflict 2 damage to it.",
     "markup": "<keywords><attach>CHARACTER</attach></keywords><rule>The attached character gains 3 strength.</rule><rule>Once per turn, when the attached character attacks, restore it at the end of battle.</rule><rule>When the attached character attacks, pick a character and inflict 2 damage to it.</rule>",
     "subtitle": "700160x 3n9493",
+    "art": {
+      "artists": [
+        "Anil Duyal Baydir"
+      ],
+      "credit": "ART: Anil Duyal Baydir",
+      "source": "printed"
+    },
     "attachTo": "character",
     "behavior": {
       "abilities": [
@@ -3978,6 +4132,13 @@ const cards = [
     "text": "CAN'T BELIEVE YOU PULLED IT! -- COST: Pay 1. Pick a character you control and a character an opponent controls. Destroy this card. -- EFFECT: Destroy the characters.",
     "markup": "<ability name=\"CAN'T BELIEVE YOU PULLED IT!\" ref=\"finger-explosive-pull\"><cost>Pay 1. Pick a character you control and a character an opponent controls. Destroy this card.</cost><effect>Destroy the characters.</effect></ability>",
     "subtitle": "go on. pull it.",
+    "art": {
+      "artists": [
+        "Matteo Galletti"
+      ],
+      "credit": "ART: Matteo Galletti",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -4046,6 +4207,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [D] -- At the end of your turn, you may restore a character with speed 4 or more.",
     "markup": "<provides>[D]</provides><rule>At the end of your turn, you may restore a character with speed 4 or more.</rule>",
+    "art": {
+      "artists": [
+        "Marc Steinmann"
+      ],
+      "credit": "ART: Marc Steinmann",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "deception"
@@ -4123,6 +4291,13 @@ const cards = [
     "text": "EXTRA COST: Pick up to 3 characters in your discard pile. Destroy a character you control. -- If you picked any characters as part of this card's extra cost, put those characters into your hand.",
     "markup": "<extra-cost>Pick up to 3 characters in your discard pile. Destroy a character you control.</extra-cost><rule>If you picked any characters as part of this card's extra cost, put those characters into your hand.</rule>",
     "subtitle": "elzibeth giveth life and taketh life away",
+    "art": {
+      "artists": [
+        "Maik Beiersdorf"
+      ],
+      "credit": "ART: Maik Beiersdorf",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -4209,6 +4384,13 @@ const cards = [
     "text": "EXTRA COST: You may pick a location. -- When this card enters play, if you picked a location as part of its extra cost, X is its structure. Destroy it and deal X damage to its controller's faction.",
     "markup": "<extra-cost>You may pick a location.</extra-cost><rule>When this card enters play, if you picked a location as part of its extra cost, X is its structure. Destroy it and deal X damage to its controller's faction.</rule>",
     "subtitle": "nice place you had there",
+    "art": {
+      "artists": [
+        "Ramón Pantoja Gómez"
+      ],
+      "credit": "ART: Ramón Pantoja Gómez",
+      "source": "printed"
+    },
     "behavior": {
       "onPlay": {
         "targets": [
@@ -4297,12 +4479,12 @@ const cards = [
     "subtype": [],
     "text": "TACTICAL -- IMPALE -- COST: Destroy this card. Pick an attacking character. -- EFFECT: Destroy the character. -- FLIP UP: 1 [E][E]",
     "markup": "<keywords><kw>TACTICAL</kw></keywords><ability name=\"IMPALE\" ref=\"impale\"><cost>Destroy this card. Pick an attacking character.</cost><effect>Destroy the character.</effect></ability><flip-up>1 [E][E]</flip-up>",
-    "subtitle": "[MISSING]",
+    "subtitle": "fr33333ddddd00000mmmmm!!!11oneone",
     "art": {
       "artists": [
         "Gong Studios"
       ],
-      "credit": "Art: Gong Studios",
+      "credit": "ART: Gong Studios",
       "source": "printed"
     },
     "behavior": {
@@ -4370,6 +4552,13 @@ const cards = [
     "text": "If you deployed this card in response to a card being deployed, terminate that card. Put that card into its owner's hand instead of into their discard pile. -- Draw a card.",
     "markup": "<rule>If you deployed this card in response to a card being deployed, terminate that card. Put that card into its owner's hand instead of into their discard pile.</rule><rule>Draw a card.</rule>",
     "subtitle": "you don't want to look this up",
+    "art": {
+      "artists": [
+        "Raiza Miranda"
+      ],
+      "credit": "ART: Raiza Miranda",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -4870,6 +5059,13 @@ const cards = [
     "text": "EXTRA COST: Pick an opponent. -- That opponent puts cards equal to the highest speed amongst characters you control from the top of their deck into their discard pile. Draw a card.",
     "markup": "<extra-cost>Pick an opponent.</extra-cost><rule>That opponent puts cards equal to the highest speed amongst characters you control from the top of their deck into their discard pile. Draw a card.</rule>",
     "subtitle": "not a pluck amongst us",
+    "art": {
+      "artists": [
+        "Luca Chirivi"
+      ],
+      "credit": "ART: Luca Chirivi",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5075,6 +5271,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [O] icon or [R] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [O] icon or [R] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Patricio Clarey"
+      ],
+      "credit": "ART: Patricio Clarey",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5142,6 +5345,13 @@ const cards = [
     "text": "When this card enters play, each opponent loses 3 influence.",
     "markup": "<rule>When this card enters play, each opponent loses 3 influence.</rule>",
     "subtitle": "looking for a brain to call home",
+    "art": {
+      "artists": [
+        "Sekhar Fainama"
+      ],
+      "credit": "ART: Sekhar Fainama",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5477,7 +5687,14 @@ const cards = [
     "subtype": [],
     "text": "EXTRA COST: Pick a faction. -- Inflict 3 damage to it. If you deployed another non-resource card this turn, put this card into its owner's hand instead of their discard pile.",
     "markup": "<extra-cost>Pick a faction.</extra-cost><rule>Inflict 3 damage to it. If you deployed another non-resource card this turn, put this card into its owner's hand instead of their discard pile.</rule>",
-    "subtitle": "[MISSING]",
+    "subtitle": "vexillarius' elzibeth smelting special attack",
+    "art": {
+      "artists": [
+        "Júlio Cesar Oliveira Rocha"
+      ],
+      "credit": "ART: Júlio Cesar Oliveira Rocha",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5532,6 +5749,13 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [G] icon or [D] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [G] icon or [D] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
+    "art": {
+      "artists": [
+        "Blue Monkey Studios"
+      ],
+      "credit": "ART: Blue Monkey Studios",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5725,6 +5949,13 @@ const cards = [
     "text": "When this card is deployed, all opponents must destroy 4 non-staple cards they control. -- TRY AGAIN TOMORROW NIGHT -- COST: Pay 2. Destroy a resource you control. -- EFFECT: Put this card into its owner's hand.",
     "markup": "<rule>When this card is deployed, all opponents must destroy 4 non-staple cards they control.</rule><ability name=\"TRY AGAIN TOMORROW NIGHT\" ref=\"try-again\"><cost>Pay 2. Destroy a resource you control.</cost><effect>Put this card into its owner's hand.</effect></ability>",
     "subtitle": "time to take over the world",
+    "art": {
+      "artists": [
+        "Chris Shehan"
+      ],
+      "credit": "ART: Chris Shehan",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5915,6 +6146,13 @@ const cards = [
     "text": "When a player deploys a tactic, inflict 3 damage to that player's faction.",
     "markup": "<rule>When a player deploys a tactic, inflict 3 damage to that player's faction.</rule>",
     "subtitle": "no fear. no love. only death.",
+    "art": {
+      "artists": [
+        "Richard Sashigane"
+      ],
+      "credit": "ART: Richard Sashigane",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -5990,36 +6228,39 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [G] icon or [E] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [G] icon or [E] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
-    "resource": {
-      "provides": [],
-      "staple": false
+    "art": {
+      "artists": [
+        "Mark Bulahao"
+      ],
+      "credit": "ART: Mark Bulahao",
+      "source": "printed"
     },
     "behavior": {
       "abilities": [
         {
-          "id": "name-on-resource",
+          "id": "name-provides",
           "type": "triggered",
           "event": "cardEnteredPlay",
           "condition": {
             "type": "and",
             "conditions": [
               {
+                "type": "eventCardControlledBy",
+                "player": "controller"
+              },
+              {
                 "type": "cardTypeIs",
                 "target": "eventCard",
                 "cardType": "resource"
-              },
-              {
-                "type": "eventCardControlledBy",
-                "player": "controller"
               }
             ]
           },
           "effects": [
             {
               "type": "nameValue",
+              "chooser": "controller",
               "valueKind": "resourceIcon",
               "storeAs": "x",
-              "chooser": "controller",
               "exclude": [
                 "rage",
                 "deception",
@@ -6057,6 +6298,13 @@ const cards = [
     "text": "At the start of your turn, you may pick a non-resource card you control. If you do, void that card. At the end of your turn, put the voided card into play under your control.",
     "markup": "<rule>At the start of your turn, you may pick a non-resource card you control. If you do, void that card. At the end of your turn, put the voided card into play under your control.</rule>",
     "subtitle": "half price shanties now on sale",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -6296,6 +6544,13 @@ const cards = [
     "text": "When this card enters play put a Micromajig token into play under your control. -- Micromajig tokens you control gain 1 strength, 1 life, and 1 speed.",
     "markup": "<rule>When this card enters play put a Micromajig token into play under your control.</rule><rule>Micromajig tokens you control gain 1 strength, 1 life, and 1 speed.</rule>",
     "subtitle": "go forth my pretties!",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -6405,6 +6660,13 @@ const cards = [
     "text": "EXTRA COST: You may deplete 3 Micromajig tokens you control. -- Put a Micromajig token into play. If you depleted 3 Micromajig tokens as part of this card's cost, put this card into its owner's hand instead of their discard pile.",
     "markup": "<extra-cost>You may deplete 3 Micromajig tokens you control.</extra-cost><rule>Put a Micromajig token into play. If you depleted 3 Micromajig tokens as part of this card's cost, put this card into its owner's hand instead of their discard pile.</rule>",
     "subtitle": "the master is dead!! freedom!",
+    "art": {
+      "artists": [
+        "Davi Comodo"
+      ],
+      "credit": "ART: Davi Comodo",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -6697,6 +6959,13 @@ const cards = [
     "text": "When this card enters play, reveal the top 4 cards of your deck. Put up to two resources revealed this way into your hand. Put the remaining cards into your discard pile.",
     "markup": "<rule>When this card enters play, reveal the top 4 cards of your deck. Put up to two resources revealed this way into your hand. Put the remaining cards into your discard pile.</rule>",
     "subtitle": "why steal babies when you can grow them?",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -7007,6 +7276,13 @@ const cards = [
     "text": "At the start of your turn, inflict 1 damage to all other characters.",
     "markup": "<rule>At the start of your turn, inflict 1 damage to all other characters.</rule>",
     "subtitle": "oh you're going to feel my pain",
+    "art": {
+      "artists": [
+        "Stephen Cellar"
+      ],
+      "credit": "ART: Stephen Cellar",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -7064,36 +7340,39 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [O] icon or [E] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [O] icon or [E] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
-    "resource": {
-      "provides": [],
-      "staple": false
+    "art": {
+      "artists": [
+        "Torbjörn Kallström"
+      ],
+      "credit": "ART: Torbjörn Kallström",
+      "source": "printed"
     },
     "behavior": {
       "abilities": [
         {
-          "id": "name-on-resource",
+          "id": "name-provides",
           "type": "triggered",
           "event": "cardEnteredPlay",
           "condition": {
             "type": "and",
             "conditions": [
               {
+                "type": "eventCardControlledBy",
+                "player": "controller"
+              },
+              {
                 "type": "cardTypeIs",
                 "target": "eventCard",
                 "cardType": "resource"
-              },
-              {
-                "type": "eventCardControlledBy",
-                "player": "controller"
               }
             ]
           },
           "effects": [
             {
               "type": "nameValue",
+              "chooser": "controller",
               "valueKind": "resourceIcon",
               "storeAs": "x",
-              "chooser": "controller",
               "exclude": [
                 "rage",
                 "greed",
@@ -7282,6 +7561,13 @@ const cards = [
     "text": "EXTRA COST: Pick up to 2 characters with numeric cost 2 or less in your discard pile. -- Put the characters into play under your control.",
     "markup": "<extra-cost>Pick up to 2 characters with numeric cost 2 or less in your discard pile.</extra-cost><rule>Put the characters into play under your control.</rule>",
     "subtitle": "lesser mau worship money; greater mau worship god",
+    "art": {
+      "artists": [
+        "Chantelle Basson"
+      ],
+      "credit": "ART: Chantelle Basson",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -7345,6 +7631,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [V] -- IMBUE -- COST: Use this ability only once each turn. Lose 2 influence. -- EFFECT: This turn, this card gains \"PROVIDES: [D][D]\".",
     "markup": "<provides>[V]</provides><ability name=\"IMBUE\" ref=\"imbue\"><cost>Use this ability only once each turn. Lose 2 influence.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [D][D]\".</effect></ability>",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "volition"
@@ -7391,6 +7684,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [V] -- IMBUE -- COST: Use this ability only once each turn. Lose 2 influence. -- EFFECT: This turn, this card gains \"PROVIDES: [E][E]\".",
     "markup": "<provides>[V]</provides><ability name=\"IMBUE\" ref=\"imbue\"><cost>Use this ability only once each turn. Lose 2 influence.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [E][E]\".</effect></ability>",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "volition"
@@ -7437,6 +7737,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [V] -- IMBUE -- COST: Use this ability only once each turn. Lose 2 influence. -- EFFECT: This turn, this card gains \"PROVIDES: [G][G]\".",
     "markup": "<provides>[V]</provides><ability name=\"IMBUE\" ref=\"imbue\"><cost>Use this ability only once each turn. Lose 2 influence.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [G][G]\".</effect></ability>",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "volition"
@@ -7483,6 +7790,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [V] -- IMBUE -- COST: Use this ability only once each turn. Lose 2 influence. -- EFFECT: This turn, this card gains \"PROVIDES: [O][O]\".",
     "markup": "<provides>[V]</provides><ability name=\"IMBUE\" ref=\"imbue\"><cost>Use this ability only once each turn. Lose 2 influence.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [O][O]\".</effect></ability>",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "volition"
@@ -7529,6 +7843,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [V] -- IMBUE -- COST: Use this ability only once each turn. Lose 2 influence. -- EFFECT: This turn, this card gains \"PROVIDES: [R][R]\".",
     "markup": "<provides>[V]</provides><ability name=\"IMBUE\" ref=\"imbue\"><cost>Use this ability only once each turn. Lose 2 influence.</cost><effect>This turn, this card gains \"<term>PROVIDES</term>: [R][R]\".</effect></ability>",
+    "art": {
+      "artists": [
+        "Denilson Santtos"
+      ],
+      "credit": "ART: Denilson Santtos",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "volition"
@@ -7699,6 +8020,13 @@ const cards = [
     "text": "Only characters with at least X strength can block this card, where X is this card's strength.",
     "markup": "<rule>Only characters with at least X strength can block this card, where X is this card's strength.</rule>",
     "subtitle": "definitely compensating for something",
+    "art": {
+      "artists": [
+        "Paco Giudice"
+      ],
+      "credit": "ART: Paco Giudice",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -7805,36 +8133,39 @@ const cards = [
     "subtype": [],
     "text": "When a resource enters play under your control, name [O] icon or [D] icon. X is the named icon. This turn, this card gains \"PROVIDES: X\".",
     "markup": "<rule>When a resource enters play under your control, name [O] icon or [D] icon. X is the named icon. This turn, this card gains \"<term>PROVIDES</term>: X\".</rule>",
-    "resource": {
-      "provides": [],
-      "staple": false
+    "art": {
+      "artists": [
+        "Tomas Panavas"
+      ],
+      "credit": "ART: Tomas Panavas",
+      "source": "printed"
     },
     "behavior": {
       "abilities": [
         {
-          "id": "name-on-resource",
+          "id": "name-provides",
           "type": "triggered",
           "event": "cardEnteredPlay",
           "condition": {
             "type": "and",
             "conditions": [
               {
+                "type": "eventCardControlledBy",
+                "player": "controller"
+              },
+              {
                 "type": "cardTypeIs",
                 "target": "eventCard",
                 "cardType": "resource"
-              },
-              {
-                "type": "eventCardControlledBy",
-                "player": "controller"
               }
             ]
           },
           "effects": [
             {
               "type": "nameValue",
+              "chooser": "controller",
               "valueKind": "resourceIcon",
               "storeAs": "x",
-              "chooser": "controller",
               "exclude": [
                 "rage",
                 "greed",
@@ -7877,6 +8208,13 @@ const cards = [
     "text": "When this card enters play, gain 3 influence.",
     "markup": "<rule>When this card enters play, gain 3 influence.</rule>",
     "subtitle": "equal opportunity opportunist",
+    "art": {
+      "artists": [
+        "Luca Chirivi"
+      ],
+      "credit": "ART: Luca Chirivi",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -7910,6 +8248,13 @@ const cards = [
     "text": "EXTRA COST: Pick a character or faction. -- Inflict 3 damage to the character or faction.",
     "markup": "<extra-cost>Pick a character or faction.</extra-cost><rule>Inflict 3 damage to the character or faction.</rule>",
     "subtitle": "like a big barduse furball",
+    "art": {
+      "artists": [
+        "Patricio Clarey"
+      ],
+      "credit": "ART: Patricio Clarey",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -8324,6 +8669,13 @@ const cards = [
     "text": "EXTRA COST: Pick a character. -- Void that character.",
     "markup": "<extra-cost>Pick a character.</extra-cost><rule>Void that character.</rule>",
     "subtitle": "down the hatch",
+    "art": {
+      "artists": [
+        "Sekhar Fainama"
+      ],
+      "credit": "ART: Sekhar Fainama",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -8371,6 +8723,13 @@ const cards = [
     "text": "When this card enters play, void all discard piles. -- If a card would go to a discard pile from anywhere, void it instead.",
     "markup": "<rule>When this card enters play, void all discard piles.</rule><rule>If a card would go to a discard pile from anywhere, void it instead.</rule>",
     "subtitle": "cleaning up the remains",
+    "art": {
+      "artists": [
+        "Jake Ekiss"
+      ],
+      "credit": "ART: Jake Ekiss",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -8914,6 +9273,13 @@ const cards = [
     "text": "UNIQUE RASPUTIN, TACTICAL -- When another character enters play under your control, pick an opponent. This turn, the speed of all characters that opponent controls is reduced to 0.",
     "markup": "<keywords><unique>RASPUTIN</unique>, <kw>TACTICAL</kw></keywords><rule>When another character enters play under your control, pick an opponent. This turn, the speed of all characters that opponent controls is reduced to 0.</rule>",
     "subtitle": "slow down and enjoy the show",
+    "art": {
+      "artists": [
+        "Anil Duyal Baydir"
+      ],
+      "credit": "ART: Anil Duyal Baydir",
+      "source": "printed"
+    },
     "unique": "rasputin",
     "behavior": {
       "keywords": [
@@ -9184,7 +9550,7 @@ const cards = [
     ],
     "text": "RESEARCH -- COST: Deplete this card. -- EFFECT: Reduce the next numeric cost you pay this turn by 1.",
     "markup": "<ability name=\"RESEARCH\" ref=\"research\"><cost>Deplete this card.</cost><effect>Reduce the next numeric cost you pay this turn by 1.</effect></ability>",
-    "subtitle": "[MISSING]",
+    "subtitle": "\"enjoy your 'milk'\"",
     "art": {
       "artists": [
         "Patrick Meehan",
@@ -9815,6 +10181,13 @@ const cards = [
     "text": "SCRAPPED -- COST: Destroy a Micromajig token you control. -- EFFECT: Reduce the numeric cost of the next card you deploy this turn by 1.",
     "markup": "<ability name=\"SCRAPPED\" ref=\"scrapyard-scrapped\"><cost>Destroy a Micromajig token you control.</cost><effect>Reduce the numeric cost of the next card you deploy this turn by 1.</effect></ability>",
     "subtitle": "where bygone majigs go to rest",
+    "art": {
+      "artists": [
+        "Starcat Games"
+      ],
+      "credit": "ART: Starcat Games",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -9929,6 +10302,13 @@ const cards = [
     "text": "When this card enters play, you may lose 2 influence. If you do, pick a character in your discard pile and put it into your hand.",
     "markup": "<rule>When this card enters play, you may lose 2 influence. If you do, pick a character in your discard pile and put it into your hand.</rule>",
     "subtitle": "shepherding the dead back to the living",
+    "art": {
+      "artists": [
+        "Tore Wesolowski"
+      ],
+      "credit": "ART: Tore Wesolowski",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -10045,6 +10425,13 @@ const cards = [
     "text": "AGGRO -- When this card enters play, if an opponent's faction lost influence this turn you may inflict 2 damage to that faction and pick a character that opponent controls. If you do, inflict 2 damage to it.",
     "markup": "<keywords><kw>AGGRO</kw></keywords><rule>When this card enters play, if an opponent's faction lost influence this turn you may inflict 2 damage to that faction and pick a character that opponent controls. If you do, inflict 2 damage to it.</rule>",
     "subtitle": "screeching death from the sky",
+    "art": {
+      "artists": [
+        "Maik Beiersdorf"
+      ],
+      "credit": "ART: Maik Beiersdorf",
+      "source": "printed"
+    },
     "behavior": {
       "keywords": [
         "aggro"
@@ -10276,6 +10663,13 @@ const cards = [
     "text": "UNIQUE SILURIFORMES -- When this card enters play, set your influence to your faction's starting influence. -- INCARNATE: [G][G][G][G] -- COST: Pay 1. -- EFFECT: This turn, this card cannot be picked by tactics or abilities.",
     "markup": "<keywords><unique>SILURIFORMES</unique></keywords><rule>When this card enters play, set your influence to your faction's starting influence.</rule><ability name=\"INCARNATE\" threshold=\"gggg\" ref=\"incarnate\"><cost>Pay 1.</cost><effect>This turn, this card cannot be picked by tactics or abilities.</effect></ability>",
     "subtitle": "you thought you won, didn't you?",
+    "art": {
+      "artists": [
+        "Julio Rocha"
+      ],
+      "credit": "ART: Julio Rocha",
+      "source": "printed"
+    },
     "unique": "siluriformes",
     "behavior": {
       "abilities": [
@@ -10341,6 +10735,13 @@ const cards = [
     "text": "When this card enters play, you may pick an item in your discard pile. If you do, put the item into your hand.",
     "markup": "<rule>When this card enters play, you may pick an item in your discard pile. If you do, put the item into your hand.</rule>",
     "subtitle": "testudo shrievers were bred for their brains",
+    "art": {
+      "artists": [
+        "Jake Ekiss"
+      ],
+      "credit": "ART: Jake Ekiss",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -10682,6 +11083,13 @@ const cards = [
     "text": "Draw 1 card and gain 1 influence for each [G] you control.",
     "markup": "<rule>Draw 1 card and gain 1 influence for each [G] you control.</rule>",
     "subtitle": "just dump the money right there",
+    "art": {
+      "artists": [
+        "Amber Debelak"
+      ],
+      "credit": "ART: Amber Debelak",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -10731,6 +11139,13 @@ const cards = [
     "text": "Destroy all non-resource cards.",
     "markup": "<rule>Destroy all non-resource cards.</rule>",
     "subtitle": "scorched earth is the official imperial policy",
+    "art": {
+      "artists": [
+        "David Campos"
+      ],
+      "credit": "ART: David Campos",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -10782,6 +11197,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [R] -- FIRE UP -- COST: Use this only while this card is a face-down resource. Reveal this card. Pay 2. -- EFFECT: Put this card into play face-up. X is the number of characters that were destroyed this turn. Each faction loses X influence.",
     "markup": "<provides>[R]</provides><ability name=\"FIRE UP\" ref=\"fire-up\"><cost>Use this only while this card is a face-down resource. Reveal this card. Pay 2.</cost><effect>Put this card into play face-up. X is the number of characters that were destroyed this turn. Each faction loses X influence.</effect></ability>",
+    "art": {
+      "artists": [
+        "Ramon Pantoja Gómez"
+      ],
+      "credit": "ART: Ramon Pantoja Gómez",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "rage"
@@ -10847,6 +11269,13 @@ const cards = [
     "text": "UNIQUE TEMPLE OF RANTZIGORE -- Characters your opponents control lose 1 strength, 1 life, and 1 speed.",
     "markup": "<keywords><unique>TEMPLE OF RANTZIGORE</unique></keywords><rule>Characters your opponents control lose 1 strength, 1 life, and 1 speed.</rule>",
     "subtitle": "all must pay tribute",
+    "art": {
+      "artists": [
+        "monztre.ink.studio"
+      ],
+      "credit": "ART: monztre.ink.studio",
+      "source": "printed"
+    },
     "unique": "temple of rantzigore",
     "behavior": {
       "abilities": [
@@ -10909,6 +11338,13 @@ const cards = [
     "text": "UNIQUE TESTUDINE -- When this card enters play, look at the top 6 cards of your deck. You may choose a character among them with numeric cost 3 or less and reveal it. If you do, put that character into play. Put the remaining cards on the bottom of your deck in any order.",
     "markup": "<keywords><unique>TESTUDINE</unique></keywords><rule>When this card enters play, look at the top 6 cards of your deck. You may choose a character among them with numeric cost 3 or less and reveal it. If you do, put that character into play. Put the remaining cards on the bottom of your deck in any order.</rule>",
     "subtitle": "when the cavalry calls the cavalry",
+    "art": {
+      "artists": [
+        "Julio Rocha"
+      ],
+      "credit": "ART: Julio Rocha",
+      "source": "printed"
+    },
     "unique": "testudine",
     "behavior": {
       "abilities": [
@@ -11050,6 +11486,13 @@ const cards = [
     "text": "[V]: This card gains 1 life. -- [V][V]: This card gains 1 strength. -- [V][V][V]: This card gains 1 speed. -- [V][V][V][V]: This card gains 1 life, 1 strength, and 1 speed.",
     "markup": "<rule when=\"v\">This card gains 1 life.</rule><rule when=\"vv\">This card gains 1 strength.</rule><rule when=\"vvv\">This card gains 1 speed.</rule><rule when=\"vvvv\">This card gains 1 life, 1 strength, and 1 speed.</rule>",
     "subtitle": "the living gods call for a killing",
+    "art": {
+      "artists": [
+        "Nagasse"
+      ],
+      "credit": "ART: Nagasse",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -11149,6 +11592,13 @@ const cards = [
     "text": "COVERT -- While this card is in your hand, you may reveal this card when a card that provides [V] enters play under your control. If you do, you may deploy this card for 2.",
     "markup": "<keywords><kw>COVERT</kw></keywords><rule>While this card is in your hand, you may reveal this card when a card that provides [V] enters play under your control. If you do, you may deploy this card for 2.</rule>",
     "subtitle": "powered by the souls of its victims",
+    "art": {
+      "artists": [
+        "Marc Steinmann"
+      ],
+      "credit": "ART: Marc Steinmann",
+      "source": "printed"
+    },
     "behavior": {
       "keywords": [
         "covert"
@@ -11227,6 +11677,13 @@ const cards = [
     "text": "[V]: This card gains TACTICAL. -- [V][V]: When this card inflicts damage to a character, destroy that character. -- [V][V][V]: When this card enters play, you may pick a character. If you do, inflict 1 damage to the character.",
     "markup": "<rule when=\"v\">This card gains <kw>TACTICAL</kw>.</rule><rule when=\"vv\">When this card inflicts damage to a character, destroy that character.</rule><rule when=\"vvv\">When this card enters play, you may pick a character. If you do, inflict 1 damage to the character.</rule>",
     "subtitle": "the living gods call for obedience",
+    "art": {
+      "artists": [
+        "Kristina Wayte"
+      ],
+      "credit": "ART: Kristina Wayte",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -11378,6 +11835,13 @@ const cards = [
     "text": "EXTRA COST: Deploy this only in response to a card being deployed. X is its numeric cost. -- If that card's owner has at least X cards in their discard pile, terminate that card.",
     "markup": "<extra-cost>Deploy this only in response to a card being deployed. X is its numeric cost.</extra-cost><rule>If that card's owner has at least X cards in their discard pile, terminate that card.</rule>",
     "subtitle": "joke's on you",
+    "art": {
+      "artists": [
+        "Cleveland Mosher"
+      ],
+      "credit": "ART: Cleveland Mosher",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -11503,6 +11967,13 @@ const cards = [
     "text": "UNIQUE UHLUHTC -- When this card enters play, if it was deployed from your hand, pick an opponent and then choose one of the following: -- OPTION 1 -- Look at that player's hand and choose a non-resource card in it. That player discards that card. -- OPTION 2 -- That player must destroy a character they control.",
     "markup": "<keywords><unique>UHLUHTC</unique></keywords><rule>When this card enters play, if it was deployed from your hand, pick an opponent and then choose one of the following:</rule><option label=\"OPTION 1\"><rule>Look at that player's hand and choose a non-resource card in it. That player discards that card.</rule></option><option label=\"OPTION 2\"><rule>That player must destroy a character they control.</rule></option>",
     "subtitle": "uhluhtc smash",
+    "art": {
+      "artists": [
+        "Anil Duyal Baydir"
+      ],
+      "credit": "ART: Anil Duyal Baydir",
+      "source": "printed"
+    },
     "unique": "uhluhtc",
     "behavior": {
       "abilities": [
@@ -11616,6 +12087,13 @@ const cards = [
     "text": "Put 3 Micromajig tokens into play.",
     "markup": "<rule>Put 3 Micromajig tokens into play.</rule>",
     "subtitle": "no, brother! they must find one of us in the wreckage",
+    "art": {
+      "artists": [
+        "Rai Caraan"
+      ],
+      "credit": "ART: Rai Caraan",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -11661,6 +12139,13 @@ const cards = [
     "text": "TACTICAL -- While this card is in play, ignore all triggers that begin with \"when this card enters play\" or \"when this card leaves play\".",
     "markup": "<keywords><kw>TACTICAL</kw></keywords><rule>While this card is in play, ignore all triggers that begin with \"when this card enters play\" or \"when this card leaves play\".</rule>",
     "subtitle": "jo got the brains, her brother got the brawn",
+    "art": {
+      "artists": [
+        "Ramon Puasa Jr."
+      ],
+      "credit": "ART: Ramon Puasa Jr.",
+      "source": "printed"
+    },
     "behavior": {
       "keywords": [
         "tactical"
@@ -11693,6 +12178,13 @@ const cards = [
     "text": "ATTACH TO CHARACTER -- The attached character gains COVERT. -- When the attached character inflicts battle damage to a faction, draw a card.",
     "markup": "<keywords><attach>CHARACTER</attach></keywords><rule>The attached character gains <kw>COVERT</kw>.</rule><rule>When the attached character inflicts battle damage to a faction, draw a card.</rule>",
     "subtitle": "who would ever use this crap?",
+    "art": {
+      "artists": [
+        "Douglas Deri"
+      ],
+      "credit": "ART: Douglas Deri",
+      "source": "printed"
+    },
     "attachTo": "character",
     "behavior": {
       "abilities": [
@@ -11757,6 +12249,13 @@ const cards = [
     "text": "COVERT -- At the start of your turn, you may reveal the top card of your deck. If you do and it is a tactic, you may put it into your hand.",
     "markup": "<keywords><kw>COVERT</kw></keywords><rule>At the start of your turn, you may reveal the top card of your deck. If you do and it is a tactic, you may put it into your hand.</rule>",
     "subtitle": "venture capitalists are pussies",
+    "art": {
+      "artists": [
+        "Daniel Thiele"
+      ],
+      "credit": "ART: Daniel Thiele",
+      "source": "printed"
+    },
     "behavior": {
       "keywords": [
         "covert"
@@ -11905,6 +12404,13 @@ const cards = [
     "text": "This card cannot be blocked by parties of less than 2 members.",
     "markup": "<rule>This card cannot be blocked by parties of less than 2 members.</rule>",
     "subtitle": "counter-imperial lap dog",
+    "art": {
+      "artists": [
+        "David Franco Campos"
+      ],
+      "credit": "ART: David Franco Campos",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
@@ -11991,6 +12497,13 @@ const cards = [
     "text": "UNIQUE SIXSMITH -- When this card enters play, you may search your deck for an item card and a character card and reveal them. If you do, put them in your hand. -- When this card leaves play, discard 2 cards.",
     "markup": "<keywords><unique>SIXSMITH</unique></keywords><rule>When this card enters play, you may search your deck for an item card and a character card and reveal them. If you do, put them in your hand.</rule><rule>When this card leaves play, discard 2 cards.</rule>",
     "subtitle": "pure genius wrapped in scales",
+    "art": {
+      "artists": [
+        "Saher Imran"
+      ],
+      "credit": "ART: Saher Imran",
+      "source": "printed"
+    },
     "unique": "sixsmith",
     "behavior": {
       "abilities": [
@@ -12151,6 +12664,13 @@ const cards = [
     "subtype": [],
     "text": "PROVIDES: [E] -- When a Micromajig token enters play under your control, lose 1 influence. Micromajig tokens you control gain AGGRO.",
     "markup": "<provides>[E]</provides><rule>When a Micromajig token enters play under your control, lose 1 influence. Micromajig tokens you control gain <kw>AGGRO</kw>.</rule>",
+    "art": {
+      "artists": [
+        "Ramon Rantonja"
+      ],
+      "credit": "ART: Ramon Rantonja",
+      "source": "printed"
+    },
     "resource": {
       "provides": [
         "elitism"
@@ -12235,6 +12755,13 @@ const cards = [
     "text": "EXTRA COST: Pick a character in your discard pile. -- Put the character into play under your control.",
     "markup": "<extra-cost>Pick a character in your discard pile.</extra-cost><rule>Put the character into play under your control.</rule>",
     "subtitle": "death is only for the unprepared",
+    "art": {
+      "artists": [
+        "Matteo Galletti"
+      ],
+      "credit": "ART: Matteo Galletti",
+      "source": "printed"
+    },
     "behavior": {
       "abilities": [
         {
