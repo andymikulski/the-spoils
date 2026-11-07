@@ -1870,7 +1870,7 @@ function communionBoard(opts: CommunionOpts = {}) {
   const starter = opts.starter ?? P2;
   const [aHand, bHand] = opts.hand ?? [3, 3];
   const [aDeck, bDeck] = opts.deck ?? [4, 4];
-  return devBoard(
+  const game = devBoard(
     [
       { key: "comm", def: printing(COMMUNION), owner: opts.controller ?? P1, zone: opts.zone ?? "play" },
       ...fillers("ah", aHand, P1, "hand"),
@@ -1891,6 +1891,12 @@ function communionBoard(opts: CommunionOpts = {}) {
     ],
     starter === P2 ? {} : { turn: 2, activePlayerId: P2 }
   );
+  // The Communion triggers at EVERY seat's turn start and "both players" binds the opponent the turn start is about, so at
+  // a bigger table the extra seats' own turns (which the two-player game never has) would each raise a four-option prompt
+  // for the controller too. These clauses are about the options between the two original players: the extra seats sit out
+  // of the turn rotation (multiplayer-tables-saga.test.ts plays it at a real bigger table).
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 
 type CommGame = ReturnType<typeof communionBoard>;

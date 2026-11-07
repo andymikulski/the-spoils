@@ -1311,8 +1311,11 @@ clause(DC, "1:rule@rrrrrr", "switches on with AGITATE's own [R][R][R] (three ban
 
 const DRILL = "6a477977-867b-4cdc-acc0-1d3f00923031";
 
+// "At the start of the NEXT turn": at a bigger table that is an extra seat's turn, over before the wrapped `endTurn`
+// returns, so the clauses below could not see the +3. The extra seats sit out of the turn rotation here
+// (multiplayer-tables-saga.test.ts plays it at a real bigger table).
 function drillBoard(o: { zone?: "hand" | "play"; rage?: number; greed?: number; active?: PlayerId; noOthers?: boolean; cards?: CardPlacement[] } = {}) {
-  return duo(
+  const game = duo(
     [
       { key: "di", def: printing(DRILL), owner: P1, zone: o.zone ?? "hand" },
       ...(o.noOthers
@@ -1332,6 +1335,8 @@ function drillBoard(o: { zone?: "hand" | "play"; rage?: number; greed?: number; 
     ],
     { active: o.active }
   );
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 const deployDI = (b: Board, key = "di"): void => {
   play(b.engine, P1, b.id(key), {});

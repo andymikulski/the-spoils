@@ -1712,7 +1712,7 @@ clause(RND, "7:rule:RESEARCH & DEVELOPMENT", "the faction card has the ability t
   });
   const factionId = factionOf(engine, P1);
   assert.equal(engine.getAvailableActivatedAbilities(P1).filter((a) => a.cardId === factionId).length, 2, "before anything is created there is only DRAW and RESOURCE");
-  engine.applyCreatedFactionAbility({ costs: [{ kind: "pay", amount: 2 }], effect: { kind: "gainInfluence", amount: 1 } });
+  engine.applyCreatedFactionAbility(P1, { costs: [{ kind: "pay", amount: 2 }], effect: { kind: "gainInfluence", amount: 1 } });
   const mine = engine.getAvailableActivatedAbilities(P1).filter((a) => a.cardId === factionId);
   assert.ok(mine.length >= 3, `the controller sees DRAW, RESOURCE and the created ability (saw ${mine.map((a) => a.ability.id).join(", ")})`);
   engine.state.activePlayerId = P2;

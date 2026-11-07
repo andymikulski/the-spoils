@@ -263,9 +263,11 @@ describe("CR 403.4 — in play", () => {
     const run = (where: "play" | "hand") => {
       const built = buildGame({ cards: [{ key: "w", def: watcher(), owner: P1, zone: where }] });
       const before = built.engine.state.players[P1].influence;
+      const turn = built.engine.state.turn;
       built.engine.perform({ type: "endTurn", playerId: P1 });
       resolvePendingResponses(built.engine);
-      return built.engine.state.players[P1].influence - before;
+      // The trigger fires at the end of every turn; seats between P1 and P2 end turns of their own: count the gain per turn ended.
+      return (built.engine.state.players[P1].influence - before) / (built.engine.state.turn - turn);
     };
     assert.equal(run("play"), 5, "control: in play it triggers");
     assert.equal(run("hand"), 0, "in hand it does nothing");

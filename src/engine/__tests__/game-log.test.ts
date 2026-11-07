@@ -18,6 +18,9 @@ function indentOf(line: string): number {
   return line.length - line.trimStart().length;
 }
 
+/** A "passes" line of one of the two original players (Alice, Bob), not of an extra seat at a bigger table. */
+const isOriginalPlayersPass = (message: string): boolean => /^(Alice|Bob) passes/.test(message);
+
 describe("game log — a running, toggleable record of everything that happens", () => {
   test("records draws, deploys, resolution and turn structure in emit order with gap-free seq numbers", () => {
     const { engine, id } = buildGame({
@@ -104,7 +107,8 @@ describe("game log — a running, toggleable record of everything that happens",
 
     const log = engine.getLog();
 
-    const passed = log.find(e => e.marker === "priorityPassed");
+    // (Only the two original players' passes: extra seats at a bigger table log their own.)
+    const passed = log.find(e => e.marker === "priorityPassed" && isOriginalPlayersPass(e.message));
     assert.ok(passed, "the pass was logged");
     assert.equal(passed.kind, "info");
     // the decline names what was on offer, so consecutive passes don't read alike
@@ -208,7 +212,7 @@ describe("game log — a running, toggleable record of everything that happens",
     // An unblocked one-attacker battle opens three two-sided response
     // windows; each decline says which one it was, so six "passes" lines
     // don't look like a stuck loop.
-    const passes = log.filter(e => e.marker === "priorityPassed").map(e => e.message);
+    const passes = log.filter(e => e.marker === "priorityPassed").map(e => e.message).filter(isOriginalPlayersPass);
     assert.deepEqual(passes, [
       "Alice passes — no response to the attack",
       "Bob passes — no response to the attack",
@@ -264,7 +268,8 @@ describe("game log — a running, toggleable record of everything that happens",
     const passes = engine
       .getLog()
       .filter(e => e.marker === "priorityPassed")
-      .map(e => e.message);
+      .map(e => e.message)
+      .filter(isOriginalPlayersPass);
     assert.deepEqual(passes, [
       "Alice passes — no response to the attack",
       "Bob passes — no response to Charlie",

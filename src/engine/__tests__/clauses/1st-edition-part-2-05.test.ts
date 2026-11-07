@@ -5971,7 +5971,8 @@ clause(COUNTER_ATTACK, "0:ability", "played in response to the end of their turn
   resolvePendingResponses(engine);
   assert.equal(battleOf(engine), undefined);
   assert.equal(engine.state.activePlayerId, P1, "their turn ended and mine began");
-  assert.equal(engine.state.turn, 3);
+  const order = engine.state.turnOrder;
+  assert.equal(engine.state.turn, 2 + ((order.indexOf(P1) - order.indexOf(P2) + order.length) % order.length), "turn 2 was theirs; one turn per seat from them round to me");
 });
 
 clause(COUNTER_ATTACK, "0:ability", "the opponent's blockers that fought are depleted afterwards only as battle rules say: unblocking characters are not touched", () => {

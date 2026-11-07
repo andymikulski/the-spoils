@@ -12,10 +12,19 @@ import type { ActivatedAbility, CardDefinition, CardInstanceId, NumberExpression
 import cardsJson from "../../data/cards.js";
 import { bank, cardDef, developFaction } from "./per-card/_harness.js";
 import { character, item, tactic } from "./support/fixtures.js";
-import { abilityOf, completePlay, playOf, richBoard, P1, P2 } from "./support/requirements-kit.js";
+import { abilityOf as unboundAbilityOf, completePlay, playOf as unboundPlayOf, richBoard, P1, P2 } from "./support/requirements-kit.js";
 import type { CardPlacement } from "./support/fixtures.js";
 
 const CATALOG = cardsJson as CardDefinition[];
+
+// These queries and checks bypass the table-mode wrapper's `perform`, so each play names its opponent (the other
+// original player) itself: left unbound, a bigger table would first ask which opponent the play is about.
+const opponentOf = (playerId: string) => (playerId === P1 ? P2 : P1);
+const playOf = (playerId: string, cardId: CardInstanceId): PlayAction => ({ ...unboundPlayOf(playerId, cardId), opponentId: opponentOf(playerId) });
+const abilityOf = (playerId: string, cardId: CardInstanceId, abilityId: string): PlayAction => ({
+  ...unboundAbilityOf(playerId, cardId, abilityId),
+  opponentId: opponentOf(playerId)
+});
 
 type Built = ReturnType<typeof richBoard>;
 

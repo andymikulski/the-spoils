@@ -210,7 +210,7 @@ describe("getPendingDelayedEffects: Gilded Yurt", () => {
     assert.equal(entry.sourceId, g.id("yurt"));
     assert.equal(entry.controllerId, P1);
     assert.equal(entry.when, "startOfNextTurn");
-    assert.equal(entry.turn, g.engine.state.turn + 2, "P1 is the active player: its next turn is two turns on");
+    assert.equal(entry.turn, g.engine.state.turn + g.engine.state.turnOrder.length, "P1 is the active player: its next turn is a full round of seats on (two turns on at a two-player table)");
     assert.deepEqual(entry.affectedCardIds, [g.id("a")]);
     assert.match(entry.text, /^Gilded Yurt: the start of .*'s next turn$/);
     assert.deepEqual(g.engine.getPendingDelayedEffects(P2), [], "the opponent controls none of it");
@@ -273,7 +273,7 @@ describe("getPendingDelayedEffects: Imperial Palace and Drill Instructor", () =>
     assert.equal(list.length, 1);
     assert.equal(list[0].sourceId, g.id("pal"));
     assert.equal(list[0].when, "startOfNextTurn");
-    assert.equal(list[0].turn, 4, "P1's next turn after the opponent's turn 3");
+    assert.equal(list[0].turn, 2 + g.engine.state.turnOrder.length, "P1's next turn: a full round of seats after turn 2 (turn 4 at a two-player table, after the opponent's turn 3)");
     assert.deepEqual(list[0].affectedCardIds, [g.id("c")]);
   });
 
@@ -318,7 +318,7 @@ describe("getPendingDelayedEffects: skipped Restore Rule and timed take-control"
     assert.equal(list.length, 1);
     assert.equal(list[0].kind, "restoreRuleSkip");
     assert.equal(list[0].controllerId, P1);
-    assert.equal(list[0].turn, g.engine.state.turn + 2);
+    assert.equal(list[0].turn, g.engine.state.turn + g.engine.state.turnOrder.length);
     assert.equal(list[0].sourceId, undefined, "the engine does not record a source for restore skips");
     assert.deepEqual(g.engine.getPendingDelayedEffects(P2), []);
     g.engine.perform({ type: "endTurn", playerId: P1 } as never);
@@ -345,7 +345,7 @@ describe("getPendingDelayedEffects: skipped Restore Rule and timed take-control"
     g.engine.state.cards[g.id("c")].borrowedUntilEndOfTurn = true;
     const byKind = Object.fromEntries(g.engine.getPendingDelayedEffects().map(e => [e.kind, e]));
     assert.deepEqual(byKind.skipNextRestore.affectedCardIds, [g.id("a")]);
-    assert.equal(byKind.skipNextRestore.turn, g.engine.state.turn + 2, "P1 is active: its next Restore Rule is two turns on");
+    assert.equal(byKind.skipNextRestore.turn, g.engine.state.turn + g.engine.state.turnOrder.length, "P1 is active: its next Restore Rule is a full round of seats on (two turns on at a two-player table)");
     assert.equal(byKind.restoreLock.when, "whileInPlay");
     assert.equal(byKind.restoreLock.controllerId, P2);
     assert.equal(byKind.removeAtEndOfTurn.when, "endOfTurn");

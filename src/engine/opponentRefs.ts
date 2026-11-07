@@ -16,8 +16,11 @@ export interface OpponentRefs {
   elsewhere: boolean;
 }
 
-/** Keys whose "opponent" value is not a player the block's text refers to. */
-const NOT_A_REFERENCE = new Set(["usableBy"]);
+/**
+ * Keys whose "opponent" is not a player the block's text refers to: who may use an ability, and the per-player
+ * tests that judge every opponent on their own ("cannot be blocked by those players", "that player cannot pick").
+ */
+const NOT_A_REFERENCE = new Set(["usableBy", "notBy", "pickerWhere"]);
 
 const cache = new WeakMap<object, OpponentRefs>();
 
@@ -73,7 +76,8 @@ function walk(node: unknown, inPick: boolean, refs: OpponentRefs): void {
   // themselves ("each opponent ...", "any player may pay ..."): the body's
   // references are not the enclosing block's.
   const anyOpponentMayPay = record.type === "mayPay" && record.anyOf === "opponents";
-  const rebindsBody = record.type === "forEachPlayer" || record.type === "anyPlayerMayPay" || anyOpponentMayPay;
+  const rebindsBody =
+    record.type === "forEachPlayer" || record.type === "asPlayer" || record.type === "anyPlayerMayPay" || anyOpponentMayPay;
   if (anyOpponentMayPay) {
     // The payer is whichever opponent pays; only the "otherwise" branch speaks for the block.
     walk(record.elseEffects, inPick, refs);

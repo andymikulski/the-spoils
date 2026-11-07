@@ -573,7 +573,9 @@ clause(LOF, "1:rule", "control: without it, the turn ends once the opponent's re
   const turn = b.engine.state.turn;
   announceAndPing(b);
   resolvePendingResponses(b.engine);
-  assert.equal(b.engine.state.turn, turn + 1);
+  const order = b.engine.state.turnOrder;
+  const seatsToP2 = (order.indexOf(P2) - order.indexOf(P1) + order.length) % order.length; // 1 at the two-player table
+  assert.equal(b.engine.state.turn, turn + seatsToP2);
   assert.equal(b.engine.state.activePlayerId, P2);
 });
 

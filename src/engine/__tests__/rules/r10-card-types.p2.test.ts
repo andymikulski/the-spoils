@@ -112,9 +112,11 @@ describe("CR 201.5 — rules text", () => {
     const gained = (where: "hand" | "discard" | "play") => {
       const { engine } = buildGame({ cards: [{ key: "w", def: watcher, owner: P1, zone: where }] });
       const before = engine.state.players[P1].influence;
+      const turn = engine.state.turn;
       engine.perform({ type: "endTurn", playerId: P1 });
       resolvePendingResponses(engine);
-      return engine.state.players[P1].influence - before;
+      // The trigger fires at the end of every turn; seats between P1 and P2 end turns of their own: count the gain per turn ended.
+      return (engine.state.players[P1].influence - before) / (engine.state.turn - turn);
     };
     assert.equal(gained("hand"), 0, "in hand it does not trigger");
     assert.equal(gained("discard"), 0, "in the discard pile it does not trigger");
@@ -136,9 +138,11 @@ describe("CR 201.5 — rules text", () => {
     engine.perform({ type: "activateAbility", playerId: P1, cardId: id("r"), abilityId: "recur" });
     resolvePendingResponses(engine);
     assert.equal(engine.state.players[P1].influence, before + 4, "the stated discard-pile ability is usable from the discard pile");
+    const turn = engine.state.turn;
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
-    assert.equal(engine.state.players[P1].influence, before + 5, "and the stated discard-pile trigger fires there");
+    // One trigger per turn ended (seats between P1 and P2 end turns of their own).
+    assert.equal(engine.state.players[P1].influence, before + 4 + (engine.state.turn - turn), "and the stated discard-pile trigger fires there");
 
     const inHand = buildGame({ cards: [{ key: "r", def: recur, owner: P1, zone: "hand" }] });
     refused(

@@ -315,7 +315,9 @@ describe("CR 414 — action loops", () => {
       settleTurnStart(engine);
     }
     assert.equal(engine.state.result, undefined, "twelve rule-driven turn cycles later the game is still on");
-    assert.equal(engine.state.turn, 13, "and the turns really did pass");
+    // The loop ends the original players' turns alternately: 12 of them make six full trips round the table, and a
+    // trip takes one turn per seat (the seats between P1 and P2 take, and end, their own turns).
+    assert.equal(engine.state.turn, 1 + 6 * engine.state.turnOrder.length, "and the turns really did pass");
   });
 
   ruleExempt(

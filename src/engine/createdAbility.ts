@@ -269,7 +269,8 @@ export function validateCreatedAbilitySpec(spec: unknown): string[] {
 /**
  * Builds the engine-native ability and its generated rules text from a spec.
  * Throws (listing every problem) when the spec is invalid. The ability is
- * always `usableBy: "anyPlayer"`; "you" in the text is whoever uses it. The
+ * always `usableBy: "controllerAndOpponent"` (the two players who created it);
+ * "you" in the text is whoever uses it. The
  * text is made only from the menu's own phrases, in the printed-card layout:
  * `COST: Pay 2. Discard a card. Pick a character. EFFECT: ...`.
  */
@@ -284,7 +285,7 @@ export function buildCreatedAbility(spec: CreatedAbilitySpec): { ability: Activa
   const ability: ActivatedAbility = {
     id: CREATED_ABILITY_ID,
     type: "activated",
-    usableBy: "anyPlayer",
+    usableBy: "controllerAndOpponent",
     costs: costs.map(({ def, amount }) => def.build(amount)),
     ...(effectDef.pick ? { targets: [{ id: PICK_ID, selector: structuredClone(effectDef.pick.selector), count: 1 }] } : {}),
     effects: [effectDef.build(effectAmount)]

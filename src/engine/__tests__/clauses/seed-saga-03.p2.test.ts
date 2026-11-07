@@ -34,9 +34,12 @@ const pick = (engine: SpoilsEngine, ids: CardInstanceId[]) => answerPending(engi
 
 const TGB = "a7351707-259c-4414-b734-962d4dc33634";
 
+// "Your opponent takes control" at the start of EACH turn binds whoever's turn starts: at a bigger table an extra
+// seat's turn start is one too (the seat after the controller takes it), which the two-player clauses below never meant.
+// The extra seats sit out of the turn rotation here; multiplayer-tables-saga.test.ts plays it at a real bigger table.
 function tgbBoard(o: { tokens?: number; controller?: PlayerId; active?: PlayerId; hands?: boolean } = {}) {
   const active = o.active ?? P1;
-  return buildGame({
+  const game = buildGame({
     playerA: { faction: developFaction(), influence: 20 },
     playerB: { faction: developFaction(), influence: 20 },
     turn: active === P1 ? 1 : 2,
@@ -63,6 +66,8 @@ function tgbBoard(o: { tokens?: number; controller?: PlayerId; active?: PlayerId
           ])
     ]
   });
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 type TgbGame = ReturnType<typeof tgbBoard>;
 /** The active player ends their turn; the "may play a resource" pick is declined if it is open. */

@@ -2580,7 +2580,7 @@ describe("ownerOf PlayerRef (Arcanist's Almanac targets any one deck, not just i
       playerId: P1,
       cardId: id("almanac"),
       abilityId: "almanac-foresight",
-      selected: { deckOwner: [id("__factionB")] }
+      selected: { deckOwner: [engine.state.players[P2].factionId!] }
     });
     resolvePendingResponses(engine);
 
@@ -9765,7 +9765,7 @@ describe("SotDE new-shape cards", () => {
             condition: { type: "cardNameEquals", target: { type: "selected", id: "__candidate" }, other: "source" },
             effects: [
               { type: "flipFaceDown", target: { type: "selected", id: "__candidate" } },
-              { type: "modifyInfluence", player: "opponent", amount: 1 },
+              { type: "forEachPlayer", players: "opponents", effects: [{ type: "modifyInfluence", player: "opponent", amount: 1 }] },
               { type: "createTokens", controller: "controller", count: 1, token: { name: "Micromajig", cardType: "character", subtype: ["micromajig"], strength: 0, life: 1, speed: 1 } }
             ]
           }

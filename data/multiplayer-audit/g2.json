@@ -4,7 +4,7 @@
     "ids": [
       "88ddad6c-4df5-4baa-b1b8-c7492f67d42e"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
       "At the start of each player's turn, that player picks a number for X.",
       "Both players put X cards from their hand on the bottom of their deck in any order.",
@@ -13,7 +13,7 @@
     "notes": "The turn's player picks X, then \"both players\" act: D4 reads that as controller + bound opponent, but this is a trigger on every player's turn with no natural opponent to bind. Current encoding (forEachPlayer inside the active player's number choice) makes every player do it.",
     "ruling": "Engine-derived reading: every player (each living player puts X on the bottom and draws that many) -- keep the current forEachPlayer.",
     "recheck": "changed from a because printed text is \"Both players\" at the start of EACH player's turn (not \"each player\"); under D4 that is ambiguous in 3+ players",
-    "resolved": "d ruling implemented as proposed (every living player bottoms X and draws): data unchanged (forEachPlayer all inside the turn player's number choice), pinned by a 3-player test. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Re-encoded per MP 3 (user, 2026-11-06): \"both players\" bottom X and draw is forEachPlayer controllerAndOpponent — you and the turn's player (E3), or the opponent you select on your own turn. 3-player test in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Anesthetizing Opulence",
@@ -285,14 +285,14 @@
       "ab111049-6ba1-430e-8d27-f647bcd5ac35",
       "300ab3d1-3214-4fa5-9000-d657e6e7816d"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
       "Your opponent cannot respond to this card."
     ],
     "notes": "Strictly only the bound opponent is denied a response, but noResponse resolves the card with no response window for anyone (D6 rotation skipped).",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
     "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent",
-    "resolved": "d ruling implemented as proposed (keep noResponse): data unchanged; verified at 3 players that it resolves at once with no response window for the third player. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Re-encoded per MP 2 (user, 2026-11-06: follow the rules): the singular printings (\"Your opponent cannot respond\") are noResponse: \"opponent\" — the opponent it is played against may not respond, the other players may (it waits on the stack for them); identical to before at two players. Plural \"your opponents\" printings keep noResponse: true. 3-player tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Fool's Gold",
@@ -460,7 +460,7 @@
     ],
     "notes": "Only 451308 needs a data change: fan the removal out with forEachPlayer, record each player's cost, and compare myCost >= max(cost of every other player's removed card) instead of the single oppCost. 85fcf7 stays as is.",
     "recheck": "printings differ: 85fcf7 (Seed 2) prints \"both players\" / \"your opponent's\" (a: the controller + bound opponent encoding is exactly D4); 451308 (Seed Saga) prints \"each player\" / \"each opponents'\" (b, needs fan-out); same behavior",
-    "resolved": "Fixed 451308 (Seed Saga, \"each player\" / \"each opponents'\"): every opponent's top card is removed in forEachPlayer players:\"opponents\" and the card survives only if its removed card's cost is >= every opponent's (the damage is reduced to 0 before the fan-out: a forEachPlayer inside a replacement settles state-based actions, which would re-destroy a card still carrying lethal damage). 85fcf752 (Seed 2, \"both players\" / \"your opponent's\") was NOT correct as encoded: a replacement binds no opponent and cannot ask, so at 3 players it threw (\"has 2 opponents and none is chosen\"); it now takes the same every-opponent comparison as an interim (engine gap: replacements should bind or ask for an opponent). tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Seed 2 (85fcf752, \"both players\" / \"your opponent's\"): the whole replacement is asPlayer controller — the controller selects one opponent and compares against theirs alone (MP 3). Seed Saga (4513085a, \"each player\"): fan-out over every opponent. Tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Martial Artist",
@@ -517,7 +517,7 @@
     ],
     "notes": "Opponent branch is the mirror image (controller discards) which is only right in 2 players. Collapse into one trigger for any drawing player, resolved as that player (controller := event player) with that player binding their own opponent for the 0-token discard, and eventPlayerIs matching any seat.",
     "recheck": "unchanged",
-    "resolved": "Fixed: one cardsDrawn trigger for ANY player's draw (forEachPlayer all, acting only for the drawer via eventPlayerIs controller), so the drawing player makes the token choice and gets the token effects; replaces the mirror controller / opponent pair. Approximation: \"that player's opponent discards a card\" (0 tokens) makes each of the drawer's opponents discard (identical in 2 players); one chosen opponent needs a mid-effect opponent choice, which the engine lacks. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Fixed: one cardsDrawn trigger for any player's draw, resolved as the drawer; 0 TOKENS \"that player's opponent discards a card\" is asPlayer controller, so the drawer selects ONE of their opponents (MP 2). 3-player tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Mendacious Brigand",
@@ -538,14 +538,14 @@
       "837d5a93-213d-4e5d-af65-0a6c14c55c7c",
       "82b3462a-12d5-463b-8984-25059e30ac9a"
     ],
-    "category": "d",
+    "category": "a",
     "phrases": [
       "Both players may use this ability."
     ],
     "notes": "usableBy:anyPlayer lets every seat use the Bribe ability; the printed \"both players\" has no block to bind a pair, so it is a ruling whether that means every player. Takeover goes to the activating player either way.",
     "ruling": "Engine-derived reading: every living player may use it (usableBy anyPlayer, each pays from their own resources); no data change.",
     "recheck": "changed from a because the printed text is \"Both players may use this ability\" (not \"any player\"): which players is ambiguous in 3+ players",
-    "resolved": "d ruling implemented as proposed (every living player may use Bribe): data unchanged (usableBy anyPlayer), pinned by a 3-player test for both printings. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Works as encoded (usableBy anyPlayer) under MP 3: the player who uses BRIBE is \"you\" for that block, so \"both players\" always includes them (same for The Knitting Coalition). Test in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Misappropriation Machine",
@@ -914,14 +914,14 @@
       "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a",
       "23fe59c9-9bf1-49d1-bfc4-084c556aca80"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
       "Your opponent cannot respond to this card."
     ],
     "notes": "Strictly only the bound opponent is denied a response, but noResponse resolves the card with no response window for anyone (D6 rotation skipped).",
     "ruling": "Keep noResponse (no window for anyone): simplest and matches the intent of an uninterruptible play; strict D4 would let non-bound opponents respond.",
     "recheck": "changed from a because both printings say singular \"Your opponent cannot respond\" while noResponse is a card-level flag that denies every opponent",
-    "resolved": "d ruling implemented as proposed (keep noResponse): data unchanged; verified at 3 players. tests: src/engine/__tests__/per-card/multiplayer-g12.test.ts."
+    "resolved": "Re-encoded per MP 2 (user, 2026-11-06: follow the rules): the singular printings (\"Your opponent cannot respond\") are noResponse: \"opponent\" — the opponent it is played against may not respond, the other players may (it waits on the stack for them); identical to before at two players. Plural \"your opponents\" printings keep noResponse: true. 3-player tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Swinish Elder",

@@ -289,7 +289,8 @@ describe("RULES.md §7 (CR §607) — responding to actions", () => {
     const w = engine.state.responseWindow;
     assert.equal(w?.kind, "endTurn");
     assert.equal(w?.priorityPlayerId, P2);
-    assert.deepEqual(w?.pendingResponders, [P2]);
+    // (the two original players: a bigger table also lists its extra seats among those still to answer)
+    assert.deepEqual(w?.pendingResponders.filter(seat => seat === P1 || seat === P2), [P2]);
 
     // The turn-ender gets no pass of their own.
     assert.throws(() => engine.perform({ type: "passPriority", playerId: P1 }));
@@ -320,7 +321,7 @@ describe("RULES.md §7 (CR §607) — responding to actions", () => {
       const w = engine.state.responseWindow;
       assert.equal(w?.kind, "battleAfterAttackers");
       assert.equal(w?.priorityPlayerId, P1);
-      assert.deepEqual(w?.pendingResponders, [P1, P2]);
+      assert.deepEqual(w?.pendingResponders.filter(seat => seat === P1 || seat === P2), [P1, P2]);
 
       // Attacker declines -> hand off to the defender, same window.
       engine.perform({ type: "passPriority", playerId: P1 });

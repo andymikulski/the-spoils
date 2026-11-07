@@ -208,7 +208,8 @@ describe("saveGame / loadGame", () => {
   });
 
   test("a format-1 save loads as a classic game, its winner becoming the result", () => {
-    const { engine } = buildGame({});
+    // A format-1 save is a two-player game by definition: seat exactly two players whatever the table mode.
+    const { engine } = buildGame({ players: [{ id: P1, name: "Alice" }, { id: P2, name: "Bob" }] });
     const legacyState = structuredClone(engine.state) as unknown as Record<string, unknown>;
     delete legacyState.format;
     delete legacyState.turnOrder;
@@ -247,7 +248,8 @@ describe("getSaveSummary", () => {
     assert.equal(summary.mode, "main");
     assert.equal(summary.result, undefined);
     assert.deepEqual(
-      summary.players.sort((a, b) => a.id.localeCompare(b.id)),
+      // (the two original players: a bigger table lists its extra seats too)
+      summary.players.filter(player => player.id === P1 || player.id === P2).sort((a, b) => a.id.localeCompare(b.id)),
       [
         { id: P1, name: "Alice", influence: 20 },
         { id: P2, name: "Bob", influence: 18 }

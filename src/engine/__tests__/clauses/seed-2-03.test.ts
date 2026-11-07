@@ -3026,17 +3026,22 @@ const keyed = (key: string, icon: StapleIcon, owner: PlayerId = P1, over: Partia
 const keyedSpent = (key: string, icon: StapleIcon, owner: PlayerId = P1): CardPlacement =>
   keyed(key, icon, owner, { attachedToKey: owner === P1 ? "__factionA" : "__factionB" });
 
+// The Aide triggers at the start of EACH opponent's turn: at a bigger table an extra seat's turn start is one too and
+// would offer the controller its pick before the turn the clause is about. The extra seats sit out of the turn rotation
+// here; multiplayer-tables-saga.test.ts plays it at a real bigger table.
 function aideBoard(
   o: { aide?: Partial<CardPlacement>; extra?: CardPlacement[]; active?: PlayerId } = {}
 ) {
   const active = o.active ?? P1;
-  return devBoard(
+  const game = devBoard(
     [
       { key: "aide", def: printing(AIDE), owner: P1, zone: "play", ...o.aide },
       ...(o.extra ?? [])
     ],
     { turn: active === P1 ? 1 : 2, activePlayerId: active }
   );
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 
 const isAttached = (engine: SpoilsEngine, cardId: CardInstanceId): boolean => engine.state.cards[cardId].attachedTo !== undefined;
@@ -6349,6 +6354,8 @@ clause(LEET, "0:rule", "it adds to icons already boosted this turn by another ef
 
 clause(AIDE, "1:rule", "the picked resource can be any of my attached resources, including one that was attached by paying for the Aide's own deployment", () => {
   const g = devBoard([{ key: "aide", def: printing(AIDE), owner: P1, zone: "hand" }, ...res({ elitism: 4 })]);
+  // the extra seats' turn starts would also offer the pick (each opponent's turn): they sit out of the rotation here
+  g.engine.state.turnOrder = g.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
   playAndResolve(g.engine, P1, g.id("aide"));
   assert.equal(attachedCount(g.engine, P1), 4, "setup: the 4 resources I paid are attached");
   endTurn(g.engine, P1);

@@ -143,6 +143,17 @@ export function advanceTo(engine: SpoilsEngine, playerId: PlayerId): void {
 
 export const sharedFaction = (engine: SpoilsEngine): CardInstanceId => engine.state.showdown!.sharedFactionId!;
 export const heroDeckOf = (engine: SpoilsEngine): CardInstanceId[] => engine.state.showdown!.heroDeck;
+
+/**
+ * Empties the Hero Deck the way play would — its cards gone from the table: a Showdown game starts with one (SD 3),
+ * so "the Hero Deck is empty" is a state reached in play.
+ */
+export function exhaustHeroDeck(engine: SpoilsEngine): void {
+  const showdown = engine.state.showdown!;
+  const move = (engine as unknown as { moveCard(id: CardInstanceId, zone: "removed"): void }).moveCard.bind(engine);
+  for (const id of showdown.heroDeck) move(id, "removed");
+  showdown.heroDeck = [];
+}
 export const pileOf = (engine: SpoilsEngine): CardInstanceId[] => engine.state.showdown!.temptationPile;
 export const nameOf = (engine: SpoilsEngine, id: CardInstanceId): string => engine.getDefinition(id).name;
 

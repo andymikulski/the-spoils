@@ -579,7 +579,7 @@
     ],
     "notes": "The 'hide' static compares count(owner:\"opponent\" discard) >= 10 (existential under E4: some opponent has 10+) but then applies cannotBePickedByOpponents to every opponent. Printed 'that player cannot pick this card' bars only the opponent whose own pile has 10+ cards: needs a restriction scoped to those players. FLEX binds one opponent (ok).",
     "recheck": "unchanged (c); E4 fixes the count but the restriction still bars every opponent",
-    "resolved": "Left: the static condition is now existential and correct for the count, but cannotBePickedByOpponents is judged only against the picker being a non-controller; barring just the opponent(s) whose own discard pile has 10+ needs a restriction scoped to the picking player's piles. Engine gap: a picker-conditional pick restriction."
+    "resolved": "Fixed: cannotBePickedByOpponents with pickerWhere (10+ cards in the picker's own discard pile), so only \"that player\" is barred; identical at two players. 3-player test in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Opportunistic Pirate",
@@ -802,7 +802,7 @@
     ],
     "notes": "'Any opponent' is encoded as mayPay player:opponent (one bound opponent). Should be any-of-the-opponents may pay (anyPlayerMayPay restricted to opponents, first payer wins), not just the bound one. The picks and X effects need no change.",
     "recheck": "unchanged (c): printed 'Any opponent may pay 3' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")",
-    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
+    "resolved": "Re-encoded with mayPay anyOf:\"opponents\" (E5): offered to each opponent of the controller in turn order who can afford it; the first to pay decides it and is bound as the block opponent; nobody pays: elseEffects. 3-player tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Tempered Rage",

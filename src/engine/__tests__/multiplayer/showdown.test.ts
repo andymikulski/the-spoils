@@ -24,6 +24,7 @@ const VILLAIN_FACTION = factionCard({
       setup: { startingResources: { count: 1, stapleOnly: true }, openingHand: { goingFirst: 0, goingSecond: 0 } }
     }),
     influencePerOpponent: 10,
+    showdownRole: "villain",
     setup: {
       startingResources: { count: 1, countPerOpponent: 1, stapleOnly: true },
       openingHand: { goingFirst: 0, goingSecond: 0 }
@@ -45,6 +46,7 @@ const SHARED_FACTION = factionCard({
   name: "Shared",
   faction: {
     ...defaultFactionDefinition(),
+    showdownRole: "heroes",
     abilities: [
       {
         id: "spring",

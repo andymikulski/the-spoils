@@ -29,6 +29,12 @@ const destroyer = (name: string) =>
 
 const zone = (engine: SpoilsEngine, cardId: string) => engine.state.cards[cardId]!.zone;
 
+/** Turns it takes to get from `from`'s turn to `to`'s turn: 1 at a two-player table, more when other seats sit between them. */
+const turnsFromTo = (engine: SpoilsEngine, from: string, to: string): number => {
+  const order = engine.state.turnOrder;
+  return (order.indexOf(to) - order.indexOf(from) + order.length) % order.length;
+};
+
 describe("CR 607 — responding to actions", () => {
   rule("CR 607.1", "the opponent can respond to a deployed card: they get priority and may deploy a tactic", () => {
     const { engine, id } = buildGame({
@@ -206,10 +212,12 @@ describe("CR 607 — responding to actions", () => {
       ]
     });
     const before = engine.state.players[P1].influence;
+    const turn = engine.state.turn;
     engine.perform({ type: "endTurn", playerId: P1 });
     engine.perform({ type: "passPriority", playerId: P2 });
     engine.perform({ type: "advanceFlow" });
-    assert.equal(engine.state.players[P1].influence, before + 3, "the trigger resolved");
+    // The trigger fires at the end of every turn; seats between P1 and P2 take (and end) turns of their own.
+    assert.equal(engine.state.players[P1].influence, before + 3 * (engine.state.turn - turn), "the trigger resolved");
     assert.ok(!engine.state.responseStack.some((item) => item.sourceId === id("watcher")), "the trigger was never put on the response stack");
     assert.equal(engine.state.responseStack.length, 0, "no stack item or window is left over for the trigger");
   });
@@ -248,7 +256,7 @@ describe("CR 610 — ending a turn", () => {
     assert.equal(engine.state.turn, turn);
     resolvePendingResponses(engine);
     assert.equal(engine.state.activePlayerId, P2);
-    assert.equal(engine.state.turn, turn + 1);
+    assert.equal(engine.state.turn, turn + turnsFromTo(engine, P1, P2));
   });
 
   rule("CR 610.1", "the active player cannot take further actions after announcing the end of the turn (control: they can before)", () => {
@@ -273,6 +281,7 @@ describe("CR 610 — ending a turn", () => {
       ]
     });
     const before = engine.state.players[P1].influence;
+    const turn = engine.state.turn;
     engine.perform({ type: "endTurn", playerId: P1 });
     assert.equal(engine.state.players[P1].influence, before, "not at the announcement");
     engine.perform({ type: "playCard", playerId: P2, cardId: id("reply") });
@@ -280,7 +289,8 @@ describe("CR 610 — ending a turn", () => {
     engine.perform({ type: "advanceFlow" });
     assert.equal(engine.state.players[P1].influence, before, "not after the opponent's response resolves");
     resolvePendingResponses(engine);
-    assert.equal(engine.state.players[P1].influence, before + 1, "at the moment the turn actually ends");
+    // One trigger for P1's turn ending, plus one for each turn of a seat between P1 and P2 that ends before P2's turn.
+    assert.equal(engine.state.players[P1].influence, before + (engine.state.turn - turn), "at the moment the turn actually ends");
   });
 
   rule("CR 610.1a", "an end-of-turn trigger's source destroyed by an opponent's response never triggers", () => {

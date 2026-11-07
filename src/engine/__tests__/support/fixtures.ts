@@ -205,7 +205,15 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
     );
   const format = options.format ?? (mode === "classic" ? undefined : table.format);
   const factionDefs = seats.map(seat => seat.faction ?? factionCard({ name: `${seat.id}-faction` }));
-  const factionKey = (i: number) => (i === 0 ? "__factionA" : i === 1 ? "__factionB" : `__faction_${seats[i].id}`);
+  // `__factionA` / `__factionB` are the two original players' factions wherever they sit (a table mode can seat others between them).
+  const factionKey = (i: number) =>
+    seats[i].id === original[0].id && !options.players
+      ? "__factionA"
+      : seats[i].id === original[1].id && !options.players
+        ? "__factionB"
+        : options.players && i < 2
+          ? (i === 0 ? "__factionA" : "__factionB")
+          : `__faction_${seats[i].id}`;
 
   const placements: CardPlacement[] = [
     ...seats.map((seat, i) => ({ key: factionKey(i), def: factionDefs[i], owner: seat.id, zone: "play" as const })),

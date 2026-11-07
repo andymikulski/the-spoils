@@ -598,10 +598,21 @@ describe("Thabbashite Barbeque: any opponent may pay 2", () => {
     assert.equal(handOf(g.engine, P3), 1);
   });
 
-  test("nobody pays: the picked card returns to hand, then a card from an opponent's hand is discarded", () => {
+  test("nobody pays: the picked card returns to hand, then you look at the hand of ONE opponent you select and discard from it", () => {
     const g = board();
     play(g.engine, P1, g.id("bq"), { selected: { picked: [g.id("pick")] } });
-    drain(g.engine, combine(payWith(), pc => (pc.kind === "chooserSelectsTarget" ? { kind: "chooserSelectsTarget", selected: candidatesOf(g.engine, pc).filter(c => g.engine.state.cards[c].ownerId === P3) } : undefined)));
+    let offered: string[] = [];
+    const asked = drain(
+      g.engine,
+      combine(payWith(), pc => {
+        if (pc.kind === "chooseOpponent") return { kind: "chooseOpponent", opponentId: P3 };
+        if (pc.kind !== "chooserSelectsTarget") return undefined;
+        offered = candidatesOf(g.engine, pc);
+        return { kind: "chooserSelectsTarget", selected: offered.slice(0, 1) };
+      })
+    );
+    assert.ok(asked.includes("p1:chooseOpponent"), "with two opponents, you select whose hand to look at (MP 2)");
+    assert.ok(offered.length > 0 && offered.every(c => g.engine.state.cards[c].ownerId === P3), "only the selected opponent's hand is offered");
     assert.equal(zoneOf(g.engine, g.id("pick")), "hand");
     assert.equal(zoneOf(g.engine, g.id("bq")), "discard");
     assert.equal(handOf(g.engine, P3), 0, "the card taken from p3's hand was discarded");
@@ -929,3 +940,61 @@ describe("Shriever General: 'if an opponent's faction lost influence this turn'"
 
 void item;
 void volition;
+
+describe("Unloyal Necromorph: \"an opponent may pay 2\" is offered to each opponent in turn", () => {
+  const board = (players: 2 | 3, p2Banks = 2) =>
+    table(
+      [
+        { key: "un", def: cd("Holy Heist", "Unloyal Necromorph"), owner: P1, zone: "play" },
+        { key: "kill", def: killTactic(), owner: P1, zone: "hand" },
+        ...bank("rage", 6, P1),
+        ...bank("greed", p2Banks, P2),
+        ...(players === 3 ? bank("greed", 2, P3) : [])
+      ],
+      { players }
+    );
+  const destroy = (g: Game) => play(g.engine, P1, g.id("kill"), { selected: { t: [g.id("un")] } });
+  const applyFor =
+    (...takers: PlayerId[]): Answer =>
+    pc =>
+      pc.kind === "replacementChoice" ? { kind: "replacementChoice", apply: takers.includes(pc.playerId) } : undefined;
+  const controller = (g: Game) => g.engine.state.cards[g.id("un")].controllerId;
+
+  test("the second opponent may take it when the first declines", () => {
+    const g = board(3);
+    destroy(g);
+    assert.deepEqual(drain(g.engine, applyFor(P3)), ["p2:replacementChoice", "p3:replacementChoice"]);
+    assert.equal(zoneOf(g.engine, g.id("un")), "play");
+    assert.equal(controller(g), P3);
+    assert.equal(g.engine.getAvailableResourceCount(P3), 0, "the taker paid 2");
+    assert.equal(g.engine.getAvailableResourceCount(P2), 2);
+  });
+
+  test("the first opponent to pay takes it: nobody else is asked", () => {
+    const g = board(3);
+    destroy(g);
+    assert.deepEqual(drain(g.engine, applyFor(P2, P3)), ["p2:replacementChoice"]);
+    assert.equal(controller(g), P2);
+  });
+
+  test("an opponent who cannot pay is not asked", () => {
+    const g = board(3, 1);
+    destroy(g);
+    assert.deepEqual(drain(g.engine, applyFor(P3)), ["p3:replacementChoice"]);
+    assert.equal(controller(g), P3);
+  });
+
+  test("every opponent declines: it is destroyed", () => {
+    const g = board(3);
+    destroy(g);
+    assert.deepEqual(drain(g.engine, applyFor()), ["p2:replacementChoice", "p3:replacementChoice"]);
+    assert.equal(zoneOf(g.engine, g.id("un")), "discard");
+  });
+
+  test("two players: unchanged", () => {
+    const g = board(2);
+    destroy(g);
+    assert.deepEqual(drain(g.engine, applyFor(P2)), ["p2:replacementChoice"]);
+    assert.equal(controller(g), P2);
+  });
+});

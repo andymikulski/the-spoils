@@ -3428,17 +3428,24 @@ describe("Seed — Obscene Communion", () => {
       playerB: { faction: developFaction() },
       cards: [
         { key: "oc", def: def("Obscene Communion"), owner: P1, zone: "play" },
+        // Spare cards: it triggers at every player's turn start, so at a bigger table the extra seats' turns (the
+        // table-mode wrapper answers them at random) also move cards out of these hands before P1's own turn starts.
         { key: "h1", def: character({ name: "H1" }), owner: P1, zone: "hand" },
-        { key: "h2", def: character({ name: "H2" }), owner: P2, zone: "hand" }
+        { key: "h1b", def: character({ name: "H1b" }), owner: P1, zone: "hand" },
+        { key: "h1c", def: character({ name: "H1c" }), owner: P1, zone: "hand" },
+        { key: "h2", def: character({ name: "H2" }), owner: P2, zone: "hand" },
+        { key: "h2b", def: character({ name: "H2b" }), owner: P2, zone: "hand" },
+        { key: "h2c", def: character({ name: "H2c" }), owner: P2, zone: "hand" }
       ],
       turn: 2,
       activePlayerId: P2
     });
-    const d1 = engine.state.players[P1].discard.length;
-    const d2 = engine.state.players[P2].discard.length;
     engine.perform({ type: "endTurn", playerId: P2 });
     resolvePendingResponses(engine);
     settleStartFirst(engine);
+    // P1's turn has started and its Communion choice is open: count discards from here.
+    const d1 = engine.state.players[P1].discard.length;
+    const d2 = engine.state.players[P2].discard.length;
     drain(engine, pc => {
       if (pc.kind === "chooserSelectsOption") return { kind: "chooserSelectsOption", index: 2 };
       if (pc.kind === "chooserSelectsTarget") {

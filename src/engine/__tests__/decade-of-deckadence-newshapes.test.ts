@@ -212,6 +212,12 @@ describe("Engorged Sarcophyle", () => {
       { key: "kill", def: killTactic(), owner: P1, zone: "hand" }
     ]);
     play(engine, P1, id("kill"), { selected: { t: [id("eng")] } });
+    // At a bigger table the opponent is picked (automatic with 2 players): the opponent is P2.
+    const pc = pending(engine) as any;
+    if (pc?.kind === "selectTargets") {
+      engine.perform({ type: "resolvePendingChoice", playerId: pc.playerId, choice: { kind: "selectTargets", selected: { opp: [engine.state.players[P2].factionId] } } } as never);
+      resolvePendingResponses(engine);
+    }
     drain(engine, declineAll);
     noPending(engine);
     assert.equal(zoneOf(engine, id("eng")), "discard");

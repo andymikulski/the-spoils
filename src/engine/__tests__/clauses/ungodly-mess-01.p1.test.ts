@@ -151,8 +151,7 @@ clause(WILY, "1:rule", "the character restores normally at the restore after tha
   passTurn(engine);
   passTurn(engine);
   passTurn(engine);
-  assert.equal(engine.state.turn, 4);
-  assert.equal(engine.state.activePlayerId, P2);
+  assert.equal(engine.state.activePlayerId, P2, "three turn passes from P1: P2's second turn");
   assert.equal(isDepleted(engine, id("foe")), false, "restored at its controller's second restore");
 });
 
@@ -167,7 +166,7 @@ clause(WILY, "1:rule", "your own depleted character skips your next RESTORE RULE
   assert.equal(isDepleted(engine, id("mine2")), false, "control: my other depleted character restored");
   passTurn(engine);
   passTurn(engine);
-  assert.equal(engine.state.turn, 5);
+  assert.equal(engine.state.activePlayerId, P1, "P1's third turn (the turn passes alternate P1 / P2 whatever the table)");
   assert.equal(isDepleted(engine, id("mine")), false, "restored the time after");
 });
 
@@ -1254,7 +1253,7 @@ clause(CONDUIT, "0:rule", "it fires every one of my turns, not only the first", 
   toP1Turn(b.engine);
   answerChoice(b.engine, { kind: "mayPay", pay: false });
   toP1Turn(b.engine);
-  assert.equal(b.engine.state.turn, 5);
+  assert.equal(b.engine.state.activePlayerId, P1, "P1's second turn");
   assert.equal(pending(b.engine)?.kind, "mayPay");
 });
 

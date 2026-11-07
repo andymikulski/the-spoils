@@ -446,7 +446,8 @@ describe("getAttackOptions agrees with perform({type: 'declareAttack'})", () => 
       ]
     });
     const options = engine.getAttackOptions(P1);
-    assert.deepEqual(options.targets.filter((t) => t.type === "faction"), [], "P2's faction is protected");
+    // (P2's faction: the extra seats at a bigger table have factions that can be attacked)
+    assert.deepEqual(options.targets.filter((t) => t.type === "faction" && t.playerId === P2), [], "P2's faction is protected");
     const cardTargets = options.targets.flatMap((t) => (t.type === "card" ? [t.cardId] : []));
     assert.deepEqual(cardTargets.sort(), [id("court"), id("fort")].sort());
 

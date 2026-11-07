@@ -381,9 +381,10 @@ describe("Q1 over the real card catalog", () => {
 
 describe("Q2 getPlaySelectionInput agrees with getPlayRequirements", () => {
   const picksOf = (engine: SpoilsEngine, playerId: PlayerId, cardId: CardInstanceId, mode?: number) =>
-    engine.getSelectionRequirements(engine.getPlaySelectionInput(playerId, cardId, mode));
+    engine.getSelectionRequirements(engine.getPlaySelectionInput(playerId, cardId, mode, playerId === P1 ? P2 : P1));
   const requirementsOf = (engine: SpoilsEngine, playerId: PlayerId, cardId: CardInstanceId, mode?: number) =>
-    engine.getPlayRequirements({ type: "playCard", playerId, cardId, ...(mode !== undefined ? { mode } : {}) });
+    // The play names its opponent (the other original player) up front: at a bigger table an unbound play would first ask which.
+    engine.getPlayRequirements({ type: "playCard", playerId, cardId, opponentId: playerId === P1 ? P2 : P1, ...(mode !== undefined ? { mode } : {}) });
 
   test("named cards: reveal-from-hand, ATTACH TO, a pick after a cost, X, distinct picks, modes", () => {
     const cases: Array<[label: string, set: string, name: string, mode?: number]> = [

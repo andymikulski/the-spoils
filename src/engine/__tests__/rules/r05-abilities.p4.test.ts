@@ -107,11 +107,13 @@ describe("CR 503 — triggers", () => {
     });
     const { engine } = buildGame({ cards: [{ key: "watcher", def: watcher, owner: P1 }] });
     const before = influence(engine, P1);
+    const turn = engine.state.turn;
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
     settleTurnStart(engine);
     assert.equal(engine.state.activePlayerId, P2);
-    assert.equal(influence(engine, P1), before + 4, "it triggered at the start of the opponent's turn (any turn start)");
+    // It triggers at the start of every turn: seats between P1 and P2 start (and end) turns of their own.
+    assert.equal(influence(engine, P1), before + 4 * (engine.state.turn - turn), "it triggered at the start of the opponent's turn (any turn start)");
   });
 
   rule("CR 503.1", "the trigger's instructions are followed immediately, in the middle of resolving something else", () => {

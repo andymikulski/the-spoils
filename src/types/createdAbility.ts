@@ -1,6 +1,8 @@
 // -----------------------------------------------------------------------------
 // The Open R&D Faction: the ability both players create (closed menu)
 // -----------------------------------------------------------------------------
+
+import type { PlayerId } from "./ids.js";
 //
 // "Before the game begins, both players create the rules text for an ability."
 // The players do not type anything. They agree on ONE `CreatedAbilitySpec`,
@@ -48,6 +50,17 @@ export interface CreatedEffectPart {
 export interface CreatedAbilitySpec {
   costs: CreatedCostPart[];
   effect: CreatedEffectPart;
+}
+
+/**
+ * One RESEARCH & DEVELOPMENT faction card's ability at setup: the spec its
+ * controller and `with` — "both players" (MP 3), the opponent they select to
+ * create it with — agree on. `with` may be omitted when the controller has a
+ * single opponent (every two-player game).
+ */
+export interface CreatedAbilitySetup {
+  spec: CreatedAbilitySpec;
+  with?: PlayerId;
 }
 
 /** One selectable row of the menu (cost or effect), for rendering a dropdown + stepper. */

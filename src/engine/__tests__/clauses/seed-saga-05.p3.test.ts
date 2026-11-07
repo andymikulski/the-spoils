@@ -1550,9 +1550,12 @@ clause(MUD, "0:rule", "only while in play: a Whisperer in my hand does nothing a
 // Braggadocian Aide
 // ============================================================================
 
+// The Aide triggers at the start of EACH opponent's turn: at a bigger table an extra seat's turn start is one too and
+// would offer the controller its pick before the turn the clause is about. The extra seats sit out of the turn rotation
+// here; multiplayer-tables-saga.test.ts plays it at a real bigger table.
 function aideBoard(o: { extra?: CardPlacement[]; active?: PlayerId; aideZone?: "play" | "hand"; aideCtl?: PlayerId } = {}) {
   const ctl = o.aideCtl ?? P1;
-  return base(
+  const game = base(
     [
       { key: "aide", def: printing(AIDE), owner: ctl, controller: ctl, zone: o.aideZone ?? "play" },
       { key: "needE", def: character({ name: "NeedE", cost: 0, threshold: "e" } as never), owner: P1, zone: "hand" },
@@ -1560,6 +1563,8 @@ function aideBoard(o: { extra?: CardPlacement[]; active?: PlayerId; aideZone?: "
     ],
     o.active ?? P1
   );
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 type AideGame = ReturnType<typeof aideBoard>;
 const attachedTo = (g: AideGame, key: string): boolean => {

@@ -86,6 +86,13 @@ export interface PendingChooseOpponentChoice {
   abilityId?: AbilityId;
   /** The players that may be chosen, in turn order after the chooser. */
   candidates: PlayerId[];
+  /**
+   * Set when an effect asks mid-resolution (`asPlayer`): answering resolves
+   * `effects` under `context` with the chosen opponent bound. Unset: the
+   * chooser names the opponent of the trigger waiting at the head of the queue.
+   */
+  effects?: Effect[];
+  context?: ResolutionContext;
 }
 
 /** Identifies one queued trigger: the card it came from and which ability. */

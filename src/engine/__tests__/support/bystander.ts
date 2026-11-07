@@ -104,6 +104,15 @@ export function withBystanders(engine: SpoilsEngine, first: PlayerId, second: Pl
           real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "chooserSelectsTarget", selected: [] } });
           continue;
         }
+        if (
+          !extra.has(pending.playerId) &&
+          pending.kind === "selectTargets" &&
+          pending.declarations.every(declaration => declaration.optional)
+        ) {
+          const selected = Object.fromEntries(pending.declarations.map(declaration => [declaration.id, []]));
+          real({ type: "resolvePendingChoice", playerId: pending.playerId, choice: { kind: "selectTargets", selected } });
+          continue;
+        }
         const before = pending.id;
         settling = true;
         try {
@@ -122,7 +131,12 @@ export function withBystanders(engine: SpoilsEngine, first: PlayerId, second: Pl
           real({ type: "passPriority", playerId: window.priorityPlayerId });
           continue;
         }
-        if (window.phase === "resolving" && extraTurnEnding) {
+        // An item the other original player may not respond to ("your opponent cannot respond to this card")
+        // resolves inline in the two-player game: once the extra seats have passed on it, it resolves.
+        const top = state.responseStack[state.responseStack.length - 1];
+        const shutOutOriginal =
+          top !== undefined && top.unanswerableBy?.includes(classicOpponent(top.controllerId) ?? "") === true;
+        if (window.phase === "resolving" && (extraTurnEnding || shutOutOriginal)) {
           real({ type: "advanceFlow" });
           continue;
         }
@@ -136,14 +150,42 @@ export function withBystanders(engine: SpoilsEngine, first: PlayerId, second: Pl
     }
   };
 
+  // Whose rules text an action resolves: the actor's, except a borrowed ability (The Billionaire), which resolves as
+  // its card's controller — "the other original player" is then relative to them (the actor, in the two-player game).
+  const internalsForAbilities = engine as unknown as {
+    getCardActivatedAbilities(cardId: string): Array<{ id: string; usableBy?: string }>;
+  };
+  const abilityOwnerOf = (action: Extract<GameAction, { type: "playCard" | "activateAbility" | "flipUp" }>): PlayerId => {
+    if (action.type !== "activateAbility") return action.playerId;
+    const card = engine.state.cards[action.cardId];
+    if (!card || card.controllerId === action.playerId) return action.playerId;
+    const ability = internalsForAbilities.getCardActivatedAbilities(action.cardId).find(a => a.id === action.abilityId);
+    const borrowed = ability !== undefined && (ability.usableBy === undefined || ability.usableBy === "controller");
+    return borrowed ? card.controllerId : action.playerId;
+  };
+
+  // The R&D faction's created ability is made with the other original player (MP 3).
+  const applyCreated = engine.applyCreatedFactionAbility.bind(engine);
+  engine.applyCreatedFactionAbility = (playerId, spec, withId) => applyCreated(playerId, spec, withId ?? classicOpponent(playerId));
+
   (engine as { perform: (action: GameAction) => void }).perform = (action: GameAction) => {
     let next = action;
     if (
       (next.type === "playCard" || next.type === "activateAbility" || next.type === "flipUp") &&
       next.opponentId === undefined
     ) {
-      const opponentId = classicOpponent(next.playerId);
+      const opponentId = classicOpponent(abilityOwnerOf(next));
       if (opponentId !== undefined) next = { ...next, opponentId };
+    }
+    // A card an effect lets an original player play names the other original player too.
+    if (
+      next.type === "resolvePendingChoice" &&
+      (next.choice.kind === "deployForFree" || next.choice.kind === "resourceReveal") &&
+      next.choice.cardId !== undefined &&
+      next.choice.opponentId === undefined
+    ) {
+      const opponentId = classicOpponent(next.playerId);
+      if (opponentId !== undefined) next = { ...next, choice: { ...next.choice, opponentId } };
     }
     if (next.type === "declareAttack" && !next.target) {
       const opponentId = classicOpponent(next.playerId);

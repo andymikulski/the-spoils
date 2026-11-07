@@ -18,15 +18,30 @@ const FACTION = factionCard({
   })
 });
 
+const VILLAIN_FACTION = factionCard({ ...FACTION, id: "testers-villain", name: "Testers (Villain)", faction: { ...FACTION.faction!, showdownRole: "villain" } });
+const SHARED_FACTION = factionCard({ name: "Shared", faction: { ...defaultFactionDefinition(), showdownRole: "heroes" } });
+
 function deckOf(count: number) {
   return [RAGE.id, RAGE.id, ...Array.from({ length: count - 2 }, () => FILLER.id)];
 }
 
 function game(seats: string[], format?: GameFormat): SpoilsEngine {
+  // A Showdown table: the Villain's faction and the Heroes' shared one (SD 2, SD 5), and a Hero Deck (SD 3).
+  const villainId = format?.kind === "showdown" ? format.villainId : undefined;
   const engine = createFactionGame(
-    [FACTION, RAGE, FILLER],
-    seats.map(id => ({ id, name: id.toUpperCase(), factionDefinitionId: FACTION.id, deckDefinitionIds: deckOf(12) })),
-    { firstPlayerId: seats[0], seed: 3, ...(format ? { format } : {}) }
+    [FACTION, VILLAIN_FACTION, SHARED_FACTION, RAGE, FILLER],
+    seats.map(id => ({
+      id,
+      name: id.toUpperCase(),
+      factionDefinitionId: id === villainId ? VILLAIN_FACTION.id : FACTION.id,
+      deckDefinitionIds: deckOf(12)
+    })),
+    {
+      firstPlayerId: seats[0],
+      seed: 3,
+      ...(format ? { format } : {}),
+      ...(villainId !== undefined ? { showdown: { heroDeck: [FILLER.id], sharedFactionDefinitionId: SHARED_FACTION.id } } : {})
+    }
   );
   settleTurnStart(engine);
   return engine;
@@ -207,5 +222,63 @@ describe("Showdown sides (D3)", () => {
     knockOut(engine, "h1", "h2");
     passTurn(engine);
     assert.deepEqual(engine.state.result, { outcome: "victory", winners: ["v"] });
+  });
+});
+
+describe("an eliminated player takes no further part in what is resolving (D8)", () => {
+  test("\"each player chooses\": a player knocked out by an earlier choice is not asked", () => {
+    const victim = character({ name: "Victim" });
+    // "Each player chooses: their pick's controller loses 100 influence, or nothing."
+    const roulette = {
+      ...character({ name: "unused" }),
+      id: "roulette",
+      name: "Roulette",
+      type: "tactic" as const,
+      cost: 0,
+      behavior: {
+        abilities: [
+          {
+            id: "r",
+            type: "activated" as const,
+            targets: [{ id: "t", selector: { zone: "play" as const, type: "character" as const }, count: 1 }],
+            effects: [
+              {
+                type: "forEachPlayer" as const,
+                effects: [
+                  {
+                    type: "chooserSelectsOption" as const,
+                    chooser: "controller" as const,
+                    options: [
+                      { label: "Drain", effects: [{ type: "modifyInfluence" as const, player: { type: "controllerOf" as const, target: { type: "selected" as const, id: "t" } }, amount: -100 }] },
+                      { label: "Nothing", effects: [] }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    };
+    const seats = ["p1", "p2", "p3"].map(id => ({ id, faction: noDevelopFaction() }));
+    const { engine, id } = buildGame({
+      players: seats,
+      cards: [
+        { key: "v", def: victim, owner: "p2", zone: "play" },
+        { key: "r", def: roulette as never, owner: "p1", zone: "hand" }
+      ]
+    });
+    engine.perform({ type: "playCard", playerId: "p1", cardId: id("r"), selected: { t: [id("v")] } } as never);
+    resolvePendingResponses(engine);
+    const asked: string[] = [];
+    for (let guard = 0; guard < 6 && engine.state.pendingChoice?.kind === "chooserSelectsOption"; guard++) {
+      const playerId = engine.state.pendingChoice.playerId;
+      asked.push(playerId);
+      engine.perform({ type: "resolvePendingChoice", playerId, choice: { kind: "chooserSelectsOption", index: playerId === "p1" ? 0 : 1 } } as never);
+      resolvePendingResponses(engine);
+    }
+    assert.equal(isLiving(engine.state, "p2"), false, "p1's choice knocked p2 out");
+    assert.deepEqual(asked, ["p1", "p3"], "p2, out of the game, is not asked");
+    assert.equal(engine.state.result, undefined, "p1 and p3 play on");
   });
 });

@@ -333,13 +333,16 @@ describe("CR 602.2 — start-of-turn triggers", () => {
 describe("CR 603.1 — the active player", () => {
   rule("CR 603.1", "the active player is the player taking the current turn, and it passes to the opponent when the turn ends", () => {
     const { engine } = buildGame({});
+    // Turns it takes to get from one original player's turn to the other's: 1 at two seats, more with seats between them.
+    const order = engine.state.turnOrder;
+    const turnsFromTo = (from: string, to: string) => (order.indexOf(to) - order.indexOf(from) + order.length) % order.length;
     assert.equal(engine.state.activePlayerId, P1);
     passTurn(engine);
     assert.equal(engine.state.activePlayerId, P2);
-    assert.equal(engine.state.turn, 2);
+    assert.equal(engine.state.turn, 1 + turnsFromTo(P1, P2));
     passTurn(engine);
     assert.equal(engine.state.activePlayerId, P1);
-    assert.equal(engine.state.turn, 3);
+    assert.equal(engine.state.turn, 1 + turnsFromTo(P1, P2) + turnsFromTo(P2, P1));
   });
 
   rule("CR 603.1", "the seat taking the turn is whoever is active, not a fixed seat: with the second seat active it is that player who acts", () => {
@@ -493,10 +496,13 @@ describe("CR 603.2 — the actions of a turn", () => {
 
   rule("CR 603.2d", "the turn can be ended only once: a second end-of-turn while the first is announced is refused", () => {
     const { engine } = buildGame({});
+    const turn = engine.state.turn;
     engine.perform({ type: "endTurn", playerId: P1 });
     refused(() => engine.perform({ type: "endTurn", playerId: P1 }), "ending the turn twice", /response window/);
     passWindows(engine);
-    assert.equal(engine.state.turn, 2, "the turn ended exactly once");
+    // Ending P1's turn once moves play to the next seat; any seats before P2 then take (and end) their own turns.
+    const order = engine.state.turnOrder;
+    assert.equal(engine.state.turn, turn + ((order.indexOf(P2) - order.indexOf(P1) + order.length) % order.length), "the turn ended exactly once");
   });
 
   rule("CR 603.2d", "after the turn has ended the player who ended it cannot end a turn again: it is the opponent's turn now", () => {

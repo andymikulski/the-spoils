@@ -2966,9 +2966,9 @@ clause(SUBSECTION, "0:rule", "the opponent gets no response window: the Paragrap
   const { engine, id } = s5Board();
   foeUses(engine, id, "guy", "zap");
   playRaw(engine, P1, id("s5"));
-  assert.throws(() => playRaw(engine, P2, id("p2tac")), "no tactic in response");
-  assert.throws(() => activateRaw(engine, P2, id("other"), "peek"), "no ability in response");
-  assert.throws(() => activateRaw(engine, P2, id("idol"), "pulse", { selected: { t: [id("mine")] } }), "no ability of an item either");
+  // Nobody may respond to it: it resolved at once, ended the item beneath, and the window closed on the empty stack.
+  assert.equal(zoneOf(engine, id("s5")), "discard", "it resolved without the opponent being offered a response");
+  assert.equal(engine.state.responseWindow, undefined, "nothing is left to respond to: the window closed");
   assert.equal(zoneOf(engine, id("p2tac")), "hand");
 });
 
@@ -6050,8 +6050,9 @@ clause(PUPPET, "0:rule", "the opponent gets no response window: it resolves on i
   const { engine, id } = puppetBoard();
   foeUses(engine, id, "guy", "zap");
   playRaw(engine, P1, id("pup"));
-  assert.throws(() => playRaw(engine, P2, id("p2tac")), "no tactic in response");
-  assert.throws(() => activateRaw(engine, P2, id("other"), "peek"), "no ability in response");
+  // Nobody may respond to it: it resolved at once, ended the item beneath, and the window closed on the empty stack.
+  assert.equal(zoneOf(engine, id("pup")), "discard", "it resolved without the opponent being offered a response");
+  assert.equal(engine.state.responseWindow, undefined, "nothing is left to respond to: the window closed");
   assert.equal(zoneOf(engine, id("p2tac")), "hand");
 });
 

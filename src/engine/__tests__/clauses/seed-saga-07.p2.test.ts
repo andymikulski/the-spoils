@@ -434,10 +434,25 @@ clause(PEPPER, "2:rule", "attached to the OPPONENT's character it restores that 
   assert.equal(g.engine.state.cards[g.id("eh")].depleted ?? false, false, "restored at the start of P2's turn (P2 is P1's opponent)");
 });
 
+/**
+ * Ends `player`'s turn so that the OTHER original player's turn starts next. At a bigger table the seats between also
+ * take turns, and each is an opponent's turn start that restores the attached character; this clause is about the
+ * start of the Pepper controller's OWN turn, so play passes straight between the two original players.
+ */
+const endTurnBetweenOriginals = (engine: SpoilsEngine, player: PlayerId): void => {
+  const seats = engine.state.turnOrder;
+  engine.state.turnOrder = seats.filter((id) => id === P1 || id === P2);
+  try {
+    endTurn(engine, player);
+  } finally {
+    engine.state.turnOrder = seats;
+  }
+};
+
 clause(PEPPER, "2:rule", "does not trigger at the start of the Pepper controller's OWN turn: an attached opponent character stays depleted then", () => {
   const g = pepOn("eh", [], { turn: 2, active: P2 });
   g.engine.state.cards[g.id("eh")].depleted = true;
-  endTurn(g.engine, P2);
+  endTurnBetweenOriginals(g.engine, P2);
   assert.equal(g.engine.state.activePlayerId, P1, "the Pepper controller's own turn began");
   assert.equal(g.engine.state.cards[g.id("eh")].depleted, true, "not restored at its controller's own turn start");
 });

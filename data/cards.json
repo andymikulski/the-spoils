@@ -663,7 +663,7 @@
       "fromPrintingId": "12cfc4e1-e8f7-431e-a37a-593210181b0c"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -3434,7 +3434,7 @@
       "fromPrintingId": "63369e53-e89b-4b7d-beb0-7110cb1290ce"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -4391,137 +4391,152 @@
               "chooser": "activePlayer",
               "options": [
                 {
-                  "label": "You draw a card; opponents may play a resource",
+                  "label": "That player may draw a card and their opponent may play a resource",
                   "effects": [
                     {
-                      "type": "mayPay",
+                      "type": "asPlayer",
                       "player": "activePlayer",
-                      "costs": [],
                       "effects": [
                         {
-                          "type": "draw",
-                          "player": "activePlayer",
-                          "amount": 1
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
-                        {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "mayPay",
+                          "player": "controller",
+                          "costs": [],
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "draw",
+                              "player": "controller",
+                              "amount": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "forEachPlayer",
+                          "effects": [
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "You may play a resource; opponents may draw",
+                  "label": "That player may play a resource and their opponent may draw a card",
                   "effects": [
                     {
-                      "type": "forEachPlayer",
+                      "type": "asPlayer",
+                      "player": "activePlayer",
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "isActivePlayer",
-                            "player": "controller"
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "if",
+                              "condition": {
+                                "type": "isActivePlayer",
+                                "player": "controller"
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
+                          ],
+                          "players": "controllerAndOpponent"
+                        },
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "mayPay",
-                              "player": "controller",
-                              "costs": [],
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
+                              },
                               "effects": [
                                 {
-                                  "type": "draw",
+                                  "type": "mayPay",
                                   "player": "controller",
-                                  "amount": 1
+                                  "costs": [],
+                                  "effects": [
+                                    {
+                                      "type": "draw",
+                                      "player": "controller",
+                                      "amount": 1
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "Each player may draw up to 2 cards",
+                  "label": "Both players may draw up to 2 cards",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -4550,12 +4565,13 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
                 {
-                  "label": "Each player may play up to 2 resources",
+                  "label": "Both players may play up to 2 resources",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -4590,7 +4606,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 }
@@ -14853,16 +14870,19 @@
             {
               "type": "if",
               "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "count",
-                  "selector": {
-                    "controller": "opponent",
-                    "type": "character"
-                  }
-                },
-                "operator": "=",
-                "right": 0
+                "type": "not",
+                "condition": {
+                  "type": "numberCompare",
+                  "left": {
+                    "type": "count",
+                    "selector": {
+                      "controller": "opponent",
+                      "type": "character"
+                    }
+                  },
+                  "operator": ">",
+                  "right": 0
+                }
               },
               "effects": [
                 {
@@ -16452,7 +16472,7 @@
       "fromPrintingId": "4181e922-7ffb-4c71-aef6-17adf4f006c7"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -16829,7 +16849,8 @@
                         "id": "bot"
                       }
                     }
-                  ]
+                  ],
+                  "players": "controllerAndOpponent"
                 }
               ]
             }
@@ -21610,7 +21631,7 @@
       "fromPrintingId": "23fe59c9-9bf1-49d1-bfc4-084c556aca80"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -22645,7 +22666,7 @@
       "fromPrintingId": "300ab3d1-3214-4fa5-9000-d657e6e7816d"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -30489,7 +30510,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -34668,7 +34689,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -35811,137 +35832,152 @@
               "chooser": "activePlayer",
               "options": [
                 {
-                  "label": "You draw a card; opponents may play a resource",
+                  "label": "That player may draw a card and their opponent may play a resource",
                   "effects": [
                     {
-                      "type": "mayPay",
+                      "type": "asPlayer",
                       "player": "activePlayer",
-                      "costs": [],
                       "effects": [
                         {
-                          "type": "draw",
-                          "player": "activePlayer",
-                          "amount": 1
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
-                        {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "mayPay",
+                          "player": "controller",
+                          "costs": [],
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "draw",
+                              "player": "controller",
+                              "amount": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "forEachPlayer",
+                          "effects": [
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "You may play a resource; opponents may draw",
+                  "label": "That player may play a resource and their opponent may draw a card",
                   "effects": [
                     {
-                      "type": "forEachPlayer",
+                      "type": "asPlayer",
+                      "player": "activePlayer",
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "isActivePlayer",
-                            "player": "controller"
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "if",
+                              "condition": {
+                                "type": "isActivePlayer",
+                                "player": "controller"
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
+                          ],
+                          "players": "controllerAndOpponent"
+                        },
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "mayPay",
-                              "player": "controller",
-                              "costs": [],
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
+                              },
                               "effects": [
                                 {
-                                  "type": "draw",
+                                  "type": "mayPay",
                                   "player": "controller",
-                                  "amount": 1
+                                  "costs": [],
+                                  "effects": [
+                                    {
+                                      "type": "draw",
+                                      "player": "controller",
+                                      "amount": 1
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "Each player may draw up to 2 cards",
+                  "label": "Both players may draw up to 2 cards",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -35970,12 +36006,13 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
                 {
-                  "label": "Each player may play up to 2 resources",
+                  "label": "Both players may play up to 2 resources",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -36010,7 +36047,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 }
@@ -38488,7 +38526,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -40359,7 +40397,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -50164,16 +50202,19 @@
             {
               "type": "if",
               "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "count",
-                  "selector": {
-                    "controller": "opponent",
-                    "type": "character"
-                  }
-                },
-                "operator": "=",
-                "right": 0
+                "type": "not",
+                "condition": {
+                  "type": "numberCompare",
+                  "left": {
+                    "type": "count",
+                    "selector": {
+                      "controller": "opponent",
+                      "type": "character"
+                    }
+                  },
+                  "operator": ">",
+                  "right": 0
+                }
               },
               "effects": [
                 {
@@ -52601,7 +52642,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -53090,124 +53131,28 @@
               ]
             },
             {
-              "type": "bind",
-              "id": "anyOpponentPaid",
-              "value": 0
-            },
-            {
-              "type": "bind",
-              "id": "opponentsToAsk",
-              "value": 0
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
+              "type": "mayPay",
+              "player": "opponent",
+              "costs": [
+                {
+                  "type": "payResources",
+                  "amount": 1
+                }
+              ],
               "effects": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      1
-                    ]
-                  }
+                  "type": "draw",
+                  "player": "controller",
+                  "amount": 1
                 }
-              ]
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
-              "effects": [
+              ],
+              "elseEffects": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      -1
-                    ]
-                  }
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "anyOpponentPaid"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "mayPay",
-                      "player": "opponent",
-                      "costs": [
-                        {
-                          "type": "payResources",
-                          "amount": 1
-                        }
-                      ],
-                      "effects": [
-                        {
-                          "type": "bind",
-                          "id": "anyOpponentPaid",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "opponentsToAsk"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "variable",
-                          "id": "anyOpponentPaid"
-                        },
-                        "operator": "=",
-                        "right": 0
-                      },
-                      "effects": [
-                        {
-                          "type": "terminate",
-                          "scope": "respondedItem"
-                        }
-                      ],
-                      "elseEffects": [
-                        {
-                          "type": "draw",
-                          "player": "controller",
-                          "amount": 1
-                        }
-                      ]
-                    }
-                  ]
+                  "type": "terminate",
+                  "scope": "respondedItem"
                 }
-              ]
+              ],
+              "anyOf": "opponents"
             }
           ]
         }
@@ -54468,145 +54413,49 @@
           ],
           "effects": [
             {
-              "type": "bind",
-              "id": "anyOpponentPaid",
-              "value": 0
-            },
-            {
-              "type": "bind",
-              "id": "opponentsToAsk",
-              "value": 0
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
-              "effects": [
+              "type": "mayPay",
+              "player": "opponent",
+              "costs": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      1
-                    ]
-                  }
+                  "type": "payResources",
+                  "amount": 2
                 }
-              ]
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
-              "effects": [
+              ],
+              "effects": [],
+              "elseEffects": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
+                  "type": "forEach",
+                  "selector": {
+                    "zone": "play",
+                    "type": "character",
+                    "conditions": [
                       {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      -1
-                    ]
-                  }
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "anyOpponentPaid"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "mayPay",
-                      "player": "opponent",
-                      "costs": [
-                        {
-                          "type": "payResources",
-                          "amount": 2
-                        }
-                      ],
-                      "effects": [
-                        {
-                          "type": "bind",
-                          "id": "anyOpponentPaid",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "opponentsToAsk"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "variable",
-                          "id": "anyOpponentPaid"
+                        "type": "cardNameEquals",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
                         },
-                        "operator": "=",
-                        "right": 0
-                      },
-                      "effects": [
-                        {
-                          "type": "forEach",
-                          "selector": {
-                            "zone": "play",
-                            "type": "character",
-                            "conditions": [
-                              {
-                                "type": "cardNameEquals",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "__candidate"
-                                },
-                                "other": {
-                                  "type": "selected",
-                                  "id": "c"
-                                }
-                              }
-                            ]
-                          },
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "deck",
-                              "position": "bottom"
-                            }
-                          ]
+                        "other": {
+                          "type": "selected",
+                          "id": "c"
                         }
-                      ],
-                      "elseEffects": []
+                      }
+                    ]
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "deck",
+                      "position": "bottom"
                     }
                   ]
                 }
-              ]
+              ],
+              "anyOf": "opponents"
             }
           ]
         }
@@ -55347,163 +55196,73 @@
           ],
           "effects": [
             {
-              "type": "bind",
-              "id": "anyOpponentPaid",
-              "value": 0
-            },
-            {
-              "type": "bind",
-              "id": "opponentsToAsk",
-              "value": 0
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
-              "effects": [
+              "type": "mayPay",
+              "player": "opponent",
+              "costs": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      1
-                    ]
-                  }
+                  "type": "payResources",
+                  "amount": 2
                 }
-              ]
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
+              ],
               "effects": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      -1
-                    ]
-                  }
+                  "type": "moveCard",
+                  "target": "source",
+                  "to": "hand"
+                }
+              ],
+              "elseEffects": [
+                {
+                  "type": "moveCard",
+                  "target": {
+                    "type": "selected",
+                    "id": "picked"
+                  },
+                  "to": "hand"
                 },
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "anyOpponentPaid"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
+                  "type": "asPlayer",
+                  "player": "controller",
                   "effects": [
                     {
-                      "type": "mayPay",
-                      "player": "opponent",
-                      "costs": [
-                        {
-                          "type": "payResources",
-                          "amount": 2
-                        }
-                      ],
-                      "effects": [
-                        {
-                          "type": "bind",
-                          "id": "anyOpponentPaid",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "opponentsToAsk"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "variable",
-                          "id": "anyOpponentPaid"
+                      "type": "chooserSelectsTarget",
+                      "chooser": "controller",
+                      "declaration": {
+                        "id": "d",
+                        "selector": {
+                          "owner": "opponent",
+                          "zone": "hand",
+                          "conditions": [
+                            {
+                              "type": "not",
+                              "condition": {
+                                "type": "cardTypeIs",
+                                "target": {
+                                  "type": "selected",
+                                  "id": "__candidate"
+                                },
+                                "cardType": "resource"
+                              }
+                            }
+                          ]
                         },
-                        "operator": "=",
-                        "right": 0
+                        "count": 1
                       },
                       "effects": [
                         {
                           "type": "moveCard",
                           "target": {
                             "type": "selected",
-                            "id": "picked"
+                            "id": "d"
                           },
-                          "to": "hand"
-                        },
-                        {
-                          "type": "chooserSelectsTarget",
-                          "chooser": "controller",
-                          "declaration": {
-                            "id": "d",
-                            "selector": {
-                              "owner": "opponent",
-                              "zone": "hand",
-                              "conditions": [
-                                {
-                                  "type": "not",
-                                  "condition": {
-                                    "type": "cardTypeIs",
-                                    "target": {
-                                      "type": "selected",
-                                      "id": "__candidate"
-                                    },
-                                    "cardType": "resource"
-                                  }
-                                }
-                              ]
-                            },
-                            "count": 1
-                          },
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "d"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ],
-                      "elseEffects": [
-                        {
-                          "type": "moveCard",
-                          "target": "source",
-                          "to": "hand"
+                          "to": "discard"
                         }
                       ]
                     }
                   ]
                 }
-              ]
+              ],
+              "anyOf": "opponents"
             }
           ]
         }
@@ -68853,7 +68612,7 @@
       "fromPrintingId": "12cfc4e1-e8f7-431e-a37a-593210181b0c"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -72237,137 +71996,152 @@
               "chooser": "activePlayer",
               "options": [
                 {
-                  "label": "You draw a card; opponents may play a resource",
+                  "label": "That player may draw a card and their opponent may play a resource",
                   "effects": [
                     {
-                      "type": "mayPay",
+                      "type": "asPlayer",
                       "player": "activePlayer",
-                      "costs": [],
                       "effects": [
                         {
-                          "type": "draw",
-                          "player": "activePlayer",
-                          "amount": 1
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
-                        {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "mayPay",
+                          "player": "controller",
+                          "costs": [],
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "draw",
+                              "player": "controller",
+                              "amount": 1
+                            }
+                          ]
+                        },
+                        {
+                          "type": "forEachPlayer",
+                          "effects": [
+                            {
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "You may play a resource; opponents may draw",
+                  "label": "That player may play a resource and their opponent may draw a card",
                   "effects": [
                     {
-                      "type": "forEachPlayer",
+                      "type": "asPlayer",
+                      "player": "activePlayer",
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "isActivePlayer",
-                            "player": "controller"
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
+                              "type": "if",
+                              "condition": {
+                                "type": "isActivePlayer",
+                                "player": "controller"
                               },
                               "effects": [
                                 {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
+                                  "type": "chooserSelectsTarget",
+                                  "chooser": "controller",
+                                  "declaration": {
+                                    "id": "h",
+                                    "selector": {
+                                      "owner": "self",
+                                      "zone": "hand"
+                                    },
+                                    "count": 1,
+                                    "optional": true
                                   },
-                                  "faceDown": "auto",
-                                  "player": "controller"
+                                  "effects": [
+                                    {
+                                      "type": "playResource",
+                                      "target": {
+                                        "type": "selected",
+                                        "id": "h"
+                                      },
+                                      "faceDown": "auto",
+                                      "player": "controller"
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "forEachPlayer",
-                      "effects": [
+                          ],
+                          "players": "controllerAndOpponent"
+                        },
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
+                          "type": "forEachPlayer",
                           "effects": [
                             {
-                              "type": "mayPay",
-                              "player": "controller",
-                              "costs": [],
+                              "type": "if",
+                              "condition": {
+                                "type": "not",
+                                "condition": {
+                                  "type": "isActivePlayer",
+                                  "player": "controller"
+                                }
+                              },
                               "effects": [
                                 {
-                                  "type": "draw",
+                                  "type": "mayPay",
                                   "player": "controller",
-                                  "amount": 1
+                                  "costs": [],
+                                  "effects": [
+                                    {
+                                      "type": "draw",
+                                      "player": "controller",
+                                      "amount": 1
+                                    }
+                                  ]
                                 }
                               ]
                             }
-                          ]
+                          ],
+                          "players": "controllerAndOpponent"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "Each player may draw up to 2 cards",
+                  "label": "Both players may draw up to 2 cards",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -72396,12 +72170,13 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
                 {
-                  "label": "Each player may play up to 2 resources",
+                  "label": "Both players may play up to 2 resources",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -72436,7 +72211,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 }
@@ -81404,16 +81180,19 @@
             {
               "type": "if",
               "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "count",
-                  "selector": {
-                    "controller": "opponent",
-                    "type": "character"
-                  }
-                },
-                "operator": "=",
-                "right": 0
+                "type": "not",
+                "condition": {
+                  "type": "numberCompare",
+                  "left": {
+                    "type": "count",
+                    "selector": {
+                      "controller": "opponent",
+                      "type": "character"
+                    }
+                  },
+                  "operator": ">",
+                  "right": 0
+                }
               },
               "effects": [
                 {
@@ -82919,7 +82698,7 @@
       "fromPrintingId": "4181e922-7ffb-4c71-aef6-17adf4f006c7"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -85759,7 +85538,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
@@ -85823,7 +85603,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
@@ -85862,7 +85643,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 },
@@ -85902,7 +85684,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 }
@@ -86750,7 +86533,8 @@
                     "id": "n"
                   }
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         }
@@ -95245,7 +95029,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ],
                   "elseEffects": [
@@ -95276,7 +95061,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "controllerAndOpponent"
                     }
                   ]
                 }
@@ -103128,8 +102914,7 @@
                               },
                               "effects": [
                                 {
-                                  "type": "forEachPlayer",
-                                  "players": "opponents",
+                                  "type": "asPlayer",
                                   "effects": [
                                     {
                                       "type": "chooserSelectsTarget",
@@ -103153,7 +102938,8 @@
                                         }
                                       ]
                                     }
-                                  ]
+                                  ],
+                                  "player": "controller"
                                 }
                               ]
                             },
@@ -103345,8 +103131,7 @@
                               },
                               "effects": [
                                 {
-                                  "type": "forEachPlayer",
-                                  "players": "opponents",
+                                  "type": "asPlayer",
                                   "effects": [
                                     {
                                       "type": "chooserSelectsTarget",
@@ -103370,7 +103155,8 @@
                                         }
                                       ]
                                     }
-                                  ]
+                                  ],
+                                  "player": "controller"
                                 }
                               ]
                             },
@@ -109965,23 +109751,6 @@
           },
           "effects": [
             {
-              "type": "bind",
-              "id": "mineCost",
-              "value": {
-                "type": "cardCost",
-                "target": {
-                  "type": "deckPosition",
-                  "player": "controller",
-                  "from": "top"
-                }
-              }
-            },
-            {
-              "type": "bind",
-              "id": "beaten",
-              "value": 0
-            },
-            {
               "type": "setDamage",
               "target": {
                 "type": "selected",
@@ -109990,9 +109759,26 @@
               "amount": 0
             },
             {
-              "type": "forEachPlayer",
-              "players": "opponents",
+              "type": "asPlayer",
+              "player": "controller",
               "effects": [
+                {
+                  "type": "bind",
+                  "id": "mineCost",
+                  "value": {
+                    "type": "cardCost",
+                    "target": {
+                      "type": "deckPosition",
+                      "player": "controller",
+                      "from": "top"
+                    }
+                  }
+                },
+                {
+                  "type": "bind",
+                  "id": "beaten",
+                  "value": 0
+                },
                 {
                   "type": "if",
                   "condition": {
@@ -110026,54 +109812,54 @@
                     "player": "opponent",
                     "from": "top"
                   }
-                }
-              ]
-            },
-            {
-              "type": "removeFromGame",
-              "target": {
-                "type": "deckPosition",
-                "player": "controller",
-                "from": "top"
-              }
-            },
-            {
-              "type": "if",
-              "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "variable",
-                  "id": "beaten"
                 },
-                "operator": "=",
-                "right": 0
-              },
-              "effects": [
-                {
-                  "type": "draw",
-                  "player": "controller",
-                  "amount": 1
-                }
-              ]
-            },
-            {
-              "type": "if",
-              "condition": {
-                "type": "numberCompare",
-                "left": {
-                  "type": "variable",
-                  "id": "beaten"
-                },
-                "operator": "=",
-                "right": 1
-              },
-              "effects": [
                 {
                   "type": "removeFromGame",
                   "target": {
-                    "type": "selected",
-                    "id": "__candidate"
+                    "type": "deckPosition",
+                    "player": "controller",
+                    "from": "top"
                   }
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "beaten"
+                    },
+                    "operator": "=",
+                    "right": 0
+                  },
+                  "effects": [
+                    {
+                      "type": "draw",
+                      "player": "controller",
+                      "amount": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "if",
+                  "condition": {
+                    "type": "numberCompare",
+                    "left": {
+                      "type": "variable",
+                      "id": "beaten"
+                    },
+                    "operator": "=",
+                    "right": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "removeFromGame",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -116122,7 +115908,8 @@
                   ],
                   "elseEffects": []
                 }
-              ]
+              ],
+              "players": "controllerAndOpponent"
             }
           ]
         },
@@ -117453,7 +117240,8 @@
       "influencePerOpponent": 10,
       "daringGambit": {
         "damage": 7
-      }
+      },
+      "showdownRole": "villain"
     },
     "trade": "Universal",
     "rarity": "e-sle",
@@ -118525,7 +118313,8 @@
             }
           ]
         }
-      ]
+      ],
+      "showdownRole": "heroes"
     },
     "trade": "Universal",
     "rarity": "e-sle",
@@ -118551,7 +118340,7 @@
           "event": "turnStarted",
           "condition": {
             "type": "eventPlayerIs",
-            "player": "controller"
+            "player": "villain"
           },
           "effects": [
             {
@@ -143998,9 +143787,26 @@
           ],
           "effects": [
             {
-              "type": "grantKeyword",
+              "type": "restrictBlockers",
               "target": "source",
-              "keyword": "cannotBeBlocked",
+              "notBy": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "opponent",
+                    "type": "character"
+                  }
+                },
+                "operator": ">",
+                "right": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "self",
+                    "type": "character"
+                  }
+                }
+              },
               "duration": {
                 "type": "untilEndOfTurn"
               }
@@ -154489,149 +154295,53 @@
           ],
           "effects": [
             {
-              "type": "bind",
-              "id": "anyOpponentPaid",
-              "value": 0
-            },
-            {
-              "type": "bind",
-              "id": "opponentsToAsk",
-              "value": 0
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
-              "effects": [
+              "type": "mayPay",
+              "player": "opponent",
+              "costs": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      1
-                    ]
-                  }
+                  "type": "payResources",
+                  "amount": 3
                 }
-              ]
-            },
-            {
-              "type": "forEachPlayer",
-              "players": "opponents",
+              ],
               "effects": [
                 {
-                  "type": "bind",
-                  "id": "opponentsToAsk",
-                  "value": {
-                    "type": "add",
-                    "values": [
-                      {
-                        "type": "variable",
-                        "id": "opponentsToAsk"
-                      },
-                      -1
-                    ]
-                  }
-                },
+                  "type": "lookAndReorder",
+                  "player": "controller",
+                  "chooser": "controller",
+                  "count": 3
+                }
+              ],
+              "elseEffects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "anyOpponentPaid"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
-                  "effects": [
-                    {
-                      "type": "mayPay",
-                      "player": "opponent",
-                      "costs": [
-                        {
-                          "type": "payResources",
-                          "amount": 3
-                        }
-                      ],
-                      "effects": [
-                        {
-                          "type": "bind",
-                          "id": "anyOpponentPaid",
-                          "value": 1
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "numberCompare",
-                    "left": {
-                      "type": "variable",
-                      "id": "opponentsToAsk"
-                    },
-                    "operator": "=",
-                    "right": 0
-                  },
+                  "type": "forEach",
+                  "selected": "picks",
                   "effects": [
                     {
                       "type": "if",
                       "condition": {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "variable",
-                          "id": "anyOpponentPaid"
+                        "type": "statCompare",
+                        "target": {
+                          "type": "selected",
+                          "id": "__candidate"
                         },
-                        "operator": "=",
-                        "right": 0
+                        "stat": "strength",
+                        "operator": "<=",
+                        "value": 3
                       },
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selected": "picks",
-                          "effects": [
-                            {
-                              "type": "if",
-                              "condition": {
-                                "type": "statCompare",
-                                "target": {
-                                  "type": "selected",
-                                  "id": "__candidate"
-                                },
-                                "stat": "strength",
-                                "operator": "<=",
-                                "value": 3
-                              },
-                              "effects": [
-                                {
-                                  "type": "destroy",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ],
-                      "elseEffects": [
-                        {
-                          "type": "lookAndReorder",
-                          "player": "controller",
-                          "chooser": "controller",
-                          "count": 3
+                          "type": "destroy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
                         }
                       ]
                     }
                   ]
                 }
-              ]
+              ],
+              "anyOf": "opponents"
             }
           ]
         }
@@ -177859,23 +177569,23 @@
         {
           "id": "hide",
           "type": "continuous",
-          "condition": {
-            "type": "numberCompare",
-            "left": {
-              "type": "count",
-              "selector": {
-                "zone": "discard",
-                "owner": "opponent"
-              }
-            },
-            "operator": ">=",
-            "right": 10
-          },
           "modifiers": [],
           "restrictions": [
             {
               "restriction": "cannotBePickedByOpponents",
-              "target": "source"
+              "target": "source",
+              "pickerWhere": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "zone": "discard",
+                    "owner": "opponent"
+                  }
+                },
+                "operator": ">=",
+                "right": 10
+              }
             }
           ]
         },

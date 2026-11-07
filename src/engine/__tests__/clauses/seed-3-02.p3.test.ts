@@ -8,7 +8,7 @@ import { declareAttackOpenWindow, fight, fightThrough } from "./_battle.js";
 import { answerPending, pending, zoneOf } from "./_board.js";
 import { clause, exempt, printing, refused, flipUpNow, holdResourceFace } from "./_clause.js";
 import { defaultFactionDefinition, factionCard } from "../support/fixtures.js";
-import { attachedCount, developDraw, developResource, endTurn, factionOf, readyCount, setupGame, spentResources, developOffers, endTurnRaw } from "./_turn.js";
+import { attachedCount, developDraw, developResource, endTurn, factionOf, readyCount, setupGame, spentResources, developOffers, endTurnRaw, developDrawLeft } from "./_turn.js";
 import { chooseDevelopOption, isDevelopChoice, settleTurnStart } from "../support/develop.js";
 import * as sd from "./_showdown.js";
 
@@ -939,7 +939,7 @@ clause(EVIL, "2:rule:STARTING DRAW", "I draw 7 cards going first and 8 going sec
 // --- 3:rule:RESTORE RULE ----------------------------------------------------------------------------
 
 const topOfDeck = (label: string, owner: PlayerId = P1): Cards =>
-  Array.from({ length: 4 }, (_, i) => ({ key: `${label}${i}`, def: character({ name: `${label} ${i}` }), owner, zone: "deck" as const }));
+  Array.from({ length: 10 }, (_, i) => ({ key: `${label}${i}`, def: character({ name: `${label} ${i}` }), owner, zone: "deck" as const }));
 
 function restoreBoard(active: PlayerId) {
   return buildGame({
@@ -1001,6 +1001,22 @@ clause(EVIL, "3:rule:RESTORE RULE", "only at the start of MY turn: nothing of mi
 
 // --- 4:rule:DEVELOP RULE  "draw a card or play a resource. Repeat this X-1 times." -----------------
 
+/**
+ * X - 1: the Develop Rule repeats once per opponent beyond the first (X = the opponents at the start of the game). Zero in the
+ * two-player games these boards are written for; a bigger table seats more opponents, so the rule is offered that many more times.
+ */
+const repeatsOf = (engine: SpoilsEngine): number => Object.keys(engine.state.players).length - 2;
+/** Uses the Develop Rule's remaining repeats (draws; it cannot be skipped) and returns how many there were. */
+function drawRemaining(engine: SpoilsEngine): number {
+  let n = 0;
+  for (let id = engine.state.pendingChoice?.id; n < 10; n++) {
+    developDrawLeft(engine); // (a rule opened by hand carries no ability id, so it is recognised by its option labels)
+    if (engine.state.pendingChoice?.id === id) break;
+    id = engine.state.pendingChoice?.id;
+  }
+  return n;
+}
+
 const developBoard = (active: PlayerId = P1) =>
   buildGame({
     playerA: { faction: printing(EVIL) },
@@ -1059,24 +1075,30 @@ clause(EVIL, "4:rule:DEVELOP RULE", "any card may be played face-down as a resou
   developResource(c.engine, P1, c.id("handChar"), false); // asked to play it face-up
   assert.equal(c.engine.state.cards[c.id("handChar")].zone, "play");
   assert.equal(c.engine.state.cards[c.id("handChar")].faceDown, true, "a non-resource can't be played face-up: it enters face-down");
-  assert.equal(c.engine.state.pendingChoice, undefined, "that was the Develop Rule's one resource play");
+  assert.equal(drawRemaining(c.engine), repeatsOf(c.engine), "that was the Develop Rule's one resource play (then only its X - 1 repeats)");
+  assert.equal(c.engine.state.pendingChoice, undefined);
 });
 
 clause(EVIL, "4:rule:DEVELOP RULE", "'draw a card OR play a resource': not both (X - 1 = 0 repeats with one opponent), so a second use in the same turn is refused either way round", () => {
   const a = developBoard();
   developDraw(a.engine, P1);
+  assert.equal(drawRemaining(a.engine), repeatsOf(a.engine), "already developed this turn: nothing more is offered beyond the X - 1 repeats");
   assert.equal(a.engine.state.pendingChoice, undefined, "already developed this turn: nothing more is offered");
   assert.equal(a.engine.state.cards[a.id("handRes")].zone, "hand");
   const b = developBoard();
   const deck = [...b.engine.state.players[P1].deck];
   developResource(b.engine, P1, b.id("handRes"), false);
+  const bRepeats = drawRemaining(b.engine);
+  assert.equal(bRepeats, repeatsOf(b.engine), "already developed this turn: nothing more is offered beyond the X - 1 repeats");
   assert.equal(b.engine.state.pendingChoice, undefined, "already developed this turn: nothing more is offered");
-  assert.deepEqual(b.engine.state.players[P1].deck, deck);
+  assert.deepEqual(b.engine.state.players[P1].deck, deck.slice(bRepeats), "only the repeats drew");
   const c = developBoard();
   developDraw(c.engine, P1);
+  assert.equal(drawRemaining(c.engine), repeatsOf(c.engine));
   assert.equal(c.engine.state.pendingChoice, undefined, "a second draw is not offered");
   const d = developBoard();
   developResource(d.engine, P1, d.id("handRes"), false);
+  assert.equal(drawRemaining(d.engine), repeatsOf(d.engine));
   assert.equal(d.engine.state.pendingChoice, undefined, "a second resource play is not offered");
   assert.equal(d.engine.state.cards[d.id("handRes2")].zone, "hand");
 });
@@ -1098,11 +1120,12 @@ clause(EVIL, "4:rule:DEVELOP RULE", "only on my own turn, optional, and availabl
   endTurnRaw(engine, P2);
   settleTurnStart(engine, "draw");
   assert.equal(engine.state.activePlayerId, P1);
-  assert.equal(handSize(engine, P1), hand + 1, "the Develop Rule is offered again at the start of my next turn");
+  const uses = repeatsOf(engine) + 1; // the rule and its X - 1 repeats
+  assert.equal(handSize(engine, P1), hand + uses, "the Develop Rule is offered again at the start of my next turn");
   endTurn(engine, P1);
   endTurnRaw(engine, P2);
   settleTurnStart(engine, "draw");
-  assert.equal(handSize(engine, P1), hand + 2, "renews every turn");
+  assert.equal(handSize(engine, P1), hand + 2 * uses, "renews every turn");
 });
 
 /** Orders the turn start's triggers (Restore first) until the Develop Rule's option prompt is pending. */
@@ -1230,8 +1253,9 @@ clause(EVIL, "5:ability", "DRAW has no printed limit (usable again the same turn
   assert.equal(handSize(a.engine, P1), hand + 2);
   const b = abilityBoard(3);
   developDraw(b.engine, P1);
+  const bRepeats = drawRemaining(b.engine); // the rule's X - 1 repeats (none at a two-player table) must be used before anything else
   activateFaction(b.engine, P1, "evil-draw");
-  assert.equal(handSize(b.engine, P1), hand + 2);
+  assert.equal(handSize(b.engine, P1), hand + 2 + bRepeats);
 });
 
 clause(EVIL, "5:ability", "only the faction's controller can use DRAW: the opponent can't use mine", () => {
@@ -1369,8 +1393,8 @@ clause(EVIL, "7:ability", "ENTICEMENT exists on the faction and, during my turn,
   activateFaction(engine, P1, ability.id);
   pickFromHand(engine, P1, id("handRes"));
   assert.equal(engine.state.cards[id("handRes")].zone, "play");
-  assert.equal(handSize(engine, P1), hand - 1, "X - 1 = 0 cards drawn");
-  assert.equal(engine.state.showdown, undefined, "a two-player game has no Hero Deck or Temptation Pile: that step does nothing");
+  assert.equal(handSize(engine, P1), hand - 1 + repeatsOf(engine), "X - 1 cards drawn (0 with one opponent), one played");
+  if (engine.state.format.kind !== "showdown") assert.equal(engine.state.showdown, undefined, "a game that is not a Showdown has no Hero Deck or Temptation Pile: that step does nothing");
 });
 
 clause(EVIL, "7:ability", "ENTICEMENT can be used only once per turn", () => {
@@ -1430,7 +1454,8 @@ clause(EVIL, "7:ability", "ENTICEMENT puts the top card of the Hero deck into th
 });
 
 clause(EVIL, "7:ability", "ENTICEMENT with an empty Hero deck still draws and plays its resource: the Temptation Pile step finds no card", () => {
-  const engine = sd.showdownGame({ heroes: 2, heroDeck: [] });
+  const engine = sd.showdownGame({ heroes: 2 });
+  sd.exhaustHeroDeck(engine);
   const hand = handSize(engine, sd.VILLAIN);
   enticeNow(engine);
   assert.deepEqual(sd.pileOf(engine), []);

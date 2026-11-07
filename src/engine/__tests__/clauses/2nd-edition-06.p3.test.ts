@@ -875,8 +875,9 @@ clause(VACATION, "0:rule", "played in response to the opponent's action, they st
   playRaw(engine, P2, id("noop2"));
   assert.equal(engine.state.responseWindow?.priorityPlayerId, P1, "I may respond to their tactic");
   playRaw(engine, P1, id("vac"));
-  refused(() => activateRaw(engine, P2, id("pinger2"), "ping", { selected: { t: [id("mine")] } }), "they cannot respond to the Vacation with an ability", /./);
-  refused(() => playRaw(engine, P2, id("p2hit"), { selected: { t: [id("mine")] } }), "they cannot respond to the Vacation with a tactic", /./);
+  // Nobody may respond to it: it resolved at once, ended the item beneath, and the window closed on the empty stack.
+  assert.equal(zoneOf(engine, id("vac")), "discard", "it resolved without the opponent being offered a response");
+  assert.equal(engine.state.responseWindow, undefined, "nothing is left to respond to: the window closed");
   resolvePendingResponses(engine);
   assert.equal(damageOf(engine, id("mine")), 0);
 });

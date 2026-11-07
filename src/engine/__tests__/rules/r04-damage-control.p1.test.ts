@@ -143,7 +143,7 @@ function passTurn(engine: SpoilsEngine): void {
   assert.notEqual(engine.state.activePlayerId, active, "the turn passed to the other player");
 }
 
-const ctx = (engine: SpoilsEngine, sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, selected: {} });
+const ctx = (engine: SpoilsEngine, sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, opponentId: controllerId === P1 ? P2 : P1, selected: {} });
 const REF = (cardId: CardInstanceId) => ({ type: "card", id: cardId }) as const;
 
 describe("CR 408.1 — an attempt to inflict 0 damage", () => {

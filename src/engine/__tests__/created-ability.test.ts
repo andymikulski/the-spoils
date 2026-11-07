@@ -12,7 +12,7 @@ import {
   P1,
   P2
 } from "./per-card/_harness.js";
-import { resolvePendingResponses, defaultFactionDefinition, factionCard } from "./support/fixtures.js";
+import { resolvePendingResponses, defaultFactionDefinition, factionCard, noDevelopFaction } from "./support/fixtures.js";
 import {
   buildCreatedAbility,
   CREATED_ABILITY_ID,
@@ -58,7 +58,7 @@ function board(spec: CreatedAbilitySpec) {
     ])
   ];
   const built = buildGame({ playerA: { faction: rdFaction() }, cards });
-  assert.equal(built.engine.applyCreatedFactionAbility(spec), 1, "exactly the one R&D faction card receives the ability");
+  built.engine.applyCreatedFactionAbility(P1, spec);
   return built;
 }
 
@@ -225,7 +225,7 @@ describe("Q51B: invalid specs are refused", () => {
     const bad = { costs: [], effect: { kind: "draw", amount: 1 } } as CreatedAbilitySpec;
     assert.throws(() => buildCreatedAbility(bad), /Invalid player-created ability: .*at least 1 cost/);
     const b = buildGame({ playerA: { faction: rdFaction() } });
-    assert.throws(() => b.engine.applyCreatedFactionAbility(bad), /Invalid player-created ability/);
+    assert.throws(() => b.engine.applyCreatedFactionAbility(P1, bad), /Invalid player-created ability/);
     assert.equal(b.engine.state.cards[rdCard(b.engine)].createdAbility, undefined, "nothing was stored");
 
     const filler = character({ id: "q51b-filler", name: "Filler" });
@@ -237,7 +237,7 @@ describe("Q51B: invalid specs are refused", () => {
           [rd, plain, filler],
           [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
           { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
-          { seed: 1, createdAbility: bad }
+          { seed: 1, createdAbilities: { [P1]: { spec: bad } } }
         ),
       /Invalid player-created ability/
     );
@@ -245,18 +245,19 @@ describe("Q51B: invalid specs are refused", () => {
 });
 
 describe("Q51B: the built ability, in play", () => {
-  test("it is an activated ability usable by anyPlayer, stored with its spec and text, and survives a JSON round trip", () => {
+  test("it is an activated ability usable by both players who created it, stored with its spec and text, and survives a JSON round trip", () => {
     const spec: CreatedAbilitySpec = { costs: [{ kind: "pay", amount: 2 }, lose1], effect: { kind: "damageCharacter", amount: 2 } };
     const { ability, text } = buildCreatedAbility(spec);
     assert.equal(ability.type, "activated");
     assert.equal(ability.id, CREATED_ABILITY_ID);
-    assert.equal(ability.usableBy, "anyPlayer");
+    assert.equal(ability.usableBy, "controllerAndOpponent");
     assert.deepEqual(JSON.parse(JSON.stringify(ability)), ability, "plain JSON");
     const b = board(spec);
     const stored = b.engine.state.cards[rdCard(b.engine)].createdAbility!;
     assert.deepEqual(stored.spec, spec);
     assert.equal(stored.text, text);
     assert.deepEqual(stored.ability, ability);
+    assert.equal(b.engine.state.cards[rdCard(b.engine)].chosenOpponentId, P2, "the other of both players: the only opponent");
     // Later edits to the caller's spec do not reach the stored copy.
     spec.costs[0].amount = 6;
     assert.equal(b.engine.state.cards[rdCard(b.engine)].createdAbility!.spec.costs[0].amount, 2);
@@ -275,7 +276,7 @@ describe("Q51B: the built ability, in play", () => {
         [rd, plain, filler],
         [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
         { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
-        { seed: 7, createdAbility: spec }
+        { seed: 7, createdAbilities: { [P1]: { spec } } }
       );
     const a = make();
     const rdId = a.state.players[P1].factionId!;
@@ -339,7 +340,7 @@ describe("Q51B: the built ability, in play", () => {
         assert.deepEqual(listed(b.engine, p), [CREATED_ABILITY_ID], `${p} can afford Pay 6 with 6 resources`);
       }
       const poor = buildGame({ playerA: { faction: rdFaction() }, cards: [...bank("rage", 2, P1), ...bank("rage", 2, P2)] });
-      poor.engine.applyCreatedFactionAbility({ costs: [{ kind: "pay", amount: 3 }], effect: { kind: "draw", amount: 1 } });
+      poor.engine.applyCreatedFactionAbility(P1, { costs: [{ kind: "pay", amount: 3 }], effect: { kind: "draw", amount: 1 } });
       for (const p of [P1, P2]) {
         turnOf(poor.engine, p);
         assert.deepEqual(listed(poor.engine, p), [], `${p} has 2 resources and cannot pay 3`);
@@ -452,5 +453,65 @@ describe("Q51B: the built ability, in play", () => {
     assert.deepEqual([b.engine.state.players[P1].influence, b.engine.state.players[P2].influence], [before[0] + 2, before[1]]);
     use(b, P2);
     assert.deepEqual([b.engine.state.players[P1].influence, b.engine.state.players[P2].influence], [before[0] + 2, before[1] + 2]);
+  });
+});
+
+describe("RESEARCH & DEVELOPMENT at a bigger table: \"both players\" is you and the opponent you create it with (MP 3)", () => {
+  const P3: PlayerId = "p3";
+  const spec: CreatedAbilitySpec = { costs: [{ kind: "pay", amount: 1 }], effect: { kind: "draw", amount: 1 } };
+  const table = () =>
+    buildGame({
+      players: [
+        { id: P1, faction: rdFaction() },
+        { id: P2, faction: noDevelopFaction() },
+        { id: P3, faction: noDevelopFaction() }
+      ],
+      cards: [...bank("rage", 3, P1), ...bank("rage", 3, P2), ...bank("rage", 3, P3), ...[P1, P2, P3].flatMap(owner => Array.from({ length: 3 }, (_, i) => ({ key: `d-${owner}-${i}`, def: character({ name: `D${owner}${i}` }), owner, zone: "deck" as const })))]
+    });
+  const usersOf = (engine: SpoilsEngine) =>
+    [P1, P2, P3].filter(pid => engine.getAvailableActivatedAbilities(pid).some(a => a.cardId === engine.state.players[P1].factionId && a.ability.id === CREATED_ABILITY_ID));
+
+  test("the partner must be named when there are several opponents", () => {
+    const { engine } = table();
+    assert.throws(() => engine.applyCreatedFactionAbility(P1, spec), /Name the opponent who creates/);
+    assert.throws(() => engine.applyCreatedFactionAbility(P1, spec, P1), /not one of/);
+  });
+
+  test("only its controller and the opponent who created it with them may use it; the third player may not", () => {
+    const { engine } = table();
+    engine.applyCreatedFactionAbility(P1, spec, P3);
+    assert.equal(engine.state.cards[engine.state.players[P1].factionId!].chosenOpponentId, P3);
+    const users: PlayerId[] = [];
+    for (const pid of [P1, P2, P3]) {
+      engine.state.activePlayerId = pid;
+      engine.state.priorityPlayerId = pid;
+      users.push(...usersOf(engine).filter(u => u === pid));
+    }
+    assert.deepEqual(users, [P1, P3]);
+    engine.state.activePlayerId = P2;
+    engine.state.priorityPlayerId = P2;
+    assert.throws(
+      () => engine.perform({ type: "activateAbility", playerId: P2, cardId: engine.state.players[P1].factionId!, abilityId: CREATED_ABILITY_ID } as never),
+      /control/i,
+      "the third player is not one of both players"
+    );
+  });
+
+  test("each R&D faction card has its own ability, made by its own pair", () => {
+    const rd2 = factionCard({ ...rdFaction(), id: "q51b-rd-2", name: "Q51B R&D 2" });
+    const deck = (n: number) => Array.from({ length: n }, () => "q51b-filler");
+    const filler = character({ id: "q51b-filler", name: "Filler" });
+    const other: CreatedAbilitySpec = { costs: [{ kind: "loseInfluence", amount: 1 }], effect: { kind: "gainInfluence", amount: 2 } };
+    const engine = createFactionGame(
+      [rdFaction(), rd2, filler],
+      [
+        { id: P1, name: "A", factionDefinitionId: "q51b-rd", deckDefinitionIds: deck(8) },
+        { id: P2, name: "B", factionDefinitionId: "q51b-rd-2", deckDefinitionIds: deck(8) }
+      ],
+      { seed: 2, createdAbilities: { [P1]: { spec }, [P2]: { spec: other } } }
+    );
+    const of = (pid: PlayerId) => engine.state.cards[engine.state.players[pid].factionId!].createdAbility?.spec;
+    assert.deepEqual(of(P1), spec);
+    assert.deepEqual(of(P2), other);
   });
 });

@@ -22,7 +22,8 @@ import { refused, rule } from "./_rule.js";
 import { developPlay, settleTurnStart } from "../support/develop.js";
 
 const REF = (cardId: CardInstanceId) => ({ type: "card", id: cardId }) as const;
-const ctx = (sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, selected: {} });
+// The block of rules text binds P2 as its opponent (at a bigger table the engine would otherwise have to ask which opponent).
+const ctx = (sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, opponentId: controllerId === P1 ? P2 : P1, selected: {} });
 
 const zoneOf = (engine: SpoilsEngine, cardId: CardInstanceId) => engine.state.cards[cardId]!.zone;
 const counterOf = (engine: SpoilsEngine, cardId: CardInstanceId, name: string) => engine.state.cards[cardId]!.counters[name] ?? 0;

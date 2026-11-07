@@ -1012,7 +1012,13 @@ clause(READY, "3.1:grant-rule", "it restores only characters: a depleted item yo
 clause(READY, "3.1:grant-rule", "\"you may\": the restore is optional, so it is offered and declining leaves the characters depleted", () => {
   const b = rBoard({ attached: "host" });
   for (const k of ["host", "ally"]) b.engine.state.cards[b.id(k)].depleted = true;
-  turnStart(b, P1);
+  // The turn ending right before P2's: P1's, or at a table with a bystander between them, that seat's (whose own
+  // turn start would offer P1 this prompt too, answered by the harness, not by this test).
+  const order = b.engine.state.turnOrder;
+  const beforeP2 = order[(order.indexOf(P2) + order.length - 1) % order.length];
+  b.engine.state.activePlayerId = beforeP2;
+  turnStart(b, beforeP2);
+  assert.equal(b.engine.state.activePlayerId, P2);
   assert.ok(pending(b.engine), "a may-prompt is offered");
   drain(b.engine, (pc) => (pc.kind === "chooserSelectsOption" ? { kind: "chooserSelectsOption", index: 1 } : { kind: pc.kind, selected: [] }));
   for (const k of ["host", "ally"]) assert.equal(b.engine.state.cards[b.id(k)].depleted, true, `${k} stays depleted`);
@@ -1107,10 +1113,23 @@ clause(READY, "3.0:grant-rule", "an item you control keeps its strength too (cha
 /** The faction's own Restore Rule is a trigger too ("Restore Rule" resolves): only the cards' triggers are counted here. */
 const isFactionRule = (message: string): boolean => /"Restore Rule"|"Develop Rule"/.test(message);
 
-function restoredByTriggers(engine: Engine): string[] {
+/**
+ * The log from `playerId`'s latest turn start on. At a bigger table a bystander's turn can lie between two of the
+ * original players' turns, and "at the start of each opponent's turn" legitimately fires at THEIR turn start.
+ */
+function logFromTurnStartOf(engine: Engine, playerId: string) {
+  const log = engine.getLog();
+  let from = 0;
+  log.forEach((entry, index) => {
+    if (entry.event?.type === "turnStarted" && (entry.event as unknown as { playerId: string }).playerId === playerId) from = index;
+  });
+  return log.slice(from);
+}
+
+function restoredByTriggers(engine: Engine, entries: ReturnType<Engine["getLog"]> = engine.getLog()): string[] {
   const out: string[] = [];
   let inTrigger = false;
-  for (const entry of engine.getLog()) {
+  for (const entry of entries) {
     if (entry.marker === "triggerResolving") inTrigger = !isFactionRule(entry.message);
     else if (inTrigger && entry.event?.type === "cardRestored") out.push((entry.event as unknown as { cardId: string }).cardId);
     else inTrigger = false;
@@ -1123,8 +1142,9 @@ clause(READY, "3.1:grant-rule", "the trigger does not fire at your own turn star
   for (const k of ["host", "ally"]) b.engine.state.cards[b.id(k)].depleted = true;
   turnStart(b, P2);
   assert.equal(b.engine.state.activePlayerId, P1);
-  assert.deepEqual(restoredByTriggers(b.engine), []);
-  assert.equal(b.engine.getLog().filter((e) => e.marker === "triggerResolving" && !isFactionRule(e.message)).length, 0, "the Blessing's trigger never resolves at my own turn start");
+  const ownStart = logFromTurnStartOf(b.engine, P1);
+  assert.deepEqual(restoredByTriggers(b.engine, ownStart), []);
+  assert.equal(ownStart.filter((e) => e.marker === "triggerResolving" && !isFactionRule(e.message)).length, 0, "the Blessing's trigger never resolves at my own turn start");
 });
 
 clause(READY, "3.1:grant-rule", "only characters YOU control are restored: the opponent's depleted character is not restored by the trigger", () => {

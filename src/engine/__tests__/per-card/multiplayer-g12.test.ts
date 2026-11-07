@@ -6,7 +6,7 @@
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import cardsJson from "../../../data/cards.js";
-import { createFactionGame } from "../../../engine.js";
+import { createFactionGame, isLiving } from "../../../engine.js";
 import type { CardDefinition, PlayerId } from "../../../engine.js";
 import { banks, bank, buildGame, character, factionCard, noDevelopFaction, resolvePendingResponses, resourceCard, tactic } from "./_harness.js";
 
@@ -605,7 +605,7 @@ describe("Lucky Bastard - compare numeric costs of the removed cards", () => {
     assert.equal(zoneOf(dies.engine, dies.id("lb")), "removed");
   });
 
-  for (const printed of [SEED_SAGA, SEED_2]) {
+  for (const printed of [SEED_SAGA]) {
     test(`${printed.slice(0, 6)}: lethal damage is replaced too - a won comparison at three players leaves it in play with 0 damage`, () => {
       const HIT = tactic({
         name: "Hit",
@@ -641,14 +641,28 @@ describe("Lucky Bastard - compare numeric costs of the removed cards", () => {
     });
   }
 
-  test("Seed 2 (prints \"both players\" / \"your opponent's\"): a replacement cannot ask which opponent, so it too compares against every opponent", () => {
-    const survives = destroy(SEED_2, { p1: 5, p2: 2, p3: 5 });
+  for (const [chosen, outcome] of [["p2", "play"], ["p3", "removed"]] as const) {
+    test(`Seed 2 (prints "both players" / "your opponent's"): you select one opponent (${chosen}) and compare against theirs alone`, () => {
+      const { engine, id } = destroy(SEED_2, { p1: 5, p2: 2, p3: 6 });
+      assert.equal(pending(engine)?.kind, "chooseOpponent");
+      assert.equal(pending(engine)?.playerId, "p1");
+      assert.deepEqual(pending(engine)?.candidates, ["p2", "p3"]);
+      reply(engine, "p1", { kind: "chooseOpponent", opponentId: chosen });
+      assert.equal(pending(engine), undefined);
+      assert.equal(zoneOf(engine, id("lb")), outcome, chosen === "p2" ? "5 >= 2: it survives" : "5 < 6: it is removed");
+      assert.equal(zoneOf(engine, id("p1-top")), "removed");
+      assert.equal(zoneOf(engine, id(`${chosen}-top`)), "removed", "the selected opponent removes their top card");
+      const other = chosen === "p2" ? "p3" : "p2";
+      assert.equal(zoneOf(engine, id(`${other}-top`)), "deck", "the other opponent is not one of 'both players'");
+    });
+  }
+
+  test("Seed 2: classic two-player play is unchanged (nobody is asked)", () => {
+    const survives = destroy(SEED_2, { p1: 4, p2: 4 });
     assert.equal(pending(survives.engine), undefined);
     assert.equal(zoneOf(survives.engine, survives.id("lb")), "play");
-    const dies = destroy(SEED_2, { p1: 5, p2: 2, p3: 6 });
+    const dies = destroy(SEED_2, { p1: 3, p2: 4 });
     assert.equal(zoneOf(dies.engine, dies.id("lb")), "removed");
-    const classic = destroy(SEED_2, { p1: 3, p2: 4 });
-    assert.equal(zoneOf(classic.engine, classic.id("lb")), "removed");
   });
 });
 
@@ -700,21 +714,25 @@ describe("Meat of the Mountain - \"If a player draws any number of cards, that p
     assert.equal(engine.state.cards[id("meat")].counters.token, 3);
   });
 
-  test("0 TOKENS: the drawing player's opponents (not the drawer) discard a card", () => {
-    const { engine, id } = board(SEATS, 1, "p2");
-    draw(engine, id, "p2");
-    reply(engine, "p2", { kind: "chooserSelectsOption", index: 2 });
-    // p2's opponents (p3, then p1, in seat order from p2) each choose their own discard.
-    assert.equal(pending(engine)?.kind, "chooserSelectsTarget");
-    assert.equal(pending(engine)?.playerId, "p3");
-    pick(engine, "p3", id("p3-hand0"));
-    assert.equal(pending(engine)?.playerId, "p1");
-    pick(engine, "p1", id("p1-hand0"));
-    assert.equal(pending(engine), undefined);
-    assert.equal(zoneOf(engine, id("p1-hand0")), "discard");
-    assert.equal(zoneOf(engine, id("p3-hand0")), "discard");
-    assert.equal(inZone(engine, "p2", "hand"), 4, "the drawer discards nothing (3 + the card drawn)");
-  });
+  for (const chosen of ["p3", "p1"] as PlayerId[]) {
+    test(`0 TOKENS: "that player's opponent" — the drawing player selects one opponent (${chosen}), who discards a card`, () => {
+      const { engine, id } = board(SEATS, 1, "p2");
+      draw(engine, id, "p2");
+      reply(engine, "p2", { kind: "chooserSelectsOption", index: 2 });
+      assert.equal(pending(engine)?.kind, "chooseOpponent");
+      assert.equal(pending(engine)?.playerId, "p2", "the drawing player selects their opponent (MP 2)");
+      assert.deepEqual(pending(engine)?.candidates, ["p3", "p1"]);
+      reply(engine, "p2", { kind: "chooseOpponent", opponentId: chosen });
+      assert.equal(pending(engine)?.kind, "chooserSelectsTarget");
+      assert.equal(pending(engine)?.playerId, chosen, "the selected opponent chooses their own discard");
+      pick(engine, chosen, id(`${chosen}-hand0`));
+      assert.equal(pending(engine), undefined);
+      assert.equal(zoneOf(engine, id(`${chosen}-hand0`)), "discard");
+      const other = chosen === "p3" ? "p1" : "p3";
+      assert.equal(inZone(engine, other, "hand"), 3, "the opponent not selected discards nothing");
+      assert.equal(inZone(engine, "p2", "hand"), 4, "the drawer discards nothing (3 + the card drawn)");
+    });
+  }
 
   test("classic two-player play is unchanged: the opponent's draw makes the Meat's controller discard at 0 tokens", () => {
     const { engine, id } = board(ONE_ON_ONE, 1, "p2");
@@ -852,7 +870,7 @@ function nextTurn(engine: Engine, playerId: PlayerId, abilityId: string): void {
   settleTriggers(engine, abilityId);
 }
 
-describe("d rulings kept as encoded: \"both players\" / \"their opponent\" at the start of EACH player's turn means every player", () => {
+describe("\"Both players\" / \"their opponent\" at the start of each player's turn (MP 2 / MP 3)", () => {
   const CHEST = "fe7095e0-d918-420c-9303-fbc5054d2564";
   const FTA = ["72056e1f-62f5-41e1-865f-6a40a18a609e", "6a09105b-8cde-488e-ae5b-89ebc81beade", "234559f8-329c-4c05-bc09-c34e087a4182"];
   const EMBIGGENER = "88ddad6c-4df5-4baa-b1b8-c7492f67d42e";
@@ -862,13 +880,14 @@ describe("d rulings kept as encoded: \"both players\" / \"their opponent\" at th
     ...extra
   ];
   const handSize = (engine: Engine, owner: PlayerId) => inZone(engine, owner, "hand");
-
-  test("Community Chest: at p2's turn start every player (p2, p3, p1 in seat order) may draw a card or play a resource", () => {
-    const { engine } = buildGame({
-      players: SEATS,
-      cards: [{ key: "cc", def: printing(CHEST), owner: "p1" }, ...withStock(SEATS, [])]
-    });
-    nextTurn(engine, "p1", "chest-boon");
+  const resource = (owner: PlayerId) => ({
+    key: `${owner}-res`,
+    def: resourceCard({ name: `Res${owner}`, resource: { provides: ["rage"], staple: true } }),
+    owner,
+    zone: "hand" as const
+  });
+  /** Accept every "may draw / play a resource" offer (drawing), recording who was offered. */
+  const takeChestOffers = (engine: Engine): string[] => {
     const offered: string[] = [];
     while (pending(engine)?.kind === "mayPay") {
       offered.push(pending(engine)!.playerId);
@@ -876,34 +895,80 @@ describe("d rulings kept as encoded: \"both players\" / \"their opponent\" at th
       assert.equal(pending(engine)?.kind, "chooserSelectsOption");
       reply(engine, pending(engine)!.playerId, { kind: "chooserSelectsOption", index: 0 });
     }
-    assert.deepEqual(offered, ["p2", "p3", "p1"]);
-    for (const owner of ["p1", "p2", "p3"] as PlayerId[]) assert.equal(handSize(engine, owner), 3, `${owner} drew`);
+    return offered;
+  };
+
+  test("Community Chest: at an opponent's turn start, both players are you and that opponent; the third player is left out", () => {
+    const { engine } = buildGame({ players: SEATS, cards: [{ key: "cc", def: printing(CHEST), owner: "p1" }, ...withStock(SEATS, [])] });
+    nextTurn(engine, "p1", "chest-boon");
+    assert.deepEqual(takeChestOffers(engine), ["p2", "p1"]);
+    assert.equal(handSize(engine, "p1"), 3);
+    assert.equal(handSize(engine, "p2"), 3);
+    assert.equal(handSize(engine, "p3"), 2, "p3 is not one of the two players");
   });
 
-  test("Free Trade Agreement: with option 1 the active player draws and every other player may play a resource", () => {
-    for (const id of FTA) {
-      const resource = (owner: PlayerId) => ({ key: `${owner}-res`, def: resourceCard({ name: `Res${owner}`, resource: { provides: ["rage"], staple: true } }), owner, zone: "hand" as const });
+  test("Community Chest: at your own turn start you select the opponent who is the other of both players", () => {
+    const { engine } = buildGame({
+      players: SEATS,
+      activePlayerId: "p3",
+      cards: [{ key: "cc", def: printing(CHEST), owner: "p1" }, ...withStock(SEATS, [])]
+    });
+    nextTurn(engine, "p3", "chest-boon");
+    assert.equal(engine.state.activePlayerId, "p1");
+    assert.equal(pending(engine)?.kind, "chooseOpponent");
+    assert.deepEqual(pending(engine)?.candidates, ["p2", "p3"]);
+    reply(engine, "p1", { kind: "chooseOpponent", opponentId: "p3" });
+    assert.deepEqual(takeChestOffers(engine), ["p1", "p3"]);
+    assert.equal(handSize(engine, "p2"), 2, "the opponent not selected is left out");
+  });
+
+  test("Community Chest: two players — both are offered, nobody is asked to select", () => {
+    const { engine } = buildGame({ players: ONE_ON_ONE, cards: [{ key: "cc", def: printing(CHEST), owner: "p1" }, ...withStock(ONE_ON_ONE, [])] });
+    nextTurn(engine, "p1", "chest-boon");
+    assert.deepEqual(takeChestOffers(engine), ["p2", "p1"]);
+  });
+
+  for (const id of FTA) {
+    test(`Free Trade Agreement ${id.slice(0, 6)}: option 1 — that player draws, and the opponent THEY select may play a resource`, () => {
       const { engine, id: card } = buildGame({
         players: SEATS,
         cards: [{ key: "fta", def: printing(id), owner: "p1" }, ...withStock(SEATS, [resource("p1"), resource("p3")])]
       });
       nextTurn(engine, "p1", "modal");
       assert.equal(pending(engine)?.kind, "chooserSelectsOption");
-      assert.equal(pending(engine)?.playerId, "p2", "the turn's player chooses");
       reply(engine, "p2", { kind: "chooserSelectsOption", index: 0 });
+      // "Their opponent": the turn's player selects one of their own opponents, which may be someone other than the card's controller.
+      assert.equal(pending(engine)?.kind, "chooseOpponent");
+      assert.equal(pending(engine)?.playerId, "p2");
+      assert.deepEqual(pending(engine)?.candidates, ["p3", "p1"]);
+      reply(engine, "p2", { kind: "chooseOpponent", opponentId: "p3" });
       reply(engine, "p2", { kind: "mayPay", pay: true });
-      // Every other player (p3 then p1) is offered the resource play.
       assert.equal(pending(engine)?.playerId, "p3");
       reply(engine, "p3", { kind: "chooserSelectsTarget", selected: [card("p3-res")], faceDown: true });
-      assert.equal(pending(engine)?.playerId, "p1");
-      reply(engine, "p1", { kind: "chooserSelectsTarget", selected: [card("p1-res")], faceDown: true });
+      assert.equal(pending(engine), undefined, "the player not selected (p1) is not offered anything");
       assert.equal(zoneOf(engine, card("p3-res")), "play");
-      assert.equal(zoneOf(engine, card("p1-res")), "play");
-      assert.equal(handSize(engine, "p2"), 3, "the active player drew");
-    }
+      assert.equal(zoneOf(engine, card("p1-res")), "hand");
+      assert.equal(handSize(engine, "p2"), 3, "that player drew");
+    });
+  }
+
+  test("Free Trade Agreement: option 2 — that player plays a resource, and the opponent they select may draw", () => {
+    const { engine, id: card } = buildGame({
+      players: SEATS,
+      cards: [{ key: "fta", def: printing(FTA[0]), owner: "p1" }, ...withStock(SEATS, [resource("p2")])]
+    });
+    nextTurn(engine, "p1", "modal");
+    reply(engine, "p2", { kind: "chooserSelectsOption", index: 1 });
+    reply(engine, "p2", { kind: "chooseOpponent", opponentId: "p1" });
+    reply(engine, "p2", { kind: "chooserSelectsTarget", selected: [card("p2-res")], faceDown: true });
+    reply(engine, "p1", { kind: "mayPay", pay: true });
+    assert.equal(pending(engine), undefined);
+    assert.equal(zoneOf(engine, card("p2-res")), "play");
+    assert.equal(handSize(engine, "p1"), 3, "the selected opponent drew");
+    assert.equal(handSize(engine, "p3"), 2);
   });
 
-  test("Free Trade Agreement: with option 3 every player may draw up to 2 cards", () => {
+  test("Free Trade Agreement: option 3 — both players (you and the turn's player) may draw up to 2 cards", () => {
     const { engine } = buildGame({ players: SEATS, cards: [{ key: "fta", def: printing(FTA[1]), owner: "p1" }, ...withStock(SEATS, [])] });
     nextTurn(engine, "p1", "modal");
     reply(engine, "p2", { kind: "chooserSelectsOption", index: 2 });
@@ -912,11 +977,42 @@ describe("d rulings kept as encoded: \"both players\" / \"their opponent\" at th
       offered.push(pending(engine)!.playerId);
       reply(engine, pending(engine)!.playerId, { kind: "mayPay", pay: true });
     }
-    assert.deepEqual(offered, ["p2", "p2", "p3", "p3", "p1", "p1"]);
-    for (const owner of ["p1", "p2", "p3"] as PlayerId[]) assert.equal(handSize(engine, owner), 4);
+    assert.deepEqual(offered, ["p2", "p2", "p1", "p1"]);
+    assert.equal(handSize(engine, "p1"), 4);
+    assert.equal(handSize(engine, "p2"), 4);
+    assert.equal(handSize(engine, "p3"), 2);
   });
 
-  test("Ambiguity Embiggener: the turn's player picks X, then every player bottoms X cards and draws that many", () => {
+  test("Free Trade Agreement: on your own turn, the opponent you select serves the whole card (asked once)", () => {
+    const { engine, id: card } = buildGame({
+      players: SEATS,
+      activePlayerId: "p3",
+      cards: [{ key: "fta", def: printing(FTA[2]), owner: "p1" }, ...withStock(SEATS, [resource("p2")])]
+    });
+    nextTurn(engine, "p3", "modal");
+    reply(engine, "p1", { kind: "chooseOpponent", opponentId: "p2" });
+    reply(engine, "p1", { kind: "chooserSelectsOption", index: 0 });
+    reply(engine, "p1", { kind: "mayPay", pay: true });
+    assert.equal(pending(engine)?.playerId, "p2", "no second selection: the block's opponent carries on");
+    reply(engine, "p2", { kind: "chooserSelectsTarget", selected: [card("p2-res")], faceDown: true });
+    assert.equal(pending(engine), undefined);
+    assert.equal(zoneOf(engine, card("p2-res")), "play");
+  });
+
+  test("Free Trade Agreement: two players — option 1 asks nobody to select", () => {
+    const { engine, id: card } = buildGame({
+      players: ONE_ON_ONE,
+      cards: [{ key: "fta", def: printing(FTA[0]), owner: "p1" }, ...withStock(ONE_ON_ONE, [resource("p1")])]
+    });
+    nextTurn(engine, "p1", "modal");
+    reply(engine, "p2", { kind: "chooserSelectsOption", index: 0 });
+    reply(engine, "p2", { kind: "mayPay", pay: true });
+    reply(engine, "p1", { kind: "chooserSelectsTarget", selected: [card("p1-res")], faceDown: true });
+    assert.equal(pending(engine), undefined);
+    assert.equal(zoneOf(engine, card("p1-res")), "play");
+  });
+
+  test("Ambiguity Embiggener: the turn's player picks X, then both players (you and them) bottom X cards and draw that many", () => {
     const { engine, id } = buildGame({
       players: SEATS,
       cards: [{ key: "ae", def: printing(EMBIGGENER), owner: "p1" }, ...withStock(SEATS, [])]
@@ -925,38 +1021,52 @@ describe("d rulings kept as encoded: \"both players\" / \"their opponent\" at th
     assert.equal(pending(engine)?.kind, "chooseNumber");
     assert.equal(pending(engine)?.playerId, "p2");
     reply(engine, "p2", { kind: "chooseNumber", value: 1 });
-    for (const player of ["p2", "p3", "p1"] as PlayerId[]) {
-      assert.equal(pending(engine)?.playerId, player, "every player in seat order from the turn's player");
+    for (const player of ["p2", "p1"] as PlayerId[]) {
+      assert.equal(pending(engine)?.playerId, player, "both players in seat order from the turn's player");
       pick(engine, player, id(`${player}-hand0`));
     }
     assert.equal(pending(engine), undefined);
-    for (const owner of ["p1", "p2", "p3"] as PlayerId[]) {
+    for (const owner of ["p1", "p2"] as PlayerId[]) {
       assert.equal(zoneOf(engine, id(`${owner}-hand0`)), "deck");
       assert.equal(handSize(engine, owner), 2, `${owner} put one on the bottom and drew one`);
     }
+    assert.equal(zoneOf(engine, id("p3-hand0")), "hand", "the third player is left out");
   });
 });
 
-describe("d rulings: \"Your opponent cannot respond to this card\" denies a response to every player (noResponse kept)", () => {
+describe("\"Your opponent cannot respond to this card\" shuts out the opponent it is played against (MP 2); \"your opponents\" shuts out all", () => {
   const VACATION = ["f5b4db56-d972-48de-b1b5-7f16b7d427aa", "4181e922-7ffb-4c71-aef6-17adf4f006c7", "5ca25182-e910-4f21-97d0-b30298e7d4af"];
   const MOLESTATION = ["d0f8ae01-7941-4b39-9292-1ad30f8eec9d", "12cfc4e1-e8f7-431e-a37a-593210181b0c", "f77f9b48-ebfb-4f8f-a32d-46a0309da781"];
   const SOCK_PUPPET = ["ab111049-6ba1-430e-8d27-f647bcd5ac35", "300ab3d1-3214-4fa5-9000-d657e6e7816d"];
   const SUBSECTION = ["8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a", "23fe59c9-9bf1-49d1-bfc4-084c556aca80"];
-  const VOIDAL = ["7416a581-63a8-495f-a845-f79eeddf2eea", "63369e53-e89b-4b7d-beb0-7110cb1290ce", "b9e94612-3cbd-44ff-9aac-a553a49c0955"];
+  /** 1st / 2nd Edition print "your opponent"; Open Beta prints "your opponents". */
+  const VOIDAL_SINGULAR = ["7416a581-63a8-495f-a845-f79eeddf2eea", "63369e53-e89b-4b7d-beb0-7110cb1290ce"];
+  const VOIDAL_PLURAL = "b9e94612-3cbd-44ff-9aac-a553a49c0955";
 
   /** After the card is played, nobody holds priority to respond to it: it is not left on the stack. */
   const resolvedWithoutAWindow = (engine: Engine) => engine.state.responseWindow === undefined && engine.state.responseStack.length === 0;
+  const priority = (engine: Engine) => engine.state.responseWindow?.priorityPlayerId;
+  const offeredTo = (engine: Engine) => engine.state.responseWindow?.stackResponders ?? [];
+  const pass = (engine: Engine, playerId: PlayerId) => engine.perform({ type: "passPriority", playerId } as never);
 
   for (const id of VACATION) {
-    test(`Tactician Vacation ${id.slice(0, 6)}: resolves at once for a table of three, restricting tactics for every player`, () => {
+    test(`Tactician Vacation ${id.slice(0, 6)}: the opponent it is played against cannot respond; the other opponent may, then tactics are restricted for every player`, () => {
       const { engine, id: card } = buildGame({
         players: SEATS,
         cards: [{ key: "tv", def: printing(id), owner: "p1", zone: "hand" }, ...bank("rage", 4), { key: "t1", def: KILL_TACTIC, owner: "p1", zone: "hand" }, fighter("x", "p3")]
       });
-      engine.perform({ type: "playCard", playerId: "p1", cardId: card("tv") } as never);
-      assert.ok(resolvedWithoutAWindow(engine), "no response window is opened on the card");
+      assert.throws(
+        () => engine.perform({ type: "playCard", playerId: "p1", cardId: card("tv") } as never),
+        /opponent/i,
+        "with two opponents, the one it is played against must be selected"
+      );
+      engine.perform({ type: "playCard", playerId: "p1", cardId: card("tv"), opponentId: "p2" } as never);
+      assert.equal(zoneOf(engine, card("tv")), "deploying", "it waits on the stack for the player who may still respond");
+      assert.equal(priority(engine), "p3");
+      assert.deepEqual(offeredTo(engine), ["p3"], "p2 is never offered a response");
+      pass(engine, "p3");
+      resolvePendingResponses(engine);
       assert.equal(zoneOf(engine, card("tv")), "discard");
-      // Every player is restricted, the controller included: no tactic may be played this turn.
       assert.throws(
         () => engine.perform({ type: "playCard", playerId: "p1", cardId: card("t1"), selected: { t: [card("x")] } } as never),
         /tactic/i,
@@ -965,13 +1075,27 @@ describe("d rulings: \"Your opponent cannot respond to this card\" denies a resp
     });
   }
 
+  test("Tactician Vacation: two players — it resolves at once, nobody is asked (classic unchanged)", () => {
+    const { engine, id: card } = buildGame({
+      players: ONE_ON_ONE,
+      cards: [{ key: "tv", def: printing(VACATION[0]), owner: "p1", zone: "hand" }, ...bank("rage", 4)]
+    });
+    engine.perform({ type: "playCard", playerId: "p1", cardId: card("tv") } as never);
+    assert.ok(resolvedWithoutAWindow(engine));
+    assert.equal(zoneOf(engine, card("tv")), "discard");
+  });
+
   for (const id of MOLESTATION) {
-    test(`Degenerate Molestation ${id.slice(0, 6)}: the named opponent discards their whole hand, unanswerable; the other opponent is untouched`, () => {
+    test(`Degenerate Molestation ${id.slice(0, 6)}: the named opponent cannot respond and discards their hand; the other opponent may respond and is untouched`, () => {
       const { engine, id: card } = buildGame({
         players: SEATS,
         cards: [{ key: "dm", def: printing(id), owner: "p1", zone: "hand" }, ...bank("obsession", 10), ...stock("p2", "hand", 2), ...stock("p3", "hand", 2)]
       });
       engine.perform({ type: "playCard", playerId: "p1", cardId: card("dm"), opponentId: "p3" } as never);
+      assert.equal(priority(engine), "p2", "the opponent it is not played against may respond");
+      assert.deepEqual(offeredTo(engine), ["p2"]);
+      pass(engine, "p2");
+      resolvePendingResponses(engine);
       for (let guard = 0; guard < 6 && pending(engine); guard++) {
         const open = pending(engine)!;
         if (open.kind === "chooserSelectsTarget") {
@@ -1013,42 +1137,60 @@ describe("d rulings: \"Your opponent cannot respond to this card\" denies a resp
 
   for (const [name, ids] of [["Exploding Sock Puppet!", SOCK_PUPPET], ["Subsection 5, Paragraph 12", SUBSECTION]] as const) {
     for (const pid of ids) {
-      test(`${name} ${pid.slice(0, 6)}: played in response, it resolves at once - no window opens for the third player to answer it`, () => {
+      test(`${name} ${pid.slice(0, 6)}: played in response against p2, p2 cannot answer it but the third player can`, () => {
         const { engine, id } = respondAfterP3Passes(printing(pid));
-        engine.perform({ type: "playCard", playerId: "p1", cardId: id("resp") } as never);
+        engine.perform({ type: "playCard", playerId: "p1", cardId: id("resp"), opponentId: "p2" } as never);
         assert.equal(pending(engine), undefined);
-        assert.equal(zoneOf(engine, id("resp")), "discard", "it has already resolved");
-        assert.ok(
-          engine.state.responseStack.every(item => item.sourceId !== id("resp")),
-          "it was never left on the stack for the other players to respond to"
-        );
+        assert.ok(engine.state.responseStack.some(item => item.sourceId === id("resp")), "it waits on the stack");
+        assert.equal(priority(engine), "p3", "the third player may respond to it");
+        assert.deepEqual(offeredTo(engine), ["p3"], "p2, the opponent it is played against, is never offered a response to it");
+        pass(engine, "p3");
+        resolvePendingResponses(engine);
+        assert.equal(zoneOf(engine, id("resp")), "discard", "it resolved");
       });
     }
   }
 
-  for (const pid of VOIDAL) {
-    test(`Voidal Replication ${pid.slice(0, 6)}: duplicates the last tactic with no window for anyone to respond`, () => {
-      const SPARK = tactic({
-        name: "Spark",
-        cost: 0,
-        behavior: { abilities: [{ id: "spark", type: "activated", effects: [{ type: "draw", player: "controller", amount: 1 }] }] }
-      });
-      const { engine, id } = buildGame({
-        players: SEATS,
-        cards: [
-          { key: "spark", def: SPARK, owner: "p1", zone: "hand" },
-          { key: "vr", def: printing(pid), owner: "p1", zone: "hand" },
-          ...stock("p1", "deck", 4),
-          ...bank("obsession", 3)
-        ]
-      });
-      engine.perform({ type: "playCard", playerId: "p1", cardId: id("spark") } as never);
+  for (const pid of VOIDAL_SINGULAR) {
+    test(`Voidal Replication ${pid.slice(0, 6)} ("your opponent"): the opponent it is played against cannot respond; the other opponent may`, () => {
+      const { engine, id } = voidalBoard(pid);
+      engine.perform({ type: "playCard", playerId: "p1", cardId: id("vr"), opponentId: "p3" } as never);
+      assert.deepEqual(offeredTo(engine), ["p2"]);
+      pass(engine, "p2");
       resolvePendingResponses(engine);
-      assert.equal(inZone(engine, "p1", "hand"), 2, "Spark drew once (Voidal Replication is still in hand)");
-      engine.perform({ type: "playCard", playerId: "p1", cardId: id("vr") } as never);
-      assert.equal(zoneOf(engine, id("vr")), "discard", "it resolved without a response window");
+      assert.equal(zoneOf(engine, id("vr")), "discard");
       assert.equal(inZone(engine, "p1", "hand"), 2, "the duplicate drew once more");
     });
+  }
+
+  test(`Voidal Replication ${VOIDAL_PLURAL.slice(0, 6)} ("your opponents"): nobody may respond, it resolves at once`, () => {
+    const { engine, id } = voidalBoard(VOIDAL_PLURAL);
+    engine.perform({ type: "playCard", playerId: "p1", cardId: id("vr") } as never);
+    assert.ok(resolvedWithoutAWindow(engine));
+    assert.equal(zoneOf(engine, id("vr")), "discard", "it resolved without a response window");
+    assert.equal(inZone(engine, "p1", "hand"), 2, "the duplicate drew once more");
+  });
+
+  /** p1 has played Spark (it drew), and holds Voidal Replication `pid`. */
+  function voidalBoard(pid: string) {
+    const SPARK = tactic({
+      name: "Spark",
+      cost: 0,
+      behavior: { abilities: [{ id: "spark", type: "activated", effects: [{ type: "draw", player: "controller", amount: 1 }] }] }
+    });
+    const built = buildGame({
+      players: SEATS,
+      cards: [
+        { key: "spark", def: SPARK, owner: "p1", zone: "hand" },
+        { key: "vr", def: printing(pid), owner: "p1", zone: "hand" },
+        ...stock("p1", "deck", 4),
+        ...bank("obsession", 3)
+      ]
+    });
+    built.engine.perform({ type: "playCard", playerId: "p1", cardId: built.id("spark") } as never);
+    resolvePendingResponses(built.engine);
+    assert.equal(inZone(built.engine, "p1", "hand"), 2, "Spark drew once (Voidal Replication is still in hand)");
+    return built;
   }
 });
 
@@ -1058,7 +1200,7 @@ describe("engine-side two-party and standing constructs (no card data change)", 
   const MUSTACHES = ["1dffc074-b158-4134-b52e-9e6e56541cf0", "f276a0be-6c30-4276-a743-30e63619dc41"];
 
   for (const creed of CREEDS) {
-    test(`Mercenary's Creed ${creed.slice(0, 6)} (d: "Both players may use this ability" = every player): the third player may Bribe`, () => {
+    test(`Mercenary's Creed ${creed.slice(0, 6)} ("Both players may use this ability": whoever uses it is "you", MP 3): the third player may Bribe`, () => {
       const { engine, id } = buildGame({
         players: SEATS,
         activePlayerId: "p3",
@@ -1244,4 +1386,154 @@ describe("Emergency Obfuscation - \"both players switch seats\" (MP 3: the contr
       assert.equal(built.engine.state.cards[built.id("m1")].controllerId, "p2");
     });
   }
+});
+
+describe("Seed \"both players\" vs Seed Saga \"each player\" (MP 3): Thabbashite Wizard, Gambling Den", () => {
+  const WIZARD = { seed: "2c419c3a-cd05-4d6c-b6c4-6d2e64655218", saga: "9470335e-1d2b-46a5-861e-04527371ffb2" };
+  const DEN = { seed: "ee8821d4-4933-4e4b-a632-c4db1b91ea95", saga: "0a6c2548-8c2a-4352-a8ea-b97257aa2ac7" };
+  const decks = SEATS.flatMap(seat => stock(seat.id, "deck", 4));
+
+  /** Plays the Wizard for p1 and answers every "draw up to 2" with 0, recording who was asked. */
+  const playWizard = (id: string, opponentId?: PlayerId) => {
+    const { engine, id: card } = buildGame({
+      players: SEATS,
+      cards: [{ key: "wiz", def: printing(id), owner: "p1", zone: "hand" }, ...bank("obsession", 3), ...decks]
+    });
+    engine.perform({ type: "playCard", playerId: "p1", cardId: card("wiz") } as never);
+    resolvePendingResponses(engine);
+    if (opponentId !== undefined) {
+      assert.equal(pending(engine)?.kind, "chooseOpponent", "the controller selects the other of both players");
+      reply(engine, "p1", { kind: "chooseOpponent", opponentId });
+    }
+    const asked: string[] = [];
+    while (pending(engine)?.kind === "chooseNumber") {
+      asked.push(pending(engine)!.playerId);
+      reply(engine, pending(engine)!.playerId, { kind: "chooseNumber", value: 0 });
+    }
+    assert.equal(pending(engine), undefined);
+    return asked;
+  };
+
+  test("Thabbashite Wizard (Seed, \"both players\"): you and the opponent you select may draw; the third player is not asked", () => {
+    assert.deepEqual(playWizard(WIZARD.seed, "p3"), ["p1", "p3"]);
+  });
+
+  test("Thabbashite Wizard (Seed Saga, \"each player\"): every player may draw", () => {
+    assert.deepEqual(playWizard(WIZARD.saga), ["p1", "p2", "p3"]);
+  });
+
+  const denTurn = (id: string) => {
+    const built = buildGame({
+      players: SEATS,
+      activePlayerId: "p3",
+      cards: [{ key: "den", def: printing(id), owner: "p1", zone: "play" }, ...decks]
+    });
+    nextTurn(built.engine, "p3", "wheel");
+    return built;
+  };
+  const answerDen = (engine: Engine) => {
+    const asked: string[] = [];
+    while (pending(engine)?.kind === "chooserSelectsOption") {
+      asked.push(pending(engine)!.playerId);
+      reply(engine, pending(engine)!.playerId, { kind: "chooserSelectsOption", index: 1 });
+    }
+    return asked;
+  };
+
+  test("Gambling Den (Seed, \"both players\"): at the start of your turn you select the opponent; only the two of you may draw", () => {
+    const { engine } = denTurn(DEN.seed);
+    assert.equal(pending(engine)?.kind, "chooseOpponent");
+    reply(engine, "p1", { kind: "chooseOpponent", opponentId: "p2" });
+    assert.deepEqual(answerDen(engine), ["p1", "p2"]);
+    assert.equal(inZone(engine, "p3", "hand"), 0, "the third player draws nothing");
+  });
+
+  test("Gambling Den (Seed Saga, \"each player\"): every player may draw", () => {
+    const { engine } = denTurn(DEN.saga);
+    assert.deepEqual(answerDen(engine), ["p1", "p2", "p3"]);
+  });
+});
+
+describe("per-player printed scopes: \"those players\", \"that player\", \"as though you were your opponent\"", () => {
+  test("Underhanded Gamer (Seed Saga): cannot be blocked by the opponents who control more characters than you — the others may block", () => {
+    const gamerId = CATALOG.find(c => c.id.startsWith("8bed01de"))!.id;
+    const board = () =>
+      buildGame({
+        players: SEATS,
+        cards: [
+          { key: "g", def: printing(gamerId), owner: "p1", zone: "play" },
+          fighter("p2a", "p2"),
+          fighter("p2b", "p2"),
+          fighter("p3a", "p3"),
+          ...banks(1)
+        ]
+      });
+    const outsmart = (engine: Engine, id: (k: string) => string) => activate(engine, "p1", id("g"), "outsmart");
+    const a = board();
+    outsmart(a.engine, a.id);
+    assert.throws(() => startBattle(a.engine, "p1", "p2", [a.id("g")], [a.id("p2a")]), /cannot be blocked/i, "p2 controls more characters: p2 cannot block it");
+    const b = board();
+    outsmart(b.engine, b.id);
+    startBattle(b.engine, "p1", "p3", [b.id("g")], [b.id("p3a")]);
+    assert.ok(b.engine.state.battle?.blockingParty.includes(b.id("p3a")), "p3 does not control more characters than p1: p3 may block it");
+  });
+
+  test("Omahkapi'si Pi'kssii: only an opponent with 10+ cards in their own discard pile cannot pick it", () => {
+    const omahId = CATALOG.find(c => c.id.startsWith("7a1759c9"))!.id;
+    const discard = (owner: PlayerId, n: number) =>
+      Array.from({ length: n }, (_, i) => ({ key: `${owner}-x${i}`, def: character({ name: `${owner}X${i}` }), owner, zone: "discard" as const }));
+    const { engine, id } = buildGame({
+      players: SEATS,
+      cards: [{ key: "o", def: printing(omahId), owner: "p1", zone: "play" }, ...discard("p2", 10), ...discard("p3", 9)]
+    });
+    const canPick = (pickerId: PlayerId) =>
+      engine
+        .targetCandidates({ zone: "play", type: "character" }, { sourceId: engine.state.players[pickerId].factionId!, controllerId: pickerId, selected: {} }, pickerId)
+        .some(card => card.id === id("o"));
+    assert.equal(canPick("p2"), false, "p2 has 10 cards in their discard pile: p2 cannot pick it");
+    assert.equal(canPick("p3"), true, "p3 has 9: p3 may pick it");
+    assert.equal(canPick("p1"), true, "its controller is never barred");
+  });
+
+  test("The Billionaire (1st Edition): using an opponent's ability as that opponent, you select THEIR opponent for it (MP 2)", () => {
+    const billionaireId = CATALOG.find(c => c.id.startsWith("ff195e18"))!.id;
+    const DRAIN = character({
+      name: "Drainer",
+      behavior: { abilities: [{ id: "drain", type: "activated", costs: [], effects: [{ type: "modifyInfluence", player: "opponent", amount: -1 }] }] }
+    });
+    const board = () =>
+      buildGame({ players: SEATS, cards: [{ key: "b", def: printing(billionaireId), owner: "p1", zone: "play" }, { key: "d", def: DRAIN, owner: "p2", zone: "play" }] });
+    const use = (engine: Engine, cardId: string, opponentId?: PlayerId) =>
+      engine.perform({ type: "activateAbility", playerId: "p1", cardId, abilityId: "drain", ...(opponentId ? { opponentId } : {}) } as never);
+    const a = board();
+    assert.throws(() => use(a.engine, a.id("d")), /Choose which opponent/, "p2 has two opponents: one must be selected");
+    assert.throws(() => use(a.engine, a.id("d"), "p2"), /not one of/, "p2 is not their own opponent");
+    for (const target of ["p3", "p1"] as PlayerId[]) {
+      const g = board();
+      const before = influence(g.engine, target);
+      use(g.engine, g.id("d"), target);
+      resolvePendingResponses(g.engine);
+      assert.equal(influence(g.engine, target), before - 1, `the effect happens to the opponent selected for it (${target})`);
+    }
+  });
+
+  test("Final Countdown's shape: a delayed effect waiting for an opponent's next turn is dropped when that opponent is eliminated (D8)", () => {
+    const COUNTDOWN = character({
+      name: "Countdown",
+      behavior: {
+        abilities: [
+          { id: "count", type: "activated", costs: [], effects: [{ type: "scheduleEffect", when: "startOfOpponentNextTurn", effects: [{ type: "modifyInfluence", player: "controller", amount: 5 }] }] }
+        ]
+      }
+    });
+    const { engine, id } = buildGame({ players: SEATS, cards: [{ key: "c", def: COUNTDOWN, owner: "p1", zone: "play" }] });
+    engine.perform({ type: "activateAbility", playerId: "p1", cardId: id("c"), abilityId: "count", opponentId: "p3" } as never);
+    resolvePendingResponses(engine);
+    assert.equal(engine.state.scheduledEffects.length, 1);
+    engine.state.players.p3.influence = 0;
+    engine.perform({ type: "endTurn", playerId: "p1" } as never);
+    resolvePendingResponses(engine);
+    assert.equal(isLiving(engine.state, "p3"), false);
+    assert.equal(engine.state.scheduledEffects.length, 0, "p3's next turn never comes: the effect is dropped");
+  });
 });

@@ -5510,7 +5510,8 @@ clause(BURLY, "2:flipUp", "a face-down Burly that was already spent this turn (a
 
 clause(BURLY, "2:flipUp", "a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves", () => {
   const g = burlyFaceDown();
-  flipBurly(g, "fc")();
+  // held: the flip's response window stays open on the opponent (the helper's auto-pass would leave the LAST passer's seat there)
+  holdFlipUp(() => flipBurly(g, "fc")());
   assert.ok(g.engine.state.responseWindow, "a response window is open after the cost is paid (CR 604.1g, 607.1)");
   assert.equal(g.engine.state.responseWindow?.priorityPlayerId, P2, "the opponent may respond");
 });

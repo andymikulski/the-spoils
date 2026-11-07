@@ -761,7 +761,9 @@ clause(UI, "0:extraCost", "your opponents cannot respond to it: the opponent's o
   const b = uiBoard({ extra: [{ key: "answer", def: free("Answer"), owner: P2, zone: "hand" }] });
   useAbility(b.engine, P2, b.id("mage"));
   playRaw(b.engine, P1, b.id("ui"));
-  refused(() => playRaw(b.engine, P2, b.id("answer")), "the opponent cannot respond to the Intrusion", /priority/);
+  // Nobody may respond to it: it resolved at once, ended the ability beneath, and the window closed on the empty stack.
+  assert.equal(zoneOf(b.engine, b.id("ui")), "discard", "it resolved without the opponent being offered a response");
+  assert.equal(b.engine.state.responseWindow, undefined, "nothing is left to respond to: the window closed");
   assert.equal(zoneOf(b.engine, b.id("answer")), "hand");
 });
 

@@ -64,6 +64,16 @@ export interface ResolutionContext {
    * during this resolution, so the interrupted `playResource` does not ask again for the same card.
    */
   resourceRevealOffered?: CardInstanceId[];
+
+  /**
+   * Set while a replacement's effects resolve (CR §506): the card whose event
+   * it replaces and the replacement's key. They happen instead of the event,
+   * as one — no state-based check and no trigger processing between them, in
+   * nested effect lists too (those run once it has finished) — and, while any
+   * of them is still to run (across a pause too), the replacement is not
+   * applied to that card again (CR §506.5).
+   */
+  replacing?: { cardId: CardInstanceId; key: string };
 }
 
 export interface TriggerResolution {
@@ -106,6 +116,12 @@ export interface StackItem {
    * X is its numeric cost").
    */
   playCost?: number;
+
+  /**
+   * Players who may not respond to this item while it is on top of the stack
+   * ("your opponent cannot respond to this card", `noResponse: "opponent"`).
+   */
+  unanswerableBy?: PlayerId[];
 
   context: ResolutionContext;
 }

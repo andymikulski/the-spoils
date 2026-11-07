@@ -495,11 +495,13 @@ function numericCostUntouched(a: SkyAbility) {
 function persistsAcrossTurns(a: SkyAbility) {
   const b = skyBoard({ rage: 1, greed: 3, vol: volFor(a), hand: [thrCard("A", "r".repeat(a.max + 1))] });
   nameIcon(b, a, "rage");
+  const turnBefore = b.engine.state.turn;
   endTurn(b.engine, P1);
   assert.equal(b.engine.state.activePlayerId, P2);
   endTurn(b.engine, P2);
   assert.equal(b.engine.state.activePlayerId, P1);
-  assert.equal(b.engine.state.turn, 3);
+  // a full round: one turn per seat (2 at a two-player table, so turn 3 from turn 1)
+  assert.equal(b.engine.state.turn, turnBefore + b.engine.state.turnOrder.length);
   deployOk(b, "A");
 }
 function opponentUnaffected(a: SkyAbility) {

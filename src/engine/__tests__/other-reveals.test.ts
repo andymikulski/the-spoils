@@ -363,6 +363,8 @@ describe("reveals the engine emits for data flags and rules", () => {
               id: "auction",
               type: "triggered",
               event: "turnStarted",
+              // Only the start of its controller's own turn: at a bigger table the other seats start turns too.
+              condition: { type: "isActivePlayer" },
               effects: [{ type: "auctionForCard", revealFor: "controller" }]
             }
           ]

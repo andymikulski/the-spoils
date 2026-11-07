@@ -125,7 +125,10 @@ describe("fidelity pass", () => {
         { key: "h1", def: character({ name: "Held", id: "fx-held" }), owner: P2, zone: "hand" }
       ]
     });
-    assert.deepEqual(engine.getFlowView().revealed.hands, [P2]);
+    // "Each opponent": at a bigger table every seat but the Diva's controller.
+    const opponents = engine.state.turnOrder.filter(seat => seat !== P1);
+    assert.deepEqual([...engine.getFlowView().revealed.hands].sort(), [...opponents].sort());
+    assert.ok(engine.getFlowView().revealed.hands.includes(P2));
   });
 
   test("Intellectual Reliquary — take a tactic from the top 3 to hand, rest to the bottom", () => {

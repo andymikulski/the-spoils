@@ -159,7 +159,7 @@ const KNOWN_TYPE_TAGS = new Set([
   "alternatingPayLoop", "if", "shuffleDeck",
   "mill", "bind",
   "terminate", "terminateEndOfTurn", "setRestoreLock", "setDamage", "removeFromBattle", "addToBattle",
-  "forEachPlayer", "nameValue", "mayPay", "createTokens", "useTargetAbility",
+  "forEachPlayer", "asPlayer", "nameValue", "mayPay", "createTokens", "useTargetAbility",
   "chooserSelectsTarget", "chooserSelectsOption", "lookAndReorder",
   "reduceNextCost", "deployForFree", "distributeAmong",
   "flipFaceDown", "flipFaceUp", "flipFactionCard", "putIntoPlay", "deployFromZone", "detach", "scheduleEffect",

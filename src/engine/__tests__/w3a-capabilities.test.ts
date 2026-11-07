@@ -324,7 +324,7 @@ describe("W3a: a faction ability both players write (FactionDefinition.playerCre
       [rd, plain, filler],
       [{ id: P1, name: "A", deckDefinitionIds: [rd.id, ...Array(8).fill(filler.id)] },
       { id: P2, name: "B", deckDefinitionIds: [plain.id, ...Array(8).fill(filler.id)] }],
-      { seed: 3, ...(withAbility ? { createdAbility: created } : {}) }
+      { seed: 3, ...(withAbility ? { createdAbilities: { [P1]: { spec: created } } } : {}) }
     );
 
   test("setup gives the ability to the faction card that asks for it, and only that one", () => {
@@ -333,7 +333,8 @@ describe("W3a: a faction ability both players write (FactionDefinition.playerCre
     const plainCard = engine.state.players[P2].factionId!;
     assert.equal(engine.state.cards[rdCard].createdAbility?.text, createdText);
     assert.deepEqual(engine.state.cards[rdCard].createdAbility?.spec, created);
-    assert.equal(engine.state.cards[rdCard].createdAbility?.ability.usableBy, "anyPlayer");
+    assert.equal(engine.state.cards[rdCard].createdAbility?.ability.usableBy, "controllerAndOpponent");
+    assert.equal(engine.state.cards[rdCard].chosenOpponentId, P2);
     assert.equal(engine.state.cards[plainCard].createdAbility, undefined);
     assert.equal(game(false).state.cards[rdCard].createdAbility, undefined, "no ability written: the card has none");
   });

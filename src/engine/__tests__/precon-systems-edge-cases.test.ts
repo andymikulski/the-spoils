@@ -143,7 +143,9 @@ describe("systems: several independent battles inside one main phase", () => {
     // --- Turn passes to P2. ---
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
-    assert.equal(engine.state.turn, 2);
+    // P2's turn: the next turn at a two-player table, later when seats sit between P1 and P2.
+    const p2Turn = 1 + ((engine.state.turnOrder.indexOf(P2) - engine.state.turnOrder.indexOf(P1) + engine.state.turnOrder.length) % engine.state.turnOrder.length);
+    assert.equal(engine.state.turn, p2Turn);
     assert.equal(engine.state.activePlayerId, P2);
 
     settleTurnStart(engine, "draw");
@@ -184,7 +186,7 @@ describe("systems: several independent battles inside one main phase", () => {
 
     assert.equal(engine.state.players[P1].influence, p1Start - 5);
     assert.equal(engine.state.battle, undefined);
-    assert.equal(engine.state.turn, 2);
+    assert.equal(engine.state.turn, p2Turn);
     assert.equal(engine.state.activePlayerId, P2);
     assert.equal(engine.getFlowView().mode, "main");
   });
@@ -670,13 +672,17 @@ describe("systems: turn-start triggers recur every one of their controller's tur
     });
 
     assert.equal(engine.getStat(id("berserker"), "strength"), 5);
+    // Turns from one original player's turn to the other's: 1 at a two-player table, more with seats between them.
+    const order = engine.state.turnOrder;
+    const toP2 = (order.indexOf(P2) - order.indexOf(P1) + order.length) % order.length;
+    const toP1 = order.length - toP2;
 
     // --- Turn 1 -> 2 (P1 -> P2): Berserker Corps' own "start of my turn"
     // trigger fires; Voidal Observatory's doesn't (it isn't P1's turn).
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
 
-    assert.equal(engine.state.turn, 2);
+    assert.equal(engine.state.turn, 1 + toP2);
     assert.equal(engine.state.activePlayerId, P2);
     settleTurnStart(engine, "draw");
     const berserkerPickTurn2 = engine.state.pendingChoice;
@@ -705,7 +711,7 @@ describe("systems: turn-start triggers recur every one of their controller's tur
     engine.perform({ type: "endTurn", playerId: P2 });
     resolvePendingResponses(engine);
 
-    assert.equal(engine.state.turn, 3);
+    assert.equal(engine.state.turn, 1 + toP2 + toP1);
     assert.equal(engine.state.activePlayerId, P1);
     settleTurnStart(engine, "draw");
     const observatoryPick = engine.state.pendingChoice;
@@ -730,7 +736,7 @@ describe("systems: turn-start triggers recur every one of their controller's tur
     engine.perform({ type: "endTurn", playerId: P1 });
     resolvePendingResponses(engine);
 
-    assert.equal(engine.state.turn, 4);
+    assert.equal(engine.state.turn, 1 + 2 * toP2 + toP1);
     assert.equal(engine.state.activePlayerId, P2);
     settleTurnStart(engine, "draw");
     const berserkerPickTurn4 = engine.state.pendingChoice;

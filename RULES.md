@@ -831,7 +831,9 @@ from the acting player. An `endTurn` window carries a one-entry queue
 `[attacker, defender]` (CR §608.1c / §609.1a — the attacker acts as many
 times as they want, then the defender), each shifted off when that player
 passes with an empty stack. `noResponse` (Swindle — "your opponents cannot
-respond to this card") resolves its item inline with no window of its own.
+respond to this card") resolves its item inline with no window of its own;
+"your opponent cannot respond" at a bigger table shuts out only the opponent
+it is played against (§16).
 
 **(engine-derived)** Every trigger found for one emitted event shares a
 batch. While 2+ of a batch are still waiting, the engine pauses on
@@ -2005,14 +2007,29 @@ two-player game). Otherwise, in order:
 - a triggering event names it (E3): the player who acted, the controller of
   the card the event is about, or a side of the current battle;
 - otherwise a trigger asks its controller (`chooseOpponent` pending choice).
-A replacement binds the controller of the opponent's card it replaces for.
-Where there is nobody to ask (a deploy an effect makes, a replacement on
-your own card) the first candidate in turn order is taken. A condition
-alone never needs the opponent named (it is judged for each opponent, E4).
-The binding is made afresh for every block (MP 4).
+A replacement binds the controller of the opponent's card it replaces for;
+one on your own card that names an opponent asks you (`chooseOpponent`).
+A card an effect plays is its own block: the answer that plays it names its
+opponent (`deployForFree` / `resourceReveal` `opponentId`), never the
+enclosing block's. Every block that names one opponent has it selected — no
+opponent is ever taken by default. A condition alone never needs the
+opponent named (it is judged for each opponent, E4). The binding is made
+afresh for every block (MP 4). "That player ... their opponent" is MP 2 from
+that player's seat (`asPlayer`). Using an opponent's ability as them (The
+Billionaire), you select one of *their* opponents.
 
 **Both players (MP 3).** "Both players" in a block is the controller and its
-bound opponent (`forEachPlayer { players: "controllerAndOpponent" }`).
+bound opponent (`forEachPlayer { players: "controllerAndOpponent" }`) — also
+in a trigger at the start of each player's turn (Community Chest, Ambiguity
+Embiggener, Free Trade Agreement's options 3–4): on an opponent's turn that
+opponent, on your own the one you select. "That player ... their opponent"
+reads MP 2 from that player's seat: they select one of *their* opponents
+(`asPlayer`; Free Trade Agreement's options 1–2, Meat of the Mountain).
+"Both players may use this ability" (Mercenary's Creed, The Knitting
+Coalition) lets any player use it: whoever uses it is "you" for that block.
+"Your opponent cannot respond to this card" (`noResponse: "opponent"`) shuts
+out the opponent the card is played against; the others may still respond.
+"Your opponents cannot respond" shuts out everyone.
 "Each opponent" / "all opponents" resolves once per opponent
 (`forEachPlayer { players: "opponents" }`, E1); "any opponent may pay" is
 offered to each opponent in turn (`anyPlayerMayPay { players: "opponents" }`,
@@ -2041,7 +2058,9 @@ under Trickster's Globe, whose deck is empty) while others remain is
 eliminated (`PlayerState.eliminated`, `playerEliminated` event): cards they
 control but do not own return to their owners; every card they own leaves the
 game; their actions on the response stack, queued triggers and delayed
-effects are dropped; a battle they are a side of ends. They take no further
+effects (and one waiting for their next turn) are dropped, and whatever was
+still to resolve as them (their pass of an "each player" effect, the rest of
+their own resolution) is skipped; a battle they are a side of ends. They take no further
 turns and are nobody's opponent; if it was their turn it passes once
 whatever is resolving settles. The last player standing wins; players who
 fall together as the last ones draw.
@@ -2067,7 +2086,11 @@ is seen by its Hero, by the Villain, and by everyone once face-up
 is the Villain, or — once their Allegiance card is face-up showing loyalty to
 the Villain — the other Heroes. Heroes may still attack each other (SD 12).
 
-**The table (SD 3, SD 5, SD 11).** `showdown: { heroDeck,
+**The table (SD 2, SD 3, SD 5, SD 11).** Setup refuses a Showdown table
+whose Villain does not use The Evil Alliance (SD 2), that has no Hero Deck
+(SD 3) or no shared Slightly Less Evil Alliance (SD 5): the factions say
+which they are (`FactionDefinition.showdownRole`: `"villain"` /
+`"heroes"`). `showdown: { heroDeck,
 sharedFactionDefinitionId }` at setup: the Hero Deck is shuffled into the
 `table` zone (`GameState.showdown.heroDeck`, face-down to all); the
 Temptation Pile (`temptationPile`) is face-up; the shared faction (Slightly

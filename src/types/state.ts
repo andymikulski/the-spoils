@@ -1398,6 +1398,8 @@ export interface GameState {
     minPartySize?: NumberExpression;
     minSpeed?: NumberExpression;
     condition?: Condition;
+    /** `restrictBlockers.notBy`: the players who cannot block `targetId` ("cannot be blocked by those players"). */
+    notByPlayerIds?: PlayerId[];
     duration: Duration;
     createdTurn: number;
   }>;
@@ -1580,6 +1582,8 @@ export interface GameState {
     affectedCardId: CardInstanceId;
     sourceId: CardInstanceId;
     abilityId: AbilityId;
+    /** "Any opponent may ... instead": the opponents still to be offered it if the current chooser declines, in turn order. */
+    nextChoosers?: PlayerId[];
     original: { event: "destroy" } | { event: "moveToZone"; zone: Zone };
     cost: Cost[];
     effects: Effect[];

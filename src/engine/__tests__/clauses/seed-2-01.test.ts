@@ -3414,7 +3414,7 @@ clause(MANIFEST, "2:flipUp", "a face-down Manifest that was already spent this t
 
 clause(MANIFEST, "2:flipUp", "a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves", () => {
   const g = manifestBoard({ man: "faceDown" });
-  flipManifest(g, g.id("hid"));
+  holdFlipUp(() => flipManifest(g, g.id("hid")));
   assert.ok(g.engine.state.responseWindow, "a response window is open after the cost is paid (CR 604.1g, 607.1)");
   assert.equal(g.engine.state.responseWindow?.priorityPlayerId, P2, "the opponent may respond");
   assert.equal(influenceOf(g.engine, P2), 30, "the effect has not happened yet");
@@ -6631,7 +6631,7 @@ clause(MONKEY, "1:flipUp", "a face-down Ritual that was already spent this turn 
 
 clause(MONKEY, "1:flipUp", "a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves", () => {
   const g = monkeyBoard({ monkey: "faceDown", icons: { obsession: 3 } });
-  flipMonkey(g);
+  holdFlipUp(() => flipMonkey(g));
   assert.ok(g.engine.state.responseWindow, "a response window is open after the cost is paid (CR 604.1g, 607.1)");
   assert.equal(g.engine.state.responseWindow?.priorityPlayerId, P2, "the opponent may respond");
   assert.equal(handOf(g.engine, P2).length, 6, "the effect has not happened yet");
@@ -6910,6 +6910,9 @@ clause(MOONCALF, "0:rule", "an [O] card put into play by an effect (not deployed
 
 const BLADDER = "0b790bde-153c-42d9-8038-feb93e327764";
 
+// "Your opponent takes control" at the start of EACH turn binds whoever's turn starts: at a bigger table an extra
+// seat's turn start is one too (the seat after the controller takes it), which the two-player clauses below never meant.
+// The extra seats sit out of the turn rotation here; multiplayer-tables-saga.test.ts plays it at a real bigger table.
 function bladderBoard(
   opts: {
     tokens?: number;
@@ -6924,7 +6927,7 @@ function bladderBoard(
   } = {}
 ) {
   const where = opts.bladder ?? "play";
-  return buildGame({
+  const game = buildGame({
     turn: opts.active === P2 ? 2 : undefined,
     activePlayerId: opts.active,
     playerA: { faction: developFaction(), influence: opts.inf1 ?? 30 },
@@ -6953,11 +6956,32 @@ function bladderBoard(
       ...(opts.extra ?? [])
     ]
   });
+  game.engine.state.turnOrder = game.engine.state.turnOrder.filter((id) => id === P1 || id === P2);
+  return game;
 }
 
 type BladderGame = ReturnType<typeof bladderBoard>;
 const tgbTokens = (g: BladderGame): number => tokensOn(g.engine, g.id("tgb"));
 const tgbControl = (g: BladderGame): PlayerId => g.engine.state.cards[g.id("tgb")].controllerId as PlayerId;
+
+/**
+ * Who takes the item at the start of the turn after `ender`'s: "your opponent" is bound by the turn-start event to the player whose
+ * turn it is (RULES §16, E3) — P2 at a two-player table, the next seat at a bigger one; when that turn is the controller's own, the
+ * controller names its opponent (the other original player).
+ */
+function takerAfter(g: BladderGame, ender: PlayerId, controller: PlayerId = P1): PlayerId {
+  const order = g.engine.state.turnOrder;
+  const next = order[(order.indexOf(ender) + 1) % order.length];
+  return next === controller ? (controller === P1 ? P2 : P1) : next;
+}
+/** The taker's own turn, after it took the item: an extra seat's turn already ran (and ended) during the wrapper's settle. */
+function endTakersTurn(g: BladderGame, taker: PlayerId): void {
+  if (taker === P1 || taker === P2) endTurnDeclining(g, taker);
+}
+/** Tokens on the item right after it changed hands: 0 for an original taker; an extra taker's whole turn already ran, ending with the item's token (1). */
+const tokensAfterTake = (g: BladderGame): number => (tgbControl(g) === P1 || tgbControl(g) === P2 ? 0 : 1);
+/** Influence a seat starts with here: the two original players 30, an extra seat 99. */
+const startInfluence = (taker: PlayerId): number => (taker === P1 || taker === P2 ? 30 : 99);
 
 /** `player` ends their turn; every prompt that comes up is declined (no resource played), the response windows are drained. */
 function endTurnDeclining(g: BladderGame, player: PlayerId): void {
@@ -7145,8 +7169,8 @@ clause(BLADDER, "1:rule", "at the start of a turn with 3 tokens on it, my oppone
   const g = bladderBoard({ tokens: 3 });
   endTurnDeclining(g, P1);
   assert.equal(g.engine.state.activePlayerId, P2);
-  assert.equal(tgbControl(g), P2, "my opponent now controls it");
-  assert.equal(tgbTokens(g), 0, "all tokens were removed");
+  assert.equal(tgbControl(g), takerAfter(g, P1), "my opponent now controls it");
+  assert.equal(tgbTokens(g), tokensAfterTake(g), "all tokens were removed");
   assert.equal(zoneOf(g.engine, g.id("tgb")), "play");
   assert.equal(g.engine.state.cards[g.id("tgb")].ownerId, P1, "ownership never changes");
 });
@@ -7155,8 +7179,8 @@ clause(BLADDER, "1:rule", "the 3-token check happens at the START of the turn: a
   const g = bladderBoard({ tokens: 2 });
   endTurnDeclining(g, P1);
   assert.equal(g.engine.state.activePlayerId, P2);
-  assert.equal(tgbControl(g), P2);
-  assert.equal(tgbTokens(g), 0);
+  assert.equal(tgbControl(g), takerAfter(g, P1));
+  assert.equal(tgbTokens(g), tokensAfterTake(g));
   assert.equal(influenceOf(g.engine, P1), 27, "I paid the 3 influence for the third token before it left me");
 });
 
@@ -7175,41 +7199,43 @@ clause(BLADDER, "1:rule", "'at least 3': with 4 tokens at the start of a turn it
   const g = bladderBoard({ tokens: 4, active: P2 });
   endTurnDeclining(g, P2);
   assert.equal(g.engine.state.activePlayerId, P1);
-  assert.equal(tgbTokens(g), 0);
-  assert.equal(tgbControl(g), P2, "taken at the start of MY turn by my opponent (the opponent of its controller)");
+  assert.equal(tgbTokens(g), tokensAfterTake(g));
+  assert.equal(tgbControl(g), takerAfter(g, P2), "taken at the start of MY turn by my opponent (the opponent of its controller)");
 });
 
 clause(BLADDER, "1:rule", "'each turn': it also checks at the start of my own turn: 3 tokens at the start of my turn pass the item to my opponent", () => {
   const g = bladderBoard({ tokens: 3, active: P2 });
   endTurnDeclining(g, P2);
   assert.equal(g.engine.state.activePlayerId, P1, "my turn begins");
-  assert.equal(tgbControl(g), P2);
-  assert.equal(tgbTokens(g), 0);
+  // at a bigger table an extra seat's turn starts first and the item changes hands there: the check runs at EVERY turn start
+  assert.equal(tgbControl(g), takerAfter(g, P2));
+  assert.equal(tgbTokens(g), tokensAfterTake(g));
 });
 
 clause(BLADDER, "1:rule", "'your opponent' is the opponent of the CURRENT controller: when my opponent controls it with 3 tokens it returns to me", () => {
   const g = bladderBoard({ tokens: 3, controller: P2 });
   endTurnDeclining(g, P1);
   assert.equal(g.engine.state.activePlayerId, P2);
-  assert.equal(tgbControl(g), P1, "my opponent controls it, so THEIR opponent (me) takes control");
-  assert.equal(tgbTokens(g), 0);
+  assert.equal(tgbControl(g), takerAfter(g, P1, P2), "my opponent controls it, so THEIR opponent (me) takes control");
+  assert.equal(tgbTokens(g), tokensAfterTake(g));
 });
 
 clause(BLADDER, "1:rule", "when it changes hands the item stays in play (it is not destroyed or moved) and keeps its owner", () => {
   const g = bladderBoard({ tokens: 3 });
   endTurnDeclining(g, P1);
   assert.equal(zoneOf(g.engine, g.id("tgb")), "play");
-  assert.ok(playOf(g.engine, P2).includes(g.id("tgb")), "it is among my opponent's cards in play");
+  assert.ok(playOf(g.engine, takerAfter(g, P1)).includes(g.id("tgb")), "it is among my opponent's cards in play");
   assert.equal(playOf(g.engine, P1).includes(g.id("tgb")), false);
 });
 
 clause(BLADDER, "1:rule", "the new controller starts again at 0 tokens: at the end of THEIR turn it gets one token and THEIR faction loses 1", () => {
   const g = bladderBoard({ tokens: 3 });
   endTurnDeclining(g, P1);
-  assert.equal(tgbControl(g), P2);
-  endTurnDeclining(g, P2);
+  const taker = takerAfter(g, P1);
+  assert.equal(tgbControl(g), taker);
+  endTakersTurn(g, taker);
   assert.equal(tgbTokens(g), 1);
-  assert.equal(influenceOf(g.engine, P2), 29, "their faction lost 1");
+  assert.equal(influenceOf(g.engine, taker), startInfluence(taker) - 1, "their faction lost 1");
   assert.equal(influenceOf(g.engine, P1), 26, "mine only lost the 4 from before (a 4th token went on it at the end of my turn)");
 });
 
@@ -7220,8 +7246,8 @@ clause(BLADDER, "1:rule", "a full cycle: the item changes hands every three end-
     if (i < 2) endTurnDeclining(g, P2);
   }
   assert.equal(influenceOf(g.engine, P1), 24, "1 + 2 + 3 = 6 influence paid by me");
-  assert.equal(tgbControl(g), P2, "at the start of their turn it passed to them");
-  assert.equal(tgbTokens(g), 0);
+  assert.equal(tgbControl(g), takerAfter(g, P1), "at the start of their turn it passed to them");
+  assert.equal(tgbTokens(g), tokensAfterTake(g));
 });
 
 clause(BLADDER, "1:rule", "it only works while the item is in play, face-up: with 3 tokens on a face-down item (or one in my hand) nothing changes hands", () => {
@@ -7269,10 +7295,25 @@ function brainsBoard(
 
 type BrainsGame = ReturnType<typeof brainsBoard>;
 /** `player` ends their turn; ties are broken by `tie` (a key), everything else declined. */
-function endTurnTie(g: BrainsGame, player: PlayerId, tie?: string): { prompted: PendingChoiceLike | undefined } {
+function endTurnTie(g: BrainsGame, player: PlayerId, tie?: string, firstEndOnly = false): { prompted: PendingChoiceLike | undefined } {
   g.engine.perform({ type: "endTurn", playerId: player });
   resolvePendingResponses(g.engine);
   let prompted: PendingChoiceLike | undefined;
+  if (firstEndOnly) {
+    // Observe the state right after THIS turn end resolved: the tie answer goes to the engine directly, so the extra seats' turns
+    // (whose own turn ends would return more characters) have not run yet.
+    const pc = pending(g.engine);
+    if (pc?.kind === "selectTargets") {
+      prompted = pc;
+      const decl = ((pc.declarations as Array<{ id: string }>) ?? [])[0]?.id ?? "lowest";
+      Object.getPrototypeOf(g.engine).perform.call(g.engine, {
+        type: "resolvePendingChoice",
+        playerId: pc.playerId,
+        choice: { kind: "selectTargets", selected: { [decl]: tie ? [g.id(tie)] : [] } }
+      });
+    }
+    return { prompted };
+  }
   drain(g.engine, (pc) => {
     if (pc.kind === "selectTargets") {
       prompted = pc;
@@ -7284,12 +7325,28 @@ function endTurnTie(g: BrainsGame, player: PlayerId, tie?: string): { prompted: 
   return { prompted };
 }
 
+/**
+ * Turn ends one `endTurn` by `ender` sets the item off: its own, then every extra seat's that follows before an original player's
+ * turn ("at the end of EACH turn" counts a bystander's turn too). 1 at a two-player table.
+ */
+function turnEndsAfter(g: BrainsGame, ender: PlayerId): number {
+  const order = g.engine.state.turnOrder;
+  let n = 1;
+  for (let i = (order.indexOf(ender) + 1) % order.length; order[i] !== P1 && order[i] !== P2; i = (i + 1) % order.length) n++;
+  return n;
+}
+/** After `ender`'s turn ends: the first `turnEnds` of `cheapestFirst` (one per turn end, per item) are in hand, every other listed character is still in play. */
+function expectGone(g: BrainsGame, ender: PlayerId, cheapestFirst: string[], perEnd = 1): void {
+  const gone = turnEndsAfter(g, ender) * perEnd;
+  cheapestFirst.forEach((key, i) => assert.equal(zoneOf(g.engine, g.id(key)), i < gone ? "hand" : "play", `${key} ${i < gone ? "goes" : "stays"}`));
+}
+
 clause(BRAINS, "0:rule", "at the end of my turn the character with the lowest numeric cost (here cost 1, mine) is put into its owner's hand", () => {
   const g = brainsBoard();
   endTurnTie(g, P1);
   assert.equal(zoneOf(g.engine, g.id("c1")), "hand");
   assert.ok(handOf(g.engine, P1).includes(g.id("c1")), "handOf(g.engine, P1).includes(g.id(\"c1\"))");
-  for (const key of ["c3", "f2", "f5"]) assert.equal(zoneOf(g.engine, g.id(key)), "play", `${key} stays`);
+  expectGone(g, P1, ["c1", "f2", "c3", "f5"]);
   assert.equal(g.engine.state.pendingChoice, undefined, "no tie, no question");
 });
 
@@ -7297,7 +7354,7 @@ clause(BRAINS, "0:rule", "'each turn': it also happens at the end of my OPPONENT
   const g = brainsBoard({ active: P2 });
   endTurnTie(g, P2);
   assert.equal(zoneOf(g.engine, g.id("c1")), "hand");
-  for (const key of ["c3", "f2", "f5"]) assert.equal(zoneOf(g.engine, g.id(key)), "play", `${key} stays`);
+  expectGone(g, P2, ["c1", "f2", "c3", "f5"]);
 });
 
 clause(BRAINS, "0:rule", "the lowest cost is judged across BOTH players' characters: when their character is cheapest, theirs goes to THEIR hand", () => {
@@ -7311,14 +7368,16 @@ clause(BRAINS, "0:rule", "the lowest cost is judged across BOTH players' charact
   endTurnTie(g, P1);
   assert.equal(zoneOf(g.engine, g.id("f1")), "hand");
   assert.ok(handOf(g.engine, P2).includes(g.id("f1")), "into its owner's hand");
-  assert.equal(zoneOf(g.engine, g.id("c2")), "play");
+  expectGone(g, P1, ["f1", "c2", "f4"]);
 });
 
 clause(BRAINS, "0:rule", "exactly ONE character is returned each turn end", () => {
   const g = brainsBoard();
   endTurnTie(g, P1);
-  assert.equal(playOf(g.engine, P1).filter((c) => g.engine.getDefinition(c).type === "character").length, 1, "c3 remains");
-  assert.equal(handOf(g.engine, P2).length, 0);
+  // one per turn end, cheapest first: c1 (mine), f2 (theirs), c3 (mine), f5 (theirs)
+  const gone = ([["c1", P1], ["f2", P2], ["c3", P1], ["f5", P2]] as const).slice(0, turnEndsAfter(g, P1));
+  assert.equal(playOf(g.engine, P1).filter((c) => g.engine.getDefinition(c).type === "character").length, 2 - gone.filter(([, owner]) => owner === P1).length, "one character per turn end left play");
+  assert.equal(handOf(g.engine, P2).length, gone.filter(([, owner]) => owner === P2).length);
 });
 
 clause(BRAINS, "0:rule", "a cost of 0 is the lowest: a cost-0 character goes before a cost-1 character", () => {
@@ -7331,8 +7390,13 @@ clause(BRAINS, "0:rule", "a cost of 0 is the lowest: a cost-0 character goes bef
   });
   endTurnTie(g, P1);
   assert.equal(zoneOf(g.engine, g.id("c0")), "hand");
-  assert.equal(zoneOf(g.engine, g.id("c1")), "play");
-  assert.equal(zoneOf(g.engine, g.id("f1")), "play");
+  // the cost-1 tie only comes up at a later turn end (an extra seat's), where it is settled for me
+  if (turnEndsAfter(g, P1) === 1) {
+    assert.equal(zoneOf(g.engine, g.id("c1")), "play");
+    assert.equal(zoneOf(g.engine, g.id("f1")), "play");
+  } else {
+    assert.equal(["c1", "f1"].filter((key) => zoneOf(g.engine, g.id(key)) === "hand").length, Math.min(turnEndsAfter(g, P1) - 1, 2), "one of the tied cost-1 characters per further turn end");
+  }
 });
 
 clause(BRAINS, "0:rule", "the cost compared is the numeric cost (cost number), not strength or life: the cheapest character goes even when it is the strongest", () => {
@@ -7343,7 +7407,7 @@ clause(BRAINS, "0:rule", "the cost compared is the numeric cost (cost number), n
   ]);
   endTurnTie(g, P1);
   assert.equal(zoneOf(g.engine, g.id("cheapBig")), "hand");
-  assert.equal(zoneOf(g.engine, g.id("priceyWeak")), "play");
+  expectGone(g, P1, ["cheapBig", "priceyWeak"]);
 });
 
 clause(BRAINS, "0:rule", "a character I control but my opponent owns goes to its OWNER's hand", () => {
@@ -7425,13 +7489,13 @@ clause(BRAINS, "0:rule", "a tie: I decide which of the tied characters is return
       ]
     });
   const mine = make();
-  const r1 = endTurnTie(mine, P1, "c1");
+  const r1 = endTurnTie(mine, P1, "c1", true);
   assert.ok(r1.prompted, "I was asked");
   assert.equal(r1.prompted?.playerId, P1);
   assert.equal(zoneOf(mine.engine, mine.id("c1")), "hand");
   assert.equal(zoneOf(mine.engine, mine.id("f1")), "play");
   const theirs = make();
-  endTurnTie(theirs, P1, "f1");
+  endTurnTie(theirs, P1, "f1", true);
   assert.equal(zoneOf(theirs.engine, theirs.id("f1")), "hand", "I may choose THEIR character");
   assert.equal(zoneOf(theirs.engine, theirs.id("c1")), "play");
 });
@@ -7464,7 +7528,7 @@ clause(BRAINS, "0:rule", "a tie: exactly one character is returned, not both", (
       { key: "f1", cost: 1, owner: P2 }
     ]
   });
-  endTurnTie(g, P1, "c1");
+  endTurnTie(g, P1, "c1", true);
   assert.equal(zoneOf(g.engine, g.id("f1")), "play");
 });
 
@@ -7532,7 +7596,7 @@ clause(BRAINS, "0:rule", "two Brains each return a character: the two cheapest g
   drain(g.engine, declineAll);
   assert.equal(zoneOf(g.engine, g.id("c1")), "hand");
   assert.equal(zoneOf(g.engine, g.id("f2")), "hand", "the next-cheapest goes for the second item");
-  assert.equal(zoneOf(g.engine, g.id("c3")), "play");
+  expectGone(g, P1, ["c1", "f2", "c3", "f5"], 2);
 });
 
 clause(BRAINS, "0:rule", "'At the end of each turn' happens when the turn actually ends, after my opponent has had the chance to respond (CR 610.1a), not when it is announced", () => {

@@ -22,7 +22,7 @@
     ],
     "notes": "mayPay player:\"opponent\" offers the payment only to the one bound opponent. 'Any opponent' means each opponent in turn may pay: re-encode as anyPlayerMayPay restricted to opponents (offer in seat order, first payer pays; the controller is never offered). Also settle who draws ('they' = the payer) since the encoding draws for the controller.",
     "recheck": "unchanged (c): printed 'Any opponent may pay 1' still needs anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data still encodes mayPay player:\"opponent\")",
-    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
+    "resolved": "Re-encoded with mayPay anyOf:\"opponents\" (E5): offered to each opponent of the controller in turn order who can afford it; the first to pay decides it and is bound as the block opponent; nobody pays: elseEffects. 3-player tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Akashic Coin",
@@ -370,14 +370,14 @@
     "ids": [
       "66238cd1-a654-4900-8cb0-775bb6df6c17"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
       "At the start of your opponent's next turn"
     ],
     "notes": "scheduleEffect when:\"startOfOpponentNextTurn\" still fires 'the turn right after scheduling, if an opponent's' (fireScheduledEffects), not the bound opponent's next turn (tracked in the plan's Known follow-ups). Ruling stands: bind the opponent chosen for the casting block and fire at the start of that opponent's next turn; drop if they are eliminated (D8).",
     "ruling": "Per D4, binds the opponent chosen for the casting block (prompted only if more than one candidate) and the delayed effect fires at the start of that opponent's next turn; if that opponent is eliminated first it is dropped (D8).",
     "recheck": "unchanged (d); binding exists but the delayed-effect scheduler does not use it yet",
-    "resolved": "Left: the ruling (bind the casting block's opponent; fire at the start of that opponent's next turn; drop if eliminated) is not representable. scheduleEffect only offers startOfNextTurn (controller), startOfOpponentNextTurn (the turn right after scheduling, if an opponent's) and startOfTheNextTurn; fireScheduledEffects ignores the bound opponent. Needs an engine change (a scheduled effect keyed on its bound opponent's next turn) -- tracked in the plan's Known follow-ups."
+    "resolved": "Fixed in the engine: scheduleEffect startOfOpponentNextTurn fires at the bound opponent's next turn (multiplayer/binding.test.ts), and is dropped if that opponent is eliminated first (D8; per-card/multiplayer-g12.test.ts)."
   },
   {
     "name": "Flagitious Denunciator",
@@ -442,7 +442,7 @@
       "ee8821d4-4933-4e4b-a632-c4db1b91ea95",
       "0a6c2548-8c2a-4352-a8ea-b97257aa2ac7"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
       "both players may draw a card",
       "both players may play a resource",
@@ -450,7 +450,8 @@
       "each player may play a resource"
     ],
     "notes": "Already forEachPlayer for both 'each player' branches; fans out to all players.",
-    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already encoded with forEachPlayer over every player"
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already encoded with forEachPlayer over every player",
+    "resolved": "Re-checked against the printed text (user, 2026-11-06: follow the rules): the Seed printing says \"both players\" -> forEachPlayer controllerAndOpponent (MP 3; on your own turn / your own play you select the opponent); the Seed Saga printing says \"each player\" and keeps every player. 3-player tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Gathering of Unlikely Heroes",
@@ -668,7 +669,8 @@
       "Each player draws a card."
     ],
     "notes": "Already uses forEachPlayer for every 'each player' step and chooser activePlayer; works for N players.",
-    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already forEachPlayer over every player"
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; both already forEachPlayer over every player",
+    "resolved": "Seed printing (\"both players\") re-encoded as forEachPlayer controllerAndOpponent (MP 3); the Seed Saga printing (\"each player\") reaches every seat. Tests in per-card/multiplayer-tables-{seed,saga}.test.ts."
   },
   {
     "name": "Offering of False Friendship",
@@ -681,7 +683,7 @@
     ],
     "notes": "mayPay player:\"opponent\" asks only the bound opponent. Printed 'Any opponent may pay 2' = each opponent in turn may pay: re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it); the elseEffects run only if all decline, a payer terminates the card.",
     "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay",
-    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts."
+    "resolved": "Re-encoded with mayPay anyOf:\"opponents\" (E5): offered to each opponent of the controller in turn order who can afford it; the first to pay decides it and is bound as the block opponent; nobody pays: elseEffects. 3-player tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "P3pp3r 0f 1n54n17y",
@@ -950,7 +952,7 @@
     ],
     "notes": "'Any opponent may pay 2' is encoded as mayPay player:\"opponent\" (bound only): re-encode as anyPlayerMayPay players:\"opponents\" (engine E5 exists; card data does not use it). The later 'Look at an opponent's hand ... That player discards' sentence is fine with the bound opponent.",
     "recheck": "unchanged (c); engine E5 exists, card data still single-opponent mayPay",
-    "resolved": "Re-encoded: each opponent is offered the payment in turn (forEachPlayer opponents + mayPay, so one who cannot afford it is not asked, as in classic) until one pays; what follows (paid / otherwise branch) runs in the last iteration, state kept in two bind variables. anyPlayerMayPay was not used: it has no otherwise branch and asks opponents who cannot pay (changes classic prompts). Needs the engine's forEachPlayer to run later effects after a paused iteration, which it does not (see plan follow-ups). 3-player test in per-card/multiplayer-g34.test.ts. The later 'look at an opponent's hand' pick now spans every opponent's hand (nothing binds one opponent any more); no chooseOpponent effect exists to restore that."
+    "resolved": "mayPay anyOf:\"opponents\" (E5); when nobody pays, \"look at an opponent's hand\" is asPlayer controller — you select ONE opponent and look at their hand (MP 2). 3-player tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Thabbashite Urchin",
@@ -970,13 +972,14 @@
       "2c419c3a-cd05-4d6c-b6c4-6d2e64655218",
       "9470335e-1d2b-46a5-861e-04527371ffb2"
     ],
-    "category": "a",
+    "category": "c",
     "phrases": [
       "both players may draw up to 2 cards",
       "each player may draw up to 2 cards"
     ],
     "notes": "Already wrapped in forEachPlayer; fans out to all players (not just 'both').",
-    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; already forEachPlayer"
+    "recheck": "unchanged (a); Seed 'both players', Seed Saga 'each player'; already forEachPlayer",
+    "resolved": "Re-checked against the printed text (user, 2026-11-06: follow the rules): the Seed printing says \"both players\" -> forEachPlayer controllerAndOpponent (MP 3; on your own turn / your own play you select the opponent); the Seed Saga printing says \"each player\" and keeps every player. 3-player tests in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Theocratic Senate of Marduun",
@@ -1037,7 +1040,7 @@
       "8c111617-ef44-42a4-a79e-b895dd8005c3",
       "8bed01de-3627-4ae9-92dc-fc065e9e5de7"
     ],
-    "category": "d",
+    "category": "c",
     "phrases": [
       "Use this only if your opponent controls more characters than you",
       "Use this only if an opponent controls more characters than you",
@@ -1047,7 +1050,7 @@
     "notes": "Printings differ. The use condition (count(opponent) > count(self)) now works by binding: the activation names one opponent who must individually control more characters (E4 / opponentId). Seed 8c111617 then prints an unconditional 'cannot be blocked', which the encoded grantKeyword cannotBeBlocked matches (a). Seed Saga 8bed01de prints 'cannot be blocked by those players': the encoding is still unconditional, so it needs a restriction scoped to the opponent(s) who qualify.",
     "ruling": "For Seed Saga 8bed01de: the ability's block binds one opponent who must individually control more characters than you (unavailable if none qualifies); this card cannot be blocked by that opponent's characters this turn and can still be blocked by others. Seed 8c111617 stays as printed (unblockable by everyone).",
     "recheck": "printings differ: 8c111617 (Seed) is a; 8bed01de (Seed Saga) is still d (needs a scoped cannotBeBlockedBy restriction and a ruling on 'those players'); the condition itself is fixed by binding/E4",
-    "resolved": "Seed 8c111617: unchanged (a). Seed Saga 8bed01de left: the ruling (cannot be blocked by the opponent bound by the use condition, still blockable by others) needs a restriction scoped to a blocking player; the engine has only the cannotBeBlocked keyword and restrictBlockers (party-size / speed), so the data still grants unconditional unblockability. Engine gap: a per-player 'cannot be blocked by <player>' grant."
+    "resolved": "Seed 8c111617: unconditional \"cannot be blocked\" (unchanged). Seed Saga 8bed01de: restrictBlockers.notBy — the opponents who control more characters than you (judged per opponent as it resolves) cannot block it; the others may. 3-player test in per-card/multiplayer-g12.test.ts."
   },
   {
     "name": "Unloyal Necromorph",
@@ -1061,7 +1064,7 @@
     ],
     "notes": "Replacement uses chooser:\"opponent\" (one bound opponent). Printed 'any opponent may pay 2 ... that player takes control' needs each opponent offered in seat order (anyPlayerMayPay players:\"opponents\", engine E5 exists); the payer becomes the new controller (takeControl to that payer, not the controller ref).",
     "recheck": "unchanged (c); engine E5 exists, card data still single-opponent",
-    "resolved": "Left: the replacement's chooser resolves 'opponent' to one player (the first) when the card is destroyed, so only that opponent is ever offered the payment; offering each opponent in seat order and giving control to the payer needs an engine change (an optional replacement whose chooser fans out like anyPlayerMayPay). Data unchanged."
+    "resolved": "Fixed in the engine: an optional replacement whose chooser is \"opponent\" is offered to each opponent of the affected card's controller who can afford it, in turn order, until one applies it (pendingReplacement.nextChoosers). Data unchanged. 3-player tests in per-card/multiplayer-g34.test.ts."
   },
   {
     "name": "Watchtower",

@@ -11,6 +11,7 @@ import { character, item, resolvePendingResponses, tactic } from "../support/fix
 import { refused, rule } from "./_rule.js";
 import {
   CHAMPION,
+  exhaustHeroDeck,
   evilFaction,
   giveResources,
   influenceOf,
@@ -228,7 +229,8 @@ describe("SD-SLE 3 - SPRING FORTH MY BURLY PROTECTOR!", () => {
   });
 
   rule("SD-SLE 3", "with the Hero Deck empty there is nothing to reveal or claim", () => {
-    const { engine, shared } = spring([]);
+    const { engine, shared } = spring();
+    exhaustHeroDeck(engine);
     giveResources(engine, "h1", 6);
     const playBefore = [...engine.state.players.h1.play];
     use(engine, "h1", shared, "spring");

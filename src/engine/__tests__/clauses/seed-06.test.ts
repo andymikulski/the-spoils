@@ -1207,11 +1207,26 @@ clause(PEPPER, "2:rule", "only the ATTACHED character is restored: another deple
   assert.equal(isDepleted(engine, id("ally")), true);
 });
 
+/**
+ * Ends `player`'s turn so that the OTHER original player's turn starts next. At a bigger table the seats between also
+ * take turns, and each is an opponent's turn start that restores the attached character; this clause is about the
+ * start of the Pepper controller's OWN turn, so play passes straight between the two original players.
+ */
+const endTurnBetweenOriginals = (engine: SpoilsEngine, player: PlayerId): void => {
+  const seats = engine.state.turnOrder;
+  engine.state.turnOrder = seats.filter((id) => id === P1 || id === P2);
+  try {
+    endTurn(engine, player);
+  } finally {
+    engine.state.turnOrder = seats;
+  }
+};
+
 clause(PEPPER, "2:rule", "it is the OPPONENT's turn start only: at the start of my own turn the Pepper restores nothing", () => {
   const { engine, id } = ppBoard({ noRestore: true, turn: 2, active: P2, hostDepleted: true, extra: [{ key: "dp", def: depleteTactic(), owner: P2, zone: "hand" }] });
-  endTurn(engine, P2);
+  endTurnBetweenOriginals(engine, P2);
   assert.equal(engine.state.activePlayerId, P1);
-  assert.equal(isDepleted(engine, id("host")), true, "turn 3 starts as MY turn: the Pepper did not restore at my own turn start");
+  assert.equal(isDepleted(engine, id("host")), true, "turn 3 starts as MY turn: the Pepper did not restore at my own turn start (only an opponent's turn start restores)");
 });
 
 clause(PEPPER, "2:rule", "it restores again at every opponent's turn start (turn after turn)", () => {

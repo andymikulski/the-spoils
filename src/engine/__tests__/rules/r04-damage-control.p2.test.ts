@@ -83,7 +83,7 @@ const zoneOf = (engine: SpoilsEngine, cardId: CardInstanceId) => engine.state.ca
 const damageOf = (engine: SpoilsEngine, cardId: CardInstanceId) => engine.state.cards[cardId]!.damage;
 const influence = (engine: SpoilsEngine, player: PlayerId) => engine.state.players[player].influence;
 const battleOf = (engine: SpoilsEngine) => engine.state.battle;
-const ctx = (sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, selected: {} });
+const ctx = (sourceId: CardInstanceId, controllerId: PlayerId = P1) => ({ sourceId, controllerId, opponentId: controllerId === P1 ? P2 : P1, selected: {} });
 
 /** A tactic that takes control of the picked card until the end of the turn. */
 const grantTactic = (name: string) =>
@@ -271,7 +271,7 @@ describe("CR 407.2 — you and your refer to the card's current controller", () 
   rule("CR 407.2", "a stolen card's triggered abilities say 'you' for its new controller", () => {
     const earner = character({
       name: "Earner",
-      behavior: { abilities: [{ id: "t", type: "triggered", event: "turnEnding", effects: [{ type: "modifyInfluence", player: "controller", amount: 4 }] }] }
+      behavior: { abilities: [{ id: "t", type: "triggered", event: "turnEnding", condition: { type: "eventPlayerIs", player: "controller" }, effects: [{ type: "modifyInfluence", player: "controller", amount: 4 }] }] }
     });
     const { engine, id } = buildGame({
       cards: [

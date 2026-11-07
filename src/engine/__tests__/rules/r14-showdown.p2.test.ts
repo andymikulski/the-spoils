@@ -10,6 +10,7 @@ import { character, item, location, resolvePendingResponses, tactic } from "../s
 import { refused, rule } from "./_rule.js";
 import {
   CHAMPION,
+  exhaustHeroDeck,
   giveResources,
   influenceOf,
   passTurn,
@@ -175,7 +176,8 @@ describe("SD 8 - claiming a Hero card that is not a tactic", () => {
   });
 
   rule("SD 8", "an empty Hero Deck leaves nothing to claim: the effect does nothing", () => {
-    const { engine } = table({ heroes: 2, heroDeck: [], extra: [OPERATOR], deckExtras: [OPERATOR] });
+    const { engine } = table({ heroes: 2, extra: [OPERATOR], deckExtras: [OPERATOR] });
+    exhaustHeroDeck(engine);
     const op = operator(engine, "h1");
     const playBefore = [...engine.state.players.h1.play];
     use(engine, "h1", op, "claim1");
@@ -437,7 +439,8 @@ describe("SD 11 - the Temptation Pile", () => {
   });
 
   rule("SD 11", "with no Hero Deck cards left an effect that fills the pile adds nothing", () => {
-    const { engine } = tempting([]);
+    const { engine } = tempting([CHAMPION]);
+    exhaustHeroDeck(engine);
     use(engine, "h1", operator(engine, "h1"), "tempt");
     assert.deepEqual(engine.state.showdown!.temptationPile, []);
   });

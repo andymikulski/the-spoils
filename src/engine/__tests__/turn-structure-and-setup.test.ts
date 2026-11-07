@@ -268,7 +268,8 @@ describe("RULES.md §6 — start-of-turn restore", () => {
     resolvePendingResponses(engine);
     settleTurnStart(engine);
 
-    assert.equal(engine.state.turn, 2);
+    // P2's turn is the next one at a two-player table; seats between P1 and P2 take (and end) turns first.
+    assert.equal(engine.state.turn, 1 + ((engine.state.turnOrder.indexOf(P2) - engine.state.turnOrder.indexOf(P1) + engine.state.turnOrder.length) % engine.state.turnOrder.length));
     assert.equal(engine.state.activePlayerId, P2);
 
     assert.equal(engine.state.cards[id("p2Character")].damage, 0);
@@ -384,7 +385,9 @@ describe("RULES.md §6 — start-of-turn restore", () => {
     resolvePendingResponses(engine);
 
     // Turn passed to P2: P2's settled character becomes eligible this turn...
-    assert.equal(engine.state.cards[id("p2Character")].attackEligibleTurn, 2);
+    // (P2's turn is turn 2 at a two-player table; seats between P1 and P2 take turns first)
+    assert.equal(engine.state.cards[id("p2Character")].attackEligibleTurn, engine.state.turn);
+    assert.equal(engine.state.activePlayerId, P2);
     // ...and P1's is cleared, since it isn't P1's turn.
     assert.equal(engine.state.cards[id("p1Character")].attackEligibleTurn, undefined);
   });

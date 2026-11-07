@@ -243,6 +243,11 @@ export type GameAction =
             /** The chosen card's own extra-cost target declarations, same shape as playCard's `selected`. */
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
+            /**
+             * The opponent the deployed card's rules text is about (MP 2), when it has several to choose from — as
+             * `playCard.opponentId`; `getPlayRequirements` on the card lists `{ kind: "opponent", candidates }`.
+             */
+            opponentId?: PlayerId;
           }
         | {
             kind: "distributeAmong";
@@ -268,6 +273,11 @@ export type GameAction =
             /** The revealed card's own extra-cost target declarations, same shape as playCard's `selected`. */
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
+            /**
+             * The opponent the deployed card's rules text is about (MP 2), when it has several to choose from — as
+             * `playCard.opponentId`; `getPlayRequirements` on the card lists `{ kind: "opponent", candidates }`.
+             */
+            opponentId?: PlayerId;
           }
         | { kind: "chooseNumber"; value: number }
         | { kind: "mayPay"; pay: boolean }

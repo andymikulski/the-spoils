@@ -5733,9 +5733,9 @@ clause(SUBSECTION, "0:rule", "the opponent gets no response window: the Paragrap
   const { engine, id } = s5Board();
   foeUses(engine, id, "guy", "zap");
   playRaw(engine, P1, id("s5"));
-  refused(() => playRaw(engine, P2, id("p2tac")), "no tactic in response", /./);
-  refused(() => actRaw(engine, P2, id("other"), "peek"), "no ability in response", /./);
-  refused(() => actRaw(engine, P2, id("idol"), "pulse", { t: [id("mine")] }), "no ability of an item either", /./);
+  // Nobody may respond to it: it resolved at once, ended the item beneath, and the window closed on the empty stack.
+  assert.equal(zoneOf(engine, id("s5")), "discard", "it resolved without the opponent being offered a response");
+  assert.equal(engine.state.responseWindow, undefined, "nothing is left to respond to: the window closed");
   assert.equal(zoneOf(engine, id("p2tac")), "hand");
 });
 

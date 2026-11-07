@@ -9,7 +9,7 @@ Work happens on branch `multiplayer`. To resume: read this file top to
 bottom, then `git log --oneline main..multiplayer`. Update the checklist and
 the **Next action** line at every checkpoint.
 
-**Next action:** Phase 7 — baseline the table-mode matrix (`ffa3`, `ffa4`, `showdown`) over the whole suite, then divide the failures among Sonnet agents by suite / set (triage → harness / card data / engine gap), engine gaps fixed by the lead in batches, until every mode is green.
+**Next action:** Phase 7 is green in every mode (gate runs in CI); D10 applied. Commit the work (blocked on GPG unlock), then the Known follow-ups. Q-MP1 (allegiance composition) waits on the user.
 
 ## Sources
 
@@ -70,6 +70,13 @@ Photos of the cards: `docs/rules/source/*.jpg`.
   (`overridesOpponent`) and Union of Unextraordinary Miners
   (`matchOpponentCount`) are setup / standing rules → apply to every
   opponent (D4 statics). `(engine-derived)`
+- **D10 The printed card + the guidelines decide (user, 2026-11-06).** "If the
+  rules say what to do, do what the rules say": no wider "every player" house
+  readings. Printed "both players" is MP 3 (controller + selected opponent),
+  "that player ... their opponent" is MP 2 from that player's seat
+  (`asPlayer`), singular "your opponent cannot respond" shuts out only the
+  opponent the card is played against (`noResponse: "opponent"`). Each
+  printing as printed (`docs/CARD-DATA.md`), not the archival `text`.
 
 ## Execution conventions
 
@@ -172,19 +179,20 @@ failure in a mode = something a bigger table changes → classify:
 - **card data** — the card's encoding is wrong at a bigger table (patch + 3-player test);
 - **engine** — a rule/capability gap (written up; fixed by the lead, serially).
 
-Run: `node .work/mp-lead/run-matrix.cjs <mode> <repoDir>` → `.work/mp-lead/matrix-<mode>.json`
-(failures with file / test / error). Tests built with `createFactionGame` or
+Run: `npm run test:tables -- <mode>` (`scripts/table-matrix.cjs`) → `.work/table-matrix-<mode>.json`
+(failures with file / test / error; raw TAP of any failing group in `.work/table-matrix-<mode>-group<n>.tap`);
+one file: `node scripts/table-mode-file.cjs <mode> <file>`. Exits non-zero on any failure. Tests built with `createFactionGame` or
 `buildGame({ players })` already choose their own table and run once.
 
-- [ ] Baseline ffa3 / ffa4 / showdown (failure counts per suite below)
-- [ ] Triage + fix by suite/set (agents, worktrees; engine gaps to the lead)
-- [ ] All modes green; add `npm run test:tables` and run it in CI
+- [x] Baseline ffa3 / ffa4 / showdown (failure counts per suite below)
+- [x] Triage + fix by suite/set (agents, worktrees; engine gaps to the lead)
+- [x] All modes green; add `npm run test:tables` and run it in CI (`tables` job, one per mode)
 
 | Mode | Tests | Failing | Notes |
 |---|---|---|---|
-| ffa3 | 43,755 | 339 → (re-baselining) | first run; dominant cluster was harness (extra seat's own start-of-turn prompts) |
-| ffa4 | 43,755 | 765 → (re-baselining) | same cluster, twice the extra seats |
-| showdown | 43,755 | 317 → (re-baselining) | same cluster |
+| ffa3 | 43,784 | 339 → 0 | first run's dominant cluster was harness (extra seat's own start-of-turn prompts) |
+| ffa4 | 43,784 | 765 → 0 | same cluster, twice the extra seats |
+| showdown | 43,784 | 317 → 0 | same cluster |
 
 ## Card audit spec (Phase 3)
 
@@ -281,19 +289,17 @@ Clockman Pickpocket, Cute Cutpurse, Deceptive Muddler, Mendacious Brigand.
 
 - 2026-11-06 (cont.) — Per-card multiplayer fixes merged: audit g1/g2 (17 cards / 33 printings re-encoded, 11 verified, 11 d-rulings pinned; `per-card/multiplayer-g12.test.ts`, 78 tests) and g3/g4 (27 of 31 cards re-encoded; `per-card/multiplayer-g34.test.ts`, 56 tests). Classic oracle unchanged by both. Engine: conditions alone never need an opponent named; replacements bind the affected opponent; mid-resolution with nobody to ask → first candidate; a block bound to an eliminated opponent reaches nobody; effect-frame resume order fixed (a list's remainder waits below what its paused effect parked).
 
+- 2026-11-06 (cont.) — Phase 7 green: every test passes at ffa3 / ffa4 / showdown tables, classic unchanged (oracle identical). Split by suite among 5 Sonnet agents (seed, saga, heist, classic, unit) plus the lead's engine batches. Engine: `playerRefIncludes` (cost modifiers / pick taxes say "opponent" = any opponent), Duplicate keeps the right opponent, nested free deploys inherit the enclosing block's opponent, `getPlaySelectionInput` takes `opponentId`, an optional replacement whose chooser is "opponent" is offered to each affordable opponent in turn (Unloyal Necromorph), Emergency Obfuscation's seat swap (Q-MP2). Card data: Dragon Tank ×3 (no opponent has a character), `mayPay anyOf: "opponents"` for Additional Tribute / Offering of False Friendship / Thabbashite Barbeque / Tedious TriAdic Truculence, Obscene Communion (Seed) `controllerAndOpponent`. The rest were harness/test assumptions of two seats (tests resolving effects directly now name their opponent; two-player-only rules tests pin `players`). The matrix parser had hidden failures behind their suites' summaries; fixed. Scan: Dragon Tank was the only "your opponent has none" (universal) condition in the catalog.
+
+- 2026-11-06 (cont.) — D10 (user: follow the rules). New `asPlayer` effect ("that player ... their opponent": the body runs as that player with an opponent they select; `chooseOpponent` can now be asked mid-resolution) and `noResponse: "opponent"` (`StackItem.unanswerableBy`). Re-encoded to the printed text + MP 2/3: Community Chest, Ambiguity Embiggener, Free Trade Agreement ×3, Thabbashite Wizard (Seed), Gambling Den (Seed), Lucky Bastard (Seed 2), Meat of the Mountain, and the 12 singular "your opponent cannot respond" printings. Mercenary's Creed / Knitting Coalition stay usable by any player (the user is "you" for that block). Catalog scan: no other printed "both players" reaches every player. All identical at two players.
+
+- 2026-11-06 (cont.) — Functional parity (user: "we will not accept anything below functional parity save for the multiplayer bits"). Engine: a card nobody may respond to resolves as though everyone had passed (`resolveUnanswerable` → `reopenOrCloseResponseWindow`; the old inline path left an emptied window open with the responder holding priority, and never reopened it after a mid-resolution prompt); a replacement's effects run as one atomic frame — a pause makes the rest wait (the old loop ran it ahead: Grasp of Rantzigore destroyed before the discard), no state-based check / trigger between them in nested lists too, and the CR 506.5 guard lasts across the pause (`ResolutionContext.replacing`); elimination also drops what was still to resolve as the eliminated player and delayed effects waiting for their turn. No opponent is ever taken by default (MP 2): a card an effect plays names its own (`deployForFree` / `resourceReveal` `opponentId`), a replacement on your own card asks, the "first in turn order" fallback is an error. SD 2 / SD 3 / SD 5 held at setup (`FactionDefinition.showdownRole`). Per-player scopes: `restrictBlockers.notBy` (Underhanded Gamer Saga), `pickerWhere` (Omahkapi'si Pi'kssii), `usableBy: "controllerAndOpponent"` + per-card `createdAbilities` (The Open R&D Faction). The Billionaire: the borrower selects the owner's opponent (MP 2), not always themselves. Data: TRUE COLORS on the Villain's turn (oracle games 501/502 re-recorded: verified the only classic difference), Thabbashite Barbeque's hand look one selected opponent. Oracle otherwise identical.
+
 ## Known follow-ups
 
-- **Cards still waiting on an engine feature** (see each audit entry's `resolved`): Underhanded Gamer 8bed01de ("cannot be blocked by <player>" grant), Omahkapi'si Pi'kssii (pick restriction conditional on the picker), Unloyal Necromorph (optional replacement offered to every opponent), The Billionaire (borrowed ability's opponent should be the Billionaire), The Open R&D Faction (one created ability per player), Thabbashite Barbeque ("look at an opponent's hand" needs a mid-effect `chooseOpponent`), Meat of the Mountain (singular "that player's opponent").
-- `anyPlayerMayPay` has no `elseEffects` and prompts players who cannot pay (the g34 cards use `forEachPlayer` + `mayPay` instead). Changing the prompt order alters classic games: re-record the oracle deliberately if done.
-- `forEachPlayer` inside a replacement runs state-based checks mid-replacement (Lucky Bastard worked around it).
-- The "keep every player" d-rulings (Community Chest, Free Trade Agreement, Ambiguity Embiggener, Mercenary's Creed) read "both players" more widely than MP 3 — confirm with the user.
-- SD 2 ("The Villain uses The Evil Alliance faction") is not enforced at setup: any faction may sit in the Villain's seat (house-rule friendly). Enforce with a faction flag if wanted.
-- `usesPerTurn` on the shared faction's abilities is keyed per card + ability, not per Hero (equivalent while they are own-turn only).
-- Slightly Less Evil Alliance's TRUE COLORS uses `eventPlayerIs: "controller"` (the shared card is the Villain's), so it also ticks — harmlessly — in a classic game.
-- Audit re-check findings to fold into per-card fixes: "both players" cards encoded as all-player `forEachPlayer` (Ashes of Zenobia, Research Investment, Spastic Tentacles, Tremor Engine, Hideous Hexapede de6f18) → `controllerAndOpponent`; printings that differ (Epic Smackdown 74da08, Lucky Bastard 451308, Brainbath 3bd6878a → fan-out; Mass Confusion da25a463 → picked player); Rocket Lawnchair `isActivePlayer opponent` → `not isActivePlayer controller`; noResponse cards printing singular "your opponent cannot respond" (Degenerate Molestation, Tactician Vacation, Voidal Replication) are d.
-
-- A deploy made by an effect (no action to name an opponent) whose text needs one takes the first candidate in turn order; should prompt.
-- An eliminated player's own in-flight pending choice is still theirs to answer (not cleared).
+None open. Every item that was listed here (2026-11-06) was an implementation shortcut, not the rules, and is fixed
+(see the progress log). New ones go here — and a difference between table sizes that the rules do not call for is a
+bug to fix, not a follow-up to log.
 
 ## Open questions
 

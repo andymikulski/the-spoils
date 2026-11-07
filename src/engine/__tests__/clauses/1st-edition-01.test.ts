@@ -1377,7 +1377,8 @@ function freePlay(engine: SpoilsEngine, cardId?: string, selected?: Record<strin
 clause(MOLESTATION, "0:rule", "the opponent gets no response window: the tactic resolves entirely on its own", () => {
   const { engine, id } = molestationBoard([], [character({ name: "Victim", cost: 1 })]);
   playRaw(engine, P1, id("dm"));
-  assert.equal(engine.state.responseWindow, undefined, "no window opens for the opponent");
+  const window = engine.state.responseWindow;
+  assert.ok(!window || (window.priorityPlayerId !== P2 && !(window.stackResponders ?? []).includes(P2)), "no window opens for the opponent");
   assert.equal(pending(engine) !== undefined, true, "the effect has already started (the opponent must discard)");
   opponentDiscards(engine, id, "o:Victim");
   assert.equal(zoneOf(engine, id("dm")), "discard");
@@ -2338,7 +2339,7 @@ clause(STAVE, "0:ability:counterfeit", "only a tactic played THIS turn counts: a
   endTurn(b.engine, P1);
   endTurn(b.engine, P2);
   assert.equal(b.engine.state.activePlayerId, P1);
-  assert.equal(b.engine.state.turn, 3);
+  assert.equal(b.engine.state.turn, 1 + b.engine.state.turnOrder.length, "one round of the table later");
   assert.throws(() => counterfeit(b), "the tactic was played two turns ago");
 });
 
@@ -5641,7 +5642,7 @@ clause(JEWELRY, "2:rule", "it stays depleted turn after turn while the Jewelry i
     endTurn(b.engine, P1);
     endTurn(b.engine, P2);
   }
-  assert.equal(b.engine.state.turn, 5);
+  assert.equal(b.engine.state.turn, 1 + 2 * b.engine.state.turnOrder.length, "two rounds of the table later");
   assert.equal(isDepleted(b.engine, b.id("mine")), true);
 });
 

@@ -242,7 +242,7 @@ describe("a stolen card held in the thief's hand or deck", () => {
 
     engine.resolveEffect(
       { type: "moveCard", target: T, to: "hand", toPlayer: "opponent" },
-      { sourceId: id("thief"), controllerId: P1, selected: { t: [id("victim")] } }
+      { sourceId: id("thief"), controllerId: P1, opponentId: P2, selected: { t: [id("victim")] } }
     );
 
     const victim = engine.state.cards[id("victim")];

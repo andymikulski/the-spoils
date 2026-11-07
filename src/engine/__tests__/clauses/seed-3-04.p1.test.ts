@@ -1346,7 +1346,8 @@ clause(SLE, "2:ability", "SPRING FORTH MY BURLY PROTECTOR! is refused when the 6
   const deck = [...sd.heroDeckOf(engine)];
   refused(() => sd.useAbility(engine, sd.H1, sdIds.spring), "no resources left");
   assert.deepEqual(sd.heroDeckOf(engine), deck, "nothing claimed");
-  const empty = sd.showdownGame({ heroes: 2, heroDeck: [] });
+  const empty = sd.showdownGame({ heroes: 2 });
+  sd.exhaustHeroDeck(empty);
   sd.advanceTo(empty, sd.H1);
   sd.useAbility(empty, sd.H1, sdIds.spring);
   assert.equal(ready(empty, sd.H1), 0, "the cost was paid");

@@ -1302,6 +1302,24 @@ export type Effect =
     }
   | {
       /**
+       * "That player ... their opponent" (MP 2 read from another player's
+       * seat): resolves `effects` once as `player` — `controller` / `owner`
+       * rebound to them, as one pass of `forEachPlayer` — with `opponent`
+       * bound to one of *their* opponents. They choose it (a
+       * `chooseOpponent` prompt) when `effects` refer to an opponent and
+       * more than one is possible; at a two-player table it is the other
+       * player. When `player` is the block's own controller, the block's
+       * opponent (if one is bound) carries on. Free Trade Agreement ("that
+       * player may draw a card and their opponent may play a resource"),
+       * Meat of the Mountain ("that player's opponent discards a card"),
+       * Lucky Bastard (Seed 2: "both players ... your opponent's").
+       */
+      type: "asPlayer";
+      player: PlayerRef;
+      effects: Effect[];
+    }
+  | {
+      /**
        * Pauses for `chooser` to name a value from a closed vocabulary
        * (`kind: "subtype"` — any card subtype; `kind: "cardName"` — any
        * card name in the game). The chosen string is stored on the source
@@ -1485,6 +1503,15 @@ export type Effect =
        * — LeoKaiser). Omit for an unconditional "this turn" restriction.
        */
       condition?: Condition;
+      /**
+       * "This card cannot be blocked by those players": judged once, as the
+       * effect resolves, for each opponent of the controller with that
+       * opponent bound as `opponent`; `target` cannot be blocked by any for
+       * whom it holds (as `cannotBeBlocked`, but only against them).
+       * Underhanded Gamer (Seed Saga: "... if an opponent controls more
+       * characters than you ... cannot be blocked by those players").
+       */
+      notBy?: Condition;
       duration: Duration;
     }
   | {
@@ -1787,6 +1814,13 @@ export interface RestrictionGrantDefinition {
    * `exceptPickerType: "item"` (Gigantitect's Giant Giant).
    */
   exceptPickerType?: CardType;
+  /**
+   * `cannotBePickedByOpponents` only: it bars just the picking players for
+   * whom this holds, judged with the picker bound as `opponent` — "while
+   * there are at least 10 cards in an opponent's discard pile, that player
+   * cannot pick this card" (Omahkapi'si Pi'kssii).
+   */
+  pickerWhere?: Condition;
 }
 
 /**

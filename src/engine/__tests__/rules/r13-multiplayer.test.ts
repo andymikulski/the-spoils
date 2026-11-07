@@ -20,6 +20,7 @@ import { refused, rule, ruleExempt } from "./_rule.js";
 
 const seats = (...ids: string[]) => ids.map(id => ({ id, faction: noDevelopFaction() }));
 const THREE = seats("p1", "p2", "p3");
+const TWO = seats("p1", "p2");
 const FOUR = seats("p1", "p2", "p3", "p4");
 
 const influenceOf = (engine: SpoilsEngine): Record<string, number> =>
@@ -247,7 +248,7 @@ describe("MP 2 - select one of the other players as your opponent", () => {
   });
 
   rule("MP 2", "in a two-player game the only other player is the opponent, with no selection to make", () => {
-    const { engine, id } = buildGame({ cards: [{ key: "s", def: SWAP, owner: "p1" }] });
+    const { engine, id } = buildGame({ players: TWO, cards: [{ key: "s", def: SWAP, owner: "p1" }] });
     const before = influenceOf(engine);
     assert.notEqual(
       engine.getPlayRequirements({ type: "activateAbility", playerId: "p1", cardId: id("s"), abilityId: "swap" })[0]?.kind,

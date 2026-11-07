@@ -67,6 +67,7 @@ export function evilFaction(overrides: Partial<FactionDefinition> = {}): CardDef
     name: "Evil",
     faction: {
       ...base,
+      showdownRole: "villain",
       influencePerOpponent: 10,
       meetsAllThresholds: true,
       daringGambit: { damage: 7 },
@@ -157,9 +158,20 @@ export function sharedFaction(): CardDefinition {
   };
   return factionCard({
     name: "Shared Justice",
-    faction: { ...defaultFactionDefinition(), abilities },
+    faction: { ...defaultFactionDefinition(), showdownRole: "heroes", abilities },
     behavior: { abilities: [trueColors] }
   });
+}
+
+/**
+ * Empties the Hero Deck the way play would — its cards gone from the table (claimed, or otherwise used up): a
+ * Showdown game starts with one (SD 3), so "the Hero Deck is empty" is a state reached in play.
+ */
+export function exhaustHeroDeck(engine: SpoilsEngine): void {
+  const showdown = engine.state.showdown!;
+  const move = (engine as unknown as { moveCard(id: string, zone: "removed"): void }).moveCard.bind(engine);
+  for (const id of showdown.heroDeck) move(id, "removed");
+  showdown.heroDeck = [];
 }
 
 /** A keyed bag of the synthetic definitions a test table is built from. */

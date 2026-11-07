@@ -754,8 +754,23 @@ const answer = (engine: SpoilsEngine, player: PlayerId, choice: Record<string, u
   engine.perform({ type: "resolvePendingChoice", playerId: player, choice } as never);
   resolvePendingResponses(engine);
 };
+/**
+ * Ends `player`'s turn so that the OTHER original player's turn starts next. Communion triggers at EVERY seat's turn
+ * start, so at a bigger table the extra seats' own turns (which the two-player game never has) would each raise its
+ * own four-option prompt for everyone; these tests are about the option semantics between the two original players,
+ * so play passes straight between them (the extra seats stay in the game and are still asked "each player" prompts).
+ */
+const endTurnBetweenOriginals = (engine: SpoilsEngine, player: PlayerId): void => {
+  const seats = engine.state.turnOrder;
+  engine.state.turnOrder = seats.filter((id) => id === P1 || id === P2);
+  try {
+    endTurn(engine, player);
+  } finally {
+    engine.state.turnOrder = seats;
+  }
+};
 /** Ends P1's turn: P2's turn starts and Communion asks P2 which option. */
-const toP2Turn = (g: ReturnType<typeof comBoard>) => endTurn(g.engine, P1);
+const toP2Turn = (g: ReturnType<typeof comBoard>) => endTurnBetweenOriginals(g.engine, P1);
 
 clause(COMMUNION, "0:rule", "printed card: an item, cost 2 [O][O], paid in full when deployed", () => {
   const def = printing(COMMUNION);
@@ -791,7 +806,7 @@ clause(COMMUNION, "0:rule", "at the start of the controller's own turn the contr
   toP2Turn(g);
   runPrompts(g.engine, { [P1]: [[g.id("h1_0")]], [P2]: [2, [g.id("h2_0")]] });
   assert.equal(g.engine.state.pendingChoice, undefined);
-  endTurn(g.engine, P2);
+  endTurnBetweenOriginals(g.engine, P2);
   const pc = pending(g.engine) as unknown as { kind: string; playerId: string; optionCount: number };
   assert.equal(pc?.kind, "chooserSelectsOption");
   assert.equal(pc.playerId, P1, "P1's turn: P1 chooses");
@@ -800,7 +815,7 @@ clause(COMMUNION, "0:rule", "at the start of the controller's own turn the contr
 
 clause(COMMUNION, "0:rule", "it triggers whoever controls the item (an opponent-controlled Communion still asks the active player)", () => {
   const g = comBoard([], { controller: P2 });
-  endTurn(g.engine, P1);
+  endTurnBetweenOriginals(g.engine, P1);
   const pc = pending(g.engine) as unknown as { kind: string; playerId: string };
   assert.equal(pc?.kind, "chooserSelectsOption");
   assert.equal(pc.playerId, P2);

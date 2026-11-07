@@ -27,6 +27,7 @@ import type { PendingChoiceLike } from "./_clause.js";
 import { answerPending, fillers, pending, tokensOn, zoneOf } from "./_board.js";
 import { battleOf, covertBlocksOnlyCovertParties, covertCannotBeBlockedByNonCovert, covertHasKeyword, covertPartyNeedsEveryMemberCovert, declareAttackBy, declareAttackOpenWindow, playRaw } from "./_battle.js";
 import { endTurn, spentResources, developOffers, developPlay } from "./_turn.js";
+import { opponentsOf } from "../../seating.js";
 import type { CardDefinition, CardInstanceId, SpoilsEngine } from "../../../engine.js";
 import type { CardPlacement } from "../support/fixtures.js";
 
@@ -4016,7 +4017,9 @@ function divaBoard(opts: { greed?: number; controller?: Pid; zone?: "play" | "ha
 }
 
 type DivaBoard = ReturnType<typeof divaBoard>;
-const revealedHands = (engine: SpoilsEngine) => engine.getFlowView().revealed.hands;
+const revealedHands = (engine: SpoilsEngine) => [...engine.getFlowView().revealed.hands].sort();
+/** Every opponent's hand is revealed: the one opponent's in a two-player game, each of them at a bigger table. */
+const handsOfOpponentsOf = (engine: SpoilsEngine, playerId: string) => [...opponentsOf(engine.state, playerId)].sort();
 
 /**
  * Uses DISAPPROVE. "Name a card" is part of the COST, so the Diva's controller names it while using the ability:
@@ -4032,7 +4035,7 @@ function disapprove(b: DivaBoard, name?: string): void {
 
 clause(DIVA, "0:rule", "while it is in play the opponent's hand is revealed (and your own is not)", () => {
   const b = divaBoard();
-  assert.deepEqual(revealedHands(b.engine), [P2]);
+  assert.deepEqual(revealedHands(b.engine), handsOfOpponentsOf(b.engine, P1));
 });
 
 clause(DIVA, "0:rule", "no hand is revealed when there is no Odious Diva in play", () => {
@@ -4044,7 +4047,7 @@ clause(DIVA, "0:rule", "no hand is revealed when there is no Odious Diva in play
 
 clause(DIVA, "0:rule", "a Diva controlled by the opponent reveals the Diva's owner's hand (your opponent's hand is the other player's)", () => {
   const b = divaBoard({ controller: P2 });
-  assert.deepEqual(revealedHands(b.engine), [P1], "P2 controls the Diva, so P1's hand is revealed");
+  assert.deepEqual(revealedHands(b.engine), handsOfOpponentsOf(b.engine, P2), "P2 controls the Diva, so P1's hand is revealed");
 });
 
 clause(DIVA, "0:rule", "the hand stops being revealed once the Diva leaves play", () => {
@@ -4057,7 +4060,7 @@ clause(DIVA, "0:rule", "the hand stops being revealed once the Diva leaves play"
       ...fillers("oh", 2, P2, "hand")
     ]
   });
-  assert.deepEqual(revealedHands(gone.engine), [P2]);
+  assert.deepEqual(revealedHands(gone.engine), handsOfOpponentsOf(gone.engine, P1));
   play(gone.engine, P1, gone.id("kill"), { selected: { t: [gone.id("diva")] } });
   assert.equal(zoneOf(gone.engine, gone.id("diva")), "discard");
   assert.deepEqual(revealedHands(gone.engine), []);
@@ -4065,7 +4068,7 @@ clause(DIVA, "0:rule", "the hand stops being revealed once the Diva leaves play"
 
 clause(DIVA, "0:rule", "two Divas still reveal the hand (it is simply revealed)", () => {
   const b = divaBoard({ copies: 2 });
-  assert.deepEqual(revealedHands(b.engine), [P2]);
+  assert.deepEqual(revealedHands(b.engine), handsOfOpponentsOf(b.engine, P1));
 });
 
 clause(DIVA, "1:ability:disapprove", "pays 2, then the opponent puts a card with the named name on the bottom of their deck and draws a card", () => {

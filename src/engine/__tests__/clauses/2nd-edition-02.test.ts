@@ -6602,7 +6602,7 @@ clause(JEWELRY, "2:rule", "it stays depleted turn after turn while the Jewelry i
     endTurn(b.engine, P1);
     endTurn(b.engine, P2);
   }
-  assert.equal(b.engine.state.turn, 5);
+  assert.equal(b.engine.state.turn, 1 + 2 * b.engine.state.turnOrder.length, "two rounds of the table later");
   assert.equal(isDepleted(b.engine, b.id("mine")), true);
 });
 

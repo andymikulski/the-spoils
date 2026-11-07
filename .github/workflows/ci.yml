@@ -37,3 +37,25 @@ jobs:
       - run: npm run typecheck:consumer
 
       - run: npm test
+
+  # Every 2-player test re-run at bigger tables: the extra seats sit passive and
+  # the result is judged between the two original players, so each test must
+  # pass unchanged (see src/engine/__tests__/support/bystander.ts).
+  tables:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        table: [ffa3, ffa4, showdown]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - name: test suite at a ${{ matrix.table }} table
+        run: npm run test:tables -- ${{ matrix.table }}

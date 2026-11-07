@@ -8,7 +8,7 @@ import type {
   CardDefinitionId,
   CardInstance,
   CardInstanceId,
-  CreatedAbilitySpec,
+  CreatedAbilitySetup,
   FactionDefinition,
   GameFormat,
   GameState,
@@ -89,16 +89,17 @@ export interface FactionGameSetupOptions {
    */
   chooseStartingResources?: boolean;
   /**
-   * The ability the two players wrote for a faction with
-   * `faction.playerCreatedAbility` ("Before the game begins, both players
-   * create the rules text for an ability" -- The Open R&D Faction). Not free
-   * text: the one ability the two players agree on, picked from the closed
-   * menu `CREATED_ABILITY_MENU`. Setup validates it (an invalid spec throws)
-   * and builds the ability and its rules text; every such faction card in the
-   * game gets it, usable by both players. JSON-serializable, so an online
+   * The ability written for each faction with `faction.playerCreatedAbility`
+   * ("Before the game begins, both players create the rules text for an
+   * ability. This card has that ability and both players can use it." -- The
+   * Open R&D Faction), keyed by the player whose faction it is. Each card has
+   * its own: its controller and the opponent they select (`with`, MP 3)
+   * agree on one spec from the closed menu `CREATED_ABILITY_MENU`, and only
+   * those two may use it. Setup validates it (an invalid spec throws) and
+   * builds the ability and its rules text. JSON-serializable, so an online
    * match can pin it. See `SpoilsEngine.applyCreatedFactionAbility`.
    */
-  createdAbility?: CreatedAbilitySpec;
+  createdAbilities?: Record<PlayerId, CreatedAbilitySetup>;
   /**
    * Real cards (name + type) the engine may check a named card against:
    * "name a non-resource card" (Incriminating Photograph) then refuses names
@@ -474,6 +475,22 @@ export function createFactionGame(
 
   const resolved = players.map(player => resolveFactionAndDeck(definitions, player));
 
+  if (format.kind === "showdown") {
+    // SD 2: the Villain uses The Evil Alliance. SD 3: a single shared Hero Deck. SD 5: every Hero also has the
+    // Slightly Less Evil Alliance.
+    const villainFaction = resolved[seatIds.indexOf(format.villainId)].factionDefinition;
+    assert(
+      villainFaction.faction?.showdownRole === "villain",
+      `The Villain uses The Evil Alliance (SD 2); '${villainFaction.name}' is not the Villain's faction.`
+    );
+    const sharedId = options.showdown?.sharedFactionDefinitionId;
+    assert(
+      sharedId !== undefined && definitions[sharedId]?.faction?.showdownRole === "heroes",
+      "Every Hero shares the Slightly Less Evil Alliance (SD 5): name it as showdown.sharedFactionDefinitionId."
+    );
+    assert((options.showdown?.heroDeck?.length ?? 0) > 0, "A Showdown game has a shared Hero Deck (SD 3): showdown.heroDeck is empty.");
+  }
+
   // "(Other side starts face-up.)" — start on the flipped side when its
   // definition is registered (`faction.setup.startsFlipped`).
   for (const seat of resolved) {
@@ -549,7 +566,9 @@ export function createFactionGame(
   });
 
   const engine = new SpoilsEngine(normalizedDefinitions, state, undefined, options.cardCatalog);
-  if (options.createdAbility) engine.applyCreatedFactionAbility(options.createdAbility);
+  for (const [playerId, created] of Object.entries(options.createdAbilities ?? {})) {
+    engine.applyCreatedFactionAbility(playerId, created.spec, created.with);
+  }
 
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
   players.forEach((player, i) => {

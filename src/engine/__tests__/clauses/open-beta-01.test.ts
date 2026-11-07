@@ -920,7 +920,8 @@ function freePlay(engine: SpoilsEngine, cardId?: string) {
 clause(MOLESTATION, "0:rule", "the opponent gets no response window: the tactic resolves entirely on its own", () => {
   const { engine, id } = molestationBoard([], [character({ name: "Victim", cost: 1 })]);
   playRaw(engine, P1, id("dm"));
-  assert.equal(engine.state.responseWindow, undefined, "no window opens for the opponent");
+  const window = engine.state.responseWindow;
+  assert.ok(!window || (window.priorityPlayerId !== P2 && !(window.stackResponders ?? []).includes(P2)), "no window opens for the opponent");
   assert.equal(engine.state.pendingChoice !== undefined, true, "the effect has already started (the opponent must discard)");
   opponentDiscards(engine, id, "o:Victim");
   assert.equal(engine.state.cards[id("dm")].zone, "discard");

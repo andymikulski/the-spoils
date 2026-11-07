@@ -517,6 +517,10 @@ describe("Seed 2 — Verrucose Brains", () => {
       cards: [
         { key: "vb", def: def("Verrucose Brains"), owner: P1, zone: "play" },
         { key: "cheap", def: character({ name: "Cheap", cost: 1 }), owner: P1, zone: "play" },
+        // It triggers at the end of EVERY turn: at a bigger table the extra seats' turns end too, each bouncing the
+        // next-cheapest character, so more cheap ones keep the pricey one the only character left standing.
+        { key: "cheaper2", def: character({ name: "Cheap Two", cost: 2 }), owner: P1, zone: "play" },
+        { key: "cheaper3", def: character({ name: "Cheap Three", cost: 3 }), owner: P1, zone: "play" },
         { key: "pricey", def: character({ name: "Pricey", cost: 6 }), owner: P2, zone: "play" }
       ]
     });

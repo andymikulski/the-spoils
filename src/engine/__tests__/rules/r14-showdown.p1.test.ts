@@ -23,6 +23,7 @@ import {
   CHAMPION,
   FILLER,
   RAGE,
+  sharedFaction,
   evilFaction,
   giveResources,
   heroFaction,
@@ -65,8 +66,14 @@ describe("SD 1 - one Villain, every other player a Hero", () => {
       factionDefinitionId: faction.id,
       deckDefinitionIds: [RAGE.id, FILLER.id, FILLER.id, FILLER.id]
     });
+    const shared = sharedFaction();
     const build = (seats: ReturnType<typeof seat>[], villainId = "v") =>
-      createFactionGame([evil, hero, RAGE, FILLER], seats, { format: { kind: "showdown", villainId }, seed: 1, firstPlayerId: seats[0].id });
+      createFactionGame([evil, hero, shared, CHAMPION, RAGE, FILLER], seats, {
+        format: { kind: "showdown", villainId },
+        showdown: { heroDeck: [CHAMPION.id], sharedFactionDefinitionId: shared.id },
+        seed: 1,
+        firstPlayerId: seats[0].id
+      });
     refused(() => build([seat("v", evil), seat("h1")]), "a Villain with a single Hero is not a Showdown", /Showdown/);
     refused(() => build([seat("x", evil), seat("h1"), seat("h2")]), "the Villain must be one of the seated players", /not seated/);
     const three = build([seat("v", evil), seat("h1"), seat("h2")]);
@@ -77,10 +84,16 @@ describe("SD 1 - one Villain, every other player a Hero", () => {
     const evil = evilFaction();
     const hero = heroFaction();
     const seat = (id: string, faction = hero) => ({ id, name: id, factionDefinitionId: faction.id, deckDefinitionIds: [RAGE.id, ...Array.from({ length: 20 }, () => FILLER.id)] });
+    const shared = sharedFaction();
     const engine = createFactionGame(
-      [evil, hero, RAGE, FILLER],
+      [evil, hero, shared, CHAMPION, RAGE, FILLER],
       [seat("h1"), seat("v", evil), seat("h2")],
-      { format: { kind: "showdown", villainId: "v" }, seed: 1, firstPlayerId: "h1" }
+      {
+        format: { kind: "showdown", villainId: "v" },
+        showdown: { heroDeck: [CHAMPION.id], sharedFactionDefinitionId: shared.id },
+        seed: 1,
+        firstPlayerId: "h1"
+      }
     );
     assert.deepEqual(engine.state.turnOrder, ["h1", "v", "h2"]);
     assert.equal(villainOf(engine.state), "v");
@@ -362,5 +375,34 @@ describe("SD 7 - the Villain may look at the Allegiance cards at any time", () =
     redactStateFor(engine.state, "v");
     assert.equal(isAllegianceRevealed(engine.state, "h1"), false);
     assert.equal(redactStateFor(engine.state, "h2").showdown!.allegiance.h1.loyalty, "hidden");
+  });
+});
+
+describe("SD 2 / SD 3 / SD 5 - a Showdown table is held to its rules at setup", () => {
+  const evil = evilFaction();
+  const hero = heroFaction();
+  const shared = sharedFaction();
+  const seat = (id: string, faction = hero) => ({ id, name: id, factionDefinitionId: faction.id, deckDefinitionIds: [RAGE.id, FILLER.id, FILLER.id, FILLER.id] });
+  const build = (villainFaction: typeof evil, showdown: { heroDeck: string[]; sharedFactionDefinitionId?: string }) =>
+    createFactionGame([evil, hero, shared, CHAMPION, RAGE, FILLER], [seat("v", villainFaction), seat("h1"), seat("h2")], {
+      format: { kind: "showdown", villainId: "v" },
+      showdown,
+      seed: 1,
+      firstPlayerId: "v"
+    });
+  const legal = { heroDeck: [CHAMPION.id], sharedFactionDefinitionId: shared.id };
+
+  rule("SD 2", "the Villain must use The Evil Alliance: any other faction in the Villain's seat is refused", () => {
+    refused(() => build(hero, legal), "a Hero faction in the Villain's seat", /Evil Alliance/);
+    assert.ok(build(evil, legal), "control: the Villain's faction is accepted");
+  });
+
+  rule("SD 3", "there is a shared Hero Deck: a table without one is refused", () => {
+    refused(() => build(evil, { ...legal, heroDeck: [] }), "an empty Hero Deck", /Hero Deck/);
+  });
+
+  rule("SD 5", "every Hero shares the Slightly Less Evil Alliance: a table without it, or with another faction in its place, is refused", () => {
+    refused(() => build(evil, { heroDeck: legal.heroDeck }), "no shared faction", /Slightly Less Evil Alliance/);
+    refused(() => build(evil, { ...legal, sharedFactionDefinitionId: hero.id }), "a Hero faction as the shared faction", /Slightly Less Evil Alliance/);
   });
 });

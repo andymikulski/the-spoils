@@ -49,6 +49,12 @@ const isDepleted = (engine: SpoilsEngine, cardId: CardInstanceId): boolean => en
 const stat = (engine: SpoilsEngine, id: CardInstanceId, name: "strength" | "speed" | "life" | "structure"): number | undefined =>
   engine.getStat(id, name) as number | undefined;
 
+/** Turn starts when play passes from `from`'s turn to `to`'s: 1 at a two-player table, more where extra seats take turns between. */
+const turnStartsBetween = (engine: SpoilsEngine, from: PlayerId, to: PlayerId): number => {
+  const order = engine.state.turnOrder;
+  return (order.indexOf(to) - order.indexOf(from) + order.length) % order.length || order.length;
+};
+
 /** Both factions can develop (draw or play a resource). */
 const devBoard = (cards: CardPlacement[], extra: Parameters<typeof buildGame>[0] = {}) =>
   buildGame({ playerA: { faction: developFaction() }, playerB: { faction: developFaction() }, ...extra, cards });
@@ -154,21 +160,24 @@ clause(CHURNER, "0:rule", "printed card: an item, cost 3, threshold [R][R][R]; d
 clause(CHURNER, "0:rule", "at the start of EACH turn (mine and my opponent's) it gets a token", () => {
   const g = churnerBoard();
   assert.equal(tokensOn(g.engine, g.id("ch")), 0);
+  // At a bigger table the seats between also take turns (each a turn start): count the starts passed.
+  const toThem = turnStartsBetween(g.engine, P1, P2);
+  const toMe = turnStartsBetween(g.engine, P2, P1);
   endTurn(g.engine, P1); // the opponent's turn starts
   assert.equal(g.engine.state.activePlayerId, P2);
-  assert.equal(tokensOn(g.engine, g.id("ch")), 1, "start of the opponent's turn");
+  assert.equal(tokensOn(g.engine, g.id("ch")), toThem, "start of the opponent's turn");
   endTurn(g.engine, P2); // my turn starts
   assert.equal(g.engine.state.activePlayerId, P1);
-  assert.equal(tokensOn(g.engine, g.id("ch")), 2, "start of my turn");
+  assert.equal(tokensOn(g.engine, g.id("ch")), toThem + toMe, "start of my turn");
   endTurn(g.engine, P1);
   endTurn(g.engine, P2);
-  assert.equal(tokensOn(g.engine, g.id("ch")), 4);
+  assert.equal(tokensOn(g.engine, g.id("ch")), 2 * (toThem + toMe));
 });
 
 clause(CHURNER, "0:rule", "exactly one token per turn start, and the other cards get none", () => {
   const g = churnerBoard();
   endTurn(g.engine, P1);
-  assert.equal(tokensOn(g.engine, g.id("ch")), 1, "one token, not two");
+  assert.equal(tokensOn(g.engine, g.id("ch")), turnStartsBetween(g.engine, P1, P2), "one token per turn start, not two");
   for (const k of ["m1", "m2", "o1", "o2", "gear"]) assert.equal(tokensOn(g.engine, g.id(k)), 0, `${k} gets no token`);
 });
 
@@ -180,14 +189,18 @@ clause(CHURNER, "0:rule", "a Churner that is not in play gets nothing, and one t
   const theirs = churnerBoard({ controller: P2 });
   endTurn(theirs.engine, P1);
   endTurn(theirs.engine, P2);
-  assert.equal(tokensOn(theirs.engine, theirs.id("ch")), 2, "at every turn start, whoever controls it");
+  assert.equal(
+    tokensOn(theirs.engine, theirs.id("ch")),
+    turnStartsBetween(theirs.engine, P1, P2) + turnStartsBetween(theirs.engine, P2, P1),
+    "at every turn start, whoever controls it"
+  );
 });
 
 clause(CHURNER, "0:rule", "the token is added to the tokens already on it, and entering play does not itself give one", () => {
   const g = churnerBoard({ tokens: 3 });
   endTurn(g.engine, P1);
-  assert.equal(tokensOn(g.engine, g.id("ch")), 4);
-  const d = devBoard([{ key: "ch", def: printing(CHURNER), owner: P1, zone: "hand" }, ...res({ rage: 3 })], { turn: 2 });
+  assert.equal(tokensOn(g.engine, g.id("ch")), 3 + turnStartsBetween(g.engine, P1, P2));
+  const d =devBoard([{ key: "ch", def: printing(CHURNER), owner: P1, zone: "hand" }, ...res({ rage: 3 })], { turn: 2 });
   play(d.engine, P1, d.id("ch"));
   assert.equal(zoneOf(d.engine, d.id("ch")), "play");
   assert.equal(tokensOn(d.engine, d.id("ch")), 0, "no token merely for entering play");
@@ -1384,7 +1397,18 @@ function engorgedBoard(o: { controller?: PlayerId; theirChars?: number } = {}) {
   );
 }
 type EngorgedBoard = ReturnType<typeof engorgedBoard>;
-const killEngorged = (g: EngorgedBoard): void => play(g.engine, P1, g.id("kill"), { selected: { t: [g.id("eng")] } });
+/**
+ * Kills the Sarcophyle. "Pick an opponent" is a faction pick: at a bigger table the controller is asked which opponent
+ * (several candidates), so the original opponent `victim` is named; at a two-player table nothing is asked.
+ */
+const killEngorged = (g: EngorgedBoard, victim: PlayerId = P2): void => {
+  play(g.engine, P1, g.id("kill"), { selected: { t: [g.id("eng")] } });
+  const pc = pending(g.engine);
+  if (pc?.kind === "selectTargets") {
+    const decl = (pc.declarations as Array<{ id: string }>)[0].id;
+    answerPending(g.engine, "selectTargets", { selected: { [decl]: [factionOf(g.engine, victim)] } });
+  }
+};
 
 clause(ENGORGED, "0:rule", "printed card: a 1/3/1 sarcophyle for cost 2 with [D]; one short or no [D] is refused", () => {
   deployChecks(ENGORGED, 2, res({ deception: 1, rage: 1 }), res({ deception: 1 }), res({ rage: 2 }));
@@ -1457,7 +1481,7 @@ clause(ENGORGED, "0:rule", "it triggers only when destroyed: bouncing it to hand
 
 clause(ENGORGED, "0:rule", "'an opponent' is its controller's opponent: an Engorged Sarcophyle the opponent controls makes ME destroy one of my characters", () => {
   const g = engorgedBoard({ controller: P2 });
-  killEngorged(g);
+  killEngorged(g, P1);
   assert.equal(zoneOf(g.engine, g.id("eng")), "discard");
   const pc = pending(g.engine)!;
   assert.equal(pc.kind, "chooserSelectsTarget");

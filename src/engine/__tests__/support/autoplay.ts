@@ -788,7 +788,8 @@ export function handlePendingChoice(
           tryCommit(engine, {
             type: "resolvePendingChoice",
             playerId: pending.playerId,
-            choice: { kind: "deployForFree", cardId, selected }
+            // The card played is its own block: its opponent is named with it (MP 2), as for a play.
+            choice: { kind: "deployForFree", cardId, selected, ...namedOpponent(engine, pending.playerId, rng) }
           })
         ) {
           return;

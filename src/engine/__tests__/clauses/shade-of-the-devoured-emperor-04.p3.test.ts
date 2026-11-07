@@ -2,6 +2,7 @@
 // Expectations come from each card's PRINTED text and RULES.md / the CR; engine data is only used to drive the engine.
 
 import assert from "node:assert/strict";
+import { opponentsOf } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import {
   buildGame,
@@ -1297,6 +1298,8 @@ const killStutt = (b: ReturnType<typeof stuttBoard>, key = "st", take = true): v
   play(b.engine, P2, b.id("kill"), { selected: { t: [b.id(key)] } });
   if (take) takeStuttToken(b.engine);
 };
+/** "Each opponent's faction gains 1 ... a token for each influence gained": one per opponent of `player` (1 at a two-player table). */
+const opponentCount = (engine: SpoilsEngine, player: PlayerId): number => opponentsOf(engine.state, player).length;
 const tokensInPlay = (engine: SpoilsEngine): CardInstanceId[] =>
   Object.values(engine.state.cards)
     .filter((card) => card.isToken && card.zone === "play")
@@ -1410,7 +1413,7 @@ clause(STUTT, "1:rule", "a Micromajig token (a Gearsmith majig character, 1/1/3)
   const b = stuttBoard();
   killStutt(b);
   const tokens = tokensInPlay(b.engine);
-  assert.equal(tokens.length, 1, "one token for the one influence gained");
+  assert.equal(tokens.length, opponentCount(b.engine, P1), "one token for each influence gained (one per opponent)");
   const [tok] = tokens;
   const def = b.engine.getDefinition(tok);
   assert.equal(def.name, "Micromajig");
@@ -1435,8 +1438,8 @@ clause(STUTT, "1:rule", "'you' is the Stuttershy's CONTROLLER: for a stolen one 
   assert.equal(influence(b.engine, P1) - owner, 1, "the controller's opponent (its owner) gains 1");
   assert.equal(influence(b.engine, P2), controller);
   const tokens = tokensInPlay(b.engine);
-  assert.equal(tokens.length, 1);
-  assert.equal(b.engine.state.cards[tokens[0]].controllerId, P2, "the token comes in under the controller's control");
+  assert.equal(tokens.length, opponentCount(b.engine, P2));
+  for (const tok of tokens) assert.equal(b.engine.state.cards[tok].controllerId, P2, "the token comes in under the controller's control");
 });
 
 clause(STUTT, "1:rule", "destroyed in battle as a blocker: the influence gain and the token happen too", () => {
@@ -1447,7 +1450,7 @@ clause(STUTT, "1:rule", "destroyed in battle as a blocker: the influence gain an
     pc.kind === "chooserSelectsOption" ? { kind: "chooserSelectsOption", index: 1 } : declineAll(pc)
   );
   assert.equal(influence(b.engine, P2) - before, 1);
-  assert.equal(tokensInPlay(b.engine).length, 1);
+  assert.equal(tokensInPlay(b.engine).length, opponentCount(b.engine, P1));
 });
 
 clause(STUTT, "1:rule", "'you MAY put a Micromajig token': the controller can decline the token (the influence still happens)", () => {
@@ -1491,5 +1494,5 @@ clause(STUTT, "1:rule", "'if this card is flipped down' — ANY flip-down counts
   assert.equal(b.engine.state.cards[b.id("st")].faceDown, true, "setup: it was flipped down by the effect");
   assert.equal(influence(b.engine, P2) - before, 1, "the opponent's faction gains 1");
   drain(b.engine, (pc) => (pc.kind === "mayPay" ? { kind: "mayPay", pay: true } : { kind: pc.kind, index: 1 }));
-  assert.equal(tokensInPlay(b.engine).length, 1, "and a Micromajig can be put into play");
+  assert.equal(tokensInPlay(b.engine).length, opponentCount(b.engine, P1), "and a Micromajig can be put into play (one per influence gained)");
 });

@@ -150,8 +150,13 @@ per-category sections below and in `src/types/*`.
   negative) to the numeric cost paid, floored at 0, evaluated in the play
   context (so it can read EXTRA-COST `selectionCount`s). Opportunistic
   Pirate.
-- **`behavior.noResponse: true`** — the tactic resolves with no opponent
-  response window. Swindle.
+- **`behavior.noResponse: true`** — "Your opponents cannot respond to this
+  card": the tactic resolves with no response window. Swindle.
+  **`"opponent"`** — "Your opponent cannot respond to this card" (MP 2): the
+  opponent it is played against (named like any other) is never offered a
+  response to it; at a bigger table the other players still are, so it waits
+  on the stack for them (`StackItem.unanswerableBy`). Two players: the same as
+  `true`. Tactician Vacation.
 - **`revealFromHand` gains `threshold?` + `effects?`** — an icon gate + rider
   effects for a FINE PRINT reveal deploy (Unexpected Codicil).
 
@@ -184,6 +189,11 @@ per-category sections below and in `src/types/*`.
 - **`cannotBePicked`** — removed from every player-or-chooser *target
   declaration*'s candidate pool (not from `forEach` / `count` / auras).
   Gloamspike-Gosche Bridge, Martial Arts Wannabe (conditional).
+- **`cannotBePickedByOpponents`** — the same, for a pick by any player but
+  its controller. A continuous grant's `pickerWhere` condition scopes it to
+  the pickers for whom it holds, judged with the picker bound as `opponent`:
+  "while there are at least 10 cards in an opponent's discard pile, that
+  player cannot pick this card" (Omahkapi'si Pi'kssii).
 - **`attackOncePerTurn`** — `declareAttack` rejects a 2nd attack by that
   character this turn (`GameState.attacksThisTurn`). Static or aura.
 - **`cannotBeTakenControl`** — a `takeControl` to a different controller
@@ -260,7 +270,10 @@ Condition`. `nameValue.valueKind` gains `"resourceIcon"`.
 - **`ActivatedAbility.usableBy`** — `"controller"` (default) or
   `"anyPlayer"`. An `"anyPlayer"` faction ability (The Knitting Coalition —
   "Both players may use this ability") is offered to the opponent and
-  resolves under whoever activated it.
+  resolves under whoever activated it. `"controllerAndOpponent"` — "both
+  players" where the card names the opponent (MP 3): its controller and
+  `CardInstance.chosenOpponentId` only (The Open R&D Faction's created
+  ability).
 - **`ActivatedAbility.variableBounds`** — `{ [id]: { min?, max? } }`
   (each an optional `NumberExpression`) — the action's `variables[id]`
   must satisfy `min <= v <= max`, beyond plain affordability. "Pick a
@@ -362,9 +375,12 @@ combat-heavy early set). Full detail in `src/types/*` + `COVERAGE.md`.
   `effects` as a rider (source = the replacement card). Fwing!,
   Throatstabber, Two-Headed Coin.
 - **`{ type: "restrictBlockers", target?, minPartySize?, minSpeed?,
-  condition?, duration }`** — the "this turn" form of
+  condition?, notBy?, duration }`** — the "this turn" form of
   `ContinuousAbility.blockRestriction`; `condition` re-checked at
-  `declareBlockers`. LeoKaiser GO MEGA-NEKO-KAISER!.
+  `declareBlockers`. LeoKaiser GO MEGA-NEKO-KAISER!. `notBy` — "this card
+  cannot be blocked by those players": judged once as it resolves for each
+  opponent (that opponent bound as `opponent`); the target cannot be blocked
+  by any for whom it holds (Underhanded Gamer, Seed Saga).
 - **`{ type: "restrictBlockersToChosen", chooser, declaration }`** — on a
   `characterAttacked` trigger: `chooser` picks any number of characters
   (a `chooseChosenBlockers` pending choice); for this battle only those may
@@ -1194,6 +1210,13 @@ rehearses them on a cloned state) — no partial payment; the numeric
 - **`forEachPlayer`** — `{ effects }` — runs `effects` once per player
   (turn order, active first) with `controller`/`owner` rebound; nested
   choosers pause per player.
+- **`asPlayer`** — `{ player, effects }` — "that player ... their opponent":
+  runs `effects` once as `player` (`controller`/`owner` rebound) with one of
+  *their* opponents bound as `opponent`, chosen by them (`chooseOpponent`)
+  when the body refers to one and several are possible. With `player:
+  "controller"` it keeps the block's opponent if one is bound, else asks the
+  controller (Lucky Bastard's "both players" inside a replacement, which has
+  nobody else to ask). Free Trade Agreement, Meat of the Mountain.
 - **`nameValue`** — `{ chooser, valueKind: "subtype" | "cardName", storeAs }`
   — pauses for `chooser` to name a string, stored on the source card's
   `namedValues[storeAs]` and read by `CardSelector.subtypeVar`.
@@ -1722,7 +1745,7 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
 
 ### The Open R&D Faction: the ability both players create (Q51B)
 
-`faction.playerCreatedAbility: true` marks a faction card that takes ONE ability the two players make before the game ("both players work together to make the ability, but only one is produced"). It is never free text and never a raw engine ability: the players agree on a `CreatedAbilitySpec` picked from the closed menu `CREATED_ABILITY_MENU` (`src/engine/createdAbility.ts`, exported from `engine.ts`; types in `src/types/createdAbility.ts`).
+`faction.playerCreatedAbility: true` marks a faction card that takes ONE ability its controller and one opponent make before the game ("both players work together to make the ability, but only one is produced"; with three or more players, "both players" is the controller and the opponent they select, MP 3). Each such card has its own. It is never free text and never a raw engine ability: the players agree on a `CreatedAbilitySpec` picked from the closed menu `CREATED_ABILITY_MENU` (`src/engine/createdAbility.ts`, exported from `engine.ts`; types in `src/types/createdAbility.ts`).
 
 ```ts
 CreatedAbilitySpec = { costs: CreatedCostPart[]; effect: CreatedEffectPart }   // plain JSON
@@ -1751,9 +1774,9 @@ CreatedEffectPart  = { kind: CreatedEffectKind; amount?: number }               
 | `millOpponent` "Put the top N cards of your opponent's deck into their discard pile" | 1-5 | `mill` (opponent, discard) | |
 
 - `validateCreatedAbilitySpec(spec: unknown): string[]` lists every problem (empty = valid); it accepts any value, so run it on what comes off the wire.
-- `buildCreatedAbility(spec) -> { ability: ActivatedAbility; text: string }` throws on an invalid spec. The ability has id `CREATED_ABILITY_ID` (`"created-ability"`), `usableBy: "anyPlayer"`, the costs in the written order and, for the picking effects, a `targets` entry `created-pick` (an `activateAbility` supplies `selected["created-pick"]`, and `selected["created-discard"]` for a discard cost). The text is generated from the parts in the printed layout: `COST: Pay 2. Discard a card. Pick a character. EFFECT: Inflict 3 damage to the picked character.`
+- `buildCreatedAbility(spec) -> { ability: ActivatedAbility; text: string }` throws on an invalid spec. The ability has id `CREATED_ABILITY_ID` (`"created-ability"`), `usableBy: "controllerAndOpponent"` (the two who made it), the costs in the written order and, for the picking effects, a `targets` entry `created-pick` (an `activateAbility` supplies `selected["created-pick"]`, and `selected["created-discard"]` for a discard cost). The text is generated from the parts in the printed layout: `COST: Pay 2. Discard a card. Pick a character. EFFECT: Inflict 3 damage to the picked character.`
 - `CREATED_ABILITY_MENU` is the same table as data (`{ costs, effects, limits }`; each entry has `kind`, `label` with `N` for the stepper, `min`/`max`/`defaultAmount`, `picksCharacter`), for a UI to render dropdowns and steppers from.
-- Setup: `FactionGameSetupOptions.createdAbility?: CreatedAbilitySpec` and `SpoilsEngine.applyCreatedFactionAbility(spec)` validate and build it (an invalid spec throws `Invalid player-created ability: ...`) and store it on each marked faction card as `CardInstance.createdAbility = { text, ability, spec }`, all plain JSON, so a save or a replay from the pinned setup keeps it.
+- Setup: `FactionGameSetupOptions.createdAbilities?: Record<PlayerId, { spec; with? }>` (keyed by the faction's player; `with` = the opponent who made it with them, required with several opponents) and `SpoilsEngine.applyCreatedFactionAbility(playerId, spec, withId?)` validate and build it (an invalid spec throws `Invalid player-created ability: ...`) and store it on that player's faction card as `CardInstance.createdAbility = { text, ability, spec }`, naming the partner in `chosenOpponentId`; all plain JSON, so a save or a replay from the pinned setup keeps it.
 - To add a part: add one row to `COST_PARTS` / `EFFECT_PARTS` in `createdAbility.ts` (label, range, text, build); the menu, validator, builder and text follow. Add its case to `created-ability.test.ts`.
 
 ## Continuous ability: ignore a card type

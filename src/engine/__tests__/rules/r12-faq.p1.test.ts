@@ -82,7 +82,7 @@ describe("FAQ 1 — who is the active player", () => {
     assert.equal(engine.state.activePlayerId, P1, "announcing the end of turn does not change it while P2 may still respond");
     resolvePendingResponses(engine);
     assert.equal(engine.state.activePlayerId, P2, "when the turn has ended the other player's turn begins");
-    assert.equal(engine.state.turn, 2);
+    assert.equal(engine.state.turn, engine.state.turnOrder.indexOf(P2) + 1, "one turn per seat that has taken one");
     settleTurnStart(engine);
     refused(() => engine.perform({ type: "endTurn", playerId: P1 }), "the former active player ending a turn that is not theirs", /turn|active|priority/i);
   });

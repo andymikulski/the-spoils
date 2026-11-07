@@ -41,6 +41,14 @@ export interface FactionDefinition {
   influencePerOpponent?: number;
 
   /**
+   * The faction's place at a Showdown table: `"villain"` — the faction the
+   * Villain must use (The Evil Alliance, SD 2); `"heroes"` — the faction
+   * every Hero shares (Slightly Less Evil Alliance, SD 5). `createFactionGame`
+   * holds a Showdown game to both.
+   */
+  showdownRole?: "villain" | "heroes";
+
+  /**
    * The faction's printed MINIMUM DECK SIZE (The Society of Magical Propriety:
    * 300 cards): the least the deck may hold, not counting the faction card.
    * Absent = no minimum rule. Read by `getMinimumDeckSize`.
@@ -218,8 +226,9 @@ export interface FactionDefinition {
    * `FactionGameSetupOptions.createdAbility`; the engine validates it, builds
    * the ability and its rules text (`buildCreatedAbility`) and stores both on
    * the faction card instance (`CardInstance.createdAbility`) as an extra
-   * activated ability with `usableBy: "anyPlayer"`. Without one the card
-   * simply has no third ability.
+   * activated ability with `usableBy: "controllerAndOpponent"`: its
+   * controller and the opponent who created it with them (MP 3; the card's
+   * `chosenOpponentId`). Without one the card simply has no third ability.
    */
   playerCreatedAbility?: boolean;
 
@@ -485,10 +494,17 @@ export interface CardDefinition {
       costAdjust?: NumberExpression;
     };
     /**
-     * "Your opponents cannot respond to this card." — a tactic that opens
-     * no response window when it's played; it resolves immediately. Swindle.
+     * `true` — "Your opponents cannot respond to this card.": a tactic that
+     * opens no response window when it's played; it resolves immediately.
+     * Swindle.
+     *
+     * `"opponent"` — "Your opponent cannot respond to this card." (MP 2):
+     * the opponent the card is played against may not respond to it; at a
+     * bigger table the other players still may (it waits on the stack for
+     * them). At a two-player table it is the same as `true`. Tactician
+     * Vacation.
      */
-    noResponse?: boolean;
+    noResponse?: boolean | "opponent";
     /**
      * "This card does not leave play if the attached card leaves play."
      * (Everlasting Blade of Light). An "Attach to X" card is normally put
@@ -566,9 +582,12 @@ export interface ActivatedAbility extends AbilityBase {
    * ability"; hidden from the controller, resolved under the opponent), or
    * `"heroes"` (Slightly Less Evil Alliance — "All Heroes can use abilities
    * on this card", SD-SLE 1; offered to every Showdown Hero and resolved
-   * under whoever activated it, never the Villain).
+   * under whoever activated it, never the Villain), or
+   * `"controllerAndOpponent"` ("both players can use it" where the card
+   * names the opponent, MP 3: its controller and `CardInstance.
+   * chosenOpponentId` — the player-made ability of The Open R&D Faction).
    */
-  usableBy?: "controller" | "anyPlayer" | "opponent" | "heroes";
+  usableBy?: "controller" | "anyPlayer" | "opponent" | "heroes" | "controllerAndOpponent";
   /**
    * An *icon* requirement to activate this ability, same shorthand as
    * `CardDefinition.threshold` (e.g. `"gg"` = two Greed icons) — a gate,
