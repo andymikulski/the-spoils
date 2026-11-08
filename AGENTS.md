@@ -94,10 +94,11 @@ The package must stay usable from TypeScript consumers under `nodenext`,
   instance wraps a `definitions` map (`CardDefinitionId -> CardDefinition`)
   and a mutable `GameState`. All rules logic lives here.
 - `src/engine/setup.ts` / `src/engine/factionSetup.ts` — game bootstrapping.
-  `createTwoPlayerFactionGame` is the real entry point: it resolves each
-  player's faction card, builds `CardInstance`s, shuffles, deals starting
-  resources/opening hands per the faction's `setup` rules, and queues
-  mulligans (or starts turn 1 directly if the faction has none).
+  `createFactionGame` (any number of players, array order is seat order;
+  `createTwoPlayerFactionGame` is its two-seat form) is the real entry point:
+  it resolves each player's faction card, builds `CardInstance`s, shuffles,
+  deals starting resources/opening hands per the faction's `setup` rules, and
+  queues mulligans (or starts turn 1 directly if the faction has none).
 - `src/engine/utilities.ts` — small pure helpers (`assert`, `compare`,
   `nextId`, threshold parsing, built-in faction defaults).
 - `src/engine.ts` — the package's main entry point (`package.json`'s

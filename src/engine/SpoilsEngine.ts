@@ -3144,7 +3144,7 @@ export class SpoilsEngine {
       }
       setup.currentIndex++;
       if (setup.currentIndex >= setup.order.length) {
-        finishFactionSetup(this, setup.askStartingDrawSearch === true);
+        finishFactionSetup(this, setup.askStartingDrawSearch === true, setup.matchOpponents);
       }
       return;
     }
@@ -3211,7 +3211,7 @@ export class SpoilsEngine {
 
     setup.currentIndex++;
     if (setup.currentIndex >= setup.order.length) {
-      finishFactionSetup(this, setup.askStartingDrawSearch === true);
+      finishFactionSetup(this, setup.askStartingDrawSearch === true, setup.matchOpponents);
     }
   }
 

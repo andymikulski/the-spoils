@@ -19,7 +19,7 @@ import {
   startingStaplesMustDiffer,
   withBuiltInFactionDefaults
 } from "./utilities.js";
-import { createCardInstance, createTwoPlayerGame } from "./setup.js";
+import { createCardInstance, createGame } from "./setup.js";
 import { SpoilsEngine } from "./SpoilsEngine.js";
 import { drawRandom, shuffleInPlace } from "./rng.js";
 
@@ -40,10 +40,11 @@ export interface FactionGameSetupOptions {
   firstPlayerId?: PlayerId;
   /**
    * CR 601.1c in the engine: once the starting resources are in play, the
-   * game's RNG picks which player decides who goes first, and setup pauses
-   * in the `chooseFirstPlayer` phase for that player's `chooseFirstPlayer`
-   * action. Ignored when `firstPlayerId` is given. Off by default: player A
-   * (or `firstPlayerId`) goes first and no random draw is made.
+   * game's RNG picks which of all the players decides who goes first, and
+   * setup pauses in the `chooseFirstPlayer` phase for that player's
+   * `chooseFirstPlayer` action (any player, themselves included). Ignored
+   * when `firstPlayerId` is given. Off by default: the first seat (or
+   * `firstPlayerId`) goes first and no random draw is made.
    */
   chooseFirstPlayer?: boolean;
   /**
@@ -59,6 +60,15 @@ export interface FactionGameSetupOptions {
    * defaults to `min` when omitted.
    */
   startingResourceX?: Record<PlayerId, number>;
+  /**
+   * The opponent a faction with `setup.startingResources.matchOpponentCount`
+   * (The Union of Unextraordinary Miners — MONEY FOR NOTHING: "Your opponent
+   * starts with ... enough staple resources so that both players have the same
+   * number") makes the match with, per such player. The player chooses it before
+   * the game begins (MP 2): required when that player has two or more
+   * opponents, implied (and ignored) when there is one.
+   */
+  startingResourceOpponent?: Record<PlayerId, PlayerId>;
   /**
    * Let a player pick *which* staples their faction starts with in play,
    * when their deck runs more than one kind (most factions — "find 2 staple
@@ -88,6 +98,11 @@ export interface FactionGameSetupOptions {
    * Not saved with the game: pass it again when resuming (`loadGame`).
    */
   cardCatalog?: readonly CardCatalogEntry[];
+}
+
+/** `createFactionGame`'s argument: the players in seat order (two or more, distinct ids) plus the setup options. */
+export interface FactionGameOptions extends FactionGameSetupOptions {
+  players: FactionPlayerSetup[];
 }
 
 type StartingRule = FactionDefinition["setup"]["startingResources"];
@@ -621,44 +636,46 @@ function stapleChoiceCountFor(
 }
 
 /**
- * Creates a complete two-player game using faction-defined setup rules.
+ * Creates a complete game for two or more players using faction-defined setup
+ * rules (MPX-setup). `players` is the seat order, clockwise; every player's
+ * faction is in play and every player's starting resources are placed.
  *
  * Resulting flow for The Tournament Faction:
  *   faction enters play
  *   -> find 2 staple resources and put them in play
- *   -> (option `chooseFirstPlayer`) random decider chooses who goes first
+ *   -> (option `chooseFirstPlayer`) a random player chosen from all of them decides who goes first
  *   -> shuffle
- *   -> first player draws 8, second draws 9
- *   -> mulligan decisions in turn order
+ *   -> the first player draws 8, every other player 9
+ *   -> mulligan decisions clockwise from the first player
  *   -> start turn 1
  */
-export function createTwoPlayerFactionGame(
+export function createFactionGame(
   definitionsInput: CardDefinition[],
-  playerA: FactionPlayerSetup,
-  playerB: FactionPlayerSetup,
-  options: FactionGameSetupOptions = {}
+  gameOptions: FactionGameOptions
 ): SpoilsEngine {
+  const { players, ...options } = gameOptions;
+  assert(players.length >= 2, "A game needs at least two players.");
+  assert(new Set(players.map(player => player.id)).size === players.length, "Every player needs a distinct id.");
+
   const normalizedDefinitions = definitionsInput.map(withBuiltInFactionDefaults);
   const definitions = Object.fromEntries(
     normalizedDefinitions.map(definition => [definition.id, definition])
   ) as Record<CardDefinitionId, CardDefinition>;
 
-  const firstPlayerId = options.firstPlayerId ?? playerA.id;
+  const firstPlayerId = options.firstPlayerId ?? players[0].id;
   assert(
-    firstPlayerId === playerA.id || firstPlayerId === playerB.id,
-    "firstPlayerId must identify one of the two players."
+    players.some(player => player.id === firstPlayerId),
+    "firstPlayerId must identify one of the players."
   );
 
-  const secondPlayerId = firstPlayerId === playerA.id ? playerB.id : playerA.id;
-  const resolvedA = resolveFactionAndDeck(definitions, playerA);
-  const resolvedB = resolveFactionAndDeck(definitions, playerB);
+  const resolved = players.map(player => resolveFactionAndDeck(definitions, player));
 
   // "(Other side starts face-up.)" — start on the flipped side when its
   // definition is registered (`faction.setup.startsFlipped`).
-  for (const resolved of [resolvedA, resolvedB]) {
-    const faction = resolved.factionDefinition.faction;
+  for (const entry of resolved) {
+    const faction = entry.factionDefinition.faction;
     const flipped = faction?.setup.startsFlipped && faction.flipsTo ? definitions[faction.flipsTo] : undefined;
-    if (flipped?.faction) resolved.factionDefinition = flipped;
+    if (flipped?.faction) entry.factionDefinition = flipped;
   }
 
   // Instance ids are numbered per game (`card_1`, `card_2`, ...), never from
@@ -669,16 +686,16 @@ export function createTwoPlayerFactionGame(
   let instanceSeq = 0;
   const mintCardId = (): CardInstanceId => `card_${++instanceSeq}`;
 
-  const factionA = createCardInstance(resolvedA.factionDefinition.id, playerA.id, "play", mintCardId());
-  const factionB = createCardInstance(resolvedB.factionDefinition.id, playerB.id, "play", mintCardId());
+  const factionCards = players.map((player, seat) =>
+    createCardInstance(resolved[seat]!.factionDefinition.id, player.id, "play", mintCardId())
+  );
+  const deckCards = players.map((player, seat) =>
+    resolved[seat]!.deckDefinitionIds.map(id => createCardInstance(id, player.id, "deck", mintCardId()))
+  );
 
-  const cardsA = resolvedA.deckDefinitionIds.map(id => createCardInstance(id, playerA.id, "deck", mintCardId()));
-  const cardsB = resolvedB.deckDefinitionIds.map(id => createCardInstance(id, playerB.id, "deck", mintCardId()));
-
-  const state = createTwoPlayerGame(
-    { id: playerA.id, name: playerA.name, influence: 0 },
-    { id: playerB.id, name: playerB.name, influence: 0 },
-    [factionA, ...cardsA, factionB, ...cardsB]
+  const state = createGame(
+    players.map(player => ({ id: player.id, name: player.name, influence: 0 })),
+    players.flatMap((_, seat) => [factionCards[seat]!, ...deckCards[seat]!])
   );
 
   state.turn = 1;
@@ -692,22 +709,37 @@ export function createTwoPlayerFactionGame(
     state.decideFirstPlayer = true;
   }
 
-  state.players[playerA.id].factionId = factionA.id;
-  state.players[playerB.id].factionId = factionB.id;
-  state.players[playerA.id].influence = resolvedA.factionDefinition.faction!.startingInfluence;
-  state.players[playerB.id].influence = resolvedB.factionDefinition.faction!.startingInfluence;
+  players.forEach((player, seat) => {
+    state.players[player.id].factionId = factionCards[seat]!.id;
+    state.players[player.id].influence = resolved[seat]!.factionDefinition.faction!.startingInfluence;
+  });
 
   const engine = new SpoilsEngine(normalizedDefinitions, state, undefined, options.cardCatalog);
   if (options.createdAbility) engine.applyCreatedFactionAbility(options.createdAbility);
 
-  const playerOrder = [
-    [playerA.id, resolvedA.factionDefinition],
-    [playerB.id, resolvedB.factionDefinition]
-  ] as const;
+  // MONEY FOR NOTHING's "your opponent" is the one opponent its controller
+  // chooses before the game begins (MP 2); with a single opponent it is that player.
+  const matchOpponents: Record<PlayerId, PlayerId> = {};
+  players.forEach((player, seat) => {
+    if (!resolved[seat]!.factionDefinition.faction!.setup.startingResources.matchOpponentCount) return;
+    const opponents = engine.getOpponents(player.id);
+    if (opponents.length < 2) return;
+    const chosen = options.startingResourceOpponent?.[player.id];
+    assert(
+      chosen !== undefined && opponents.includes(chosen),
+      `Player '${player.id}' must choose which opponent starts with matching resources (startingResourceOpponent).`
+    );
+    matchOpponents[player.id] = chosen;
+  });
+  const matchOpponentsField = Object.keys(matchOpponents).length > 0 ? { matchOpponents } : {};
+
+  // Prompts and placements run clockwise from the first player.
+  const clockwise = engine.getPlayersInSeatOrder(firstPlayerId);
 
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
-  for (const [playerId, factionDefinition] of playerOrder) {
-    const rule = factionDefinition.faction!.setup.startingResources;
+  players.forEach((player, seat) => {
+    const playerId = player.id;
+    const rule = resolved[seat]!.factionDefinition.faction!.setup.startingResources;
     const chosenX = options.startingResourceX?.[playerId];
     const choiceCount = options.chooseStartingResources
       ? stapleChoiceCountFor(engine, playerId, rule, chosenX)
@@ -717,7 +749,7 @@ export function createTwoPlayerFactionGame(
       // This player picks which staples they start with — deferred to the
       // `chooseStartingResources` phase below.
       choosers.push({ playerId, count: choiceCount });
-      continue;
+      return;
     }
 
     // No real choice (one staple kind, or a name-pinned faction) — place the
@@ -725,10 +757,10 @@ export function createTwoPlayerFactionGame(
     for (const pick of chooseStartingResources(engine, playerId, rule, chosenX)) {
       moveSetupCardToPlay(state, playerId, pick.cardId, pick.faceDown);
     }
-  }
+  });
 
   if (choosers.length === 0) {
-    finishFactionSetup(engine, options.chooseStartingResources === true);
+    finishFactionSetup(engine, options.chooseStartingResources === true, matchOpponents);
     return engine;
   }
 
@@ -737,9 +769,7 @@ export function createTwoPlayerFactionGame(
   // `finishFactionSetup` once the last one is in (matchOpponentCount top-up,
   // shuffle, opening hands, mulligan / turn 1). Nothing is shuffled or drawn
   // until then.
-  const order = [firstPlayerId, secondPlayerId].filter(id =>
-    choosers.some(chooser => chooser.playerId === id)
-  );
+  const order = clockwise.filter(id => choosers.some(chooser => chooser.playerId === id));
   const counts: Record<PlayerId, number> = {};
   for (const chooser of choosers) counts[chooser.playerId] = chooser.count;
 
@@ -748,26 +778,41 @@ export function createTwoPlayerFactionGame(
     order,
     currentIndex: 0,
     counts,
-    ...(options.chooseStartingResources ? { askStartingDrawSearch: true } : {})
+    ...(options.chooseStartingResources ? { askStartingDrawSearch: true } : {}),
+    ...matchOpponentsField
   };
 
   return engine;
 }
 
+/** A two-seat game: `createFactionGame` with `playerA` in the first seat and `playerB` in the second. */
+export function createTwoPlayerFactionGame(
+  definitionsInput: CardDefinition[],
+  playerA: FactionPlayerSetup,
+  playerB: FactionPlayerSetup,
+  options: FactionGameSetupOptions = {}
+): SpoilsEngine {
+  return createFactionGame(definitionsInput, { ...options, players: [playerA, playerB] });
+}
+
 /**
- * The STARTING DRAW search that governs `playerId`: its own faction's, unless
- * the opponent's faction makes it "ignore their faction's STARTING DRAW rule
- * and use this card's rule instead" (The Knitting Coalition), in which case it
- * is the opponent faction's rule (which has no search).
+ * The faction whose STARTING DRAW rule governs `playerId`: its own, unless an
+ * opponent's faction makes every opponent "ignore their faction's STARTING DRAW
+ * rule and use this card's rule instead" (The Knitting Coalition — HIDDEN
+ * INFLUENCE; "your opponent" there means every opponent, RQ-mp-6). With several
+ * such opponents the first clockwise from `playerId` governs.
  */
+function startingDrawFaction(engine: SpoilsEngine, playerId: PlayerId): FactionDefinition | undefined {
+  for (const opponentId of engine.getOpponents(playerId)) {
+    const opponentFaction = engine.getFactionDefinition(opponentId);
+    if (opponentFaction?.overridesOpponent?.startingDraw) return opponentFaction;
+  }
+  return engine.getFactionDefinition(playerId);
+}
+
+/** The STARTING DRAW search that governs `playerId` (see {@link startingDrawFaction}; an overriding faction has none). */
 function governingStartingDrawSearch(engine: SpoilsEngine, playerId: PlayerId) {
-  const playerIds = Object.keys(engine.state.players) as PlayerId[];
-  const opponentId = playerIds.find(id => id !== playerId);
-  const opponentFaction = opponentId ? engine.getFactionDefinition(opponentId) : undefined;
-  const governing = opponentFaction?.overridesOpponent?.startingDraw
-    ? opponentFaction
-    : engine.getFactionDefinition(playerId);
-  return governing?.setup.startingDrawSearch;
+  return startingDrawFaction(engine, playerId)?.setup.startingDrawSearch;
 }
 
 /**
@@ -824,17 +869,19 @@ function applyStartingDrawSearch(engine: SpoilsEngine, playerId: PlayerId): void
  * draws (honouring The Knitting Coalition's STARTING DRAW override), then
  * either the mulligan step or straight into turn 1.
  *
- * Called by {@link createTwoPlayerFactionGame} directly when no player has a
+ * Called by {@link createFactionGame} directly when no player has a
  * starting-resource choice, or by the engine once the last
  * `chooseStartingResources` action has been answered.
  */
-export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): void {
+export function finishFactionSetup(
+  engine: SpoilsEngine,
+  askSearch = false,
+  matchOpponents: Readonly<Record<PlayerId, PlayerId>> = {}
+): void {
   const state = engine.state;
-  // Insertion order is [playerA, playerB] (see `createTwoPlayerGame`); keep to
-  // it so the RNG stream is consumed exactly as in a game with no
+  // Seat order, so the RNG stream is consumed exactly as in a game with no
   // starting-resource choice.
-  const playerIds = Object.keys(state.players) as PlayerId[];
-  const otherThan = (playerId: PlayerId) => playerIds.find(id => id !== playerId)!;
+  const playerIds = [...state.seats];
 
   const startingResourceCounts: Record<PlayerId, number> = {};
   for (const playerId of playerIds) {
@@ -845,12 +892,13 @@ export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): voi
 
   // "...enough staple resources so that both players have the same number of
   // starting resources." (The Union of Unextraordinary Miners — MONEY FOR
-  // NOTHING). Done before the shuffle, like every other setup placement.
+  // NOTHING): the player and their one chosen opponent (`matchOpponents`, or
+  // the only opponent). Done before the shuffle, like every other setup placement.
   for (const playerId of playerIds) {
     if (!engine.getFactionDefinition(playerId)?.setup.startingResources.matchOpponentCount) {
       continue;
     }
-    const opponentId = otherThan(playerId);
+    const opponentId = matchOpponents[playerId] ?? engine.getOpponents(playerId)[0]!;
     const deficit = startingResourceCounts[playerId] - startingResourceCounts[opponentId];
     // The extra staples are an ordinary "N staple resources" pick: when the
     // setup phase is interactive and the opponent's deck runs several kinds,
@@ -867,7 +915,8 @@ export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): voi
         currentIndex: 0,
         counts: { [opponentId]: deficit },
         topUp: true,
-        askStartingDrawSearch: true
+        askStartingDrawSearch: true,
+        ...(Object.keys(matchOpponents).length > 0 ? { matchOpponents: { ...matchOpponents } } : {})
       };
       return;
     }
@@ -890,7 +939,7 @@ export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): voi
   // `chooseFirstPlayer` answer (`continueSetupAfterFirstPlayer`).
   if (state.decideFirstPlayer) {
     delete state.decideFirstPlayer;
-    const deciderId = drawRandom(state) < 0.5 ? playerIds[0] : playerIds[1];
+    const deciderId = playerIds[Math.floor(drawRandom(state) * playerIds.length)]!;
     state.setup = {
       phase: "chooseFirstPlayer",
       order: [deciderId],
@@ -911,9 +960,8 @@ export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): voi
  */
 export function continueSetupAfterFirstPlayer(engine: SpoilsEngine, askSearch: boolean): void {
   const state = engine.state;
-  const playerIds = Object.keys(state.players) as PlayerId[];
+  const playerIds = [...state.seats];
   const firstPlayerId = state.activePlayerId;
-  const otherThan = (playerId: PlayerId) => playerIds.find(id => id !== playerId)!;
 
   // "You may search your deck for [a resource] that is not any of your
   // starting resources, reveal it and put it into your hand." (Unlikely
@@ -921,9 +969,9 @@ export function continueSetupAfterFirstPlayer(engine: SpoilsEngine, askSearch: b
   if (askSearch) {
     // Interactive setup: each searching seat is asked (and may decline); the
     // rest of setup runs once the last answer is in (`continueStartingDrawSearch`).
-    const order = [firstPlayerId, otherThan(firstPlayerId)].filter(
-      playerId => startingDrawSearchCandidates(engine, playerId).length > 0
-    );
+    const order = engine
+      .getPlayersInSeatOrder(firstPlayerId)
+      .filter(playerId => startingDrawSearchCandidates(engine, playerId).length > 0);
     if (order.length > 0) {
       state.setup = { phase: "startingDrawSearch", order, currentIndex: 0 };
       promptStartingDrawSearch(engine, order[0]);
@@ -1004,27 +1052,23 @@ function promptStartingDrawSearch(engine: SpoilsEngine, playerId: PlayerId): voi
 }
 
 /**
- * How many cards `playerId` draws for their opening hand going first or
- * second: their faction's STARTING DRAW, or the opponent faction's when it
- * says "Your opponent ignores their faction's STARTING DRAW rule and uses
- * this card's rule instead." (The Knitting Coalition — HIDDEN INFLUENCE).
+ * How many cards `playerId` draws for their opening hand (MPX-draw): the
+ * "going first" number for the first player, the "going second" number for every
+ * other player, whatever their seat. The rule is their faction's STARTING DRAW,
+ * or the one an opponent faction imposes: "Your opponent ignores their faction's
+ * STARTING DRAW rule and uses this card's rule instead." (The Knitting Coalition
+ * — HIDDEN INFLUENCE, which applies to every opponent).
  */
 export function openingDrawFor(engine: SpoilsEngine, playerId: PlayerId, goingFirst: boolean): number {
-  const opponentId = (Object.keys(engine.state.players) as PlayerId[]).find(id => id !== playerId)!;
-  const ownFaction = engine.getFactionDefinition(playerId)!;
-  const opponentFaction = engine.getFactionDefinition(opponentId)!;
-  const handRule = opponentFaction.overridesOpponent?.startingDraw
-    ? opponentFaction.setup.openingHand
-    : ownFaction.setup.openingHand;
+  const handRule = startingDrawFaction(engine, playerId)!.setup.openingHand;
   return goingFirst ? handRule.goingFirst : handRule.goingSecond;
 }
 
 /** Everything after the STARTING DRAW search: shuffles, opening hands, then the mulligan step or turn 1. */
 function finishFactionSetupAfterSearch(engine: SpoilsEngine): void {
   const state = engine.state;
-  const playerIds = Object.keys(state.players) as PlayerId[];
+  const playerIds = [...state.seats];
   const firstPlayerId = state.activePlayerId;
-  const otherThan = (playerId: PlayerId) => playerIds.find(id => id !== playerId)!;
 
   const random = () => drawRandom(state);
   for (const playerId of playerIds) {
@@ -1035,7 +1079,8 @@ function finishFactionSetupAfterSearch(engine: SpoilsEngine): void {
     drawSetupCards(state, playerId, openingDrawFor(engine, playerId, playerId === firstPlayerId));
   }
 
-  const mulliganOrder = [firstPlayerId, otherThan(firstPlayerId)].filter(playerId => {
+  // Each player in turn, clockwise from the first player (CR 601.1g).
+  const mulliganOrder = engine.getPlayersInSeatOrder(firstPlayerId).filter(playerId => {
     const faction = engine.getFactionDefinition(playerId);
     return (faction?.setup.mulligan?.count ?? 0) > 0;
   });

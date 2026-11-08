@@ -56,9 +56,11 @@ export {
 export { createCardInstance, createGame, createTwoPlayerGame } from "./engine/setup.js";
 export type { GamePlayerSetup } from "./engine/setup.js";
 export {
+  createFactionGame,
   createTwoPlayerFactionGame,
   findFactionDeckIssues,
   type FactionPlayerSetup,
+  type FactionGameOptions,
   type FactionGameSetupOptions
 } from "./engine/factionSetup.js";
 export {

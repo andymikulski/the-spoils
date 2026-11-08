@@ -118,7 +118,7 @@ export type GameAction =
   | {
       /**
        * Answers the `chooseFirstPlayer` setup phase (CR 601.1c): the deciding
-       * player names who takes the first turn, themselves or their opponent.
+       * player names who takes the first turn: any player, themselves included.
        */
       type: "chooseFirstPlayer";
       playerId: PlayerId;

@@ -897,6 +897,12 @@ export type GameSetupState =
        * starting-resource rules applied.
        */
       topUp?: boolean;
+      /**
+       * The opponent each `matchOpponentCount` player chose, for the players
+       * with two or more opponents (MP 2): the top-up matches against that
+       * opponent only. Absent when no player had a choice to make.
+       */
+      matchOpponents?: Record<PlayerId, PlayerId>;
     }
   | {
       /**
@@ -918,7 +924,8 @@ export type GameSetupState =
        * CR 601.1c: "Randomly determine which player will decide who takes
        * the first turn of the game. That player chooses who goes first."
        * The random draw picked `order[0]`, the deciding player, who answers
-       * with a `chooseFirstPlayer` action naming either player. Runs once the
+       * with a `chooseFirstPlayer` action naming any player (themselves
+       * included). Runs once the
        * starting resources are in play (601.1b) and before the STARTING DRAW
        * (search, shuffle, opening hands: 601.1e). Only with the setup option
        * `chooseFirstPlayer`; otherwise the caller's `firstPlayerId` goes first.
@@ -988,7 +995,7 @@ export interface StartingResourceChoice {
  * included). `SpoilsEngine.getFirstPlayerChoice`.
  */
 export interface FirstPlayerChoice {
-  /** The player the random draw picked to decide who goes first. */
+  /** The player the random draw picked, from all the players, to decide who goes first. */
   deciderId: PlayerId;
   /**
    * The number of cards each player draws for their opening hand, keyed by

@@ -31,7 +31,7 @@ export interface DeckSpec {
   cards: Array<[CardDefinitionId, number]>;
 }
 
-/** Everything `createTwoPlayerFactionGame` is given: with the action log it reproduces a game exactly. */
+/** Everything `createFactionGame` is given: with the action log it reproduces a game exactly. */
 export interface GameSetupInputs {
   /** Seeds the engine's own RNG stream (shuffles, flips, random picks). */
   seed: number;
@@ -41,6 +41,8 @@ export interface GameSetupInputs {
   chooseFirstPlayer: boolean;
   chooseStartingResources: boolean;
   startingResourceX?: Record<PlayerId, number>;
+  /** The opponent each "match the opponent's starting resources" faction chooses (needed from three seats up). */
+  startingResourceOpponent?: Record<PlayerId, PlayerId>;
   createdAbility?: CreatedAbilitySpec;
 }
 
@@ -234,7 +236,7 @@ export interface SetupOptions {
   factions?: Array<CardDefinition | undefined>;
   /** Featured set per seat (default: random). */
   featuredSets?: Array<string | undefined>;
-  /** Seat count (default 2; only 2 is supported by the engine today). */
+  /** Seat count (default 2). */
   seats?: number;
 }
 
@@ -263,6 +265,17 @@ export function randomSetup(seed: number, options: SetupOptions = {}): GameSetup
     if (chosen) x[players[seat]!.id] = chosen.min + Math.floor(rng() * (Math.min(chosen.max, chosen.min + 6) - chosen.min + 1));
   }
   if (Object.keys(x).length > 0) setup.startingResourceX = x;
+
+  // A faction that tops an opponent up to its own starting resources chooses which one when there are several.
+  if (seats > 2) {
+    const chosen: Record<PlayerId, PlayerId> = {};
+    for (let seat = 0; seat < seats; seat++) {
+      if (!factionOf(seat).faction?.setup.startingResources.matchOpponentCount) continue;
+      const others = players.filter((_, other) => other !== seat);
+      chosen[players[seat]!.id] = pick(others, rng).id;
+    }
+    if (Object.keys(chosen).length > 0) setup.startingResourceOpponent = chosen;
+  }
 
   if (players.some((_, seat) => factionOf(seat).faction?.playerCreatedAbility)) {
     setup.createdAbility = randomCreatedAbility(rng);

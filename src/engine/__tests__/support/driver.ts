@@ -6,7 +6,7 @@
 // never performed. Same setup + same driver seed + same catalog => the same game, action for action.
 //
 // It reads the acting player from the flow view and iterates players from `state.players`, so it does not
-// assume two seats (`createEngine` is the only place that still builds a two-player game).
+// assume two seats.
 //
 // Two things are engine findings, never papered over: `perform` throwing on an action `checkAction`
 // approved, and a non-gameOver state in which no candidate action is accepted. `playRandomGame` stops at
@@ -14,7 +14,7 @@
 
 import {
   answerPlayRequirement,
-  createTwoPlayerFactionGame,
+  createFactionGame,
   declinedKey,
   type AttackTarget,
   type BattleDamageAssignment,
@@ -79,25 +79,24 @@ export interface DriverResult {
   finding?: Finding;
 }
 
-/** Builds the game a setup describes, through the real entry point `createTwoPlayerFactionGame`. */
+/** Builds the game a setup describes, through the real entry point `createFactionGame`. */
 export function createEngine(setup: GameSetupInputs): SpoilsEngine {
-  if (setup.players.length !== 2) {
-    throw new Error("createTwoPlayerFactionGame builds two-player games only.");
-  }
-  const [a, b] = setup.players.map(player => ({
+  const players = setup.players.map(player => ({
     id: player.id,
     name: player.name,
     factionDefinitionId: player.deck.factionDefinitionId,
     deckDefinitionIds: expandDeck(player.deck)
-  })) as [Parameters<typeof createTwoPlayerFactionGame>[1], Parameters<typeof createTwoPlayerFactionGame>[2]];
+  }));
 
-  return createTwoPlayerFactionGame(CATALOG, a, b, {
+  return createFactionGame(CATALOG, {
+    players,
     seed: setup.seed,
     chooseFirstPlayer: setup.chooseFirstPlayer,
     chooseStartingResources: setup.chooseStartingResources,
     cardCatalog: CARD_NAME_CATALOG,
     ...(setup.firstPlayerId !== undefined ? { firstPlayerId: setup.firstPlayerId } : {}),
     ...(setup.startingResourceX ? { startingResourceX: setup.startingResourceX } : {}),
+    ...(setup.startingResourceOpponent ? { startingResourceOpponent: setup.startingResourceOpponent } : {}),
     ...(setup.createdAbility ? { createdAbility: setup.createdAbility } : {})
   });
 }

@@ -98,11 +98,12 @@ export interface FactionDefinition {
        */
       chosenStaples?: { min: number; max: number; plus?: string[] };
       /**
-       * After both players' starting resources are placed, top this
-       * faction's OPPONENT up with staple resources until both players hold
-       * the same number of starting resources ("...enough staple resources
-       * so that both players have the same number of starting resources").
-       * 2-player only.
+       * After the players' starting resources are placed, top this
+       * faction's OPPONENT up with staple resources until the two hold the
+       * same number of starting resources ("...enough staple resources so
+       * that both players have the same number of starting resources"). With
+       * several opponents it is the one the player chose before the game
+       * began (`FactionGameSetupOptions.startingResourceOpponent`, MP 2).
        */
       matchOpponentCount?: boolean;
     };
@@ -239,7 +240,8 @@ export interface FactionDefinition {
    * "your opponent ignores their faction's STARTING DRAW rule and uses
    * this card's rule instead"; PULLING STRINGS: "your opponent ignores
    * their faction's DEVELOP RULE"). Resolved before setup (opening hand)
-   * and consulted live (`getDevelopChoices`). 2-player only.
+   * and consulted live (`getDevelopChoices`). `startingDraw` applies to
+   * every opponent (RQ-mp-6); `suppressDevelop` reads a single opponent.
    */
   overridesOpponent?: {
     /** Opponent's opening hand uses THIS faction's `setup.openingHand` sizes. */
