@@ -179,6 +179,13 @@ export interface PlayerState {
   void: CardInstanceId[];
   /** "Removed from the game" (RULES.md §2). Owner-tracked, like discard/void. */
   removed: CardInstanceId[];
+
+  /**
+   * Set once this player has lost (their faction reached 0 influence, CR 102.1). They are out of the game from the
+   * end of the unit that brought them to 0 (CR 102.2 unit rule): skipped in seat order, never given priority, and
+   * never an opponent. `turn` is the turn number when they lost.
+   */
+  eliminated?: { turn: number };
 }
 
 export interface RuntimeModifier {
@@ -1238,6 +1245,14 @@ export interface GameState {
   idSeq: number;
 
   players: Record<PlayerId, PlayerState>;
+
+  /**
+   * The seats in clockwise order (CR 402.2, 413.1a, 601.1g: "clockwise"). Set at setup from the order the players
+   * are given; eliminated players keep their seat and are skipped. Emergency Obfuscation's seat swap exchanges two
+   * entries while it lasts.
+   */
+  seats: PlayerId[];
+
   cards: Record<CardInstanceId, CardInstance>;
 
   modifiers: RuntimeModifier[];

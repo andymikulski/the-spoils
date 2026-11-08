@@ -53,7 +53,8 @@ export {
   CREATED_ABILITY_MENU,
   CREATED_ABILITY_ID
 } from "./engine/createdAbility.js";
-export { createCardInstance, createTwoPlayerGame } from "./engine/setup.js";
+export { createCardInstance, createGame, createTwoPlayerGame } from "./engine/setup.js";
+export type { GamePlayerSetup } from "./engine/setup.js";
 export {
   createTwoPlayerFactionGame,
   findFactionDeckIssues,

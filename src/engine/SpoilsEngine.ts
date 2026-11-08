@@ -781,6 +781,7 @@ export class SpoilsEngine {
     this.state.started ??= true;
     this.state.rngState ??= randomSeed();
     this.state.idSeq ??= deriveIdSeq(this.state);
+    this.state.seats ??= Object.keys(this.state.players);
     this.state.turnEventTally ??= {};
     this.state.turnDeploys ??= {};
     this.state.turnDestroyed ??= [];
@@ -21284,7 +21285,7 @@ export class SpoilsEngine {
   }
 
   private passTurn(playerId: PlayerId): void {
-    const next = this.getOpponent(playerId);
+    const next = this.requirePlayer(this.nextSeat(playerId));
 
     this.state.turn++;
     this.state.activePlayerId = next.id;
@@ -24012,6 +24013,46 @@ export class SpoilsEngine {
     assert(player, `Player '${id}' not found.`);
 
     return player;
+  }
+
+  /** The seats in clockwise order, eliminated players included (`GameState.seats`). */
+  getSeats(): PlayerId[] {
+    return [...this.state.seats];
+  }
+
+  /** Whether `playerId` has lost and is out of the game (`PlayerState.eliminated`). */
+  isEliminated(playerId: PlayerId): boolean {
+    return this.requirePlayer(playerId).eliminated !== undefined;
+  }
+
+  /** The players still in the game, clockwise, starting with `from` (or the first seat). */
+  getPlayersInSeatOrder(from?: PlayerId): PlayerId[] {
+    const seats = this.state.seats;
+    const start = from === undefined ? 0 : seats.indexOf(from);
+    assert(start >= 0, `Unknown player '${from}'.`);
+    const ordered: PlayerId[] = [];
+    for (let i = 0; i < seats.length; i++) {
+      const id = seats[(start + i) % seats.length];
+      if (!this.state.players[id].eliminated) ordered.push(id);
+    }
+    return ordered;
+  }
+
+  /** `playerId`'s opponents still in the game, clockwise from the seat on their left. */
+  getOpponents(playerId: PlayerId): PlayerId[] {
+    return this.getPlayersInSeatOrder(playerId).filter(id => id !== playerId);
+  }
+
+  /** The next seat clockwise after `playerId` whose player is still in the game. */
+  private nextSeat(playerId: PlayerId): PlayerId {
+    const seats = this.state.seats;
+    const at = seats.indexOf(playerId);
+    assert(at >= 0, `Unknown player '${playerId}'.`);
+    for (let i = 1; i <= seats.length; i++) {
+      const id = seats[(at + i) % seats.length];
+      if (!this.state.players[id].eliminated) return id;
+    }
+    return playerId;
   }
 
   private getOpponent(

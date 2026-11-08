@@ -43,22 +43,38 @@ export function createCardInstance(
   };
 }
 
+export interface GamePlayerSetup {
+  id: PlayerId;
+  name: string;
+  influence?: number;
+}
+
+/** A two-seat game: `createGame([playerA, playerB], cards)`. */
 export function createTwoPlayerGame(
-  playerA: {
-    id: PlayerId;
-    name: string;
-    influence?: number;
-  },
-  playerB: {
-    id: PlayerId;
-    name: string;
-    influence?: number;
-  },
+  playerA: GamePlayerSetup,
+  playerB: GamePlayerSetup,
   cards: CardInstance[]
 ): GameState {
+  return createGame([playerA, playerB], cards);
+}
+
+/**
+ * A game for two or more players. `seatOrder` is clockwise and the first seat takes the first turn; the real setup
+ * flow (`createFactionGame`) decides the first player itself (CR 601.1c).
+ */
+export function createGame(
+  seatOrder: readonly GamePlayerSetup[],
+  cards: CardInstance[]
+): GameState {
+  assert(seatOrder.length >= 2, "A game needs at least two players.");
+  assert(
+    new Set(seatOrder.map(player => player.id)).size === seatOrder.length,
+    "Every player needs a distinct id."
+  );
+  const playerA = seatOrder[0];
   const players: Record<PlayerId, PlayerState> = {};
 
-  for (const player of [playerA, playerB]) {
+  for (const player of seatOrder) {
     players[player.id] = {
       id: player.id,
       name: player.name,
@@ -127,6 +143,7 @@ export function createTwoPlayerGame(
     // Placeholder — set for real just below, once `cardMap` is in its final form.
     idSeq: 0,
     players,
+    seats: seatOrder.map(player => player.id),
     cards: cardMap,
     modifiers: [],
     areaModifiers: [],

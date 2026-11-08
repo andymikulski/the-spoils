@@ -5,7 +5,7 @@
 
 import {
   createCardInstance,
-  createTwoPlayerGame,
+  createGame,
   SpoilsEngine
 } from "../../../engine.js";
 import type {
@@ -23,6 +23,10 @@ import type {
 
 export const P1: PlayerId = "p1";
 export const P2: PlayerId = "p2";
+export const P3: PlayerId = "p3";
+export const P4: PlayerId = "p4";
+export const P5: PlayerId = "p5";
+export const P6: PlayerId = "p6";
 
 let defCounter = 0;
 
@@ -159,6 +163,11 @@ export interface PlayerSetup {
 export interface BuildGameOptions {
   playerA?: Partial<PlayerSetup>;
   playerB?: Partial<PlayerSetup>;
+  /**
+   * More seats after `playerA` and `playerB`, clockwise. Ids default to P3, P4, ... in order. Omitted: a two-player
+   * game, exactly as before.
+   */
+  extraPlayers?: Partial<PlayerSetup>[];
   cards?: CardPlacement[];
   turn?: number;
   activePlayerId?: PlayerId;
@@ -178,12 +187,25 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   const playerA: PlayerSetup = { id: P1, name: "Alice", ...options.playerA };
   const playerB: PlayerSetup = { id: P2, name: "Bob", ...options.playerB };
 
+  const extraIds = [P3, P4, P5, P6];
+  const extraPlayers: PlayerSetup[] = (options.extraPlayers ?? []).map((setup, i) => {
+    const id = setup.id ?? extraIds[i] ?? `p${i + 3}`;
+    return { id, name: id, ...setup };
+  });
+  const extraFactionDefs = extraPlayers.map(player => player.faction ?? factionCard({ name: `${player.id}-faction` }));
+
   const factionDefA = playerA.faction ?? factionCard({ name: `${playerA.id}-faction` });
   const factionDefB = playerB.faction ?? factionCard({ name: `${playerB.id}-faction` });
 
   const placements: CardPlacement[] = [
     { key: "__factionA", def: factionDefA, owner: playerA.id, zone: "play" },
     { key: "__factionB", def: factionDefB, owner: playerB.id, zone: "play" },
+    ...extraPlayers.map((player, i): CardPlacement => ({
+      key: `__faction_${player.id}`,
+      def: extraFactionDefs[i],
+      owner: player.id,
+      zone: "play"
+    })),
     ...(options.cards ?? [])
   ];
 
@@ -226,14 +248,24 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
     instancesByKey.get(placement.key)!.attachedTo = target.id;
   }
 
-  const state = createTwoPlayerGame(
-    { id: playerA.id, name: playerA.name ?? playerA.id, influence: playerA.influence ?? factionDefA.faction?.startingInfluence },
-    { id: playerB.id, name: playerB.name ?? playerB.id, influence: playerB.influence ?? factionDefB.faction?.startingInfluence },
+  const state = createGame(
+    [
+      { id: playerA.id, name: playerA.name ?? playerA.id, influence: playerA.influence ?? factionDefA.faction?.startingInfluence },
+      { id: playerB.id, name: playerB.name ?? playerB.id, influence: playerB.influence ?? factionDefB.faction?.startingInfluence },
+      ...extraPlayers.map((player, i) => ({
+        id: player.id,
+        name: player.name ?? player.id,
+        influence: player.influence ?? extraFactionDefs[i].faction?.startingInfluence
+      }))
+    ],
     [...instancesByKey.values()]
   );
 
   state.players[playerA.id].factionId = instancesByKey.get("__factionA")!.id;
   state.players[playerB.id].factionId = instancesByKey.get("__factionB")!.id;
+  for (const player of extraPlayers) {
+    state.players[player.id].factionId = instancesByKey.get(`__faction_${player.id}`)!.id;
+  }
 
   state.turn = options.turn ?? 1;
   state.activePlayerId = options.activePlayerId ?? playerA.id;
@@ -244,7 +276,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
 
   const engine = new SpoilsEngine(definitions, state, options.random);
 
-  // createTwoPlayerGame forces attackEligibleTurn = 1 for anything already
+  // createGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for
   // every placement rather than conditionally skipping, so `attackEligible`
   // is authoritative regardless of which player owns the card or what
