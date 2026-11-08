@@ -5,6 +5,7 @@
 import type { ComparisonOperator } from "../types/ids.js";
 import type { CardDefinition, FactionDefinition, Threshold } from "../types/cards.js";
 import type { GameState } from "../types/state.js";
+import type { DeepReadonly } from "../types/readonly.js";
 
 let nextIdCounter = 1;
 
@@ -82,6 +83,14 @@ export function startingStaplesMustDiffer(
   rule: FactionDefinition["setup"]["startingResources"]
 ): boolean {
   return rule.distinctStaples === true && Boolean(rule.stapleOnly);
+}
+
+/**
+ * A private, mutable copy of something a caller handed in. The engine works on the copy (it may write into it and
+ * keep it in the game state), so the caller's object is never touched and never shares structure with the game.
+ */
+export function ownedCopy<T>(value: DeepReadonly<T>): T {
+  return structuredClone(value) as unknown as T;
 }
 
 export function assert(condition: unknown, message: string): asserts condition {

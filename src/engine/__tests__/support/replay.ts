@@ -58,7 +58,7 @@ export function replayAgainstDigests(file: ReplayFile, options: ReplayOptions = 
   for (let i = 0; i < file.actions.length; i++) {
     const action = file.actions[i]!;
     try {
-      engine.perform(structuredClone(action));
+      engine.perform(action);
     } catch (error) {
       return {
         index: i + 1,
@@ -102,7 +102,7 @@ export function findRoundTripPoints(file: ReplayFile, targets: readonly number[]
   const engine = createEngine(file.setup);
 
   for (let done = 0; done <= file.actions.length && pending.length > 0; done++) {
-    if (done > 0) engine.perform(structuredClone(file.actions[done - 1]!));
+    if (done > 0) engine.perform(file.actions[done - 1]!);
     if (done < pending[0]!) continue;
 
     const save = JSON.parse(JSON.stringify(saveGame(engine)));
@@ -115,7 +115,7 @@ export function findRoundTripPoints(file: ReplayFile, targets: readonly number[]
     for (let i = done; !mismatch && i < Math.min(file.actions.length, done + lookahead); i++) {
       const action = file.actions[i]!;
       try {
-        fork.perform(structuredClone(action));
+        fork.perform(action);
       } catch (error) {
         mismatch = { index: i + 1, action, expected: digestAt(file, i + 1), actual: "(threw)", error: error instanceof Error ? error.message : String(error) };
         break;

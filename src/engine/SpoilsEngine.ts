@@ -17,6 +17,7 @@ import type {
   CardDefinitionId,
   CardInstance,
   CardInstanceId,
+  DeepReadonly,
   AttackOptions,
   AttackTarget,
   BlockOptions,
@@ -98,6 +99,7 @@ import {
   declinedKey,
   deriveIdSeq,
   isStapleResourceDefinition,
+  ownedCopy,
   parseThreshold,
   startingStaplesMustDiffer,
   withBuiltInFactionDefaults
@@ -121,6 +123,7 @@ import {
   continueStartingDrawSearch,
   finishFactionSetup,
   openingDrawFor,
+  requiredStartingCards,
   startingSlotPlan
 } from "./factionSetup.js";
 
@@ -227,6 +230,11 @@ function conditionConjuncts(condition: Condition | undefined): Condition[] {
   if (!condition) return [];
   return condition.type === "and" ? condition.conditions.flatMap(conditionConjuncts) : [condition];
 }
+
+/** A continuous ability that carries `providesGrants` (the field is known to be present). */
+type IconGrantingAbility = Extract<AbilityDefinition, { type: "continuous" }> & {
+  providesGrants: NonNullable<Extract<AbilityDefinition, { type: "continuous" }>["providesGrants"]>;
+};
 
 type IgnorableTriggerKind = NonNullable<
   Extract<AbilityDefinition, { type: "continuous" }>["ignoresTriggers"]
@@ -358,6 +366,19 @@ const SOURCE_CLASS_GUARDED_EFFECTS = new Set<Effect["type"]>([
   "setRestoreLock",
   "skipNextRestore",
   "attachTo"
+]);
+
+/**
+ * Effects that act on one existing card named by `target`. A card that no
+ * longer exists (a token that left play ceased to exist, CR 409.3) cannot be
+ * acted on: the instruction is carried out as far as possible, which is not
+ * at all (CR 402.5, 402.5a).
+ */
+const CARD_SUBJECT_EFFECTS = new Set<Effect["type"]>([
+  ...SOURCE_CLASS_GUARDED_EFFECTS,
+  "duplicate",
+  "grantAbilitiesFrom",
+  "useTargetAbility"
 ]);
 
 /** One damage step's assignments to a single target (see `SpoilsEngine.battleDamageGroups`). */
@@ -839,7 +860,17 @@ export class SpoilsEngine {
   // Public API
   // ---------------------------------------------------------------------------
 
-  perform(action: GameAction): void {
+  /**
+   * Performs `action`. The engine reads the action and writes nothing into it: it works on its own copy, so the
+   * object passed in is left exactly as it was (it may be frozen), shares nothing with the game state, and can be
+   * sent again or checked first with `checkAction`.
+   */
+  perform(action: DeepReadonly<GameAction>): void {
+    this.performOwned(ownedCopy<GameAction>(action));
+  }
+
+  /** `perform` for an action this engine already owns (a copy it made, or one it built itself). */
+  private performOwned(action: GameAction): void {
     this.readMemo = undefined;
     try {
       this.performAndSettle(action);
@@ -2131,6 +2162,7 @@ export class SpoilsEngine {
   ): CardInstanceId {
     const defId = this.nextId("token-def");
     this.grantingDefinitionIds = undefined;
+    this.grantedAbilitiesProvideIcons = undefined;
     const printing = this.pickTokenPrinting(token, defId);
     this.definitions[defId] = {
       id: defId,
@@ -2317,12 +2349,9 @@ export class SpoilsEngine {
     if (!card || card.zone !== "play" || !this.anyDefinitionProvidesGrants()) return own;
 
     let icons: ResourceIcon[] | undefined;
-    const granters = this.grantingSources();
     for (const source of Object.values(this.state.cards)) {
       if (source.zone !== "play" || source.faceDown) continue;
-      for (const ability of this.getEffectiveContinuousAbilities(source.id, granters)) {
-        if (!ability.providesGrants) continue;
-
+      for (const ability of this.iconGrantingAbilities(source.id)) {
         // The grant's own condition / selector / suppression check may ask for icons again (a condition counting
         // its controller's [D]): a re-entrant read skips this ability instead of bootstrapping off itself.
         const guardKey = `${source.id}:${ability.id}:provides`;
@@ -2350,6 +2379,53 @@ export class SpoilsEngine {
       }
     }
     return icons ?? own;
+  }
+
+  /**
+   * The continuous abilities of in-play `sourceId` that carry `providesGrants`: its printed ones, those another card
+   * copied onto it at runtime (`GameState.abilityGrants`), and — only when some definition's `grantedAbilities` block
+   * holds one — those an in-play `grantedAbilities` ability gives it.
+   *
+   * Only these can change an icon count, so nothing else about the source is evaluated here: asking whether an
+   * unrelated granter's condition holds or whether it is suppressed would read thresholds (a "[G][G][G][G][G]: this card
+   * loses all other rules text" suppressor, Espionage Loafers), and the thresholds being computed are what asked.
+   * The one remaining route (a `grantedAbilities` block that hands out `providesGrants`) is a real dependency of the icon
+   * count on the granter's condition, so a read made while it is being evaluated sees only the printed and copied ones
+   * (`resolvingContinuousGrant` guard, like every other self-referential continuous read).
+   */
+  private iconGrantingAbilities(sourceId: CardInstanceId): IconGrantingAbility[] {
+    const hasGrants = (ability: AbilityDefinition): ability is IconGrantingAbility =>
+      ability.type === "continuous" && !!ability.providesGrants;
+
+    const found = this.continuousAbilitiesOf(this.getDefinition(sourceId)).filter(hasGrants);
+    for (const grant of this.state.abilityGrants) {
+      if (grant.cardId === sourceId) found.push(...grant.abilities.filter(hasGrants));
+    }
+
+    if (!this.grantedAbilitiesMayProvideIcons()) return found;
+    const guardKey = "grantedIconAbilities";
+    if (this.resolvingContinuousGrant.has(guardKey)) return found;
+    this.resolvingContinuousGrant.add(guardKey);
+    try {
+      for (const ability of this.getEffectiveContinuousAbilities(sourceId, this.grantingSources())) {
+        if (hasGrants(ability) && !found.includes(ability)) found.push(ability);
+      }
+    } finally {
+      this.resolvingContinuousGrant.delete(guardKey);
+    }
+    return found;
+  }
+
+  /** Whether any definition in this game prints a `grantedAbilities` block that hands out a `providesGrants` ability (no real card does). */
+  private grantedAbilitiesProvideIcons: boolean | undefined;
+
+  private grantedAbilitiesMayProvideIcons(): boolean {
+    this.grantedAbilitiesProvideIcons ??= Object.values(this.definitions).some(definition =>
+      this.grantingAbilitiesOf(definition).some(ability =>
+        (ability.grantedAbilities ?? []).some(block => objectMentionsKey(block.abilities, "providesGrants"))
+      )
+    );
+    return this.grantedAbilitiesProvideIcons;
   }
 
   /** Whether any card definition in this game prints a `providesGrants` block (almost never): when none does, icon reads skip the board scan. */
@@ -2904,11 +2980,14 @@ export class SpoilsEngine {
     if (setup.order[setup.currentIndex] !== playerId) return null;
 
     const player = this.requirePlayer(playerId);
-    const candidateCardIds = player.deck.filter(cardId =>
-      isStapleResourceDefinition(this.getDefinition(cardId))
-    );
-
     const rule = this.getFactionDefinition(playerId)?.setup.startingResources;
+
+    // A card that is the only one a named extra ("...and 1 Deception") can be is
+    // not the player's to pick as one of the X staples.
+    const required = !setup.topUp && rule ? requiredStartingCards(this, playerId, rule) : [];
+    const candidateCardIds = player.deck.filter(
+      cardId => !required.includes(cardId) && isStapleResourceDefinition(this.getDefinition(cardId))
+    );
 
     // A `slots` program (Society of Magical Propriety, "1 Obsession, 1 staple
     // resource"): the player picks only the free slots; named slots are fixed.
@@ -3319,7 +3398,7 @@ export class SpoilsEngine {
   previewMulligan(playerId: PlayerId, cardIds: CardInstanceId[]): MulliganPreview {
     const probe = this.cloneForProbe();
     const before = new Set(probe.requirePlayer(playerId).hand);
-    probe.perform({ type: "mulligan", playerId, cardIds: [...cardIds] });
+    probe.performOwned({ type: "mulligan", playerId, cardIds: [...cardIds] });
 
     const setup = probe.state.setup;
     // A prompt raised once setup is over is the first turn's start-of-turn triggers, not the mulligan's own.
@@ -5647,9 +5726,10 @@ export class SpoilsEngine {
    * A FLIP UP line's own steps ("and play a resource") are not rehearsed.
    */
   getPickCandidates(
-    action: Extract<GameAction, { type: "playCard" | "activateAbility" | "flipUp" }>,
+    given: DeepReadonly<Extract<GameAction, { type: "playCard" | "activateAbility" | "flipUp" }>>,
     declarationId: string
   ): CardInstanceId[] {
+    const action = ownedCopy<PlayAction>(given);
     const card = this.requireCard(action.cardId);
     const definition = this.getDefinition(card.id);
     let declarations: TargetDeclaration[];
@@ -5732,12 +5812,12 @@ export class SpoilsEngine {
    * ENGINE asks after the dispatch (`nameValue`, `oneOf`, `otherPlayerChooses`, `distribute`, `alternatingPay`, a
    * FLIP UP rider pick).
    */
-  getPlayRequirements(action: PlayAction): PlayRequirement[] {
+  getPlayRequirements(action: DeepReadonly<PlayAction>): PlayRequirement[] {
     if (!this.state.cards[action.cardId]) return [];
     const probe = this.cloneForProbe();
     // The card being played is Being Deployed (CR 604.1): no pick or cost may use it.
     probe.beingDeployedId = action.type === "activateAbility" ? undefined : action.cardId;
-    return probe.collectPlayRequirements(action);
+    return probe.collectPlayRequirements(ownedCopy<PlayAction>(action));
   }
 
   /**
@@ -5746,7 +5826,8 @@ export class SpoilsEngine {
    * shapes and rules as `getPlayRequirements`; a `pick` cost step is judged against the board as it is now (no
    * action to rehearse the earlier steps with).
    */
-  getSelectionRequirements(input: SelectionRequirementsInput): PlayRequirement[] {
+  getSelectionRequirements(given: DeepReadonly<SelectionRequirementsInput>): PlayRequirement[] {
+    const input = ownedCopy<SelectionRequirementsInput>(given);
     const probe = this.cloneForProbe();
     probe.beingDeployedId = this.beingDeployedIdOf(input);
     const { context, gates } = probe.selectionBasis(input);
@@ -5812,10 +5893,11 @@ export class SpoilsEngine {
    * steps; without it, on the board as it stands. The live game is untouched.
    */
   checkSelection(
-    input: SelectionRequirementsInput,
+    given: DeepReadonly<SelectionRequirementsInput>,
     declarationId: string,
     cardIds: readonly CardInstanceId[]
   ): SelectionCheck {
+    const input = ownedCopy<SelectionRequirementsInput>(given);
     const probe = this.cloneForProbe();
     probe.beingDeployedId = this.beingDeployedIdOf(input);
     try {
@@ -5866,11 +5948,11 @@ export class SpoilsEngine {
    * `{ ok: false }` also for a modal card with no `mode` yet and for an ability the card does not have.
    */
   checkPlaySelection(
-    action: PlayAction,
+    action: DeepReadonly<PlayAction>,
     declarationId: string,
     cardIds: readonly CardInstanceId[]
   ): SelectionCheck {
-    const built = this.selectionInputOfPlay(action);
+    const built = this.selectionInputOfPlay(ownedCopy<PlayAction>(action));
     if ("error" in built) return { ok: false, error: built.error };
     return this.checkSelection(built.input, declarationId, cardIds);
   }
@@ -5949,13 +6031,14 @@ export class SpoilsEngine {
    * `{ ok: false, error }` with the engine's own reason when it would refuse. The live game, its random stream
    * and its log are untouched. (A prompt the action raises, such as a name still to be given, counts as accepted.)
    */
-  checkAction(action: GameAction): { ok: true } | { ok: false; error: string } {
+  checkAction(action: DeepReadonly<GameAction>): { ok: true } | { ok: false; error: string } {
+    const owned = ownedCopy<GameAction>(action);
     const probe = this.cloneForProbe();
     // The copy plays for real (it is `perform`ing, not rehearsing a payment), with the triggers waiting on the live game.
     probe.dryRun = false;
     probe.immediateQueue.push(...structuredClone(this.immediateQueue));
     try {
-      probe.perform(action);
+      probe.performOwned(owned);
       return { ok: true };
     } catch (error) {
       return { ok: false, error: error instanceof Error ? error.message : String(error) };
@@ -5968,7 +6051,7 @@ export class SpoilsEngine {
    * missing, or the engine would refuse it). Read without any side effect, on a copy of the game. The answer is
    * sent back as `payWith`; a client that does not ask the player leaves it off and the engine chooses.
    */
-  getPaymentOptions(action: PlayAction): PaymentOptions | undefined {
+  getPaymentOptions(action: DeepReadonly<PlayAction>): PaymentOptions | undefined {
     if (!this.state.cards[action.cardId]) return undefined;
     const probe = this.cloneForProbe();
     probe.dryRun = false;
@@ -5976,7 +6059,7 @@ export class SpoilsEngine {
     probe.paymentCapture = { amount: 0, candidates: [] };
     const { payWith: _ignored, ...bare } = action;
     try {
-      probe.perform(bare as PlayAction);
+      probe.performOwned(ownedCopy<PlayAction>(bare));
     } catch (error) {
       if (!(error instanceof PaymentCaptured)) return undefined;
     }
@@ -6002,13 +6085,13 @@ export class SpoilsEngine {
    * the random stream and the event log are untouched. `undefined` for anything that rolls (`random`,
    * `coinFlip`, a random target) and for an expression that cannot be read yet (it needs a pick not made).
    */
-  previewNumber(expression: NumberExpression, context: ResolutionContext): number | undefined {
+  previewNumber(expression: DeepReadonly<NumberExpression>, context: DeepReadonly<ResolutionContext>): number | undefined {
     if (typeof expression === "number") return expression;
     if (expressionRolls(expression)) return undefined;
     const probe = this.cloneForProbe();
     const rngBefore = probe.state.rngState;
     try {
-      const value = probe.evaluateNumber(expression, context);
+      const value = probe.evaluateNumber(ownedCopy<NumberExpression>(expression), ownedCopy<ResolutionContext>(context));
       // Belt and braces: a roll hidden somewhere the walk above cannot see is not a preview.
       return probe.state.rngState === rngBefore && Number.isFinite(value) ? value : undefined;
     } catch {
@@ -6787,9 +6870,9 @@ export class SpoilsEngine {
     const context: ResolutionContext = {
       sourceId: card.id,
       controllerId: playerId,
-      selected,
-      variables,
-      ...(named ? { named } : {})
+      selected: structuredClone(selected),
+      variables: { ...variables },
+      ...(named ? { named: { ...named } } : {})
     };
 
     // The card is in Being Deployed from here on (CR 604.1): no cost or pick can use it.
@@ -7739,9 +7822,9 @@ export class SpoilsEngine {
       controllerId: abilityControllerId,
       abilityId: ability.id,
       ...(borrowed ? { payerId: action.playerId } : {}),
-      selected: action.selected ?? {},
-      variables: action.variables ?? {},
-      ...(action.named ? { named: action.named } : {})
+      selected: structuredClone(action.selected ?? {}),
+      variables: { ...(action.variables ?? {}) },
+      ...(action.named ? { named: { ...action.named } } : {})
     };
 
     this.assertChosenVariablesPresent(
@@ -8194,9 +8277,9 @@ export class SpoilsEngine {
     const context: ResolutionContext = {
       sourceId: card.id,
       controllerId: action.playerId,
-      selected: action.selected ?? {},
-      variables: action.variables ?? {},
-      ...(action.named ? { named: action.named } : {}),
+      selected: structuredClone(action.selected ?? {}),
+      variables: { ...(action.variables ?? {}) },
+      ...(action.named ? { named: { ...action.named } } : {}),
       deployedViaFlipUp: true
     };
     // The card being flipped up cannot be picked or used by its own costs (CR 604.1; it is Being Deployed).
@@ -10408,7 +10491,7 @@ export class SpoilsEngine {
         );
         if (!cardId) return false;
         const ownerId = this.state.cards[cardId]?.ownerId;
-        return !!ownerId && ownerId === this.resolvePlayerRef(condition.player, context).id;
+        return !!ownerId && ownerId === this.resolvePlayerRefIfKnown(condition.player, context)?.id;
       }
 
       case "targetControlledBy": {
@@ -10420,7 +10503,7 @@ export class SpoilsEngine {
         const controllerId = this.state.cards[cardId]?.controllerId;
         return (
           !!controllerId &&
-          controllerId === this.resolvePlayerRef(condition.player, context).id
+          controllerId === this.resolvePlayerRefIfKnown(condition.player, context)?.id
         );
       }
 
@@ -11861,11 +11944,7 @@ export class SpoilsEngine {
     if (value === "self") return context.controllerId;
     if (value === "opponent") return this.getOpponent(context.controllerId).id;
     if (value && typeof value === "object") {
-      try {
-        return this.resolvePlayerRef(value as PlayerRef, context).id;
-      } catch {
-        return "none";
-      }
+      return this.resolvePlayerRefIfKnown(value as PlayerRef, context)?.id ?? "none";
     }
     return "none";
   }
@@ -12425,6 +12504,26 @@ export class SpoilsEngine {
       }
     }
     return undefined;
+  }
+
+  /**
+   * `resolvePlayerRef` for a player a selector or condition is judged against while a pick is still being made:
+   * `undefined` when the ref is an `ownerOf` / `controllerOf` a card that is not known yet (a pick not made yet:
+   * "Pick a player. Pick X characters that player controls" judges the characters before the player is picked).
+   * Nothing can match a player nobody has named, so callers treat `undefined` as "does not match".
+   */
+  private resolvePlayerRefIfKnown(
+    ref: PlayerRef,
+    context: ResolutionContext
+  ): PlayerState | undefined {
+    if (
+      typeof ref === "object" &&
+      (ref.type === "ownerOf" || ref.type === "controllerOf") &&
+      !this.resolveTargetRef(ref.target, context)
+    ) {
+      return undefined;
+    }
+    return this.resolvePlayerRef(ref, context);
   }
 
   resolvePlayerRef(
@@ -13864,18 +13963,20 @@ export class SpoilsEngine {
     // filtered by `targetCandidates`; this covers the non-pick vectors
     // (`"eventCard"`, `"attachedTo"`, a remembered ref). A `{random}` target
     // is skipped — resolving it here would consume the RNG twice.
-    if (SOURCE_CLASS_GUARDED_EFFECTS.has(effect.type) && "target" in effect) {
-      // Every effect in SOURCE_CLASS_GUARDED_EFFECTS carries a `target:
-      // TargetRef` — the cast is safe (the union widens once effects with a
-      // non-TargetRef `target`, e.g. `initiateAttack`, joined the type).
+    if (CARD_SUBJECT_EFFECTS.has(effect.type) && "target" in effect) {
+      // Every effect in CARD_SUBJECT_EFFECTS carries a `target: TargetRef` —
+      // the cast is safe (the union widens once effects with a non-TargetRef
+      // `target`, e.g. `initiateAttack`, joined the type).
       const rawTarget = (effect as { target?: TargetRef }).target;
       if (
         rawTarget !== undefined &&
         !(typeof rawTarget === "object" && rawTarget.type === "random")
       ) {
         const guardedId = this.resolveTargetRef(rawTarget, context);
+        if (guardedId && !this.state.cards[guardedId]) return;
         if (
           guardedId &&
+          SOURCE_CLASS_GUARDED_EFFECTS.has(effect.type) &&
           this.sourceClassIgnoredByTarget(guardedId, context.sourceId)
         ) {
           return;
@@ -17696,22 +17797,18 @@ export class SpoilsEngine {
           abilityId: ability.id,
           selected: {}
         };
-        if (
-          ability.condition &&
-          !this.evaluateCondition(ability.condition, context)
-        ) {
-          continue;
-        }
-
+        // Whom it reaches is settled first: the condition of a suppressor that does not reach `cardId` is not this
+        // question's business, and a threshold condition ("[G][G][G][G][G]: this card loses all other rules text") would
+        // read the thresholds that may be what asked.
         const spec = ability.suppressAllAbilities;
         const hits = spec.selector
           ? this.queryCards(spec.selector, context).some(c => c.id === cardId)
           : this.resolveTargetRef(spec.target ?? "source", context) === cardId;
-        if (hits) {
-          if (!collect) return true;
-          found = true;
-          collect.push({ kind: "aura", sourceId: source.id, abilityId: ability.id });
-        }
+        if (!hits) continue;
+        if (ability.condition && !this.evaluateCondition(ability.condition, context)) continue;
+        if (!collect) return true;
+        found = true;
+        collect.push({ kind: "aura", sourceId: source.id, abilityId: ability.id });
       }
     }
     return found;
@@ -22355,24 +22452,24 @@ export class SpoilsEngine {
    */
   previewBlockOptions(
     attackerPlayerId: PlayerId,
-    attackerIds: CardInstanceId[],
-    target: AttackTarget
+    attackerIds: readonly CardInstanceId[],
+    target: DeepReadonly<AttackTarget>
   ): BlockOptions | undefined {
     const probe = this.cloneForProbe();
     // The copy plays for real, with the triggers waiting on the live game (as `checkAction` does).
     probe.dryRun = false;
     probe.immediateQueue.push(...structuredClone(this.immediateQueue));
     try {
-      probe.perform({ type: "declareAttack", playerId: attackerPlayerId, attackerIds: [...attackerIds], target });
+      probe.performOwned({ type: "declareAttack", playerId: attackerPlayerId, attackerIds: [...attackerIds], target: ownedCopy<AttackTarget>(target) });
       // Nobody responds: the attacker, then the defender, pass; the window closes into the blocking step.
       for (let step = 0; step < 12; step++) {
         const battle = probe.state.battle;
         if (!battle || battle.phase === "blocking" || probe.state.pendingChoice) break;
         const window = probe.state.responseWindow;
         if (window?.phase === "acceptingResponses") {
-          probe.perform({ type: "passPriority", playerId: window.priorityPlayerId });
+          probe.performOwned({ type: "passPriority", playerId: window.priorityPlayerId });
         } else {
-          probe.perform({ type: "advanceFlow" });
+          probe.performOwned({ type: "advanceFlow" });
         }
       }
       return probe.getBlockOptions();

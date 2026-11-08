@@ -81,8 +81,10 @@ below depends on them.
 Work happens on branch `ffa`. Status:
 
 - [x] 1. Tag `mp-baseline` (`8e1c87e`, main after the RQ-r11-2/4 fix).
-- [ ] 2. Random play driver (in progress).
-- [ ] 3. Two-player replay digests (in progress).
+- [x] 2. Random play driver (`src/engine/__tests__/support/driver.ts`). It found six two-player engine bugs
+  (a crashing target query, two soft-locks, actions mutated by `perform`, save/load losing state mid-resolution,
+  a deck validation gap). They are fixed at the root before Phase 3 continues.
+- [x] 3. Two-player replay digests: 102 games in `data/replays/2p/`, checked by `replay-2p.test.ts`.
 - [x] 4. Freeze gate.
 - [x] 5. Phrase inventory.
 

@@ -853,13 +853,12 @@ export function playRandomGame(setup: GameSetupInputs, driverSeed: number, optio
     let current: GameAction | undefined;
     try {
       for (const candidate of driver.candidates(flow)) {
-        // `checkAction` and `perform` write into the action they are given (a `playCard` gains the
-        // variables it worked out itself), so each gets its own copy and the log keeps the pristine one.
-        const action = structuredClone(candidate);
+        // `checkAction` and `perform` only read the action, so the one object is checked, performed and logged.
+        const action = candidate;
         current = action;
-        if (!engine.checkAction(structuredClone(action)).ok) continue;
+        if (!engine.checkAction(action).ok) continue;
         try {
-          engine.perform(structuredClone(action));
+          engine.perform(action);
         } catch (error) {
           return result("finding", engine, {
             kind: "performThrew",
@@ -894,7 +893,7 @@ export function playRandomGame(setup: GameSetupInputs, driverSeed: number, optio
         seed: setup.seed,
         step,
         mode: flow.mode,
-        ...(current ? { action: structuredClone(current) } : {}),
+        ...(current ? { action: current } : {}),
         error: error instanceof Error ? error.message : String(error),
         detail: `${describeState(engine, flow)}; ${frames}`
       });

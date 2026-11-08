@@ -150,6 +150,10 @@ The package must stay usable from TypeScript consumers under `nodenext`,
 ### Engine control flow
 
 `SpoilsEngine.perform(action: GameAction)` is the single mutation entrypoint.
+Public methods that take an action (or a selection, a context, a target) type it
+`DeepReadonly<...>` and treat it as read-only: they work on a private copy
+(`ownedCopy`), so the caller's object is never written to and never shares
+structure with `state`, and a frozen action can be checked and performed.
 It dispatches to private handlers (`playCard`, `activateAbility`,
 `passPriority`, `declareAttack`, ...), and `getFlowView()` is the single
 query surface intended for a renderer/UI — it derives a `mode`

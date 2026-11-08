@@ -36,10 +36,15 @@ if (testFiles.length === 0) {
   process.exit(1);
 }
 
+// Paths relative to the repository root keep the command line short: Windows caps it at 32,767
+// characters, and hundreds of absolute paths under a deep checkout exceed that (spawnSync then fails
+// with no output).
+const REPO_ROOT = path.join(__dirname, '..');
 const result = spawnSync(
   process.execPath,
-  ['--import', 'tsx', '--test', ...testFiles],
-  { stdio: 'inherit' }
+  ['--import', 'tsx', '--test', ...testFiles.map(file => path.relative(REPO_ROOT, file))],
+  { stdio: 'inherit', cwd: REPO_ROOT }
 );
+if (result.error) console.error(result.error);
 
 process.exit(result.status ?? 1);

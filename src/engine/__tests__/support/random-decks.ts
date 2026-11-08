@@ -91,7 +91,13 @@ function iconOfName(name: string): string | undefined {
   return ICONS.find(icon => ICON_NAMES[icon] === name.toLowerCase());
 }
 
-/** Icons a faction's STARTING RESOURCES rule names outright (Greed for the Knitting Coalition, ...). */
+/**
+ * Icons a faction's STARTING RESOURCES rule names outright (Obsession for the Lugubrian Council,
+ * Deception for the Union of Unextraordinary Miners, Greed for the Knitting Coalition, ...).
+ * `findDeckConstructionIssues` rejects a deck without the named resources. The staples below are
+ * spread evenly over these icons first, so every named icon is present, and with more than two
+ * staples per icon so are the copies a rule names ("2 Greed").
+ */
 function requiredIcons(faction: CardDefinition): string[] {
   const rule = withBuiltInFactionDefaults(faction).faction?.setup.startingResources;
   const names = [

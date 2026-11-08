@@ -351,6 +351,18 @@ carry activated abilities, usable any time you could use an ability
   until both players hold the same number of starting resources. As with the
   flat form the engine picks cards in deck order — the player does not choose
   *which* staple / card.
+  **(engine-derived)** What the deck must hold for setup: the rules are silent
+  on deck legality here, so `findDeckConstructionIssues` reports a
+  `factionRule` issue exactly where setup would stop: a *named* resource
+  ("1 Obsession", "...and 1 Deception", "2 Greed") or a staple slot ("1 staple
+  resource", the Union's X staples at the smallest X) with no card of its own.
+  Every slot is a different card, so the Union's X staples and its Deception
+  never share one (a lone Deception is never taken as one of the X) and a deck
+  of one Obsession cannot fill "1 Obsession, 1 staple resource". "Any 1
+  resource", "Any 1 card" and the flat "Any 2 staple resources" are searches
+  that may find fewer (CR 312.2); setup carries them out as far as the deck
+  allows (CR 402.5) and they ask nothing of the deck. The Union's X above the
+  smallest is limited to the staples the deck can still supply.
 - **`setup.startingDrawSearch`** — an extra Starting Draw step: the first
   card in deck order matching `selector` whose `CardDefinitionId` differs
   from every starting resource just placed goes to hand, before the opening
@@ -484,6 +496,18 @@ deploying, FLIP UP and gated abilities, the `cardProvides` condition, the
 - never counts a FLIP UP card's own granted icon toward its own FLIP UP
   threshold (it is checked after the flip, when the card is no longer a
   resource).
+- is read before, and independent of, every rules paragraph that is gated on a
+  threshold (CR §405.4): counting icons looks only at abilities that carry
+  `providesGrants`, never at whether an unrelated card's paragraph is active or
+  suppressed. A "[G][G][G][G][G]: this card loses all other rules text"
+  paragraph (Espionage Loafers, Monstrous Lassitude, Crimson Pandiatus,
+  Rushing Crushing Blockhead) therefore needs the icons without being needed by
+  them. Where an icon grant really depends on a threshold paragraph (a
+  suppressor reaching the Broker, a `grantedAbilities` block that hands out a
+  `providesGrants` ability), the threshold read made while that paragraph is
+  being evaluated counts icons without that one grant (a grant cannot bootstrap
+  off its own evaluation); the rules do not say how such a circular pair
+  settles. A suppressor's condition is consulted only for cards it reaches.
 
 "Pay N" costs never read icons (any resource pays), so payment options are
 unaffected.
@@ -1382,7 +1406,12 @@ re-runs the check once it has settled.
   effect. **(CR §402.5a)** effects never "fizzle" just because their target
   left play. **(CR §402.5b)** but an instruction that *depends* on an
   earlier one you skipped/replaced (typically an "If you do …" clause) is
-  itself skipped.
+  itself skipped. **(CR §402.5 / §409.2 / §409.3a, engine-derived)** A card
+  an effect names that no longer exists — a token that left play disappears
+  — is simply not affected: damage, depletion, counters, control, moves,
+  keyword grants and the like against it do nothing, and the rest of the
+  resolution carries on. An Attach-to card whose target is gone when it tries
+  to enter play goes to its owner's discard pile (§9, CR §507.2c).
 - **(CR §402.4)** When a card changes game areas, unresolved effects that
   meant to act on it in the old area lose track of it (a character
   destroyed in response to "put it into your hand from play" is not then

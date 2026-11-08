@@ -8,13 +8,14 @@ import type {
   CardInstanceId,
   CardSelector,
   Cost,
+  DeepReadonly,
   GameAction,
   NumberExpression,
   PlayerId,
   ResolutionContext,
   TargetDeclaration
 } from "../types/index.js";
-import { declinedKey } from "./utilities.js";
+import { declinedKey, ownedCopy } from "./utilities.js";
 
 /** A play, an ability use or a FLIP UP: the three actions that carry picks, costs and chosen numbers. */
 export type PlayAction = Extract<GameAction, { type: "playCard" | "activateAbility" | "flipUp" }>;
@@ -144,8 +145,9 @@ export interface SelectionRequirementsInput {
 /** The answer of `checkSelection`: `{ ok: true }`, or the engine's own refusal text. */
 export type SelectionCheck = { ok: true } | { ok: false; error: string };
 
-/** The action with one requirement's answer folded in (a new object; `action` is untouched). */
-export function answerPlayRequirement(action: PlayAction, answer: PlayAnswer): PlayAction {
+/** The action with one requirement's answer folded in: a new object that shares nothing with `action` or `answer`. */
+export function answerPlayRequirement(given: DeepReadonly<PlayAction>, answer: DeepReadonly<PlayAnswer>): PlayAction {
+  const action = ownedCopy<PlayAction>(given);
   switch (answer.kind) {
     case "mode":
       return action.type === "activateAbility" ? action : { ...action, mode: answer.index };
@@ -154,7 +156,7 @@ export function answerPlayRequirement(action: PlayAction, answer: PlayAnswer): P
     case "variables":
       return { ...action, variables: { ...(action.variables ?? {}), ...answer.values } };
     case "pick": {
-      const selected = { ...(action.selected ?? {}), [answer.id]: answer.declined ? [] : answer.cardIds };
+      const selected = { ...(action.selected ?? {}), [answer.id]: answer.declined ? [] : [...answer.cardIds] };
       if (answer.declined) selected[declinedKey(answer.id)] = [];
       return { ...action, selected };
     }

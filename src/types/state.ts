@@ -876,7 +876,11 @@ export type GameSetupState =
 export interface StartingResourceChoice {
   /** Exactly this many of `candidateCardIds` must be chosen. */
   count: number;
-  /** Every staple resource instance currently in this player's deck (repeats are distinct ids). */
+  /**
+   * Every staple resource instance currently in this player's deck (repeats are
+   * distinct ids), except one a `chosenStaples` named extra cannot do without
+   * (the only Deception for "...and 1 Deception").
+   */
   candidateCardIds: CardInstanceId[];
   /**
    * Extra resources placed alongside the chosen staples, not chosen by the

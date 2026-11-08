@@ -90,18 +90,151 @@ export interface FactionGameSetupOptions {
   cardCatalog?: readonly CardCatalogEntry[];
 }
 
+type StartingRule = FactionDefinition["setup"]["startingResources"];
+
 /**
- * Deck-legality check for a faction's STARTING RESOURCES rule (rules answer
- * Q45). A faction that needs N DIFFERENT staple resources ("Any 2 different
- * staple resources" — `distinctStaples`) cannot be satisfied by a deck that
- * holds fewer than N staple kinds. The engine still starts such a game with a
- * duplicate staple as a safety fallback, but the deck should be treated as
- * unplayable so a player can't field their faction illegally. Returns
- * readable issues; an empty list means the deck satisfies the rule.
+ * One card a faction's STARTING RESOURCES rule takes from the deck: a resource
+ * (optionally a staple, optionally a specific name) or, for "Any 1 card", any
+ * card.
+ */
+type StartingNeed =
+  | { kind: "resource"; name?: string; staple?: boolean; faceDown?: boolean }
+  | { kind: "anyCard" };
+
+/**
+ * The cards a `slots` program or a `chosenStaples` rule (X staples, then the
+ * named extras; `x` defaults to the smallest X the player may choose) takes,
+ * in the order the rule lists them. Other rules are the flat `{ count, names?,
+ * stapleOnly? }` form, which `chooseStartingResources` filters by membership.
+ */
+function startingNeeds(rule: StartingRule, x?: number): StartingNeed[] {
+  if (rule.slots?.length) {
+    return rule.slots.map(slot =>
+      slot.kind === "resource"
+        ? { kind: "resource", name: slot.name, staple: slot.staple, faceDown: slot.faceDown }
+        : { kind: "anyCard" }
+    );
+  }
+  if (rule.chosenStaples) {
+    const { min, plus } = rule.chosenStaples;
+    return [
+      ...Array.from({ length: x ?? min }, (): StartingNeed => ({ kind: "resource", staple: true })),
+      ...(plus ?? []).map((name): StartingNeed => ({ kind: "resource", name }))
+    ];
+  }
+  return [];
+}
+
+/**
+ * Whether setup refuses to start without a card for this need. A named resource
+ * ("1 Obsession", "...and 1 Deception") and a staple slot ("1 staple resource")
+ * need theirs; "Any 1 resource" and "Any 1 card" are searches that may come up
+ * short (CR 312.2, CR 402.5), and setup starts with what the deck has.
+ */
+function isRequiredNeed(need: StartingNeed): boolean {
+  return need.kind === "resource" && Boolean(need.name || need.staple);
+}
+
+/** The named resources of a `slots` / `chosenStaples` rule ("1 Deception"), one need per copy. */
+function namedStartingNeeds(rule: StartingRule): StartingNeed[] {
+  return startingNeeds(rule).filter(need => need.kind === "resource" && need.name);
+}
+
+/**
+ * What a deck must hold for `rule`: every need of a `slots` / `chosenStaples`
+ * rule (those that `isRequiredNeed`), and, for the flat form, each resource
+ * its `names` list names ("2 Greed"). The rest of a flat rule ("Any 2 staple
+ * resources") is a search that the setup carries out as far as the deck allows.
+ */
+function deckStartingNeeds(rule: StartingRule): StartingNeed[] {
+  if (rule.slots?.length || rule.chosenStaples) return startingNeeds(rule);
+  return (rule.names ?? []).map((name): StartingNeed => ({ kind: "resource", name }));
+}
+
+function matchesNeed(need: StartingNeed, definition: CardDefinition): boolean {
+  if (need.kind === "anyCard") return true;
+  if (definition.type !== "resource") return false;
+  if (need.name && definition.name.toLowerCase() !== need.name.toLowerCase()) return false;
+  return !need.staple || isStapleResourceDefinition(definition);
+}
+
+/**
+ * Gives each need its own card from `pool`. Needs are taken in order and each
+ * takes the first free card that fits, in pool order; only when none is free
+ * does it move an earlier need onto another card (an augmenting path), so a
+ * card that fits a broad need is never what leaves a later narrow need
+ * ("X staples and 1 Deception" with the Deception first in the deck) without
+ * one. A need gets a card whenever any assignment can give every matched need
+ * its own. The result holds each need's card, `undefined` when the pool has
+ * none left for it. Setup and deck validation both place cards through this,
+ * so they cannot disagree.
+ */
+function assignStartingNeeds<T>(
+  needs: readonly StartingNeed[],
+  pool: readonly T[],
+  definitionOf: (item: T) => CardDefinition
+): Array<T | undefined> {
+  const fits = needs.map(need => pool.map(item => matchesNeed(need, definitionOf(item))));
+  const holder: Array<number | undefined> = pool.map(() => undefined); // pool index -> need index
+  const place = (need: number, seen: Set<number>): boolean => {
+    const candidates = pool.map((_, at) => at).filter(at => fits[need]![at] && !seen.has(at));
+    const free = candidates.find(at => holder[at] === undefined);
+    if (free !== undefined) {
+      holder[free] = need;
+      return true;
+    }
+    for (const at of candidates) {
+      seen.add(at);
+      if (place(holder[at]!, seen)) {
+        holder[at] = need;
+        return true;
+      }
+    }
+    return false;
+  };
+  needs.forEach((_, need) => place(need, new Set()));
+  const picks: Array<T | undefined> = needs.map(() => undefined);
+  holder.forEach((need, at) => {
+    if (need !== undefined) picks[need] = pool[at];
+  });
+  return picks;
+}
+
+function describeNeed(need: StartingNeed): string {
+  if (need.kind === "anyCard") return "card";
+  return need.name ?? (need.staple ? "staple resource" : "resource");
+}
+
+/** "2 Greed" / "1 Deception": the needs counted by kind, in first-seen order. */
+function listNeeds(needs: readonly StartingNeed[]): string {
+  const counts = new Map<string, number>();
+  for (const need of needs) counts.set(describeNeed(need), (counts.get(describeNeed(need)) ?? 0) + 1);
+  return [...counts].map(([description, count]) => `${count} ${description}`).join(" and ");
+}
+
+/**
+ * Deck-legality check for a faction's STARTING RESOURCES rule. Two things make
+ * a deck unplayable for its faction:
  *
- * `deckCardDefs` is the deck's card definitions (one entry per copy or one per
- * distinct card, either works). Staple "kinds" are counted by resource name,
- * case-insensitively, so different printings of Rage are one kind.
+ * - A faction that needs N DIFFERENT staple resources ("Any 2 different staple
+ *   resources" — `distinctStaples`, rules answer Q45) with fewer than N staple
+ *   kinds in the deck. The engine still starts such a game with a duplicate
+ *   staple as a safety fallback, but the deck should be treated as unplayable
+ *   so a player can't field their faction illegally.
+ * - A faction whose rule names a specific resource ("1 Obsession", "1 Deception"
+ *   next to X staples, "2 Greed") or has a staple slot ("1 Obsession, 1 staple
+ *   resource"; the X staples take the smallest X) with a deck that cannot give
+ *   each of them its own card. Setup puts exactly those cards into play from the
+ *   deck and cannot start the game without one. The rest of the rules ("Any 2
+ *   staple resources", "Any 1 resource", "Any 1 card") are searches that may
+ *   find fewer (CR 312.2): setup starts with what the deck has, so they need
+ *   nothing.
+ *
+ * Returns readable issues; an empty list means the deck satisfies the rule.
+ *
+ * `deckCardDefs` is the deck's card definitions, one entry per copy (the
+ * faction card, if listed, is ignored). Staple "kinds" are counted by resource
+ * name, case-insensitively, so different printings of Rage are one kind.
  */
 export function findFactionDeckIssues(
   faction: FactionDefinition,
@@ -110,20 +243,38 @@ export function findFactionDeckIssues(
 ): string[] {
   const rule = faction.setup.startingResources;
   const issues: string[] = [];
-  if (!startingStaplesMustDiffer(rule)) return issues;
 
-  const kinds = new Set<string>();
-  for (const definition of deckCardDefs) {
-    if (isStapleResourceDefinition(definition)) kinds.add(definition.name.toLowerCase());
+  if (startingStaplesMustDiffer(rule)) {
+    const kinds = new Set<string>();
+    for (const definition of deckCardDefs) {
+      if (isStapleResourceDefinition(definition)) kinds.add(definition.name.toLowerCase());
+    }
+    if (kinds.size < rule.count) {
+      issues.push(
+        `${factionName} starts with ${rule.count} different staple resources, ` +
+          `but the deck has only ${kinds.size} kind${kinds.size === 1 ? "" : "s"} of staple resource.`
+      );
+    }
   }
-  if (kinds.size < rule.count) {
+
+  // Narrowest need first, so a lone Deception is never reported as the card the
+  // deck is missing when it is the staple that is short.
+  const rank = (need: StartingNeed): number => (need.kind === "resource" && need.name ? 0 : 1);
+  const needs = deckStartingNeeds(rule)
+    .filter(isRequiredNeed)
+    .sort((a, b) => rank(a) - rank(b));
+  const pool = deckCardDefs.filter(definition => definition.type !== "faction");
+  const picks = assignStartingNeeds(needs, pool, definition => definition);
+  const missing = needs.filter((_, index) => picks[index] === undefined);
+  if (missing.length > 0) {
     issues.push(
-      `${factionName} starts with ${rule.count} different staple resources, ` +
-        `but the deck has only ${kinds.size} kind${kinds.size === 1 ? "" : "s"} of staple resource.`
+      `${factionName} starts the game with ${listNeeds(needs)} from its deck, ` +
+        `but the deck is missing ${listNeeds(missing)}.`
     );
   }
   return issues;
 }
+
 
 function resolveFactionAndDeck(
   definitions: Record<CardDefinitionId, CardDefinition>,
@@ -212,48 +363,44 @@ function chooseStartingResources(
   chosenX?: number
 ): StartingResourcePick[] {
   const player = engine.state.players[playerId];
-  const used = new Set<CardInstanceId>();
 
-  const takeResource = (opts: { staple?: boolean; name?: string; faceDown?: boolean }): StartingResourcePick => {
-    const name = opts.name?.toLowerCase();
-    const cardId = player.deck.find(id => {
-      if (used.has(id)) return false;
-      const definition = engine.getDefinition(id);
-      if (definition.type !== "resource") return false;
-      if (name && definition.name.toLowerCase() !== name) return false;
-      if (opts.staple && !isStapleResourceDefinition(definition)) return false;
-      return true;
+  // Every slot of a `slots` program or `chosenStaples` rule takes its own
+  // card (see `assignStartingNeeds`); the picks come back in slot order. A need
+  // the deck cannot meet stops setup if `isRequiredNeed`; any other slot ("Any 1
+  // resource", "Any 1 card") is a search that may find fewer (CR 312.2), carried
+  // out as far as possible (CR 402.5): the slot stays empty.
+  const placeNeeds = (needs: StartingNeed[]): StartingResourcePick[] => {
+    const picks = assignStartingNeeds(needs, player.deck, id => engine.getDefinition(id));
+    const placed: StartingResourcePick[] = [];
+    needs.forEach((need, index) => {
+      const cardId = picks[index];
+      if (cardId === undefined) {
+        assert(
+          !isRequiredNeed(need),
+          `Faction setup: no matching starting resource${need.kind === "resource" && need.name ? ` '${need.name}'` : ""} for '${playerId}'.`
+        );
+        return;
+      }
+      placed.push({
+        cardId,
+        faceDown:
+          need.kind === "anyCard" ? engine.getDefinition(cardId).type !== "resource" : (need.faceDown ?? false)
+      });
     });
-    assert(
-      cardId,
-      `Faction setup: no matching starting resource${opts.name ? ` '${opts.name}'` : ""} for '${playerId}'.`
-    );
-    used.add(cardId);
-    return { cardId, faceDown: opts.faceDown ?? false };
+    return placed;
   };
 
-  const takeAnyCard = (): StartingResourcePick => {
-    const cardId = player.deck.find(id => !used.has(id));
-    assert(cardId, `Faction setup: '${playerId}' has no card left for an 'any card' starting slot.`);
-    used.add(cardId);
-    return { cardId, faceDown: engine.getDefinition(cardId).type !== "resource" };
-  };
-
-  if (rule.slots?.length) {
-    return rule.slots.map(slot =>
-      slot.kind === "resource"
-        ? takeResource({ staple: slot.staple, name: slot.name, faceDown: slot.faceDown })
-        : takeAnyCard()
-    );
-  }
+  if (rule.slots?.length) return placeNeeds(startingNeeds(rule));
 
   if (rule.chosenStaples) {
-    const { min, max, plus } = rule.chosenStaples;
-    const x = Math.max(min, Math.min(max, Math.floor(chosenX ?? min)));
-    const picks: StartingResourcePick[] = [];
-    for (let i = 0; i < x; i++) picks.push(takeResource({ staple: true }));
-    for (const name of plus ?? []) picks.push(takeResource({ name }));
-    return picks;
+    // "Choose a number for X": the player's X, clamped to the allowed range and
+    // to the staples the deck has left once the named extras have theirs (never
+    // below the smallest X, which the deck must be able to supply).
+    const { min, max } = rule.chosenStaples;
+    const requested = Math.max(min, Math.min(max, Math.floor(chosenX ?? min)));
+    return placeNeeds(
+      startingNeeds(rule, Math.max(min, Math.min(requested, chosenStapleSupply(engine, playerId, rule))))
+    );
   }
 
   // Flat form — unchanged: `names` is a membership filter, `count` the quantity.
@@ -314,6 +461,9 @@ function distinctStapleDefsInDeck(engine: SpoilsEngine, playerId: PlayerId): Set
 }
 
 type StartingSlotRule = NonNullable<FactionDefinition["setup"]["startingResources"]["slots"]>;
+
+const isRequiredSlot = (slot: StartingSlotRule[number]): boolean =>
+  slot.kind === "resource" && Boolean(slot.name || slot.staple);
 
 /** One slot of a `slots` starting-resource program, resolved against a player's deck. */
 export interface StartingSlotPlan {
@@ -377,8 +527,52 @@ export function startingSlotPlan(
     });
   });
 
-  plan.sort((a, b) => a.slotIndex - b.slotIndex);
-  return { slots: plan, fixedMissing };
+  // An "Any 1 resource" / "Any 1 card" slot the deck has no card left for
+  // (CR 312.2: a search may find nothing) is not offered: the player picks only
+  // slots they can fill.
+  const fillable = assignStartingNeeds(
+    startingNeeds({ count: slots.length, slots }),
+    deck,
+    id => engine.getDefinition(id)
+  );
+  const offered = plan.filter(
+    entry => entry.cardId !== undefined || fillable[entry.slotIndex] !== undefined || isRequiredSlot(slots[entry.slotIndex]!)
+  );
+  offered.sort((a, b) => a.slotIndex - b.slotIndex);
+  return { slots: offered, fixedMissing };
+}
+
+/**
+ * The cards of `playerId`'s deck a `chosenStaples` rule's named extras ("...and 1
+ * Deception") cannot do without: the only card that can be that extra. The
+ * player's X staples must not take one, so they are not offered as a choice.
+ */
+export function requiredStartingCards(
+  engine: SpoilsEngine,
+  playerId: PlayerId,
+  rule: StartingRule
+): CardInstanceId[] {
+  const deck = engine.state.players[playerId].deck;
+  const named = namedStartingNeeds(rule);
+  const definitionOf = (id: CardInstanceId) => engine.getDefinition(id);
+  const taken = assignStartingNeeds(named, deck, definitionOf).filter((id): id is CardInstanceId => id !== undefined);
+  return taken.filter(id => {
+    const without = assignStartingNeeds(named, deck.filter(other => other !== id), definitionOf);
+    return without.filter(pick => pick !== undefined).length < taken.length;
+  });
+}
+
+/**
+ * How many staples of `playerId`'s deck a `chosenStaples` rule can take for X:
+ * the staples in the deck, less those the named extras ("...and 1 Deception")
+ * use, since a named extra and an X staple are different cards. Taking more
+ * would leave a named extra without its card.
+ */
+function chosenStapleSupply(engine: SpoilsEngine, playerId: PlayerId, rule: StartingRule): number {
+  const deck = engine.state.players[playerId].deck;
+  const named = namedStartingNeeds(rule);
+  const taken = new Set(assignStartingNeeds(named, deck, id => engine.getDefinition(id)));
+  return deck.filter(id => !taken.has(id) && isStapleResourceDefinition(engine.getDefinition(id))).length;
 }
 
 /**
@@ -396,6 +590,7 @@ function stapleChoiceCountFor(
   chosenX: number | undefined
 ): number | null {
   let count: number;
+  let available: number | undefined;
   if (rule.slots?.length) {
     // A `slots` program: the player picks the free slots ("1 staple resource",
     // "Any 1 resource", "Any 1 card"); named slots ("1 Obsession") stay fixed.
@@ -409,6 +604,7 @@ function stapleChoiceCountFor(
   } else if (rule.chosenStaples) {
     const { min, max } = rule.chosenStaples;
     count = Math.max(min, Math.min(max, Math.floor(chosenX ?? min)));
+    available = chosenStapleSupply(engine, playerId, rule);
   } else if (rule.stapleOnly && !rule.names?.length && !rule.slots?.length) {
     count = rule.count;
   } else {
@@ -418,7 +614,7 @@ function stapleChoiceCountFor(
   if (count < 1) return null;
   if (distinctStapleDefsInDeck(engine, playerId).size < 2) return null;
 
-  const available = engine.state.players[playerId].deck.filter(cardId =>
+  available ??= engine.state.players[playerId].deck.filter(cardId =>
     isStapleResourceDefinition(engine.getDefinition(cardId))
   ).length;
   return available >= count ? count : null;
@@ -680,6 +876,9 @@ export function finishFactionSetup(engine: SpoilsEngine, askSearch = false): voi
         count: 1,
         stapleOnly: true
       });
+      // An opponent deck with no staple left can't be topped up further
+      // (carried out as far as possible, CR 402.5).
+      if (!extra) break;
       moveSetupCardToPlay(state, opponentId, extra.cardId, false);
       startingResourceCounts[opponentId] += 1;
     }
