@@ -491,7 +491,7 @@ clause(GATHERING, "0:extraCost", "Deploy not during a battle: refused while a ba
   });
   // Declare and keep priority: it is my turn, I hold priority and a response window is open, so ONLY the
   // "not during a battle" condition can refuse (declareAttackBy would hand priority to the defender, which refuses on its own).
-  g.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [g.id("atk")], target: { type: "faction", playerId: faction(g.engine, P2) } } as never);
+  g.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [g.id("atk")], target: { type: "faction", playerId: P2 } } as never);
   assert.ok(g.engine.state.battle, "a battle is active");
   assert.equal(g.engine.state.responseWindow?.priorityPlayerId, P1, "I hold priority in an open window on my own turn");
   refused(() => castGuh(g), "during a battle", /cannot be deployed right now/);
@@ -502,7 +502,7 @@ clause(GATHERING, "0:extraCost", "Deploy not during a battle: refused while a ba
     deck: [{ key: "atk", def: character({ name: "Atk", strength: 1, life: 3, speed: 1 }), owner: P1, zone: "play" }],
     hand: [{ key: "free", def: tactic({ name: "Free", cost: 0, behavior: { abilities: [{ id: "f", type: "activated", targets: [], effects: [] }] } }), owner: P1, zone: "hand" }]
   });
-  c.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [c.id("atk")], target: { type: "faction", playerId: faction(c.engine, P2) } } as never);
+  c.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [c.id("atk")], target: { type: "faction", playerId: P2 } } as never);
   play(c.engine, P1, c.id("free"));
   assert.notEqual(zoneOf(c.engine, c.id("free")), "hand", "positive control: a plain tactic deploys in the same window");
 });

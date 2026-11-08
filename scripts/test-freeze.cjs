@@ -7,6 +7,10 @@
 // two-player behavior exactly as written. New test files are not recorded and
 // never trip the gate.
 //
+// The only way a frozen file may change is an entry in the baseline's
+// `amended` map: `{ "<file>": { "sha256": "<new hash>", "reason": "..." } }`,
+// added by hand with the user's approval for a test that itself was wrong.
+//
 //   node scripts/test-freeze.cjs           # check (exit 1 on drift)
 //   node scripts/test-freeze.cjs --record  # (re)write data/test-freeze.json
 
@@ -50,9 +54,12 @@ function drift() {
   const baseline = JSON.parse(fs.readFileSync(BASELINE, 'utf8'));
   const current = currentHashes();
   const problems = [];
+  const amended = baseline.amended ?? {};
   for (const [file, hash] of Object.entries(baseline.files)) {
+    const allowed = amended[file] ? amended[file].sha256 : hash;
+    if (amended[file] && !amended[file].reason) problems.push(`${file}: amendment has no reason`);
     if (!(file in current)) problems.push(`${file}: deleted`);
-    else if (current[file] !== hash) problems.push(`${file}: modified`);
+    else if (current[file] !== allowed) problems.push(`${file}: modified`);
   }
   return problems;
 }
@@ -62,7 +69,9 @@ module.exports = { currentHashes, drift, BASELINE };
 if (require.main === module) {
   if (process.argv.includes('--record')) {
     const files = currentHashes();
-    fs.writeFileSync(BASELINE, JSON.stringify({ files }, null, 2) + '\n');
+    const previous = fs.existsSync(BASELINE) ? JSON.parse(fs.readFileSync(BASELINE, 'utf8')) : {};
+    const record = previous.amended ? { files, amended: previous.amended } : { files };
+    fs.writeFileSync(BASELINE, JSON.stringify(record, null, 2) + '\n');
     console.log(`Recorded ${Object.keys(files).length} test files in ${relative(BASELINE)}.`);
   } else {
     const problems = drift();

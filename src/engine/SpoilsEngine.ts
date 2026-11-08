@@ -6639,9 +6639,7 @@ export class SpoilsEngine {
         !this.state.pendingChoice &&
         this.responseStack.length > 0
       ) {
-        const top = this.responseStack[this.responseStack.length - 1];
-        w.priorityPlayerId = this.getOpponent(top.controllerId).id;
-        this.state.priorityPlayerId = w.priorityPlayerId;
+        this.offerTopItem(w, action.playerId, true);
       }
       return;
     }
@@ -8532,6 +8530,14 @@ export class SpoilsEngine {
     );
 
     if (this.responseStack.length > 0) {
+      const top = this.responseStack[this.responseStack.length - 1];
+      window.passed = [...(window.passed ?? []), playerId];
+      const next = this.nextResponder(top.controllerId, playerId, false, window.passed);
+      if (next !== undefined) {
+        window.priorityPlayerId = next;
+        this.state.priorityPlayerId = next;
+        return;
+      }
       window.phase = "resolving";
       return;
     }
@@ -8541,6 +8547,7 @@ export class SpoilsEngine {
     // window always tracks `pendingResponders[0]`, so this drops exactly
     // this player.)
     window.pendingResponders.shift();
+    this.dropLostResponders(window);
 
     if (window.pendingResponders.length > 0) {
       window.priorityPlayerId = window.pendingResponders[0];
@@ -8549,6 +8556,54 @@ export class SpoilsEngine {
     }
 
     window.phase = "resolving";
+  }
+
+  /**
+   * Who is offered the top item next (MPX-priority): the first player clockwise from `from` (`from` itself when
+   * `includeFrom`) who is still in the game, is not `controllerId` (CR 607.1) and has not passed on it. Undefined
+   * when nobody is left, so the item resolves.
+   */
+  private nextResponder(
+    controllerId: PlayerId,
+    from: PlayerId,
+    includeFrom: boolean,
+    passed: readonly PlayerId[]
+  ): PlayerId | undefined {
+    const seats = this.state.seats;
+    const at = seats.indexOf(from);
+    assert(at >= 0, `Unknown player '${from}'.`);
+    for (let step = includeFrom ? 0 : 1; step <= seats.length; step++) {
+      const id = seats[(at + step) % seats.length];
+      if (id === controllerId || this.state.players[id].eliminated || passed.includes(id)) continue;
+      return id;
+    }
+    return undefined;
+  }
+
+  /** Offers the top item afresh: first to `from` (or the seat after it), with nobody having passed. False when nobody may respond. */
+  private offerTopItem(window: ResponseWindowState, from: PlayerId, includeFrom: boolean): boolean {
+    const top = this.responseStack[this.responseStack.length - 1];
+    window.passed = [];
+    const first = this.nextResponder(top.controllerId, from, includeFrom, []);
+    if (first === undefined) return false;
+    window.priorityPlayerId = first;
+    this.state.priorityPlayerId = first;
+    return true;
+  }
+
+  /** Drops players who have lost from the front of the top-level responder queue (MPX-elim). */
+  private dropLostResponders(window: ResponseWindowState): void {
+    while (window.pendingResponders.length > 0 && this.state.players[window.pendingResponders[0]].eliminated) {
+      window.pendingResponders.shift();
+    }
+  }
+
+  /** The battle response order (MPX-battle-window, RQ-mp-8): attacker, defender, then the rest clockwise from the defender. */
+  private battleResponders(battle: BattleState): PlayerId[] {
+    const rest = this.getPlayersInSeatOrder(battle.defenderPlayerId).filter(
+      id => id !== battle.attackerPlayerId && id !== battle.defenderPlayerId
+    );
+    return [battle.attackerPlayerId, battle.defenderPlayerId, ...rest];
   }
 
   /**
@@ -8571,13 +8626,18 @@ export class SpoilsEngine {
     if (resume) {
       // The end of turn announced before the battle is still pending: the
       // opponent answers it again (and the turn ends once they are done).
+      const responders = (
+        resume.pendingResponders.length > 0 ? resume.pendingResponders : this.getOpponents(resume.playerId)
+      ).filter(id => !this.state.players[id].eliminated);
+      if (responders.length === 0) {
+        this.finishTurn(resume.playerId);
+        return;
+      }
       this.openResponseWindow(
         "endTurn",
-        this.getOpponent(resume.playerId).id,
+        responders[0],
         { type: "endTurn", playerId: resume.playerId },
-        resume.pendingResponders.length > 0
-          ? resume.pendingResponders
-          : [this.getOpponent(resume.playerId).id]
+        responders
       );
     }
   }
@@ -8631,12 +8691,16 @@ export class SpoilsEngine {
 
     if (this.responseStack.length > 0) {
       const top = this.responseStack[this.responseStack.length - 1];
+      const maker = window.resumeWith ?? top.controllerId;
+      delete window.resumeWith;
       window.phase = "acceptingResponses";
-      window.priorityPlayerId = this.getOpponent(top.controllerId).id;
-      this.state.priorityPlayerId = window.priorityPlayerId;
+      if (!this.offerTopItem(window, maker, true)) window.phase = "resolving";
       return;
     }
+    delete window.resumeWith;
+    delete window.passed;
 
+    this.dropLostResponders(window);
     if (window.pendingResponders.length > 0) {
       window.phase = "acceptingResponses";
       window.priorityPlayerId = window.pendingResponders[0];
@@ -8655,6 +8719,7 @@ export class SpoilsEngine {
     const item = this.responseStack.pop();
 
     assert(item, "Response stack is empty.");
+    if (this.state.responseWindow) this.state.responseWindow.resumeWith = item.controllerId;
 
     if (this.logEnabled) {
       this.recordLogMarker(
@@ -9070,7 +9135,7 @@ export class SpoilsEngine {
       const top = this.responseStack[this.responseStack.length - 1];
       this.openResponseWindow(
         "action",
-        this.getOpponent(top.controllerId).id,
+        this.nextSeat(top.controllerId),
         { type: "main" },
         []
       );
@@ -9092,11 +9157,21 @@ export class SpoilsEngine {
         "Cannot add a response while the chain is resolving."
       );
 
-      // A fresh item is on top of the stack; only the opponent of whoever
-      // just acted may respond to it (CR §607.1). The stack itself carries
-      // the LIFO ordering — no priority hand-back to the actor.
-      existing.priorityPlayerId = this.getOpponent(actingPlayerId).id;
-      this.state.priorityPlayerId = existing.priorityPlayerId;
+      // A fresh item is on top of the stack: it is offered clockwise from the
+      // actor's left, never to the actor (CR 607.1, MPX-priority). The stack
+      // itself carries the LIFO ordering.
+      if (this.responseStack.length > 0) {
+        this.offerTopItem(existing, actingPlayerId, false);
+        return;
+      }
+      // The action left nothing on the stack (a tactic terminated as it was
+      // deployed): the top-level responder whose opportunity it was keeps it
+      // (CR 607.2: "you may make another response").
+      delete existing.passed;
+      this.dropLostResponders(existing);
+      const holder = existing.pendingResponders[0] ?? this.nextSeat(actingPlayerId);
+      existing.priorityPlayerId = holder;
+      this.state.priorityPlayerId = holder;
       return;
     }
 
@@ -9105,7 +9180,7 @@ export class SpoilsEngine {
     // resolves — there is no top-level responder queue (CR §607.2b).
     this.openResponseWindow(
       "action",
-      this.getOpponent(actingPlayerId).id,
+      this.nextSeat(actingPlayerId),
       { type: "main" },
       []
     );
@@ -21077,15 +21152,17 @@ export class SpoilsEngine {
     // `turnEnding` event, the faction / scheduled end-of-turn effects and
     // every "at the end of your turn" trigger fire when the turn ACTUALLY
     // ends (CR 610.1a), after the opponent's response window: `finishTurn`.
+    // CR 607.1 / 610.1: every other player may respond to "I end my turn", clockwise from the ender's left
+    // (MPX-endturn).
+    const responders = this.getOpponents(playerId);
     this.openResponseWindow(
       "endTurn",
-      this.getOpponent(playerId).id,
+      responders[0],
       {
         type: "endTurn",
         playerId
       },
-      // CR §607.1 — only the opponent responds to "I end my turn".
-      [this.getOpponent(playerId).id]
+      responders
     );
   }
 
@@ -21528,6 +21605,9 @@ export class SpoilsEngine {
   ): { defenderId: PlayerId } | { problem: string } {
     if (target.type === "faction") {
       if (target.playerId === playerId) return { problem: "You cannot attack your own faction." };
+      const defender = this.state.players[target.playerId];
+      if (!defender) return { problem: `Unknown player '${target.playerId}'.` };
+      if (defender.eliminated) return { problem: "That player is out of the game." };
       return { defenderId: target.playerId };
     }
     const targetCard = this.requireCard(target.cardId);
@@ -21837,7 +21917,7 @@ export class SpoilsEngine {
         type: "battleBlocking",
         battleId: battle.id
       },
-      [battle.attackerPlayerId, battle.defenderPlayerId]
+      this.battleResponders(battle)
     );
   }
 
@@ -21966,7 +22046,7 @@ export class SpoilsEngine {
       "battleAfterAttackers",
       battle.attackerPlayerId,
       { type: "battleBlocking", battleId },
-      [battle.attackerPlayerId, battle.defenderPlayerId]
+      this.battleResponders(battle)
     );
   }
 
@@ -22445,7 +22525,7 @@ export class SpoilsEngine {
         type: "battleAssignDamage",
         battleId: battle.id
       },
-      [battle.attackerPlayerId, battle.defenderPlayerId]
+      this.battleResponders(battle)
     );
   }
 
@@ -22659,7 +22739,7 @@ export class SpoilsEngine {
         type: "battleInflictDamage",
         battleId: battle.id
       },
-      [battle.attackerPlayerId, battle.defenderPlayerId]
+      this.battleResponders(battle)
     );
   }
 

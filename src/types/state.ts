@@ -762,24 +762,37 @@ export interface ResponseWindowState {
   phase: "acceptingResponses" | "resolving";
 
   /**
-   * The one player entitled to act right now. The Spoils has no
-   * priority-passing system (CR §607.2b): while the response stack has
-   * items this is always the opponent of the top item's controller — you
-   * never respond to your own action (CR §607.1). While the stack is empty
+   * The one player entitled to act right now. While the response stack has items, the top item is offered to every
+   * player still in the game except its controller (CR 607.1), one at a time clockwise (MPX-priority): first the
+   * seat after the player who put it there, or, once an item above it has resolved, the player who made that item
+   * (CR 607.2). With two players this is always the opponent of the top item's controller. While the stack is empty
    * it is the head of `pendingResponders`.
    */
   priorityPlayerId: PlayerId;
 
   /**
+   * The players who have declined the top item since it was last offered from the start, in order. The item
+   * resolves once every player still in the game other than its controller is listed (MPX-priority). Reset
+   * whenever the top item changes.
+   */
+  passed?: PlayerId[];
+
+  /**
+   * Set while a stack item resolves: its controller, who is offered the item beneath it first once it is done
+   * (CR 607.2: "Once this response resolves, you may make another response").
+   */
+  resumeWith?: PlayerId;
+
+  /**
    * Players who still get a top-level opportunity to respond once the
-   * response stack drains, in order. A single-responder `action` window is
-   * driven entirely by its stack item and leaves this empty; an `endTurn`
-   * window holds `[opponent-of-turn-ender]`; a two-sided battle response
-   * window (CR §608.1c / §609.1a — "the attacking player may deploy tactics
-   * and use abilities as many times as they want, then the defending player
-   * may do the same") holds `[attacker, defender]`. A player is shifted off
-   * once they pass with an empty stack; when it empties and the stack is
-   * empty the window closes.
+   * response stack drains, in order. An `action` window is driven entirely
+   * by its stack item and leaves this empty; an `endTurn` window holds every
+   * other player, clockwise from the turn-ender's left (MPX-endturn); a
+   * battle response window (CR 608.1c / 609.1a) holds the attacker, the
+   * defender, then the other players clockwise from the defender
+   * (MPX-battle-window, RQ-mp-8). A player is shifted off once they pass with
+   * an empty stack, and players who have lost are dropped; when it empties
+   * and the stack is empty the window closes.
    */
   pendingResponders: PlayerId[];
 

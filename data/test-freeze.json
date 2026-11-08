@@ -340,5 +340,11 @@
     "src/engine/__tests__/victory.test.ts": "7a57190fc9835a04693641f198e8a372993244a257180b991fece9728389a5d2",
     "src/engine/__tests__/w3a-capabilities.test.ts": "5656c8292717c58db545cdf3d8dcc0f8ff620ef238cf191eeade8958e229e71e",
     "src/engine/__tests__/zones-and-state-based-actions.test.ts": "db8d51dd2cee8d09f24773de2764b57abe905e31111e6bc6ac139bad54cdf6ec"
+  },
+  "amended": {
+    "src/engine/__tests__/clauses/holy-heist-07.p2.test.ts": {
+      "sha256": "e795c45be64a2eb7e3a36f1eb4269763bff4800a16fd48cc96d958b8447ecbf4",
+      "reason": "Lines 494 and 505 declared an attack on { type: \"faction\", playerId: <P2's faction card id> }, a card id where a player id belongs; the engine now refuses an attack on an unknown player. Corrected to playerId: P2, the test's stated intent. Approved by the user 2026-11-07."
+    }
   }
 }
