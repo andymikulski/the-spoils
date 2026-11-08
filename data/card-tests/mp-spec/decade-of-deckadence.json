@@ -1,0 +1,1083 @@
+[
+  {
+    "id": "3bd6878a-1a14-402f-93eb-a23afac654b0",
+    "name": "Brainbath",
+    "clauses": [
+      {
+        "key": "1:ability:recur",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "All opponents",
+            "at": 109,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"All opponents discard\": every opponent still in the game, one at a time (active player first, then clockwise, CR 402.2), each choosing their own card; the data has a single chooser/selector."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "eachOpponent"
+          }
+        ],
+        "test3": "Table: P1 controls Brainbath in P1's discard pile, P2 left of P1, P3 after P2. On P1's turn P1 activates RECUR (pays 4, voids the card). P2 chooses and discards a card, then P3 chooses and discards a card; P1 discards nothing; then P1 draws a card. Each opponent chooses their own card. If P3 is eliminated only P2 discards.",
+        "test4": "Table P1..P4. On P1's turn the same activation: P2, then P3, then P4 each choose and discard one card in that order; P1 discards nothing and draws once afterwards. A P3 with an empty hand discards nothing and the order continues with P4."
+      }
+    ]
+  },
+  {
+    "id": "5332f878-57a2-46dd-ab1e-f7ab6113a5bd",
+    "name": "Chain Reaction",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1 plays it and picks a location as the extra cost: a location controlled by P1, P2 or P3 is legal. The opponent word in the data belongs to the damage in clause 1, not to this pick."
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 197,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"an opponent\": one opponent picked by P1 when this part of the effect resolves, not the single opponent the two-player collapse has."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card and the effect resolves. No opponent is picked up front; the pick happens only when the last step is reached. Both P2 and P3 are legal. Run A (P1 picks P2): The picked location is destroyed by 3 damage; P1 picks a character, inflicts 2 damage and it is destroyed; at that point P1 picks P2: P2's faction takes 1 damage and P1 draws a card; P3's faction is unchanged. If the chain stops before the character dies, no opponent is picked and nobody's faction is hit. Run B (P1 picks P3): The picked location is destroyed by 3 damage; P1 picks a character, inflicts 2 damage and it is destroyed; at that point P1 picks P3: P3's faction takes 1 damage and P1 draws a card; P2's faction is unchanged. If the chain stops before the character dies, no opponent is picked and nobody's faction is hit. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "e26eb079-952b-4396-bb5d-79894ac5417e",
+    "name": "Deadly Striker",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 29,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. When Deadly Striker is destroyed the trigger resolves and P1 picks the opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): Deadly Striker is destroyed; P1 picks P2: P2's faction loses 4 influence; P3's faction is unchanged and P1's is unchanged. Run B (P1 picks P3): Deadly Striker is destroyed; P1 picks P3: P3's faction loses 4 influence; P2's faction is unchanged and P1's is unchanged. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "e1d91071-20c5-4eac-9dec-5b147de9804e",
+    "name": "Devilfang Thunderhoof",
+    "clauses": [
+      {
+        "key": "3:ability:thunderhoof-disrupt",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 60,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "That opponent",
+            "at": 84,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[2].costs",
+            "now": "(no opponent pick; sites below use `opponent`)",
+            "meaning": "anyOneOpponent",
+            "why": "\"Pick an opponent\" is part of the cost: needs a pick-opponent step whose result the effect's chooser and selector read (the two sites here become the picked opponent)."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 activates DISRUPT; the opponent is picked as part of the cost. Both P2 and P3 are legal. Run A (P1 picks P2): P1 pays 2, removes a token and picks P2 as part of the cost. P2 (not P3) chooses and discards a card from P2's hand; P3's hand is unchanged. Run B (P1 picks P3): P1 pays 2, removes a token and picks P3 as part of the cost. P3 (not P2) chooses and discards a card from P3's hand; P2's hand is unchanged. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "ecf19d3f-857f-4a62-8c29-dd293164c495",
+    "name": "Drill Garrison",
+    "clauses": [
+      {
+        "key": "1:rule@rrr",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 66,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. At the start of P1's turn the trigger resolves and P1 picks the opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): P1 controls RRR; at the start of P1's turn P1 may inflict 1 damage to an opponent and picks P2: P2's faction takes 1 damage; P3's faction is unchanged. Without RRR the clause is inactive. The trigger does not fire at the start of P2's or P3's turn. Run B (P1 picks P3): P1 controls RRR; at the start of P1's turn P1 may inflict 1 damage to an opponent and picks P3: P3's faction takes 1 damage; P2's faction is unchanged. Without RRR the clause is inactive. The trigger does not fire at the start of P2's or P3's turn. In both runs the opponent not picked is unaffected."
+      },
+      {
+        "key": "2:rule@rrrrr",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1 controls RRRRR; at the start of P1's turn P1 may pick any character (P1's own, P2's or P3's) and deplete it. No opponent is picked; the pooled opponent site is clause 1's."
+      },
+      {
+        "key": "3:rule@rrrrrrr",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1 controls RRRRRRR; at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it. No opponent is picked; the pooled opponent site is clause 1's."
+      }
+    ]
+  },
+  {
+    "id": "ca0987a9-99ab-462e-8d61-cc898b3441dc",
+    "name": "Dual Blade Assassin",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 56,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.onPlay.condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "The condition is met by damage to any one opponent's faction."
+          }
+        ],
+        "test3": "P1 tries to deploy Dual Blade Assassin. Run A: P1 inflicted damage to P2's faction this turn, none to P3's: allowed. Run B: only to P3's faction: allowed. Run C: P2 damaged P3's faction (P1 inflicted none) or P1 damaged only P1's own faction: refused. Run D: no damage at all: refused."
+      }
+    ]
+  },
+  {
+    "id": "3ad8995c-8bd2-4e07-9e64-1be39cc38f0d",
+    "name": "Engorged Sarcophyle",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 34,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "That opponent",
+            "at": 47,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "The pick is a faction target; \"opponent\" in a selector matches any opponent's faction. Ownership of the picked faction (ownerOf, unchanged) then carries \"that opponent\"."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. When Engorged Sarcophyle is destroyed the trigger resolves and P1 picks an opponent's faction (P2's or P3's; P1's own is not legal). Both P2 and P3 are legal. Run A (P1 picks P2): Engorged Sarcophyle is destroyed; P1 picks P2's faction. P2 (not P1, not P3) chooses and destroys a character P2 controls; P3's characters are untouched. Run B (P1 picks P3): Engorged Sarcophyle is destroyed; P1 picks P3's faction. P3 (not P1, not P2) chooses and destroys a character P3 controls; P2's characters are untouched. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "249bf742-f624-4e5b-a236-a5757e64472a",
+    "name": "Enlightened Sarcophyle",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "each opponent",
+            "at": 52,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"each opponent loses 1 influence\": every opponent, not a single one."
+          }
+        ],
+        "test3": "Table: P1 controls it, P2 left of P1, P3 after P2. A character (controlled by any player) is destroyed: P1's faction gains 1 influence and both P2's and P3's factions lose 1; P1's faction does not lose influence. No opponent prompt appears.",
+        "test4": "Table P1..P4. A character is destroyed: P1 gains 1; P2, P3 and P4 each lose 1; with P3 already eliminated only P2 and P4 lose 1."
+      }
+    ]
+  },
+  {
+    "id": "0007c001-1606-422f-b1a8-cdc4c7afbce9",
+    "name": "Escort Ally",
+    "clauses": [
+      {
+        "key": "0:ability:escort-ally-substitute",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponents",
+            "at": 126,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].replaces.by",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "The replaced event's source \"by\" is any card or ability controlled by any of your opponents, not one opponent."
+          }
+        ],
+        "test3": "P1 destroys Escort Ally as the cost. This turn: a card or ability controlled by P2 that would destroy a P1 character does not destroy it; the same for one controlled by P3. A card controlled by P1 itself can still destroy a P1 character. A P2 card destroying a P3 character still works (only characters P1 controls are protected).",
+        "test4": "Table P1..P4: the protection holds against cards and abilities controlled by P2, by P3 and by P4 alike; P1's own cards can still destroy P1's characters; a P2 card destroying a P4 character works."
+      }
+    ]
+  },
+  {
+    "id": "e634a62b-1295-4fbe-8349-1434c067e9d1",
+    "name": "Finger Explosive",
+    "clauses": [
+      {
+        "key": "0:ability:finger-explosive-pull",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 90,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[1].selector.controller",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"a character an opponent controls\": a selector that matches a character of any opponent."
+          }
+        ],
+        "test3": "P1 pays 1, picks a character P1 controls and a character controlled by P2 (run A) or by P3 (run B), destroys Finger Explosive, and both picked characters are destroyed. Both P2's and P3's characters are legal for the second pick; a second pick of a P1 character is refused. The opponent that was not picked loses nothing."
+      }
+    ]
+  },
+  {
+    "id": "ab4f55ff-fe17-4dde-b44d-a16b5f7540f6",
+    "name": "Illusionist's Trick",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 17,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "The pick is a faction target: \"opponent\" in the selector matches any opponent's faction."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card; the opponent is picked as part of the extra cost (P2's or P3's faction). Both P2 and P3 are legal. Run A (P1 picks P2): P1 plays it and picks P2's faction as the extra cost (P1's own faction is refused). P3 is not picked and is unaffected. Run B (P1 picks P3): P1 plays it and picks P3's faction as the extra cost (P1's own faction is refused). P2 is not picked and is unaffected. In both runs the opponent not picked is unaffected."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [
+          {
+            "phrase": "That opponent",
+            "at": 0,
+            "meaning": "refersBack",
+            "note": "\"That opponent\": the opponent picked in the extra cost (clause 0)."
+          }
+        ],
+        "dataChanges": [],
+        "test3": "P1 controls characters with speeds 2 and 3 (highest 3). P1 picked P2: P2 puts the top 3 cards of P2's deck into P2's discard pile; P3's deck is unchanged; P1 draws a card. Run B: P1 picked P3: P3's deck loses 3, P2's is unchanged. The data uses the owner of the picked faction, so it already follows the pick."
+      }
+    ]
+  },
+  {
+    "id": "0fca82df-12d4-4a50-abe5-1ed3c79d3fc1",
+    "name": "Insidious Brainworm",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "each opponent",
+            "at": 28,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"each opponent loses 3 influence\": every opponent."
+          }
+        ],
+        "test3": "Table: P1 controls it, P2 left of P1, P3 after P2. When it enters play P2's and P3's factions each lose 3 influence; P1's faction is unchanged. No opponent prompt appears.",
+        "test4": "Table P1..P4. P2, P3 and P4 each lose 3; P1's faction is unchanged. If P3 was eliminated earlier only P2 and P4 lose 3."
+      }
+    ]
+  },
+  {
+    "id": "2a7f9474-5265-4804-865f-f4c3b63b6651",
+    "name": "Ipsighast, the Lustful",
+    "clauses": [
+      {
+        "key": "1:ability:ipsighast-exhume",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 47,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "that opponent's",
+            "at": 172,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"an opponent's discard pile\": the picked card may be in any opponent's discard pile; its owner is \"that opponent\" for the last sentence."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 activates the ability; the opponent is settled by the picked card (a character in P2's or P3's discard pile; P1's own is not legal). Both P2 and P3 are legal. Run A (P1 picks P2): P1 pays 3 and picks a character in P2's discard pile (the owner of the picked card is the picked opponent); it is voided; Ipsighast gains COVERT this turn; P1 may put the top 3 cards of P2's deck (not P3's) into P2's discard pile. P3's deck and discard pile are unchanged. Run B (P1 picks P3): P1 pays 3 and picks a character in P3's discard pile (the owner of the picked card is the picked opponent); it is voided; Ipsighast gains COVERT this turn; P1 may put the top 3 cards of P3's deck (not P2's) into P3's discard pile. P2's deck and discard pile are unchanged. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "40841abf-5c44-4a67-8597-2675a2cad9bb",
+    "name": "Luteorunic Behemoth",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "all opponents",
+            "at": 28,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"all opponents must destroy 4 non-staple cards\": each opponent chooses and destroys their own, active player first then clockwise."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent"
+          }
+        ],
+        "test3": "Table: P1 deploys it, P2 left of P1, P3 after P2. P2 chooses and destroys 4 non-staple cards P2 controls, then P3 does the same; P1's cards are untouched. Each opponent makes their own choice; with fewer than 4 non-staple cards a player destroys all they have.",
+        "test4": "Table P1..P4. P2, then P3, then P4 each destroy 4 non-staple cards they control, in that order (P1's turn); P1 destroys nothing. Staple cards are never chosen."
+      }
+    ]
+  },
+  {
+    "id": "ffee58bd-4f4b-4742-b601-0d6e84566a2c",
+    "name": "Master General",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "a player",
+            "at": 5,
+            "meaning": "anyPlayer",
+            "note": "\"a player\": the controller or any opponent."
+          },
+          {
+            "phrase": "that player's",
+            "at": 52,
+            "meaning": "refersBack",
+            "note": "\"that player's faction\": the player who deployed the tactic."
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.conditions[0].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "The mg-opp ability's event condition must match a tactic deployed by any opponent (a trigger for each opponent, not one fixed player)."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "The damage target must be the faction of the player who deployed the tactic, not a fixed opponent."
+          }
+        ],
+        "test3": "Table: P1 controls Master General, P2 left of P1, P3 after P2. P1 deploys a tactic: P1's faction takes 3 damage (the controller's own ability). P2 deploys a tactic: P2's faction takes 3; P1's and P3's are unchanged. P3 deploys a tactic: P3's faction takes 3; P1's and P2's are unchanged. Deploying a non-tactic damages nobody."
+      }
+    ]
+  },
+  {
+    "id": "1fcd1fda-0d6c-45a6-8b08-918b5c15b6e9",
+    "name": "Mindrender",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 5,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"When an opponent discards\": the trigger matches a discard by any opponent."
+          }
+        ],
+        "test3": "Mindrender is in P1's hand. P2 discards a card: P1 may reveal Mindrender and deploy it for 1. In a separate run P3 discards a card: the same. P1 discards a card: no trigger. A second trigger in the same turn offers the same option while Mindrender is still in hand."
+      }
+    ]
+  },
+  {
+    "id": "fa3a29ad-e316-4e66-96f1-d367b4720d1d",
+    "name": "Opportunistic Pirate",
+    "clauses": [
+      {
+        "key": "1:extraCost",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 42,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.onPlay.targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"an opponent's discard pile\": the voided cards all come from one opponent's pile; the opponent is settled by the cards picked."
+          }
+        ],
+        "test3": "P1 deploys Pirate (numeric cost 5). Run A: P1 voids 3 cards from P2's discard pile: cost becomes 2. Run B: P1 voids 4 cards from P3's discard pile: cost becomes 1. Run C: a pick mixing a P2 card and a P3 card is refused. Run D: voiding 0 gives no reduction. Cards in P1's own discard pile are not legal."
+      }
+    ]
+  },
+  {
+    "id": "8ca591c5-d7d1-47d2-87a7-cf0a04edb205",
+    "name": "Plunging Shriever",
+    "clauses": [
+      {
+        "key": "1:ability:fly-away",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 34,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"an item in an opponent's discard pile\": any opponent's pile."
+          }
+        ],
+        "test3": "P1 activates FLY AWAY by voiding an item from P2's discard pile (run A) or from P3's (run B): both are legal; Plunging Shriever flips face-down under its owner's control. An item in P1's own discard pile is refused as the cost."
+      }
+    ]
+  },
+  {
+    "id": "f74f67af-3f00-4937-a79d-7e3c53858d85",
+    "name": "Purifier of the Fallen",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "When Purifier enters play under P1, the discard piles of P1, P2 and P3 are all voided."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "While Purifier is in play, a card that would go to P1's, P2's or P3's discard pile is voided instead (the data's `any`: every player's cards). After Purifier leaves play, cards go to discard piles again."
+      }
+    ]
+  },
+  {
+    "id": "c27110b6-26bc-473b-874c-0461819ee0d3",
+    "name": "Rantzigite Inquisitor",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1 may discard an Arcanist card from P1's own hand to deploy Rantzigite for free. P2's and P3's hands are not offered. The pooled opponent sites belong to clause 1."
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 34,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "That opponent",
+            "at": 47,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "(no opponent pick; sites use `opponent`)",
+            "meaning": "anyOneOpponent",
+            "why": "\"pick an opponent\": needs a pick-opponent step before the discard whose result the chooser and selector read."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. When it is destroyed the trigger resolves and P1 picks an opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): Rantzigite Inquisitor is destroyed; P1 picks P2. P2 (not P3) chooses and discards a card; P3's hand is unchanged. Run B (P1 picks P3): Rantzigite Inquisitor is destroyed; P1 picks P3. P3 (not P2) chooses and discards a card; P2's hand is unchanged. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "2f870c54-2a0f-470c-a73e-2939196e0853",
+    "name": "Rasputin Unleashed",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 60,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "that opponent",
+            "at": 112,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "(no opponent pick; selector uses `opponent`)",
+            "meaning": "anyOneOpponent",
+            "why": "\"pick an opponent\": needs a pick-opponent step; the area modifier's selector is then the picked opponent's characters."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. The trigger resolves and P1 picks an opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): Another character enters play under P1; P1 picks P2. This turn the speed of every character P2 controls is 0 (including ones that enter later this turn); P3's characters keep their speed and so do P1's. At end of turn speeds return. Run B (P1 picks P3): Another character enters play under P1; P1 picks P3. This turn the speed of every character P3 controls is 0 (including ones that enter later this turn); P2's characters keep their speed and so do P1's. At end of turn speeds return. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
+    "name": "Redonkulous",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1 picks a character as the extra cost: a character controlled by P1, P2 or P3 is legal. The pooled `opponent` sites in the data belong to clause 1 (\"that character's controller\")."
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "why": "\"that character's controller\": the controller of the picked character at any table size; the data branches on controller vs a single opponent. Replace with a controllerOf the picked character reference (also for the `condition.player` / `selector.controller` / `chooser` sites)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "cardRelative"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative"
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
+            "now": "opponent",
+            "meaning": "cardRelative"
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative"
+          }
+        ],
+        "test3": "P1 deploys Redonkulous via FLIP UP. Run A: picked character is controlled by P3: P3 chooses and discards 2 cards; if P3 then has 3 or fewer cards in hand the character is voided; P2's hand is untouched. Run B: picked character is controlled by P2: the same with P2; P3's hand is untouched. Run C: picked character is P1's own: P1 discards 2 and is the one checked. Without FLIP UP (cast normally) nobody discards, but the 3-or-fewer void check still follows the printed text."
+      }
+    ]
+  },
+  {
+    "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
+    "name": "Ritual of the Double Monkey",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "An opponent",
+            "at": 0,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "that opponent",
+            "at": 55,
+            "meaning": "refersBack"
+          },
+          {
+            "phrase": "that opponent",
+            "at": 133,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that opponent\": the same opponent picked for the first discard."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that opponent\": the same opponent picked for the first discard."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that opponent\": the same opponent picked for the first discard."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that opponent\": the same opponent picked for the first discard."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card; when the effect resolves P1 picks the one opponent for all three discards. Both P2 and P3 are legal. Run A (P1 picks P2): P2 chooses and discards a card. With P1 controlling OOO, P2 discards another card; with OOOOOOOO, P2 discards a third. Every discard is by P2; P3's hand is untouched in all cases. Run B (P1 picks P3): P3 chooses and discards a card. With P1 controlling OOO, P3 discards another card; with OOOOOOOO, P3 discards a third. Every discard is by P3; P2's hand is untouched in all cases. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "2ac6e84e-f9c7-4c31-9cbb-c7572cb99858",
+    "name": "Shriever General",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent's",
+            "at": 31,
+            "meaning": "anyOneOpponent"
+          },
+          {
+            "phrase": "that opponent",
+            "at": 140,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.conditions[1].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "\"if an opponent's faction lost influence this turn\": met when any opponent's faction lost influence; that opponent becomes the one used below (P1 picks among those that qualify)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that faction\": the faction of the opponent whose faction lost influence."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that opponent controls\": the same opponent."
+          }
+        ],
+        "test3": "Shriever General enters play under P1. Run A: only P2's faction lost influence this turn: P1 may inflict 2 damage to P2's faction and pick a character P2 controls (P3's characters are not legal) and inflict 2 damage to it. Run B: only P3's faction lost influence: the same with P3. Run C: both lost influence: P1 picks which one, and the faction and the character are the same opponent's. Run D: neither lost influence: nothing happens. A loss of P1's own faction does not count."
+      }
+    ]
+  },
+  {
+    "id": "71422ede-b7b7-4d1c-b176-a0bb7d9a8b30",
+    "name": "Silencer",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "P1's Silencer attacks. A character with a token controlled by P2 or by P3 cannot block it; a character with no token (of either) can. The pooled opponent site belongs to clause 1."
+      },
+      {
+        "key": "1:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 33,
+            "meaning": "chosenOpponent",
+            "note": "\"If a character enters play under your opponent's control\": see question."
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.conditions[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Under recommended reading (A) the condition is met by any opponent and that player is the selected opponent."
+          }
+        ],
+        "test3": "Written for recommended reading (A). P1 controls Silencer. A character enters play under P2's control: P1 may pay 1 and put a token on it. A character enters under P3's control: the same. A character entering under P1's control: no trigger. Under reading (B), with P2 selected when Silencer entered play, a character entering under P3's control would not trigger it.",
+        "questions": [
+          "MPQ-decade-of-deckadence-1"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-decade-of-deckadence-1",
+        "clause": "1:rule",
+        "question": "Silencer: \"If a character enters play under your opponent's control, you may pay 1. If you do, put a token on it.\" The condition names \"your opponent\", but MP 2 selects the opponent per block and triggers choose when they resolve, after the event. Which opponent's characters trigger it?",
+        "readings": [
+          "(A) A character entering under any opponent's control triggers it; that player is the selected opponent for the block (a condition naming your opponent is met by selecting the player who meets it).",
+          "(B) The opponent is selected once when Silencer enters play (lasting text, RQ-mp-5); only that opponent's characters trigger it."
+        ],
+        "recommendation": "(A): it is the README rule for conditions (\"satisfied by choosing\" the player who meets it) and avoids tying a reactive trigger to one fixed opponent."
+      }
+    ]
+  },
+  {
+    "id": "79e1db0c-a18b-4a66-ad29-1fd522a41f2e",
+    "name": "Tempered Rage",
+    "clauses": [
+      {
+        "key": "1:ability:fire-up",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Table: P1 flips Tempered Rage up. Two characters were destroyed this turn (X = 2). Each faction loses 2: P1's, P2's and P3's all lose 2. The card's own text says \"Each faction\" (the data's forEachPlayer is already the printed meaning at any table size).",
+        "test4": "Table P1..P4: all four factions lose X. An eliminated player's faction is not affected."
+      }
+    ]
+  },
+  {
+    "id": "66d4842a-f209-4ff8-bf29-935596d08bb7",
+    "name": "Temple of Rantzigore",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponents",
+            "at": 11,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].modifiers[0].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"Characters your opponents control\": a static selector for every opponent's characters."
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[1].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent"
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[2].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent"
+          }
+        ],
+        "test3": "Table: P1 controls Temple of Rantzigite, P2 left of P1, P3 after P2. A P2 character and a P3 character each lose 1 strength, 1 life and 1 speed; a P1 character does not. A P3 character entering later is also affected. When the Temple leaves play all stats return.",
+        "test4": "Table P1..P4: characters of P2, P3 and P4 each lose 1/1/1; P1's do not."
+      }
+    ]
+  },
+  {
+    "id": "03793397-ca23-4bda-b0ec-3a1597874ab8",
+    "name": "The Ministry of Other Smaller Smaller Ministries",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Each opponent",
+            "at": 0,
+            "meaning": "eachOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].attackTax.player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "why": "\"Each opponent must pay 2\": every opponent pays, not one."
+          }
+        ],
+        "test3": "Table: P1 controls it, P2 left of P1, P3 after P2. When P2 forms an attacking party it costs 2 (refused with 1, allowed with 2); when P3 forms an attacking party it also costs 2. P1's own parties cost nothing.",
+        "test4": "Table P1..P4: P2, P3 and P4 each pay 2 to form an attacking party; P1 pays nothing."
+      }
+    ]
+  },
+  {
+    "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
+    "name": "Uhluhtc Unleashed",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 68,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "chooserSelectsOption (no opponent pick)",
+            "meaning": "anyOneOpponent",
+            "why": "\"pick an opponent and then choose one of the following\": needs a pick-opponent step before the options; both options read the picked opponent (clauses 2 and 3)."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. When Uhluhtc enters play (from P1's hand) the trigger resolves; P1 picks the opponent (P2 or P3) before choosing the option. Both P2 and P3 are legal. Run A (P1 picks P2): Uhluhtc Unleashed enters play from P1's hand; P1 picks P2 and then chooses an option; the option affects P2 only; P3 is unaffected. If it entered play from anywhere else the trigger does nothing. Run B (P1 picks P3): Uhluhtc Unleashed enters play from P1's hand; P1 picks P3 and then chooses an option; the option affects P3 only; P2 is unaffected. If it entered play from anywhere else the trigger does nothing. In both runs the opponent not picked is unaffected."
+      },
+      {
+        "key": "2:option:OPTION 1",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "that player's",
+            "at": 20,
+            "meaning": "refersBack"
+          },
+          {
+            "phrase": "That player",
+            "at": 77,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"that player\": the opponent picked in clause 1."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. As clause 1: P1 has picked P2 or P3 before choosing OPTION 1. Both P2 and P3 are legal. Run A (P1 picks P2): P1 picked P2 and chose OPTION 1: P1 looks at P2's hand and chooses a non-resource card; P2 discards it. P3's hand is not viewed and is unchanged. Run B (P1 picks P3): P1 picked P3 and chose OPTION 1: P1 looks at P3's hand and chooses a non-resource card; P3 discards it. P2's hand is not viewed and is unchanged. In both runs the opponent not picked is unaffected."
+      },
+      {
+        "key": "3:option:OPTION 2",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "That player",
+            "at": 12,
+            "meaning": "refersBack"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "why": "\"That player\": the opponent picked in clause 1."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack"
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. As clause 1: P1 has picked P2 or P3 before choosing OPTION 2. Both P2 and P3 are legal. Run A (P1 picks P2): P1 picked P2 and chose OPTION 2: P2 chooses and destroys a character P2 controls; P3's characters are untouched. Run B (P1 picks P3): P1 picked P3 and chose OPTION 2: P3 chooses and destroys a character P3 controls; P2's characters are untouched. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "ea562e12-53f2-4da2-831f-fe986b9229cb",
+    "name": "Upstart Arcanist",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "At the start of P1's turn P1 may reveal the top card of P1's deck; the reveal is shown to P2 and P3 alike (viewer: all). If it is a tactic P1 may put it into P1's hand. P2's and P3's decks are unchanged."
+      }
+    ]
+  },
+  {
+    "id": "575ecc83-447b-4e43-9e61-87d6513b7949",
+    "name": "Violating Ritual",
+    "clauses": [
+      {
+        "key": "0:extraCost",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "an opponent",
+            "at": 17,
+            "meaning": "anyOneOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].costs",
+            "now": "(no opponent pick; effect sites use `opponent`)",
+            "meaning": "anyOneOpponent",
+            "why": "\"Pick an opponent\" is an extra cost: needs a pick-opponent step in the costs whose result clause 1's chooser and selector read."
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card; the opponent is picked as part of the extra cost (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): P1 plays it and picks P2 as the extra cost; P3 is not picked and unaffected. Run B (P1 picks P3): P1 plays it and picks P3 as the extra cost; P2 is not picked and unaffected. In both runs the opponent not picked is unaffected."
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "That opponent",
+            "at": 0,
+            "meaning": "refersBack",
+            "note": "\"That opponent\": the opponent picked in the extra cost (clause 0)."
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack"
+          }
+        ],
+        "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. As clause 0: P1 has picked P2 or P3 as the extra cost. Both P2 and P3 are legal. Run A (P1 picks P2): P1 picked P2: P2 (not P3) chooses and discards 2 cards from P2's hand, then P1 draws a card; P3's hand is unchanged. Run B (P1 picks P3): P1 picked P3: P3 (not P2) chooses and discards 2 cards from P3's hand, then P1 draws a card; P2's hand is unchanged. In both runs the opponent not picked is unaffected."
+      }
+    ]
+  }
+]
