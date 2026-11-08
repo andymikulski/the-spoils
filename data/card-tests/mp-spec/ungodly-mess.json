@@ -23,8 +23,7 @@
         "dataChanges": [],
         "test3": "P1 has Arrakis Eternity in their discard pile and pays 2. The pick offers the factions of P1, P2 and P3. P1 picks P3: P3 (not P2) discards 3 cards, chosen by P3 from P3's hand; P1's and P2's hands are unchanged and the card is removed from the game. No chooseOpponent step appears. Second run: P1 picks P1 and P1 discards 3 of their own cards."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "808bd2ba-7b76-4d81-b733-425078db481a",
@@ -52,12 +51,14 @@
             "path": "behavior.onPlay.effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the player who may detach is the picked opponent (\"That player\"); the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           },
           {
             "path": "behavior.onPlay.effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the detachable resources are the picked opponent's attached resources; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           }
         ],
@@ -65,26 +66,12 @@
       },
       {
         "key": "2:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.onPlay.effects[0].chooser",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the player who may detach is the picked opponent (\"That player\"); the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 1:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          },
-          {
-            "path": "behavior.onPlay.effects[0].declaration.selector.controller",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the detachable resources are the picked opponent's attached resources; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 1:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "With the Bonnet attached to P1's character (opponent picked in the cost: P2), P1's character has COVERT: when it attacks P2's faction, P2 cannot block it with a non-COVERT character. The same holds in a second run where P3 was the picked opponent (COVERT does not depend on the pick). P2's and P3's own characters do not gain COVERT."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "94a4916f-0dcf-48d0-b1ab-62aa40c26070",
@@ -112,6 +99,7 @@
             "path": "behavior.abilities[0].variables.x.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "X counts only the detached resources the picked opponent controls; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           }
         ],
@@ -119,20 +107,12 @@
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].variables.x.selector.controller",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "X counts only the detached resources the picked opponent controls; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "With P2 picked (X=1): a P3 character with 1 strength is destroyed and a P3 character with 2 strength survives; a P2 character with 1 strength is destroyed too (the character pick is unrestricted). With P3 picked (X=4): a P2 character with 4 strength is destroyed and one with 5 strength survives. X comes only from the picked opponent."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "2475968c-7bb5-43c1-8225-1bf9d8fdc059",
@@ -154,20 +134,21 @@
             "path": "behavior.abilities[0].playRestrictions[0].player",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the FLIP UP restriction applies to every opponent, not one chosen opponent"
           },
           {
             "path": "behavior.abilities[0].restrictReturnToHand.player",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the \"cards cannot be returned to their hands\" half is governed by the same \"your opponents\": every opponent's hand"
           }
         ],
         "test3": "P1 controls Lockbox. P2 and P3 both cannot use FLIP UP (a face-down card of P2 and one of P3 each refuse to flip up) while P1 can flip up their own cards. A card owned by P2 cannot be put into P2's hand from the void, discard pile or play, and the same for P3; P1's own cards can still return to P1's hand. When P1 stops controlling Lockbox all of these work again.",
         "test4": "Same as test3 with P4: P2, P3 and P4 all cannot use FLIP UP and none of their cards can be returned to their hands; P1 is unaffected."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e89bc47b-90e9-48c3-8da8-1ce22e2847e0",
@@ -177,7 +158,15 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].costs[0]",
+            "now": "otherPlayerChooses",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "\"That character's controller may detach\": the chooser is the controller of the picked character, whichever player that is; the other-player-chooses cost already follows the picked card, so nothing changes"
+          }
+        ],
         "test3": "P1 plays Quotidian Quagmire picking P3's character (P2's characters and P1's own are also legal picks). P3, as the picked character's controller, is asked to detach up to 2 resources from P3's faction (0, 1 and 2 accepted); P1 and P2 are not asked. Second run picking P2's character: P2 is asked and P3 is not. Third run picking P1's own character: P1 decides."
       },
       {
@@ -187,8 +176,7 @@
         "dataChanges": [],
         "test3": "After the cost is paid: the picked character (P3's) loses 1 speed this turn while P2's characters keep their speed, and P1 (not P2, not P3) draws a card. The speed loss ends at end of turn."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "58fd9f77-2796-4601-be97-d5015bb05145",
@@ -216,19 +204,20 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the player who chooses the discards is the picked opponent (\"That player discards\"); the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the cards discarded come from the picked opponent's hand; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           }
         ],
         "test3": "Seance Ritualist (P1) has 2 tokens. P1 activates VIOLATE (deplete, pay 2): the opponent pick offers P2 and P3. P1 picks P2: P2 chooses and discards 2 cards from P2's hand; P3's and P1's hands are unchanged. A token is put on the Ritualist. Second activation (3 tokens) picking P3: only P3 discards, 3 cards."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "8817125b-0cc8-43ba-a08e-c6711a79ecaa",
@@ -256,13 +245,13 @@
             "path": "behavior.abilities[0].variables.x.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "X counts the staple types of the picked opponent only; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           }
         ],
         "test3": "P2 controls 2 different staple resource types and P3 controls none. P1 activates the ability: the opponent pick offers P2 and P3. Picking P2 makes the cost 6-2 = 4; a second activation picking P3 makes the cost 6. In both cases the Penumbra gains 1 life and COVERT this turn and neither opponent is otherwise affected."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "fb3bed57-05e1-44b3-a8c4-2f03bc876476",
@@ -272,11 +261,25 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.owner",
+            "now": "any",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"all hands\": the count covers the hand of every player; the stored \"any\" owner already counts all of them"
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.owner",
+            "now": "any",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"all hands\": the count covers the hand of every player; the stored \"any\" owner already counts all of them"
+          }
+        ],
         "test3": "Theological Opportunist is in play under P1. P1 holds 1 card, P2 holds 2 and P3 holds 3: it has lost 6 strength and 6 life, counting the hands of all three players. When P3 draws a card the loss grows by 1; when P2 plays a card from hand it shrinks by 1. It is not limited to the controller's hand or to one opponent's hand (\"all hands\")."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "f78f043a-1c35-49ae-939f-3e0efabdd810",
@@ -291,13 +294,13 @@
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
+            "edit": true,
             "why": "the character is picked from those controlled by the controller of the damaged faction (\"that faction's controller\"; the chooser is already the faction's owner); at three seats it must not read as the block's chosen opponent or as any opponent"
           }
         ],
         "test3": "P1's Twisted Marionette attacks P3's faction while P2 also controls characters, and inflicts battle damage to it. P1 may pay 1 (declinable). If P1 pays, P3 (the damaged faction's controller, not P2) puts a character P3 controls into its owner's hand, P3's choice; P2's characters are not candidates and P2 is not asked. Second run attacking P2's faction: P2 is the one asked. No chooseOpponent step appears. If P1 declines to pay nothing happens."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a750d103-edca-4c5d-8724-e289ed80463e",
@@ -325,13 +328,13 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "the controller picks one opponent when the trigger resolves, then looks at only that player's hand and chooses a card in it; a selector that matches every opponent's hand at once would let the controller see and choose across several hands"
           }
         ],
         "test3": "Voidal Bask (P1) leaves play. A choice offers P2 and P3 to P1. P1 picks P3: P1 sees P3's hand (and not P2's) and chooses one card in it; P3 discards that card. P2's hand is unchanged and stays hidden from P1. Second run picking P2: only P2's hand is looked at and P2 discards the chosen card."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "feb21afe-1749-4041-b5b0-0586c4bc4964",
@@ -353,19 +356,8 @@
             "path": "behavior.modes[0].variables.x.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "X counts the staple types of the picked player; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
-          },
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the player who chooses the cards to return is the picked player (\"That player puts\"); the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.controller",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the cards returned are the picked player's; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
           }
         ],
         "test3": "P1 controls 3 different staple types, P2 controls 2 and P3 controls 1. P1 plays Wasted Wickedness: the pick offers P1, P2 and P3 (no chooseOpponent step). Picking P3: X=1 and P1 pays X+X = 2. Picking P2: X=2, cost 4. Picking P1: X=3, cost 6 (P1's own staples)."
@@ -383,28 +375,23 @@
         ],
         "dataChanges": [
           {
-            "path": "behavior.modes[0].variables.x.selector.controller",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "X counts the staple types of the picked player; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          },
-          {
             "path": "behavior.modes[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the player who chooses the cards to return is the picked player (\"That player puts\"); the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the player who chooses the cards to return is the picked player (\"That player puts\"); the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the cards returned are the picked player's; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the cards returned are the picked player's; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
           }
         ],
         "test3": "P1 picks P3 with X=1: P3 (not P2, not P1) chooses 1 non-resource, non-faction card P3 controls and puts it into its owner's hand; P2's cards are unchanged. Picking P2 with X=2: P2 chooses 2 such cards. Picking P1: P1 chooses X of P1's own cards."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e1c896c0-6e2b-46af-9dbb-008146423145",
@@ -426,6 +413,7 @@
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "\"a character an opponent controls\": the selector matches the characters of any opponent (P2's or P3's), not only a chosen one"
           }
         ],
@@ -433,7 +421,7 @@
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "that player",
@@ -442,18 +430,10 @@
             "note": "\"that player\": the owner of the picked character (the antecedent \"its owner's hand\"); the same at every table size"
           }
         ],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "now": "opponent",
-            "meaning": "anyOneOpponent",
-            "why": "\"a character an opponent controls\": the selector matches the characters of any opponent (P2's or P3's), not only a chosen one (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "P1 picks P3's character (P3 owns and controls it): it goes into P3's hand. With P1 controlling an attacking party of 2 or more members, P3 (not P2) then discards a card of P3's choice; with a party of 1 member nobody discards. P2's hand is never affected."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "453db85c-818d-4e89-a019-9abf16307109",
@@ -487,8 +467,7 @@
         "dataChanges": [],
         "test3": "P1 picks P3, who controls a face-down resource: P3 (not P2) reveals one face-down resource P3 controls, P1's faction gains influence equal to that card's numeric cost and the card is destroyed. P2's resources are untouched. If P3 has no face-down resource nothing is revealed, gained or destroyed."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "d56e0e61-ff37-4424-b089-83d879c37d98",
@@ -510,14 +489,14 @@
             "path": "behavior.abilities[0].costModifiers[0].affects",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the +1 deployment cost applies to every opponent"
           }
         ],
         "test3": "While P1's Foreclosure Overseer is depleted, P2 and P3 must each pay 1 more to deploy a card (on their own turns or in response); P1's own deployments cost no extra. When the Overseer is ready (not depleted), neither pays extra.",
         "test4": "Same as test3 with P4: P2, P3 and P4 each pay 1 more while it is depleted; P1 does not."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a0243e83-005c-4bec-8454-0bbb86489d3c",
@@ -527,11 +506,18 @@
         "key": "0:rule@ggvv",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "any",
+            "meaning": "anyPlayer",
+            "edit": false,
+            "why": "\"a discard pile\": any player's discard pile; the stored \"any\" owner already allows every pile"
+          }
+        ],
         "test3": "With the threshold met, P1's Thabbashite Glutton attacks P2's faction. P1 may pick a card in any discard pile: cards in P1's, P2's and P3's discard piles are all legal (P3 is not in the battle); P1 picks one in P3's pile and it is removed from the game. P1 may also decline, and nothing is removed."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a49c3c32-ad10-4ffe-8814-aa68ddb666fa",
@@ -541,11 +527,18 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].amount.selector.controller",
+            "now": "any",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"each character in play\": characters of every player; the stored \"any\" controller already counts them all"
+          }
+        ],
         "test3": "P1 controls 1 other character, P2 controls 2 and P3 controls 3. P1 deploys War Racketeer: when it enters play P1 draws one card for each character in play under any player: 1+2+3 plus the Racketeer itself = 7 cards. Characters of P2 and P3 both count."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "453a6b4d-a4c3-46f7-a9cc-9e043cde9f50",
@@ -567,12 +560,14 @@
             "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the count of items is over every opponent combined, not one chosen opponent"
           },
           {
             "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the count of items is over every opponent combined, not one chosen opponent"
           }
         ],
@@ -581,26 +576,12 @@
       },
       {
         "key": "2:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
-            "now": "opponent",
-            "meaning": "eachOpponent",
-            "why": "the count of items is over every opponent combined, not one chosen opponent (Pooled data: the printed text for this site is in clause 1:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
-            "now": "opponent",
-            "meaning": "eachOpponent",
-            "why": "the count of items is over every opponent combined, not one chosen opponent (Pooled data: the printed text for this site is in clause 1:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "Items of P1, P2 and P3 all gain \"At the start of your turn, you may pay 1. If you don't, destroy this card.\" At the start of P2's turn P2 (the item's controller, not P1) may pay 1, otherwise P2's item is destroyed; P3's and P1's items do nothing on P2's turn. Each item is judged only at the start of its own controller's turn."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a9c7ba1c-1080-4a81-932a-ab573c7a193f",
@@ -608,21 +589,14 @@
     "clauses": [
       {
         "key": "0:extraCost",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "now": "opponent",
-            "meaning": "chosenOpponent",
-            "why": "\"your opponent\" in the \"destroy an item\" option: the block's chosen opponent, chosen when the card is played (Pooled data: the printed text for this site is in clause 1:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "P1 plays Frantic Jerryrigging: the chooseOpponent step offers P2 and P3 at play (before costs and targets), then P1 destroys an item P1 controls as the cost. The cost always comes from P1's own items whichever opponent was chosen; X is that item's numeric cost."
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -636,13 +610,13 @@
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "\"your opponent\" in the \"destroy an item\" option: the block's chosen opponent, chosen when the card is played"
+            "edit": false,
+            "why": "\"your opponent\" in the \"destroy an item\" option: the block's chosen opponent, chosen when the card is played; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
         "test3": "P1 plays it: chooseOpponent offers P2 and P3 even if P1 later picks the search option. P1 chooses P2. Option \"destroy an item\": only items P2 controls with numeric cost X+2 or less are candidates (a qualifying P3 item is not offered). Option \"search\": P1 searches P1's own deck and nothing happens to P2 or P3. A second run choosing P3 offers only P3's items."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "c71f0071-5ef8-4b3b-9356-149cad14c9bd",
@@ -663,8 +637,7 @@
         "test3": "The Blessing is attached to P1's character. At the start of P2's turn P1 may restore all characters P1 controls; at the start of P3's turn P1 may restore them again; at the start of P1's own turn it does not trigger. Second run with the Blessing attached to P2's character: it triggers at the start of P1's turn and P3's turn for P2 (P2 restores P2's characters) and not at the start of P2's own turn.",
         "test4": "Same as test3 with P4: for P1's character it triggers at the starts of P2's, P3's and P4's turns, three times per round, and not at P1's own turn."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "cbffb937-448e-425e-ac37-fa1d856a07c8",
@@ -685,8 +658,7 @@
         "test3": "P2 activates a character's ability. P1 deploys Undesirable Intrusion in response (legal only in response to a character's ability; refused in response to a non-ability, e.g. a tactic). Neither P2 nor P3 is offered a response window or priority pass for it: it resolves at once, terminating the ability, destroying the character and giving its controller a Micromajig token. Contrast: an ordinary tactic P1 deploys in the same spot gives P2 and P3 response windows.",
         "test4": "Same as test3 with P4: P2, P3 and P4 get no response window for Undesirable Intrusion."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a138d554-4fdb-4234-9362-d120f7b13bd2",
@@ -707,8 +679,7 @@
         "test3": "P1's Camouflaged Urchin is depleted: an effect of P2 and an effect of P3 that pick a card each cannot pick it (it is not in either candidate list); P1's own effects can still pick it. While it is ready (not depleted), P2 and P3 can pick it.",
         "test4": "Same as test3 with P4: P2, P3 and P4 cannot pick the depleted Urchin; P1 can."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "4897e844-426b-4333-bc8b-3377d4ff6339",
@@ -730,13 +701,13 @@
             "path": "behavior.abilities[0].condition",
             "now": "{\"type\":\"battleRole\",\"role\":\"defender\"}",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "this site has no player word. It fires only when the controller is the defender. The printed text fires whenever any opponent forms an attacking party, including P2 attacking P3 (the controller is not the defender); the condition must be about the attacking party's controller being any opponent, not about being the defender"
           }
         ],
         "test3": "P1 controls Candy Skull Commander. P2 forms an attacking party attacking P3's faction (P1 is not the defender): the trigger fires for P1, who may pay 2 and may flip a coin; on a won flip all of P1's characters gain 1 speed this turn. P3 attacks P2's faction: fires again. P2 attacks P1's faction: fires. P1 forming its own attacking party: does not fire. Declining to pay does nothing."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "b58eb946-a9fe-4661-bc06-c4607cc448cd",
@@ -744,7 +715,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -758,6 +729,7 @@
             "path": "behavior.onPlay.targets[0].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "printed as an enters-play trigger (\"When this card enters play\"); the data models it as onPlay targets. \"your opponent\" is the block's chosen opponent, chosen when the trigger resolves, before the two picks"
           }
         ],
@@ -765,20 +737,12 @@
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.onPlay.targets[0].selector.controller",
-            "now": "opponent",
-            "meaning": "chosenOpponent",
-            "why": "printed as an enters-play trigger (\"When this card enters play\"); the data models it as onPlay targets. \"your opponent\" is the block's chosen opponent, chosen when the trigger resolves, before the two picks (Pooled data: the printed text for this site is in clause 0:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "With P2's character (3/2/1 strength/life/speed) and P1's character (1/4/2) picked, their strength, life and speed are switched (P2's becomes 1/4/2, P1's becomes 3/2/1) while Funhouse is in play; P3's characters are unaffected. When Funhouse leaves play the switch ends."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "2f3399c9-e12b-423d-88e7-e23850939fab",
@@ -786,13 +750,13 @@
     "clauses": [
       {
         "key": "1:ability:grand-theft",
-        "status": "question",
+        "status": "changes",
         "readings": [
           {
             "phrase": "an opponent",
             "at": 90,
             "meaning": "anyOneOpponent",
-            "note": "\"an opponent controls\": see MPQ-ungodly-mess-1"
+            "note": "\"an opponent controls\" governs both cards (MPQ-P9): one opponent is chosen, and the character and the item both come from that opponent's cards"
           }
         ],
         "dataChanges": [
@@ -800,31 +764,18 @@
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "why": "the character is picked from any opponent's characters"
+            "edit": true,
+            "why": "the character is picked from any opponent's characters; the item must then come from that same opponent (MPQ-P9), so the two selectors cannot stay independent \"opponent\" matches"
           },
           {
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "why": "the item is picked from any opponent's items; whether it must be the same opponent as the character is MPQ-ungodly-mess-1"
+            "edit": true,
+            "why": "the item must be controlled by the same opponent as the picked character (MPQ-P9); the second pick is limited by the first, which two independent selectors do not express"
           }
         ],
-        "test3": "P2 controls a character A2 and an item I2; P3 controls a character A3 and an item I3. P1 activates GRAND THEFT (destroy this card). Both picks must be made (one of each type is required). Under reading (A): after A2 is picked only I2 is a legal item (I3 is refused), and picking A3 leaves only I3; control of both passes to P1 and the other opponent's cards are untouched. Under reading (B): A2 with I3 is also legal. If P2 controls only a character and P3 only an item, (A) refuses the activation and (B) allows it. P1's own cards are never legal picks.",
-        "questions": [
-          "MPQ-ungodly-mess-1"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-ungodly-mess-1",
-        "clause": "1:ability:grand-theft",
-        "question": "\"Take control of one character and one item an opponent controls.\" At 3+ players, must the character and the item come from the same opponent, or may each come from any opponent?",
-        "readings": [
-          "(A) One opponent: the single \"an opponent\" controls both cards; once the character (or item) is picked, the other must be controlled by that same opponent. If no one opponent controls both a character and an item the ability cannot be used (the card says you must take one of each).",
-          "(B) Independent: the relative clause \"an opponent controls\" is read for each noun separately, so the character can be P2's and the item P3's."
-        ],
-        "recommendation": "(A). The printed \"an opponent\" is singular and the README meaning anyOneOpponent is one opponent settled by the pick, matching the two-player behavior where both come from the one opponent."
+        "test3": "P2 controls a character C2 and an item I2; P3 controls a character C3 and an item I3. P1 activates GRAND THEFT (destroy this card). Both picks must be made (one of each type is required) and both come from one opponent: after C2 is picked only I2 is a legal item (I3 is refused), and picking C3 first leaves only I3 (I2 is refused). Control of both passes to P1 and the other opponent's cards are untouched. If P2 controls only a character and P3 only an item, no single opponent controls one of each and the ability cannot take effect through that pair. P1's own cards are never legal picks."
       }
     ]
   },
@@ -836,11 +787,18 @@
         "key": "1:ability:imply",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"reveals the top card of their deck\": every player in the game sees it; the stored \"all\" viewer already means that"
+          }
+        ],
         "test3": "P1 depletes Cicibeo and picks P3's character (P2 has characters too, also legal; so does P1). P3, its controller (not P2), chooses: deplete it, or reveal the top card of P3's deck. If P3 reveals, the card is revealed to every player (P1 and P2 both see it); if it is a character P1 takes control of the picked character until end of turn, otherwise nothing more. P2 is never asked to choose."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "540939e9-45c3-4f51-bc1c-2078048463e2",
@@ -862,13 +820,13 @@
             "path": "behavior.abilities[0].targets[0].selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "\"a non-tactic card in an opponent's discard pile\": the selector matches cards in the discard pile of any opponent"
           }
         ],
         "test3": "P2's discard pile holds a character and a tactic; P3's holds an item; P1's own holds a character. The pick offers P2's character and P3's item but not P2's tactic and not P1's own card. P1 picks P3's item and destroys the Puppeteer: the item enters play under P1's control. A second run picking P2's character works the same way."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "62ddcc7c-6229-43a5-b656-2c1fd2593b05",
@@ -888,8 +846,7 @@
         "dataChanges": [],
         "test3": "P1 declares the end of their turn. P2 responds by paying a cost (for example deploying a tactic): P1 may play Lost on Floor 3 in response. A separate run where P3 is the one who pays: allowed too. No chooseOpponent step appears. Refused: before P1 has declared the end of turn, and during P2's or P3's turn. Effect: P1's end-of-turn declaration is terminated and P1 detaches a resource from P1's faction."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "c35705f0-9e26-4e6d-a682-0ff4d029166f",
@@ -911,6 +868,7 @@
             "path": "behavior.abilities[0].targets[0].selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "\"up to 3 non-character cards in an opponent's discard pile\": all the cards come from one opponent's pile (a single pile, settled by the first card picked); a selector matching every opponent's pile would allow cards from several piles"
           }
         ],
@@ -918,20 +876,12 @@
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "now": "opponent",
-            "meaning": "anyOneOpponent",
-            "why": "\"up to 3 non-character cards in an opponent's discard pile\": all the cards come from one opponent's pile (a single pile, settled by the first card picked); a selector matching every opponent's pile would allow cards from several piles (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "With the picked character at 4 life or less (a P2 character, a P3 character and a P1 character are each legal picks) it is destroyed; at 5 life it survives. The discard-pile opponent has no effect on this clause."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "7a1759c9-392a-4655-94c7-8d9893904130",
@@ -959,12 +909,14 @@
             "path": "behavior.abilities[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "the 10-card test is per opponent: it is true for an opponent whose own discard pile holds at least 10 cards. Counting the piles of all opponents together would be wrong, and the \"cannot be picked\" restriction must bind only to that opponent"
           },
           {
             "path": "behavior.abilities[0].restrictions[0].restriction",
             "now": "cannotBePickedByOpponents",
             "meaning": "refersBack",
+            "edit": true,
             "why": "this enum names \"opponents\" generally; it must bind to only the opponent whose pile holds at least 10 cards (\"that player\"), so another opponent with fewer than 10 can still pick this card"
           }
         ],
@@ -986,13 +938,13 @@
             "path": "behavior.abilities[1].targets[0].selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "\"a card in an opponent's discard pile\": the selector matches the cards of any opponent's pile"
           }
         ],
         "test3": "P1 pays 2. The pick offers cards in P2's and P3's discard piles but not P1's own. P1 picks a card in P3's pile: it is removed from the game and Omahkapi'si gains 2 strength this turn (P2's pile is unchanged)."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "ed4e38e3-0557-4bbf-92c3-6e02a2596bd3",
@@ -1000,41 +952,16 @@
     "clauses": [
       {
         "key": "0:extraCost",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent",
             "at": 17,
             "meaning": "anyOneOpponent",
-            "note": "\"Pick an opponent\" in the extra cost"
+            "note": "\"Pick an opponent\" in the extra cost: one opponent, picked before targets; the data sites that refer back to this pick are listed on 1:rule, the clause whose text they implement"
           }
         ],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].effects[0].player",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the deck that is looked at is the picked opponent's; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
-          }
-        ],
+        "dataChanges": [],
         "test3": "P1 plays Purloining Performance: the opponent pick offers P2 and P3. P1 picks P3. No other pick or opponent step follows."
       },
       {
@@ -1059,31 +986,34 @@
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the deck that is looked at is the picked opponent's; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the deck that is looked at is the picked opponent's; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to (Pooled data: the printed text for this site is in clause 0:extraCost; listed here because the inventory attributes the ability data to every clause of the card.)"
+            "edit": true,
+            "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
           }
         ],
         "test3": "With P3 picked: P1 looks at the top 4 cards of P3's deck (only P3's; P2's deck is untouched and P1 sees nothing of it) and puts them back in any order. If P1 controls an attacking party of 2 or more members (and is the attacker), P1 may put up to 3 cards (0 to 3) from the top of P3's deck into P3's discard pile; with a party of 1 member that option is not offered. P2's deck and discard pile never change."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "c47c8579-7fdc-49e7-b934-f3e86c37dc13",
@@ -1117,8 +1047,7 @@
         "dataChanges": [],
         "test3": "With the Globe in play, P2's deck reaches 0 cards (for example from a draw or a mill): P2, and only P2, loses the game and is eliminated; P1 and P3 play on. The Globe's controller is not special: if P1's deck is empty P1 loses. P3, with cards in the deck, is unaffected."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "9f159c52-0b48-4661-b3cd-9269e4bad55d",
@@ -1126,22 +1055,9 @@
     "clauses": [
       {
         "key": "1:extraCost",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the player who destroys is the picked opponent (\"that player destroys\"); the option needs its own pick of one opponent (made when the option is chosen) (Pooled data: the printed text for this site is in clause 2:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "now": "opponent",
-            "meaning": "refersBack",
-            "why": "the face-down resources are the picked opponent's; the option needs its own pick of one opponent (Pooled data: the printed text for this site is in clause 2:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "P1 deploys Big McLargehuge: the extra cost destroys 2 resources P1 controls (chosen at random from P1's resources); P2's and P3's resources are untouched."
       },
       {
@@ -1166,19 +1082,20 @@
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the player who destroys is the picked opponent (\"that player destroys\"); the option needs its own pick of one opponent (made when the option is chosen)"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": true,
             "why": "the face-down resources are the picked opponent's; the option needs its own pick of one opponent"
           }
         ],
         "test3": "Big McLargehuge leaves play. P1 chooses the option \"pick an opponent\": the pick offers P2 and P3. P1 picks P3: P3 (not P2) chooses and destroys a face-down resource P3 controls; P2's resources are unchanged. Choosing the other option (\"play a resource\") offers no opponent pick. A second run picking P2 affects only P2."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "f28ced68-ff65-4257-8e08-178a51d9e15e",
@@ -1208,12 +1125,19 @@
             "note": "each player in turn"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "forEachPlayer",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"Each player destroys 2 characters they own\": the forEachPlayer iteration covers every player still in the game; it already runs for any number of players"
+          }
+        ],
         "test3": "P1 (active), P2 and P3 each own 3 characters. In the order P1, P2, P3 each player chooses 2 characters they own and destroys them; no player is skipped and each chooses only among characters they own (a character P2 owns but P3 controls counts as P2's). P3, owning only 1 character, loses it (\"Otherwise, destroy all of that player's characters\"). Characters P1 owns but P2 controls would be destroyed with P1's choice.",
         "test4": "Same as test3 with P4: the order is P1, P2, P3, P4 and each of the four players chooses (or loses all) in turn."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "083e0cca-f86f-4922-9bf5-04d254ebfc4e",
@@ -1235,20 +1159,21 @@
             "path": "behavior.abilities[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "each opponent makes their own choice; today a single chooser stands in for one opponent, so the effect needs one repetition per opponent still in the game"
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "each opponent destroys a character that opponent controls; one repetition per opponent"
           }
         ],
         "test3": "P1 activates CONVERT on P1's turn (pays 1, removes a token, destroys one of P1's own non-micromajig characters). P2 destroys a character P2 controls and P3 destroys a character P3 controls, each chosen by that player in that order; a player with no character destroys nothing; P1 is not asked beyond the cost. The choice lists contain only the deciding player's own characters.",
         "test4": "Same as test3 with P4: P2, P3 and P4 each destroy a character they control, in that order; P1 does not."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "f4ab5680-e5ab-47b1-bf3d-953d54adc79b",
@@ -1270,14 +1195,14 @@
             "path": "behavior.abilities[0].playRestrictions[0].player",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "the restriction applies to every opponent"
           }
         ],
         "test3": "While P1 controls Geldale: P2 and P3 can each play tactics only during their own turn: P2's tactic is refused during P1's turn and during P3's turn (including as a response) and allowed during P2's own turn; likewise for P3. P1 can play tactics at any time as normal.",
         "test4": "Same as test3 with P4: P2, P3 and P4 can each play tactics only on their own turn; P1 is unaffected."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "c257a1c0-f7f4-4bfc-a82a-5b63999808d0",
@@ -1299,13 +1224,13 @@
             "path": "behavior.abilities[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "\"an opponent's faction\": no pick word in the sentence, so P1 chooses one opponent when the effect resolves"
           }
         ],
         "test3": "P1's attacking character is blocked by a P2 character while P3 also exists. P1 activates GET IN THERE (deplete Gor-blach, pick the blocked character, pay X): the character is destroyed, then P1 is offered P2 and P3 (the blocking defender is not forced). P1 picks P3: P3's faction takes X damage and P2's takes none; Gor-blach takes X damage. A second run choosing P2 damages only P2's faction."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "dae21a35-cc0b-4da5-8a97-1a178ce4a9a0",
@@ -1313,27 +1238,20 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[1].condition.conditions[0].player",
-            "now": "opponent",
-            "meaning": "chosenOpponent",
-            "why": "\"your opponent\" in the trigger's condition: Silencer is a lasting rule, so RQ-mp-5 applies: the controller chooses the opponent when the card enters play, and chooses again if that player is eliminated (Pooled data: the printed text for this site is in clause 1:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "P1's Silencer attacks P3's faction: P3's character with a token cannot block it and P3's character without a token can. Attacking P2's faction: P2's tokened character cannot block it. The restriction covers every player's characters with tokens; it does not depend on the opponent chosen for the other ability."
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
             "at": 33,
             "meaning": "chosenOpponent",
-            "note": "lasting trigger: opponent chosen when Silencer enters play (RQ-mp-5), kept while it is in play"
+            "note": "trigger condition (MPQ-P5): a character entering play under any opponent's control triggers it, and that opponent is the chosen opponent for that trigger, with no choice offered"
           }
         ],
         "dataChanges": [
@@ -1341,13 +1259,13 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "\"your opponent\" in the trigger's condition: Silencer is a lasting rule, so RQ-mp-5 applies: the controller chooses the opponent when the card enters play, and chooses again if that player is eliminated"
+            "edit": false,
+            "why": "\"your opponent's\" in the trigger condition (MPQ-P5): any opponent's character entering play satisfies it, and that opponent is the block's chosen opponent for that trigger; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
         "test3": "P1 deploys Silencer: chooseOpponent offers P2 and P3 as it enters play. P1 chooses P2. A character entering play under P2's control lets P1 pay 1 (declinable) to put a token on it; a character entering play under P3's control does nothing. If P2 is eliminated, P1 chooses again (only P3 is left, so no choice is offered) and P3's characters now trigger it. With a single opponent left no choice appears at all."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e8cd0ae5-9aba-4996-8a29-3f160b2d96f2",
@@ -1369,6 +1287,7 @@
             "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
+            "edit": true,
             "why": "\"each opponent's faction\": every opponent's faction takes X damage, one instance per opponent"
           }
         ],
@@ -1377,20 +1296,12 @@
       },
       {
         "key": "1:rule@vvvvv",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [],
-        "dataChanges": [
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
-            "now": "opponent",
-            "meaning": "eachOpponent",
-            "why": "\"each opponent's faction\": every opponent's faction takes X damage, one instance per opponent (Pooled data: the printed text for this site is in clause 0:rule; listed here because the inventory attributes the ability data to every clause of the card.)"
-          }
-        ],
+        "dataChanges": [],
         "test3": "With [V][V][V][V][V] available the Weapons Expert gains 2 strength, and without them it does not; this does not depend on how many opponents there are, and X at the start of P1's turn uses the boosted strength."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "2bf6045a-5b3f-4189-ae91-28837c0d7b83",
@@ -1412,18 +1323,19 @@
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "the opponent who discards is the one opponent the controller chooses when the effect resolves"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "the discarded card comes from that one opponent's hand"
           }
         ],
         "test3": "P1 activates RECUR from P1's discard pile (pays 4, removes it from the game). At resolution P1 is offered P2 and P3. P1 picks P3: P3 chooses and discards a card from P3's hand (Q17); P2's hand is unchanged. P1 then draws a card. A second run picking P2 affects only P2."
       }
-    ],
-    "questions": []
+    ]
   }
 ]

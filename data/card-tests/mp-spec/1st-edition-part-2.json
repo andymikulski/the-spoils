@@ -44,9 +44,17 @@
         ],
         "dataChanges": [
           {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "\"that player picks a number for X\": the active player of the turn that is starting; the stored \"activePlayer\" chooser already names that player at any table size"
+          },
+          {
             "path": "behavior.abilities[0].effects[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
+            "edit": true,
             "why": "Iterates only the controller and the one opponent chosen when the trigger resolves (MP 3), not every player. Order: active player first, then clockwise (CR 402.2), skipping seats outside the pair. The trigger itself still fires at the start of every player's turn."
           }
         ],
@@ -61,7 +69,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -74,6 +82,7 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -87,7 +96,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -100,6 +109,7 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -113,7 +123,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -132,24 +142,35 @@
             "path": "behavior.abilities[0].effects[0].of",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"Reveal\": every player in the game sees the revealed cards; the stored \"all\" viewer already means that"
           },
           {
             "path": "behavior.abilities[0].effects[1].value.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[2].selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[3].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -160,7 +181,7 @@
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player words listed for this clause belong to clause 0:rule and are specified there. After P1 picked P2 in clause 0: P1 (and only P1) may play the tactics removed from P2's deck as though in P1's hand and without icons for the rest of the game; P2 and P3 cannot play them. Tactics removed from P3's deck by a second Inquisition (P3 picked) are also playable by P1 only."
+        "test3": "After P1 picked P2 in clause 0: P1 (and only P1) may play the tactics removed from P2's deck as though in P1's hand and without icons for the rest of the game; P2 and P3 cannot play them. Tactics removed from P3's deck by a second Inquisition (P3 picked) are also playable by P1 only."
       }
     ]
   },
@@ -170,7 +191,7 @@
     "clauses": [
       {
         "key": "3:ability:disrupt",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -189,6 +210,7 @@
             "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -202,7 +224,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -215,12 +237,14 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent is the one who picks which card to discard, as at two seats."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -234,24 +258,25 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "either deck",
             "at": 61,
-            "meaning": "other",
-            "note": "your own deck, or the deck of any one opponent (one pick); at three seats that is three decks to choose from"
+            "meaning": "chosenOpponent",
+            "note": "MPQ-P6: your own deck, or the deck of one opponent the controller chooses (the block's chosen opponent); at three seats the choice is offered between P2 and P3 when the opponent's-deck option is taken"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
             "now": "opponent",
-            "meaning": "anyOneOpponent",
-            "why": "The \"opponent's deck\" option has to let the controller choose which opponent's deck is looked at (one option per opponent, or a follow-up pick). Reorder (1 on bottom, 1 on top) applies to that deck."
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "the \"opponent's deck\" option is the deck of the one opponent the controller chooses (MPQ-P6); the data already has a separate option for each of the two decks and the stored \"opponent\" keeps working: only the engine's binding changes; the reorder (1 on bottom, 1 on top) applies to that deck"
           }
         ],
-        "test3": "P1's Armchair leaves play. P1 may decline, or look at the top 2 cards of P1's own deck, or of P2's deck, or of P3's deck (all three decks are selectable). Choosing P3's deck: only P1 sees P3's top 2, P1 puts 1 on the bottom of P3's deck and 1 on top; P2's and P1's decks are unchanged. P1 then draws a card from P1's own deck."
+        "test3": "P1's Armchair leaves play. P1 may decline, or look at the top 2 cards of P1's own deck, or take the opponent's-deck option: chooseOpponent then offers P2 and P3 and P1 picks one (P1 never sees P2's and P3's decks together). Choosing P3: only P1 sees P3's top 2, P1 puts 1 on the bottom of P3's deck and 1 on top; P2's and P1's decks are unchanged. P1 then draws a card from P1's own deck."
       }
     ]
   },
@@ -261,7 +286,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent's",
@@ -274,6 +299,7 @@
             "path": "behavior.abilities[0].grantsReveal.of",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Lasting text: the opponent is chosen when the effect starts applying (the Diva enters play) and lasts as long as the effect; if that player is eliminated the controller chooses again (RQ-mp-5)."
           }
         ],
@@ -281,7 +307,7 @@
       },
       {
         "key": "1:ability:disapprove",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -300,18 +326,21 @@
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent decides which matching card goes to the bottom of their deck."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent draws (the \"they\" of \"If they do\")."
           }
         ],
@@ -325,7 +354,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -338,12 +367,14 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent picks the non-resource card."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -357,7 +388,7 @@
     "clauses": [
       {
         "key": "0:ability:disrupt",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -376,6 +407,7 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -389,7 +421,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -402,6 +434,7 @@
             "path": "behavior.abilities[0].effects[0].condition.left.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Counts face-down resources of the one chosen opponent only, not all opponents together. The opponent is chosen when played, before the cost's character pick."
           }
         ],
@@ -415,7 +448,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -428,12 +461,14 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent picks the card to discard."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -447,7 +482,7 @@
     "clauses": [
       {
         "key": "0:ability:lobotomize",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -472,12 +507,14 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[1].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent takes control of the Deranger, not every opponent."
           }
         ],
@@ -491,12 +528,13 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 44,
-            "meaning": "chosenOpponent"
+            "meaning": "chosenOpponent",
+            "note": "battle text (MPQ-P8): the other side of the battle, the attacking player when the Sacspider defends and the defending player when it attacks; no choice is offered"
           }
         ],
         "dataChanges": [
@@ -504,10 +542,11 @@
             "path": "behavior.abilities[0].effects[0].selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+            "edit": false,
+            "why": "\"your opponent\" is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "P1's Sacspider is destroyed by battle damage (attacked by P3's character). The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the attacker). P2 discards their entire hand; P3's and P1's hands are unchanged. Repeat picking P3."
+        "test3": "P1's Sacspider is destroyed by battle damage while defending against P3's attack: your opponent is P3 (the attacker). No chooseOpponent step appears; P3 discards their entire hand; P1's and P2's hands are unchanged. Second run: P1's Sacspider attacks P2's faction and is destroyed by damage from P2's blocker: your opponent is P2, who discards their hand; P3's hand is unchanged."
       }
     ]
   },
@@ -517,7 +556,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -536,6 +575,7 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -546,7 +586,7 @@
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 0:rule. This clause has no opponent: P1's Anomaly leaves play; P1 may pick any non-resource card in play (P1's, P2's or P3's); it goes to its owner's hand (a P3-owned card P2 controls goes to P3's hand); P1 draws a card. No opponent choice is offered and no other player draws."
+        "test3": "This clause has no opponent: P1's Anomaly leaves play; P1 may pick any non-resource card in play (P1's, P2's or P3's); it goes to its owner's hand (a P3-owned card P2 controls goes to P3's hand); P1 draws a card. No opponent choice is offered and no other player draws."
       }
     ]
   },
@@ -556,7 +596,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -569,6 +609,7 @@
             "path": "behavior.abilities[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -582,7 +623,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -595,6 +636,7 @@
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -608,7 +650,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -621,6 +663,7 @@
             "path": "behavior.abilities[0].effects[0].elseEffects[0].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Only the one chosen opponent takes control, and only in the \"you don't\" branch."
           }
         ],
@@ -634,7 +677,7 @@
     "clauses": [
       {
         "key": "0:ability:profit",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -647,6 +690,7 @@
             "path": "behavior.abilities[0].effects[1].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Only the one chosen opponent takes control of the card."
           }
         ],
@@ -660,7 +704,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -673,6 +717,7 @@
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The picked character must be controlled by the chosen opponent, chosen before the pick."
           }
         ],
@@ -699,6 +744,7 @@
             "path": "behavior.noResponse",
             "now": "true (no player)",
             "meaning": "chosenOpponent",
+            "edit": true,
             "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
           }
         ],
@@ -712,7 +758,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -731,30 +777,42 @@
             "path": "behavior.abilities[0].effects[0].of",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"reveal their hand\": every player in the game sees it; the stored \"all\" viewer already means that"
           },
           {
             "path": "behavior.abilities[0].effects[1].value.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[2].selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[3].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[4].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -768,7 +826,7 @@
     "clauses": [
       {
         "key": "0:ability:insight",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -781,6 +839,7 @@
             "path": "behavior.abilities[0].effects[2].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Only the one chosen opponent takes control."
           }
         ],
@@ -807,6 +866,7 @@
             "path": "behavior.noResponse",
             "now": "true (no player)",
             "meaning": "chosenOpponent",
+            "edit": true,
             "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
           }
         ],
@@ -823,58 +883,43 @@
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 2:rule. This clause has no opponent: P1's Morphmajig attacks on the turn it enters play; it is not gated by any other player."
+        "test3": "This clause has no opponent: P1's Morphmajig attacks on the turn it enters play; it is not gated by any other player."
       },
       {
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 2:rule. P1 plays a card (non-resource): +1 token. P2 plays a card or P3 plays a card: no token added by this clause. P1 playing a resource: no token."
+        "test3": "P1 plays a card (non-resource): +1 token. P2 plays a card or P3 plays a card: no token added by this clause. P1 playing a resource: no token."
       },
       {
         "key": "2:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 3,
-            "meaning": "other",
-            "note": "provisional, pending MPQ-1st-edition-part-2-1: \"your opponent\" in a trigger's event condition"
+            "meaning": "chosenOpponent",
+            "note": "trigger condition (MPQ-P5): a card played by any opponent triggers it, and that opponent is the block's chosen opponent for that trigger; no choice is offered"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
-            "meaning": "other",
-            "why": "Event-player check in the trigger condition; meaning is pending MPQ-1st-edition-part-2-1. Under recommendation (A) it becomes anyOneOpponent (the event player is any opponent)."
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "\"If your opponent plays a card\" (MPQ-P5): any opponent's play satisfies the condition and that player is the chosen opponent for that trigger; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 controls the Morphmajig with 2 tokens. P2 plays a card: remove a token (1 left). P3 plays a card: remove a token (0 left). P1 plays a card: this clause does not remove a token (clause 1 adds one). Removal is mandatory and never exceeds the tokens present. Under (B) or (C) the test asserts the chosen/fixed opponent instead (see question).",
-        "questions": [
-          "MPQ-1st-edition-part-2-1"
-        ]
+        "test3": "P1 controls the Morphmajig with 2 tokens. P2 plays a card: remove a token (1 left). P3 plays a card: remove a token (0 left). P1 plays a card: this clause does not remove a token (clause 1 adds one). No chooseOpponent step appears for any of these triggers. Removal is mandatory and never exceeds the tokens present."
       },
       {
         "key": "3:rule",
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 2:rule. With 2 tokens the Morphmajig has +2 strength and +2 life; after P2 or P3 causes a token to be removed it has +1/+1; tokens come only from P1's own card plays."
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-1",
-        "clause": "2:rule",
-        "question": "\"If your opponent plays a card, remove a token from this card.\" The trigger's own event condition names \"your opponent\". Triggers choose \"your opponent\" when they resolve (README, MP 4), but here the condition decides whether the trigger happens at all. Who counts?",
-        "readings": [
-          "(A) The trigger fires whenever any opponent plays a card; no choice is offered (the acting player is \"your opponent\" for that trigger).",
-          "(B) The controller picks one opponent when the Morphmajig enters play (RQ-mp-5 lasting text, re-picked if eliminated); only that opponent's plays remove tokens.",
-          "(C) The controller picks an opponent each time any opponent plays a card, and the token is removed only if the picked player is the one who played."
-        ],
-        "recommendation": "(A). It is the only reading with no extra choice and no way for the controller to dodge a mandatory drawback; it matches the two-player behavior for every opponent. Sadistic Colonel (same family) should follow the same answer."
+        "test3": "With 2 tokens the Morphmajig has +2 strength and +2 life; after P2 or P3 causes a token to be removed it has +1/+1; tokens come only from P1's own card plays."
       }
     ]
   },
@@ -921,7 +966,22 @@
             "note": "the winner of the bidding: whichever player makes the winning bid"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "auctionForCard",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "\"players take turns bidding starting with the active player\": every player still in the game bids, active player first, then clockwise; the auction step already covers all players"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].revealFor",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "\"At the start of each player's turn, that player must reveal cards\": the player whose turn is starting; the stored \"activePlayer\" already names that player"
+          }
+        ],
         "test3": "P1 controls Auction House. At the start of P2's turn (the trigger fires at the start of every player's turn, P1's included) P2 reveals from the top of P2's own deck until a character is revealed. Bidding starts with the active player and goes clockwise (CR 413.1a): order P2, P3, P1. Each bid must be higher than the last. A player cannot bid more than the number of detached resources they control: P3 with 1 detached resource cannot bid 2 and must pass; a player who passes cannot bid again (CR 413.1b). Bidding continues until one player remains; that player pays that many resources and puts the character into play under their own control (P3 winning with 1: P3 controls it, P2 pays nothing). All other revealed cards are shuffled into P2's deck (their owner). Repeat at the start of P1's turn: P1 reveals from P1's deck, order P1, P2, P3. If no character is revealed no bidding occurs.",
         "test4": "P1 controls it; P2, P3, P4 clockwise. At the start of P3's turn P3 reveals from P3's deck; order P3, P4, P1, P2. P4 passes and is skipped in later rounds; P1 bids 1, P2 bids 2, P3 bids 3, P1 passes, P2 passes: P3 wins and pays 3. A player with no detached resources (P4) must pass at once. Non-revealed cards shuffle into P3's deck, not any other."
       }
@@ -933,13 +993,13 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 6,
             "meaning": "chosenOpponent",
-            "note": "provisional: lasting text per RQ-mp-5; the open point is when a condition-gated static \"starts applying\", see MPQ-1st-edition-part-2-2"
+            "note": "lasting text (MPQ-P2, RQ-mp-5): the opponent is chosen when the effect starts applying (when the card enters play), kept while it lasts, and chosen again if that player is eliminated"
           }
         ],
         "dataChanges": [
@@ -947,17 +1007,15 @@
             "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "Static \"While your opponent controls an item\": the one opponent is chosen when the effect starts applying and persists (RQ-mp-5). The start time of a condition-gated static is MPQ-1st-edition-part-2-2."
+            "edit": false,
+            "why": "static \"While your opponent controls an item\" (MPQ-P2): the one opponent is chosen when the effect starts applying and kept while it lasts, chosen again if eliminated; only that opponent's items count, even when another opponent is the one attacked; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 plays the Pickpocket and picks P2 when it enters play. P1 attacks P3 with the Pickpocket as the only member of its party. P2 controls an item, P3 controls none: the Pickpocket cannot be blocked. Variation: P3 controls an item, P2 none: it can be blocked. Variation: not the only party member: it can be blocked. If P2 is eliminated P1 re-picks (only P3 left: no choice offered) and the condition then checks P3.",
-        "questions": [
-          "MPQ-1st-edition-part-2-2"
-        ]
+        "test3": "P1 plays the Pickpocket and chooses P2 when it enters play. P1 attacks P3 with the Pickpocket as the only member of its party. P2 controls an item, P3 controls none: the Pickpocket cannot be blocked. Variation: P3 controls an item, P2 none: it can be blocked. Variation: not the only party member: it can be blocked. If P2 is eliminated P1 chooses again (only P3 left: no choice offered) and the condition then checks P3."
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -970,29 +1028,18 @@
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The chosen opponent picks the item."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
         "test3": "The Pickpocket inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the damaged player; this is a separate block from clause 0 so this choice is independent of it). P2 must pick an item P2 controls; if P2 does, P1 takes control of that item and the Pickpocket is destroyed. P3's items are not offered. If P2 controls no item nothing happens and the Pickpocket survives."
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-2",
-        "clause": "0:rule",
-        "question": "\"While your opponent controls an item and this card is the only member of an attacking party, this card cannot be blocked.\" RQ-mp-5 says lasting text chooses its opponent when the effect starts applying. For a static gated by a condition that itself names the opponent, when does it \"start applying\", and is the choice then fixed?",
-        "readings": [
-          "(A) The controller picks one opponent when the card enters play and keeps it until the card leaves or that player is eliminated (then re-picks). Only that opponent's items count, even when another opponent is the one attacked.",
-          "(B) The controller picks an opponent each time the condition is checked (each attack/block step), so the condition is met whenever the controller can pick an opponent who controls an item (equivalent to \"any opponent controls an item\").",
-          "(C) The static is gated per defending player: the condition counts only the player being attacked."
-        ],
-        "recommendation": "(A), the literal application of RQ-mp-5. If the user prefers the table-neutral outcome, (B) is the alternative; (C) is not supported by the printed words. Cute Cutpurse clause 0 has the identical text and should follow the same answer."
       }
     ]
   },
@@ -1017,7 +1064,15 @@
             "note": "same opponent, so the attack target is the active player"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].target",
+            "now": "activePlayer",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "\"Attack your opponent\": the opponent is the block's chosen opponent (MP 2), and the play condition \"only during your opponent's turn\" is satisfied by choosing the active player, so the attack target is the active player; the stored \"activePlayer\" target already says that"
+          }
+        ],
         "test3": "P2's turn (not in a battle): P1 plays Counter Attack. The \"only during your opponent's turn\" restriction is met only by choosing the active player, so the opponent is P2 (choosing P3 fails the restriction, so P3 is not selectable). P1 attacks P2 (not P3) with the picked characters that started the turn under P1's control; the battle resolves before P1 draws. P3's turn: the same card attacks P3. P1's own turn: it cannot be played. During a battle: it cannot be played."
       }
     ]
@@ -1028,13 +1083,13 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 6,
             "meaning": "chosenOpponent",
-            "note": "provisional: lasting text per RQ-mp-5; the open point is when a condition-gated static \"starts applying\", see MPQ-1st-edition-part-2-3"
+            "note": "lasting text (MPQ-P2, RQ-mp-5): the opponent is chosen when the effect starts applying (when the card enters play), kept while it lasts, and chosen again if that player is eliminated"
           }
         ],
         "dataChanges": [
@@ -1042,17 +1097,15 @@
             "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "Static \"While your opponent controls an item\": the one opponent is chosen when the effect starts applying and persists (RQ-mp-5). The start time of a condition-gated static is MPQ-1st-edition-part-2-3."
+            "edit": false,
+            "why": "static \"While your opponent controls an item\" (MPQ-P2): the one opponent is chosen when the effect starts applying and kept while it lasts, chosen again if eliminated; only that opponent's items count, even when another opponent is the one attacked; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 plays the Cutpurse and picks P3 when it enters play. P1 attacks P2 with the Cutpurse as the only party member. P3 controls an item, P2 does not: it cannot be blocked. Variation: P2 controls an item, P3 does not: it can be blocked (by P2). If P3 is eliminated P1 re-picks (P2 only: no choice).",
-        "questions": [
-          "MPQ-1st-edition-part-2-3"
-        ]
+        "test3": "P1 plays the Cutpurse and chooses P3 when it enters play. P1 attacks P2 with the Cutpurse as the only party member. P3 controls an item, P2 does not: it cannot be blocked. Variation: P2 controls an item, P3 does not: it can be blocked (by P2). If P3 is eliminated P1 chooses again (P2 only: no choice)."
       },
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -1065,23 +1118,11 @@
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
         "test3": "The Cutpurse inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (independent of clause 0). P1 must pick an item P2 controls and destroys it; P3's items are not offered. If P2 controls no item nothing is destroyed."
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-3",
-        "clause": "0:rule",
-        "question": "Same text and same open point as Clockman Pickpocket clause 0:rule: \"While your opponent controls an item and this card is the only member of an attacking party, this card cannot be blocked.\" When does a condition-gated static \"start applying\" for RQ-mp-5, and is the opponent then fixed?",
-        "readings": [
-          "(A) Picked once when the card enters play, fixed until it leaves or that player is eliminated (then re-picked).",
-          "(B) Picked each time the condition is checked, so effectively \"any opponent controls an item\".",
-          "(C) Only the defending player counts."
-        ],
-        "recommendation": "(A), as for Clockman Pickpocket (MPQ-1st-edition-part-2-2); both cards must get the same answer."
       }
     ]
   },
@@ -1091,7 +1132,7 @@
     "clauses": [
       {
         "key": "0:ability:trade",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -1104,6 +1145,7 @@
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The picked item must be controlled by the chosen opponent, chosen before the pick."
           }
         ],
@@ -1117,7 +1159,7 @@
     "clauses": [
       {
         "key": "0:ability:plunder",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1130,6 +1172,7 @@
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1143,7 +1186,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1156,6 +1199,7 @@
             "path": "behavior.abilities[0].effects[0].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The one chosen opponent controls it as it enters play. Chosen as the card is played / enters play (a character card has no targets to precede)."
           }
         ],
@@ -1166,11 +1210,11 @@
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 0:rule and clause 2. \"Your\" is the Moose's current controller. Moose is controlled by P3: at the start of P3's turn P3's faction loses 1 influence; at the start of P1's or P2's turn nobody loses influence from it. After INFILTRATE moves it to P2, P2's faction loses 1 at the start of P2's turn instead."
+        "test3": "\"Your\" is the Moose's current controller. Moose is controlled by P3: at the start of P3's turn P3's faction loses 1 influence; at the start of P1's or P2's turn nobody loses influence from it. After INFILTRATE moves it to P2, P2's faction loses 1 at the start of P2's turn instead."
       },
       {
         "key": "2:ability:infiltrate",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -1183,6 +1227,7 @@
             "path": "behavior.abilities[2].effects[0].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Only the one chosen opponent takes control; the choice is offered among the activating player's opponents."
           }
         ],
@@ -1209,6 +1254,7 @@
             "path": "behavior.abilities[0].restrictions[0].restriction",
             "now": "cannotBePickedByOpponents",
             "meaning": "chosenOpponent",
+            "edit": true,
             "why": "The restriction name encodes \"opponents\" (all of them) in the data; the printed text is one chosen opponent. Needs a player reference (the opponent chosen when the effect starts applying, RQ-mp-5) instead of a baked-in \"all opponents\"."
           }
         ],
@@ -1235,6 +1281,7 @@
             "path": "behavior.abilities[0].restrictions[0].restriction",
             "now": "cannotBePickedByOpponents",
             "meaning": "chosenOpponent",
+            "edit": true,
             "why": "The restriction name encodes \"opponents\" (all of them) in the data; the printed text is one chosen opponent. Needs a player reference (the opponent chosen when the effect starts applying, RQ-mp-5) instead of a baked-in \"all opponents\"."
           }
         ],
@@ -1248,7 +1295,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1261,6 +1308,7 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1274,12 +1322,13 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 75,
-            "meaning": "chosenOpponent"
+            "meaning": "chosenOpponent",
+            "note": "battle text (MPQ-P8): the player who blocked, i.e. the defending player; no choice is offered"
           }
         ],
         "dataChanges": [
@@ -1287,10 +1336,11 @@
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "The second pick is limited to characters the chosen opponent controls; the chosen opponent need not be the blocking player."
+            "edit": false,
+            "why": "\"a character your opponent controls that is not in a battle\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; so the second pick is limited to characters the blocking player controls; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "P1's Brigand attacks P3 and is blocked by a P3 character. The trigger resolves: P1 is offered P2 and P3 and picks P2. P1 may pick a blocking character and a P2-controlled character not in a battle (P3's other characters are not offered). If P1 does, the blocker is removed from the battle and the P2 character is added to the blocking party. Repeat picking P3: the second pick is a P3 character not in a battle."
+        "test3": "P1's Brigand attacks P3 and is blocked by a P3 character. The trigger resolves with no chooseOpponent step: your opponent is P3. P1 may pick a blocking character and a P3-controlled character not in a battle (P2's characters are not offered). If P1 does, the blocker is removed from the battle and the P3 character is added to the blocking party. Second run: P1 attacks P2 and P2 blocks: the second pick is a P2 character not in a battle."
       }
     ]
   },
@@ -1300,40 +1350,26 @@
     "clauses": [
       {
         "key": "1:ability:bribe",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Both players",
             "at": 15,
-            "meaning": "chosenPair",
-            "note": "provisional: MP 3 applies to \"both players\"; the timing and who picks the opponent for a permission is MPQ-1st-edition-part-2-4"
+            "meaning": "selfAndEachOpponent",
+            "note": "MPQ-P10: ruled like The Knitting Coalition (RQ-mp-6): the controller and every opponent may use it"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].usableBy",
             "now": "anyPlayer",
-            "meaning": "other",
-            "why": "Currently \"anyPlayer\". Under recommendation (A) it becomes chosenPair: usable by the Creed's controller and the one opponent chosen when the effect starts applying; pending MPQ-1st-edition-part-2-4."
+            "meaning": "selfAndEachOpponent",
+            "edit": false,
+            "why": "\"Both players may use this ability\" (MPQ-P10): the controller and every opponent may use it, which is every player; the stored \"anyPlayer\" is already the same set at every table size"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 controls Mercenary's Creed attached to a character controlled by P3. When it starts applying P1 picks P2 as the opponent. P1 may use BRIBE (pay 3 from P1's resources) and takes control of the attached character; P2 may use BRIBE (pays 3 from P2's resources) and takes control; P3 may not use it. Under (B) P3 could; under (C) both P2 and P3 could.",
-        "questions": [
-          "MPQ-1st-edition-part-2-4"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-4",
-        "clause": "1:ability:bribe",
-        "question": "\"Both players may use this ability.\" MP 3 says \"both players\" means you and the opponent selected for the block, but the ability can be used by the second player, so who selects that opponent, and when? RQ-mp-6 gives \"every opponent\" for The Knitting Coalition only.",
-        "readings": [
-          "(A) The Creed's controller picks one opponent when the effect starts applying (RQ-mp-5 lasting text, re-picked if that player is eliminated); the controller and that opponent may use BRIBE.",
-          "(B) The player activating is \"you\" and picks the other player at activation, so any player may use it (collapses to anyPlayer).",
-          "(C) The controller and every opponent may use it (RQ-mp-6 extended beyond the one card it was given for)."
-        ],
-        "recommendation": "(A): it follows MP 3 and RQ-mp-5 literally, and RQ-mp-6 explicitly says it covers its own card only."
+        "test3": "P1 controls Mercenary's Creed attached to a character controlled by P3. P1 may use BRIBE (pays 3 from P1's resources) and takes control of the attached character; P2 may use it too (pays 3 from P2's resources) and takes control. P3 may also use it, as an opponent of the Creed's controller. No chooseOpponent step appears.",
+        "test4": "With P1 controlling the Creed and P2, P3, P4 as opponents: each of P1, P2, P3 and P4 may activate BRIBE, paying 3 from their own resources, and the activating player takes control of the attached character."
       }
     ]
   },
@@ -1343,7 +1379,7 @@
     "clauses": [
       {
         "key": "0:ability:steal",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1362,6 +1398,7 @@
             "path": "behavior.abilities[0].targets[0].selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The cost pick is limited to the chosen opponent's discard pile."
           }
         ],
@@ -1375,7 +1412,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -1388,12 +1425,14 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           },
           {
             "path": "behavior.abilities[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent (\"their deck\")."
           }
         ],
@@ -1407,7 +1446,7 @@
     "clauses": [
       {
         "key": "0:ability:sneak",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -1426,12 +1465,14 @@
             "path": "behavior.abilities[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Use-only-if: satisfied by choosing an opponent whose discard pile has at least 10 cards. Chosen when activated, before targets."
           },
           {
             "path": "behavior.abilities[0].targets[0].selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1445,7 +1486,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1458,6 +1499,7 @@
             "path": "behavior.abilities[0].effects[0].target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1471,7 +1513,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent's",
@@ -1484,6 +1526,7 @@
             "path": "behavior.abilities[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1497,7 +1540,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1510,6 +1553,7 @@
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1526,16 +1570,17 @@
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 3:rule. The attached character (P1's) gains 2 strength and 2 life; no other player's characters are affected."
+        "test3": "The attached character (P1's) gains 2 strength and 2 life; no other player's characters are affected."
       },
       {
         "key": "3:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
             "at": 38,
-            "meaning": "chosenOpponent"
+            "meaning": "chosenOpponent",
+            "note": "battle text (MPQ-P8): the player whose character blocked the attached character, i.e. the defending player; no choice is offered"
           }
         ],
         "dataChanges": [
@@ -1543,24 +1588,25 @@
             "path": "behavior.abilities[1].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+            "edit": false,
+            "why": "\"If the attached character is blocked, your opponent's faction loses 2 influence\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "P1's attached character is blocked (by a P3 character). The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the blocking player). P2's faction loses 2 influence; P3's is unaffected. Repeat picking P3."
+        "test3": "P1's attached character attacks P3 and is blocked by a P3 character. No chooseOpponent step appears: P3's faction loses 2 influence and P2's and P1's are unaffected. Second run: it attacks P2 and is blocked: P2's faction loses 2 influence."
       },
       {
         "key": "4:rule",
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 3:rule. The attached character inflicts damage to P3's faction: P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; no opponent choice is offered."
+        "test3": "The attached character inflicts damage to P3's faction: P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; no opponent choice is offered."
       },
       {
         "key": "5:rule",
         "status": "unchanged",
         "readings": [],
         "dataChanges": [],
-        "test3": "Shared data: the player word listed here belongs to clause 3:rule. This card would go to P1's discard pile from play: it goes to P1's hand instead (if owned by P1). No other player is involved."
+        "test3": "This card would go to P1's discard pile from play: it goes to P1's hand instead (if owned by P1). No other player is involved."
       }
     ]
   },
@@ -1570,7 +1616,7 @@
     "clauses": [
       {
         "key": "0:ability:plan",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1583,6 +1629,7 @@
             "path": "behavior.abilities[0].effects[0].target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
           }
         ],
@@ -1596,7 +1643,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1627,24 +1674,28 @@
             "path": "behavior.abilities[0].effects[1].condition.target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Influence of the one chosen opponent's faction, chosen once for the whole ability before targets."
           },
           {
             "path": "behavior.abilities[0].effects[2].condition.target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent."
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "\"each character your opponent controls\": only the chosen opponent's characters."
           },
           {
             "path": "behavior.abilities[0].effects[3].condition.target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Same chosen opponent."
           }
         ],
@@ -1658,46 +1709,32 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 3,
-            "meaning": "other",
-            "note": "provisional, pending MPQ-1st-edition-part-2-5: \"your opponent\" in a trigger's event condition; \"their faction\" refers back to the same player"
+            "meaning": "chosenOpponent",
+            "note": "trigger condition (MPQ-P5): a tactic played by any opponent triggers it; that opponent is the chosen opponent for that trigger, no choice is offered, and \"their faction\" is that player's faction"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition.conditions[0].player",
             "now": "opponent",
-            "meaning": "other",
-            "why": "Event-player check in the trigger condition; pending MPQ-1st-edition-part-2-5. Under recommendation (A) it becomes anyOneOpponent (the event player is any opponent)."
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "\"If your opponent plays a tactic\" (MPQ-P5): any opponent's tactic satisfies the condition and that player is the chosen opponent for that trigger; the stored \"opponent\" keeps working: only the engine's binding changes"
           },
           {
             "path": "behavior.abilities[0].effects[0].target.player",
             "now": "opponent",
-            "meaning": "other",
-            "why": "Faction damaged; pending MPQ-1st-edition-part-2-5. Under recommendation (A) it becomes refersBack (the faction of the opponent who played the tactic)."
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "\"their faction\": the faction of the opponent who played the tactic, the trigger's chosen opponent (MPQ-P5); the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 controls the Colonel. P2 plays a tactic: P2's faction takes 2 damage (not P3's). P3 plays a tactic: P3's faction takes 2 damage. P2 plays a non-tactic: nothing. P1 plays a tactic: nothing.",
-        "questions": [
-          "MPQ-1st-edition-part-2-5"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-5",
-        "clause": "0:rule",
-        "question": "\"If your opponent plays a tactic, inflict 2 damage to their faction.\" The trigger condition names \"your opponent\". Who counts, and when is \"your opponent\" chosen? (Same family as Guardforce Morphmajig clause 2.)",
-        "readings": [
-          "(A) Any opponent playing a tactic triggers it; \"their faction\" is that player's faction; no choice is offered.",
-          "(B) The controller picks one opponent when the Colonel enters play (RQ-mp-5); only that opponent's tactics trigger it.",
-          "(C) The controller picks an opponent each time any opponent plays a tactic, and damage happens only if the picked player is the one who played."
-        ],
-        "recommendation": "(A), consistently with Guardforce Morphmajig: no extra choice, no dodge of a mandatory effect, and per-opponent behavior identical to the two-player collapse."
+        "test3": "P1 controls the Colonel. P2 plays a tactic: P2's faction takes 2 damage (not P3's) and no chooseOpponent step appears. P3 plays a tactic: P3's faction takes 2 damage. P2 plays a non-tactic: nothing. P1 plays a tactic: nothing."
       }
     ]
   },
@@ -1707,7 +1744,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
@@ -1726,6 +1763,7 @@
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "The second pick is limited to the chosen opponent's characters; \"your opponent's character\" later is that same pick's controller."
           }
         ],
@@ -1739,7 +1777,7 @@
     "clauses": [
       {
         "key": "0:ability:unload",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -1752,6 +1790,7 @@
             "path": "behavior.abilities[0].effects[1].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Only the one chosen opponent takes control (chosen before targets; need not be the player who owns the damaged pick)."
           }
         ],
@@ -1765,7 +1804,7 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -1778,6 +1817,7 @@
             "path": "behavior.onPlay.condition.target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
+            "edit": false,
             "why": "Use-only-if: satisfied by choosing an opponent whose faction has 10 influence or less; chosen when played, before targets. At least one opponent must qualify to play it."
           }
         ],
@@ -1791,13 +1831,13 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 15,
             "meaning": "chosenOpponent",
-            "note": "provisional: chosen when the trigger resolves; MPQ-1st-edition-part-2-6 asks whether the chosen opponent must be the defending player"
+            "note": "battle text (MPQ-P8): the defending player, the other side of the battle the Deathskull's controller started by attacking; no choice is offered"
           }
         ],
         "dataChanges": [
@@ -1805,25 +1845,11 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "The chosen opponent picks which of their own characters must block (the selector is \"controller self\" relative to the chooser). Whether the choice is limited to the defending player is MPQ-1st-edition-part-2-6."
+            "edit": false,
+            "why": "\"your opponent must pick any number of characters they control\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; so the chooser is the defending player, who picks from their own characters; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
         ],
-        "test3": "Assuming recommendation (A): P1 attacks P3 with the Deathskull in play. The trigger resolves: P1 is offered P2 and P3 and picks P3. P3 picks any number of P3's characters; they must block if able and only they can block. Variation: P1 picks P2: P2 picks P2's own characters, which cannot block an attack on P3, so nothing can block (literal reading, see question). P1's picked-opponent choice appears only for the attacker's own Deathskull.",
-        "questions": [
-          "MPQ-1st-edition-part-2-6"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-1st-edition-part-2-6",
-        "clause": "1:rule",
-        "question": "\"If you attack, your opponent must pick any number of characters they control. Those characters must block during this battle if they can, and only those characters can block.\" With several opponents, must the opponent chosen for this block be the player being attacked?",
-        "readings": [
-          "(A) Literal MP 2: the controller picks any opponent. If the pick is not the defending player, that player's characters cannot block (they are not the picker's) so effectively no character can block.",
-          "(B) The block implicitly means the defending player: the chosen opponent is forced to be the player being attacked (no choice offered)."
-        ],
-        "recommendation": "(A) if \"rules decide\": MP 2 puts no constraint on the selection, and the same literal rule is applied to every other combat card. (B) is the sensible-looking outcome; the user should decide whether this card deserves the exception."
+        "test3": "P1 attacks P3 with the Deathskull in play. The trigger resolves with no chooseOpponent step: your opponent is P3, who picks any number of P3's characters; they must block if able and only they can block. Second run: P1 attacks P2: P2 picks any number of P2's characters, and only they can block; P3's characters are not involved."
       }
     ]
   }

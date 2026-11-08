@@ -37,14 +37,14 @@
             "path": "behavior.abilities[0].effects[2]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
+            "edit": true,
             "why": "forEachPlayer iterates every player; 'both players remove ... from the game' (three sentences, one block) is only the controller and the block's chosen opponent."
           }
         ],
         "test3": "P1 pays 6, destroys Hideous Hexapede and picks 6 characters (any mix of P1's, P2's, P3's); P1's, P2's and P3's factions have influence 20. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: each picked character takes 6; ALL three factions take 6 (including P3's); P1 and P2 each remove 6 cards from hand, 6 from discard and the top 6 of their deck from the game; P3's hand, discard and deck are untouched. Choose P3 (second run): each picked character takes 6; ALL three factions take 6 (including P2's); P1 and P3 each remove 6 cards from hand, 6 from discard and the top 6 of their deck from the game; P2's hand, discard and deck are untouched.",
         "test4": "With P1..P4 and any chosen opponent (say P2): all four factions take 6 damage (P3's and P4's included) while only P1 and P2 remove cards; P3 and P4 keep hand, discard and deck. If P2 and P3 have 6 influence or less they reach 0 in the same unit and lose together (RQ-mp-7); with everyone at 6 or less the game is a draw."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e2126c92-6654-406e-9bcc-c2682df3696f",
@@ -60,11 +60,25 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 activates TICKLE (pays 1, depletes). The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 discards a card and P3 discards nothing. Choose P3 (second run): P3 discards a card and P2 discards nothing."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "60eab41e-55d8-428c-991a-de347296fa4f",
@@ -72,7 +86,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "a player",
@@ -92,20 +106,162 @@
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "why": "Today 'the opponent drew'. At three or more players it must be 'an opponent drew': it fires for whichever opponent drew (P2 or P3), once per draw event, and that opponent is 'that player'."
+            "edit": false,
+            "why": "Trigger condition (MPQ-P5 binding): 'opponent' matches whichever opponent drew, once per draw event, and that opponent is the drawer ('that player') for the rest of the block. The spelling keeps working."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who adds/removes the token is the drawer (that player), not a chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
           }
         ],
         "test3": "P1 controls Meat of the Mountain. P2 draws cards: the trigger fires once for P2 and only P2 (not P1 or P3) is asked whether to add a token, remove a token or do nothing (remove is offered only with at least 1 token). P3's draw fires it for P3 with P3 choosing. P1's draw fires it with P1 choosing. A draw by one player never lets another choose."
       },
       {
         "key": "1:rule",
-        "status": "question",
+        "status": "changes",
         "readings": [
           {
             "phrase": "That player's",
@@ -116,44 +272,199 @@
           {
             "phrase": "opponent",
             "at": 25,
-            "meaning": "other",
-            "note": "'That player's opponent': when the drawer is P1 it is P1's chosen opponent; when the drawer is P2 or P3 who selects, and from whom, is open (MPQ-seed-2-1)"
+            "meaning": "chosenOpponent",
+            "note": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (not by the card's controller). When the drawer is P1 it is P1's chosen opponent; when the drawer is P2 or P3, the drawer picks among the other players, which can include P1."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "other",
-            "why": "In the drawing-opponent branch the data uses controller/self for 'that player's opponent' (it assumed the other player is P1). With three players the player who discards is that player's opponent, selected per MPQ-seed-2-1; it can no longer be hard-wired to P1."
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "other",
-            "why": "In the drawing-opponent branch the data uses controller/self for 'that player's opponent' (it assumed the other player is P1). With three players the player who discards is that player's opponent, selected per MPQ-seed-2-1; it can no longer be hard-wired to P1."
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "other",
-            "why": "In the drawing-opponent branch the data uses controller/self for 'that player's opponent' (it assumed the other player is P1). With three players the player who discards is that player's opponent, selected per MPQ-seed-2-1; it can no longer be hard-wired to P1."
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "other",
-            "why": "In the drawing-opponent branch the data uses controller/self for 'that player's opponent' (it assumed the other player is P1). With three players the player who discards is that player's opponent, selected per MPQ-seed-2-1; it can no longer be hard-wired to P1."
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
           }
         ],
-        "test3": "0 TOKENS reached. P1 drew (P1 is 'that player'): P1 selects an opponent (P2 or P3) and that opponent discards a card; the other opponent does not. P2 drew: the discarding player is P2's opponent (P1 or P3) selected per MPQ-seed-2-1; recommended (A): P2 selects, and it can be P3, not only P1.",
-        "questions": [
-          "MPQ-seed-2-1"
-        ]
+        "test3": "0 TOKENS reached. P1 draws: P1 picks one opponent (P2 or P3) and that opponent discards a card; the other opponent does not. P2 draws: P2 (not P1) is offered the other players as P2's opponent, P1 or P3; the picked player discards a card (pick P1: P1 discards, P3 does not; pick P3: P3 discards, P1 does not). P3 draws: P3 is offered P1 or P2; the picked player discards. P1 is never asked to pick when P2 or P3 drew."
       },
       {
         "key": "2:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "That player",
@@ -167,56 +478,162 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
           }
         ],
         "test3": "1 TOKEN reached after P2 drew: P2 (not P1, not P3) may look at the top 2 cards of P2's deck, put 1 into P2's hand and 1 on the bottom of P2's deck; P1's and P3's decks are untouched. Same for P3 drawing, and P1 drawing uses P1's deck."
       },
       {
         "key": "3:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "That player",
@@ -230,20 +647,162 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The picker is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The picker is the drawer (that player)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
           }
         ],
         "test3": "2 TOKENS reached after P2 drew: P2 may pick any character or location (P1's, P2's or P3's) and put it into its owner's hand (a P3 character goes to P3's hand); P1 and P3 make no pick. Same with P3 or P1 drawing."
       },
       {
         "key": "4:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "That player",
@@ -257,53 +816,158 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
+            "edit": false,
             "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+          },
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
           }
         ],
         "test3": "At least 3 tokens after P2 drew: P2 may play a resource from P2's own hand (not from P1's or P3's); P1 and P3 do not. Same with P3 or P1 drawing."
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-seed-2-1",
-        "clause": "1:rule",
-        "question": "'0 TOKENS - That player's opponent discards a card.' When an opponent (say P2) is 'that player', who is 'that player's opponent' and who selects them, with P1 (the Meat's controller) and P3 also at the table?",
-        "readings": [
-          "(A) P2, as the player MP 2's 'your' refers to, selects one of the other players (P1 or P3) as P2's opponent for the block.",
-          "(B) P1, the card's controller, selects among the players other than P2 (P1 or P3), as for every other opponent selection.",
-          "(C) Always P1, the card's controller (the two-player collapse)."
-        ],
-        "recommendation": "(A). The text makes the drawer the 'you' of the sentence ('that player's opponent'), and MP 2 has the player whose opponent it is make the selection. When the drawer is P1 this is just P1's chosen opponent."
       }
     ]
   },
@@ -327,11 +991,18 @@
             "note": "same player as the first phrase"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 plays Perturb. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 looks at P2's hand and picks a non-resource card in it; P2 discards it; P3's hand is not shown. P1 may then pick a card of the same type as the discarded card (the second pick names no player). Choose P3 (second run): P1 looks at P3's hand and picks a non-resource card in it; P3 discards it; P2's hand is not shown. P1 may then pick a card of the same type as the discarded card (the second pick names no player)."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "464b99b7-c1b7-43ae-9248-68f7614fd2cb",
@@ -353,11 +1024,32 @@
             "note": "same player as the first phrase"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 picks a character as the cost and plays Redonkulous using FLIP UP; P2 has 5 cards in hand and P3 has 2. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 discards 2 cards of P2's choice; the second sentence checks P2's hand only (3 or fewer left: P2 has 3, so the character is removed from the game); P3's hand size is ignored. Choose P3 (second run): P3 discards 2 cards of P3's choice; the second sentence checks P3's hand only (3 or fewer left: P3 has 0, so the character is removed from the game); P2's hand size is ignored. Played normally (not FLIP UP) no one discards, but the second sentence still checks the chosen opponent's hand."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e93a6fc4-da98-4698-b44f-3d1269903dfb",
@@ -385,11 +1077,53 @@
             "note": "same player as the first phrase"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 plays Ritual of the Double Monkey with three [O] and then with eight [O]. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 discards 1 card, a second with three [O], a third with eight [O], all of P2's own choice; P3 never discards. Choose P3 (second run): P3 discards 1 card, a second with three [O], a third with eight [O], all of P3's own choice; P2 never discards."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "0b790bde-153c-42d9-8038-feb93e327764",
@@ -399,7 +1133,15 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          }
+        ],
         "test3": "P1 controls Tumescent Guilt Bladder: at the end of P1's turn (not P2's or P3's) a token is added, P1's faction loses influence equal to the tokens on the card, and P1 may play a resource."
       },
       {
@@ -412,11 +1154,18 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "At the start of each turn (P1's, P2's, P3's) the trigger checks for 3 or more tokens. At P2's turn start with 3 tokens, P1 controlling it: the opponent is chosen when the trigger resolves (offering P2 and P3). Choose P3: P3 takes control and all tokens are removed; P2 gets nothing. Then, with P3 controlling it, P3's opponents are P1 and P2: when it reaches 3 tokens again P3 selects among them."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "a9d9be90-b1ba-4cea-9abb-1b570317441d",
@@ -426,11 +1175,18 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "No change: the revealed or viewed cards are shown to every player."
+          }
+        ],
         "test3": "At the end of P1's turn P1 may reveal the top card of P1's deck: it is revealed to P1, P2 and P3. If it is a staple resource it goes to P1's hand. Not at the end of P2's or P3's turn, and P2's and P3's decks are untouched."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "414bcffa-7213-40f1-810f-9563a33cc619",
@@ -438,46 +1194,31 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 3,
             "meaning": "chosenOpponent",
-            "note": "'If your opponent plays a resource'"
+            "note": "MPQ-P5: trigger condition. Any opponent's resource play triggers it; that opponent is the block's chosenOpponent for that trigger, with no choice offered."
           },
           {
             "phrase": "your opponent's",
             "at": 85,
             "meaning": "chosenOpponent",
-            "note": "same player as the first phrase"
+            "note": "Same player as the first phrase: the opponent who played the resource."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition.player",
             "now": "opponent",
-            "meaning": "anyOneOpponent",
-            "why": "Under recommended reading (A) of MPQ-seed-2-2 'an opponent plays a resource' matches any opponent, and that player becomes the block's opponent."
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "MPQ-P5: no data change. 'opponent' binds to the opponent who played the resource."
           }
         ],
-        "test3": "Assumes recommendation (A) of MPQ-seed-2-2. P1 controls Swinish Elder. P2 plays a resource: P1 may pay 1, and if P1 does, that resource is attached to P2's faction (the owner of the resource); P3 playing a resource does the same for P3's faction; P1 playing a resource does not trigger it; paying 1 is optional and declining attaches nothing.",
-        "questions": [
-          "MPQ-seed-2-2"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-seed-2-2",
-        "clause": "0:rule",
-        "question": "'If your opponent plays a resource, ... attach that resource to your opponent's faction' is a persistent trigger. Which opponent's resource play triggers it?",
-        "readings": [
-          "(A) Any opponent's resource play; the player who played it is the block's opponent.",
-          "(B) Only the opponent chosen when Swinish Elder enters play (RQ-mp-5).",
-          "(C) Every opponent literally."
-        ],
-        "recommendation": "(A), same as MPQ-seed-2 (opponent-triggered conditions are satisfied by choosing the acting player)."
+        "test3": "P1 controls Swinish Elder. P2 plays a resource: P1 may pay 1, and if P1 does, that resource is attached to P2's faction (the opponent who played it); no chooseOpponent step is offered. P3 playing a resource does the same for P3's faction. P1 playing a resource does not trigger it. Paying 1 is optional: declining attaches nothing."
       }
     ]
   },
@@ -489,25 +1230,48 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "useAnyAbility",
+            "meaning": "self",
+            "edit": false,
+            "why": "Effect type with the controller as chooser: the controller uses an ability. Nothing varies with the number of players."
+          }
+        ],
         "test3": "At the start of P1's turn P1 (the controller) may use an ability. Nothing fires at the start of P2's or P3's turn, and P2/P3 never get the use. A response by P2 or P3 to the used ability remains possible (clockwise from P1's left)."
       },
       {
         "key": "2:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "useAnyAbility",
+            "meaning": "self",
+            "edit": false,
+            "why": "Effect type with the controller as chooser: the controller uses an ability. Nothing varies with the number of players."
+          }
+        ],
         "test3": "At the start of P1's turn P1 may draw a card; P2 and P3 draw nothing, and nothing fires at the start of their turns."
       },
       {
         "key": "3:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "useAnyAbility",
+            "meaning": "self",
+            "edit": false,
+            "why": "Effect type with the controller as chooser: the controller uses an ability. Nothing varies with the number of players."
+          }
+        ],
         "test3": "At the start of P1's turn P1's faction gains 1 influence; P2's and P3's factions do not, and nothing fires at the start of their turns."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "0c2563df-d5fa-4444-a48e-9506e158f5b8",
@@ -517,7 +1281,15 @@
         "key": "0:provides",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          }
+        ],
         "test3": "PROVIDES: [E] works for P1 whichever table size; P2 and P3 get nothing."
       },
       {
@@ -531,11 +1303,18 @@
             "note": "turn condition: satisfied by choosing the active player (manifest text 'your opponent's'; the data's text field says 'each opponent's')"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "Trigger at the start of an opponent's turn (the turn-condition is satisfied by choosing the active player): nothing happens at the start of P1's own turn. At the start of P2's turn it fires with P2 as the opponent: P1 may pick a resource attached to P1's faction and detach it (resources on P2's or P3's factions are not pickable). At the start of P3's turn it fires the same way with P3 as the opponent. It fires once per opponent turn, not once per opponent."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "95faefae-3b2a-454b-a2a5-f10544095ff8",
@@ -548,14 +1327,22 @@
           {
             "phrase": "your opponent's",
             "at": 229,
-            "meaning": "chosenOpponent"
+            "meaning": "chosenOpponent",
+            "note": "MPQ-P9: the count (the number of cards in the deck) is taken within the one chosen opponent's deck only."
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].count.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 activates MICROMAJIG APOCALYPSE (six [E]; at least 20 tokens; destroys the card); P2's deck has 30 cards and P3's has 12. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: 30 Micromajig tokens enter play under P1's control (the number of cards in P2's deck); P3's deck size is ignored. Choose P3 (second run): 12 Micromajig tokens enter play under P1's control (the number of cards in P3's deck); P2's deck size is ignored."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "e3fae5c4-c6ed-4c28-af91-2d85d11fceb1",
@@ -571,7 +1358,36 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "At the end of P1's turn the trigger resolves. The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 picks a character that P2 both controls and owns (a character P2 controls but P3 owns is not pickable, and one P3 controls is not pickable) if able, and P1 takes control of it; P3 picks nothing. Choose P3 (second run): P3 picks a character that P3 both controls and owns (a character P3 controls but P2 owns is not pickable, and one P2 controls is not pickable) if able, and P1 takes control of it; P2 picks nothing."
       },
       {
@@ -585,11 +1401,39 @@
             "note": "a separate paragraph, so a separate block: chosen independently of the first clause's opponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "At the end of P1's turn the trigger resolves (it is independent of the first clause, which may select a different opponent). The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 takes control of Ass and P3 does not. Choose P3 (second run): P3 takes control of Ass and P2 does not."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "6f1bdb80-2506-4724-bf83-950a81cc531a",
@@ -602,19 +1446,20 @@
           {
             "phrase": "your opponent's",
             "at": 15,
-            "meaning": "chosenOpponent"
+            "meaning": "chosenOpponent",
+            "note": "The opponent chosen when the card is played: their deck is searched and shuffled."
           },
           {
             "phrase": "your opponent",
             "at": 123,
             "meaning": "chosenOpponent",
-            "note": "same player as the first phrase: the paragraph is one block, and the 'rest of the game' trigger keeps the binding"
+            "note": "MPQ-P5: trigger condition. Any opponent's card play triggers it; that opponent is the chosenOpponent for that trigger, with no choice offered. It need not be the opponent whose deck was searched."
           },
           {
             "phrase": "your opponent's",
             "at": 296,
             "meaning": "chosenOpponent",
-            "note": "same player as the first phrase"
+            "note": "Same player as the second phrase: the opponent whose card was just played."
           }
         ],
         "dataChanges": [
@@ -622,19 +1467,34 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "The trigger sits in a second ability (abilities[1]) but is the same printed paragraph. It must reuse the opponent chosen when abilities[0] was played (a delayed effect keeps its block's binding), so the two definitions need a block tie. Left alone it would choose independently."
+            "edit": false,
+            "why": "MPQ-P5: no data change. 'opponent' binds to the opponent who played the card."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": true,
+            "why": "The removed card belongs to the opponent whose deck was searched, who is not necessarily the opponent whose play triggered it (MPQ-P5). The selector can no longer use the triggering opponent; it must find the card this card removed, whoever owns it."
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
             "meaning": "chosenOpponent",
-            "why": "The removed cards belong to the same chosen opponent (block tie, see the trigger's condition)."
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
           }
         ],
-        "test3": "P1 plays I Drink Your Milkshake! and searches a card out of the chosen opponent's deck. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: the card is removed face-down from P2's deck and P2's deck is shuffled; P3's deck is untouched. Later, P2 plays a non-resource card with the same name: P1 may reveal the removed card and play it free ignoring its threshold, terminating P2's card. P3 playing a card with that name does not trigger it. Playing a resource does not trigger it. Choose P3 (second run): the card is removed face-down from P3's deck and P3's deck is shuffled; P2's deck is untouched. Later, P3 plays a non-resource card with the same name: P1 may reveal the removed card and play it free ignoring its threshold, terminating P3's card. P2 playing a card with that name does not trigger it. Playing a resource does not trigger it."
+        "test3": "P1 plays I Drink Your Milkshake!, choosing P2 as the opponent: P1 searches P2's deck for a card (P2's deck is shuffled; P3's deck is untouched) and removes it from the game face-down. Later P2 plays a card with the same name: P1 may reveal the removed card, play it for free ignoring its threshold, and terminate P2's card. P3 plays a card with the same name: the trigger fires for P3 too, with no chooseOpponent step; P1 may reveal the removed card (owned by P2), play it for free, and terminate P3's card. A resource played by P2 or P3 does not trigger it. A card played by P1 does not trigger it. A played card with a different name: nothing to reveal."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "85fcf752-5566-427e-a993-49531a2f38b0",
@@ -644,43 +1504,58 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[1].value.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          },
+          {
+            "path": "behavior.abilities[1].effects[3].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          }
+        ],
         "test3": "When Lucky Bastard enters play P1 draws a card; P2 and P3 draw nothing."
       },
       {
         "key": "1:rule",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "both players",
             "at": 27,
             "meaning": "chosenPair",
-            "note": "pair of P1 and the block's chosen opponent; the data already spells it as controller + opponent, which equals the pair once 'opponent' is the block's opponent"
+            "note": "Pair of P1 and the opponent chosen at the moment the replacement applies (MPQ-P3); the data already spells it as controller + opponent, which equals the pair once 'opponent' is that chosen opponent."
           },
           {
             "phrase": "your opponent's",
             "at": 186,
             "meaning": "chosenOpponent",
-            "note": "same player as the pair's other member"
+            "note": "Same player as the pair's other member: the opponent chosen when the replacement applies."
           }
         ],
-        "dataChanges": [],
-        "test3": "Assumes recommendation (A) of MPQ-seed-2-3. Lucky Bastard (P1) would be destroyed: P1 selects P2 as the block's opponent; P1 and P2 each remove the top card of their deck from the game instead; P3's deck is untouched. If P1's removed card's numeric cost >= P2's, P1 draws a card and the damage to Lucky Bastard this turn is reduced to 0; otherwise Lucky Bastard is removed from the game. Both branches are tested; P3's top card never matters.",
-        "questions": [
-          "MPQ-seed-2-3"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-seed-2-3",
-        "clause": "1:rule",
-        "question": "'If this card is destroyed, both players remove the top card of their deck ... your opponent's' is a replacement on a permanent. When is the block's opponent chosen?",
-        "readings": [
-          "(A) When the replacement applies (Lucky Bastard would be destroyed), like a trigger resolving.",
-          "(B) When Lucky Bastard enters play (RQ-mp-5 lasting text), fixed until it is eliminated."
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[1].value.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[1].effects[3].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
         ],
-        "recommendation": "(A). The replacement runs a one-shot block when the destroy event happens; (B) would fix the opponent long before the deck cards are compared."
+        "test3": "Lucky Bastard (P1) would be destroyed. At that moment P1 chooses an opponent (P2 or P3; exactly one chooseOpponent step, offered when the replacement applies, not when Lucky Bastard entered play). Choose P2: P1 and P2 each remove the top card of their deck from the game instead; P3's deck is untouched. If P1's removed card's numeric cost is >= P2's, P1 draws a card and the damage to Lucky Bastard this turn is reduced to 0; otherwise Lucky Bastard is removed from the game. Both branches are tested; P3's top card never matters. A second destruction in the same game offers the choice again."
       }
     ]
   },
@@ -690,33 +1565,17 @@
     "clauses": [
       {
         "key": "0:ability",
-        "status": "question",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent",
             "at": 238,
-            "meaning": "chosenOpponent",
-            "note": "'as though your opponent had picked the other character': the player who actually picked in the card or ability being responded to"
+            "meaning": "cardRelative",
+            "note": "MPQ-P4: 'your opponent' is the controller of the card or ability being responded to (the player who actually picked). Nobody chooses."
           }
         ],
         "dataChanges": [],
-        "test3": "Assumes recommendation (A) of MPQ-seed-2-4. P2 plays a card that picks a character as an extra cost. P1 responds with Mistaken Identity: P1 picks another character the card could pick; when the card resolves it happens as though P2 had picked that character. If P3 had played the card instead the opponent is P3. No chooseOpponent step with two choices appears: the picker is fixed.",
-        "questions": [
-          "MPQ-seed-2-4"
-        ]
-      }
-    ],
-    "questions": [
-      {
-        "id": "MPQ-seed-2-4",
-        "clause": "0:ability",
-        "question": "'... its effect happens as though your opponent had picked the other character instead.' With P2 and P3 at the table, who is 'your opponent' when the responded-to card or ability was played by one of them?",
-        "readings": [
-          "(A) The controller of the responded-to card or ability (the player who picked), forced, so no free choice.",
-          "(B) Whatever opponent P1 selects for the block (MP 2); if P1 selects the other opponent the effect happens as though that player had picked.",
-          "(C) Any opponent; the effect's picker is unchanged."
-        ],
-        "recommendation": "(A). The text ties 'your opponent' to the one who picked; the block selection collapses to the picker."
+        "test3": "P2 plays a card that picks a character as an extra cost. P1 responds with Mistaken Identity: P1 picks another character the card could pick; when the card resolves it happens as though P2 had picked that character. If P3 had played the card instead, the effect happens as though P3 had picked it. No chooseOpponent step is offered: the player is the controller of the card or ability responded to."
       }
     ]
   },
@@ -752,13 +1611,13 @@
             "path": "behavior.abilities[0].effects[0]",
             "now": "partitionAndPick",
             "meaning": "chosenPair",
+            "edit": true,
             "why": "The effect (count 3, piles 2, compareBy cost, winnerTakes 1) has no player fields, so the engine assumes the two seats. It needs the participating players (the controller and the block's chosen opponent) and each participant choosing among the other participant's piles."
           }
         ],
         "test3": "P1 activates MUSTACHE SHOWDOWN (deplete). The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 and P2 each look at the top 3 cards of their own deck and divide them into 2 face-down piles of at least 1 card; P1 chooses one of P2's piles and P2 chooses one of P1's; the chosen piles are revealed; the owner of the higher-total pile may put one card from it into hand; the remaining cards shuffle into their owner's decks (P1's and P2's decks, not P3's); P3's deck is untouched. Choose P3 (second run): P1 and P3 each look at the top 3 cards of their own deck and divide them into 2 face-down piles of at least 1 card; P1 chooses one of P3's piles and P3 chooses one of P1's; the chosen piles are revealed; the owner of the higher-total pile may put one card from it into hand; the remaining cards shuffle into their owner's decks (P1's and P3's decks, not P2's); P2's deck is untouched."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "2db3791b-3472-44b9-ad9b-ea65743ea4fc",
@@ -774,11 +1633,18 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 plays Peculate: the cost picks a character, item or location in the chosen opponent's discard pile and P1 pays X (its numeric cost). The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: only cards in P2's discard pile are legal picks (P3's discard pile is not); the picked card enters play under P1's control. Choose P3 (second run): only cards in P3's discard pile are legal picks (P2's discard pile is not); the picked card enters play under P1's control."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "54acfe5d-ccfe-4f8e-b324-65b65e6d927f",
@@ -788,7 +1654,15 @@
         "key": "0:provides",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.left.selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+          }
+        ],
         "test3": "PROVIDES: [D] works for P1 whatever the table size; P2 and P3 get nothing."
       },
       {
@@ -800,13 +1674,13 @@
             "path": "behavior.abilities[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": true,
             "why": "'a character you don't own' in a selector matches a character owned by any other player (P2 or P3, i.e. any opponent), not a single opponent."
           }
         ],
         "test3": "P1 controls Resistance Fighter. P1 controls a character owned by P2: +2 strength, +2 life and +1 speed. P1 controls only a character owned by P3: same bonus. P1 controls only P1-owned characters: no bonus. A P2-controlled character owned by P1 (or P3) does not count. The bonus ends when the last such character leaves P1's control."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "4d801a32-d054-413d-9eaf-d915a82139b1",
@@ -828,11 +1702,53 @@
             "note": "same player as the first phrase"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].of",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "No change: the revealed or viewed cards are shown to every player."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].elseEffects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1's Rosy Palmer is destroyed. The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: the top 5 cards of P2's deck are revealed; P1 may choose a revealed character and put it into play under P1's control; P2 puts the rest on the bottom of P2's deck in any order; P3's deck is untouched. Choose P3 (second run): the top 5 cards of P3's deck are revealed; P1 may choose a revealed character and put it into play under P1's control; P3 puts the rest on the bottom of P3's deck in any order; P2's deck is untouched."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "48ac4062-dca5-469f-8b39-54f4519e137d",
@@ -855,11 +1771,25 @@
             "note": "same player as the pair's other member"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].costs[0].value.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].costs[2].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 plays Smothering Corpulence (opponent chosen before costs): P1 picks a character. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 and P2 each remove the top card of their deck from the game; X = P2's card cost minus P1's card cost; the picked character loses X life this turn and P1 draws; P3's deck is untouched. Choose P3 (second run): P1 and P3 each remove the top card of their deck from the game; X = P3's card cost minus P1's card cost; the picked character loses X life this turn and P1 draws; P2's deck is untouched."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "ab1abe6e-7428-492b-8eb1-0f0ceef7e512",
@@ -876,11 +1806,18 @@
             "note": "the delayed end-of-turn effect keeps the opponent chosen when the ability was activated"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].effects[1].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 activates YOU KNOW YOU WANT TO... (up to 5 times per turn, pays 1, 1 damage to P1's faction) and draws a card. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: at the end of the turn a token is put on the card and P2 takes control of it; P3 does not. Choose P3 (second run): at the end of the turn a token is put on the card and P3 takes control of it; P2 does not. Two activations in one turn that choose different opponents hand it over once per delayed effect, each to its own chosen opponent."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "0642737a-cb86-402f-bca9-293ea6c252cc",
@@ -902,11 +1839,39 @@
             "note": "same player as the first phrase"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].value.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 plays Epic Smackdown choosing X = 2 and destroying 2 of P1's characters; P2 controls 3 characters and P3 controls 1. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 controls at least 2, so P2 destroys 2 characters of P2's choice; P3's characters are untouched; P1 draws. Choose P3 (second run): P3 controls fewer than 2, so all of P3's characters are destroyed; P2's characters are untouched; P1 draws."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "1be3f538-efa8-4269-ace1-af5a0ddcdefd",
@@ -916,7 +1881,22 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].modifiers[2].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[3].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          }
+        ],
         "test3": "P1 controls Padamose: all P1's 'sword of great justice' characters gain 1 strength and 1 life; P2's and P3's do not."
       },
       {
@@ -929,11 +1909,25 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].modifiers[2].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[3].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 controls Padamose; P2, P3 and P1 each control 'mau' and Arcanist characters. The opponent is chosen when the static text starts applying (RQ-mp-5), kept while it applies, and re-chosen if that player is eliminated: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: all P2's 'mau' and Arcanist characters lose 1 strength and 1 life; P3's and P1's do not. Choose P3 (second run): all P3's 'mau' and Arcanist characters lose 1 strength and 1 life; P2's and P1's do not."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "afecc5f2-5714-46ee-9279-b6827de2ee46",
@@ -949,11 +1943,18 @@
             "meaning": "chosenOpponent"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+          }
+        ],
         "test3": "P1 activates FLY AWAY: the cost removes an item in the chosen opponent's discard pile from the game. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: only items in P2's discard pile are legal (P3's are not); Plunging Shriever flips face-down under its owner's control. Choose P3 (second run): only items in P3's discard pile are legal (P2's are not); Plunging Shriever flips face-down under its owner's control."
       }
-    ],
-    "questions": []
+    ]
   },
   {
     "id": "98321c0c-3aef-4820-8636-9353e3c8a3b0",
@@ -966,20 +1967,36 @@
           {
             "phrase": "your opponent's",
             "at": 42,
-            "meaning": "chosenOpponent"
+            "meaning": "other",
+            "note": "MPQ-P8: battle text. The controller's Spry Archer is attacking, so 'your opponent' is the defending player of that attack. No choice is offered."
           }
         ],
-        "dataChanges": [],
-        "test3": "P1's Spry Archer attacks (defender P2 or P3). The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2's faction takes 1 damage and P3's faction takes none. Choose P3 (second run): P3's faction takes 1 damage and P2's faction takes none. The chosen opponent need not be the defending player."
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "MPQ-P8: no data change. 'opponent' binds to the other side of the battle (the defending player)."
+          }
+        ],
+        "test3": "P1's Spry Archer attacks P2's faction: P2's faction takes 1 damage and P3's faction takes none. No chooseOpponent step is offered. A second attack by Spry Archer on P3's faction: P3's faction takes 1 damage and P2's faction takes none."
       },
       {
         "key": "1:rule@rrrr",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+          }
+        ],
         "test3": "With [R]x4, when Spry Archer attacks P1 may pick any character (P1's, P2's or P3's) and inflict 1 damage to it. No opponent choice appears in this clause."
       }
-    ],
-    "questions": []
+    ]
   }
 ]
