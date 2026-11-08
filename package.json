@@ -91,6 +91,7 @@
     "card-markup": "node --import tsx scripts/card-markup/cli.ts",
     "card-tests": "node --import tsx scripts/card-tests/cli.ts",
     "rule-tests": "node --import tsx scripts/rule-tests/cli.ts",
+    "record-replays": "node --import tsx scripts/record-replays.ts",
     "typecheck:consumer": "tsc -p types-test/tsconfig.json && tsc -p types-test/tsconfig.bundler.json"
   },
   "devDependencies": {

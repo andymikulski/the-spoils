@@ -1,0 +1,1770 @@
+{
+  "generatedBy": "scripts/record-replays.ts",
+  "catalogPrintings": 2257,
+  "requestedGames": 104,
+  "recordedGames": 102,
+  "maxActions": 450,
+  "totalActions": 34780,
+  "totalBytes": 3076420,
+  "winners": {
+    "p1": 45,
+    "p2": 57,
+    "draw": 0
+  },
+  "setsSeen": {
+    "1st Edition Part 2": 124,
+    "1st Edition": 201,
+    "2nd Edition": 170,
+    "Decade of Deckadence": 155,
+    "Holy Heist": 204,
+    "Open Beta": 202,
+    "Seed 2": 120,
+    "Seed 3": 196,
+    "Seed Saga": 185,
+    "Seed": 202,
+    "Shade of the Devoured Emperor": 124,
+    "Ungodly Mess": 140
+  },
+  "factionsSeen": {
+    "Alliance of Handy Weirdos (Seed Saga)": 8,
+    "Alliance of Handy Weirdos (Seed)": 8,
+    "Counter-Imperial Army (Seed 3)": 8,
+    "Defenders of Marduun (Seed Saga)": 8,
+    "Drowned Catacombs (Seed Saga)": 8,
+    "Drowned Catacombs (Seed)": 8,
+    "Hall of Great Justice (Seed Saga)": 8,
+    "Hall of Great Justice (Seed)": 8,
+    "Imperial Army (Seed 3)": 8,
+    "Legions of Chaos (Seed Saga)": 8,
+    "Lugubrian Council Expedition Division (Holy Heist)": 8,
+    "Moist Cave of the Darkpump (Seed Saga)": 8,
+    "Moist Cave of the Darkpump (Seed)": 8,
+    "Order of the Golden String (Seed Saga)": 8,
+    "Order of the Golden String (Seed)": 8,
+    "The Knitting Coalition (Seed 3)": 7,
+    "The Open R&D Faction (Seed 3)": 8,
+    "The Primitive Tribes of Thabbash (Holy Heist)": 8,
+    "The Society of Magical Propriety (Seed 3)": 7,
+    "The Tournament Faction (1st Edition)": 7,
+    "The Tournament Faction (Holy Heist)": 7,
+    "The Tournament Faction (Open Beta)": 8,
+    "The Tournament Faction (Seed Saga)": 8,
+    "The Tournament Faction (Seed)": 8,
+    "The Union of Unextraordinary Miners (Seed 3)": 8,
+    "Unlikely Heroes (Holy Heist)": 8
+  },
+  "missingSets": [],
+  "missingFactions": [],
+  "skipped": [
+    {
+      "slot": 0,
+      "seed": 1,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 0,
+      "seed": 2,
+      "reason": "finding",
+      "finding": {
+        "kind": "queryThrew",
+        "seed": 3150159069,
+        "step": 338,
+        "mode": "response",
+        "error": "Unable to resolve ownerOf target.",
+        "detail": "turn 27, window action/acceptingResponses; SpoilsEngine.resolvePlayerRef (SpoilsEngine.ts:12370) < SpoilsEngine.evaluateCondition (SpoilsEngine.ts:10337) < <anonymous> (SpoilsEngine.ts:12012) < SpoilsEngine.matchesSelector (SpoilsEngine.ts:12011) < <anonymous> (SpoilsEngine.ts:5635) < SpoilsEngine.queryCards (SpoilsEngine.ts:5634) < SpoilsEngine.targetCandidates (SpoilsEngine.ts:6469)"
+      }
+    },
+    {
+      "slot": 0,
+      "seed": 3,
+      "reason": "capped",
+      "detail": "450 actions, turn 44"
+    },
+    {
+      "slot": 0,
+      "seed": 4,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 3,
+      "seed": 301,
+      "reason": "capped",
+      "detail": "450 actions, turn 32"
+    },
+    {
+      "slot": 5,
+      "seed": 501,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 5,
+      "seed": 502,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 5,
+      "seed": 503,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 5,
+      "seed": 504,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 5,
+      "seed": 505,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 6,
+      "seed": 601,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 6,
+      "seed": 602,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 8,
+      "seed": 801,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 8,
+      "seed": 802,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 8,
+      "seed": 803,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 10,
+      "seed": 1001,
+      "reason": "capped",
+      "detail": "450 actions, turn 33"
+    },
+    {
+      "slot": 10,
+      "seed": 1002,
+      "reason": "capped",
+      "detail": "450 actions, turn 31"
+    },
+    {
+      "slot": 10,
+      "seed": 1003,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 10,
+      "seed": 1004,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 10,
+      "seed": 1005,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 12,
+      "seed": 1201,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 12,
+      "seed": 1202,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 13,
+      "seed": 1301,
+      "reason": "capped",
+      "detail": "450 actions, turn 43"
+    },
+    {
+      "slot": 13,
+      "seed": 1302,
+      "reason": "capped",
+      "detail": "450 actions, turn 39"
+    },
+    {
+      "slot": 13,
+      "seed": 1303,
+      "reason": "capped",
+      "detail": "450 actions, turn 38"
+    },
+    {
+      "slot": 13,
+      "seed": 1304,
+      "reason": "capped",
+      "detail": "450 actions, turn 36"
+    },
+    {
+      "slot": 13,
+      "seed": 1305,
+      "reason": "capped",
+      "detail": "450 actions, turn 33"
+    },
+    {
+      "slot": 13,
+      "seed": 1306,
+      "reason": "capped",
+      "detail": "450 actions, turn 42"
+    },
+    {
+      "slot": 13,
+      "seed": 1307,
+      "reason": "capped",
+      "detail": "450 actions, turn 46"
+    },
+    {
+      "slot": 13,
+      "seed": 1308,
+      "reason": "capped",
+      "detail": "450 actions, turn 32"
+    },
+    {
+      "slot": 15,
+      "seed": 1501,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 16,
+      "seed": 1601,
+      "reason": "capped",
+      "detail": "450 actions, turn 35"
+    },
+    {
+      "slot": 17,
+      "seed": 1701,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 17,
+      "seed": 1702,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 18,
+      "seed": 1801,
+      "reason": "capped",
+      "detail": "450 actions, turn 31"
+    },
+    {
+      "slot": 18,
+      "seed": 1802,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 18,
+      "seed": 1803,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 19,
+      "seed": 1901,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 20,
+      "seed": 2001,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 21,
+      "seed": 2101,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 21,
+      "seed": 2102,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 22,
+      "seed": 2201,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 22,
+      "seed": 2202,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 22,
+      "seed": 2203,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 22,
+      "seed": 2204,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 22,
+      "seed": 2205,
+      "reason": "capped",
+      "detail": "450 actions, turn 32"
+    },
+    {
+      "slot": 22,
+      "seed": 2206,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 24,
+      "seed": 2401,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 25,
+      "seed": 2501,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 25,
+      "seed": 2502,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 25,
+      "seed": 2503,
+      "reason": "capped",
+      "detail": "450 actions, turn 34"
+    },
+    {
+      "slot": 25,
+      "seed": 2504,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 25,
+      "seed": 2505,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 25,
+      "seed": 2506,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 26,
+      "seed": 2601,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 27,
+      "seed": 2701,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 27,
+      "seed": 2702,
+      "reason": "capped",
+      "detail": "450 actions, turn 16"
+    },
+    {
+      "slot": 27,
+      "seed": 2703,
+      "reason": "capped",
+      "detail": "450 actions, turn 19"
+    },
+    {
+      "slot": 27,
+      "seed": 2704,
+      "reason": "capped",
+      "detail": "450 actions, turn 17"
+    },
+    {
+      "slot": 29,
+      "seed": 2901,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 29,
+      "seed": 2902,
+      "reason": "capped",
+      "detail": "450 actions, turn 39"
+    },
+    {
+      "slot": 30,
+      "seed": 3001,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 30,
+      "seed": 3002,
+      "reason": "finding",
+      "finding": {
+        "kind": "noLegalAction",
+        "seed": 980766571,
+        "step": 121,
+        "mode": "resolvingResponses",
+        "detail": "turn 14, window action/resolving"
+      }
+    },
+    {
+      "slot": 31,
+      "seed": 3101,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 31,
+      "seed": 3102,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 32,
+      "seed": 3201,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 36,
+      "seed": 3601,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 36,
+      "seed": 3602,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 36,
+      "seed": 3603,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 36,
+      "seed": 3604,
+      "reason": "capped",
+      "detail": "450 actions, turn 19"
+    },
+    {
+      "slot": 36,
+      "seed": 3605,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 36,
+      "seed": 3606,
+      "reason": "capped",
+      "detail": "450 actions, turn 28"
+    },
+    {
+      "slot": 37,
+      "seed": 3701,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 38,
+      "seed": 3801,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 38,
+      "seed": 3802,
+      "reason": "capped",
+      "detail": "450 actions, turn 34"
+    },
+    {
+      "slot": 40,
+      "seed": 4001,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 42,
+      "seed": 4201,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 42,
+      "seed": 4202,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 42,
+      "seed": 4203,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 42,
+      "seed": 4204,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 42,
+      "seed": 4205,
+      "reason": "finding",
+      "finding": {
+        "kind": "noLegalAction",
+        "seed": 2696627880,
+        "step": 289,
+        "mode": "resolvingResponses",
+        "detail": "turn 26, window action/resolving"
+      }
+    },
+    {
+      "slot": 42,
+      "seed": 4206,
+      "reason": "capped",
+      "detail": "450 actions, turn 39"
+    },
+    {
+      "slot": 44,
+      "seed": 4401,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 44,
+      "seed": 4402,
+      "reason": "capped",
+      "detail": "450 actions, turn 36"
+    },
+    {
+      "slot": 45,
+      "seed": 4501,
+      "reason": "capped",
+      "detail": "450 actions, turn 19"
+    },
+    {
+      "slot": 45,
+      "seed": 4502,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 45,
+      "seed": 4503,
+      "reason": "capped",
+      "detail": "450 actions, turn 19"
+    },
+    {
+      "slot": 45,
+      "seed": 4504,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 47,
+      "seed": 4701,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 47,
+      "seed": 4702,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 50,
+      "seed": 5001,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 50,
+      "seed": 5002,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 50,
+      "seed": 5003,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 50,
+      "seed": 5004,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 50,
+      "seed": 5005,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 51,
+      "seed": 5101,
+      "reason": "capped",
+      "detail": "450 actions, turn 37"
+    },
+    {
+      "slot": 51,
+      "seed": 5102,
+      "reason": "capped",
+      "detail": "450 actions, turn 31"
+    },
+    {
+      "slot": 52,
+      "seed": 5201,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 55,
+      "seed": 5501,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 56,
+      "seed": 5601,
+      "reason": "capped",
+      "detail": "450 actions, turn 34"
+    },
+    {
+      "slot": 58,
+      "seed": 5801,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 58,
+      "seed": 5802,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 58,
+      "seed": 5803,
+      "reason": "capped",
+      "detail": "450 actions, turn 37"
+    },
+    {
+      "slot": 61,
+      "seed": 6101,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 62,
+      "seed": 6201,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 62,
+      "seed": 6202,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 64,
+      "seed": 6401,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 64,
+      "seed": 6402,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 64,
+      "seed": 6403,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 64,
+      "seed": 6404,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 64,
+      "seed": 6405,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 64,
+      "seed": 6406,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 64,
+      "seed": 6407,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 64,
+      "seed": 6408,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 66,
+      "seed": 6601,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 66,
+      "seed": 6602,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 66,
+      "seed": 6603,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 69,
+      "seed": 6901,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 71,
+      "seed": 7101,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 71,
+      "seed": 7102,
+      "reason": "capped",
+      "detail": "450 actions, turn 18"
+    },
+    {
+      "slot": 71,
+      "seed": 7103,
+      "reason": "capped",
+      "detail": "450 actions, turn 28"
+    },
+    {
+      "slot": 72,
+      "seed": 7201,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 74,
+      "seed": 7401,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 74,
+      "seed": 7402,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 76,
+      "seed": 7601,
+      "reason": "capped",
+      "detail": "450 actions, turn 36"
+    },
+    {
+      "slot": 76,
+      "seed": 7602,
+      "reason": "capped",
+      "detail": "450 actions, turn 36"
+    },
+    {
+      "slot": 77,
+      "seed": 7701,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 77,
+      "seed": 7702,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 79,
+      "seed": 7901,
+      "reason": "capped",
+      "detail": "450 actions, turn 32"
+    },
+    {
+      "slot": 79,
+      "seed": 7902,
+      "reason": "capped",
+      "detail": "450 actions, turn 40"
+    },
+    {
+      "slot": 82,
+      "seed": 8201,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 82,
+      "seed": 8202,
+      "reason": "capped",
+      "detail": "450 actions, turn 33"
+    },
+    {
+      "slot": 82,
+      "seed": 8203,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 82,
+      "seed": 8204,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 84,
+      "seed": 8401,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 84,
+      "seed": 8402,
+      "reason": "capped",
+      "detail": "450 actions, turn 31"
+    },
+    {
+      "slot": 84,
+      "seed": 8403,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 84,
+      "seed": 8404,
+      "reason": "capped",
+      "detail": "450 actions, turn 23"
+    },
+    {
+      "slot": 84,
+      "seed": 8405,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 84,
+      "seed": 8406,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 85,
+      "seed": 8501,
+      "reason": "capped",
+      "detail": "450 actions, turn 30"
+    },
+    {
+      "slot": 85,
+      "seed": 8502,
+      "reason": "capped",
+      "detail": "450 actions, turn 28"
+    },
+    {
+      "slot": 86,
+      "seed": 8601,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 86,
+      "seed": 8602,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 86,
+      "seed": 8603,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 86,
+      "seed": 8604,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 90,
+      "seed": 9001,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 90,
+      "seed": 9002,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    },
+    {
+      "slot": 90,
+      "seed": 9003,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 91,
+      "seed": 9101,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 92,
+      "seed": 9201,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 92,
+      "seed": 9202,
+      "reason": "capped",
+      "detail": "450 actions, turn 28"
+    },
+    {
+      "slot": 92,
+      "seed": 9203,
+      "reason": "capped",
+      "detail": "450 actions, turn 20"
+    },
+    {
+      "slot": 92,
+      "seed": 9204,
+      "reason": "capped",
+      "detail": "450 actions, turn 39"
+    },
+    {
+      "slot": 92,
+      "seed": 9205,
+      "reason": "capped",
+      "detail": "450 actions, turn 27"
+    },
+    {
+      "slot": 92,
+      "seed": 9206,
+      "reason": "capped",
+      "detail": "450 actions, turn 22"
+    },
+    {
+      "slot": 93,
+      "seed": 9301,
+      "reason": "capped",
+      "detail": "450 actions, turn 18"
+    },
+    {
+      "slot": 94,
+      "seed": 9401,
+      "reason": "capped",
+      "detail": "450 actions, turn 24"
+    },
+    {
+      "slot": 95,
+      "seed": 9501,
+      "reason": "capped",
+      "detail": "450 actions, turn 28"
+    },
+    {
+      "slot": 95,
+      "seed": 9502,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 96,
+      "seed": 9601,
+      "reason": "capped",
+      "detail": "450 actions, turn 25"
+    },
+    {
+      "slot": 96,
+      "seed": 9602,
+      "reason": "capped",
+      "detail": "450 actions, turn 26"
+    },
+    {
+      "slot": 96,
+      "seed": 9603,
+      "reason": "capped",
+      "detail": "450 actions, turn 37"
+    },
+    {
+      "slot": 96,
+      "seed": 9604,
+      "reason": "capped",
+      "detail": "450 actions, turn 21"
+    },
+    {
+      "slot": 97,
+      "seed": 9701,
+      "reason": "capped",
+      "detail": "450 actions, turn 29"
+    }
+  ],
+  "roundTripFailures": [
+    {
+      "slot": 4,
+      "seed": 401,
+      "savedAfter": 84,
+      "failedAt": 85,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_9"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 8,
+      "seed": 804,
+      "savedAfter": 216,
+      "failedAt": 217,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_1:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 8,
+      "seed": 804,
+      "savedAfter": 217,
+      "failedAt": 219,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_18"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 8,
+      "seed": 804,
+      "savedAfter": 218,
+      "failedAt": 219,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_18"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 16,
+      "seed": 1602,
+      "savedAfter": 204,
+      "failedAt": 205,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "factionStartEffect:0"
+          }
+        }
+      },
+      "error": "'card_1:factionStartEffect:0' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 17,
+      "seed": 1703,
+      "savedAfter": 276,
+      "failedAt": 277,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_36"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 17,
+      "seed": 1703,
+      "savedAfter": 277,
+      "failedAt": 278,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "playResource",
+          "faceDown": true
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 21,
+      "seed": 2103,
+      "savedAfter": 102,
+      "failedAt": 103,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_89"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 21,
+      "seed": 2103,
+      "savedAfter": 103,
+      "failedAt": 104,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "playResource",
+          "faceDown": true
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 25,
+      "seed": 2507,
+      "savedAfter": 296,
+      "failedAt": 297,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_35"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 25,
+      "seed": 2507,
+      "savedAfter": 297,
+      "failedAt": 298,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "playResource",
+          "faceDown": true
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 26,
+      "seed": 2602,
+      "savedAfter": 67,
+      "failedAt": 68,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_76"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 27,
+      "seed": 2705,
+      "savedAfter": 86,
+      "failedAt": 88,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_64"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 27,
+      "seed": 2705,
+      "savedAfter": 87,
+      "failedAt": 88,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_64"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 27,
+      "seed": 2705,
+      "savedAfter": 260,
+      "failedAt": 261,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 37,
+      "seed": 3702,
+      "savedAfter": 213,
+      "failedAt": 214,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_92"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 37,
+      "seed": 3702,
+      "savedAfter": 319,
+      "failedAt": 320,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "playResource",
+          "faceDown": true
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 46,
+      "seed": 4601,
+      "savedAfter": 105,
+      "failedAt": 106,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_1:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 46,
+      "seed": 4601,
+      "savedAfter": 106,
+      "failedAt": 107,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "developRule"
+          }
+        }
+      },
+      "error": "'card_1:developRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 46,
+      "seed": 4601,
+      "savedAfter": 107,
+      "failedAt": 108,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsOption",
+          "index": 0
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 57,
+      "seed": 5701,
+      "savedAfter": 83,
+      "failedAt": 84,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 57,
+      "seed": 5701,
+      "savedAfter": 84,
+      "failedAt": 86,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_65"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 57,
+      "seed": 5701,
+      "savedAfter": 85,
+      "failedAt": 86,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_65"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 61,
+      "seed": 6102,
+      "savedAfter": 282,
+      "failedAt": 283,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_1:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 72,
+      "seed": 7202,
+      "savedAfter": 64,
+      "failedAt": 65,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 72,
+      "seed": 7202,
+      "savedAfter": 192,
+      "failedAt": 193,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 72,
+      "seed": 7202,
+      "savedAfter": 193,
+      "failedAt": 195,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_51"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 72,
+      "seed": 7202,
+      "savedAfter": 194,
+      "failedAt": 195,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_51"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 74,
+      "seed": 7403,
+      "savedAfter": 207,
+      "failedAt": 208,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "developRule"
+          }
+        }
+      },
+      "error": "'card_1:developRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 74,
+      "seed": 7403,
+      "savedAfter": 208,
+      "failedAt": 210,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_24"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 74,
+      "seed": 7403,
+      "savedAfter": 209,
+      "failedAt": 210,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_24"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 78,
+      "seed": 7801,
+      "savedAfter": 195,
+      "failedAt": 197,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_92"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 78,
+      "seed": 7801,
+      "savedAfter": 196,
+      "failedAt": 197,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_92"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 78,
+      "seed": 7801,
+      "savedAfter": 293,
+      "failedAt": 294,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 80,
+      "seed": 8001,
+      "savedAfter": 74,
+      "failedAt": 75,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "developRule"
+          }
+        }
+      },
+      "error": "'card_1:developRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 80,
+      "seed": 8001,
+      "savedAfter": 75,
+      "failedAt": 76,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsOption",
+          "index": 0
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 87,
+      "seed": 8701,
+      "savedAfter": 107,
+      "failedAt": 108,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_1",
+            "abilityId": "developRule"
+          }
+        }
+      },
+      "error": "'card_1:developRule' is not one of the triggers waiting to resolve."
+    },
+    {
+      "slot": 87,
+      "seed": 8701,
+      "savedAfter": 108,
+      "failedAt": 110,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_13"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 87,
+      "seed": 8701,
+      "savedAfter": 109,
+      "failedAt": 110,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_13"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 88,
+      "seed": 8801,
+      "savedAfter": 327,
+      "failedAt": 328,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p1",
+        "choice": {
+          "kind": "chooserSelectsTarget",
+          "selected": [
+            "card_28"
+          ]
+        }
+      },
+      "error": "digest differs"
+    },
+    {
+      "slot": 99,
+      "seed": 9901,
+      "savedAfter": 120,
+      "failedAt": 121,
+      "action": {
+        "type": "resolvePendingChoice",
+        "playerId": "p2",
+        "choice": {
+          "kind": "orderTriggers",
+          "next": {
+            "sourceId": "card_2",
+            "abilityId": "restoreRule"
+          }
+        }
+      },
+      "error": "'card_2:restoreRule' is not one of the triggers waiting to resolve."
+    }
+  ]
+}

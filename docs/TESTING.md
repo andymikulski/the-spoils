@@ -324,6 +324,61 @@ Findings format (`data/rule-tests/findings/<batch>.md`):
 - Cause: <file/function if known>
 ```
 
+## Random-play driver and replay digests
+
+A fifth check, aimed at "did two-player behavior change?" rather than at any one
+rule. `replay-2p.test.ts` replays a committed corpus of seeded random games and
+compares a digest of the rules state after every action.
+
+- **Driver** (`support/driver.ts`, decks in `support/random-decks.ts`).
+  `playRandomGame(setup, driverSeed)` plays a game to the end by choosing
+  uniformly (weighted towards progress: attack, end turn, pass) among legal
+  actions. It reads only the engine's public queries (`getFlowView` for the mode
+  and the acting player, then `getPlayableHandCards`, `getPlayRequirements`,
+  `getPaymentOptions`, `getActivatedAbilityStatuses`, `getFlipUpPlayability`,
+  `getAttackOptions`, `getBlockOptions`, `getSelectionRequirements`, the setup
+  choice queries, and each pending choice's own fields) and runs every candidate
+  through `engine.checkAction` before `perform`. Decks are seeded random legal
+  Constructed decks from the real catalog (full-fidelity printings only, checked
+  with `findDeckConstructionIssues`), built by `createTwoPlayerFactionGame`. The
+  action log and the setup (`GameSetupInputs`: seed, decks, who goes first, staple
+  choices, created ability) are plain JSON; same setup + same driver seed + same
+  catalog gives the same game. `perform` writes into the action it is given, so
+  the driver (and the replay) hand the engine a copy and keep the pristine one.
+  Two things are reported as findings, never worked around: `perform` throwing on
+  an action `checkAction` approved, and a non-`gameOver` state with no accepted
+  action (a query throwing while candidates are listed is reported too).
+- **Digest** (`support/digest.ts`). `digestState(state)` is the first 16 hex
+  characters of the SHA-256 of the canonical JSON (sorted keys, `undefined`
+  dropped) of `projectForDigest(state)`. The projection is `GameState` minus
+  `gameLog`: the log is narration (wording, per-viewer redaction text) that no rule
+  reads. Any further exclusion goes into `projectForDigest`, with its reason, and
+  nowhere else.
+- **Corpus** (`data/replays/2p/game-NNN.json`, `index.json`). Per game: setup,
+  actions, the digest after setup and after each action, and the action counts at
+  which the test saves the game, pushes it through JSON and loads it back before
+  carrying on (`roundTripAfter`). `index.json` is informational: totals, which
+  sets and factions are covered, the seeds that were skipped, and the save/load
+  points that did not work (see below). The test also checks that at least 100
+  games are present and that every set and every full-fidelity faction appears.
+- **Re-recording**: `npm run record-replays` (flags `--games`, `--jobs`,
+  `--max-actions`; defaults 120 / cores-2 / 700, the committed corpus was recorded
+  with `--games 104 --max-actions 450`, which keeps the replay test near 45 s of
+  CPU and the corpus near 3 MB). Slot `g` plays factions and featured sets picked
+  from `g`, so any large run covers all of them. A seed that hits a finding or
+  does not finish within `--max-actions` is skipped and listed in `index.json`;
+  every recorded game is replayed from its JSON before it is written.
+- **When re-recording is legitimate**: only for an intended, explained change to
+  two-player behavior (a rules fix, a data fix that alters a card's play), and the
+  commit that re-records says which behavior changed and why. A replay test that
+  fails after a refactor, a multiplayer change or a performance change is a
+  regression: fix the code, not the corpus. Changes to the driver or the deck
+  builder also change the corpus; they are not a reason to hide a behavior change
+  in the same commit.
+- **Save/load points**: a game is saved only where a save -> JSON -> load continues
+  to the recorded digests for the next 40 actions; the recorder searches forward
+  from 25 / 50 / 75 % of the game for such a moment.
+
 ## Engine-driving notes
 
 These apply to every suite.
