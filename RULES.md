@@ -1574,10 +1574,15 @@ of the Devoured Emperor additions")**
   remainder runs as an `endOfBattle` rider (Counter Attack — "Attack that
   player. … resolve the battle immediately and before you draw the card").
 - **Bidding (Auction House).** `auctionForCard` reveals from the top of a
-  deck until a character, then alternates bids (active player first) capped
-  at each bidder's detached-resource count; the winner pays that many
+  deck until a character, then takes bids clockwise from the active player
+  across every player still in the game (MPX-bid), skipping players who have
+  passed, each capped at the bidder's detached-resource count; it ends when
+  every player but the high bidder has passed, and the winner pays that many
   (attach to faction) and puts the character into play; the rest reshuffle.
-  `auctionBid` pending choice, `{ bid: 0 }` = pass.
+  `auctionBid` pending choice, `{ bid: 0 }` = pass. The first bidder
+  passing, and everyone passing, are open points (RQ-r11-3) at every table
+  size: a player who is not the high bidder and has not passed is still
+  asked, and if everyone passes the character returns to the deck.
 
 ### Ungodly Mess additions
 
@@ -2005,8 +2010,10 @@ respond at any chosen iteration.
 resolving inside one another more than 200 deep, 5000 trigger resolutions in a
 row, or a `repeatWhile` that outlasts its `maxPasses` with its condition still
 true. `perform` then drops whatever was still resolving (queue, stack, battle,
-pending choices) and sets `winner: "draw"` (emitting `gameEnded`).
+pending choices) and sets `winner: "draw"` (emitting `gameEnded`). At any
+table size that draw is between every player still in the game (MPX-loop).
 
 **(CR §413)** A few effects have players *bid*: take turns naming an
 increasing number or passing; a player who passes is out; the last player
-in wins the bid. Bidding starts with the active player and goes clockwise.
+in wins the bid. Bidding starts with the active player and goes clockwise;
+every player in the game takes part, and a player who has passed is skipped.

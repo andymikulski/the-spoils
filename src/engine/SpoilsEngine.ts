@@ -943,8 +943,9 @@ export class SpoilsEngine {
   private triggerNesting = 0;
 
   /**
-   * CR 414.1: a series of effects that repeats without end and that neither
-   * player can end ends the game as a draw. Whatever was still resolving is dropped.
+   * CR 414.1 (MPX-loop): a series of effects that repeats without end and that
+   * no player in the game can end ends the game as a draw between every player
+   * still in it. Whatever was still resolving is dropped.
    */
   private endGameAsEndlessLoop(): void {
     this.immediateQueue.splice(0);
@@ -22266,10 +22267,9 @@ export class SpoilsEngine {
     }
 
     const otherRevealed = revealed.filter(id => id !== characterId);
-    const order = [
-      this.state.activePlayerId,
-      this.getOpponent(this.state.activePlayerId).id
-    ];
+    // CR 413.1 / 413.1a (MPX-bid): every player in the game takes part, the
+    // active player first and then clockwise.
+    const order = this.getPlayersInSeatOrder(this.state.activePlayerId);
 
     this.state.pendingAuction = {
       sourceId: context.sourceId,
@@ -22294,14 +22294,17 @@ export class SpoilsEngine {
     announceReveal();
   }
 
-  /** One bid / pass in the Auction House sequence (`auctionBid` pending choice). */
+  /**
+   * One bid / pass in the Auction House sequence (`auctionBid` pending choice).
+   * CR 413.1 (MPX-bid): bidding goes clockwise from the active player, skipping
+   * players who have passed (413.1a); a player who has passed may not bid again
+   * (413.1b); it ends when only one player has not passed, who wins the bid.
+   */
   private advanceAuction(playerId: PlayerId, bid: number): void {
     const a = this.state.pendingAuction;
     assert(a, "No auction is in progress.");
     assert(playerId === a.turn, "It is not your turn to bid.");
     assert(Number.isInteger(bid) && bid >= 0, "A bid must be a non-negative integer.");
-
-    const other = a.order.find(p => p !== playerId)!;
 
     if (bid > 0) {
       assert(bid > a.highBid, `A bid must exceed the current high bid (${a.highBid}).`);
@@ -22311,45 +22314,38 @@ export class SpoilsEngine {
       );
       a.highBid = bid;
       a.highBidder = playerId;
-      // A player who has passed may not bid again (CR 413.1b): the bidding
-      // is over as soon as only one player is left.
-      if (a.passed.includes(other)) {
-        this.settleAuction();
-        return;
+    } else {
+      a.passed.push(playerId);
+    }
+
+    // Whoever still has a live raise to make: has not passed and is not the
+    // standing high bidder (a pass against a standing high bid concedes it).
+    // With none left the bidding is over.
+    const raisers = a.order.filter(
+      id => !a.passed.includes(id) && id !== a.highBidder && !this.state.players[id].eliminated
+    );
+    if (raisers.length === 0) {
+      this.settleAuction();
+      return;
+    }
+    const at = a.order.indexOf(playerId);
+    let next = raisers[0];
+    for (let step = 1; step <= a.order.length; step++) {
+      const candidate = a.order[(at + step) % a.order.length];
+      if (raisers.includes(candidate)) {
+        next = candidate;
+        break;
       }
-      a.turn = other;
-      this.state.pendingChoice = {
-        kind: "auctionBid",
-        id: this.nextId("choice"),
-        playerId: other,
-        characterId: a.characterId,
-        highBid: a.highBid,
-        maxBid: this.getAvailableResourceCount(other)
-      };
-      return;
     }
-
-    // A pass. The auction ends unless the other player still has a live
-    // raise to make — they haven't passed yet and aren't already the high
-    // bidder (a pass against a standing high bid concedes it).
-    a.passed.push(playerId);
-    const otherCanStillAct =
-      a.highBidder !== other && !a.passed.includes(other);
-
-    if (otherCanStillAct) {
-      a.turn = other;
-      this.state.pendingChoice = {
-        kind: "auctionBid",
-        id: this.nextId("choice"),
-        playerId: other,
-        characterId: a.characterId,
-        highBid: a.highBid,
-        maxBid: this.getAvailableResourceCount(other)
-      };
-      return;
-    }
-
-    this.settleAuction();
+    a.turn = next;
+    this.state.pendingChoice = {
+      kind: "auctionBid",
+      id: this.nextId("choice"),
+      playerId: next,
+      characterId: a.characterId,
+      highBid: a.highBid,
+      maxBid: this.getAvailableResourceCount(next)
+    };
   }
 
   private settleAuction(): void {
