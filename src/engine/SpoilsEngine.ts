@@ -10344,17 +10344,19 @@ export class SpoilsEngine {
       );
 
       if (batch.length > 1 && !indistinguishable) {
-        const controllerIds = new Set(
-          batch.map(queued => queued.context.controllerId)
-        );
+        // CR 503.4: one player's cards, that player decides; cards of several players, the active player decides.
+        // The same player decides the whole batch, one trigger at a time (CR 503.4a), even when the triggers
+        // that are left all belong to one player.
+        const controllerIds = new Set(batch.map(queued => queued.context.controllerId));
+        const decider =
+          batch.find(queued => queued.orderedBy !== undefined)?.orderedBy ??
+          (controllerIds.size === 1 ? [...controllerIds][0] : this.state.activePlayerId);
+        for (const queued of batch) queued.orderedBy = decider;
 
         this.state.pendingChoice = {
           kind: "orderTriggers",
           id: this.nextId("choice"),
-          playerId:
-            controllerIds.size === 1
-              ? [...controllerIds][0]
-              : this.state.activePlayerId,
+          playerId: decider,
           triggers: batch.map(queued => ({
             sourceId: queued.sourceId,
             abilityId: queued.ability.id
@@ -21868,8 +21870,7 @@ export class SpoilsEngine {
 
     const targets: AttackTarget[] = [];
     if (party.length > 0) {
-      for (const otherId of Object.keys(this.state.players)) {
-        if (otherId === playerId) continue;
+      for (const otherId of this.getOpponents(playerId)) {
         if (this.factionAttackPrevented(otherId, party)) continue;
         targets.push({ type: "faction", playerId: otherId });
       }

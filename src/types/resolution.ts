@@ -75,6 +75,12 @@ export interface TriggerResolution {
    * it isn't re-detected as needing another ordering decision.
    */
   batchId: string;
+  /**
+   * The player who decides the order of this trigger's batch: the one player all of its triggers came from, or the
+   * active player when they came from several players' cards (CR 503.4). Fixed when the batch's first ordering prompt
+   * is raised, so the same player keeps deciding the rest of the batch (CR 503.4a).
+   */
+  orderedBy?: PlayerId;
   /** Engine bookkeeping: this trigger's own target picks were already announced (`cardPicked`). */
   picksAnnounced?: boolean;
   /**

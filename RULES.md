@@ -870,7 +870,10 @@ batch. While 2+ of a batch are still waiting, the engine pauses on
 `next` pick (CR §503.4a). That one resolves fully, then — if 2+ still
 remain — the choice is re-raised for the next pick; a lone leftover resolves
 without prompting. `playerId` is the batch's sole controller if the cards
-share one, otherwise the active player.
+share one, otherwise the active player; it is fixed when the batch's first
+prompt is raised (`TriggerResolution.orderedBy`), so the same player orders the
+rest of the batch even when the triggers left all belong to one player
+(CR §503.4a; MPX-order).
 
 **(engine-derived)** A batch is *everything found for one emitted event* —
 not everything in one simultaneous game action. Two characters destroyed
