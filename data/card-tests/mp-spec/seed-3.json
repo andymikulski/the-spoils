@@ -758,6 +758,65 @@
         ],
         "test3": "3 seats: P1 plays The Evil Alliance (X = 2 opponents): P1 starts with 15 + 10*2 = 35 influence; P2 and P3 start with their own factions' printed influence. X does not change if P2 is later eliminated: P1's influence is not recomputed.",
         "test4": "4 seats: X = 3, P1 starts with 15 + 10*3 = 45 influence."
+      },
+      {
+        "key": "1:rule:STARTING RESOURCES",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "1+X",
+            "at": 24,
+            "meaning": "eachOpponent",
+            "note": "X is the number of opponents at the start of the game (clause 0): every opponent, counted when the game starts."
+          }
+        ],
+        "note": "Free-for-all rule with X = the number of opponents at game start. Showdown-only parts of the card stay out of scope (see clause 0). The data holds a fixed count of 2 (1 + 1 opponent) and no expression that counts opponents at game start.",
+        "dataChanges": [
+          {
+            "path": "faction.setup.startingResources.count",
+            "now": 2,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "A fixed 2 today (correct for one opponent only); it must be 1 plus the number of opponents at the start of the game, with no player word to hold that count."
+          }
+        ],
+        "test3": "3 seats: P1 plays The Evil Alliance (X = 2 opponents): P1 chooses 1 + 2 = 3 staple resources at setup (any staples, in seat order with the other starting choices) and puts them into play; P2 and P3 start with their own factions' printed number of starting resources. The count is fixed at setup and is not recomputed later.",
+        "test4": "4 seats: X = 3, P1 chooses 1 + 3 = 4 staple resources; the other three seats start with their own factions' counts."
+      },
+      {
+        "key": "4:rule:DEVELOP RULE",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "X-1",
+            "at": 85,
+            "meaning": "eachOpponent",
+            "note": "X is the number of opponents at the start of the game (clause 0). \"Draw a card or play a resource\" happens once and is then repeated X-1 times, so X times in all; each repetition is a fresh choice between the two. With one opponent X-1 is 0 and the rule is the ordinary single develop."
+          }
+        ],
+        "note": "Free-for-all rule with X = the number of opponents at game start. The data develops once (a single draw-or-play) and has no repeat count or expression for it.",
+        "dataChanges": [
+          {
+            "path": "faction.turn.develop",
+            "now": {
+              "choices": [
+                {
+                  "type": "draw",
+                  "count": 1
+                },
+                {
+                  "type": "playResource",
+                  "count": 1
+                }
+              ]
+            },
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "The Develop Rule is performed once per turn today. It must be performed X times (the choice repeated X-1 times), X = the number of opponents at the start of the game: the node gains a repeat count that is not a fixed value (the existing usesPerTurn is a plain number). Each use is still one draw or one play."
+          }
+        ],
+        "test3": "3 seats: at the start of P1's turn (P1 plays The Evil Alliance, X = 2) the Develop Rule happens twice: P1 draws a card or plays a resource, then draws a card or plays a resource again, each time choosing freely (draw twice, play twice or one of each). P2 and P3 develop once at the start of their own turns under their own factions' rules. X is fixed at the start of the game: with P2 eliminated, P1 still develops twice.",
+        "test4": "4 seats: X = 3, P1's Develop Rule happens three times at the start of P1's turn; the other seats develop once."
       }
     ]
   },

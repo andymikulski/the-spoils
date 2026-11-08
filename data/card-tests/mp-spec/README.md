@@ -88,9 +88,13 @@ One rule per kind of site, applied the same way in every set. The flag belongs t
 | "each opponent" / "your opponents" / "each other player" (`eachOpponent`, `eachOtherPlayer`) | `"opponent"` | `true`: iteration (`forEachPlayer`) or `"opponents"` |
 | "each player" (`eachPlayer`) | `"all"` / `"any"` | `false`: already every player |
 | "that player" / "that opponent" (`refersBack`) after a pick or after "an opponent" | `"opponent"` | `true`: it becomes the same `chosenPlayer` reference as the pick |
-| "that player" after "your opponent", after the triggering event or after a battle | `"opponent"` | `false` |
+| "that player" after "your opponent", after the triggering event or after a battle (the block's opponent is derived: `opponentFrom` `event` / `battle`) | `"opponent"` | `false`, except in a point-of-view block (next rows) |
 | "its controller" / "that faction's owner" (`cardRelative`) | `"opponent"` | `true`: it becomes `controllerOf` / `ownerOf` of that card |
-| a missing pick, or a flag with no player word (`noResponse`, `canUseOpponentAbilities`) | no player word | `true`, listed with its real path; `now` is the stored value |
+| "that player" (`refersBack`) in a block written from another player's point of view (MPQ-P10), where `"opponent"` has become the acting player's selection | `"opponent"` | `true`: it becomes `"acting"` |
+| "their opponent" (`chosenOpponent`) in such a block | `"controller"` / `"self"` / a `forEachPlayer` proxy | `true`: it becomes plain `"opponent"` (the acting player's selection) |
+| the ability-level `opponentFrom: "acting"` of such a block | no key (`now: null`, the path does not exist) | `true` |
+| a missing pick, or a flag with no player word (`noResponse`) | no player word | `true`, listed with its real path; `now` is the stored value |
+| a flag that the lasting binding already reads (`canUseOpponentAbilities`) | the flag | `false`: the engine selects the opponent when the text starts applying (RQ-mp-5, MPQ-P2) and the flag keeps its value |
 
 - **Trigger conditions (MPQ-P5).** A site that tests the triggering event's
   player (`eventPlayerIs`, `eventCardControlledBy`) keeps `"opponent"` and is
@@ -116,6 +120,23 @@ One rule per kind of site, applied the same way in every set. The flag belongs t
 - **Readings the inventory did not detect** ("any deck", "opposing", "all
   factions") use their offset in the printed text.
 
+### Target forms the gate accepts
+
+`MEANING_FORMS` in `src/engine/__tests__/clauses/_mpWorklist.ts` judges an
+`edit: true` site once it has left its `now`. It accepts exactly the forms the
+engine reads:
+
+| Meaning | Accepted data |
+|---|---|
+| `chosenOpponent` | `"opponent"` (the block's opponent: chosen, or derived from the event, the battle, the responded-to card or the acting player), or `{ type: "chosenPlayer", id }`; a `forEachPlayer` proxy is no longer an iteration |
+| `anyOneOpponent` | `controllerOf` / `ownerOf` of the pick, `{ type: "chosenPlayer", id }` (a `playerChoices` entry or a `choosePlayer` effect), or `"opponents"` in a selector, scope or condition (any opponent); never as an effect's `player`, which would act on every opponent |
+| `eachOpponent` | the site inside `forEachPlayer { players: "opponents" }`, or `"opponents"` as an effect's `player` (the effect runs once per opponent) or in a selector / scope; not `"opponents"` in a condition (that means "some opponent") and not as a `chooser` or a target's `player` (the engine refuses both) |
+| `eachPlayer`, `eachOtherPlayer`, `chosenPair`, `selfAndEachOpponent` | a `forEachPlayer` with `players` `"all"`, `"others"`, `"pair"`, `"selfAndOpponents"`; `"pair"` is the "both players" site |
+| `refersBack` | `{ type: "chosenPlayer", id }`, `controllerOf` / `ownerOf`, or `"acting"` (a `chooser`, effect `player`, target `player` or condition `player`) in an ability that holds `opponentFrom: "acting"`; a selector's controller / owner cannot read `"acting"`, so it holds `"any"` with a `targetOwnedBy { player: "acting" }` condition in the selector |
+| `cardRelative` | `controllerOf` / `ownerOf` |
+| `other` (Gideon's Legacy) | `forEachPlayer` with `players` `"all"` or `"others"` and an `except` |
+| an `opponentFrom` site | `"acting"` |
+
 ## Meanings
 
 | id | Meaning |
@@ -126,7 +147,7 @@ One rule per kind of site, applied the same way in every set. The flag belongs t
 | `selfAndEachOpponent` | "both players" on The Knitting Coalition only (RQ-mp-6). |
 | `eachOpponentOfSelf` | "your opponent" on The Knitting Coalition's HIDDEN INFLUENCE / PULLING STRINGS only (RQ-mp-6): every opponent. |
 | `anyOneOpponent` | "an opponent" / "any opponent" / "another player": a single opponent, settled by the pick or choice the sentence makes (the controller or owner of the picked card), or chosen by the controller if nothing in the sentence settles it. In a selector ("a character an opponent controls"), it matches the cards of any opponent. |
-| `eachOpponent` | "each opponent", "your opponents", "opponents": every opponent still in the game. When they act or are affected one at a time, the order is the active player first, then clockwise (CR 402.2). |
+| `eachOpponent` | "each opponent", "your opponents", "opponents": every opponent still in the game. When they act or are affected one at a time, the order is the active player first, then clockwise (CR 402.2). Also The Evil Alliance's X, "the number of opponents you have at the start of the game": every opponent, counted once when the game starts. |
 | `eachPlayer` | "each player", "all players": every player still in the game, active player first, then clockwise (CR 402.2). |
 | `eachOtherPlayer` | "each other player": every player except the controller. |
 | `anyPlayer` | "any player", "a player": whichever player the sentence lets act or pick (for example "Any player may use this ability"). |
@@ -229,6 +250,12 @@ These settle every question from the first pass. Each one is recorded in
     ("both players" on another player's turn) and Meat of the Mountain ("that
     player's opponent"): the acting player picks one of their own opponents,
     and "both players" is the acting player plus that pick.
+  - Data form (all four cards): `opponentFrom: "acting"` on the ability. "That
+    player" is `"acting"` (or `activePlayer` where the player is the one whose
+    turn it is, which is the same player), "their opponent" is plain
+    `"opponent"`, and "both players" is `forEachPlayer { players: "pair" }`.
+    A printing that says "Each player" instead of "Both players" (Obscene
+    Communion, Seed Saga) is `eachPlayer`, not a pair, and needs no change.
   - Mercenary's Creed's "Both players may use this ability" is ruled like The
     Knitting Coalition: the controller and every opponent may use it
     (`selfAndEachOpponent`).

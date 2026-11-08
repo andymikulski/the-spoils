@@ -1,12 +1,12 @@
 {
   "total": {
-    "sites": 362,
-    "clauses": 243
+    "sites": 382,
+    "clauses": 249
   },
   "sets": {
     "1st-edition": {
-      "sites": 7,
-      "clauses": 7,
+      "sites": 6,
+      "clauses": 6,
       "pending": [
         {
           "card": "Degenerate Molestation",
@@ -52,14 +52,6 @@
           "now": "forEachPlayer",
           "meaning": "chosenPair",
           "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "The Billionaire",
-          "id": "ff195e18-a459-4594-b155-8572b869f368",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].canUseOpponentAbilities",
-          "now": "asOpponent",
-          "meaning": "chosenOpponent"
         },
         {
           "card": "Tremor Engine",
@@ -174,6 +166,15 @@
         {
           "card": "Free Trade Agreement",
           "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
+          "clause": "0:rule",
+          "path": "behavior.abilities[0].opponentFrom",
+          "now": null,
+          "meaning": "chosenOpponent",
+          "snapshot": "2be88ca4242c"
+        },
+        {
+          "card": "Free Trade Agreement",
+          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
           "clause": "1:option:OPTION 1",
           "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
           "now": "forEachPlayer",
@@ -229,14 +230,6 @@
           "id": "300ab3d1-3214-4fa5-9000-d657e6e7816d",
           "clause": "0:rule",
           "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "The Billionaire",
-          "id": "fb604d54-0aa5-40b5-9430-9d163e03fcc9",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].canUseOpponentAbilities",
           "now": true,
           "meaning": "chosenOpponent"
         },
@@ -592,6 +585,15 @@
         {
           "card": "Free Trade Agreement",
           "id": "234559f8-329c-4c05-bc09-c34e087a4182",
+          "clause": "0:rule",
+          "path": "behavior.abilities[0].opponentFrom",
+          "now": null,
+          "meaning": "chosenOpponent",
+          "snapshot": "2be88ca4242c"
+        },
+        {
+          "card": "Free Trade Agreement",
+          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
           "clause": "1:option:OPTION 1",
           "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
           "now": "forEachPlayer",
@@ -652,14 +654,6 @@
           "meaning": "chosenPair"
         },
         {
-          "card": "The Billionaire",
-          "id": "2ec131a8-26eb-4dd7-914d-ced1ca9e770c",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].canUseOpponentAbilities",
-          "now": "asOpponent",
-          "meaning": "chosenOpponent"
-        },
-        {
           "card": "Tremor Engine",
           "id": "f58d1a64-ffe6-44e6-a0fb-7fee920c215d",
           "clause": "0:rule",
@@ -679,8 +673,8 @@
       ]
     },
     "seed": {
-      "sites": 14,
-      "clauses": 13,
+      "sites": 15,
+      "clauses": 14,
       "pending": [
         {
           "card": "Forbidden Knowledge",
@@ -694,6 +688,15 @@
           },
           "meaning": "chosenOpponent",
           "snapshot": "ff839d8bc0fc"
+        },
+        {
+          "card": "Obscene Communion",
+          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
+          "clause": "0:rule",
+          "path": "behavior.abilities[0].opponentFrom",
+          "now": null,
+          "meaning": "chosenPair",
+          "snapshot": "2be88ca4242c"
         },
         {
           "card": "Obscene Communion",
@@ -827,8 +830,8 @@
       ]
     },
     "seed-2": {
-      "sites": 8,
-      "clauses": 5,
+      "sites": 26,
+      "clauses": 9,
       "pending": [
         {
           "card": "Hideous Hexapede of Horror",
@@ -842,10 +845,27 @@
         {
           "card": "Meat of the Mountain",
           "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "0:rule",
+          "path": "behavior.abilities[1].opponentFrom",
+          "now": null,
+          "meaning": "chosenOpponent",
+          "snapshot": "2be88ca4242c"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "0:rule",
+          "path": "behavior.abilities[1].effects[0].chooser",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
           "now": "controller",
-          "meaning": "refersBack"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Meat of the Mountain",
@@ -853,7 +873,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
           "now": "self",
-          "meaning": "refersBack"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Meat of the Mountain",
@@ -861,7 +881,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
           "now": "controller",
-          "meaning": "refersBack"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Meat of the Mountain",
@@ -869,6 +889,134 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
           "now": "self",
+          "meaning": "chosenOpponent"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "2:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "3:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "3:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
+          "now": "opponent",
+          "meaning": "refersBack"
+        },
+        {
+          "card": "Meat of the Mountain",
+          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
+          "clause": "4:rule",
+          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
+          "now": "opponent",
           "meaning": "refersBack"
         },
         {
@@ -899,8 +1047,8 @@
       ]
     },
     "seed-3": {
-      "sites": 27,
-      "clauses": 13,
+      "sites": 29,
+      "clauses": 15,
       "pending": [
         {
           "card": "Devilfang Thunderhoof",
@@ -1079,6 +1227,34 @@
           "path": "faction.startingInfluence",
           "now": 25,
           "meaning": "eachOpponent"
+        },
+        {
+          "card": "The Evil Alliance",
+          "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
+          "clause": "1:rule:STARTING RESOURCES",
+          "path": "faction.setup.startingResources.count",
+          "now": 2,
+          "meaning": "eachOpponent"
+        },
+        {
+          "card": "The Evil Alliance",
+          "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
+          "clause": "4:rule:DEVELOP RULE",
+          "path": "faction.turn.develop",
+          "now": {
+            "choices": [
+              {
+                "type": "draw",
+                "count": 1
+              },
+              {
+                "type": "playResource",
+                "count": 1
+              }
+            ]
+          },
+          "meaning": "eachOpponent",
+          "snapshot": "9e9e013258b6"
         },
         {
           "card": "The Knitting Coalition",

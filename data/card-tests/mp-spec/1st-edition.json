@@ -808,7 +808,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -833,8 +833,8 @@
             "path": "behavior.abilities[0].canUseOpponentAbilities",
             "now": "asOpponent",
             "meaning": "chosenOpponent",
-            "edit": true,
-            "why": "A boolean/'asOpponent' flag with no player. Must apply to the one opponent chosen when the effect starts applying (re-chosen if eliminated), so abilities of P2's cards are usable but not those of P3's. Needs a shape that carries the bound opponent."
+            "edit": false,
+            "why": "No data change: the engine reads the flag through the lasting binding (RQ-mp-5, MPQ-P2). A continuous ability with canUseOpponentAbilities is an implicit \"your opponent\"; its controller selects the opponent when the text starts applying (CardInstance.boundOpponents), only that player's cards' abilities are usable, and the controller selects again if that player is eliminated or control changes. The stored value keeps choosing the borrow mode (\"asOpponent\": the opponent pays every cost)."
           }
         ],
         "test3": "P2 and P3 each control a card with an activated ability. P1 plays The Billionaire; P1 chooses the opponent from {P2, P3} when the effect starts applying (the card enters play) and it holds for as long as the effect applies; if that player is eliminated P1 chooses again from those left. Choose P2: P1 may activate P2's card's ability as though P1 were P2 (the effect still happens to P2, \"your opponent\" resolves as P2); P3's card's ability is refused. P2 eliminated: P1 chooses again (only P3 left, so automatic) and P3's cards become usable. The card leaves play: no card of either opponent is usable."

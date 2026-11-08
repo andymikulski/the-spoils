@@ -86,7 +86,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "a player",
@@ -110,39 +110,46 @@
             "why": "Trigger condition (MPQ-P5 binding): 'opponent' matches whichever opponent drew, once per draw event, and that opponent is the drawer ('that player') for the rest of the block. The spelling keeps working."
           },
           {
+            "path": "behavior.abilities[1].opponentFrom",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: a new field on the drawing-opponent ability; there is no opponentFrom yet (the path does not exist). \"acting\" makes the player of the triggering event the acting player: \"that player\" is \"acting\" and \"their opponent\" is plain \"opponent\", the opponent that player selects. The trigger condition keeps eventPlayerIs \"opponent\" as an any-opponent filter."
+          },
+          {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who adds/removes the token is the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" when the drawer is the card's controller: the opponent the controller selects, which is exactly what plain \"opponent\" binds (this ability keeps the default binding, the controller being the acting player)."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" when the drawer is the card's controller: the opponent the controller selects, which is exactly what plain \"opponent\" binds (this ability keeps the default binding, the controller being the acting player)."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" when the drawer is the card's controller: the opponent the controller selects, which is exactly what plain \"opponent\" binds (this ability keeps the default binding, the controller being the acting player)."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" when the drawer is the card's controller: the opponent the controller selects, which is exactly what plain \"opponent\" binds (this ability keeps the default binding, the controller being the acting player)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
@@ -257,7 +264,8 @@
             "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
-        "test3": "P1 controls Meat of the Mountain. P2 draws cards: the trigger fires once for P2 and only P2 (not P1 or P3) is asked whether to add a token, remove a token or do nothing (remove is offered only with at least 1 token). P3's draw fires it for P3 with P3 choosing. P1's draw fires it with P1 choosing. A draw by one player never lets another choose."
+        "test3": "P1 controls Meat of the Mountain. P2 draws cards: the trigger fires once for P2 and only P2 (not P1 or P3) is asked whether to add a token, remove a token or do nothing (remove is offered only with at least 1 token). P3's draw fires it for P3 with P3 choosing. P1's draw fires it with P1 choosing. A draw by one player never lets another choose.",
+        "note": "Two abilities carry this text. abilities[0] is the controller's own draw (eventPlayerIs controller); abilities[1] is another player's draw (eventPlayerIs opponent, an any-opponent filter, MPQ-P5) and is written from that drawer's point of view: opponentFrom \"acting\" makes the drawer the acting player (\"that player\" is \"acting\") and \"opponent\" the opponent the drawer selects (MPQ-P10, MPX-other-pov)."
       },
       {
         "key": "1:rule",
@@ -272,64 +280,64 @@
           {
             "phrase": "opponent",
             "at": 25,
-            "meaning": "refersBack",
-            "note": "MPQ-P10: 'That player's opponent' refers back to 'that player' (the drawer): one of the drawer's own opponents, picked by the drawer (not by the card's controller). When the drawer is P1 it is one of P2 or P3; when the drawer is P2 or P3, the drawer picks among the other players, which can include P1."
+            "meaning": "chosenOpponent",
+            "note": "MPQ-P10: \"That player's opponent\": one of the drawer's own opponents, selected by the drawer (not by the card's controller). When the drawer is P1 it is one of P2 or P3; when the drawer is P2 or P3, the drawer picks among the other players, which can include P1. Plain \"opponent\" under opponentFrom \"acting\"."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": true,
-            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" is one of the drawer's own opponents, selected by the drawer (the acting player), not the card's controller. The stored value assumes the drawer's opponent is the card's controller. With opponentFrom \"acting\" on the ability, plain \"opponent\" is the opponent the drawer selected, so this site becomes \"opponent\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": true,
-            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" is one of the drawer's own opponents, selected by the drawer (the acting player), not the card's controller. The stored value assumes the drawer's opponent is the card's controller. With opponentFrom \"acting\" on the ability, plain \"opponent\" is the opponent the drawer selected, so this site becomes \"opponent\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": true,
-            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" is one of the drawer's own opponents, selected by the drawer (the acting player), not the card's controller. The stored value assumes the drawer's opponent is the card's controller. With opponentFrom \"acting\" on the ability, plain \"opponent\" is the opponent the drawer selected, so this site becomes \"opponent\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": true,
-            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
+            "why": "MPQ-P10 (MPX-other-pov): \"That player's opponent\" is one of the drawer's own opponents, selected by the drawer (the acting player), not the card's controller. The stored value assumes the drawer's opponent is the card's controller. With opponentFrom \"acting\" on the ability, plain \"opponent\" is the opponent the drawer selected, so this site becomes \"opponent\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
@@ -464,7 +472,7 @@
       },
       {
         "key": "2:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "That player",
@@ -478,83 +486,83 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Every 'opponent' site in the drawing-opponent branch of this effect means the drawer (that player), not a chosen opponent."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
@@ -633,7 +641,7 @@
       },
       {
         "key": "3:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "That player",
@@ -647,41 +655,41 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The picker is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The picker is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
@@ -802,7 +810,7 @@
       },
       {
         "key": "4:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "That player",
@@ -816,69 +824,69 @@
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\". A selector's controller / owner cannot read \"acting\": the selector's controller becomes \"any\" and its conditions gain { type: \"targetOwnedBy\", player: \"acting\" } (the drawer's hand)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\". A selector's controller / owner cannot read \"acting\": the selector's controller becomes \"any\" and its conditions gain { type: \"targetOwnedBy\", player: \"acting\" } (the drawer's hand)."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The player who plays the resource, and whose hand it comes from, is the drawer (that player)."
+            "edit": true,
+            "why": "MPQ-P10 (MPX-other-pov): this ability is followed from the drawer's point of view (opponentFrom \"acting\"), where \"opponent\" is the opponent the drawer selects. The stored \"opponent\" means the drawer (\"that player\") here, so it must become \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "refersBack",
+            "meaning": "chosenOpponent",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },

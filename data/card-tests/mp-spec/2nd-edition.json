@@ -1091,7 +1091,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "each player's",
@@ -1107,6 +1107,13 @@
           }
         ],
         "dataChanges": [
+          {
+            "path": "behavior.abilities[0].opponentFrom",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: a new field on the ability; there is no opponentFrom yet (the path does not exist). \"acting\" makes the active player (the player of the turnStarted event) select one of their own opponents for \"their opponent\" and \"both players\"."
+          },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
@@ -1162,7 +1169,8 @@
           }
         ],
         "test3": "P1 controls Free Trade Agreement. At the start of P1's turn P1 chooses one of the four options (OPTION 1-4 are offered); at the start of P2's turn P2 (not P1) is offered the four options and chooses; at the start of P3's turn P3 chooses. Neither of the other two is offered the choice. Exactly one option is applied per turn start.",
-        "test4": "4 seats P1-P4 (P1 controls the card). Start of P4's turn: P4 chooses and P1, P2, P3 do not. With P3 eliminated, P3's turn never happens and no choice is ever offered to P3; the trigger still fires at the starts of P1's, P2's and P4's turns. Seats rotate P1, P2, P3, P4."
+        "test4": "4 seats P1-P4 (P1 controls the card). Start of P4's turn: P4 chooses and P1, P2, P3 do not. With P3 eliminated, P3's turn never happens and no choice is ever offered to P3; the trigger still fires at the starts of P1's, P2's and P4's turns. Seats rotate P1, P2, P3, P4.",
+        "note": "Text from the active player's point of view (MPQ-P10, MPX-other-pov): \"that player\" is the player whose turn is starting (activePlayer, unchanged), \"their opponent\" is the opponent that player selects, and \"both players\" is that player plus that opponent. opponentFrom \"acting\" on the ability makes plain \"opponent\" that selection and lets forEachPlayer { players: \"pair\" } be that player and that opponent; the chooser stays activePlayer."
       },
       {
         "key": "1:option:OPTION 1",
@@ -1208,7 +1216,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "forEachPlayer filtered to 'not the active player' is the two-player proxy for 'their opponent': at 3+ seats it gives every other player a resource play. It must offer exactly the one opponent the active player selects."
+            "why": "A forEachPlayer filtered to \"not the active player\" is the two-player proxy for \"their opponent\": at 3+ seats it gives every other player the effect. With opponentFrom \"acting\" the effect is written once with player \"opponent\", the one opponent the active player selected, in place of the iteration."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
@@ -1299,7 +1307,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "forEachPlayer filtered to 'not the active player' is the two-player proxy for 'their opponent': at 3+ seats it gives every other player a draw. It must offer exactly the one opponent the active player selects."
+            "why": "A forEachPlayer filtered to \"not the active player\" is the two-player proxy for \"their opponent\": at 3+ seats it gives every other player the effect. With opponentFrom \"acting\" the effect is written once with player \"opponent\", the one opponent the active player selected, in place of the iteration."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1377,7 +1385,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "forEachPlayer iterates every player; it must iterate exactly the active player and the opponent the active player selects."
+            "why": "forEachPlayer iterates every player; \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
@@ -1455,7 +1463,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "forEachPlayer iterates every player; it must iterate exactly the active player and the opponent the active player selects."
+            "why": "forEachPlayer iterates every player; \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           }
         ],
         "test3": "It is P3's turn; P3 picked OPTION 4 and selects P1 as the opponent. P3 and P1 each may play up to 2 resources (P3 first); P2 plays none. A second run selects P2: P3 and P2 may play and P1 may not."
@@ -2376,7 +2384,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "your opponent's",
@@ -2400,8 +2408,8 @@
             "path": "behavior.abilities[0].canUseOpponentAbilities",
             "now": true,
             "meaning": "chosenOpponent",
-            "edit": true,
-            "why": "A boolean flag with no player. Must apply to the one opponent chosen when the effect starts applying (re-chosen if eliminated), so abilities of P2's cards are usable but not those of P3's. Needs a shape that carries the bound opponent."
+            "edit": false,
+            "why": "No data change: the engine reads the flag through the lasting binding (RQ-mp-5, MPQ-P2). A continuous ability with canUseOpponentAbilities is an implicit \"your opponent\"; its controller selects the opponent when the text starts applying (CardInstance.boundOpponents), only that player's cards' abilities are usable, and the controller selects again if that player is eliminated or control changes. The stored value keeps choosing the borrow mode (true: the activator pays the numeric cost)."
           }
         ],
         "test3": "P2 and P3 each control a card with an activated ability. P1 plays The Billionaire; P1 chooses the opponent from {P2, P3} when the effect starts applying (the card enters play) and it holds for as long as the effect applies; if that player is eliminated P1 chooses again from those left. Choose P2: P1 may use abilities on P2's cards, paying any numeric cost from P1's own resources, satisfying additional costs as though P2 were using it (e.g. a discard cost is paid from P2's hand), and the effect happens as if P2 used it (\"your opponent\" in it is P2's opponent resolution). P3's cards' abilities are refused. P2 eliminated: P1 chooses again (only P3 left so automatic). Card leaves play: no card of either opponent is usable."

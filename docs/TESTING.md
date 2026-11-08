@@ -173,12 +173,17 @@ What it asserts:
 - **Valid target form**: an `edit: true` site that left its `now` must hold a
   valid form for its meaning (`MEANING_FORMS`, from the plan's "Player
   vocabulary"). It is judged only when `now` is a player word (`"opponent"`,
-  `"self"`, ...) or `forEachPlayer`: `anyOneOpponent` becomes `"opponents"`, a
-  `controllerOf` / `ownerOf` ref or a `chosenPlayer` ref; `eachOpponent` becomes
-  `"opponents"` or the site sits inside `forEachPlayer { players: "opponents" }`;
-  `chosenPair` a `forEachPlayer` with `players: "pair"`; and so on. Sites whose
-  `now` is a flag, restriction name or described new shape are done once they
-  differ. Forms that are not in `src/types` yet are marked planned in the table.
+  `"self"`, ...) or `forEachPlayer`: `anyOneOpponent` becomes `"opponents"` (in a
+  selector, scope or condition), a `controllerOf` / `ownerOf` ref or a
+  `chosenPlayer` ref; `eachOpponent` becomes `"opponents"` (an effect's
+  `player`, a selector or a scope; never a `chooser` or a target's `player`) or
+  the site sits inside `forEachPlayer { players: "opponents" }`; `chosenPair` a
+  `forEachPlayer` with `players: "pair"`; `refersBack` may read `"acting"` in an
+  `opponentFrom: "acting"` ability; and so on. The accepted forms per meaning
+  are listed in `data/card-tests/mp-spec/README.md` ("Target forms the gate
+  accepts"). Sites whose `now` is a flag, restriction name or described new
+  shape are done once they differ, except an `opponentFrom` site, which must
+  hold `"acting"`.
 - **Printings stay in step**: every printing of a rules group holds the
   representative printing's behavior, faction and flip-up data, so a patch
   reaches the reprints in other sets.

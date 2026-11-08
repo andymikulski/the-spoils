@@ -91,13 +91,59 @@ describe("multiplayer vocabulary: the gate catches violations", () => {
     assert.equal(run({ a: {} }, entries).invalid.length, 1, "a site that vanished without a wrapping iteration");
   });
 
-  test("eachOpponent: \"opponents\", or the site moved under forEachPlayer { players: \"opponents\" }", () => {
+  test("eachOpponent: the site moved under forEachPlayer { players: \"opponents\" }, or \"opponents\" where the engine reads it", () => {
     const entries = [site("behavior.a.effects[0].chooser", "opponent", "eachOpponent", true)];
-    assert.deepEqual(run({ a: { effects: [{ chooser: "opponents" }] } }, entries).invalid, []);
     assert.deepEqual(run({ a: { effects: [{ type: "forEachPlayer", players: "opponents", effects: [{ chooser: "self" }] }] } }, entries).invalid, []);
     assert.equal(run({ a: { effects: [{ type: "forEachPlayer", effects: [{ chooser: "self" }] }] } }, entries).invalid.length, 1, "no players");
     assert.equal(run({ a: { effects: [{ type: "forEachPlayer", players: "all", effects: [{ chooser: "self" }] }] } }, entries).invalid.length, 1, "wrong players");
     assert.equal(run({ a: { effects: [{ chooser: "controller" }] } }, entries).invalid.length, 1);
+    assert.equal(run({ a: { effects: [{ chooser: "opponents" }] } }, entries).invalid.length, 1, "the engine refuses chooser: opponents");
+    const effect = [site("behavior.a.effects[0].player", "opponent", "eachOpponent", true)];
+    assert.deepEqual(run({ a: { effects: [{ player: "opponents" }] } }, effect).invalid, [], "an effect's player is expanded per opponent");
+    const selector = [site("behavior.a.effects[0].declaration.selector.controller", "opponent", "eachOpponent", true)];
+    assert.deepEqual(run({ a: { effects: [{ declaration: { selector: { controller: "opponents" } } }] } }, selector).invalid, [], "a selector scope reads any opponent");
+    const target = [site("behavior.a.effects[0].target.player", "opponent", "eachOpponent", true)];
+    assert.equal(run({ a: { effects: [{ target: { type: "factionOf", player: "opponents" } }] } }, target).invalid.length, 1, "factionOf with opponents is refused");
+    const condition = [site("behavior.a.condition.player", "opponent", "eachOpponent", true)];
+    assert.equal(run({ a: { condition: { type: "x", player: "opponents" } } }, condition).invalid.length, 1, "in a condition opponents means some opponent, not each");
+  });
+
+  test("anyOneOpponent reads \"opponents\" in a condition or selector, never as an effect's player", () => {
+    const condition = [site("behavior.a.condition.player", "opponent", "anyOneOpponent", true)];
+    assert.deepEqual(run({ a: { condition: { type: "x", player: "opponents" } } }, condition).invalid, []);
+    const effect = [site("behavior.a.effects[0].player", "opponent", "anyOneOpponent", true)];
+    assert.equal(run({ a: { effects: [{ player: "opponents" }] } }, effect).invalid.length, 1, "it would act on every opponent");
+    assert.deepEqual(run({ a: { effects: [{ player: { type: "chosenPlayer", id: "p" } }] } }, effect).invalid, []);
+  });
+
+  test("refersBack reads \"acting\" only in an opponentFrom \"acting\" ability, and never in a selector", () => {
+    const chooser = [site("behavior.abilities[0].effects[0].chooser", "opponent", "refersBack", true)];
+    const ability = (extra: object, effect: object) => ({ abilities: [{ id: "a", ...extra, effects: [effect] }] });
+    assert.deepEqual(run(ability({ opponentFrom: "acting" }, { chooser: "acting" }), chooser).invalid, []);
+    assert.equal(run(ability({}, { chooser: "acting" }), chooser).invalid.length, 1, "no opponentFrom");
+    assert.equal(run(ability({ opponentFrom: "choose" }, { chooser: "acting" }), chooser).invalid.length, 1, "wrong opponentFrom");
+    const selector = [site("behavior.abilities[0].effects[0].declaration.selector.controller", "opponent", "refersBack", true)];
+    const withSelector = (selectorValue: object) => ability({ opponentFrom: "acting" }, { declaration: { selector: selectorValue } });
+    assert.equal(run(withSelector({ controller: "acting" }), selector).invalid.length, 1, "a selector does not read acting");
+    assert.equal(run(withSelector({ controller: "any" }), selector).invalid.length, 1, "any without the acting condition");
+    assert.deepEqual(run(withSelector({ controller: "any", conditions: [{ type: "targetOwnedBy", player: "acting" }] }), selector).invalid, []);
+  });
+
+  test("an opponentFrom site must hold \"acting\"", () => {
+    const entries = [site("behavior.abilities[0].opponentFrom", null, "chosenOpponent", true)];
+    const first = run({ abilities: [{ id: "a" }] }, entries);
+    assert.deepEqual(pendingPaths(first), ["behavior.abilities[0].opponentFrom"]);
+    assert.deepEqual(pendingPaths(run({ abilities: [{ id: "a", opponentFrom: "acting" }] }, entries, first.worklist)), []);
+    assert.deepEqual(run({ abilities: [{ id: "a", opponentFrom: "acting" }] }, entries, first.worklist).invalid, []);
+    assert.equal(run({ abilities: [{ id: "a", opponentFrom: "choose" }] }, entries, first.worklist).invalid.length, 1);
+  });
+
+  test("chosenOpponent: the block's opponent word, or a chosenPlayer read-back", () => {
+    const entries = [site("behavior.a.effects[0].chooser", "controller", "chosenOpponent", true)];
+    assert.deepEqual(run({ a: { effects: [{ chooser: "opponent" }] } }, entries).invalid, []);
+    assert.deepEqual(run({ a: { effects: [{ chooser: { type: "chosenPlayer", id: "p" } }] } }, entries).invalid, []);
+    assert.equal(run({ a: { effects: [{ chooser: "acting" }] } }, entries).invalid.length, 1);
+    assert.equal(run({ a: { effects: [{ chooser: "opponents" }] } }, entries).invalid.length, 1);
   });
 
   test("a forEachPlayer site stays pending until it gains the players its meaning needs", () => {

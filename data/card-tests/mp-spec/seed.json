@@ -518,7 +518,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "each player's",
@@ -534,6 +534,13 @@
           }
         ],
         "dataChanges": [
+          {
+            "path": "behavior.abilities[0].opponentFrom",
+            "now": null,
+            "meaning": "chosenPair",
+            "edit": true,
+            "why": "MPQ-P10: a new field on the ability; there is no opponentFrom yet (the path does not exist). \"acting\" makes the active player (the player of the turnStarted event) select the one opponent that \"Both players\" pairs them with."
+          },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
@@ -571,7 +578,8 @@
           }
         ],
         "test3": "P1 controls Obscene Communion. At the start of P1's turn, P2's turn and P3's turn the trigger fires; each time the active player (not P1) chooses one of the four options. P1 never chooses on P2's or P3's turn, and P2 never chooses on P3's turn.",
-        "test4": "With P1..P4 the trigger fires at the start of all four turns and the active player of each turn is the one who chooses the option; P4 chooses on P4's turn."
+        "test4": "With P1..P4 the trigger fires at the start of all four turns and the active player of each turn is the one who chooses the option; P4 chooses on P4's turn.",
+        "note": "Text from the active player's point of view (MPQ-P10, MPX-other-pov): \"that player\" is the player whose turn is starting (activePlayer, unchanged) and \"Both players\" is that player plus the opponent that player selects. opponentFrom \"acting\" on the ability makes forEachPlayer { players: \"pair\" } iterate those two; the chooser stays activePlayer. (The Seed Saga printing says \"Each player\" and is eachPlayer: no change.)"
       },
       {
         "key": "1:option:OPTION 1",
@@ -596,7 +604,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "MPQ-P10: forEachPlayer iterates every player. 'Both players' is the active player plus one opponent of the active player, picked by the active player, so it needs a pick step and a two-player pair instead of iteration."
+            "why": "MPQ-P10: forEachPlayer iterates every player. \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
@@ -653,7 +661,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "MPQ-P10: forEachPlayer iterates every player. 'Both players' is the active player plus one opponent of the active player, picked by the active player, so it needs a pick step and a two-player pair instead of iteration."
+            "why": "MPQ-P10: forEachPlayer iterates every player. \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
@@ -704,7 +712,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "MPQ-P10: forEachPlayer iterates every player. 'Both players' is the active player plus one opponent of the active player, picked by the active player, so it needs a pick step and a two-player pair instead of iteration."
+            "why": "MPQ-P10: forEachPlayer iterates every player. \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
@@ -755,7 +763,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "MPQ-P10: forEachPlayer iterates every player. 'Both players' is the active player plus one opponent of the active player, picked by the active player, so it needs a pick step and a two-player pair instead of iteration."
+            "why": "MPQ-P10: forEachPlayer iterates every player. \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
           },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
