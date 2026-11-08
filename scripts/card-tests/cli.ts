@@ -20,6 +20,8 @@
 //                                            (a behavior change the batch's tests can't see).
 //   npm run card-tests -- mp-inventory       regenerate data/card-tests/mp-inventory.{json,md}: every printed player phrase and
 //                                            behavior player word per rules group / clause (joins with clauses.json)
+//   npm run card-tests -- mp-worklist        regenerate data/card-tests/mp-worklist.json: the pending `edit: true` sites of data/card-tests/mp-spec,
+//                                            by set; also lists `edit: true` sites changed to an invalid form and `edit: false` sites that moved
 //   npm run card-tests -- status             fix-phase scoreboard: cards working as printed, broken clauses, findings
 //   npm run card-tests -- findings [--sys N] [--category c] [--batch b] [--open|--fixed] [--card text]
 //                                            list written findings (id, category, SYS ids, status, citing tests)
@@ -44,6 +46,14 @@ import {
   type RulesGroup
 } from "../../src/engine/__tests__/clauses/_manifest.js";
 import { buildMpInventory, renderMpSummary } from "../../src/engine/__tests__/clauses/_mpInventory.js";
+import {
+  WORKLIST_FILE,
+  baselineOf,
+  evaluate,
+  loadSpecSites,
+  readWorklist,
+  renderWorklist
+} from "../../src/engine/__tests__/clauses/_mpWorklist.js";
 import { cardTextToPlain, parseCardText, serializeCardText } from "../../src/cardText.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -200,6 +210,15 @@ function mpInventory(): void {
     `${inventory.length} rules groups, ${clauses.length} clauses, ${clauses.filter((c) => c.mp !== false).length} with mp set, ` +
       `${clauses.filter((c) => c.mp === "quantified").length} quantified. Wrote ${relative(ROOT, json)} and ${relative(ROOT, md)}.`
   );
+}
+
+function mpWorklist(): void {
+  const { worklist, invalid, moved, unknown } = evaluate(loadSpecSites(), baselineOf(readWorklist()));
+  writeFileSync(WORKLIST_FILE, renderWorklist(worklist));
+  for (const [set, work] of Object.entries(worklist.sets)) console.log(`${set.padEnd(32)} ${String(work.sites).padStart(4)} pending sites in ${String(work.clauses).padStart(3)} clauses`);
+  console.log(`${"total".padEnd(32)} ${String(worklist.total.sites).padStart(4)} pending sites in ${String(worklist.total.clauses).padStart(3)} clauses. Wrote ${relative(ROOT, WORKLIST_FILE)}.`);
+  for (const [label, lines] of [["INVALID target form", invalid], ["edit:false site moved", moved], ["unknown spec entry", unknown]] as const)
+    for (const line of lines) console.log(`${label}: ${line}`);
 }
 
 function batches(): void {
@@ -762,6 +781,9 @@ switch (command) {
     break;
   case "mp-inventory":
     mpInventory();
+    break;
+  case "mp-worklist":
+    mpWorklist();
     break;
   case "batches":
     batches();
