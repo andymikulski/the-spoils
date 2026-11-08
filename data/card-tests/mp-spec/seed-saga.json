@@ -36,7 +36,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The picked character (from P3's discard pile) is put into the void. P2's discard pile and the void contents otherwise do not change."
@@ -119,14 +119,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ooooo); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ooooo); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with at least [O][O][O]) starts P1's turn and chooses to draw. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 is offered the optional draw and may accept (draws 1) or decline; P3 is not asked and does not draw. Choose P3: P3 is offered the optional draw and may accept (draws 1) or decline; P2 is not asked and does not draw. If P1 declines the draw, no opponent is offered one."
@@ -162,14 +162,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@ooo); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@ooo); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with at least [O][O][O][O][O]) starts P1's turn. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 chooses a card from their hand and discards it; P3's hand is unchanged. Choose P3: P3 chooses a card from their hand and discards it; P2's hand is unchanged."
@@ -185,28 +185,28 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@ooo); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@ooo); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ooooo); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ooooo); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with at least [O] x7) starts P1's turn and may pick a character (any player's, e.g. a P3 character): it goes to its owner's hand (P3's hand). No opponent selection is offered; P2 and P3 are not asked anything."
@@ -246,8 +246,8 @@
             "path": "behavior.abilities[0].effects[0].effects[0].effects[0].controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The card enters play under the control of the opponent whose hand it came from."
+            "edit": true,
+            "why": "The card enters play under the control of the opponent whose hand it came from. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 plays the card. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 looks at P2's hand only (P3's hand is not shown) and chooses a non-resource card in it; that card enters play under P2's control as a face-down resource; P3's resources and hand are unchanged. Choose P3: P1 looks at P3's hand only (P2's hand is not shown) and chooses a non-resource card in it; that card enters play under P3's control as a face-down resource; P2's resources and hand are unchanged."
@@ -305,21 +305,21 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The picked character and the second character each go on the bottom of their own owner's deck (P2's or P3's, matching the controller who picked); P1 draws a card."
@@ -423,14 +423,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (not during a battle) plays the card and reveals 3 characters with numeric cost 6 or less from P1's hand. The cost asks P1 to pick an opponent: the options are P2 and P3. Choose P3: only P3 is involved afterwards. Playing during a battle is refused."
       },
       {
         "key": "1:rule",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "That opponent",
@@ -444,8 +444,8 @@
             "path": "behavior.abilities[0].effects[1].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The picked opponent chooses one of the revealed characters."
+            "edit": true,
+            "why": "The picked opponent chooses one of the revealed characters. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 picked P3 in the cost and revealed 3 characters. P3 (not P2) chooses one; it enters play under P1's control. Any revealed UNIQUE GLOAMSPIKE and \"demon knight\" cards also enter under P1's control. P2 is never asked. Repeat with P2 picked: P2 chooses, P3 is not asked."
@@ -467,14 +467,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays the card and is offered the three options; only P1 chooses. P2 and P3 are not asked."
@@ -519,14 +519,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 chooses OPTION 2 and picks a character (any player's, e.g. P3's): it gains COVERT this turn. No opponent selection is offered."
@@ -542,14 +542,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 chooses OPTION 3 and picks a character (e.g. P2's): it loses 2 strength this turn. No opponent selection is offered."
@@ -793,28 +793,28 @@
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:option:OPTION 2); any edit is recorded under that clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:option:OPTION 4); any edit is recorded under that clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Obscene Communion. At the start of P2's turn P2 (not P1, not P3) is offered the four options. At the start of P3's turn P3 is offered them. At the start of P1's own turn P1 is. Exactly one player chooses each time.",
@@ -850,28 +850,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:option:OPTION 2); any edit is recorded under that clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:option:OPTION 4); any edit is recorded under that clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P2's turn P2 chooses OPTION 1. In the order P2, P3, P1 each player draws a card, then each puts a card from their own hand on the bottom of their own deck. Every one of the three players does both steps.",
@@ -907,28 +907,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:option:OPTION 4); any edit is recorded under that clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P2's turn P2 chooses OPTION 2. In the order P2, P3, P1 each player puts a resource they control into its owner's hand (a resource P1 controls but P3 owns goes to P3's hand), then each may play a resource.",
@@ -958,28 +958,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:option:OPTION 2); any edit is recorded under that clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:option:OPTION 4); any edit is recorded under that clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P2's turn P2 chooses OPTION 3. P2, then P3, then P1 each discards a card of their choice.",
@@ -1009,28 +1009,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:option:OPTION 2); any edit is recorded under that clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P2's turn P2 chooses OPTION 4. P2, then P3, then P1 each puts a card from their own hand on top of their own deck.",
@@ -1122,35 +1122,35 @@
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Redonkulous picking a character: a P3 character, a P2 character or a P1 character are each legal picks."
@@ -1309,7 +1309,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the end of P1's turn a token goes on the Bladder, P1's faction loses X influence (X = tokens) and P1 may play a resource. Nothing happens at the end of P2's or P3's turn."
@@ -1445,7 +1445,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2 using a character's ability pays 2 extra (also when the ability is used from the discard pile). P3 using a character's ability pays 2 extra. P1 using a character's ability pays nothing extra.",
@@ -1651,7 +1651,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The Aide provides [E] to P1's faction only; P2's and P3's factions gain nothing from it."
@@ -1787,7 +1787,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P1's turn P1 may pay 1 and pick a character an opponent controls: a P2 character can be picked, a P3 character can be picked, a P1 character cannot. Pick P3's character: it gets a token; P2's characters get none. No chooseOpponent step appears."
@@ -1816,7 +1816,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "A P2 character with a token and a P3 character with a token both have no rules text. A P2 character and a P3 character with no token keep their rules text. A P1 character with a token keeps its rules text.",
@@ -1839,7 +1839,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The attached character gains 3 strength and 3 life whoever controls it, and only while attached."
@@ -1966,7 +1966,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 1:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "When Ashara enters play after P1 picked B from P3's discard pile: B enters play under P1's control. P2's discard pile is unchanged."
@@ -1988,21 +1988,21 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays the card and chooses the option; P2 and P3 are not asked."
@@ -2030,15 +2030,15 @@
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The deck that gets shuffled and the discard pile that receives the card are that same opponent's."
+            "edit": true,
+            "why": "The deck that gets shuffled and the discard pile that receives the card are that same opponent's. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 chooses OPTION 1. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 searches P2's deck for a card and puts it into P2's discard pile; P2's deck is shuffled; P3's deck and discard pile are unchanged. Choose P3: P1 searches P3's deck for a card and puts it into P3's discard pile; P3's deck is shuffled; P2's deck and discard pile are unchanged."
@@ -2054,21 +2054,21 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 chooses OPTION 2 and picks a character (any player's): it gains 1 speed this turn. No opponent selection is offered."
@@ -2090,14 +2090,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 chooses OPTION 3 and picks a character that took damage this turn from a P2 card: it is destroyed. A character damaged by a P3 card, or by one of P1's own cards, is destroyed as well. An undamaged character is not."
@@ -2119,35 +2119,35 @@
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[3].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[4].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The attached character gains 2 strength whoever controls it and only while attached."
@@ -2261,21 +2261,21 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule@ddddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P1's turn (with [D][D][D]) P1 may pick a character (any player's): it gains COVERT this turn. P2 and P3 are not asked anything."
@@ -2303,15 +2303,15 @@
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile."
+            "edit": true,
+            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule@ddddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with at least [D] x5) starts P1's turn and chooses to search. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 searches P2's deck for a card and puts it into P2's discard pile; P2's deck is shuffled; P3's deck and discard pile are unchanged. Choose P3: P1 searches P3's deck for a card and puts it into P3's discard pile; P3's deck is shuffled; P2's deck and discard pile are unchanged."
@@ -2340,14 +2340,14 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule@ddddd); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with at least [D] x7) starts P1's turn. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: a card from P2's hand chosen at random is discarded (no choice for P2); P3's hand is unchanged. Choose P3: a card from P3's hand chosen at random is discarded (no choice for P3); P2's hand is unchanged."
@@ -2393,22 +2393,22 @@
             "path": "behavior.abilities[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "That opponent's deck is shuffled."
+            "edit": true,
+            "why": "That opponent's deck is shuffled. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The delayed trigger watches only the opponent whose deck was searched (the choice has to be carried from the first ability to the second)."
+            "edit": true,
+            "why": "The delayed trigger watches only the opponent whose deck was searched (the choice has to be carried from the first ability to the second). The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The voided card is that opponent's card."
+            "edit": true,
+            "why": "The voided card is that opponent's card. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 plays it and chooses P2: P1 searches P2's deck, puts a card named 'Foo' in the void face-down and P2's deck is shuffled. Later P3 deploys a card named 'Foo': nothing happens (P3 is not the opponent searched). Later P2 deploys 'Foo': P1 may reveal the voided 'Foo' and deploy it free (ignoring threshold); if P1 does, P2's card is terminated. Repeat with P3 chosen at the start: only P3's deployments trigger; P2's do not. Playing a resource does not trigger it."
@@ -2459,14 +2459,14 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[3].target.player",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "When Lucky Bastard enters play P1 draws a card. P2 and P3 draw nothing."
@@ -2524,7 +2524,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "When Lucky Charm enters play P1 draws a card. P2 and P3 draw nothing."
@@ -2592,7 +2592,7 @@
           {
             "phrase": "Each of you",
             "at": 187,
-            "meaning": "other",
+            "meaning": "chosenPair",
             "note": "'Each of you': the controller and that one opponent (not the other opponents)."
           },
           {
@@ -2653,7 +2653,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "For the rest of the game P1 may deploy the voided cards as though they were in P1's hand ignoring thresholds; P2 and P3 cannot."
@@ -2697,7 +2697,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The picked card (from P3's discard pile) enters play under P1's control."
@@ -2794,15 +2794,15 @@
             "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The revealed characters are that opponent's."
+            "edit": true,
+            "why": "The revealed characters are that opponent's. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "That opponent puts the remaining cards on the bottom of their deck in any order."
+            "edit": true,
+            "why": "That opponent puts the remaining cards on the bottom of their deck in any order. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 sees Rosy destroyed. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: the top 5 cards of P2's deck are revealed to all players (including P3); P1 may choose a revealed character and put it into play under P1's control; P2 (not P3) puts the remaining cards on the bottom of P2's deck in any order; P3's deck is unchanged. Choose P3: the top 5 cards of P3's deck are revealed to all players (including P2); P1 may choose a revealed character and put it into play under P1's control; P3 (not P2) puts the remaining cards on the bottom of P3's deck in any order; P2's deck is unchanged."
@@ -2836,8 +2836,8 @@
             "path": "behavior.abilities[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile."
+            "edit": true,
+            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 sees the Mugger enter play and chooses to search. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 searches P2's deck for a card and puts it into P2's discard pile; P2's deck is shuffled; P3's deck and discard pile are unchanged. Choose P3: P1 searches P3's deck for a card and puts it into P3's discard pile; P3's deck is shuffled; P2's deck and discard pile are unchanged."
@@ -2901,21 +2901,21 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].costs[0].value.target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].costs[2].effects[0].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With P1's removed card costing 2 and P3's costing 5 (X = 3): the picked P3 character loses 3 life this turn and P1 draws a card. P2's characters are not affected."
@@ -2953,7 +2953,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 reveals cards from the top of P1's deck until a character of numeric cost X or less is found; it enters play under P1's control as a blocking-party member; the other revealed cards are shuffled into P1's deck. P2's and P3's decks are unchanged."
@@ -3058,14 +3058,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Well Laid Plans: the extra cost asks P1 to pick an opponent; the options are P2 and P3 only."
@@ -3086,8 +3086,8 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "Search the picked opponent's deck."
+            "edit": true,
+            "why": "Search the picked opponent's deck. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
@@ -3110,14 +3110,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 searches P1's own deck for a character and reveals it; it enters play under P1's control as a face-down resource. P2's and P3's decks are untouched."
@@ -3139,7 +3139,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Chain Reaction picking a location (any player's, e.g. P2's)."
@@ -3183,14 +3183,14 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].targets[0].count.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1's Slitherform attacks P2 and is blocked by two P2 characters: P1 divides X damage (X = its strength) however P1 wants among the blocking party. P3's characters are not in the blocking party and take none."
@@ -3264,7 +3264,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@rrr); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with [R] x5) starts P1's turn and may pick a character (any player's, e.g. P3's): it is depleted. No opponent selection is offered."
@@ -3280,7 +3280,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule@rrr); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (with [R] x7) starts P1's turn and may pick a character (any player's, e.g. P2's): 2 damage is inflicted to it. No opponent selection is offered."
@@ -3302,28 +3302,28 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Epic Smackdown choosing X = 2 and destroying 2 characters P1 controls (only P1's own characters can be chosen)."
@@ -3423,7 +3423,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "When battle damage would be inflicted to Gideon while he is attacking, the amount is reduced to 0; this holds when he attacks P2 or P3. Damage to him while not attacking is unchanged."
@@ -3507,7 +3507,7 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 pays X = 2 and picks P3's faction as the player. P1 picks 2 characters P3 controls (a P2 character or a P1 character is refused). Picking P2 or P1 as the player is also legal."
@@ -3564,7 +3564,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1's character carries Phalludrix. A P2-controlled effect makes P1 discard 2 cards: P1 may put them back into P1's hand. A P3-controlled effect makes P1 discard cards: same. A P1-controlled effect that makes P1 discard: no option. No chooseOpponent step."
@@ -3580,14 +3580,14 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[3].replaces.by",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "EQUIP is activated by P1 only; P1 pays 3 (0 for an adriel card) and attaches Phalludrix to a character."
@@ -3603,14 +3603,14 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[3].replaces.by",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "The attached character gains 2 strength whoever controls it."
@@ -3639,7 +3639,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P2's turn P1 may restore the attached character; at the start of P3's turn P1 is offered it again; at the start of P1's own turn no offer.",
@@ -3768,7 +3768,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:extraCost); any edit is recorded under that clause."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "5 damage is inflicted to the picked character (the chosen opponent's); if it was destroyed by that damage P1 draws a card. The other opponent's characters are unaffected."
@@ -3812,7 +3812,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1's characters gain 1 strength per token on the Head; P2's and P3's characters gain nothing."

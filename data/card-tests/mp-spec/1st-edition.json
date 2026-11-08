@@ -62,7 +62,7 @@
           },
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -86,19 +86,22 @@
             "path": "behavior.abilities[0].effects[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (hand: playable non-resource cards of cost 1 and 3) plays it. Before targets P1 is offered the opponent choice {P2, P3}. Choose P2 (hand: a cost-2 card; P3 also holds cards). P2 must discard a card (P2 picks it; P3 discards nothing and P3's hand is never touched). P1 may then play a non-resource card with numeric cost X or less for free, X = the cost of the discarded card (cost-2 discard: the cost-1 card is legal, the cost-3 card is refused). Rerun choosing P3: P3 discards, P2's hand untouched."
@@ -119,19 +122,22 @@
             "path": "behavior.abilities[0].effects[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays it choosing P2 (3 cards in P2's hand, 4 in P3's hand). The discard-then-free-play step repeats until P2's hand is empty (3 repetitions, P1 may decline the free play each time or accept). P3's hand is never counted for the repeat condition and keeps its 4 cards. With P2 holding 0 cards at the start nothing repeats. Rerun choosing P3: repeats 4 times."
@@ -336,7 +342,8 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Continues clause 0 (same opponent, no new phrase). P2 discarded a card of numeric cost 5: P1 may play a non-resource card with cost 3 or less for free (half of 5 rounded up); a cost-4 card is refused; P3's cards and hand play no part. If the discarded card had cost 4 the limit is 2."
@@ -360,7 +367,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -562,7 +569,8 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Slingerang enters play with exactly 3 tokens on it at any table size (no player is involved). P1 plays it with P2 and P3 in the game: 3 tokens."

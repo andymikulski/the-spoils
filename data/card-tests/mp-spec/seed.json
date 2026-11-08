@@ -95,28 +95,28 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Cryptic Athenaeum with [O][O][O][O][O]; at the start of P1's turn the trigger resolves. The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 discards a card of P2's choice and P3 discards nothing. Choose P3 (second run): P3 discards a card of P3's choice and P2 discards nothing. Nothing happens at the start of P2's or P3's turn."
@@ -131,28 +131,28 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 controls Cryptic Athenaeum with seven [O]. At the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and put it into its owner's hand: a P3 character goes to P3's hand. No chooseOpponent step appears (the text names no opponent). Nothing fires at the start of P2's or P3's turn."
@@ -279,14 +279,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 plays Essence of Obsession and chooses which option becomes its rules text. Choosing OPTION 2 or OPTION 3 shows no chooseOpponent step; choosing OPTION 1 does (before targets, offering P2 and P3). The option choice itself involves only P1."
@@ -329,14 +329,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 plays Essence of Obsession choosing OPTION 2: P1 picks any character (P1's, P2's or P3's); it gains COVERT this turn. No chooseOpponent step appears and no opponent discards."
@@ -351,14 +351,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 plays Essence of Obsession choosing OPTION 3: P1 picks any character (P1's, P2's or P3's); it loses 2 strength this turn. No chooseOpponent step appears and no opponent discards."
@@ -542,28 +542,28 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:option:OPTION 1); any edit is recorded under that clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:option:OPTION 2); any edit is recorded under that clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:option:OPTION 3); any edit is recorded under that clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:option:OPTION 4); any edit is recorded under that clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Obscene Communion. At the start of P1's turn, P2's turn and P3's turn the trigger fires; each time the active player (not P1) chooses one of the four options. P1 never chooses on P2's or P3's turn, and P2 never chooses on P3's turn.",
@@ -599,28 +599,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "No change: the active player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 1 chosen. P2's turn (P2 is the active player and chose it): P2 picks one of P2's own opponents, P1 or P3 (exactly one pick step, offered to P2, not P1). Pick P3: P2 and P3 each draw a card and each put a card from their hand on the bottom of their deck; P1 draws and puts back nothing. Pick P1: P2 and P1 do it; P3 does not. P1's turn: P1 picks P2 or P3 and P1 plus that pick do it. P3's turn: P3 picks P1 or P2.",
@@ -656,28 +656,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "No change: the active player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 2 chosen. P2's turn: P2 picks P3 (from P1 or P3). P2 and P3 each put a resource they control into its owner's hand and each may play a resource; P1 does neither. A resource P2 controls but P1 owns goes to P1's hand (owner), P1 still does not play. P1's turn: P1 picks P2 or P3 and P1 plus that pick do it. P3's turn: P3 picks P1 or P2.",
@@ -707,28 +707,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "No change: the active player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 3 chosen. P2's turn: P2 picks P3 (from P1 or P3). P2 and P3 each discard a card of their own choice; P1 discards nothing. P2 picks P1 instead: P2 and P1 discard; P3 does not. P1's turn: P1 picks P2 or P3. P3's turn: P3 picks P1 or P2.",
@@ -758,28 +758,28 @@
             "now": "activePlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "No change: the active player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site: this option's data is edited under its own clause."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 4 chosen. P2's turn: P2 picks P3 (from P1 or P3). P2 and P3 each put a card from their hand on top of their own deck; P1 does nothing. P2 picks P1 instead: P2 and P1 do it; P3 does not. P1's turn: P1 picks P2 or P3. P3's turn: P3 picks P1 or P2.",
@@ -934,7 +934,10 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition",
-            "now": "battleRole = defender",
+            "now": {
+              "type": "battleRole",
+              "role": "defender"
+            },
             "meaning": "other",
             "edit": true,
             "why": "The data's 'battleRole = defender' is a two-player stand-in for 'your opponent is attacking'. The condition must be that the other side of the attack (or, if the controller is not a party, an attacking opponent chosen under MP 2) is attacking, not that the controller is the defender."
@@ -979,7 +982,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 plays Caboodling Gladhander and may pick any character (P1's, P2's or P3's) as part of the cost, or none. The pick is independent of the opponent clause (no chooseOpponent step appears in the cost)."
@@ -1056,7 +1059,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Department of Rejections. Paragraph 1 chose P2, paragraph 2 chose P3 (the two choices are independent and each offers P2 and P3 when the static text starts applying). P3 pays 2 more to use a character's ability (including abilities usable while the character is not in play, such as RECUR from the discard pile) and P2 and P1 do not; P2 pays 2 to search its deck and P3 does not."
@@ -1298,7 +1301,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "Attached to a P1 character: it gains 3 strength and 3 life whatever the table size and whoever attacks; P2's and P3's characters are unaffected."
@@ -1345,7 +1348,10 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition",
-            "now": "battleRole = defender",
+            "now": {
+              "type": "battleRole",
+              "role": "defender"
+            },
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "The defender test ('battleRole = defender') stands in for 'your opponent attacks' and only fires for attacks on the controller. MPQ-P5: any opponent's attack triggers it, so the condition must become 'an opponent attacks'."
@@ -1412,35 +1418,35 @@
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[4].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "While it has a token Dauntless Gambler gets +1 strength and +1 life; this does not depend on any other player."
@@ -1461,21 +1467,21 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Damage inflicted by any source; no player filter, so nothing varies with the number of players."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Essence of Deception and chooses an option; only OPTION 1 shows a chooseOpponent step (P2 or P3)."
@@ -1525,21 +1531,21 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Damage inflicted by any source; no player filter, so nothing varies with the number of players."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 2: P1 picks any character (P1's, P2's, P3's); it gains 1 speed this turn. No chooseOpponent step."
@@ -1554,21 +1560,21 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.modes[2].effects[0].condition.by",
             "now": "any",
             "meaning": "anyPlayer",
             "edit": false,
-            "why": "Damage inflicted by any source; no player filter, so nothing varies with the number of players."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "OPTION 3: P1 picks a character that has had damage inflicted this turn by any source (P1's, P2's or P3's cards, or battle damage): it is destroyed. A character with no damage this turn is not destroyed. No chooseOpponent step."
@@ -1632,35 +1638,35 @@
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[3].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[4].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "No change: the revealed or viewed cards are shown to every player."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "If Flailing Knife goes from play to P1's discard pile, P1 may choose a card type and reveals the top card of P1's deck: visible to P1, P2 and P3. On a match it enters play; the top card goes to the bottom. P2's and P3's decks are untouched."
@@ -1778,21 +1784,21 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[2].effects[0].target.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "With [D][D][D], at the start of P1's turn P1 may pick any character (P1's, P2's, P3's); it gains COVERT this turn. Nothing fires at the start of P2's or P3's turn."
@@ -1848,21 +1854,21 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[2].effects[0].target.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With [D]x7, at the start of P1's turn the trigger resolves. The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: a random card from P2's hand is discarded; P3's hand is untouched. Choose P3 (second run): a random card from P3's hand is discarded; P2's hand is untouched. Nothing fires at the start of P2's or P3's turn."
@@ -1883,7 +1889,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "When Lucky Charm enters play under P1, P1 draws a card; P2 and P3 draw nothing."
@@ -1988,7 +1994,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "For the rest of the game P1 may play the four removed cards as though they were in P1's hand, ignoring threshold; P2 and P3 may not play them. Only the four cards removed by Pant Swipe qualify."
@@ -2147,9 +2153,9 @@
           {
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Battle text (MPQ-P8): the other side of the battle, no choice offered (the attacker of the attack the controller defends). The spelling stays; only the engine binding changes."
           }
         ],
         "test3": "P2 attacks P1 with characters A and B. P1 plays Surprise!: no opponent choice is offered; the attacker P2 is 'your opponent'. P2's attacking characters are the only legal picks (X is the picked character's numeric cost); P3's characters and P1's own are not legal picks. A character P3 controls that is attacking P2 in another battle cannot be picked. Separately, P2 attacks P3: P1 (not a party) must choose an opponent under MP 2: choosing P2 allows picking P2's attacking characters, choosing P3 leaves nothing to pick (P3 has no attacking character) so the cost cannot be paid."
@@ -2246,7 +2252,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "With [R]x5, at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and deplete it. Nothing fires at the start of P2's or P3's turn."
@@ -2261,7 +2267,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "With [R]x7, at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it. Nothing fires at the start of P2's or P3's turn."
@@ -2309,7 +2315,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "Gideon attacks P2: battle damage inflicted to Gideon while it is attacking is reduced to 0; the same applies when attacking P3. Not dependent on the table size."
@@ -2434,14 +2440,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[3].replaces.by",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "EQUIP (P1 picks a character; X is 0 for an 'adriel' card, otherwise 3; pays X; attaches). The picked character may be any player's; no opponent choice appears."
@@ -2456,14 +2462,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[3].replaces.by",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "The attached character gains 2 strength whoever controls it."
@@ -2485,14 +2491,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[3].replaces.by",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Trigger at the start of an opponent's turn (the turn-condition is satisfied by choosing the active player): nothing happens at the start of P1's own turn. At the start of P2's turn it fires with P2 as the opponent: P1 may restore the attached character. At the start of P3's turn it fires the same way with P3 as the opponent. It fires once per opponent turn, not once per opponent."
@@ -2596,14 +2602,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 starts with Drowned Catacombs: P1 begins with 1 Deception and 1 staple resource; P2's and P3's factions give them nothing from this rule."
@@ -2618,14 +2624,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "With this faction at seat 1 (P1, going first) the player draws 8 cards; with this faction at seat 2 or 3 (P2 or P3, every seat after the first) the player draws 9 (RQ-mp-4)."
@@ -2640,14 +2646,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "At the start of P1's turn all P1's depleted cards are restored and resources are detached from P1's faction; P2's and P3's depleted cards and attached resources are untouched. P1's rule does not fire at the start of P2's or P3's turn."
@@ -2662,14 +2668,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "At the start of P1's turn P1 draws a card or plays a resource; P2 and P3 do not get this from P1's faction."
@@ -2684,14 +2690,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 pays 3 and draws a card using the faction's DRAW ability (once the ability is available); P2 and P3 cannot use P1's faction ability."
@@ -2706,14 +2712,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "faction.abilities[2].targets[0].selector.conditions[0].value.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 pays 4 and plays a resource using the RESOURCE ability; P2 and P3 cannot use P1's faction ability."

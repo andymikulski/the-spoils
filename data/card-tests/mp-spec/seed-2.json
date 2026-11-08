@@ -149,112 +149,112 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Meat of the Mountain. P2 draws cards: the trigger fires once for P2 and only P2 (not P1 or P3) is asked whether to add a token, remove a token or do nothing (remove is offered only with at least 1 token). P3's draw fires it for P3 with P3 choosing. P1's draw fires it with P1 choosing. A draw by one player never lets another choose."
@@ -310,154 +310,154 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "0 TOKENS reached. P1 draws: P1 picks one opponent (P2 or P3) and that opponent discards a card; the other opponent does not. P2 draws: P2 (not P1) is offered the other players as P2's opponent, P1 or P3; the picked player discards a card (pick P1: P1 discards, P3 does not; pick P3: P3 discards, P1 does not). P3 draws: P3 is offered P1 or P2; the picked player discards. P1 is never asked to pick when P2 or P3 drew."
@@ -535,98 +535,98 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "1 TOKEN reached after P2 drew: P2 (not P1, not P3) may look at the top 2 cards of P2's deck, put 1 into P2's hand and 1 on the bottom of P2's deck; P1's and P3's decks are untouched. Same for P3 drawing, and P1 drawing uses P1's deck."
@@ -662,140 +662,140 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 4:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "2 TOKENS reached after P2 drew: P2 may pick any character or location (P1's, P2's or P3's) and put it into its owner's hand (a P3 character goes to P3's hand); P1 and P3 make no pick. Same with P3 or P1 drawing."
@@ -859,112 +859,112 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "The player the block settled earlier; 'opponent' keeps this meaning."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 0:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared site (unit also used by clause 3:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At least 3 tokens after P2 drew: P2 may play a resource from P2's own hand (not from P1's or P3's); P1 and P3 do not. Same with P3 or P1 drawing."
@@ -1139,7 +1139,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 controls Tumescent Guilt Bladder: at the end of P1's turn (not P2's or P3's) a token is added, P1's faction loses influence equal to the tokens on the card, and P1 may play a resource."
@@ -1251,7 +1251,7 @@
             "now": "useAnyAbility",
             "meaning": "self",
             "edit": false,
-            "why": "Effect type with the controller as chooser: the controller uses an ability. Nothing varies with the number of players."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P1's turn P1 may draw a card; P2 and P3 draw nothing, and nothing fires at the start of their turns."
@@ -1266,7 +1266,7 @@
             "now": "useAnyAbility",
             "meaning": "self",
             "edit": false,
-            "why": "Effect type with the controller as chooser: the controller uses an ability. Nothing varies with the number of players."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P1's turn P1's faction gains 1 influence; P2's and P3's factions do not, and nothing fires at the start of their turns."
@@ -1287,7 +1287,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "PROVIDES: [E] works for P1 whichever table size; P2 and P3 get nothing."
@@ -1407,28 +1407,28 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "No change: 'opponent' keeps this meaning (the block's chosen opponent)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the end of P1's turn the trigger resolves (it is independent of the first clause, which may select a different opponent). The opponent is chosen when the trigger resolves: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 takes control of Ass and P3 does not. Choose P3 (second run): P3 takes control of Ass and P2 does not."
@@ -1510,14 +1510,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[1].effects[3].target.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "When Lucky Bastard enters play P1 draws a card; P2 and P3 draw nothing."
@@ -1660,7 +1660,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "PROVIDES: [D] works for P1 whatever the table size; P2 and P3 get nothing."
@@ -1887,14 +1887,14 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           },
           {
             "path": "behavior.abilities[0].modifiers[3].selector.controller",
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "P1 controls Padamose: all P1's 'sword of great justice' characters gain 1 strength and 1 life; P2's and P3's do not."
@@ -1990,9 +1990,9 @@
           {
             "path": "behavior.abilities[0].effects[0].target.player",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
-            "why": "Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag. Site of the same rules unit; 'opponent' keeps its meaning (the block's chosen opponent). The clause that names the player records it."
           }
         ],
         "test3": "With [R]x4, when Spry Archer attacks P1 may pick any character (P1's, P2's or P3's) and inflict 1 damage to it. No opponent choice appears in this clause."

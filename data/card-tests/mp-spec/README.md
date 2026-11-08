@@ -35,7 +35,7 @@ There is one file per set: `<set id>.json`. Writers work set by set.
         { "path": "<behavior path, from the inventory when it lists one>", "now": "<current value>", "meaning": "<meaning id>", "edit": true, "why": "<optional>" }
       ],
       "test3": "<what a 3-seat test asserts: name P1 (controller), P2 (left of P1), P3; who is affected, who is not, which choices appear>",
-      "test4": "<required when a reading is eachOpponent / eachPlayer / eachOtherPlayer; otherwise omit>",
+      "test4": "<required when a reading is eachOpponent / eachPlayer / eachOtherPlayer / selfAndEachOpponent / eachOpponentOfSelf: what a 4th seat does. Optional elsewhere, when a 4-seat run adds something to test3>",
       "questions": ["<id of an entry in questions[] below>"]
     }
   ],
@@ -67,16 +67,55 @@ There is one file per set: `<set id>.json`. Writers work set by set.
   "Pattern rulings" below), so a new `question` needs a pattern those rulings
   don't cover.
 
+### The `edit` flag
+
+One rule per kind of site, applied the same way in every set. The flag belongs to the data site, not to the wording of the clause.
+
+| Printed phrase (meaning) | Stored value | `edit` |
+|---|---|---|
+| "your opponent" (`chosenOpponent`), the battle opponent (`other`, MPQ-P8), the partner in "both players" (`chosenPair`) | `"opponent"` | `false`: only the engine's binding changes |
+| "an opponent" / "any opponent" / "another player" (`anyOneOpponent`) | `"opponent"` | `true`: the data becomes a pick-derived reference, a player choice with a `chosenPlayer` reference, or `"opponents"` |
+| "each opponent" / "your opponents" / "each other player" (`eachOpponent`, `eachOtherPlayer`) | `"opponent"` | `true`: iteration (`forEachPlayer`) or `"opponents"` |
+| "each player" (`eachPlayer`) | `"all"` / `"any"` | `false`: already every player |
+| "that player" / "that opponent" (`refersBack`) after a pick or after "an opponent" | `"opponent"` | `true`: it becomes the same `chosenPlayer` reference as the pick |
+| "that player" after "your opponent", after the triggering event or after a battle | `"opponent"` | `false` |
+| "its controller" / "that faction's owner" (`cardRelative`) | `"opponent"` | `true`: it becomes `controllerOf` / `ownerOf` of that card |
+| a missing pick, or a flag with no player word (`noResponse`, `canUseOpponentAbilities`) | no player word | `true`, listed with its real path; `now` is the stored value |
+
+- **Trigger conditions (MPQ-P5).** A site that tests the triggering event's
+  player (`eventPlayerIs`, `eventCardControlledBy`) keeps `"opponent"` and is
+  `edit: false` whatever the printed phrase says ("your opponent", "an
+  opponent", "each opponent's turn"): the engine binds the event's player
+  generally for trigger conditions, so the data value stays. The same goes for a
+  "that player" later in that ability that reads the event's player. The `why`
+  names MPQ-P5.
+  - A state or history condition ("lost influence this turn", "inflicted damage
+    this turn", "controls …", "if an opponent played at least 2 cards …") has no
+    event to bind. "Your opponent" there is `false`; "an opponent" and "each
+    opponent" are `true`.
+  - A trigger that names an earlier pick ("when that opponent deploys a card",
+    I Drink Your Milkshake!) is a `refersBack` to that pick and is `true`.
+- **Shared sites.** One data path can serve several clauses (the inventory lists
+  it on each). It is listed on every clause the inventory lists it on, with the
+  same `path`, `now` and `meaning`. The clause whose printed words the site
+  renders (the owner) holds the real `edit` and `why`. The other clauses carry
+  `edit: false` and a `why` starting "Shared with clause <key>: the same data
+  path". Status comes from each clause's own flags, so a clause that only carries
+  copies stays `unchanged`. Where the pick clause and a "that player" clause
+  share a site, the pick clause ("Pick an opponent") owns it.
+- **Readings the inventory did not detect** ("any deck", "opposing", "all
+  factions") use their offset in the printed text.
+
 ## Meanings
 
 | id | Meaning |
 |---|---|
 | `self` | The block's controller (for a selector: cards the controller controls/owns). |
 | `chosenOpponent` | "your opponent": the one opponent the block's controller chooses for this block of rules text (MP 2, MP 4). Every "your opponent" in the same block is the same player. Played cards and activated abilities choose it before targets. Triggers choose it when they resolve. Lasting effects choose it when they start applying, and choose again if that player is eliminated (RQ-mp-5). A condition such as "only during your opponent's turn" is satisfied by choosing the active player. With exactly one opponent left, no choice is offered. |
-| `chosenPair` | "both players": the controller and the block's `chosenOpponent` (MP 3). |
+| `chosenPair` | "both players": the controller and the block's `chosenOpponent` (MP 3). Also "each of you" on Mustache Aficionado. |
 | `selfAndEachOpponent` | "both players" on The Knitting Coalition only (RQ-mp-6). |
 | `eachOpponentOfSelf` | "your opponent" on The Knitting Coalition's HIDDEN INFLUENCE / PULLING STRINGS only (RQ-mp-6): every opponent. |
-| `anyOneOpponent` | "an opponent" / "any opponent": a single opponent, settled by the pick or choice the sentence makes (the controller or owner of the picked card), or chosen by the controller if nothing in the sentence settles it. In a selector ("a character an opponent controls"), it matches the cards of any opponent. |
+| `anyOneOpponent` | "an opponent" / "any opponent" / "another player": a single opponent, settled by the pick or choice the sentence makes (the controller or owner of the picked card), or chosen by the controller if nothing in the sentence settles it. In a selector ("a character an opponent controls"), it matches the cards of any opponent. |
 | `eachOpponent` | "each opponent", "your opponents", "opponents": every opponent still in the game. When they act or are affected one at a time, the order is the active player first, then clockwise (CR 402.2). |
 | `eachPlayer` | "each player", "all players": every player still in the game, active player first, then clockwise (CR 402.2). |
 | `eachOtherPlayer` | "each other player": every player except the controller. |
@@ -85,7 +124,7 @@ There is one file per set: `<set id>.json`. Writers work set by set.
 | `refersBack` | "that opponent", "that player", "their opponent", "the picked player": the player an earlier phrase in the same block settled. Name that phrase in `note`. |
 | `cardRelative` | The controller or owner of a specific card ("its controller", "the owner of that character"). The same at every table size. |
 | `seatRotation` | Emergency Obfuscation's "each player moves 1 seat to the left". |
-| `other` | None of the above. Explain in `note`, and raise a question if it is not obvious. |
+| `other` | None of the above. Explain in `note`, and raise a question if it is not obvious. Used for the MPQ-P8 battle opponent (no one is chosen; the note starts "Battle text (MPQ-P8)"), for reminder text that only explains a cost (Lost on Floor 3), and for MPQ-P11's "each other player". |
 
 A block of rules text is one clause (one printed paragraph or ability). If a
 clause's data is split across several abilities, or one ability spans
@@ -139,12 +178,34 @@ These settle every question from the first pass. Each one is recorded in
     Barbeque, Unloyal Necromorph, Tedious TriAdic Truculence and Recycling
     Scheme Facility.
 - **MPQ-P8, "your opponent" in battle text.** When the block is about a
-  battle the controller is in (Wyrmfang Deathskull, Bask Bomb, Dragon Tank,
+  battle the controller is in (Wyrmfang Deathskull, Bask Bomb,
   Venomous Sacspider, Catastrophic Betrayal, Sarcophyle Matriculation,
   Lugubrian Octopod and the like), "your opponent" is the other side of that
   battle: the defending player if the controller attacks, the attacking player
   if the controller defends. No choice is offered. Outside a battle, MP 2
   applies.
+  - **Scope.** P8 covers a block whose trigger or condition can only come from
+    a battle the controller is in: "if you attack", "when this card is
+    blocked", "destroyed by battle damage", "being attacked", and "If this card
+    inflicts damage to a faction, your opponent …" (Deceptive Muddler,
+    Lugubrian Octopod, Clockman Pickpocket 1:rule, Cute Cutpurse 1:rule). Cards
+    of that shape get the same treatment in every set. The ruling names
+    Lugubrian Octopod, whose text is exactly that shape. The wording agrees:
+    by CR 408.7 a card is the source of damage only when it instructs the damage
+    or, for battle damage, when it assigned it. None of these cards instructs
+    damage (a tactic that inflicts damage is the source itself, not "this
+    card"), so the only way "this card" inflicts damage to a faction is as an
+    attacker's battle damage, and the damaged faction's owner is the defending
+    player. If granted rules text ever made such a card inflict damage outside
+    a battle, P8's own last sentence applies: MP 2, the controller chooses.
+    Opponent words that are not about the battle stay MP 2 or follow their own
+    ruling: Clockman Pickpocket and Cute Cutpurse 0:rule ("While your opponent
+    controls an item") are lasting text under MPQ-P2, and Counter Attack
+    ("Attack your opponent") chooses the opponent it attacks.
+  - **Dragon Tank is not P8.** Its trigger is the start of its controller's
+    turn ("destroy a character your opponent controls"), with no battle, so
+    "your opponent" is the `chosenOpponent` of MP 2 and the entry stays
+    `chosenOpponent` (an earlier draft of this list named it by mistake).
 - **MPQ-P9, "an opponent" with a superlative, total or "all".** One opponent
   is chosen (`anyOneOpponent`), and the superlative, count or "all" is
   evaluated within that opponent's cards only. Affects Subordinate

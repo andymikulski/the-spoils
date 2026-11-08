@@ -101,19 +101,20 @@
           {
             "phrase": "your opponent",
             "at": 43,
-            "meaning": "chosenOpponent"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): \"your opponent\" is the other side of the battle in which the Muddler inflicts the damage: the defending player when the controller attacks. No choice is offered."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
-            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+            "why": "Battle text (MPQ-P8): the other side of the battle, no choice offered. The spelling stays; only the engine binding changes."
           }
         ],
-        "test3": "P1's Muddler inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 as the opponent (the chosen one need not be the damaged player) and picks P2. P2 (not P1, not P3) must put a card from their own hand on top of their own deck; P3's hand and deck are unchanged. Repeat with P1 picking P3: only P3 puts a card on top of their deck."
+        "test3": "P1's Deceptive Muddler attacks P2's faction and inflicts damage to it. No opponent choice is offered: P2, the defending player and the other side of the battle, is the opponent. When the trigger resolves P2 (only) must put a card from P2's hand on top of P2's deck (P2 picks which; nothing happens if P2's hand is empty). Rerun with P1 attacking P3's faction: P3 does this and P2 does nothing. The player who did not take part in the battle is never affected and gets no prompt. Damage to a character does not trigger it."
       }
     ]
   },
@@ -180,7 +181,43 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].of",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "now": "all",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].value.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[3].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "After P1 picked P2 in clause 0: P1 (and only P1) may play the tactics removed from P2's deck as though in P1's hand and without icons for the rest of the game; P2 and P3 cannot play them. Tactics removed from P3's deck by a second Inquisition (P3 picked) are also playable by P1 only."
       }
     ]
@@ -533,15 +570,15 @@
           {
             "phrase": "your opponent",
             "at": 44,
-            "meaning": "chosenOpponent",
-            "note": "battle text (MPQ-P8): the other side of the battle, the attacking player when the Sacspider defends and the defending player when it attacks; no choice is offered"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): the other side of the battle, the attacking player when the Sacspider defends and the defending player when it attacks; no choice is offered"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0].selector.owner",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
             "why": "\"your opponent\" is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
@@ -585,7 +622,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "This clause has no opponent: P1's Anomaly leaves play; P1 may pick any non-resource card in play (P1's, P2's or P3's); it goes to its owner's hand (a P3-owned card P2 controls goes to P3's hand); P1 draws a card. No opponent choice is offered and no other player draws."
       }
     ]
@@ -742,7 +787,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true (no player)",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
@@ -864,7 +909,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true (no player)",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
@@ -882,14 +927,30 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "This clause has no opponent: P1's Morphmajig attacks on the turn it enters play; it is not gated by any other player."
       },
       {
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays a card (non-resource): +1 token. P2 plays a card or P3 plays a card: no token added by this clause. P1 playing a resource: no token."
       },
       {
@@ -918,7 +979,15 @@
         "key": "3:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With 2 tokens the Morphmajig has +2 strength and +2 life; after P2 or P3 causes a token to be removed it has +1/+1; tokens come only from P1's own card plays."
       }
     ]
@@ -1009,6 +1078,20 @@
             "meaning": "chosenOpponent",
             "edit": false,
             "why": "static \"While your opponent controls an item\" (MPQ-P2): the one opponent is chosen when the effect starts applying and kept while it lasts, chosen again if eliminated; only that opponent's items count, even when another opponent is the one attacked; the stored \"opponent\" keeps working: only the engine's binding changes"
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays the Pickpocket and chooses P2 when it enters play. P1 attacks P3 with the Pickpocket as the only member of its party. P2 controls an item, P3 controls none: the Pickpocket cannot be blocked. Variation: P3 controls an item, P2 none: it can be blocked. Variation: not the only party member: it can be blocked. If P2 is eliminated P1 chooses again (only P3 left: no choice offered) and the condition then checks P3."
@@ -1020,26 +1103,34 @@
           {
             "phrase": "your opponent",
             "at": 43,
-            "meaning": "chosenOpponent"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): \"your opponent\" is the other side of the battle in which the Pickpocket inflicts the damage: the defending player when the controller attacks. No choice is offered."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
-            "why": "The chosen opponent picks the item."
+            "why": "Battle text (MPQ-P8): the other side of the battle, no choice offered. The spelling stays; only the engine binding changes."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
             "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Battle text (MPQ-P8): the other side of the battle, no choice offered. The spelling stays; only the engine binding changes."
+          },
+          {
+            "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
+            "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
-        "test3": "The Pickpocket inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the damaged player; this is a separate block from clause 0 so this choice is independent of it). P2 must pick an item P2 controls; if P2 does, P1 takes control of that item and the Pickpocket is destroyed. P3's items are not offered. If P2 controls no item nothing happens and the Pickpocket survives."
+        "test3": "P1's Clockman Pickpocket attacks P2's faction and inflicts damage to it. No opponent choice is offered: P2, the defending player and the other side of the battle, is the opponent. When the trigger resolves P2 (only) must pick an item P2 controls; if P2 does, P1 takes control of that item and destroys Clockman Pickpocket. P2 controls no item: nothing happens and the Pickpocket stays. P3's items cannot be taken. Rerun with P1 attacking P3's faction: the same happens to P3 and P2 is untouched."
       }
     ]
   },
@@ -1099,6 +1190,13 @@
             "meaning": "chosenOpponent",
             "edit": false,
             "why": "static \"While your opponent controls an item\" (MPQ-P2): the one opponent is chosen when the effect starts applying and kept while it lasts, chosen again if eliminated; only that opponent's items count, even when another opponent is the one attacked; the stored \"opponent\" keeps working: only the engine's binding changes"
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays the Cutpurse and chooses P3 when it enters play. P1 attacks P2 with the Cutpurse as the only party member. P3 controls an item, P2 does not: it cannot be blocked. Variation: P2 controls an item, P3 does not: it can be blocked (by P2). If P3 is eliminated P1 chooses again (P2 only: no choice)."
@@ -1110,19 +1208,27 @@
           {
             "phrase": "your opponent",
             "at": 65,
-            "meaning": "chosenOpponent"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): \"your opponent\" is the other side of the battle in which the Cutpurse inflicts the damage: the defending player when the controller attacks. No choice is offered."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
             "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Battle text (MPQ-P8): the other side of the battle, no choice offered. The spelling stays; only the engine binding changes."
+          },
+          {
+            "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
+            "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
-        "test3": "The Cutpurse inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (independent of clause 0). P1 must pick an item P2 controls and destroys it; P3's items are not offered. If P2 controls no item nothing is destroyed."
+        "test3": "P1's Cute Cutpurse attacks P2's faction and inflicts damage to it. No opponent choice is offered: P2, the defending player and the other side of the battle, is the opponent. When the trigger resolves P1 must pick an item P2 controls and destroys it; P3's items are not offered. P2 controls no item: nothing is destroyed. Rerun with P1 attacking P3's faction: P1 picks among P3's items and P2's are not offered."
       }
     ]
   },
@@ -1209,7 +1315,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "\"Your\" is the Moose's current controller. Moose is controlled by P3: at the start of P3's turn P3's faction loses 1 influence; at the start of P1's or P2's turn nobody loses influence from it. After INFILTRATE moves it to P2, P2's faction loses 1 at the start of P2's turn instead."
       },
       {
@@ -1327,15 +1441,15 @@
           {
             "phrase": "your opponent",
             "at": 75,
-            "meaning": "chosenOpponent",
-            "note": "battle text (MPQ-P8): the player who blocked, i.e. the defending player; no choice is offered"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): the player who blocked, i.e. the defending player; no choice is offered"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
             "why": "\"a character your opponent controls that is not in a battle\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; so the second pick is limited to characters the blocking player controls; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
@@ -1569,7 +1683,15 @@
         "key": "2:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "The attached character (P1's) gains 2 strength and 2 life; no other player's characters are affected."
       },
       {
@@ -1579,15 +1701,15 @@
           {
             "phrase": "your opponent's",
             "at": 38,
-            "meaning": "chosenOpponent",
-            "note": "battle text (MPQ-P8): the player whose character blocked the attached character, i.e. the defending player; no choice is offered"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): the player whose character blocked the attached character, i.e. the defending player; no choice is offered"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].player",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
             "why": "\"If the attached character is blocked, your opponent's faction loses 2 influence\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; the stored \"opponent\" keeps working: only the engine's binding changes"
           }
@@ -1598,14 +1720,30 @@
         "key": "4:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "The attached character inflicts damage to P3's faction: P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; no opponent choice is offered."
       },
       {
         "key": "5:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "other",
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "This card would go to P1's discard pile from play: it goes to P1's hand instead (if owned by P1). No other player is involved."
       }
     ]
@@ -1836,15 +1974,15 @@
           {
             "phrase": "your opponent",
             "at": 15,
-            "meaning": "chosenOpponent",
-            "note": "battle text (MPQ-P8): the defending player, the other side of the battle the Deathskull's controller started by attacking; no choice is offered"
+            "meaning": "other",
+            "note": "Battle text (MPQ-P8): the defending player, the other side of the battle the Deathskull's controller started by attacking; no choice is offered"
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
-            "meaning": "chosenOpponent",
+            "meaning": "other",
             "edit": false,
             "why": "\"your opponent must pick any number of characters they control\": your opponent is the other side of the battle (MPQ-P8): the defending player when the controller attacks, the attacking player when the controller defends; no choice is offered; so the chooser is the defending player, who picks from their own characters; the stored \"opponent\" keeps working: only the engine's binding changes"
           }

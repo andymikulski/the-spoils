@@ -32,15 +32,15 @@
             "path": "behavior.abilities[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The discarding player is the opponent picked when the ability is activated; 'opponent' keeps this meaning (the block's chosen opponent)."
+            "edit": true,
+            "why": "The discarding player is the opponent picked when the ability is activated. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": false,
-            "why": "The card is chosen from the picked opponent's hand; 'opponent' keeps this meaning."
+            "edit": true,
+            "why": "The card is chosen from the picked opponent's hand. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
           }
         ],
         "test3": "P1 activates DISRUPT (pays 2, removes a token). The cost asks P1 to pick an opponent; the options are P2 and P3 only. Pick P3: P3 (not P2) chooses a card from their own hand and discards it; P2's hand is unchanged and P2 is never asked anything. Repeat picking P2: P2 discards, P3 untouched. Exactly one opponent selection is offered per activation (no second chooseOpponent step after the pick)."
@@ -261,7 +261,7 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Port Manteau; on entering play only P1 names a subtype (a name choice is offered to P1 only). P2 and P3 are never asked."
@@ -319,14 +319,14 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Vilghame and chose P2 when it entered play (a chooseOpponent step was offered between P2 and P3). P2 must pay 1 more to play a tactic. P3 plays a tactic at its normal cost. P1 plays a tactic at its normal cost. Then P2 is eliminated: P1 chooses again (only P3 is left, so no choice is offered) and P3 now pays 1 more."
       },
       {
         "key": "2:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "each opponent",
@@ -346,8 +346,8 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "eachOpponent",
-            "edit": true,
-            "why": "The trigger must fire for any opponent, with the 'first this turn' count kept per opponent."
+            "edit": false,
+            "why": "The trigger must fire for any opponent, with the 'first this turn' count kept per opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].effects[0].to.player",
@@ -361,7 +361,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Vilghame. On P2's turn P2 plays resource R1: it enters play attached to P2's faction. P2 plays a second resource that turn: it enters normally. During the same turn P3 plays a resource (through an effect): it is P3's first this turn, so it enters attached to P3's faction (the count is per opponent, not shared). P1 plays a resource: it enters normally. Next turn P2's first resource is attached again.",
@@ -384,28 +384,28 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[2].condition.condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].player",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2's and P3's unresolved cards are on the stack with P1's Alarm. When the Alarm resolves, every other unresolved card (P2's and P3's) is terminated."
@@ -506,7 +506,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Shared site (unit also used by clause 1:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 meets [D] and bottoms Community Chest in P1's mulligan and reveals it: P1 draws an extra card at the start of P1's turn. P2's and P3's turn starts give P1 no extra draw. P2's or P3's own mulligan decisions do not matter."
@@ -610,7 +610,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Giada with 2 tokens has 2 less strength and 2 less life than printed; a token added or removed changes it; tokens on other cards do not matter. P2's and P3's cards have no effect on this."
@@ -682,7 +682,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 2:rule); any edit is recorded under that clause."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Battle damage to a P1 character is reduced by 2 (a 3-damage hit deals 1). Battle damage to P2's or P3's characters is not reduced by this clause."
@@ -776,14 +776,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Tournament-legality line: nothing for the engine to do at any table size. P1 may play the faction in a 3-seat game; P2 and P3 unaffected."
@@ -799,14 +799,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (Coalition) starts with 2 Greed resources. P2 and P3 start with their own factions' starting resources, not Greed."
@@ -822,14 +822,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 in seat 1 (going first) draws 3. With P1 in seat 2 or seat 3, P1 draws 4 (every seat after the first uses 'going second')."
@@ -859,14 +859,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 (seat 1, Coalition) vs P2 and P3, whose factions print 7 going first / 8 going second. Opening draws: P1 draws 3 (going first). P2 and P3 both ignore their factions' STARTING DRAW and use the Coalition's: P2 (seat 2, going second) draws 4 and P3 (seat 3, going second, RQ-mp-4) draws 4. With P2 seated first and P1 seat 2: P2 uses 'going first' = 3, P1 and P3 draw 4.",
@@ -897,14 +897,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2's and P3's factions both have a DEVELOP RULE (draw a card or play a resource at the start of their turn). At the start of P2's turn no develop choice is offered to P2; at the start of P3's turn none is offered to P3. P1 (Coalition) has no develop choice either.",
@@ -921,14 +921,14 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "faction.abilities[1].usableBy",
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At the start of P1's turn P1 restores P1's depleted cards and detaches P1's resources from P1's faction. P2's and P3's cards are not restored then."
@@ -957,7 +957,7 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Belongs to clause 7; same set."
+            "why": "Shared with clause 7:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1, P2 and P3 can each use INFLATIONARY FORCES - DRAW: the user pays 2 of their own resources and draws a card for themselves; the ability stays P1's. A user with fewer than 2 ready resources is refused. P2 using it does not make P3 draw.",
@@ -987,7 +987,7 @@
             "now": "anyPlayer",
             "meaning": "selfAndEachOpponent",
             "edit": false,
-            "why": "Shared site (unit also used by clause 6:ability); any edit is recorded under that clause."
+            "why": "Shared with clause 6:ability: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1, P2 and P3 can each use INFLATIONARY FORCES - RESOURCE: the user pays 2 of their own resources and plays a resource from their own hand; refused with fewer than 2 ready resources or no resource in hand. P2's use puts the resource under P2's control, not P1's.",
@@ -1076,7 +1076,7 @@
           {
             "phrase": "another player",
             "at": 57,
-            "meaning": "other",
+            "meaning": "anyOneOpponent",
             "note": "'another player': one player other than the controller, chosen by the controller when activating (not each other player). With a single opponent it is that opponent."
           },
           {

@@ -47,7 +47,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays it and picks a location as the extra cost: a location controlled by P1, P2 or P3 is legal. The opponent word in the data belongs to the damage in clause 1, not to this pick."
@@ -180,7 +180,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Same site as clause 1:rule@rrr, where it is listed."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls RRRRR; at the start of P1's turn P1 may pick any character (P1's own, P2's or P3's) and deplete it. No opponent is picked; the pooled opponent site is clause 1's."
@@ -195,7 +195,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Same site as clause 1:rule@rrr, where it is listed."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls RRRRRRR; at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it. No opponent is picked; the pooled opponent site is clause 1's."
@@ -387,7 +387,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Same site as clause 0:extraCost, where it is listed."
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls characters with speeds 2 and 3 (highest 3). P1 picked P2: P2 puts the top 3 cards of P2's deck into P2's discard pile; P3's deck is unchanged; P1 draws a card. Run B: P1 picked P3: P3's deck loses 3, P2's is unchanged. The data uses the owner of the picked faction, so it already follows the pick."
@@ -495,7 +495,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "a player",
@@ -515,15 +515,15 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "The mg-opp ability's event condition must match a tactic deployed by any opponent (a trigger for each opponent, not one fixed player)."
+            "edit": false,
+            "why": "The mg-opp ability's event condition must match a tactic deployed by any opponent (a trigger for each opponent, not one fixed player). Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].effects[0].target.player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true,
-            "why": "The damage target must be the faction of the player who deployed the tactic, not a fixed opponent."
+            "edit": false,
+            "why": "The damage target must be the faction of the player who deployed the tactic, not a fixed opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "Table: P1 controls Master General, P2 left of P1, P3 after P2. P1 deploys a tactic: P1's faction takes 3 damage (the controller's own ability). P2 deploys a tactic: P2's faction takes 3; P1's and P3's are unchanged. P3 deploys a tactic: P3's faction takes 3; P1's and P2's are unchanged. Deploying a non-tactic damages nobody."
@@ -536,7 +536,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent",
@@ -549,8 +549,8 @@
             "path": "behavior.abilities[0].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "\"When an opponent discards\": the trigger matches a discard by any opponent."
+            "edit": false,
+            "why": "\"When an opponent discards\": the trigger matches a discard by any opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "Mindrender is in P1's hand. P2 discards a card: P1 may reveal Mindrender and deploy it for 1. In a separate run P3 discards a card: the same. P1 discards a card: no trigger. A second trigger in the same turn offers the same option while Mindrender is still in hand."
@@ -638,7 +638,8 @@
             "path": "behavior.abilities[1].replaces.controlledBy",
             "now": "any",
             "meaning": "anyPlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "While Purifier is in play, a card that would go to P1's, P2's or P3's discard pile is voided instead (the data's `any`: every player's cards). After Purifier leaves play, cards go to discard piles again."
@@ -659,14 +660,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 may discard an Arcanist card from P1's own hand to deploy Rantzigite for free. P2's and P3's hands are not offered. The pooled opponent sites belong to clause 1."
@@ -765,35 +766,35 @@
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 picks a character as the extra cost: a character controlled by P1, P2 or P3 is legal. The pooled `opponent` sites in the data belong to clause 1 (\"that character's controller\")."
@@ -973,7 +974,8 @@
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1's Silencer attacks. A character with a token controlled by P2 or by P3 cannot block it; a character with no token (of either) can. The pooled opponent site belongs to clause 1."
@@ -1111,21 +1113,21 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0]",
@@ -1167,14 +1169,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. As clause 1: P1 has picked P2 or P3 before choosing OPTION 1. Both P2 and P3 are legal. Run A (P1 picks P2): P1 picked P2 and chose OPTION 1: P1 looks at P2's hand and chooses a non-resource card; P2 discards it. P3's hand is not viewed and is unchanged. Run B (P1 picks P3): P1 picked P3 and chose OPTION 1: P1 looks at P3's hand and chooses a non-resource card; P3 discards it. P2's hand is not viewed and is unchanged. In both runs the opponent not picked is unaffected."
@@ -1196,7 +1198,7 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
@@ -1256,14 +1258,14 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Same site as clause 1:rule, where it is listed."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].costs",

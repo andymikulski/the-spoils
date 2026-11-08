@@ -7,7 +7,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 controls the Machine. A character enters play under P2's control: P2 (the entering character's controller; not P1, not P3) chooses one of the three options. A character entering under P3: P3 chooses. A character entering under P1: P1 chooses. Exactly one player is offered the choice each time."
       },
       {
@@ -29,14 +37,30 @@
         "key": "3:option:OPTION 2",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "A P3-controlled character enters play and P3 picks OPTION 2: that character is destroyed; P1's and P2's cards are unaffected."
       },
       {
         "key": "4:option:OPTION 3",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "A P2-controlled character enters play and P2 picks OPTION 3: P2's faction (the entering character's controller) loses 3 influence; P1's and P3's factions are unaffected."
       }
     ]
@@ -49,7 +73,29 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.modes[0].costs[0]",
+            "now": "otherPlayerChooses",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Expedition Endeavour and chooses OPTION 2 or OPTION 3: no opponent is chosen and no other player is asked anything or affected. P1 chooses OPTION 1: see 1:option."
       },
       {
@@ -91,14 +137,58 @@
         "key": "2:option:OPTION 2",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.modes[0].costs[0]",
+            "now": "otherPlayerChooses",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays it choosing OPTION 2: P1 chooses X, depletes X characters P1 controls and detaches X+3 of P1's resources. P2 and P3 are not offered a choice and are unaffected."
       },
       {
         "key": "3:option:OPTION 3",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.modes[0].costs[0]",
+            "now": "otherPlayerChooses",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].costs[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays it choosing OPTION 3: P1 picks any character (P1's, P2's or P3's); it gains COVERT this turn. No opponent choice is offered."
       }
     ]
@@ -288,6 +378,27 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "Structural: the data has no \"pick an opponent\" step. The controller must first pick one opponent (part of the cost or effect, as printed) and this site then means that picked player."
+          },
+          {
+            "path": "behavior.abilities[1].condition.conditions[2].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule@oooooo: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 1:rule@oooooo: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 1:rule@oooooo: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1's Agent attacks P3. The trigger resolves: P1 picks an opponent (P2 or P3), say P2 (the pick need not be the attacked player). P2 discards a card of P2's choice from P2's hand; P3 and P1 do not discard. Repeat picking P3: only P3 discards."
@@ -307,8 +418,8 @@
             "path": "behavior.abilities[1].condition.conditions[2].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "Event condition: the damaged faction is controlled by any opponent (no pick, no choice): it fires for damage to any opponent's faction."
+            "edit": false,
+            "why": "Event condition: the damaged faction is controlled by any opponent (no pick, no choice): it fires for damage to any opponent's faction. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
@@ -323,6 +434,20 @@
             "meaning": "cardRelative",
             "edit": true,
             "why": "Same player: the damaged faction's owner."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With 6 icons met: P1's Agent inflicts battle damage to P3's faction: P3 (that faction's owner; not P2, not P1) discards a card. Damage to P2's faction instead: P2 discards. Damage that is not battle damage, or with fewer than 6 icons: nothing. No opponent choice is offered for this clause."
@@ -771,7 +896,15 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0]",
+            "now": "anyPlayerMayPay",
+            "meaning": "anyPlayer",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1's Facility enters play: P1 (only P1) may draw a card. P2 and P3 draw nothing and are not offered a choice."
       },
       {
@@ -1021,7 +1154,15 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1's Stuttershy would be destroyed (by a P2 or P3 effect): it is flipped face down under its owner's control instead. No other player is asked or affected."
       },
       {
@@ -1364,14 +1505,30 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[1].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Flaming Cube: it enters play with 3 tokens regardless of the number of players or opponents."
       },
       {
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[1].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "At the start of P1's turn put a token on the Cube; at the start of P2's or P3's turn no token is put on it by this clause."
       },
       {
@@ -1400,7 +1557,15 @@
         "key": "3:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[1].player",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "The Cube has no tokens (a P2 player used the control ability to remove the last): the Cube is destroyed; no player's faction loses influence from this clause."
       },
       {
@@ -1467,7 +1632,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent's",
@@ -1487,8 +1652,8 @@
             "path": "behavior.abilities[0].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "Event condition: the player whose turn is ending is any opponent (any player other than the controller); no pick. Fires at the end of each opponent's turn."
+            "edit": false,
+            "why": "Event condition: the player whose turn is ending is any opponent (any player other than the controller); no pick. Fires at the end of each opponent's turn. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "P1 controls the Shade. At the end of P2's turn and at the end of P3's turn the trigger fires (the Shade may be removed from the game, then P1 chooses a player). It does not fire at the end of P1's own turn. P1 may choose P1, P2 or P3 as the player (P3's deck searched if chosen, P3's deck shuffled; P2's deck untouched). The found UNIQUE character enters under P1's control."

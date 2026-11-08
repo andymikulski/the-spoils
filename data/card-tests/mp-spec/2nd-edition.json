@@ -157,23 +157,26 @@
             "path": "behavior.abilities[0].effects[0].condition.left.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -880,7 +883,8 @@
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "No player phrase (the opponent site listed belongs to clause 0). When it leaves play P1 may pick a non-resource card anywhere in play (P1's, P2's or P3's) and put it into its owner's hand, then P1 draws a card; a resource is refused; declining the pick still draws. No opponent choice is offered by this clause."
@@ -900,13 +904,15 @@
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "One ability spans clauses 0-4 and is one block: P1 plays it. Before targets P1 is offered the opponent choice {P2, P3}. The choice is made once for the whole card. P1 may remove tokens only from cards P1 controls (tokens on P2's or P3's cards are not available). P1 with 6 tokens may spend them over several options in the same resolution."
@@ -920,13 +926,15 @@
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "1 TOKEN: P1 picks any character in play (P1's, P2's or P3's) and it takes 1 damage. 0 tokens spent: cannot use. Not tied to the chosen opponent."
@@ -940,13 +948,15 @@
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "2 TOKENS: P1 draws a card per use (spend 4 tokens: draws 2). No other player is involved."
@@ -987,13 +997,15 @@
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].chooser",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "3 TOKENS: P1 searches own deck for a card, puts it in hand and shuffles. No other player is involved; P2 and P3 decks untouched."
@@ -1017,7 +1029,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -1099,7 +1111,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 1:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
@@ -1113,21 +1125,21 @@
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 3, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 4:option:OPTION 4, where it is listed."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Free Trade Agreement. At the start of P1's turn P1 chooses one of the four options (OPTION 1-4 are offered); at the start of P2's turn P2 (not P1) is offered the four options and chooses; at the start of P3's turn P3 chooses. Neither of the other two is offered the choice. Exactly one option is applied per turn start.",
@@ -1155,19 +1167,22 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
@@ -1181,28 +1196,28 @@
             "now": "forEachPlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "forEachPlayer filtered to the active player: 'that player' may play a resource. Correct at any table size."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 3, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 4:option:OPTION 4, where it is listed."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P2's turn; P2 picked OPTION 1. P2 may draw a card; P2 selects P3 as \"their opponent\"; P3 (not P1) may play a resource from hand. A second run selects P1: P1 may play a resource and P3 may not. P2 is the only one who draws."
@@ -1229,33 +1244,36 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 1:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "forEachPlayer filtered to the active player: 'that player' may play a resource. Correct at any table size."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
@@ -1269,14 +1287,14 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 3, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 4:option:OPTION 4, where it is listed."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P3's turn; P3 picked OPTION 2. P3 may play a resource; P3 selects P1 as \"their opponent\"; P1 (not P2) may draw a card. A second run selects P2: P2 may draw and P1 may not."
@@ -1297,40 +1315,43 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 1:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "forEachPlayer filtered to the active player: 'that player' may play a resource. Correct at any table size."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1344,7 +1365,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 4:option:OPTION 4, where it is listed."
+            "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P2's turn; P2 picked OPTION 3 and selects P3 as the opponent. P2 and P3 each may draw up to 2 cards (P2 first as the active player); P1 draws nothing. A second run selects P1: P2 and P1 may draw and P3 may not."
@@ -1365,47 +1386,50 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
             "meaning": "activePlayer",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 1:option:OPTION 1, where it is listed."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
             "meaning": "activePlayer",
             "edit": false,
-            "why": "forEachPlayer filtered to the active player: 'that player' may play a resource. Correct at any table size."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Same site as clause 2:option:OPTION 2, where it is listed."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": false,
-            "why": "Same site as clause 3:option:OPTION 3, where it is listed."
+            "why": "Shared with clause 3:option:OPTION 3: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
@@ -1490,7 +1514,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -1694,7 +1718,7 @@
         "dataChanges": [
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -1717,7 +1741,8 @@
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "No player phrase (the opponent site listed belongs to clause 2). P1's Guardforce Morphmajig can attack the turn it enters play, at P2's or P3's faction alike."
@@ -1731,7 +1756,8 @@
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays a card (non-resource): +1 token on Guardforce Morphmajig. A resource play by P1: no token. A card played by P2 or P3 never adds a token (the add side is the controller only)."
@@ -1767,7 +1793,8 @@
             "path": "behavior.abilities[1].condition.player",
             "now": "opponent",
             "meaning": "chosenOpponent",
-            "edit": false
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "Morphmajig with 3 tokens has +3 strength and +3 life over its printed stats; tokens added by P1's plays or removed by P2's/P3's plays change the bonus immediately. Independent of seat count."
@@ -1948,14 +1975,14 @@
             "now": "opponent",
             "meaning": "other",
             "edit": false,
-            "why": "Belongs to clause 1 (battle text, MPQ-P8)."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "other",
             "edit": false,
-            "why": "Belongs to clause 1 (battle text, MPQ-P8)."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays it; P1 chooses the opponent from {P2, P3} when the effect starts applying (the card enters play) and it holds for as long as the effect applies; if that player is eliminated P1 chooses again from those left. Choose P2: while P2 controls an item it cannot be blocked (even when attacking P3's faction); with P2 having no item it can be blocked even if P3 controls items. Rerun choosing P3. Chosen P2 eliminated: P1 chooses again."
@@ -1977,7 +2004,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Belongs to clause 0 (conditional lasting text, MPQ-P2)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
@@ -2026,7 +2053,7 @@
             "now": "opponent",
             "meaning": "other",
             "edit": false,
-            "why": "Belongs to clause 1 (battle text, MPQ-P8)."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays it; P1 chooses the opponent from {P2, P3} when the effect starts applying (the card enters play) and it holds for as long as the effect applies; if that player is eliminated P1 chooses again from those left. Choose P2: cannot be blocked while P2 controls an item (also when attacking P3's faction); blockable if only P3 controls items. Rerun choosing P3. Chosen P2 eliminated: P1 chooses again."
@@ -2048,7 +2075,7 @@
             "now": "opponent",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Belongs to clause 0 (conditional lasting text, MPQ-P2)."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
@@ -2352,7 +2379,7 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].canUseOpponentAbilities",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A boolean flag with no player. Must apply to the one opponent chosen when the effect starts applying (re-chosen if eliminated), so abilities of P2's cards are usable but not those of P3's. Needs a shape that carries the bound opponent."
@@ -2374,7 +2401,7 @@
             "phrase": "your opponent",
             "at": 52,
             "meaning": "chosenOpponent",
-            "note": "Trigger: chosen when it resolves; the 'may pick' and the count-zero fallback both use that opponent."
+            "note": "Not battle text (MPQ-P8 does not apply): the trigger is the start of the controller's turn, so \"your opponent\" is the one opponent the controller chooses when the trigger resolves (MP 2)."
           }
         ],
         "dataChanges": [
@@ -2451,7 +2478,7 @@
           },
           {
             "path": "behavior.noResponse",
-            "now": "true",
+            "now": true,
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "A card-wide boolean with no player. 'Cannot respond' must bind to the block's chosen opponent only: the other opponents are still offered the response window (RQ-mp-1). Needs a shape that names the chosen opponent (a player-scoped no-response restriction), not a plain boolean."
@@ -2469,7 +2496,7 @@
             "now": "forEachPlayer",
             "meaning": "eachPlayer",
             "edit": false,
-            "why": "Implements 'tactics cannot be played' (clause 1): every player, correct at any table size."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "No player phrase. forEachPlayer here means every player: 'tactics cannot be played' applies to all of them. P3 plays a tactic; P1 plays Tactician Vacation in response (P1 chooses the opponent {P2, P3} for clause 0 only): the responded-to tactic is terminated. For the rest of the turn P1, P2 and P3 all are refused when playing a tactic. Played other than in response: no terminate, tactics still barred for everyone. Next turn tactics can be played again."

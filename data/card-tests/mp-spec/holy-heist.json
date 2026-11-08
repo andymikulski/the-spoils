@@ -7,14 +7,30 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P2 deploys a character (a non-tactic card) while P3 is also in the game. P1 may deploy Additional Tribute in response. The same works in response to a non-tactic card P3 deploys. It is refused in response to a tactic P2 or P3 deploys, and when no card is being deployed. P1 cannot respond to P1's own deployment."
       },
       {
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With P1 controlling [V][V][V], when Additional Tribute resolves P1 may look at the top card of P1's own deck (only P1 sees it) and may put it on the bottom; P2 and P3 see nothing. Without the threshold the look is not offered. This does not depend on the other players."
       },
       {
@@ -47,7 +63,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent",
@@ -61,8 +77,8 @@
             "path": "behavior.abilities[0].condition.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "\"When an opponent discards\": the trigger fires for any opponent's discard (matching any opponent), not only for a chosen opponent"
+            "edit": false,
+            "why": "\"When an opponent discards\": the trigger fires for any opponent's discard (matching any opponent), not only for a chosen opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "P2 discards 2 cards (for example to a discard effect): Bewilderbeast gains 2 strength and 2 life this turn. Then P3 discards 1 card the same turn: it gains another 1/1 (3/3 in total). A discard by P1 does not trigger it. At end of turn the bonuses end."
@@ -139,7 +155,15 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Offering of False Friendship picking a character: any character in play can be picked (P1's own, P2's or P3's). No chooseOpponent step appears at play; the opponents' offer comes at resolution."
       },
       {
@@ -188,6 +212,13 @@
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "the pick of an opponent is already a faction pick limited to opponents; the selector must match any opponent's faction, so both P2 and P3 are offered"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1]",
+            "now": "separateIntoPiles",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Profane Proposal: the opponent pick offers P2's and P3's factions (not P1's). P1 picks P3. No further opponent step appears."
@@ -210,6 +241,13 @@
             "meaning": "refersBack",
             "edit": false,
             "why": "\"That player separates those cards into two piles\": the separating player is the opponent picked in the extra cost; the step names no player and the pick on targets[0] settles who it is"
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With P3 picked: P1 searches P1's own deck for 5 cards with different names and reveals them (to all players). P3 (not P2) separates them into two piles. P1 puts one pile into P1's hand and shuffles the other into P1's deck. P2 takes no part and nothing of P2's changes. A second run picking P2 has P2 separating the piles."
@@ -250,7 +288,22 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Thabbashite Barbeque picking a non-resource card: any non-resource card in play can be picked (P1's, P2's or P3's, never a resource or a faction). No chooseOpponent step appears at play."
       },
       {
@@ -328,7 +381,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent's",
@@ -348,29 +401,29 @@
             "path": "behavior.abilities[0].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "\"enters play under an opponent's control\": the trigger fires for a card entering play under any opponent's control"
+            "edit": false,
+            "why": "\"enters play under an opponent's control\": the trigger fires for a card entering play under any opponent's control. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true,
-            "why": "\"that player\": the opponent under whose control the card entered, not a chosen opponent"
+            "edit": false,
+            "why": "\"that player\": the opponent under whose control the card entered, not a chosen opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "same condition on the enters-play trigger: any opponent"
+            "edit": false,
+            "why": "same condition on the enters-play trigger: any opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true,
-            "why": "\"that player\": the opponent under whose control the card entered"
+            "edit": false,
+            "why": "\"that player\": the opponent under whose control the card entered. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "P2 plays a resource providing [V]: Akashic Coin triggers for P1 and P2 (not P1, not P3) may pay 2. If P2 does not pay, P1 may have P1's faction lose 1 influence and, if P1 does, draws a card; otherwise Akashic Coin is flipped face-down under its owner's control. Later P3 plays such a card: P3 is the one asked. P1's own such card does not trigger it, and neither does a card entering without providing [V]."
@@ -503,7 +556,15 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].modifiers[0].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule@eeeeee: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With 0v3rw0rk3d 31f in play, abilities on locations cannot be used: a location of P1, a location of P2 and a location of P3 each refuse their activated abilities. This restriction covers every player's locations at any table size."
       },
       {
@@ -537,7 +598,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "each opponent's",
@@ -551,8 +612,8 @@
             "path": "behavior.abilities[0].condition.player",
             "now": "opponent",
             "meaning": "eachOpponent",
-            "edit": true,
-            "why": "the trigger fires at the start of every opponent's turn, each time"
+            "edit": false,
+            "why": "the trigger fires at the start of every opponent's turn, each time. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "P1's Lunk Nut is depleted when P2's turn starts: it is restored. P1 depletes it again during P2's turn; when P3's turn starts it is restored again. At the start of P1's own turn it does not trigger (P1's RESTORE RULE restores it as usual).",
@@ -582,6 +643,13 @@
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "the pick: a faction pick limited to opponents (\"Pick an opponent\" in the extra cost), so P2 and P3 are both offered"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Subdermal Micromajig: the opponent pick offers P2 and P3 and P1 destroys a Micromajig token P1 controls as part of the cost. P1 picks P2. The cost needs a Micromajig token P1 controls (refused without one)."
@@ -610,6 +678,13 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "second sentence: \"an attacking character that player controls\" is a character controlled by the picked opponent, not by any opponent and not by a separately chosen one"
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2 attacks P1's faction with a character. P1 picks P2: the attacking character P2 controls is destroyed and P2 (not P3) puts a Micromajig token into play under P2's control. Second run: P2's character is the only attacker and P1 picks P3 instead: P2's character is not a legal target (it is not controlled by the picked player) and survives, and P3 still puts a Micromajig token into play. P2's and P3's other cards are untouched."
@@ -638,6 +713,20 @@
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "the pick: a faction pick limited to opponents (\"Pick an opponent\" in the extra cost), so P2 and P3 are both offered"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays Cheats, the Dirty Rotten: the opponent pick offers P2 and P3. P1 picks P3."
@@ -673,6 +762,13 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "the deck shuffled afterwards is the picked opponent's"
+          },
+          {
+            "path": "behavior.onPlay.targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With P3 picked: when Cheats enters play P1 searches P3's deck (not P2's) for up to 4 non-resource cards with different names, reveals them and puts them into the void; 2 of them at random go to P3's discard pile; P3's deck is shuffled and P2's deck is untouched. For the rest of the game P1 may deploy the voided cards as if in P1's hand, ignoring their thresholds. A second run picking P2 affects only P2's deck."
@@ -694,6 +790,20 @@
             "meaning": "anyPlayer",
             "edit": false,
             "why": "\"Pick a card in a discard pile\": any player's discard pile; the stored \"any\" owner already allows every pile"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[2].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[3].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 deploys Chum and picks a card in a discard pile as its extra cost: cards in P1's, P2's and P3's discard piles are all legal. X is the picked card's numeric cost. No chooseOpponent step appears at play."
@@ -723,6 +833,13 @@
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "the deck shuffled after the search must be the same chosen opponent's"
+          },
+          {
+            "path": "behavior.onPlay.targets[0].selector.owner",
+            "now": "any",
+            "meaning": "anyPlayer",
+            "edit": false,
+            "why": "Shared with clause 1:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "When Chum enters play (extra cost: a card from P2's discard pile with numeric cost 3), that card is removed from the game. P1 is offered P2 and P3, picks P3 and searches P3's deck (not P2's) for a card with numeric cost 3 or less and puts it into P3's discard pile; P3's deck is shuffled and P2's deck is untouched. If no card was picked as part of the cost nothing is removed or searched."
@@ -758,6 +875,20 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "same on the enters-play trigger: the picked opponent's deck"
+          },
+          {
+            "path": "behavior.abilities[2].modifiers[0].value.selector.owner",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[2].modifiers[1].value.selector.owner",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 plays a resource providing [V]: Craniata Nester triggers and P1 may pick an opponent (P2 and P3 are offered). P1 picks P3: the top card of P3's deck goes to P3's discard pile; P2's deck is unchanged. P1 may decline and nothing happens. A resource providing [V] entering under P2's control does not trigger it."
@@ -787,6 +918,20 @@
             "meaning": "eachOpponent",
             "edit": true,
             "why": "\"each opponent's discard pile\": the character cards of every opponent's pile are counted together"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2's discard pile holds 2 character cards and a tactic; P3's holds 1 character card; P1's own holds 3 character cards. Craniata Nester gains 1 strength and 1 life for each character card in P2's and P3's piles: +3 / +3. The tactic and P1's own character cards do not count. When a character card leaves P3's pile it drops to +2 / +2.",
@@ -886,7 +1031,15 @@
             "note": "\"Pick X players\": X different players (Q20: two picks are two different targets), any players still in the game, the controller included; X from 0 up to the number of players in the game"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With 3 players, X can be chosen from 0 to 3. With X=2, P1 picks two different players among P1, P2 and P3 (for example P2 and P3, or P1 and P3); picking the same player twice is refused. With X=3 all three are picked. No chooseOpponent step appears."
       },
       {
@@ -1016,7 +1169,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent's",
@@ -1030,15 +1183,15 @@
             "path": "behavior.abilities[0].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "\"enters play under an opponent's control\": the trigger fires for a card entering under any opponent's control"
+            "edit": false,
+            "why": "\"enters play under an opponent's control\": the trigger fires for a card entering under any opponent's control. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           },
           {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "same condition on the enters-play trigger: any opponent"
+            "edit": false,
+            "why": "same condition on the enters-play trigger: any opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
           }
         ],
         "test3": "P2 plays a resource providing [V]: Akashic Notes triggers for P1, who may pay 1 and, if P1 does, plays a face-down resource attached to P1's faction; otherwise it is flipped face-down under its owner's control. P3 plays such a card later: it triggers again. P1's own such card does not trigger it. P2 and P3 are never asked anything."
@@ -1082,7 +1235,15 @@
             "note": "the opponent picked in the extra cost"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With P3 picked: P3 (not P2) names 2 non-Universal trades, and Universal is refused as a name. P1 searches P1's own deck for a character that has one of the named trades, reveals it and puts it into P1's hand, shuffles, and draws a card. P2 is never asked to name anything."
       }
     ]
@@ -1109,6 +1270,20 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "the count compared is the picked player's resources; the data has no pick of a player and compares the count of an unnamed \"opponent\"; \"Pick a player that controls more resources than you\" is a player pick whose legal choices are the players who control more resources than the controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls 3 resources, P2 controls 5 and P3 controls 2. P1 plays Blitz of Destruction: the pick offers only P2 (P3 and P1 do not control more than P1). If P3 had 4 resources, P2 and P3 would both be offered. If no player controls more than P1 the card cannot be played. No chooseOpponent step appears."
@@ -1138,6 +1313,13 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "the face-down resource is the picked player's; the data has no pick of a player and compares the count of an unnamed \"opponent\"; \"Pick a player that controls more resources than you\" is a player pick whose legal choices are the players who control more resources than the controller"
+          },
+          {
+            "path": "behavior.abilities[0].condition.left.selector.owner",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With P2 picked: P2 (not P3) chooses and destroys a face-down resource P2 controls; P3's resources are unchanged. With P3 picked (P3 controlling more resources than P1): only P3 chooses and destroys. If the picked player controls no face-down resource, nothing is destroyed."
@@ -1167,7 +1349,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.controller",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With P2's attacking character picked (P2 attacking P1's faction, P3 also in the game): it takes 1 damage and is removed from the battle, and P1 (not P2, not P3) draws a card. P3's characters and P2's other attackers are unaffected. The same works if P3 is the one attacking P1's faction."
       }
     ]
@@ -1180,14 +1370,30 @@
         "key": "1:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 3:rule@rrrrrr: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 cannot deploy Leaping Sarume during a battle, including a battle between P2 and P3 that P1 is not in; outside a battle it can be deployed."
       },
       {
         "key": "2:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 3:rule@rrrrrr: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "When Leaping Sarume enters play, 1 damage is inflicted to all characters: P1's, P2's and P3's characters each take 1 damage, whatever any opponent choice elsewhere."
       },
       {
@@ -1220,7 +1426,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent's",
@@ -1234,8 +1440,15 @@
             "path": "behavior.abilities[0].condition.conditions[1].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "first paragraph: the gate trigger fires for a character entering under any opponent's control; \"they\" is that opponent"
+            "edit": false,
+            "why": "first paragraph: the gate trigger fires for a character entering under any opponent's control; \"they\" is that opponent. Event-bound (MPQ-P5): the stored \"opponent\" keeps working, because the engine binds the triggering event's player; no chooseOpponent step and no data change."
+          },
+          {
+            "path": "behavior.abilities[1].condition.conditions[3].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 2:rule@rrrrrr: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P2 deploys a non-token character: P2 (not P1, not P3) may pay 1; if P2 does not, the character goes to its owner's discard pile instead of entering play. The same for a character P3 deploys (P3 is asked). P1's own characters and token characters (a Micromajig token) are not affected."
@@ -1258,6 +1471,13 @@
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "second paragraph: the trigger fires for a character any opponent owns going to its owner's discard pile"
+          },
+          {
+            "path": "behavior.abilities[0].condition.conditions[1].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With [R] x6 available: a character P2 owns is put into P2's discard pile from anywhere (for example destroyed while P3 controls it). P1 may pay 1 and, if P1 does, picks any faction (P1's, P2's or P3's are all legal) and it takes 1 damage. A character P3 owns going to P3's discard pile triggers it likewise. A character P1 owns going to P1's discard pile (even from under P2's control) does not."
@@ -1312,7 +1532,15 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Suicide Smash picking a character P1 controls (X is its strength) and destroying it, then picking a location (any player's). Only P1's own characters can be picked for the sacrifice; no chooseOpponent step appears at play."
       },
       {

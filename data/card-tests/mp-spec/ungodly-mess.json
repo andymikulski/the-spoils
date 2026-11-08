@@ -68,7 +68,22 @@
         "key": "2:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.onPlay.effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:extraCost: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.onPlay.effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With the Bonnet attached to P1's character (opponent picked in the cost: P2), P1's character has COVERT: when it attacks P2's faction, P2 cannot block it with a non-COVERT character. The same holds in a second run where P3 was the picked opponent (COVERT does not depend on the pick). P2's and P3's own characters do not gain COVERT."
       }
     ]
@@ -109,7 +124,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].variables.x.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With P2 picked (X=1): a P3 character with 1 strength is destroyed and a P3 character with 2 strength survives; a P2 character with 1 strength is destroyed too (the character pick is unrestricted). With P3 picked (X=4): a P2 character with 4 strength is destroyed and one with 5 strength survives. X comes only from the picked opponent."
       }
     ]
@@ -173,7 +196,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].costs[0]",
+            "now": "otherPlayerChooses",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "After the cost is paid: the picked character (P3's) loses 1 speed this turn while P2's characters keep their speed, and P1 (not P2, not P3) draws a card. The speed loss ends at end of turn."
       }
     ]
@@ -358,6 +389,20 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "X counts the staple types of the picked player; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
+          },
+          {
+            "path": "behavior.modes[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.modes[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls 3 different staple types, P2 controls 2 and P3 controls 1. P1 plays Wasted Wickedness: the pick offers P1, P2 and P3 (no chooseOpponent step). Picking P3: X=1 and P1 pays X+X = 2. Picking P2: X=2, cost 4. Picking P1: X=3, cost 6 (P1's own staples)."
@@ -387,6 +432,13 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "the cards returned are the picked player's; the two modes (\"Pick your opponent\" / \"Pick yourself\") stand in for the single printed \"Pick a player\"; with three or more players the pick must be one player pick among all players still in the game (P1 included) that this site refers back to, instead of a mode per kind of player"
+          },
+          {
+            "path": "behavior.modes[0].variables.x.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 picks P3 with X=1: P3 (not P2, not P1) chooses 1 non-resource, non-faction card P3 controls and puts it into its owner's hand; P2's cards are unchanged. Picking P2 with X=2: P2 chooses 2 such cards. Picking P1: P1 chooses X of P1's own cards."
@@ -430,7 +482,15 @@
             "note": "\"that player\": the owner of the picked character (the antecedent \"its owner's hand\"); the same at every table size"
           }
         ],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.controller",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 picks P3's character (P3 owns and controls it): it goes into P3's hand. With P1 controlling an attacking party of 2 or more members, P3 (not P2) then discards a card of P3's choice; with a party of 1 member nobody discards. P2's hand is never affected."
       }
     ]
@@ -578,7 +638,22 @@
         "key": "2:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "Items of P1, P2 and P3 all gain \"At the start of your turn, you may pay 1. If you don't, destroy this card.\" At the start of P2's turn P2 (the item's controller, not P1) may pay 1, otherwise P2's item is destroyed; P3's and P1's items do nothing on P2's turn. Each item is judged only at the start of its own controller's turn."
       }
     ]
@@ -591,7 +666,15 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Frantic Jerryrigging: the chooseOpponent step offers P2 and P3 at play (before costs and targets), then P1 destroys an item P1 controls as the cost. The cost always comes from P1's own items whichever opponent was chosen; X is that item's numeric cost."
       },
       {
@@ -699,7 +782,10 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition",
-            "now": "{\"type\":\"battleRole\",\"role\":\"defender\"}",
+            "now": {
+              "type": "battleRole",
+              "role": "defender"
+            },
             "meaning": "anyOneOpponent",
             "edit": true,
             "why": "this site has no player word. It fires only when the controller is the defender. The printed text fires whenever any opponent forms an attacking party, including P2 attacking P3 (the controller is not the defender); the condition must be about the attacking party's controller being any opponent, not about being the defender"
@@ -739,7 +825,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.onPlay.targets[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With P2's character (3/2/1 strength/life/speed) and P1's character (1/4/2) picked, their strength, life and speed are switched (P2's becomes 1/4/2, P1's becomes 3/2/1) while Funhouse is in play; P3's characters are unaffected. When Funhouse leaves play the switch ends."
       }
     ]
@@ -878,7 +972,15 @@
         "key": "1:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With the picked character at 4 life or less (a P2 character, a P3 character and a P1 character are each legal picks) it is destroyed; at 5 life it survives. The discard-pile opponent has no effect on this clause."
       }
     ]
@@ -952,33 +1054,13 @@
     "clauses": [
       {
         "key": "0:extraCost",
-        "status": "unchanged",
+        "status": "changes",
         "readings": [
           {
             "phrase": "an opponent",
             "at": 17,
             "meaning": "anyOneOpponent",
             "note": "\"Pick an opponent\" in the extra cost: one opponent, picked before targets; the data sites that refer back to this pick are listed on 1:rule, the clause whose text they implement"
-          }
-        ],
-        "dataChanges": [],
-        "test3": "P1 plays Purloining Performance: the opponent pick offers P2 and P3. P1 picks P3. No other pick or opponent step follows."
-      },
-      {
-        "key": "1:rule",
-        "status": "changes",
-        "readings": [
-          {
-            "phrase": "that player's",
-            "at": 27,
-            "meaning": "refersBack",
-            "note": "the opponent picked in the extra cost"
-          },
-          {
-            "phrase": "that player's",
-            "at": 177,
-            "meaning": "refersBack",
-            "note": "the opponent picked in the extra cost"
           }
         ],
         "dataChanges": [
@@ -1009,6 +1091,55 @@
             "meaning": "refersBack",
             "edit": true,
             "why": "the cards milled are from the picked opponent's deck; the data has no explicit pick of an opponent (the word stands for the opponent picked in the extra cost); the block needs one single-opponent pick, made as part of the extra cost before targets, that this site refers back to"
+          }
+        ],
+        "test3": "P1 plays Purloining Performance: the opponent pick offers P2 and P3. P1 picks P3. No other pick or opponent step follows."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [
+          {
+            "phrase": "that player's",
+            "at": 27,
+            "meaning": "refersBack",
+            "note": "the opponent picked in the extra cost"
+          },
+          {
+            "phrase": "that player's",
+            "at": 177,
+            "meaning": "refersBack",
+            "note": "the opponent picked in the extra cost"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 0:extraCost: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "With P3 picked: P1 looks at the top 4 cards of P3's deck (only P3's; P2's deck is untouched and P1 sees nothing of it) and puts them back in any order. If P1 controls an attacking party of 2 or more members (and is the attacker), P1 may put up to 3 cards (0 to 3) from the top of P3's deck into P3's discard pile; with a party of 1 member that option is not offered. P2's deck and discard pile never change."
@@ -1057,7 +1188,22 @@
         "key": "1:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 deploys Big McLargehuge: the extra cost destroys 2 resources P1 controls (chosen at random from P1's resources); P2's and P3's resources are untouched."
       },
       {
@@ -1105,7 +1251,15 @@
         "key": "0:extraCost",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": "forEachPlayer",
+            "meaning": "eachPlayer",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1 plays Breath of the Barduse on P1's turn: allowed. It is refused during P2's turn and during P3's turn (P1 could only deploy it in response there), because it may be deployed only during P1's own turn."
       },
       {
@@ -1240,7 +1394,15 @@
         "key": "0:rule",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.conditions[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "P1's Silencer attacks P3's faction: P3's character with a token cannot block it and P3's character without a token can. Attacking P2's faction: P2's tokened character cannot block it. The restriction covers every player's characters with tokens; it does not depend on the opponent chosen for the other ability."
       },
       {
@@ -1298,7 +1460,15 @@
         "key": "1:rule@vvvvv",
         "status": "unchanged",
         "readings": [],
-        "dataChanges": [],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
         "test3": "With [V][V][V][V][V] available the Weapons Expert gains 2 strength, and without them it does not; this does not depend on how many opponents there are, and X at the start of P1's turn uses the boosted strength."
       }
     ]
