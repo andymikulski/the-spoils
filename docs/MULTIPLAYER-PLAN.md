@@ -47,18 +47,25 @@ below depends on them.
     opponent of the loser), auction start, seat swap (`exchangeFactionSeats`
     destructures exactly two players), develop choices, cost modifiers,
     play/return restrictors, and the text of delayed-effect durations.
-- **Card data.** About 766 `"opponent"` values across the 12 set files. Each
-  one was authored against a two-player reading, where these printed phrases
-  all meant the same thing:
+- **Card data.** About 674 distinct `"opponent"` paths across the 12 set
+  files. Each one was authored against a two-player reading, where these
+  printed phrases all meant the same thing:
 
-  | Printed phrase | Distinct cards | Multiplayer meaning (source) |
+  Counts are from the generated inventory (`data/card-tests/mp-inventory.md`).
+  It reads the printed markup, which is the spec; the archival `text` field
+  is reworded and under-counts. The counts are distinct rules groups.
+
+  | Printed phrase | Groups | Multiplayer meaning (source) |
   |---|---|---|
-  | "your opponent" | 41 | One opponent, chosen for the current block of rules text by that block's controller (MP 2, MP 4) |
-  | "both players" | 3 | You and the opponent chosen for that block (MP 3) |
-  | "an opponent" | 194 | Any one opponent; the pick or choice the sentence implies decides which (plain English, MP 2 does not apply) |
-  | "each opponent", "your opponents", "opponents" | ~60 | Every opponent still in the game |
-  | "each player", "all players" | ~19 | Every player, active player first, then clockwise (CR 402.2) |
-  | "any player", "another player", "other player", "a player" | ~30 | As written |
+  | "your opponent" | 171 | One opponent, chosen for the current block of rules text by that block's controller (MP 2, MP 4) |
+  | "both players" | 19 | You and the opponent chosen for that block (MP 3); The Knitting Coalition is ruled "every opponent" (RQ-mp-6) |
+  | "that opponent", "their opponent" | 19 / 3 | Refers back to an opponent already named in the block |
+  | "an opponent", "any opponent" | 113 / 6 | Any one opponent; the pick or choice the sentence implies decides which (plain English, MP 2 does not apply) |
+  | "each opponent", "your opponents", "opponents" | 52 | Every opponent still in the game |
+  | "each player", "all players", "each other player", "each of you" | 16 | Every player (or every other player), active player first, then clockwise (CR 402.2) |
+  | "any player", "a player", "another player", bare "players" | ~31 | As written |
+  | "that player", "the picked player", … | 55 | Refers back to a player already named |
+  | bare "opponent" | 2 | Classified by hand (Meat of the Mountain, I Drink Your Milkshake!) |
 
   Some cards were already written with three or more players in mind:
   Temple of Rantzigore ("your opponents"), Lockbox of the Aeons ("your
@@ -70,6 +77,14 @@ below depends on them.
   multiplayer tests.
 
 ## Phase 0 — Baseline and tools (no behavior change)
+
+Work happens on branch `ffa`. Status:
+
+- [x] 1. Tag `mp-baseline` (`8e1c87e`, main after the RQ-r11-2/4 fix).
+- [ ] 2. Random play driver (in progress).
+- [ ] 3. Two-player replay digests (in progress).
+- [x] 4. Freeze gate.
+- [x] 5. Phrase inventory.
 
 1. Tag `mp-baseline` on the current `main`.
 2. **Random play driver** (`src/engine/__tests__/support/driver.ts`). Plays
@@ -85,6 +100,12 @@ below depends on them.
    cover. A digest may change only with an explicit, explained update.
 4. **Freeze gate.** A test fails if any test file that existed at
    `mp-baseline` has been modified or deleted. New files are allowed.
+   - `data/test-freeze.json` records a SHA-256 of every `*.test.ts`, with
+     line endings normalized. `scripts/test-freeze.cjs` re-records it and
+     checks it; `test-freeze.test.ts` is the gate.
+   - Test helpers (`support/`, `_clause.ts`, …) are not frozen, because they
+     must grow seat options. The frozen tests that use them still have to
+     pass.
 5. **Phrase inventory** (`npm run card-tests -- mp-inventory`, written to
    `data/card-tests/mp-inventory.json`). For every printing it lists:
    - every printed player phrase, its category from the table above, and the

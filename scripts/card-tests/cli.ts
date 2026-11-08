@@ -18,6 +18,8 @@
 //                                            `card(name, set?)` in scope, e.g.
 //                                            `cost +1|||card("Gnat","Seed").cost += 1`. 0 new failures = SURVIVED
 //                                            (a behavior change the batch's tests can't see).
+//   npm run card-tests -- mp-inventory       regenerate data/card-tests/mp-inventory.{json,md}: every printed player phrase and
+//                                            behavior player word per rules group / clause (joins with clauses.json)
 //   npm run card-tests -- status             fix-phase scoreboard: cards working as printed, broken clauses, findings
 //   npm run card-tests -- findings [--sys N] [--category c] [--batch b] [--open|--fixed] [--card text]
 //                                            list written findings (id, category, SYS ids, status, citing tests)
@@ -41,6 +43,7 @@ import {
   type ClauseReference,
   type RulesGroup
 } from "../../src/engine/__tests__/clauses/_manifest.js";
+import { buildMpInventory, renderMpSummary } from "../../src/engine/__tests__/clauses/_mpInventory.js";
 import { cardTextToPlain, parseCardText, serializeCardText } from "../../src/cardText.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -184,6 +187,19 @@ function build(): void {
   const batches = new Set(groups.map((group) => group.batch));
   const clauses = groups.reduce((sum, group) => sum + group.clauses.length, 0);
   console.log(`${CATALOG.length} printings -> ${groups.length} rules groups, ${clauses} clauses, ${batches.size} batches. Wrote ${relative(ROOT, MANIFEST)}.`);
+}
+
+function mpInventory(): void {
+  const inventory = buildMpInventory();
+  const json = join(DATA, "mp-inventory.json");
+  const md = join(DATA, "mp-inventory.md");
+  writeFileSync(json, JSON.stringify(inventory, null, 2) + "\n");
+  writeFileSync(md, renderMpSummary(inventory));
+  const clauses = inventory.flatMap((group) => group.clauses);
+  console.log(
+    `${inventory.length} rules groups, ${clauses.length} clauses, ${clauses.filter((c) => c.mp !== false).length} with mp set, ` +
+      `${clauses.filter((c) => c.mp === "quantified").length} quantified. Wrote ${relative(ROOT, json)} and ${relative(ROOT, md)}.`
+  );
 }
 
 function batches(): void {
@@ -744,6 +760,9 @@ switch (command) {
   case "build":
     build();
     break;
+  case "mp-inventory":
+    mpInventory();
+    break;
   case "batches":
     batches();
     break;
@@ -787,5 +806,5 @@ switch (command) {
     break;
   }
   default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(0, 25).join("\n"));
+    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(0, 28).join("\n"));
 }

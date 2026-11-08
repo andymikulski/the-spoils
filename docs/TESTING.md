@@ -96,6 +96,50 @@ node --import tsx --test src/engine/__tests__/battle.test.ts
     field the engine never reads is a silent no-op, not a survivor. The hook is
     in `scripts/card-tests/mutation/`; nothing on disk changes.
 
+### Multiplayer inventory
+
+`npm run card-tests -- mp-inventory` writes `data/card-tests/mp-inventory.json`
+and a human-readable `mp-inventory.md`. It reuses the manifest's rules groups
+and clause keys (`clauses/_mpInventory.ts`), so it joins 1:1 with
+`clauses.json` by (group id = a printing id, clause key). Per clause:
+
+- **`phrases`**: every printed player phrase in the clause's printed text (the
+  same text as `Clause.text`: `markup`, which is generated from
+  `corrections.json` where a printing's wording differs): `text`, `category`,
+  `at` (offset in the clause text), `reminder: true` inside reminder
+  parentheses. The matcher is case-insensitive, folds curly apostrophes, and
+  gives each piece of text to the most specific pattern (`PATTERNS` in the
+  module): `yourOpponent`, `bothPlayers`, `anOpponent`, `eachOpponent` (each /
+  every / all / your opponents, plural), `eachPlayer`, `anyPlayer`,
+  `anotherPlayer`, `activePlayer`, `seat`, plus the singular `opponent` forms the
+  spec left open: `anyOpponent`, `thatOpponent`, `theirOpponent`, and
+  `opponentBare` (any other singular "opponent", e.g. "the opponent's"), and
+  `eachOtherPlayer`, `eachOfYou`, `thatPlayer` (that / those / the / picked player),
+  `xPlayers`, `eitherDeck`, `playersBare` ("Players can attack…"), `playerOther`
+  (fallback; empty today).
+- **`behavior`**: every player word in the behavior data: a string in a
+  player-valued field (`PLAYER_FIELDS`) whose value is `opponent`, `self`, `any`,
+  `controller`, `owner`, `activePlayer`, `anyPlayer` or `all`; a PlayerRef object
+  (`ownerOf`, `controllerOf`, `player`); and an effect that iterates over players
+  (`forEachPlayer`, `anyPlayerMayPay`, `alternatingPay`, `otherPlayerChooses`,
+  `auctionForCard`, `partitionAndPick`, `separateIntoPiles`, `useAnyAbility`). Each
+  has its JSON `path` from the card, `value`, the `unit` it sits in (an ability
+  or another behavior field) and how it reached the clause (`link`). The
+  manifest has no ability-to-clause mapping, so: an ability a clause names with
+  `ref` maps to that clause (`ref`); `flipUp` data to the FLIP UP clause and
+  `thresholdSlack` to FEALTY; any other (unlinked) data is listed on the only
+  clause it could belong to (`exclusive`) or on every clause it could belong to
+  (`shared`, with `sharedWith`). Count a `shared` word once per path.
+- **`mp`**: `true` if `phrases` or `behavior` is non-empty; `"quantified"` if a
+  phrase is `eachOpponent`, `eachPlayer`, `eachOtherPlayer` or `eachOfYou`.
+
+`mp-inventory.md` has the counts per category and per set and a preliminary
+mismatch list (printed phrase vs data word). It is input for reclassifying card
+data, not a gate. `mp-inventory.test.ts` regenerates both files in memory and
+fails if either is stale, if the join with `clauses.json` breaks, or if the
+behavior data holds a player word in a field `PLAYER_FIELDS` doesn't read. After
+changing the catalog or the matcher, rerun the command.
+
 ### Rules for writing clause tests
 
 1. **Expected behavior comes from the printed text** (the manifest's markup /
