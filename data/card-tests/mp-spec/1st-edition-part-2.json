@@ -1,0 +1,1830 @@
+[
+  {
+    "id": "88ddad6c-4df5-4baa-b1b8-c7492f67d42e",
+    "name": "Ambiguity Embiggener",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "each player's",
+            "at": 16,
+            "meaning": "eachPlayer"
+          },
+          {
+            "phrase": "that player",
+            "at": 36,
+            "meaning": "refersBack",
+            "note": "the active player of the turn that is starting (the \"each player's\" turn)"
+          },
+          {
+            "phrase": "Both players",
+            "at": 70,
+            "meaning": "chosenPair"
+          },
+          {
+            "phrase": "a player",
+            "at": 157,
+            "meaning": "anyPlayer",
+            "note": "reminder text: either member of the pair"
+          },
+          {
+            "phrase": "Both players",
+            "at": 231,
+            "meaning": "chosenPair",
+            "note": "the same pair as the first \"Both players\""
+          },
+          {
+            "phrase": "that player",
+            "at": 326,
+            "meaning": "refersBack",
+            "note": "each member of the pair, for that player's own Y"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0]",
+            "now": "forEachPlayer",
+            "meaning": "chosenPair",
+            "why": "Iterates only the controller and the one opponent chosen when the trigger resolves (MP 3), not every player. Order: active player first, then clockwise (CR 402.2), skipping seats outside the pair. The trigger itself still fires at the start of every player's turn."
+          }
+        ],
+        "test3": "P1 controls Ambiguity Embiggener. At the start of P3's turn (P3 active) the trigger resolves; P1 is offered P2 and P3 as the opponent and picks P2. P3 (active player, not in the pair) picks X=2. P1 and P2 each put 2 cards from their own hand on the bottom of their own deck in an order they choose, then each draws the top Y cards of their own deck where Y is the number that player put on the bottom. P3's hand and deck are untouched. If P2 holds only 1 card, P2 puts that 1 card and draws 1. Repeat at the start of P1's turn (P1 picks X, pair is P1 and P3 after P1 picks P3): P2 untouched. Repeat at the start of P2's turn, pick P3: P1 and P3 act, P2 (active, picked X) does not.",
+        "test4": "P1 controls it; P2, P3, P4 follow clockwise. At the start of P4's turn P1 picks P3 as the opponent (offered P2, P3, P4). P4 picks X=1. The pair acts in order active-first-then-clockwise: P1, then P3 (P4 is active but not in the pair, so skipped). P2 and P4 hands and decks are untouched. Then at the start of P2's turn P1 picks P4: P2 picks X, P4 and P1 act (order from P2 clockwise: P4 then P1), P3 untouched."
+      }
+    ]
+  },
+  {
+    "id": "7b05e4a8-cff1-441c-91bc-de6f671f8b12",
+    "name": "Arcanology Recruitment Officer",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 53,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 controls the Officer. At the start of P1's turn the trigger resolves; P1 is offered P2 and P3 and picks P2. P1 must pick a character P2 controls: only P2's characters are offered, P3's are not. The picked character gains COVERT until the start of P1's next turn, then loses it. Repeat picking P3: only P3's characters offered; the P2 character from before is no longer covert. P1's own turn only: it does not fire at the start of P2's or P3's turn."
+      }
+    ]
+  },
+  {
+    "id": "b28841ab-18e2-4a2e-aeb1-94b124f7baae",
+    "name": "Deceptive Muddler",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 43,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Muddler inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 as the opponent (the chosen one need not be the damaged player) and picks P2. P2 (not P1, not P3) must put a card from their own hand on top of their own deck; P3's hand and deck are unchanged. Repeat with P1 picking P3: only P3 puts a card on top of their deck."
+      }
+    ]
+  },
+  {
+    "id": "847cd807-e515-4c1f-8c4d-fa0ffd7b217d",
+    "name": "Eccentric Inquisition",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 26,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "your opponent's",
+            "at": 135,
+            "meaning": "chosenOpponent",
+            "note": "same opponent as the first \"your opponent's\""
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].of",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].value.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[3].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays Eccentric Inquisition; P1 is offered P2 and P3 and picks P2 (chosen when played). The top 7 cards of P2's deck are revealed to every player (P1, P2 and P3 all see them). All revealed tactics are removed from the game; the other revealed cards go on the bottom of P2's deck in an order P1 chooses. P3's deck is untouched. A second Inquisition picking P3 reveals only P3's top 7 and leaves P2's deck alone."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player words listed for this clause belong to clause 0:rule and are specified there. After P1 picked P2 in clause 0: P1 (and only P1) may play the tactics removed from P2's deck as though in P1's hand and without icons for the rest of the game; P2 and P3 cannot play them. Tactics removed from P3's deck by a second Inquisition (P3 picked) are also playable by P1 only."
+      }
+    ]
+  },
+  {
+    "id": "11f9caf2-79de-478a-a87f-c2fcfb90e11a",
+    "name": "Eldridge Gosche",
+    "clauses": [
+      {
+        "key": "3:ability:disrupt",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 68,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 106,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 activates DISRUPT (removes 3 tokens). When activated, before targets, P1 is offered P2 and P3 and picks P3. P1 looks at P3's hand only (P2's hand is not shown) and picks a card; P3 must discard that card. P2's hand is unchanged. Repeat picking P2: only P2's hand is shown and only P2 discards."
+      }
+    ]
+  },
+  {
+    "id": "d65c3554-ba90-45e8-ab26-4f8d42d498b7",
+    "name": "Gnat",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 26,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent is the one who picks which card to discard, as at two seats."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Gnat leaves play. The trigger resolves: P1 is offered P2 and P3 and picks P3. P3 chooses and discards a card from P3's own hand; P1's and P2's hands are unchanged. Repeat picking P2: only P2 discards."
+      }
+    ]
+  },
+  {
+    "id": "ab4bed28-7665-4017-b829-4c95c366a61e",
+    "name": "Infatuated Armchair",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "either deck",
+            "at": 61,
+            "meaning": "other",
+            "note": "your own deck, or the deck of any one opponent (one pick); at three seats that is three decks to choose from"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "anyOneOpponent",
+            "why": "The \"opponent's deck\" option has to let the controller choose which opponent's deck is looked at (one option per opponent, or a follow-up pick). Reorder (1 on bottom, 1 on top) applies to that deck."
+          }
+        ],
+        "test3": "P1's Armchair leaves play. P1 may decline, or look at the top 2 cards of P1's own deck, or of P2's deck, or of P3's deck (all three decks are selectable). Choosing P3's deck: only P1 sees P3's top 2, P1 puts 1 on the bottom of P3's deck and 1 on top; P2's and P1's decks are unchanged. P1 then draws a card from P1's own deck."
+      }
+    ]
+  },
+  {
+    "id": "b7c7b011-86ef-46db-8b26-c659ad1f24c1",
+    "name": "Odious Diva",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent's",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].grantsReveal.of",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Lasting text: the opponent is chosen when the effect starts applying (the Diva enters play) and lasts as long as the effect; if that player is eliminated the controller chooses again (RQ-mp-5)."
+          }
+        ],
+        "test3": "P1 plays the Diva; as the effect starts applying P1 is offered P2 and P3 and picks P2. P2's hand is revealed at all times; P3's hand is not revealed. P3 is not revealed even when P3 is the active player. If P2 is eliminated P1 chooses again: only P3 is left so no choice is offered and P3's hand becomes revealed. If the Diva leaves play P2's hand is no longer revealed."
+      },
+      {
+        "key": "1:ability:disapprove",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 59,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 81,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent decides which matching card goes to the bottom of their deck."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent draws (the \"they\" of \"If they do\")."
+          }
+        ],
+        "test3": "P1 activates DISAPPROVE; before targets P1 is offered P2 and P3 and picks P3 (independent of the choice the Diva's first clause made). P1 pays 2 and names a card, looks at P3's hand. If P3 holds a card with that name P3 puts it on the bottom of P3's deck and then draws a card; P2's hand and deck are unchanged. If P3 holds no card with that name nothing is moved and P3 does not draw. P2's hand is not shown to P1 by this ability."
+      }
+    ]
+  },
+  {
+    "id": "7c522a1a-aa18-4afa-955e-2a047ff91ecb",
+    "name": "Quotidian Disappearance",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent picks the non-resource card."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays Quotidian Disappearance; when played P1 is offered P2 and P3 and picks P2. P2 must pick a non-resource card P2 controls (P3's and P1's cards are not offered); if P2 does, that card goes to its owner's hand (a card P2 controls but P3 owns goes to P3's hand). P3 picks nothing. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "b1f959d9-c5cd-4a7c-9b1b-dfcac62fd6a6",
+    "name": "Quotidian Virtuoso",
+    "clauses": [
+      {
+        "key": "0:ability:disrupt",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 78,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 116,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 activates DISRUPT (pays 2, discards a card, depletes the Virtuoso); before costs/targets P1 is offered P2 and P3 and picks P2. P1 looks at P2's hand only and picks a card; P2 must discard it. P3's hand is untouched and never shown."
+      }
+    ]
+  },
+  {
+    "id": "dbc439b3-5628-43ef-bbc1-ea7523e85fb0",
+    "name": "Ritual of the Knob & Pull",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 70,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].condition.left.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Counts face-down resources of the one chosen opponent only, not all opponents together. The opponent is chosen when played, before the cost's character pick."
+          }
+        ],
+        "test3": "P1 plays it, picks P2 as the opponent (offered P2 and P3), then picks a character with strength 3 (X=3; the picked character may belong to anyone). P2 controls 3 face-down resources, P3 controls 1. With P2 chosen the condition holds and the character is destroyed. Repeat with P3 chosen: P3 has only 1, the character survives even though P2 has 3. Repeat with P2 holding 2 and P3 holding 2 (4 combined): X=3 not met, character survives."
+      }
+    ]
+  },
+  {
+    "id": "8bdf8634-d49d-43f6-b267-15978fab6227",
+    "name": "Ritual of the Ominous Urn",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent picks the card to discard."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays it; when played P1 is offered P2 and P3 and picks P3. P3 discards a card of P3's choice (say a character); P2 discards nothing. P1 may then search P1's own deck for a character, reveal it and put it into hand (deck shuffled). Repeat picking P2: only P2 discards."
+      }
+    ]
+  },
+  {
+    "id": "cebf2a7c-905e-433d-b6ab-bcdc2aafacbf",
+    "name": "The Deranger",
+    "clauses": [
+      {
+        "key": "0:ability:lobotomize",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 58,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 119,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 159,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent takes control of the Deranger, not every opponent."
+          }
+        ],
+        "test3": "P1 activates LOBOTOMIZE (depletes it); before targets P1 is offered P2 and P3 and picks P2. P1 looks at P2's hand, picks up to 2 non-resource cards; P2 discards them. P2 takes control of the Deranger (P3 does not). P3's hand is untouched. Later P2 uses LOBOTOMIZE on the Deranger: P2 is offered P1 and P3 as the opponent (not P2 itself)."
+      }
+    ]
+  },
+  {
+    "id": "b374445f-2ac5-40b2-bfc5-5ee47771db6c",
+    "name": "Venomous Sacspider",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 44,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Sacspider is destroyed by battle damage (attacked by P3's character). The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the attacker). P2 discards their entire hand; P3's and P1's hands are unchanged. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "973827cb-fb59-4ce8-9681-1263a14d2e62",
+    "name": "Violating Anomaly",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 36,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 74,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Anomaly enters play. The trigger resolves: P1 is offered P2 and P3 and picks P3. P1 looks at P3's hand only and picks a card; P3 must discard it. P2's hand is unchanged."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 0:rule. This clause has no opponent: P1's Anomaly leaves play; P1 may pick any non-resource card in play (P1's, P2's or P3's); it goes to its owner's hand (a P3-owned card P2 controls goes to P3's hand); P1 draws a card. No opponent choice is offered and no other player draws."
+      }
+    ]
+  },
+  {
+    "id": "9540ce6d-7f45-4fd9-8f71-093a8e438d50",
+    "name": "Anesthetizing Opulence",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 58,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays it; when played, before targets, P1 is offered P2 and P3 and picks P2. P1 picks a character (any player's, say P3's) and it is destroyed. P2 (the chosen opponent, not the owner of the destroyed character) draws a card; P3 and P1 draw nothing. Repeat picking P3 as the opponent while the destroyed character is P2's."
+      }
+    ]
+  },
+  {
+    "id": "56c1a7f7-7146-43d5-8bd4-2bad9e9522e7",
+    "name": "Embezzling Bookkeeper",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 28,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Bookkeeper enters play. The trigger resolves: P1 is offered P2 and P3 and picks P3. P3 draws a card; P2 and P1 draw nothing. Repeat picking P2: only P2 draws."
+      }
+    ]
+  },
+  {
+    "id": "b4d02b5b-bfb5-4384-addd-ba8f738b9940",
+    "name": "Hired Goons",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 56,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].elseEffects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Only the one chosen opponent takes control, and only in the \"you don't\" branch."
+          }
+        ],
+        "test3": "P1 controls Hired Goons. Start of P1's turn: P1 pays 2: nobody takes control and no opponent is affected. Next turn P1 does not pay: the trigger resolves, P1 is offered P2 and P3 and picks P3; P3 takes control of the Goons (P2 does not). At the start of P3's turn P3 (now the controller) may pay 2; if not, P3 is offered P1 and P2 (its own opponents, not P3 itself) and the chosen one takes control. It does not trigger at the start of P2's turn when P2 does not control it."
+      }
+    ]
+  },
+  {
+    "id": "ce20a6a6-4cf6-4b28-96d1-8b68c1441c10",
+    "name": "Inside Information",
+    "clauses": [
+      {
+        "key": "0:ability:profit",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 60,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Only the one chosen opponent takes control of the card."
+          }
+        ],
+        "test3": "P1 activates PROFIT (depletes it); before targets P1 is offered P2 and P3 and picks P2. P1 draws 4 cards. P2 takes control of Inside Information; P3 does not. P3's hand and deck are unchanged. Repeat picking P3: P3 takes control."
+      }
+    ]
+  },
+  {
+    "id": "1dc62434-5a69-44ce-acde-488436a14de8",
+    "name": "Mutiny Grant",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 23,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The picked character must be controlled by the chosen opponent, chosen before the pick."
+          }
+        ],
+        "test3": "P1 plays it; before targets P1 is offered P2 and P3 and picks P2. The cost pick offers only characters P2 controls (P3's characters are not offered). P1 picks one with cost 3: P1's faction loses 3 influence; P1 controls the character this turn and restores it; P2's and P3's factions are unaffected. At end of turn control returns to P2. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a",
+    "name": "Subsection 5, Paragraph 12",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.noResponse",
+            "now": "true (no player)",
+            "meaning": "chosenOpponent",
+            "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
+          }
+        ],
+        "test3": "P1 plays Subsection 5, Paragraph 12 in response to an ability on the stack; P1 is offered P2 and P3 and picks P2. P2 cannot respond to it (P2 is skipped in the response order). P3 may respond (offered the window clockwise after P1; the card resolves only after P3 has passed). Repeat picking P3: P2 may respond, P3 may not."
+      }
+    ]
+  },
+  {
+    "id": "42334135-ad09-4e14-b243-597d4a44384e",
+    "name": "Discommodiousness",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 86,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].of",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].value.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[3].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[4].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays Discommodiousness; when played P1 is offered P2 and P3 and picks P2. P2 reveals P2's hand (every player sees it) and shuffles all tactics from it into P2's deck; P2 draws X cards where X is the number of tactics shuffled; P1 draws a card. P3's hand and deck are untouched. Repeat picking P3 with P2 holding tactics: P2 is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "5f6c7c41-3be8-44ce-9293-454a35772c0f",
+    "name": "Epiphany Ball",
+    "clauses": [
+      {
+        "key": "0:ability:insight",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 109,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[2].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Only the one chosen opponent takes control."
+          }
+        ],
+        "test3": "P1 activates SUDDEN INSIGHT (depletes it); before targets P1 is offered P2 and P3 and picks P3. P1 searches P1's deck and puts a card into hand (shuffle). P3 takes control of the Epiphany Ball; P2 does not."
+      }
+    ]
+  },
+  {
+    "id": "ab111049-6ba1-430e-8d27-f647bcd5ac35",
+    "name": "Exploding Sock Puppet!",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.noResponse",
+            "now": "true (no player)",
+            "meaning": "chosenOpponent",
+            "why": "The data has no player word here (a card-level flag with no player). It must name a player so only the chosen opponent is barred. Chosen when the card is played, before targets."
+          }
+        ],
+        "test3": "P2 uses an ability of a character. P1 plays Exploding Sock Puppet! in response; P1 is offered P2 and P3 and picks P2. P2 cannot respond to the Sock Puppet; P3 may respond. The Sock Puppet terminates the ability and destroys the source character. Repeat with P1 picking P3 (P3 cannot respond, P2 may)."
+      }
+    ]
+  },
+  {
+    "id": "6af508e9-b4a9-473d-80fc-4c1ecbdd5781",
+    "name": "Guardforce Morphmajig",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 2:rule. This clause has no opponent: P1's Morphmajig attacks on the turn it enters play; it is not gated by any other player."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 2:rule. P1 plays a card (non-resource): +1 token. P2 plays a card or P3 plays a card: no token added by this clause. P1 playing a resource: no token."
+      },
+      {
+        "key": "2:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 3,
+            "meaning": "other",
+            "note": "provisional, pending MPQ-1st-edition-part-2-1: \"your opponent\" in a trigger's event condition"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].condition.player",
+            "now": "opponent",
+            "meaning": "other",
+            "why": "Event-player check in the trigger condition; meaning is pending MPQ-1st-edition-part-2-1. Under recommendation (A) it becomes anyOneOpponent (the event player is any opponent)."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 controls the Morphmajig with 2 tokens. P2 plays a card: remove a token (1 left). P3 plays a card: remove a token (0 left). P1 plays a card: this clause does not remove a token (clause 1 adds one). Removal is mandatory and never exceeds the tokens present. Under (B) or (C) the test asserts the chosen/fixed opponent instead (see question).",
+        "questions": [
+          "MPQ-1st-edition-part-2-1"
+        ]
+      },
+      {
+        "key": "3:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 2:rule. With 2 tokens the Morphmajig has +2 strength and +2 life; after P2 or P3 causes a token to be removed it has +1/+1; tokens come only from P1's own card plays."
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-1",
+        "clause": "2:rule",
+        "question": "\"If your opponent plays a card, remove a token from this card.\" The trigger's own event condition names \"your opponent\". Triggers choose \"your opponent\" when they resolve (README, MP 4), but here the condition decides whether the trigger happens at all. Who counts?",
+        "readings": [
+          "(A) The trigger fires whenever any opponent plays a card; no choice is offered (the acting player is \"your opponent\" for that trigger).",
+          "(B) The controller picks one opponent when the Morphmajig enters play (RQ-mp-5 lasting text, re-picked if eliminated); only that opponent's plays remove tokens.",
+          "(C) The controller picks an opponent each time any opponent plays a card, and the token is removed only if the picked player is the one who played."
+        ],
+        "recommendation": "(A). It is the only reading with no extra choice and no way for the controller to dodge a mandatory drawback; it matches the two-player behavior for every opponent. Sadistic Colonel (same family) should follow the same answer."
+      }
+    ]
+  },
+  {
+    "id": "71886432-9edb-44a6-b9aa-7890b3267cf3",
+    "name": "Auction House",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "unchanged",
+        "readings": [
+          {
+            "phrase": "each player's",
+            "at": 16,
+            "meaning": "eachPlayer"
+          },
+          {
+            "phrase": "that player",
+            "at": 36,
+            "meaning": "refersBack",
+            "note": "the active player whose turn is starting"
+          },
+          {
+            "phrase": "players",
+            "at": 173,
+            "meaning": "eachPlayer",
+            "note": "the bidders: every player still in the game"
+          },
+          {
+            "phrase": "the active player",
+            "at": 214,
+            "meaning": "activePlayer"
+          },
+          {
+            "phrase": "Players",
+            "at": 233,
+            "meaning": "eachPlayer",
+            "note": "every player still in the game"
+          },
+          {
+            "phrase": "Whichever player",
+            "at": 321,
+            "meaning": "anyPlayer",
+            "note": "the winner of the bidding: whichever player makes the winning bid"
+          }
+        ],
+        "dataChanges": [],
+        "test3": "P1 controls Auction House. At the start of P2's turn (the trigger fires at the start of every player's turn, P1's included) P2 reveals from the top of P2's own deck until a character is revealed. Bidding starts with the active player and goes clockwise (CR 413.1a): order P2, P3, P1. Each bid must be higher than the last. A player cannot bid more than the number of detached resources they control: P3 with 1 detached resource cannot bid 2 and must pass; a player who passes cannot bid again (CR 413.1b). Bidding continues until one player remains; that player pays that many resources and puts the character into play under their own control (P3 winning with 1: P3 controls it, P2 pays nothing). All other revealed cards are shuffled into P2's deck (their owner). Repeat at the start of P1's turn: P1 reveals from P1's deck, order P1, P2, P3. If no character is revealed no bidding occurs.",
+        "test4": "P1 controls it; P2, P3, P4 clockwise. At the start of P3's turn P3 reveals from P3's deck; order P3, P4, P1, P2. P4 passes and is skipped in later rounds; P1 bids 1, P2 bids 2, P3 bids 3, P1 passes, P2 passes: P3 wins and pays 3. A player with no detached resources (P4) must pass at once. Non-revealed cards shuffle into P3's deck, not any other."
+      }
+    ]
+  },
+  {
+    "id": "cc55231b-da46-435a-95ef-d26fc8de31c0",
+    "name": "Clockman Pickpocket",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 6,
+            "meaning": "chosenOpponent",
+            "note": "provisional: lasting text per RQ-mp-5; the open point is when a condition-gated static \"starts applying\", see MPQ-1st-edition-part-2-2"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Static \"While your opponent controls an item\": the one opponent is chosen when the effect starts applying and persists (RQ-mp-5). The start time of a condition-gated static is MPQ-1st-edition-part-2-2."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 plays the Pickpocket and picks P2 when it enters play. P1 attacks P3 with the Pickpocket as the only member of its party. P2 controls an item, P3 controls none: the Pickpocket cannot be blocked. Variation: P3 controls an item, P2 none: it can be blocked. Variation: not the only party member: it can be blocked. If P2 is eliminated P1 re-picks (only P3 left: no choice offered) and the condition then checks P3.",
+        "questions": [
+          "MPQ-1st-edition-part-2-2"
+        ]
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 43,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent picks the item."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "The Pickpocket inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the damaged player; this is a separate block from clause 0 so this choice is independent of it). P2 must pick an item P2 controls; if P2 does, P1 takes control of that item and the Pickpocket is destroyed. P3's items are not offered. If P2 controls no item nothing happens and the Pickpocket survives."
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-2",
+        "clause": "0:rule",
+        "question": "\"While your opponent controls an item and this card is the only member of an attacking party, this card cannot be blocked.\" RQ-mp-5 says lasting text chooses its opponent when the effect starts applying. For a static gated by a condition that itself names the opponent, when does it \"start applying\", and is the choice then fixed?",
+        "readings": [
+          "(A) The controller picks one opponent when the card enters play and keeps it until the card leaves or that player is eliminated (then re-picks). Only that opponent's items count, even when another opponent is the one attacked.",
+          "(B) The controller picks an opponent each time the condition is checked (each attack/block step), so the condition is met whenever the controller can pick an opponent who controls an item (equivalent to \"any opponent controls an item\").",
+          "(C) The static is gated per defending player: the condition counts only the player being attacked."
+        ],
+        "recommendation": "(A), the literal application of RQ-mp-5. If the user prefers the table-neutral outcome, (B) is the alternative; (C) is not supported by the printed words. Cute Cutpurse clause 0 has the identical text and should follow the same answer."
+      }
+    ]
+  },
+  {
+    "id": "65bd9386-5d61-415a-be45-5d50b5b369a5",
+    "name": "Counter Attack",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "unchanged",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 28,
+            "meaning": "chosenOpponent",
+            "note": "forced to be the active player by \"Play this only during your opponent's turn\"; no real choice is offered"
+          },
+          {
+            "phrase": "your opponent",
+            "at": 92,
+            "meaning": "chosenOpponent",
+            "note": "same opponent, so the attack target is the active player"
+          }
+        ],
+        "dataChanges": [],
+        "test3": "P2's turn (not in a battle): P1 plays Counter Attack. The \"only during your opponent's turn\" restriction is met only by choosing the active player, so the opponent is P2 (choosing P3 fails the restriction, so P3 is not selectable). P1 attacks P2 (not P3) with the picked characters that started the turn under P1's control; the battle resolves before P1 draws. P3's turn: the same card attacks P3. P1's own turn: it cannot be played. During a battle: it cannot be played."
+      }
+    ]
+  },
+  {
+    "id": "46d4519b-b2ff-4306-9489-9ce28ecc3a5b",
+    "name": "Cute Cutpurse",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 6,
+            "meaning": "chosenOpponent",
+            "note": "provisional: lasting text per RQ-mp-5; the open point is when a condition-gated static \"starts applying\", see MPQ-1st-edition-part-2-3"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.conditions[0].left.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Static \"While your opponent controls an item\": the one opponent is chosen when the effect starts applying and persists (RQ-mp-5). The start time of a condition-gated static is MPQ-1st-edition-part-2-3."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 plays the Cutpurse and picks P3 when it enters play. P1 attacks P2 with the Cutpurse as the only party member. P3 controls an item, P2 does not: it cannot be blocked. Variation: P2 controls an item, P3 does not: it can be blocked (by P2). If P3 is eliminated P1 re-picks (P2 only: no choice).",
+        "questions": [
+          "MPQ-1st-edition-part-2-3"
+        ]
+      },
+      {
+        "key": "1:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 65,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "The Cutpurse inflicts damage to P3's faction. The trigger resolves: P1 is offered P2 and P3 and picks P2 (independent of clause 0). P1 must pick an item P2 controls and destroys it; P3's items are not offered. If P2 controls no item nothing is destroyed."
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-3",
+        "clause": "0:rule",
+        "question": "Same text and same open point as Clockman Pickpocket clause 0:rule: \"While your opponent controls an item and this card is the only member of an attacking party, this card cannot be blocked.\" When does a condition-gated static \"start applying\" for RQ-mp-5, and is the opponent then fixed?",
+        "readings": [
+          "(A) Picked once when the card enters play, fixed until it leaves or that player is eliminated (then re-picked).",
+          "(B) Picked each time the condition is checked, so effectively \"any opponent controls an item\".",
+          "(C) Only the defending player counts."
+        ],
+        "recommendation": "(A), as for Clockman Pickpocket (MPQ-1st-edition-part-2-2); both cards must get the same answer."
+      }
+    ]
+  },
+  {
+    "id": "d2ef3385-bff6-42cf-8045-e5568e59efdf",
+    "name": "Fool's Gold",
+    "clauses": [
+      {
+        "key": "0:ability:trade",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 28,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The picked item must be controlled by the chosen opponent, chosen before the pick."
+          }
+        ],
+        "test3": "P1 activates TRADE; before the cost pick P1 is offered P2 and P3 and picks P2. The item pick offers only items P2 controls (not P3's). P1 pays X (the item's cost), destroys Fool's Gold and takes control of that item. P3's items are unaffected. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "a1716f04-f2d4-454f-917f-0b55eb9fbb73",
+    "name": "Forcible Depredator",
+    "clauses": [
+      {
+        "key": "0:ability:plunder",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 93,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 activates PLUNDER (pays 2, discards a card, depletes it); before costs/targets P1 is offered P2 and P3 and picks P3. The top 3 cards of P3's deck go to P3's discard pile; P2's deck is unchanged. Repeat picking P2."
+      }
+    ]
+  },
+  {
+    "id": "9fb327c0-257b-4685-98ca-de282c1dc6d7",
+    "name": "Hollow Moose",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 28,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The one chosen opponent controls it as it enters play. Chosen as the card is played / enters play (a character card has no targets to precede)."
+          }
+        ],
+        "test3": "P1 plays Hollow Moose and is offered P2 and P3; picks P3. The Moose enters play under P3's control (not P2's, not P1's). Repeat picking P2."
+      },
+      {
+        "key": "1:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 0:rule and clause 2. \"Your\" is the Moose's current controller. Moose is controlled by P3: at the start of P3's turn P3's faction loses 1 influence; at the start of P1's or P2's turn nobody loses influence from it. After INFILTRATE moves it to P2, P2's faction loses 1 at the start of P2's turn instead."
+      },
+      {
+        "key": "2:ability:infiltrate",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 78,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[2].effects[0].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Only the one chosen opponent takes control; the choice is offered among the activating player's opponents."
+          }
+        ],
+        "test3": "P3 controls the Moose. P3 activates INFILTRATE (destroys another item or character P3 controls); before costs P3 is offered P1 and P2 (its own opponents, not P3) and picks P1. P1 takes control of the Moose; P2 does not."
+      }
+    ]
+  },
+  {
+    "id": "b2ceefd9-cf5e-459b-adba-6c0f3a806c58",
+    "name": "Martial Artist",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].restrictions[0].restriction",
+            "now": "cannotBePickedByOpponents",
+            "meaning": "chosenOpponent",
+            "why": "The restriction name encodes \"opponents\" (all of them) in the data; the printed text is one chosen opponent. Needs a player reference (the opponent chosen when the effect starts applying, RQ-mp-5) instead of a baked-in \"all opponents\"."
+          }
+        ],
+        "test3": "P1 plays Martial Artist; as the effect starts applying P1 is offered P2 and P3 and picks P2. P2 cannot pick it with any effect or ability (refused); P3 can pick it; P1 can. The choice persists as long as the card is in play. If P2 is eliminated P1 chooses again (only P3 left, no choice) and then P3 cannot pick it."
+      }
+    ]
+  },
+  {
+    "id": "3142de68-bfda-45ce-b3a6-c1b085f51664",
+    "name": "Martial Arts Trainee",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].restrictions[0].restriction",
+            "now": "cannotBePickedByOpponents",
+            "meaning": "chosenOpponent",
+            "why": "The restriction name encodes \"opponents\" (all of them) in the data; the printed text is one chosen opponent. Needs a player reference (the opponent chosen when the effect starts applying, RQ-mp-5) instead of a baked-in \"all opponents\"."
+          }
+        ],
+        "test3": "P1 plays Martial Arts Trainee; as the effect starts applying P1 is offered P2 and P3 and picks P3. P3 cannot pick it (refused); P2 can pick it. Persists while in play; if P3 is eliminated P1 re-chooses (only P2 left, no choice offered)."
+      }
+    ]
+  },
+  {
+    "id": "bfe0fbb0-079e-4f9a-ada8-b0d18e2be880",
+    "name": "Master Thief",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 84,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Master Thief is destroyed. The trigger resolves: P1 is offered P2 and P3 and picks P2. P1 may pick a character, item, location or resource in P2's discard pile only (P3's discard pile is not offered) and puts it into play under P1's control. Repeat picking P3: only P3's discard pile."
+      }
+    ]
+  },
+  {
+    "id": "fd6ca900-19ab-4786-b4db-7e3c7dbac204",
+    "name": "Mendacious Brigand",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 75,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[1].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The second pick is limited to characters the chosen opponent controls; the chosen opponent need not be the blocking player."
+          }
+        ],
+        "test3": "P1's Brigand attacks P3 and is blocked by a P3 character. The trigger resolves: P1 is offered P2 and P3 and picks P2. P1 may pick a blocking character and a P2-controlled character not in a battle (P3's other characters are not offered). If P1 does, the blocker is removed from the battle and the P2 character is added to the blocking party. Repeat picking P3: the second pick is a P3 character not in a battle."
+      }
+    ]
+  },
+  {
+    "id": "837d5a93-213d-4e5d-af65-0a6c14c55c7c",
+    "name": "Mercenary's Creed",
+    "clauses": [
+      {
+        "key": "1:ability:bribe",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "Both players",
+            "at": 15,
+            "meaning": "chosenPair",
+            "note": "provisional: MP 3 applies to \"both players\"; the timing and who picks the opponent for a permission is MPQ-1st-edition-part-2-4"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].usableBy",
+            "now": "anyPlayer",
+            "meaning": "other",
+            "why": "Currently \"anyPlayer\". Under recommendation (A) it becomes chosenPair: usable by the Creed's controller and the one opponent chosen when the effect starts applying; pending MPQ-1st-edition-part-2-4."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 controls Mercenary's Creed attached to a character controlled by P3. When it starts applying P1 picks P2 as the opponent. P1 may use BRIBE (pay 3 from P1's resources) and takes control of the attached character; P2 may use BRIBE (pays 3 from P2's resources) and takes control; P3 may not use it. Under (B) P3 could; under (C) both P2 and P3 could.",
+        "questions": [
+          "MPQ-1st-edition-part-2-4"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-4",
+        "clause": "1:ability:bribe",
+        "question": "\"Both players may use this ability.\" MP 3 says \"both players\" means you and the opponent selected for the block, but the ability can be used by the second player, so who selects that opponent, and when? RQ-mp-6 gives \"every opponent\" for The Knitting Coalition only.",
+        "readings": [
+          "(A) The Creed's controller picks one opponent when the effect starts applying (RQ-mp-5 lasting text, re-picked if that player is eliminated); the controller and that opponent may use BRIBE.",
+          "(B) The player activating is \"you\" and picks the other player at activation, so any player may use it (collapses to anyPlayer).",
+          "(C) The controller and every opponent may use it (RQ-mp-6 extended beyond the one card it was given for)."
+        ],
+        "recommendation": "(A): it follows MP 3 and RQ-mp-5 literally, and RQ-mp-6 explicitly says it covers its own card only."
+      }
+    ]
+  },
+  {
+    "id": "5afd2312-a6aa-4aca-bc1e-2fb4eb78183d",
+    "name": "Misappropriation Machine",
+    "clauses": [
+      {
+        "key": "0:ability:steal",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 62,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "Your opponent",
+            "at": 159,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The cost pick is limited to the chosen opponent's discard pile."
+          }
+        ],
+        "test3": "P1 activates STEAL (depletes it); before the pick P1 is offered P2 and P3 and picks P2. P1 picks a character or item in P2's discard pile only (P3's is not offered) and puts it into play under P1's control. P2 (not P3) takes control of Misappropriation Machine. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "92083650-6785-4b9a-ba1c-542a348b22aa",
+    "name": "Orgy Den Smoke Out",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 0,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent (\"their deck\")."
+          }
+        ],
+        "test3": "P1 plays it; when played P1 is offered P2 and P3 and picks P3. P3 discards a card at random from P3's hand, and the top 2 cards of P3's deck go to P3's discard pile. P2's hand and deck are unchanged."
+      }
+    ]
+  },
+  {
+    "id": "bad0a682-9807-466b-8d9b-3ac48a34cdb2",
+    "name": "Recreant Cad",
+    "clauses": [
+      {
+        "key": "0:ability:sneak",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 32,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "your opponent's",
+            "at": 116,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.left.selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Use-only-if: satisfied by choosing an opponent whose discard pile has at least 10 cards. Chosen when activated, before targets."
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.owner",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P2 has 12 cards in discard, P3 has 4. P1 activates SNEAK: before targets P1 is offered P2 and P3; choosing P3 is refused/unusable (fewer than 10), choosing P2 works. P1 pays 1 and removes 2 cards from P2's discard pile from the game (P3's discard is not offered); the Cad gains COVERT this turn. If both P2 and P3 have fewer than 10 the ability cannot be used. If P3 also has 10+, picking P3 removes cards from P3's pile only."
+      }
+    ]
+  },
+  {
+    "id": "ad4fc0ee-cc07-4927-93ab-c1daeb97798c",
+    "name": "Barbaric Rifleman",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 48,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Rifleman enters play. The trigger resolves: P1 is offered P2 and P3 and picks P3. 1 damage is inflicted to P3's faction; P2's and P1's factions are unaffected. Repeat picking P2."
+      }
+    ]
+  },
+  {
+    "id": "efa9c2c1-5448-4733-a6c4-471f7d625c02",
+    "name": "Blow Up",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent's",
+            "at": 49,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 plays Blow Up; before targets P1 is offered P2 and P3 and picks P2. P1 picks an item (any player's, say P3's) and it is destroyed. P2's faction (the chosen opponent, not the item's owner) loses 3 influence; P3's and P1's factions are unaffected."
+      }
+    ]
+  },
+  {
+    "id": "46d213bf-f9f2-4e68-93c5-07e004b72e50",
+    "name": "Deadly Striker",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 27,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's Deadly Striker is destroyed. The trigger resolves: P1 is offered P2 and P3 and picks P3. P3's faction loses 4 influence; P2's is unaffected. Repeat picking P2."
+      }
+    ]
+  },
+  {
+    "id": "43a51ff8-16f5-4752-aa41-94d0977d219d",
+    "name": "Dethmürderblüdgeon, the Craghammer",
+    "clauses": [
+      {
+        "key": "2:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 3:rule. The attached character (P1's) gains 2 strength and 2 life; no other player's characters are affected."
+      },
+      {
+        "key": "3:rule",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 38,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1's attached character is blocked (by a P3 character). The trigger resolves: P1 is offered P2 and P3 and picks P2 (need not be the blocking player). P2's faction loses 2 influence; P3's is unaffected. Repeat picking P3."
+      },
+      {
+        "key": "4:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 3:rule. The attached character inflicts damage to P3's faction: P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; no opponent choice is offered."
+      },
+      {
+        "key": "5:rule",
+        "status": "unchanged",
+        "readings": [],
+        "dataChanges": [],
+        "test3": "Shared data: the player word listed here belongs to clause 3:rule. This card would go to P1's discard pile from play: it goes to P1's hand instead (if owned by P1). No other player is involved."
+      }
+    ]
+  },
+  {
+    "id": "84515285-34dc-4b75-95d4-51a6c072b970",
+    "name": "Murderous Commander",
+    "clauses": [
+      {
+        "key": "0:ability:plan",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 95,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent as the other \"your opponent\" words in this block (MP 2/MP 4); no longer \"the other player\"."
+          }
+        ],
+        "test3": "P1 activates CUNNING PLAN (pays 2, discards a card, depletes it); before costs P1 is offered P2 and P3 and picks P3. 2 damage is inflicted to P3's faction; P2's is unaffected."
+      }
+    ]
+  },
+  {
+    "id": "3ea9bbe2-4b32-4f04-9e2c-7a1201b655b9",
+    "name": "Needless Beating",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 73,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "your opponent's",
+            "at": 172,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          },
+          {
+            "phrase": "your opponent",
+            "at": 257,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          },
+          {
+            "phrase": "your opponent's",
+            "at": 284,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].condition.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Influence of the one chosen opponent's faction, chosen once for the whole ability before targets."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].condition.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "\"each character your opponent controls\": only the chosen opponent's characters."
+          },
+          {
+            "path": "behavior.abilities[0].effects[3].condition.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Same chosen opponent."
+          }
+        ],
+        "test3": "P1 plays it; before targets P1 is offered P2 and P3 and picks once for the whole card. P2's faction has 12 influence, P3's has 4. Picking P2: the picked character takes 2 +1 additional (12 is 15 or less); not 10 or less so no damage to P2's characters; not 5 or less so no draw. Picking P3: 2 +1 additional, then 1 damage to each character P3 controls (P2's characters unharmed), and P1 draws a card. All four tests use the same chosen player; a different player's faction never satisfies a threshold."
+      }
+    ]
+  },
+  {
+    "id": "9bb9052b-c497-4c4c-a22e-e0c2f0edf534",
+    "name": "Sadistic Colonel",
+    "clauses": [
+      {
+        "key": "0:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 3,
+            "meaning": "other",
+            "note": "provisional, pending MPQ-1st-edition-part-2-5: \"your opponent\" in a trigger's event condition; \"their faction\" refers back to the same player"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].condition.conditions[0].player",
+            "now": "opponent",
+            "meaning": "other",
+            "why": "Event-player check in the trigger condition; pending MPQ-1st-edition-part-2-5. Under recommendation (A) it becomes anyOneOpponent (the event player is any opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].target.player",
+            "now": "opponent",
+            "meaning": "other",
+            "why": "Faction damaged; pending MPQ-1st-edition-part-2-5. Under recommendation (A) it becomes refersBack (the faction of the opponent who played the tactic)."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 controls the Colonel. P2 plays a tactic: P2's faction takes 2 damage (not P3's). P3 plays a tactic: P3's faction takes 2 damage. P2 plays a non-tactic: nothing. P1 plays a tactic: nothing.",
+        "questions": [
+          "MPQ-1st-edition-part-2-5"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-5",
+        "clause": "0:rule",
+        "question": "\"If your opponent plays a tactic, inflict 2 damage to their faction.\" The trigger condition names \"your opponent\". Who counts, and when is \"your opponent\" chosen? (Same family as Guardforce Morphmajig clause 2.)",
+        "readings": [
+          "(A) Any opponent playing a tactic triggers it; \"their faction\" is that player's faction; no choice is offered.",
+          "(B) The controller picks one opponent when the Colonel enters play (RQ-mp-5); only that opponent's tactics trigger it.",
+          "(C) The controller picks an opponent each time any opponent plays a tactic, and damage happens only if the picked player is the one who played."
+        ],
+        "recommendation": "(A), consistently with Guardforce Morphmajig: no extra choice, no dodge of a mandatory effect, and per-opponent behavior identical to the two-player collapse."
+      }
+    ]
+  },
+  {
+    "id": "421c7d4c-d711-4a05-9955-d3834655f5fa",
+    "name": "Skin Suit",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 85,
+            "meaning": "chosenOpponent"
+          },
+          {
+            "phrase": "your opponent's",
+            "at": 172,
+            "meaning": "chosenOpponent",
+            "note": "same opponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].targets[1].selector.controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The second pick is limited to the chosen opponent's characters; \"your opponent's character\" later is that same pick's controller."
+          }
+        ],
+        "test3": "P1 plays Skin Suit; before targets P1 is offered P2 and P3 and picks P2. P1 picks a P1 character (strength X) and a P2 character (strength Y); P3's characters are not offered. P1's pick takes Y damage and P2's pick takes X damage; per the printed rest, only one of the two destroyed removes it from the game and the survivor gains its text. P3's characters and faction are unaffected. Repeat picking P3."
+      }
+    ]
+  },
+  {
+    "id": "69c99fee-c4fd-45ff-9d04-da0cc01ecd54",
+    "name": "Splattergun",
+    "clauses": [
+      {
+        "key": "0:ability:unload",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "Your opponent",
+            "at": 121,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[1].controller",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Only the one chosen opponent takes control (chosen before targets; need not be the player who owns the damaged pick)."
+          }
+        ],
+        "test3": "P1 activates UNLOAD (depletes it); before targets P1 is offered P2 and P3 and picks P2. P1 picks a character or faction (say P3's faction) and 3 damage is inflicted to it. P2 takes control of Splattergun; P3 does not. Repeat picking P3 with a P2 target."
+      }
+    ]
+  },
+  {
+    "id": "33e392bd-4d5d-475c-9cfe-a5dac86bfd2f",
+    "name": "Trophy Collector",
+    "clauses": [
+      {
+        "key": "0:ability",
+        "status": "changes",
+        "readings": [
+          {
+            "phrase": "your opponent's",
+            "at": 24,
+            "meaning": "chosenOpponent"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.onPlay.condition.target.player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "Use-only-if: satisfied by choosing an opponent whose faction has 10 influence or less; chosen when played, before targets. At least one opponent must qualify to play it."
+          }
+        ],
+        "test3": "P2's faction has 14 influence, P3's has 8. P1 plays Trophy Collector: when played P1 is offered P2 and P3; choosing P3 satisfies the restriction and it can be played; choosing P2 does not. If both P2 and P3 have more than 10 it cannot be played (refused). P1's own influence is irrelevant."
+      }
+    ]
+  },
+  {
+    "id": "b5fbadf6-df3d-42bd-b55a-daaa1321b076",
+    "name": "Wyrmfang Deathskull",
+    "clauses": [
+      {
+        "key": "1:rule",
+        "status": "question",
+        "readings": [
+          {
+            "phrase": "your opponent",
+            "at": 15,
+            "meaning": "chosenOpponent",
+            "note": "provisional: chosen when the trigger resolves; MPQ-1st-edition-part-2-6 asks whether the chosen opponent must be the defending player"
+          }
+        ],
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].effects[0].chooser",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "why": "The chosen opponent picks which of their own characters must block (the selector is \"controller self\" relative to the chooser). Whether the choice is limited to the defending player is MPQ-1st-edition-part-2-6."
+          }
+        ],
+        "test3": "Assuming recommendation (A): P1 attacks P3 with the Deathskull in play. The trigger resolves: P1 is offered P2 and P3 and picks P3. P3 picks any number of P3's characters; they must block if able and only they can block. Variation: P1 picks P2: P2 picks P2's own characters, which cannot block an attack on P3, so nothing can block (literal reading, see question). P1's picked-opponent choice appears only for the attacker's own Deathskull.",
+        "questions": [
+          "MPQ-1st-edition-part-2-6"
+        ]
+      }
+    ],
+    "questions": [
+      {
+        "id": "MPQ-1st-edition-part-2-6",
+        "clause": "1:rule",
+        "question": "\"If you attack, your opponent must pick any number of characters they control. Those characters must block during this battle if they can, and only those characters can block.\" With several opponents, must the opponent chosen for this block be the player being attacked?",
+        "readings": [
+          "(A) Literal MP 2: the controller picks any opponent. If the pick is not the defending player, that player's characters cannot block (they are not the picker's) so effectively no character can block.",
+          "(B) The block implicitly means the defending player: the chosen opponent is forced to be the player being attacked (no choice offered)."
+        ],
+        "recommendation": "(A) if \"rules decide\": MP 2 puts no constraint on the selection, and the same literal rule is applied to every other combat card. (B) is the sensible-looking outcome; the user should decide whether this card deserves the exception."
+      }
+    ]
+  }
+]
