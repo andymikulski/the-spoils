@@ -1946,7 +1946,7 @@ of the Devoured Emperor additions")**
 - **`GameState.gameLog` (`engine-derived`).** A running, ordered list of
   `GameLogEntry` — every emitted event plus `responseWindowOpened` /
   `priorityPassed` / `stackItemResolving` / `triggerResolving` /
-  `blockersDeclared` / `battleDamageAssigned` markers — each stamped with
+  `blockersDeclared` / `battleDamageAssigned` / `playerSelected` markers — each stamped with
   the response-stack `depth` it happened at, so a renderer can indent
   responses (and responses to responses) under what they answer and show
   the LIFO unwind. Every player action lands a line: a `priorityPassed`
@@ -2080,3 +2080,12 @@ opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
   ends first and the controller selects again.
 - **Open reading (RQ-mp-3 and MPX-select (4)):** a stack item whose selected opponent is eliminated before it
   resolves keeps naming that player (their cards are gone, so nothing of theirs is affected).
+- **Views, saves and the log (MPX-hidden, MPX-elim, `engine-derived`):** every viewer sees only their own hand,
+  their own face-down cards (CR 411.2) and what a card or a reveal shows them; a deck is hidden from everyone,
+  its owner included. A prompt is shown whole only to the player who answers it. A player who has lost sees what a
+  spectator sees: the cards they owned are set aside face-up (CR 403.6a), so every viewer sees them, and `getFlowView().revealed` no longer lists them. A save holds everything at three or
+  more seats needs (`seats`, `eliminated`, `boundOpponents`, `chosenPlayers` and `opponentId` on contexts and
+  lasting records, `responseWindow.passed`, a `choosePlayer` prompt); a loaded game plays on exactly as the
+  original. `getSaveSummary().players[].eliminated` is set for a player who is out. The log says who selected
+  whom (`playerSelected` marker, "Alice selects Carol as their opponent" / "Alice chooses Carol"), once per
+  selection actually made (never with one opponent left), the same words for every viewer.

@@ -124,7 +124,8 @@ export interface GameSaveSummary {
   priorityPlayerId: PlayerId;
   mode: GameFlowView["mode"];
   winner?: GameWinner;
-  players: Array<{ id: PlayerId; name: string; influence: number }>;
+  /** Every player, in the order the game was set up; `eliminated` is set (and true) only for a player who has lost and is out of the game. */
+  players: Array<{ id: PlayerId; name: string; influence: number; eliminated?: true }>;
 }
 
 /**
@@ -147,7 +148,8 @@ export function getSaveSummary(engine: SpoilsEngine): GameSaveSummary {
     players: Object.values(engine.state.players).map(player => ({
       id: player.id,
       name: player.name,
-      influence: player.influence
+      influence: player.influence,
+      ...(player.eliminated ? { eliminated: true as const } : {})
     }))
   };
 }

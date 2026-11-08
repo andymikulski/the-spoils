@@ -90,6 +90,8 @@ export interface GameLogEntry {
    * - `triggerResolving` — a triggered ability is now resolving.
    * - `blockersDeclared` — the defender declared their blocking party (or none).
    * - `battleDamageAssigned` — a battle character assigned its damage to a target.
+   * - `playerSelected` — at a table of three or more, a player selected another as the opponent of a block of rules
+   *   text ("your opponent", MP 2) or chose a player for a card's text; the message names both.
    */
   marker?:
     | "responseWindowOpened"
@@ -97,7 +99,8 @@ export interface GameLogEntry {
     | "stackItemResolving"
     | "triggerResolving"
     | "blockersDeclared"
-    | "battleDamageAssigned";
+    | "battleDamageAssigned"
+    | "playerSelected";
 }
 
 /**

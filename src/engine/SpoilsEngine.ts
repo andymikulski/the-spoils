@@ -1249,6 +1249,8 @@ export class SpoilsEngine {
       const rule = ability.grantsReveal;
       if (!rule) return;
       for (const playerId of Object.keys(this.state.players) as PlayerId[]) {
+        // A player who has lost is not counted by anything (MPX-elim (6)).
+        if (this.state.players[playerId].eliminated) continue;
         if (!this.scopeMatchesPlayer(rule.of, source.controllerId, playerId, context.opponentId)) continue;
         (rule.zone === "hand" ? handFor : deckTopFor).add(playerId);
       }
@@ -1513,6 +1515,37 @@ export class SpoilsEngine {
       message,
       marker
     });
+  }
+
+  /**
+   * At a table of three or more, who `chooserId` selected as the block's opponent ("your opponent", MP 2) or chose
+   * for a card's text, as the log says it (`playerSelected`). Public: the selection is announced with the action.
+   */
+  private logPlayerSelected(chooserId: PlayerId, chosenId: PlayerId, verb: "selects" | "chooses"): void {
+    if (!this.logEnabled) return;
+    this.recordLogMarker(
+      "playerSelected",
+      "info",
+      verb === "selects"
+        ? `${this.logPlayerName(chooserId)} selects ${this.logPlayerName(chosenId)} as their opponent`
+        : `${this.logPlayerName(chooserId)} chooses ${this.logPlayerName(chosenId)}`,
+      this.responseStack.length
+    );
+  }
+
+  /** The selections an action made as it was announced (`resolveActionPlayers`): its opponent, then each player choice. */
+  private logActionPlayers(controllerId: PlayerId, context: ResolutionContext, spec: PlayerSpec): void {
+    if (!this.logEnabled) return;
+    const live = this.getOpponents(controllerId);
+    // With one opponent left nobody selects anything.
+    if (live.length < 2) return;
+    if (spec.from === "choose" && context.opponentId !== undefined) {
+      this.logPlayerSelected(controllerId, context.opponentId, "selects");
+    }
+    for (const choice of spec.choices) {
+      const chosen = context.chosenPlayers?.[choice.id];
+      if (chosen !== undefined) this.logPlayerSelected(controllerId, chosen, "chooses");
+    }
   }
 
   /** Player display name for a log line, falling back to the id. */
@@ -7286,6 +7319,7 @@ export class SpoilsEngine {
         playerId,
         ...(context.deployedViaFlipUp ? { viaFlipUp: true } : {})
       });
+      this.logActionPlayers(playerId, context, this.playSpec(definition, mode, false));
 
       this.responseStack.push({
         id: this.nextId("stack"),
@@ -8198,6 +8232,7 @@ export class SpoilsEngine {
       abilityId: ability.id,
       playerId: action.playerId
     });
+    this.logActionPlayers(abilityControllerId, context, this.abilitySpec(ability));
 
     this.afterStackAction(action.playerId);
   }
@@ -8777,6 +8812,7 @@ export class SpoilsEngine {
         playerId: action.playerId,
         ...(context.deployedViaFlipUp ? { viaFlipUp: true } : {})
       });
+      this.logActionPlayers(action.playerId, context, this.playSpec(definition, action.mode, true));
 
       this.responseStack.push({
         id: this.nextId("stack"),
@@ -20033,6 +20069,11 @@ export class SpoilsEngine {
         );
         const chosen = choice.playerId;
         const bind = pending.bind;
+        this.logPlayerSelected(
+          pending.playerId,
+          chosen,
+          bind.type === "chosenPlayer" ? "chooses" : "selects"
+        );
 
         if (bind.type === "triggerOpponent") {
           const trigger = this.immediateQueue[0];
@@ -20227,6 +20268,7 @@ export class SpoilsEngine {
               abilityId: ability.id,
               playerId
             });
+            this.logActionPlayers(playerId, ctx, this.abilitySpec(ability));
           }
         }
 
