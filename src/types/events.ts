@@ -35,6 +35,15 @@ export interface GameEventMap {
   };
 
   /**
+   * A player lost and the game goes on without them (MPX-elim): their cards have left the game and their
+   * lasting effects have ended. Emitted once per player, as the unit that took their faction to 0 ends.
+   * Informational; nothing triggers on it (RQ-mp-12).
+   */
+  playerEliminated: {
+    playerId: PlayerId;
+  };
+
+  /**
    * The players switched seats (`swapped: true` — control of every card in
    * play and of both factions passed to the opposing player) or switched
    * back (`swapped: false`). Fired when `ContinuousAbility.swapsSides` takes

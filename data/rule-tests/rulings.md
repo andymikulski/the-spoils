@@ -368,6 +368,27 @@ The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leav
 - **Spec:** MPX-loop (3), (4), (5).
 - **Rules text:** CR 414.3b and 414.3c as quoted above; both assume the active player takes part in the loop.
 
+## RQ-mp-12. Does an elimination set off other players' triggers?
+
+- **Question as put:** When a player is eliminated, every card they own leaves the game and every card they control but don't own goes back to its owner (RQ-mp-3). Do those movements set off the remaining players' triggers ("when a character leaves play", "when a card is removed from the game", a change of control)? Recommendation: no; elimination is not an effect, and the player and their cards are simply gone.
+- **Ruling (recommended, 2026-11-08):** "No triggers". The cards leaving the game and the control returning with an elimination set off no trigger of any player.
+- **Spec:** MPX-elim (8).
+- **Rules text:** None found. CR 102.1 says only that the owner of a faction at 0 "immediately loses the game".
+
+## RQ-mp-13. In what order are losses from nested units processed?
+
+- **Question as put:** A trigger set off during a unit runs inside it (CR 503.1), so a nested unit can end before the unit around it. If the outer unit took one faction to 0 first and the nested one then took another faction to 0, who is eliminated first? Recommendation: in the order the factions first reached 0, which keeps two-player play exactly as RQ-mp-7 rules it (the first unit in which a faction reaches 0 decides).
+- **Ruling (recommended, 2026-11-08):** "First to reach 0". Losses are processed unit by unit in the order their factions first reached 0. A unit that ends while an earlier one is still resolving has its players eliminated as soon as that earlier unit's losses have been processed. Nobody acts in the middle of a resolution, so the wait gives the later players nothing.
+- **Spec:** MPX-simul (3), MPX-elim-timing (1).
+- **Rules text:** None found beyond RQ-mp-7.
+
+## RQ-mp-14. When the active player is eliminated, what happens to what other players have in progress?
+
+- **Question as put:** RQ-mp-3 ends an eliminated active player's turn "at once". At that moment other players may have items on the response stack, triggers already set off and waiting, and the eliminated player's battle may be in progress. Do those finish first, or are they dropped? Recommendation: all dropped, the literal "at once".
+- **Ruling (recommended, 2026-11-08):** "All dropped". The battle ends, every item on the response stack is removed without resolving (a card being deployed goes to its owner's discard pile), triggers waiting to resolve are not followed, and the next seat's turn starts. Nothing else happens on the eliminated player's turn: no end-of-turn responses, triggers or delayed effects.
+- **Spec:** MPX-elim (5), MPX-turn (5), MPX-endturn (4).
+- **Rules text:** None found beyond RQ-mp-3.
+
 ## MPQ-P1. Emergency Obfuscation and other cards whose archival text differs from the printed text: which text is the spec?
 
 - **Question as put:** The archival `text` field of a card rewords some cards. Which is the spec: the printed markup (or `corrections.json`), or the archival text? Emergency Obfuscation's printed "both players switch seats. Both players are in control of their opponent's side." can be read as the controller and one selected opponent swapping, or as every seat rotating one place left. Recommendation: the printed text governs; the card swaps seats and sides between the controller and one selected opponent.

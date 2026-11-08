@@ -39,7 +39,38 @@ export const DIGEST_LENGTH = 16;
  *   the opponent of the controller of the item beneath it, which `priorityPlayerId` then shows.
  * - `players[*].eliminated`: at two seats a player is eliminated only as the game ends, which
  *   `winner` already records.
+ * - `createdBy` on lasting records (`CreatedByPlayer`): who created the record. It is read only when that
+ *   player is eliminated and the game goes on, which never happens at two seats (the first loss ends the game).
  */
+/** The `GameState` lists whose records carry `createdBy` (`CreatedByPlayer`). */
+const CREATED_BY_RECORDS = [
+  "modifiers",
+  "keywordGrants",
+  "keywordSuppressions",
+  "playerKeywordGrants",
+  "abilitySuppressions",
+  "restrictions",
+  "costReductions",
+  "thresholdReductions",
+  "numericCostModifiers",
+  "outgoingDamageModifiers",
+  "playRestrictions",
+  "resourceGrants",
+  "provideGrants",
+  "cardTypeGrants",
+  "subtypeGrants",
+  "damageShields",
+  "battleDamageTransforms",
+  "damagePreventionWindows",
+  "destructionRestrictionWindows",
+  "controlGrants",
+  "abilityGrants",
+  "blockRestrictionGrants",
+  "mustBlockGrants",
+  "partyRestrictionGrants",
+  "voidPlayGrants"
+] as const satisfies ReadonlyArray<keyof GameState>;
+
 export function projectForDigest(state: GameState): Record<string, unknown> {
   const { gameLog: _gameLog, seats: _seats, engineMemory: _engineMemory, ...rules } = state;
   const players: Record<string, unknown> = {};
@@ -68,6 +99,9 @@ export function projectForDigest(state: GameState): Record<string, unknown> {
   if (state.responseWindow) {
     const { passed: _passed, resumeWith: _resumeWith, ...window } = state.responseWindow;
     projected.responseWindow = window;
+  }
+  for (const key of CREATED_BY_RECORDS) {
+    projected[key] = (state[key] as Array<{ createdBy?: string }>).map(({ createdBy: _createdBy, ...record }) => record);
   }
   return projected;
 }

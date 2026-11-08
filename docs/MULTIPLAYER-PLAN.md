@@ -245,6 +245,12 @@ Work happens on branch `ffa`. Status:
   triggers of an eliminated player, re-selecting on a control change, and
   loops the active player isn't part of) are ruled as recommended. They are
   recorded in `data/rule-tests/rulings.md`.
+- RQ-mp-12 to RQ-mp-14 (user, 2026-11-08), recorded in `rulings.md`:
+  - an elimination sets off no trigger;
+  - losses from nested units are processed in the order the factions first
+    reached 0;
+  - when the active player is eliminated, everything in progress on their turn
+    is dropped.
 - Card pattern rulings MPQ-P1 to MPQ-P11 are in
   `data/card-tests/mp-spec/README.md` ("Pattern rulings") and in
   `rulings.md`. They cover:
@@ -358,6 +364,10 @@ its reason. No other field may be excluded.
 
 In order. Each step is green on the full existing suite, the freeze gate and
 the two-player replay digests before the next one starts.
+
+Status: steps 1 to 4 are done (`mp-ffa.p1` to `p6`). So are the battle,
+unique, trigger-order, bidding, loop and hidden-information atoms. Steps 5 to
+8 are next.
 
 1. **Seats.** Seat helpers (`opponentsOf`, `nextSeat`, `playersFrom`) and turn
    passing.

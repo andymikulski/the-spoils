@@ -972,6 +972,7 @@ export class SpoilsEngine {
 
   private performAndSettle(action: GameAction): void {
     this.performAction(action);
+    this.abandonEliminatedTurn();
     {
       const setup = this.state.setup;
       if (setup.phase === "mulligan" && setup.pendingDraw && !this.state.pendingChoice) {
@@ -1061,6 +1062,10 @@ export class SpoilsEngine {
     // read-only queries, `getAttackOptions` / `getEndTurnBlock` ...).
     const gateProblem = this.actionGateProblem(action.type);
     if (gateProblem) throw new Error(gateProblem);
+    // A player who has lost takes no further actions (MPX-elim (6)).
+    if ("playerId" in action && action.playerId && this.state.players[action.playerId]?.eliminated) {
+      throw new Error("That player is out of the game.");
+    }
 
     // Baseline "who is causing this" for replacement `by` scoping; effect
     // resolution and battle damage refine it as they go.
@@ -1632,6 +1637,9 @@ export class SpoilsEngine {
               ? `Game over — a draw`
               : `Game over — ${this.logPlayerName(event.winnerId)} wins`
         };
+
+      case "playerEliminated":
+        return { kind: "turn", message: `${this.logPlayerName(event.playerId)} is out of the game` };
 
       case "cardPlayed": {
         const suffix = responding ? " in response" : "";
@@ -8744,7 +8752,7 @@ export class SpoilsEngine {
     const rest = this.getPlayersInSeatOrder(battle.defenderPlayerId).filter(
       id => id !== battle.attackerPlayerId && id !== battle.defenderPlayerId
     );
-    return [battle.attackerPlayerId, battle.defenderPlayerId, ...rest];
+    return [battle.attackerPlayerId, battle.defenderPlayerId, ...rest].filter(id => !this.state.players[id].eliminated);
   }
 
   /**
@@ -9114,12 +9122,238 @@ export class SpoilsEngine {
   }
 
   /**
+   * Eliminates the players of every unit whose losses are due: the unit in which a faction first reached 0 has
+   * ended, then the next unit queued behind it if that one has ended too (MPX-simul, RQ-mp-13). Stops once the game
+   * is decided or the next unit is still running.
+   */
+  private settleLosses(): void {
+    for (;;) {
+      const loss = this.state.pendingLoss;
+      if (!loss || this.state.winner || this.unitIsLive(loss.unitId)) return;
+      const [next, ...rest] = loss.later ?? [];
+      if (next) this.state.pendingLoss = rest.length > 0 ? { ...next, later: rest } : { ...next };
+      else delete this.state.pendingLoss;
+      this.eliminatePlayers(loss.players);
+    }
+  }
+
+  /**
+   * `losers` lose the game together (CR 102.1, 102.2). If at most one player is left the game ends: that player
+   * wins, or it is a draw (MPX-win (4)). Otherwise they are eliminated and the rest of the table plays on (MPX-elim).
+   */
+  private eliminatePlayers(losers: readonly PlayerId[]): void {
+    const remaining = this.getPlayersInSeatOrder().filter(id => !losers.includes(id));
+    if (remaining.length <= 1) {
+      delete this.state.pendingLoss;
+      this.state.winner = remaining[0] ?? "draw";
+      this.emit({ type: "gameEnded", winnerId: this.state.winner });
+      return;
+    }
+    for (const id of losers) {
+      this.state.players[id].eliminated = { turn: this.state.turn };
+      this.emit({ type: "playerEliminated", playerId: id });
+    }
+    this.clearEliminatedPlayers(new Set(losers));
+  }
+
+  /**
+   * What an elimination does, all at once (MPX-elim, RQ-mp-3, RQ-mp-9): the players' items on the response stack,
+   * waiting triggers, parked resolutions and pending choices are removed; every card they own leaves the game;
+   * every card they control but don't own goes back to its owner; every lasting effect they created ends. None of
+   * it sets off a trigger (RQ-mp-12). Their turn, if it is theirs, is abandoned once the action settles
+   * (`abandonEliminatedTurn`).
+   */
+  private clearEliminatedPlayers(out: ReadonlySet<PlayerId>): void {
+    const state = this.state;
+    const top = this.responseStack[this.responseStack.length - 1];
+
+    // (3) Stack items, waiting triggers, parked resolutions and choices.
+    for (let i = this.responseStack.length - 1; i >= 0; i--) {
+      const item = this.responseStack[i];
+      if (!out.has(item.controllerId)) continue;
+      this.responseStack.splice(i, 1);
+      this.dropUnresolvedItem(item);
+    }
+    for (let i = this.immediateQueue.length - 1; i >= 0; i--) {
+      if (out.has(this.immediateQueue[i].context.controllerId)) this.immediateQueue.splice(i, 1);
+    }
+    this.frames.removeWhere(frame => out.has(frame.context.controllerId));
+    if (state.pendingChoice && out.has(state.pendingChoice.playerId)) state.pendingChoice = undefined;
+
+    // (1) Every card they own leaves the game, with whatever is attached to it (CR 301.4).
+    for (const card of Object.values(state.cards)) {
+      if (!out.has(card.ownerId) || !state.cards[card.id] || card.zone === "removed") continue;
+      this.removeForElimination(card.id);
+    }
+    // (2) Every card they control but don't own goes back to its owner's control, staying where it is.
+    for (const card of Object.values(state.cards)) {
+      if (!out.has(card.controllerId) || out.has(card.ownerId)) continue;
+      if (card.zone === "play") this.reassignControl(card.id, card.ownerId);
+    }
+
+    // (4) Their lasting effects end; effects on them as a player no longer apply to anyone (MPX-elim (6)).
+    const theirs = (record: { createdBy?: PlayerId }) => record.createdBy !== undefined && out.has(record.createdBy);
+    const onThem = (record: { playerId?: PlayerId }) => record.playerId !== undefined && out.has(record.playerId);
+    state.modifiers = state.modifiers.filter(r => !theirs(r));
+    state.keywordGrants = state.keywordGrants.filter(r => !theirs(r));
+    state.keywordSuppressions = state.keywordSuppressions.filter(r => !theirs(r));
+    state.playerKeywordGrants = state.playerKeywordGrants.filter(r => !theirs(r) && !onThem(r));
+    state.abilitySuppressions = state.abilitySuppressions.filter(r => !theirs(r));
+    state.restrictions = state.restrictions.filter(r => !theirs(r));
+    state.costReductions = state.costReductions.filter(r => !theirs(r) && !onThem(r));
+    state.thresholdReductions = state.thresholdReductions.filter(r => !theirs(r) && !onThem(r));
+    state.numericCostModifiers = state.numericCostModifiers.filter(r => !theirs(r));
+    state.outgoingDamageModifiers = state.outgoingDamageModifiers.filter(r => !theirs(r));
+    state.playRestrictions = state.playRestrictions.filter(r => !theirs(r) && !onThem(r));
+    state.resourceGrants = state.resourceGrants.filter(r => !theirs(r) && !onThem(r));
+    state.provideGrants = state.provideGrants.filter(r => !theirs(r));
+    state.cardTypeGrants = state.cardTypeGrants.filter(r => !theirs(r));
+    state.subtypeGrants = state.subtypeGrants.filter(r => !theirs(r));
+    state.damageShields = state.damageShields.filter(r => !theirs(r));
+    state.battleDamageTransforms = state.battleDamageTransforms.filter(r => !theirs(r));
+    state.damagePreventionWindows = state.damagePreventionWindows.filter(r => !theirs(r));
+    state.destructionRestrictionWindows = state.destructionRestrictionWindows.filter(r => !theirs(r));
+    state.abilityGrants = state.abilityGrants.filter(r => !theirs(r));
+    state.blockRestrictionGrants = state.blockRestrictionGrants.filter(r => !theirs(r));
+    state.mustBlockGrants = state.mustBlockGrants.filter(r => !theirs(r));
+    state.partyRestrictionGrants = state.partyRestrictionGrants.filter(r => !theirs(r));
+    state.voidPlayGrants = state.voidPlayGrants.filter(r => !theirs(r) && !onThem(r));
+    state.areaModifiers = state.areaModifiers.filter(r => !out.has(r.controllerId));
+    state.runtimeReplacements = state.runtimeReplacements.filter(r => !out.has(r.controllerId));
+    state.scheduledEffects = state.scheduledEffects.filter(r => !out.has(r.controllerId));
+    state.handMoveRedirects = state.handMoveRedirects.filter(r => !out.has(r.sourceControllerId));
+    // A take-control effect they created has ended (the card went back to its owner above). One that would hand a
+    // card back to them when it ends hands it to its owner instead.
+    state.controlGrants = state.controlGrants.flatMap(grant => {
+      if (theirs(grant)) return [];
+      if (!out.has(grant.previousControllerId)) return [grant];
+      const ownerId = state.cards[grant.cardId]?.ownerId;
+      return ownerId !== undefined && !out.has(ownerId) ? [{ ...grant, previousControllerId: ownerId }] : [];
+    });
+
+    this.settleWindowAfterElimination(out, top);
+  }
+
+  /**
+   * After an elimination: players who lost are no longer offered anything (MPX-elim-timing (2)). If the top item
+   * was theirs, the item beneath is offered afresh from the seat after them; if they held the offer, it moves on
+   * clockwise.
+   */
+  private settleWindowAfterElimination(out: ReadonlySet<PlayerId>, previousTop: StackItem | undefined): void {
+    const window = this.state.responseWindow;
+    if (!window) return;
+    window.pendingResponders = window.pendingResponders.filter(id => !out.has(id));
+    if (window.passed) window.passed = window.passed.filter(id => !out.has(id));
+    if (window.phase !== "acceptingResponses") return;
+
+    const top = this.responseStack[this.responseStack.length - 1];
+    if (top) {
+      if (previousTop && top !== previousTop) {
+        if (!this.offerTopItem(window, previousTop.controllerId, false)) window.phase = "resolving";
+        return;
+      }
+      const holder = window.priorityPlayerId;
+      if (!out.has(holder)) return;
+      const next = this.nextResponder(top.controllerId, holder, false, window.passed ?? []);
+      if (next === undefined) {
+        window.phase = "resolving";
+        return;
+      }
+      window.priorityPlayerId = next;
+      this.state.priorityPlayerId = next;
+      return;
+    }
+
+    if (window.pendingResponders.length > 0) {
+      if (!out.has(window.priorityPlayerId)) return;
+      window.priorityPlayerId = window.pendingResponders[0];
+      this.state.priorityPlayerId = window.priorityPlayerId;
+      return;
+    }
+    window.phase = "resolving";
+    this.reopenOrCloseResponseWindow();
+  }
+
+  /**
+   * A stack item removed without resolving (an eliminated player's, RQ-mp-3; or any, when the active player is
+   * eliminated, RQ-mp-14): a card being deployed that it carried goes to its owner's discard pile. Silent: nothing
+   * triggers on it (RQ-mp-12).
+   */
+  private dropUnresolvedItem(item: StackItem | undefined): void {
+    if (!item || item.kind !== "card") return;
+    const card = this.state.cards[item.sourceId];
+    if (!card || card.zone !== "deploying") return;
+    if (this.state.players[card.ownerId]?.eliminated) {
+      this.removeForElimination(card.id);
+      return;
+    }
+    this.moveCard(card.id, "discard", false, "bottom", true);
+  }
+
+  /** Moves `cardId` out of the game for an elimination: no replacement, redirect or trigger sees it (RQ-mp-12). */
+  private removeForElimination(cardId: CardInstanceId): void {
+    this.eliminationMove = true;
+    try {
+      this.moveCard(cardId, "removed", false, "bottom", true);
+    } finally {
+      this.eliminationMove = false;
+    }
+  }
+
+  /** True while `removeForElimination` moves a card: the move is not a game event that anything can change. */
+  private eliminationMove = false;
+
+  /**
+   * Whether an effect list belongs to nothing that is still going on: its controller has been eliminated, or the
+   * active player has, which abandons everything on their turn (RQ-mp-14). Such a list does nothing more.
+   */
+  private resolutionAbandoned(context: ResolutionContext): boolean {
+    const players = this.state.players;
+    return !!players[context.controllerId]?.eliminated || !!players[this.state.activePlayerId]?.eliminated;
+  }
+
+  /**
+   * The active player has been eliminated: their turn ends at once (MPX-elim (5), RQ-mp-14). The battle ends, every
+   * item on the response stack is removed without resolving, waiting triggers and parked resolutions are dropped,
+   * no end-of-turn step happens, and the next seat's turn starts. Run when the action that eliminated them settles.
+   */
+  private abandonEliminatedTurn(): void {
+    const state = this.state;
+    const active = state.activePlayerId;
+    if (state.winner || !state.players[active]?.eliminated) return;
+
+    for (const item of this.responseStack) this.dropUnresolvedItem(item);
+    this.responseStack.splice(0);
+    state.responseWindow = undefined;
+    state.battle = undefined;
+    state.pendingChoice = undefined;
+    state.pendingPartition = undefined;
+    state.pendingCoinFlip = undefined;
+    state.pendingAuction = undefined;
+    state.pendingReplacement = undefined;
+    state.pendingReplacementPick = undefined;
+    this.frames.splice(0);
+    this.immediateQueue.splice(0);
+    state.endingTurnFor = undefined;
+    state.startingTurnFor = undefined;
+    // The turn's "at end of turn" and "at end of battle" delayed effects never happen.
+    state.scheduledEffects = state.scheduledEffects.filter(
+      s => s.when !== "endOfBattle" && !(s.when === "endOfTurn" && s.turnScheduled === state.turn)
+    );
+    // Losses waiting on a unit that has just been dropped are due now.
+    this.settleLosses();
+    if (state.winner) return;
+    this.passTurn(active);
+  }
+
+  /**
    * Records the players out right now (a faction at 0 influence not shielded by `preventsDefeat`; an empty deck under
    * Trickster's Globe) against the unit running now. Only the first unit in which anyone is out counts.
    */
   private noteFactionsAtZero(): void {
     if (this.state.winner) return;
-    const players = Object.values(this.state.players);
+    // A player who has lost is not counted again (MPX-elim (6)).
+    const players = Object.values(this.state.players).filter(player => !player.eliminated);
     if (!players.some(player => player.influence <= 0 || player.deck.length === 0)) return;
 
     const shielded = new Set<PlayerId>();
@@ -9162,11 +9396,17 @@ export class SpoilsEngine {
       this.state.pendingLoss = { unitId, players: [...out] };
       return;
     }
-    // A player already counted (here or in another unit) stays where they were first found out.
+    // A player already counted (here or in another unit) stays where they were first found out; other units queue
+    // up behind the first in the order their factions reached 0 (RQ-mp-13).
     for (const playerId of out) {
-      if (loss.players.includes(playerId) || loss.elsewhere?.includes(playerId)) continue;
-      if (loss.unitId === unitId) loss.players.push(playerId);
-      else (loss.elsewhere ??= []).push(playerId);
+      if (loss.players.includes(playerId) || loss.later?.some(entry => entry.players.includes(playerId))) continue;
+      if (loss.unitId === unitId) {
+        loss.players.push(playerId);
+        continue;
+      }
+      const entry = loss.later?.find(candidate => candidate.unitId === unitId);
+      if (entry) entry.players.push(playerId);
+      else (loss.later ??= []).push({ unitId, players: [playerId] });
     }
   }
 
@@ -9182,6 +9422,11 @@ export class SpoilsEngine {
     const deckTotal = (): number =>
       Object.values(this.state.players).reduce((n, pl) => n + pl.deck.length, 0);
     for (let i = frame.index; i < frame.effects.length; i++) {
+      if (this.resolutionAbandoned(frame.context)) {
+        // Removed without resolving the rest (MPX-elim (3), RQ-mp-14).
+        this.dropUnresolvedItem(frame.finishStackItem);
+        return true;
+      }
       const current = frame.effects[i];
       this.runningFrame = { effects: frame.effects, index: i + 1 };
       this.followingEffect = frame.effects[i + 1];
@@ -9402,6 +9647,8 @@ export class SpoilsEngine {
         }
         battle.phase = "blocking";
         this.state.priorityPlayerId = battle.defenderPlayerId;
+        // A defender who has lost forms no blocking party (MPX-elim (6)).
+        if (this.state.players[battle.defenderPlayerId].eliminated) this.declareBlockers(battle.defenderPlayerId, []);
         return;
       }
 
@@ -14010,6 +14257,9 @@ export class SpoilsEngine {
     context: ResolutionContext
   ): void {
     this.readMemo = undefined;
+    // An eliminated player's effects, and everything on an eliminated active player's turn, do nothing more
+    // (MPX-elim (3), (5); RQ-mp-14).
+    if (this.resolutionAbandoned(context)) return;
     effect = this.normalizeEffectDuration(effect, context);
     // Whatever effect is resolving, its controller is the "cause" of any
     // destroy / move / damage it goes on to perform (and of the state-based
@@ -14653,6 +14903,7 @@ export class SpoilsEngine {
         if (!targetId || !this.state.cards[targetId]) return;
 
         this.state.cardTypeGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("cardTypeGrant"),
           sourceId: context.sourceId,
           targetId,
@@ -14663,6 +14914,7 @@ export class SpoilsEngine {
 
         for (const [stat, expr] of Object.entries(effect.grantStats ?? {})) {
           this.state.modifiers.push({
+            createdBy: context.controllerId,
             id: this.nextId("modifier"),
             sourceId: context.sourceId,
             sourceAbilityId: context.abilityId,
@@ -14759,6 +15011,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         this.state.numericCostModifiers.push({
+          createdBy: context.controllerId,
           id: this.nextId("numericCostMod"),
           targetId,
           delta: this.evaluateNumber(effect.delta, context),
@@ -15116,6 +15369,7 @@ export class SpoilsEngine {
             : undefined;
 
         this.state.damageShields.push({
+          createdBy: context.controllerId,
           id: this.nextId("shield"),
           sourceId: context.sourceId,
           targetId,
@@ -15240,6 +15494,7 @@ export class SpoilsEngine {
         const value = this.evaluateNumber(effect.value, context);
 
         this.state.modifiers.push({
+          createdBy: context.controllerId,
           id: this.nextId("modifier"),
           sourceId: context.sourceId,
           sourceAbilityId: context.abilityId,
@@ -15327,6 +15582,7 @@ export class SpoilsEngine {
           );
           if (!existing) {
             this.state.controlGrants.push({
+              createdBy: context.controllerId,
               id: this.nextId("controlGrant"),
               cardId: targetId,
               previousControllerId: card.controllerId,
@@ -15522,6 +15778,7 @@ export class SpoilsEngine {
             continue;
           }
           this.state.voidPlayGrants.push({
+            createdBy: context.controllerId,
             cardId,
             playerId: player.id,
             ignoreThreshold: effect.ignoreThreshold ?? false,
@@ -15591,6 +15848,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.keywordGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("keywordGrant"),
           sourceId: context.sourceId,
           targetId,
@@ -15609,6 +15867,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.keywordSuppressions.push({
+          createdBy: context.controllerId,
           id: this.nextId("keywordSuppression"),
           sourceId: context.sourceId,
           targetId,
@@ -15625,6 +15884,7 @@ export class SpoilsEngine {
         if (!targetId) return;
 
         this.state.restrictions.push({
+          createdBy: context.controllerId,
           id: this.nextId("restriction"),
           sourceId: context.sourceId,
           targetId,
@@ -15640,6 +15900,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId || !this.state.cards[targetId]) return;
         this.state.battleDamageTransforms.push({
+          createdBy: context.controllerId,
           id: this.nextId("bdTransform"),
           sourceId: context.sourceId,
           cardId: targetId,
@@ -15659,6 +15920,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId || !this.state.cards[targetId]) return;
         this.state.abilitySuppressions.push({
+          createdBy: context.controllerId,
           id: this.nextId("abilitySuppression"),
           sourceId: context.sourceId,
           targetId,
@@ -15671,6 +15933,7 @@ export class SpoilsEngine {
       case "grantKeywordToPlayer": {
         const player = this.resolvePlayerRef(effect.player, context);
         this.state.playerKeywordGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("playerKeywordGrant"),
           sourceId: context.sourceId,
           playerId: player.id,
@@ -15685,6 +15948,7 @@ export class SpoilsEngine {
         const sourceId = this.resolveTargetRef(effect.source, context);
         if (!sourceId) return;
         this.state.outgoingDamageModifiers.push({
+          createdBy: context.controllerId,
           id: this.nextId("outgoingDmgMod"),
           sourceId,
           toFactionOf: effect.toFaction
@@ -15701,6 +15965,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId || !this.state.cards[targetId]) return;
         this.state.outgoingDamageModifiers.push({
+          createdBy: context.controllerId,
           id: this.nextId("incomingDmgMod"),
           sourceId: context.sourceId,
           targetId,
@@ -15715,6 +15980,7 @@ export class SpoilsEngine {
         const player = this.resolvePlayerRef(effect.player, context);
 
         this.state.resourceGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("resourceGrant"),
           playerId: player.id,
           icon: effect.icon,
@@ -15737,6 +16003,7 @@ export class SpoilsEngine {
         if (!icon) return;
 
         this.state.thresholdReductions.push({
+          createdBy: context.controllerId,
           id: this.nextId("thresholdReduction"),
           playerId: player.id,
           icon,
@@ -15768,6 +16035,7 @@ export class SpoilsEngine {
         }
 
         this.state.provideGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("provideGrant"),
           sourceId: context.sourceId,
           targetId,
@@ -15791,6 +16059,7 @@ export class SpoilsEngine {
       case "restrictPlay": {
         const player = this.resolvePlayerRef(effect.player, context);
         this.state.playRestrictions.push({
+          createdBy: context.controllerId,
           id: this.nextId("playRestriction"),
           playerId: player.id,
           kind: effect.kind,
@@ -15804,6 +16073,7 @@ export class SpoilsEngine {
 
       case "preventAllDamage": {
         this.state.damagePreventionWindows.push({
+          createdBy: context.controllerId,
           id: this.nextId("damagePreventionWindow"),
           sourceId: context.sourceId,
           battleOnly: effect.battleOnly,
@@ -15816,6 +16086,7 @@ export class SpoilsEngine {
 
       case "restrictDestruction": {
         this.state.destructionRestrictionWindows.push({
+          createdBy: context.controllerId,
           id: this.nextId("destructionRestrictionWindow"),
           sourceId: context.sourceId,
           duration: effect.duration,
@@ -15828,6 +16099,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target, context);
         if (!targetId) return;
         this.state.subtypeGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("subtypeGrant"),
           sourceId: context.sourceId,
           targetId,
@@ -16416,6 +16688,7 @@ export class SpoilsEngine {
         const amount = this.evaluateNumber(effect.amount, context);
 
         this.state.costReductions.push({
+          createdBy: context.controllerId,
           id: this.nextId("costReduction"),
           playerId: player.id,
           amount,
@@ -16641,6 +16914,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target ?? "source", context);
         if (!targetId) return;
         this.state.blockRestrictionGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("blockRestriction"),
           sourceId: context.sourceId,
           targetId,
@@ -16663,6 +16937,7 @@ export class SpoilsEngine {
           if (!blockerId) return;
         }
         this.state.mustBlockGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("mustBlock"),
           sourceId: context.sourceId,
           attackerId,
@@ -16677,6 +16952,7 @@ export class SpoilsEngine {
         const targetId = this.resolveTargetRef(effect.target ?? "source", context);
         if (!targetId) return;
         this.state.partyRestrictionGrants.push({
+          createdBy: context.controllerId,
           id: this.nextId("partyRestriction"),
           sourceId: context.sourceId,
           targetId,
@@ -16724,6 +17000,7 @@ export class SpoilsEngine {
         );
         if (abilities.length > 0) {
           this.state.abilityGrants.push({
+            createdBy: context.controllerId,
             id: this.nextId("abilityGrant"),
             cardId: targetId,
             sourceId: context.sourceId,
@@ -16732,6 +17009,7 @@ export class SpoilsEngine {
         }
         for (const keyword of fromBehavior?.keywords ?? []) {
           this.state.keywordGrants.push({
+            createdBy: context.controllerId,
             id: this.nextId("keywordGrant"),
             sourceId: context.sourceId,
             targetId,
@@ -18251,13 +18529,7 @@ export class SpoilsEngine {
       // choice has not ended.
       if (!this.state.winner) {
         this.noteFactionsAtZero();
-        const loss = this.state.pendingLoss;
-        if (loss && !this.unitIsLive(loss.unitId)) {
-          delete this.state.pendingLoss;
-          this.state.winner =
-            loss.players.length >= 2 ? "draw" : this.getOpponent(loss.players[0]).id;
-          this.emit({ type: "gameEnded", winnerId: this.state.winner });
-        }
+        this.settleLosses();
       }
     }
   }
@@ -20003,7 +20275,7 @@ export class SpoilsEngine {
 
     // "If the picked character would leave play, THIS character leaves play
     // in that way instead." (6r4wny 60dy9u4rd5).
-    if (from === "play" && to !== "play") {
+    if (from === "play" && to !== "play" && !this.eliminationMove) {
       const redirected = this.redirectTargetFor(cardId);
       if (redirected) {
         this.moveCard(
@@ -20020,7 +20292,7 @@ export class SpoilsEngine {
 
     // Paired cards (Spurious Anthropologist and the character it added): if
     // either would leave play this turn, both are removed from the game.
-    if (card.pairedWith && from === "play" && to !== "play") {
+    if (card.pairedWith && from === "play" && to !== "play" && !this.eliminationMove) {
       const partnerId = card.pairedWith;
       const partner = this.state.cards[partnerId];
       card.pairedWith = undefined;
@@ -22604,7 +22876,7 @@ export class SpoilsEngine {
     // non-empty party is covered by the `blockingPartyFormed` /
     // `characterBlocked` events below; declaring *none* emits nothing, so
     // record that decision explicitly here.
-    if (blockerIds.length === 0 && alreadyBlocking.length === 0) {
+    if (blockerIds.length === 0 && alreadyBlocking.length === 0 && !this.state.players[playerId].eliminated) {
       this.recordLogMarker(
         "blockersDeclared",
         "battle",
@@ -23027,6 +23299,8 @@ export class SpoilsEngine {
     | { type: "faction"; playerId: PlayerId }
   > {
     if (battle.target.type === "faction") {
+      // The faction of a defender who has lost has left the game.
+      if (this.state.players[battle.target.playerId].eliminated) return [];
       return [
         {
           type: "faction",

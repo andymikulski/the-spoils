@@ -189,7 +189,17 @@ export interface PlayerState {
   eliminated?: { turn: number };
 }
 
-export interface RuntimeModifier {
+/**
+ * Who created a lasting record: the controller of the card or ability whose effect made it. A record created by a
+ * player stops applying when that player is eliminated (MPX-elim (4)). Records whose type names their creator
+ * already (`controllerId` on area modifiers, replacements and scheduled effects, `sourceControllerId` on hand-move
+ * redirects) do not repeat it.
+ */
+export interface CreatedByPlayer {
+  createdBy?: PlayerId;
+}
+
+export interface RuntimeModifier extends CreatedByPlayer {
   id: ModifierId;
 
   sourceId?: CardInstanceId;
@@ -227,7 +237,7 @@ export interface RuntimeAreaModifier {
 }
 
 /** A temporary keyword grant from a `grantKeyword` effect (e.g. "this turn, the character gains COVERT"). */
-export interface RuntimeKeywordGrant {
+export interface RuntimeKeywordGrant extends CreatedByPlayer {
   id: ModifierId;
 
   sourceId?: CardInstanceId;
@@ -255,7 +265,7 @@ export interface RuntimeKeywordGrant {
  * Pursuit) grants `aggro`. Consulted by `hasKeyword`; swept by
  * `durationStillActive`.
  */
-export interface RuntimePlayerKeywordGrant {
+export interface RuntimePlayerKeywordGrant extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   playerId: PlayerId;
@@ -271,7 +281,7 @@ export interface RuntimePlayerKeywordGrant {
  * inert (`abilitySuppressed`). "This turn, this card loses all rules text."
  * (iDumb De-Itemizer — RESET).
  */
-export interface RuntimeAbilitySuppression {
+export interface RuntimeAbilitySuppression extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   targetId: CardInstanceId;
@@ -280,7 +290,7 @@ export interface RuntimeAbilitySuppression {
 }
 
 /** A temporary restriction grant from a `grantRestriction` effect (e.g. "this turn, the character cannot attack"). */
-export interface RuntimeRestriction {
+export interface RuntimeRestriction extends CreatedByPlayer {
   id: ModifierId;
 
   sourceId?: CardInstanceId;
@@ -300,7 +310,7 @@ export interface RuntimeRestriction {
  * `getCardTypes` / `hasCardType` are consulted. The stat grants that ride
  * along are separate `RuntimeModifier`s with a matching duration/source.
  */
-export interface RuntimeCardTypeGrant {
+export interface RuntimeCardTypeGrant extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   targetId: CardInstanceId;
@@ -315,7 +325,7 @@ export interface RuntimeCardTypeGrant {
  * active (see `durationStillActive`) the card lists `subtype` in addition
  * to its printed subtypes, everywhere `getSubtypes` is consulted.
  */
-export interface RuntimeSubtypeGrant {
+export interface RuntimeSubtypeGrant extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   targetId: CardInstanceId;
@@ -377,7 +387,7 @@ export interface RuntimeHandMoveRedirect {
  * `getResourceIcons` while `targetId` is in play; swept by
  * `durationStillActive` / cleared when the card leaves play.
  */
-export interface RuntimeProvideGrant {
+export interface RuntimeProvideGrant extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   targetId: CardInstanceId;
@@ -388,7 +398,7 @@ export interface RuntimeProvideGrant {
 }
 
 /** A temporary phantom resource-icon grant ("this turn, you control an additional [E][E][E][E]" — 31337!). */
-export interface RuntimeResourceGrant {
+export interface RuntimeResourceGrant extends CreatedByPlayer {
   id: ModifierId;
   playerId: PlayerId;
   icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
@@ -404,7 +414,7 @@ export interface RuntimeResourceGrant {
  * inflicted TO that card is adjusted (Fiscal Intercessor); `sourceId` is then
  * just the card that made the entry.
  */
-export interface RuntimeOutgoingDamageModifier {
+export interface RuntimeOutgoingDamageModifier extends CreatedByPlayer {
   id: ModifierId;
   sourceId: CardInstanceId;
   /** Only damage inflicted to this player's faction is adjusted. */
@@ -431,7 +441,7 @@ export interface RuntimeOutgoingDamageModifier {
  *   `cardId` is put into its owner's hand instead (Vexing Nullifier,
  *   receiver side).
  */
-export interface BattleDamageTransform {
+export interface BattleDamageTransform extends CreatedByPlayer {
   id: ModifierId;
   sourceId?: CardInstanceId;
   cardId: CardInstanceId;
@@ -443,7 +453,7 @@ export interface BattleDamageTransform {
 }
 
 /** A runtime damage "shield" registered by `preventDamage`, consumed as damage is inflicted this turn. */
-export interface DamageShield {
+export interface DamageShield extends CreatedByPlayer {
   id: ModifierId;
   /** The card whose effect registered it (read-only info for `getActiveProtections`). */
   sourceId?: CardInstanceId;
@@ -483,7 +493,7 @@ export interface ScheduledEffect {
  * blocks the FLIP UP action. Consulted by `assertCanDeployAtCurrentTiming` /
  * the `flipUp` handler; swept by `durationStillActive`.
  */
-export interface RuntimePlayRestriction {
+export interface RuntimePlayRestriction extends CreatedByPlayer {
   id: ModifierId;
   playerId: PlayerId;
   kind: "cardType" | "flipUp";
@@ -499,7 +509,7 @@ export interface RuntimePlayRestriction {
  * `modifyNumericCost` effect ("this turn, the character loses 1 numeric
  * cost"). Folded into `applyCostModifiers`; swept by `durationStillActive`.
  */
-export interface RuntimeNumericCostModifier {
+export interface RuntimeNumericCostModifier extends CreatedByPlayer {
   id: ModifierId;
   targetId: CardInstanceId;
   delta: number;
@@ -513,7 +523,7 @@ export interface RuntimeNumericCostModifier {
  * Skydocks). Consulted by `meetsThreshold`; cleared by the next deploy and
  * at end of turn.
  */
-export interface RuntimeThresholdReduction {
+export interface RuntimeThresholdReduction extends CreatedByPlayer {
   id: ModifierId;
   playerId: PlayerId;
   icon: "rage" | "greed" | "deception" | "elitism" | "obsession" | "volition";
@@ -524,7 +534,7 @@ export interface RuntimeThresholdReduction {
 }
 
 /** A pending "reduce the next numeric cost you pay this turn" from a `reduceNextCost` effect, consumed by one `playCard`. */
-export interface RuntimeCostReduction {
+export interface RuntimeCostReduction extends CreatedByPlayer {
   id: ModifierId;
 
   playerId: PlayerId;
@@ -1396,7 +1406,7 @@ export interface GameState {
    * every `dealDamage` / battle-damage assignment resolves to 0. Swept by
    * `durationStillActive`.
    */
-  damagePreventionWindows: Array<{ id: ModifierId; duration: Duration; createdTurn: number; exceptCosts?: boolean; battleOnly?: boolean; sourceId?: CardInstanceId }>;
+  damagePreventionWindows: Array<CreatedByPlayer & { id: ModifierId; duration: Duration; createdTurn: number; exceptCosts?: boolean; battleOnly?: boolean; sourceId?: CardInstanceId }>;
 
   /**
    * Runtime "cards can only be destroyed by costs" windows from a
@@ -1404,14 +1414,14 @@ export interface GameState {
    * the `destroy` effect is a no-op (cost / lethal-damage / removeFromGame
    * paths are unaffected). Swept by `durationStillActive`.
    */
-  destructionRestrictionWindows: Array<{ id: ModifierId; duration: Duration; createdTurn: number; sourceId?: CardInstanceId }>;
+  destructionRestrictionWindows: Array<CreatedByPlayer & { id: ModifierId; duration: Duration; createdTurn: number; sourceId?: CardInstanceId }>;
 
   /**
    * Durationed "take control" grants (`takeControl` effect with a
    * `duration`). When one expires (swept at the start-of-turn point), the
    * card's control reverts to `previousControllerId`. Mutiny Grant.
    */
-  controlGrants: Array<{
+  controlGrants: Array<CreatedByPlayer & {
     id: ModifierId;
     cardId: CardInstanceId;
     previousControllerId: PlayerId;
@@ -1434,7 +1444,7 @@ export interface GameState {
    * into the recipient's ability lookups; entries for a card are dropped
    * when it leaves play.
    */
-  abilityGrants: Array<{
+  abilityGrants: Array<CreatedByPlayer & {
     id: ModifierId;
     cardId: CardInstanceId;
     sourceId: CardInstanceId;
@@ -1447,7 +1457,7 @@ export interface GameState {
    * `ContinuousAbility.blockRestriction`). Consulted in `declareBlockers`;
    * swept by `durationStillActive`. LeoKaiser.
    */
-  blockRestrictionGrants: Array<{
+  blockRestrictionGrants: Array<CreatedByPlayer & {
     id: ModifierId;
     sourceId: CardInstanceId;
     targetId: CardInstanceId;
@@ -1464,7 +1474,7 @@ export interface GameState {
    * character able to block `attackerId`. Consulted in `declareBlockers`;
    * swept by `durationStillActive`.
    */
-  mustBlockGrants: Array<{
+  mustBlockGrants: Array<CreatedByPlayer & {
     id: ModifierId;
     sourceId: CardInstanceId;
     attackerId: CardInstanceId;
@@ -1481,7 +1491,7 @@ export interface GameState {
    * `blockRestriction`). Consulted in `assertPartyComposition`; swept by
    * `durationStillActive`. Carnival King (CONGA LINE).
    */
-  partyRestrictionGrants: Array<{
+  partyRestrictionGrants: Array<CreatedByPlayer & {
     id: ModifierId;
     sourceId: CardInstanceId;
     targetId: CardInstanceId;
@@ -1500,7 +1510,7 @@ export interface GameState {
    * from the void as though it were a hand card. Persistent; an entry is
    * pruned when its card leaves the void.
    */
-  voidPlayGrants: Array<{
+  voidPlayGrants: Array<CreatedByPlayer & {
     cardId: CardInstanceId;
     playerId: PlayerId;
     ignoreThreshold: boolean;
@@ -1563,9 +1573,12 @@ export interface GameState {
    * every player listed loses, even one whose influence a later effect of the unit raised again, and nothing that
    * happens in another unit counts (a triggered ability set off by the unit is its own, later unit). Absent while
    * nobody is out, and always between units except while one is parked on a player choice.
-   * `elsewhere` lists players found out in some other unit after that: they are not counted.
+   * `later` lists, in the order their factions first reached 0, the other units in which players were found out
+   * after that (a trigger resolving inside the unit is a unit of its own). Once the listed players are eliminated,
+   * the first of them becomes the unit that decides next; at two seats the first loss ends the game, so they are
+   * never counted (RQ-mp-7, RQ-mp-13).
    */
-  pendingLoss?: { unitId: string; players: PlayerId[]; elsewhere?: PlayerId[] };
+  pendingLoss?: { unitId: string; players: PlayerId[]; later?: Array<{ unitId: string; players: PlayerId[] }> };
 
   /** Blocks perform() except resolvePendingChoice until a player answers it. */
   pendingChoice?: PendingChoice;

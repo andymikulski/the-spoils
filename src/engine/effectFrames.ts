@@ -113,6 +113,14 @@ export class FrameStack implements Iterable<EffectFrame> {
     return this.stored.splice(start).map(parked => this.open(parked));
   }
 
+  /** Removes every parked frame `test` accepts. */
+  removeWhere(test: (frame: EffectFrame) => boolean): void {
+    const stored = this.stored;
+    for (let i = stored.length - 1; i >= 0; i--) {
+      if (test(this.open(stored[i]))) stored.splice(i, 1);
+    }
+  }
+
   some(test: (frame: EffectFrame) => boolean): boolean {
     return this.stored.some(parked => test(this.open(parked)));
   }
