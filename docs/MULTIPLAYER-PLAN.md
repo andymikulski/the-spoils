@@ -139,8 +139,10 @@ Work happens on branch `ffa`. Status:
      smallest count chosen (414.3b).
    - **MPX-setup.** One player is chosen at random from all players and picks
      who goes first (601.1c).
-   - **MPX-swap.** Emergency Obfuscation rotates every seat one to the left,
-     as printed.
+   - **MPX-swap.** Emergency Obfuscation's printed text ("both players switch
+     seats") swaps seats and sides between the controller and one selected
+     opponent (MP 3). The archival "moves 1 seat to the left" wording is a later
+     rewording and is not the spec (MPQ-P1).
 2. **Open questions** go into `QUESTIONS.md` as RQ-mp-n, each with a
    `ruleOpen` test. Remove the "multiplayer is out of scope" line there. These
    are the places where the rules are silent:
@@ -235,11 +237,31 @@ Work happens on branch `ffa`. Status:
     to respond or anything".
   - The rest of the table plays on per RQ-mp-3.
 
+### Later rulings (user, 2026-11-07: "all recommended")
+
+- RQ-mp-8 to RQ-mp-11 (battle-window order after the defender, pending
+  triggers of an eliminated player, re-selecting on a control change, and
+  loops the active player isn't part of) are ruled as recommended. They are
+  recorded in `data/rule-tests/rulings.md`.
+- Card pattern rulings MPQ-P1 to MPQ-P11 are in
+  `data/card-tests/mp-spec/README.md` ("Pattern rulings") and in
+  `rulings.md`. They cover:
+  - printed text over archival wording;
+  - trigger conditions, which any opponent's action satisfies;
+  - "either deck";
+  - "any opponent may pay" offers, which go clockwise;
+  - battle text, where "your opponent" is the other side of the battle;
+  - superlatives and totals over "an opponent", evaluated within one
+    opponent;
+  - other-player point-of-view text;
+  - Mercenary's Creed;
+  - Gideon's Legacy.
+
 ## Phase 2 — Types (lead session)
 
 - **`GameState`.**
-  - `seats: PlayerId[]`: clockwise seat order. The seat swap changes control,
-    not this list.
+  - `seats: PlayerId[]`: clockwise seat order. Emergency Obfuscation's swap
+    exchanges two entries while it lasts (MPX-swap).
   - `PlayerState.lostTurn?: number` plus a `playerLost` event. Every
     "players still in the game" query reads this.
   - `GameWinner` is unchanged (`PlayerId | "draw"`).
