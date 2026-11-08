@@ -3962,5 +3962,600 @@
   "text": "Can I attack if both Hangdog Alley and Arcana Department are in play?",
   "answer": "Although both cards are contradictory of each other it is still possible to attack. When two or more cards put requirements on the same action (in this case it is attacking) then the player must try to fulfill as many of the requirements as possible. If it is impossible to fulfill all requirements then the player must make the decision that satisfies as many of the requirements as possible. The Spoils USATM — Rules FAQ Version 2.0",
   "batch": "r12-faq"
+ },
+ {
+  "id": "MP 1",
+  "source": "MP",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines (printed insert)",
+  "kind": "rule",
+  "text": "The game may be played with three or more players.",
+  "title": "Three or more players",
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MP 2",
+  "source": "MP",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines (printed insert)",
+  "kind": "rule",
+  "text": "If a card refers to \"your opponent\", select one of the other players as your opponent for the current block of rules text.",
+  "title": "Selecting your opponent",
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MP 3",
+  "source": "MP",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines (printed insert)",
+  "kind": "rule",
+  "text": "If a card refers to \"both players\", the same selection applies: \"both players\" means you and the opponent selected for that block of rules text.",
+  "title": "Both players",
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MP 4",
+  "source": "MP",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines (printed insert)",
+  "kind": "rule",
+  "text": "The selected opponent is temporary: it holds only for the current block of rules text, and a new selection is made each time one is needed.",
+  "title": "The selection is temporary",
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MP 5",
+  "source": "MP",
+  "section": "MP",
+  "sectionTitle": "Multi-Player Guidelines (printed insert)",
+  "kind": "rule",
+  "text": "House rules are encouraged for combinations that are too powerful in multi-player (non-normative; the engine exposes no house-rule hook for this — see docs/house-rules-mods-design.md).",
+  "title": "House rules",
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-seat",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "Players sit in a circle of seats in the order they were given when the game was set up. \"Clockwise\" (CR 402.2, 413.1a, 601.1g) means increasing seat order, wrapping from the last seat to the first. (1) The seat order changes only when a card makes players switch seats (MPX-swap). (2) A player who has lost keeps no place in the order: every \"clockwise\", \"the next player\" and \"the seat after X\" skips such players. \"The seat after X\" is the first seat clockwise from X that holds a player in the game. (3) With exactly two players, clockwise from X is the other player.",
+  "title": "Seat order and \"clockwise\"",
+  "cites": [
+   "CR 402.2",
+   "CR 413.1a",
+   "CR 601.1g",
+   "MP 1",
+   "MPX-swap"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-turn",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) The player chosen under CR 601.1c takes the first turn. (2) When a turn ends, the next turn belongs to the next seat clockwise from the player whose turn just ended (MPX-seat), so players who have lost are skipped. (3) The active player is the player whose turn it is. It does not change while anyone acts or responds and changes only when one turn ends and another begins (FAQ 1). (4) Only the active player may take the main-turn actions of CR 603.2 (deploy a card, use an ability, attack, end the turn); every other player acts only by responding (MPX-respond) or through text that lets them deploy or use something on another player's turn (MPX-offturn). (5) A player who loses during their own turn ends it at once (MPX-elim); a player who loses during another player's turn is skipped when the turn order reaches their seat.",
+  "title": "Turn order and the active player",
+  "cites": [
+   "CR 601.1c",
+   "CR 602.1",
+   "CR 603.1",
+   "CR 603.2",
+   "CR 610.1",
+   "FAQ 1",
+   "MPX-seat",
+   "MPX-elim",
+   "RQ-mp-3"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-win",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) A faction at 0 influence makes its owner lose (CR 102.1, 408.3a), whoever controls the faction. (2) A loss removes only that player (MPX-elim). The game goes on while two or more players are in the game. (3) \"The object of the game is to reduce the influence score of your opponent's faction to 0\" (CR 102.1) holds against every other player: any other player's faction may be reduced. No opponent is selected for it (MP 2 applies to a card's rules text, not to CR 102.1). (4) The game ends as soon as at most one player is in the game. If one player is left, that player wins. If every player still in the game loses at the same time, nobody is left and the game is a draw between those players (CR 102.2, 306.4). (5) Running out of cards makes nobody lose (CR 102.1a).",
+  "title": "Losing, winning and drawing",
+  "cites": [
+   "CR 102.1",
+   "CR 102.1a",
+   "CR 102.2",
+   "CR 306.4",
+   "CR 408.3",
+   "CR 408.3a",
+   "MP 1",
+   "MPX-elim",
+   "MPX-simul"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-simul",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "A unit is one resolving card or ability's own effects, one triggered ability's own effects, or one batch of simultaneous battle damage. A trigger set off during a unit is a later, separate unit. A cost is not part of a resolution: a cost that takes a faction to 0 makes its owner lose at once. (1) A player's faction reaching 0 at any point during a unit makes that player lose when the unit ends, even if a later effect of the same unit, or a trigger that unit sets off, raises the faction above 0 again (RQ-r11-4). (2) Every player whose faction reached 0 during the same unit loses at the same time. If those are all the players in the game, the game is a draw (CR 102.2). Otherwise those players are eliminated and the others play on; if one player is left, that player wins. (3) Players whose factions reach 0 in different units are eliminated one unit at a time, in the order the units resolve; a later unit neither undoes nor shares an earlier unit's elimination. (4) A card or ability, or one batch of battle damage, that takes several factions to 0 together (one tactic, a \"each player loses N influence\" effect, battle damage hitting two factions) is one unit; one that takes only one faction to 0 eliminates only that player (RQ-mp-7). (5) With two players this is exactly RQ-r11-2 and RQ-r11-4: both reaching 0 in one unit is a draw; one reaching 0 loses and the other wins.",
+  "title": "Simultaneous and successive losses",
+  "cites": [
+   "RQ-mp-7",
+   "RQ-r11-2",
+   "RQ-r11-4",
+   "CR 102.1",
+   "CR 102.2",
+   "MPX-win",
+   "MPX-elim-timing"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-elim",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "When a player loses and the game goes on, all of the following happen at once, as that player is eliminated: (1) Every card the player owns leaves the game, from every game area (deck, hand, being deployed, in play, discard pile, void, resources, faction): it goes to the out of game area (CR 403.6a). That includes cards they own that another player controls. A card attached to a card that leaves play leaves play in the same way (CR 301.4). (2) Every card the player controls but does not own goes back to its owner's control, staying where it is. (If its owner is eliminated at the same time, step (1) applies to it.) A battle in progress follows the rules already written for this: a character whose controller changes leaves the battle (CR 407.4), an attacked location whose controller changes stops being the target (CR 407.5), and attackers with nothing left to assign damage to assign none yet count as having assigned it (CR 609.2). (3) Every item of theirs on the response stack is removed without resolving, and every pending choice addressed to them is removed. (4) Their lasting effects end: every effect, delayed effect, modifier and restriction that was created under their control stops. (5) If it was their turn, the turn ends at once: no further actions, no end-of-turn responses, no end-of-turn triggers (CR 610.1, 610.1a). The next turn belongs to the next seat (MPX-turn). (6) From then on the player takes no actions, makes no responses, is offered none, and is not counted, picked, chosen or affected as a player by anything. Another player's lasting text whose selected opponent was the eliminated player selects again (MPX-lasting). (7) The eliminated player's seat is skipped from then on (MPX-seat). Not specified by this ruling (see RQ-mp-9): triggers waiting to resolve that the eliminated player controls.",
+  "title": "What elimination does",
+  "cites": [
+   "RQ-mp-3",
+   "RQ-mp-timing",
+   "MPX-win",
+   "MPX-seat",
+   "MPX-turn",
+   "MPX-lasting",
+   "CR 301.4",
+   "CR 403.6a",
+   "CR 407.4",
+   "CR 407.5",
+   "CR 609.2"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-elim-timing",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) A player whose faction reached 0 during a unit is eliminated as soon as that unit ends. That is before any trigger that the unit set off resolves and before any response window opens. (2) From that moment they take no further actions or responses: they are not offered any response window, and anything still waiting on them is removed (MPX-elim). (3) Nobody can act in the middle of a unit, so no player can respond to a faction reaching 0 and save it; \"reaching 0 is final\" holds as in RQ-r11-4. (4) The rest of the table plays on as in MPX-elim. When the elimination leaves at most one player, the game ends (MPX-win).",
+  "title": "When elimination happens",
+  "cites": [
+   "RQ-mp-timing",
+   "RQ-mp-3",
+   "RQ-mp-7",
+   "RQ-r11-4",
+   "MPX-simul",
+   "MPX-elim",
+   "CR 102.1"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-attack",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) The attacking player is the active player. They announce one target: any faction or location in play that they do not control (CR 608.1a). That includes the faction and every location of every other player in the game, so any opponent may attack another player's locations (CR 207.3). Control, not ownership, decides whose it is. (2) The defending player is the controller of the target (CR 302.4). A player is being attacked only while the target is a faction or location they control (CR 302.2); a player in the game who controls neither is not being attacked. (3) Only the defending player may form the blocking party (CR 608.1d). Characters controlled by any other player cannot block, whether or not they are depleted, and no effect can add them to the blocking party (CR 407.6). A character that \"cannot be blocked\" stops the defending player from forming a blocking party (CR 412.1); no other player can form one either. (4) Each attack is its own battle with its own attacking player, target and defending player; one turn's attacks may target different players.",
+  "title": "Who can be attacked and who defends",
+  "cites": [
+   "CR 207.3",
+   "CR 302.2",
+   "CR 302.3",
+   "CR 302.4",
+   "CR 407.5",
+   "CR 407.6",
+   "CR 412.1",
+   "CR 603.2",
+   "CR 608.1a",
+   "CR 608.1d",
+   "MPX-seat"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-attack-default",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "CR 608.1a: if the attacker names no target, the attack defaults to \"your opponent's faction\". (1) With exactly one other player in the game, the default target is that player's faction. (2) With two or more other players in the game, \"your opponent\" is the opponent the attacker selects for that attack (MP 2): the default target is the selected opponent's faction. The selection is the attacker's and is made when the attack is announced. (3) An announcement with no target and no selected opponent while two or more opponents are in the game is not a legal announcement: there is no opponent to default to. (4) Each attack is its own block of rules text: the selection does not carry from one attack to the next (MP 4).",
+  "title": "The default attack target",
+  "cites": [
+   "CR 608.1a",
+   "MP 2",
+   "MP 4",
+   "MPX-select",
+   "MPX-attack"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-respond",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) A player may respond whenever another player deploys a card, uses an ability or ends their turn (CR 607.1). The players who may respond to an action are exactly the players in the game other than the action's controller. (2) Nobody can respond to their own actions (CR 607.1), including their own responses. A response is itself an action that every player in the game except its controller may respond to (CR 607.2a): so you may respond to another player's response to your own action, but you can never respond to your own response. (3) A response is deploying a tactic or using an ability, faction abilities included (CR 205.1, 502.3, 607.2; FAQ 3), at any time a response is legal, on any player's turn. (4) Nobody can respond to a trigger (CR 503.2). (5) A card that closes the opportunity to play tactics closes it for every player (FAQ 2). (6) A non-resource card being deployed stays in the being-deployed area until every player who may respond has finished responding (CR 403.3a); who goes when, and when the action resolves, is MPX-priority.",
+  "title": "Who may respond",
+  "cites": [
+   "CR 205.1",
+   "CR 403.3a",
+   "CR 502.3",
+   "CR 503.2",
+   "CR 607.1",
+   "CR 607.2",
+   "CR 607.2a",
+   "FAQ 2",
+   "FAQ 3",
+   "MP 1",
+   "MPX-priority"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-priority",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "CR 607.2b needs no priority system because there are two players; with more, this order applies. The controller of an item is the player who deployed the card or used the ability (the player who announced ending the turn, for that action; see MPX-endturn). (1) An item is offered to the players in the game other than its controller, one at a time, clockwise, starting with the seat after its controller (MPX-seat). (2) A player offered an item either responds to it (a tactic or an ability) or passes. A response is a new item on top of the one it answers; it is offered under (1) to everyone except its own controller, starting with the seat after the responder. (3) An item resolves only after every player in the game other than its controller has passed on it in a row. Any response or resolution above it starts that count over. (4) After an item resolves, the item it answered (if any) is on top again and is offered again from the start of the count: first to the player who controlled the item that just resolved (CR 607.2: they may make another response), then to the rest of the players other than its controller, clockwise from that player. (5) The controller of an item is never offered it. A player who passed on an item can be offered it again after a resolution (4); passing is not permanent. (6) With exactly one other player in the game this is the existing two-player flow: that player gets each item, and nobody else is ever offered anything.",
+  "title": "Response order (RQ-mp-1)",
+  "cites": [
+   "RQ-mp-1",
+   "CR 607.2",
+   "CR 607.2a",
+   "CR 607.2b",
+   "MPX-respond",
+   "MPX-seat"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-battle-window",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "CR 608.1c, 609.1a and 609.1e say the attacking player may deploy tactics and use abilities as many times as they want and then \"your opponent\" / the defending player may do the same. (1) In each of those steps the windows go in this order: the attacking player, then the defending player, then every other player in the game, clockwise. (2) In its window a player may deploy tactics and use abilities as many times as they want, and each such action can be responded to under MPX-priority. Each player has one window per step; a window does not reopen once the next player has begun theirs. (3) The blocking step (CR 608.1d) is not a window: only the defending player acts in it (MPX-attack). (4) Where \"clockwise\" starts for the other players when there are two or more of them is open (RQ-mp-8). With three players there is exactly one other player, so the order is fixed: attacking player, defending player, that player.",
+  "title": "Tactic and ability windows in a battle (RQ-mp-2)",
+  "cites": [
+   "RQ-mp-2",
+   "RQ-mp-8",
+   "CR 608.1c",
+   "CR 608.1d",
+   "CR 609.1a",
+   "CR 609.1e",
+   "MPX-attack",
+   "MPX-priority"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-endturn",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) Announcing the end of the turn is an action of the active player. Every other player in the game may respond to it (CR 607.1, 610.1), offered per MPX-priority: clockwise, starting with the seat after the active player. (2) The turn does not end until every other player in the game has passed in a row on the announcement, with no response unresolved (CR 610.1). A response, and its resolution, starts the passes over. (3) End-of-turn triggers happen at the moment the turn actually ends, after all those responses are done (CR 610.1a). Then the next turn begins (MPX-turn). (4) If the active player is eliminated during this exchange, the turn ends at once without the rest of it (MPX-elim).",
+  "title": "Ending the turn (RQ-mp-2)",
+  "cites": [
+   "RQ-mp-2",
+   "RQ-mp-1",
+   "CR 607.1",
+   "CR 610.1",
+   "CR 610.1a",
+   "MPX-priority",
+   "MPX-turn",
+   "MPX-elim"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-offturn",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "Where the CR says \"your opponent's turn\" (CR 204.1, 206.1, 207.1) or \"your opponent's actions\" (CR 205.1, 502.3), it means any turn of, or any action by, a player other than you. (1) An effect that lets you deploy a card, or a card that allows deploying on another player's turn, works on the turn of any other player. (2) A tactic or ability may be used in response to any other player's action, whichever player is active, including an action by a player who is not the active player (MPX-respond). (3) An effect that says \"deploy a card\" resolves when it resolves, whoever the active player is (CR 204.1, 206.1, 207.1 examples).",
+  "title": "Acting on another player's turn",
+  "cites": [
+   "CR 204.1",
+   "CR 205.1",
+   "CR 206.1",
+   "CR 207.1",
+   "CR 502.3",
+   "CR 603.1",
+   "FAQ 1"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-select",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "A block of rules text is one printed ability or one card effect: one activated ability (its name, COST and EFFECT together), one triggered ability (with its option lines), one paragraph of continuous text, or the effect text of one card such as a tactic. A card's separate abilities and paragraphs are separate blocks. (1) When a block that says \"your opponent\", \"that opponent\", \"their opponent\" or \"both players\" begins to be followed, its controller selects one other player in the game as the block's opponent (MP 2). The same opponent is meant by every such phrase in the block. (2) For a card played or an ability used, the selection is made when the action is announced, before any target is chosen (CR 604.1, 606.1), because which targets are legal can depend on it. For a triggered ability it is made when the trigger is about to be followed. For continuous text it is MPX-lasting. (3) With exactly one other player in the game that player is the opponent automatically: no choice is offered and nothing else changes. (4) The selected opponent is never the controller and never a player who has lost. (5) A new selection is made each time a block is followed (MP 4): one ability used twice, or one trigger firing twice, makes two independent selections, and nothing carries over from the first. (6) \"You\" and \"your\" mean the card's current controller (CR 407.2), so the selecting player is the controller when the block begins. (7) A block with none of those phrases makes no selection.",
+  "title": "Selecting your opponent",
+  "cites": [
+   "MP 2",
+   "MP 3",
+   "MP 4",
+   "CR 407.2",
+   "CR 604.1",
+   "CR 606.1",
+   "MPX-both",
+   "MPX-vocab-your",
+   "MPX-lasting"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-both",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "In a block, \"both players\" means exactly two players: the block's controller and the one opponent selected for that block (MP 3, MPX-select). It is the same opponent as every \"your opponent\" in that block. Players other than those two are not among \"both players\". The one exception is the card ruled in MPX-knitting.",
+  "title": "\"Both players\"",
+  "cites": [
+   "MP 3",
+   "MP 2",
+   "MPX-select",
+   "MPX-knitting"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-knitting",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "Printed on The Knitting Coalition: \"HIDDEN INFLUENCE: Your opponent ignores their faction's STARTING DRAW rule and uses this card's rule instead\", \"DEVELOP RULE - PULLING STRINGS: Your opponent ignores their faction's DEVELOP RULE\", and INFLATIONARY FORCES - DRAW / RESOURCE \"COST: Both players may use this ability.\" (1) \"Both players may use this ability\" means the controller and every opponent in the game may use it. No opponent is selected. (2) HIDDEN INFLUENCE and PULLING STRINGS apply to every opponent in the game: all of them ignore their own faction's STARTING DRAW rule (using this card's instead, with the seat rule of MPX-draw) and their own faction's DEVELOP RULE. No opponent is selected. (3) This ruling is about this card only. On any other card \"your opponent\" and \"both players\" keep MPX-select and MPX-both.",
+  "title": "The Knitting Coalition (RQ-mp-6)",
+  "cites": [
+   "RQ-mp-6",
+   "MP 3",
+   "MPX-both",
+   "MPX-draw",
+   "RQ-mp-4"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-vocab-your",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) \"Your opponent\" and \"your opponent's\" mean the block's selected opponent (MPX-select). (2) \"That opponent\" and \"that opponent's\" mean the same player as the opponent just named in the block, by \"an opponent\", \"your opponent\" or a pick. (3) \"Their opponent\" and \"their opponent's\" (singular) mean the opponent of the player \"their\" refers to. When the block has named exactly two players (\"you and an opponent\"), that is the other of the two. (4) \"Their opponents\" (plural) means every player in the game other than the player \"their\" refers to, the block's controller included when the controller is not that player.",
+  "title": "\"Your opponent\", \"that opponent\", \"their opponent\"",
+  "cites": [
+   "MP 2",
+   "MP 3",
+   "MPX-select",
+   "MPX-vocab-an"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-vocab-an",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) \"An opponent\" and \"any opponent\" mean one opponent in the game. MP 2 does not apply to them: no opponent is selected for the block. Which opponent is decided by the pick, choice or targeting the sentence itself makes. (2) A selector such as \"a character an opponent controls\" or \"a card in an opponent's discard pile\" matches the cards of any opponent in the game; the controller of the card picked is the opponent. (3) When the sentence makes no pick or choice of its own (such as \"you and an opponent look at ...\"), the block's controller chooses which opponent. (4) Each \"an opponent\" is independent of the others in the block unless a later phrase refers back to it (\"that opponent\", MPX-vocab-your).",
+  "title": "\"An opponent\", \"any opponent\"",
+  "cites": [
+   "MP 2",
+   "MPX-select",
+   "MPX-vocab-your"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-vocab-each",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) \"Each opponent\", \"all opponents\", \"your opponents\", \"opponents\", and \"each opponent's\" mean every opponent in the game. No opponent is selected. (2) When they act or are affected one after another, the order is the active player first and then clockwise (CR 402.2), over the opponents only. (3) A count over them (\"the number of characters your opponents own\") adds up across every opponent in the game.",
+  "title": "\"Each opponent\", \"your opponents\"",
+  "cites": [
+   "CR 402.2",
+   "MPX-seat",
+   "MPX-vocab-your"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-vocab-players",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) \"Each player\", \"all players\" and bare \"players\" mean every player in the game, the controller included, in the order of CR 402.2: the active player first, then clockwise. (2) \"Each other player\" and \"each other player's\" mean every player in the game except the controller, in the same order. (3) \"Each of you\" means the players just addressed by \"you and ...\" or \"both players\": the controller and the opponent chosen or selected in that block. It does not mean every player. (4) \"A player\" and \"any player\" mean one player in the game, the controller allowed, decided by the pick or choice the sentence makes. \"Another player\" means one player in the game other than the controller. (5) \"That player\", \"the player\" and \"the picked player\" mean the player already named or picked in the block. (6) \"The active player\" means the player whose turn it is.",
+  "title": "\"Each player\", \"another player\" and the other player phrases",
+  "cites": [
+   "CR 402.2",
+   "MPX-seat",
+   "MPX-both",
+   "MPX-vocab-your"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-lasting",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "This covers \"your opponent\", \"that opponent\" and \"both players\" in continuous or static text (such as \"while this card is in play ...\", a conditional using \"while\", a requirement using \"must\", a restriction) and in an effect or delayed effect that a resolving block creates and that keeps applying afterward (\"this turn ...\", \"the next time ...\"). (1) The controller selects the opponent once, when the effect starts applying: when the card enters play (a card's own continuous text) or when the effect is created (an effect a block creates). (2) The selection holds for as long as the effect does, and the same opponent is meant wherever the text says \"your opponent\" or \"that opponent\". It is not selected again when other things happen. (3) If the selected opponent is eliminated, the controller selects again from the players still in the game at that moment, and the effect applies to the new opponent from then on. (4) With exactly one other player in the game the opponent is that player and nothing is chosen; if only one is left after an elimination, the effect moves to that player automatically. (5) Text of this kind that says \"your opponents\" or \"each opponent\" selects nobody (MPX-vocab-each). (6) Whether a change of the card's controller makes the new controller select again is open (RQ-mp-10).",
+  "title": "\"Your opponent\" in text that keeps applying (RQ-mp-5)",
+  "cites": [
+   "RQ-mp-5",
+   "MP 2",
+   "MP 4",
+   "CR 407.2",
+   "CR 504.1",
+   "CR 505.1",
+   "MPX-select",
+   "MPX-elim",
+   "RQ-mp-10"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-draw",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "A faction prints its Starting Draw as \"N going first, M going second\" (CR 601.1e). (1) The first player (the player chosen under CR 601.1c to take the first turn) draws the \"going first\" number. (2) Every other player, whatever their seat, draws the \"going second\" number. (3) A player whose Starting Draw rule is replaced by another card's (MPX-knitting) draws that card's number by the same two cases.",
+  "title": "Opening draw by seat (RQ-mp-4)",
+  "cites": [
+   "RQ-mp-4",
+   "CR 601.1c",
+   "CR 601.1e",
+   "MPX-setup",
+   "MPX-knitting"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-setup",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) Every player's faction starts in play (CR 601.1a). Every player searches their deck for their starting resources and puts them in face-down, then every player flips them face-up (CR 601.1b, 601.1d). (2) One player is chosen at random from all the players. That player chooses who goes first and may choose any player, themselves included (CR 601.1c). (3) Every player draws their starting hand by MPX-draw (CR 601.1e). (4) The mulligan step (CR 601.1f, 601.1g) is taken by each player in turn, clockwise, starting with the first player. Whether a given player gets a mulligan is exactly as in a two-player game and is still open there (RQ-r08-turn-deploy-2). (5) The first turn begins and belongs to the first player (CR 601.1h); the turns after it follow the seats (MPX-turn).",
+  "title": "Starting an N-player game",
+  "cites": [
+   "CR 601.1a",
+   "CR 601.1b",
+   "CR 601.1c",
+   "CR 601.1d",
+   "CR 601.1e",
+   "CR 601.1f",
+   "CR 601.1g",
+   "CR 601.1h",
+   "MPX-seat",
+   "MPX-draw",
+   "RQ-r08-turn-deploy-1",
+   "RQ-r08-turn-deploy-2"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-order",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) When several triggers happen at the same time and all come from one player's cards, that player decides their order. When they come from cards under the control of two or more players, the active player decides the order of all of them, even when the active player controls none of them (CR 503.4, FAQ 6). (2) The order is decided one trigger at a time (CR 503.4a). (3) The same holds for replacements trying to replace the same thing (CR 506.4): one player's cards, that player chooses; two or more players' cards, the active player chooses. A delayed replacement that is not chosen keeps waiting. (4) At the start of a turn the active player orders the \"at start of turn\" triggers of every player (CR 602.2).",
+  "title": "Ordering simultaneous triggers and replacements",
+  "cites": [
+   "CR 503.4",
+   "CR 503.4a",
+   "CR 506.4",
+   "CR 602.2",
+   "FAQ 6",
+   "MPX-turn"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-unique",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) The unique restriction looks only at the cards one player controls. Every player may control their own copy of a unique card at the same time. (2) A player who controls two cards with the same unique identifier (for example after taking control of one, or when control of one returns to them) chooses which to keep and destroys the rest (CR 507.5a, FAQ 12).",
+  "title": "Unique with several players",
+  "cites": [
+   "CR 507.5a",
+   "FAQ 11",
+   "FAQ 12"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-hidden",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) A player's hand is hidden from every other player (CR 403.2a), not only from one opponent. No player may look through or shuffle another player's deck unless instructed (CR 403.1a). (2) When you must satisfy a cost \"as though you were your opponent\" (CR 401.2a), the opponent is the block's selected opponent (MP 2). You can satisfy it only with the knowledge you currently have about the game state: a discard from that opponent's hand is possible only if that hand is currently revealed to you by an ongoing effect. A hand revealed to you by an effect on a different opponent does not count.",
+  "title": "Hidden information",
+  "cites": [
+   "CR 401.2a",
+   "CR 403.1a",
+   "CR 403.2a",
+   "MP 2",
+   "MPX-select"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-bid",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) Every player in the game takes part in a bid (CR 413.1). (2) Bidding begins with the active player and continues clockwise, skipping players who have passed (CR 413.1a). (3) On their turn a player either chooses a number higher than the last number chosen or passes. A player who cannot bid higher must pass. A player who has passed, for any reason, may not bid again (CR 413.1, 413.1b). (4) Bidding continues until only one player has not passed. That player wins the bid and every other player loses it (CR 413.1). (5) The points RQ-r11-3 leaves open (the first bidder passing while others remain, and everyone passing) stay open at every table size.",
+  "title": "Bidding",
+  "cites": [
+   "CR 413.1",
+   "CR 413.1a",
+   "CR 413.1b",
+   "RQ-r11-3",
+   "MPX-seat"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-loop",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "(1) A series of effects that repeats forever and that no player in the game can voluntarily end is a draw between all the players in the game (CR 414.1, 102.2, MPX-win). (2) Any other player in the game may interrupt a voluntary loop at any point to respond (CR 414.2c, MPX-respond); after the response the loop continues until complete unless interrupted again. (3) When a loop involves the voluntary actions of two or more players, every involved player demonstrates it (CR 414.3a). Then each involved player chooses a number of repetitions: the active player first (when they are involved), then the other involved players clockwise from the active player (CR 414.3b). The loop is repeated the smallest number chosen; if any player chooses 0, no repetitions occur. (4) During the last repetition the active player, when they are involved, may choose any point at which to stop (CR 414.3c). (5) Who chooses the stopping point, and in what order the numbers are chosen, when the active player is not one of the involved players is open (RQ-mp-11).",
+  "title": "Action loops",
+  "cites": [
+   "CR 102.2",
+   "CR 414.1",
+   "CR 414.2c",
+   "CR 414.3",
+   "CR 414.3a",
+   "CR 414.3b",
+   "CR 414.3c",
+   "MPX-respond",
+   "MPX-win",
+   "RQ-mp-11"
+  ],
+  "batch": "mp-ffa"
+ },
+ {
+  "id": "MPX-swap",
+  "source": "MP",
+  "section": "MPX",
+  "sectionTitle": "N-player readings of two-player rules",
+  "kind": "rule",
+  "text": "Printed on Emergency Obfuscation (Open Beta and 1st Edition): \"While this card is in play, both players switch seats. Both players are in control of their opponent's side. If the game ends, the owner of the winning deck wins the game.\" (1) \"Both players\" is the card's controller and the one opponent selected for it (MP 3). It is selected when the card enters play and holds while it stays in play (MPX-lasting). No other player is affected. (2) While the card is in play those two players have switched seats: they exchange places in the seat order, so \"clockwise\" and the turn order (MPX-seat, MPX-turn) run as though each sat where the other was. Each of the two controls the side of the other: the faction, deck, hand, resources and cards in play that were the other's, as in a two-player game. (3) If the game ends, the winner is the owner of the winning deck, not whoever controls that side. (4) When the card leaves play the two players switch back: seats and control return. (5) If the selected opponent is eliminated, MPX-elim and MPX-lasting apply as written.",
+  "title": "Emergency Obfuscation: \"both players switch seats\"",
+  "cites": [
+   "MP 3",
+   "MPX-both",
+   "MPX-seat",
+   "MPX-lasting",
+   "MPX-elim",
+   "RQ-mp-5"
+  ],
+  "batch": "mp-ffa"
  }
 ]

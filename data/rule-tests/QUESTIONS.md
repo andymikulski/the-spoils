@@ -4,9 +4,9 @@ The one place to find every rules question still waiting on a ruling. The Compre
 
 After an answer arrives: record it in `rulings.md`, change the `ruleOpen(…)` to `rule(…)` (or `ruleMismatch(…)` if the engine disagrees), delete the entry from its `questions/<batch>.md`, and delete its line here. Full write-ups (readings, what the engine does, recommendation) are in `questions/<batch>.md`; one file per batch so parallel writers never collide. IDs are `RQ-<batch>-<n>`.
 
-Multiplayer / Showdown questions are out of scope: the CR and the engine are two-player.
+Free-for-all multiplayer is in scope (Showdown is still out); its atoms are in `source/multiplayer.txt` and its rulings in `rulings.md`.
 
-## Open (8; the two Flip-Up entries are one question)
+## Open (12; the two Flip-Up entries are one question)
 
 | ID | CR | Question | Engine today | Write-up |
 |---|---|---|---|---|
@@ -17,3 +17,7 @@ Multiplayer / Showdown questions are out of scope: the CR and the engine are two
 | RQ-r08-turn-deploy-2 | 601.1f, 601.1g | Does every player get the opening mulligan, or only factions whose card lists one? | Only factions with `setup.mulligan.count > 0` | `questions/r08-turn-deploy.md` |
 | RQ-r11-1 | 103.1b, 103.2b, 103.2c | How should the engine represent Constructed vs Limited deck construction (75 / 40 minimum, copy limit)? | No formats; 4-copy limit always on; minimum size only if the caller passes it | `questions/r11-general-loops-bidding.md` |
 | RQ-r11-3 | 413.1 | In a bid, if the first bidder passes, does the other player win without bidding? What if both pass? | The other player is still asked and must bid at least 1; both pass: nobody wins, the character returns to the deck | `questions/r11-general-loops-bidding.md` |
+| RQ-mp-8 | 608.1c, 609.1a, 609.1e | In a battle window, where does "the other players clockwise" start (after the defender, or after the attacker)? | Not implemented (two players only) | `questions/mp-ffa.md` |
+| RQ-mp-9 | 503.1, 503.2 | Are triggers waiting to resolve that an eliminated player controls followed or removed? | Not implemented (two players only) | `questions/mp-ffa.md` |
+| RQ-mp-10 | 407.2, 407.3 | If the controller of a card with lasting "your opponent" text changes, does the new controller select the opponent again? | Not implemented (two players only) | `questions/mp-ffa.md` |
+| RQ-mp-11 | 414.3b, 414.3c | In a multi-player action loop the active player is not involved in, who chooses the numbers and the stopping point? | Voluntary loop shortcuts are not implemented | `questions/mp-ffa.md` |

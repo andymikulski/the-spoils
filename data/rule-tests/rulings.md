@@ -281,3 +281,61 @@ The ruling is the reading the user chose: for "literal" answers, the reading the
 - **Ruling (other, 2026-11-07):** "yeah if the player hits zero and the response window is empty then we should kill em. if a player hits 0 faction they basically shouldn't be able to respond or anything; that'd be like, a player is dead but then they get a chance to keep living which isn't the point here."
 - **Applied:** reaching 0 at any point inside a unit means that player loses when the unit ends, even if a later effect of the same unit, or a triggered ability that unit sets off, raises their influence again (CR 102.1 "at any time"). A later unit cannot undo it: the game is already over (see RQ-r11-2).
 - **Rules text:** CR 102.1: "If at any time a faction's influence score is 0, the owner of that faction immediately loses the game."
+
+## Multiplayer (free-for-all) rulings, 2026-11-07
+
+The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leave several free-for-all points open. The user ruled on them on 2026-11-07, answering the questions as written in `docs/MULTIPLAYER-PLAN.md` (Phase 1), each with a recommendation. "Spec" names the atom of `data/rule-tests/source/multiplayer.txt` that states the reading for tests; the engine does not implement these yet.
+
+## RQ-mp-1. With N players, who may respond to the top item of the response stack, in what order, and when does it resolve?
+
+- **Question as put:** CR 607.2b avoids a priority system because there are only two players. With N players, who may respond to the top item, in what order, and when does it resolve? Recommendation: offer it clockwise starting left of its controller; it resolves only after every non-controller has passed in a row on that item. After it resolves, the player who made it may respond again first (607.2), then the rest clockwise.
+- **Ruling (other, 2026-11-07):** "sure" (accepts the recommendation).
+- **Spec:** MPX-priority (with MPX-respond): the item is offered clockwise starting with the seat after its controller; it resolves only after every other player has passed on it in a row; after it resolves, the player who made it may respond again first, then the rest clockwise.
+- **Rules text:** CR 607.1: "You cannot respond to your own actions." CR 607.2: "Once this response resolves, you may make another response." CR 607.2b: "Because you cannot respond to your own actions, there is no need for a 'priority passing' system".
+
+## RQ-mp-2. Can players other than the attacker and defender act in battle, and can every other player respond when a turn ends?
+
+- **Question as put:** In 608.1c and 609.1a ("then your opponent / the defending player may do the same") and 610.1 ("their opponent has had a chance to respond"), can players other than the attacker and defender act? Recommendation: in battle, the attacker, then the defender, then the other players clockwise; at end of turn, every other player clockwise.
+- **Ruling (other, 2026-11-07):** "yes".
+- **Spec:** MPX-battle-window (attacker, then defender, then the other players clockwise; where that clockwise order starts with two or more other players is the open RQ-mp-8) and MPX-endturn (every other player may respond, clockwise).
+- **Rules text:** CR 608.1c, 609.1a, 609.1e: "The attacking player may deploy tactics and use abilities as many times as they want. Then, the defending player may do the same." CR 610.1: "the turn doesn't actually end until their opponent has had a chance to respond."
+
+## RQ-mp-3. What happens to a player who loses?
+
+- **Question as put:** What happens to a player who loses? Recommendation: every card they own leaves the game; every card they control but don't own goes back to its owner's control; their unresolved stack items and pending choices are removed; their lasting effects end; if it was their turn, the turn ends at once, without end-of-turn responses or triggers.
+- **Ruling (other, 2026-11-07):** "yes".
+- **Spec:** MPX-elim (and MPX-elim-timing for when it happens).
+- **Rules text:** CR 102.1: "the owner of that faction immediately loses the game." CR 102.2 and 306.4 speak of "players still in the game", but no rule says what a loss does to a game that goes on.
+
+## RQ-mp-4. Which opening draw do seats after the first use?
+
+- **Question as put:** Factions print "N going first, M going second". Recommendation: every seat after the first uses the "going second" number.
+- **Ruling (other, 2026-11-07):** "yes".
+- **Spec:** MPX-draw.
+- **Rules text:** CR 601.1e: "The number of cards drawn is usually different if you are going first as opposed to second."
+
+## RQ-mp-5. When is the opponent chosen for lasting "your opponent" text, and what if that player is eliminated?
+
+- **Question as put:** Continuous or static text (Underdog, Mud Prison, Silencer, Escort Ally, Foreclosure Overseer, and others): when is the opponent chosen, and what happens if that player is eliminated? Recommendation: the controller chooses when the effect starts applying (the card enters play, or the effect is created). The choice lasts as long as the effect does. If the chosen player is eliminated, the controller chooses again.
+- **Ruling (other, 2026-11-07):** "yes".
+- **Spec:** MPX-lasting. The case of the card's controller changing is not covered by this ruling (open: RQ-mp-10).
+- **Rules text:** MP 2 and MP 4 select an opponent "for the current block of rules text", which says nothing about text that keeps applying. CR 504.1 (conditionals), CR 505.1 (requirements).
+
+## RQ-mp-6. "Both players may use this ability" (The Knitting Coalition), HIDDEN INFLUENCE and PULLING STRINGS: one chosen opponent, or every opponent?
+
+- **Question as put:** Is "Both players may use this ability" one chosen opponent, or every opponent? HIDDEN INFLUENCE / PULLING STRINGS ("Your opponent ignores their faction's …") also need their opponent chosen at setup time. Recommendation: by MP 3, you plus one opponent, chosen at setup.
+- **Ruling (other, 2026-11-07):** "every opponent"; and for HIDDEN INFLUENCE / PULLING STRINGS: "'your opponent' here means 'all opponents', i.e. all opponents ignore their develop rules etc."
+- **Spec:** MPX-knitting. The ruling covers this card only; on every other card "your opponent" and "both players" keep the MP 2 / MP 3 selection (MPX-select, MPX-both).
+- **Rules text:** MP 3: "'both players' means you and the opponent selected for that block of rules text."
+
+## RQ-mp-7. Are the influence losses of one card, ability or batch of battle damage simultaneous, with more than two players?
+
+- **Ruling:** already recorded as RQ-r11-2 (simultaneous losses of one unit) and RQ-r11-4 (reaching 0 is final within the unit), above. No new ruling; the multiplayer extension (several players eliminated in one unit, or successive units eliminating one player at a time) is in the elimination-timing ruling below.
+- **Spec:** MPX-simul.
+
+## RQ-mp-timing. When does a player who reaches 0 influence stop being able to act?
+
+- **Question as put:** the multiplayer extension of RQ-r11-2 / RQ-r11-4. Recommendation (as stated in the plan): a player who reaches 0 is eliminated as soon as the unit that brought them to 0 ends, before any trigger it set off and before any response window; from then on they take no further actions or responses.
+- **Ruling (other, 2026-11-07):** "if a player hits 0 faction they basically shouldn't be able to respond or anything".
+- **Spec:** MPX-elim-timing. The rest of the table plays on per RQ-mp-3 (MPX-elim).
+- **Rules text:** CR 102.1: "If at any time a faction's influence score is 0, the owner of that faction immediately loses the game." See also the ruling quoted under RQ-r11-4.

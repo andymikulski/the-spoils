@@ -1,7 +1,7 @@
 // CLI for the rules-coverage suite (docs/TESTING.md). Run: npm run rule-tests -- <command>
 //
 //   extract                  re-extract data/rule-tests/source/*.txt from the PDFs in docs/ (needs pdftotext)
-//   build                    regenerate data/rule-tests/atoms.json from the source text
+//   build                    regenerate data/rule-tests/atoms.json from the source text (CR, FAQ and multiplayer.txt)
 //   batches                  one line per batch: atoms, covered, done
 //   manifest <batch>         the batch's atoms with their full wording and coverage state
 //   show <id>                one atom, e.g. `show "CR 408.3b"`
@@ -95,7 +95,9 @@ switch (command) {
     const atoms = readAtoms();
     const state = states(atoms, readRefs());
     for (const atom of atoms.filter((a) => a.batch === batch)) {
-      console.log(`${atom.id}${atom.kind === "heading" ? " (heading)" : ""} [${state.get(atom.id)}]\n  ${atom.text}${atom.answer ? `\n  A: ${atom.answer}` : ""}\n`);
+      console.log(
+        `${atom.id}${atom.title ? ` | ${atom.title}` : ""}${atom.kind === "heading" ? " (heading)" : ""} [${state.get(atom.id)}]\n  ${atom.text}${atom.answer ? `\n  A: ${atom.answer}` : ""}${atom.cites ? `\n  Cites: ${atom.cites.join(", ")}` : ""}\n`
+      );
     }
     break;
   }

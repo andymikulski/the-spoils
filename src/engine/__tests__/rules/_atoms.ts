@@ -2,21 +2,26 @@
 //
 // The Comprehensive Rules (v2.5) and the Rules FAQ (v2.0) are split into
 // *atoms*: one per numbered rule or sub-rule ("CR 408.3b") and one per FAQ
-// question ("FAQ 7"). Every atom must be covered by a rule test (`_rule.ts`)
-// or explicitly exempted with a reason; `_coverage.test.ts` enforces it.
+// question ("FAQ 7"). The multiplayer atoms ("MP 2", "MPX-select") are written
+// by hand in data/rule-tests/source/multiplayer.txt. Every atom must be covered
+// by a rule test (`_rule.ts`) or explicitly exempted with a reason;
+// `_coverage.test.ts` enforces it.
 //
-// The source text lives in data/rule-tests/source/ (extracted once from the
-// PDFs in docs/ by `npm run rule-tests -- extract`), so building the manifest
-// and running the gate never depend on a PDF reader.
+// The CR and FAQ source text lives in data/rule-tests/source/ (extracted once
+// from the PDFs in docs/ by `npm run rule-tests -- extract`), so building the
+// manifest and running the gate never depend on a PDF reader.
 //
 // Shared by the gate test and `scripts/rule-tests/cli.ts`, so the CLI's
 // manifest and the gate's idea of "every atom" can never drift.
 
+import { readdirSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+
 export interface RuleAtom {
-  /** `CR 408.3b` or `FAQ 7`. */
+  /** `CR 408.3b`, `FAQ 7`, `MP 2` or `MPX-select`. */
   id: string;
-  source: "CR" | "FAQ";
-  /** CR: the three-digit section ("408"). FAQ: "FAQ". */
+  source: "CR" | "FAQ" | "MP";
+  /** CR: the three-digit section ("408"). FAQ: "FAQ". Multiplayer: "MP" (printed guidelines) or "MPX" (N-player readings of two-player rules). */
   section: string;
   sectionTitle: string;
   /** CR only: the atom this one nests under ("408.3" for "408.3b"). */
@@ -27,6 +32,10 @@ export interface RuleAtom {
   text: string;
   /** FAQ only. */
   answer?: string;
+  /** Multiplayer only: a short name for the atom. */
+  title?: string;
+  /** Multiplayer only: the CR / FAQ / MP atoms and rulings (`RQ-n`) the reading rests on. */
+  cites?: string[];
   batch: string;
 }
 
@@ -43,7 +52,8 @@ export const BATCHES: readonly { batch: string; title: string; sections: readonl
   { batch: "r09-resources-thresholds", title: "Threshold, resources, factions", sections: ["405", "202", "203"] },
   { batch: "r10-card-types", title: "Characters, tactics, items, locations, changing card types, parts of a card", sections: ["201", "204", "205", "206", "207", "208"] },
   { batch: "r11-general-loops-bidding", title: "Most important rule, object of the game, deck construction, tournaments, errata, bidding, action loops", sections: ["101", "102", "103", "104", "105", "413", "414"] },
-  { batch: "r12-faq", title: "Rules FAQ", sections: ["FAQ"] }
+  { batch: "r12-faq", title: "Rules FAQ", sections: ["FAQ"] },
+  { batch: "mp-ffa", title: "Free-for-all multiplayer: the printed guidelines and the N-player reading of every two-player rule", sections: ["MP", "MPX"] }
 ];
 
 const BATCH_OF = new Map(BATCHES.flatMap((b) => b.sections.map((s) => [s, b.batch] as const)));
@@ -141,8 +151,70 @@ export function parseFaq(text: string): RuleAtom[] {
   }));
 }
 
-export function buildAtoms(crText: string, faqText: string): RuleAtom[] {
-  return [...parseCr(crText), ...parseFaq(faqText)];
+const MP_HEADER = /^== (MP \d+|MPX-[a-z0-9]+(?:-[a-z0-9]+)*) \| (\S.*)$/;
+const RULING_HEADING = /^#{2,4}\s+(RQ-[\w-]+)/gm;
+
+/**
+ * Parses data/rule-tests/source/multiplayer.txt: records start with
+ * `== <id> | <title>`, then an optional `cites:` line (continuing to the next
+ * blank line), then the atom's wording. Lines starting with `#` are comments.
+ * Every cite must be a real atom or a recorded ruling / written-up question.
+ */
+export function parseMultiplayer(text: string, others: readonly RuleAtom[], rulingIds: ReadonlySet<string>): RuleAtom[] {
+  const records: { id: string; title: string; lines: string[] }[] = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (line.startsWith("#")) continue;
+    if (line.startsWith("== ")) {
+      const header = MP_HEADER.exec(line);
+      if (!header) throw new Error(`parseMultiplayer: bad header "${line}"`);
+      records.push({ id: header[1]!, title: header[2]!.trim(), lines: [] });
+    } else if (records.length) records[records.length - 1]!.lines.push(line);
+    else if (line.trim()) throw new Error(`parseMultiplayer: text before the first header: "${line}"`);
+  }
+
+  const ids = new Set([...others.map((atom) => atom.id), ...records.map((record) => record.id)]);
+  if (ids.size !== others.length + records.length) throw new Error("parseMultiplayer: duplicate atom id");
+  return records.map(({ id, title, lines }) => {
+    const citeLines: string[] = [];
+    let at = lines.findIndex((line) => line.trim());
+    if (at >= 0 && lines[at]!.startsWith("cites:")) {
+      for (; at < lines.length && lines[at]!.trim(); at++) citeLines.push(lines[at]!.replace(/^cites:/, ""));
+      lines = lines.slice(at);
+    }
+    const cites = citeLines
+      .join(" ")
+      .split(",")
+      .map((cite) => cite.trim())
+      .filter(Boolean);
+    for (const cite of cites) {
+      if (!ids.has(cite) && !rulingIds.has(cite)) throw new Error(`parseMultiplayer: ${id} cites unknown "${cite}"`);
+    }
+    const section = id.startsWith("MPX") ? "MPX" : "MP";
+    return {
+      id,
+      source: "MP" as const,
+      section,
+      sectionTitle: section === "MP" ? "Multi-Player Guidelines (printed insert)" : "N-player readings of two-player rules",
+      kind: "rule" as const,
+      text: tidy(lines),
+      title,
+      ...(cites.length && { cites }),
+      batch: BATCH_OF.get(section)!
+    };
+  });
+}
+
+/** The multiplayer source text, plus the ids of every ruling and question the atoms may cite. */
+export function readMultiplayerSource(): { text: string; rulingIds: Set<string> } {
+  const data = fileURLToPath(new URL("../../../../data/rule-tests/", import.meta.url));
+  const headings = [data + "rulings.md", ...readdirSync(data + "questions").filter((name) => name.endsWith(".md")).map((name) => data + "questions/" + name)];
+  const rulingIds = new Set(headings.flatMap((file) => [...readFileSync(file, "utf8").matchAll(RULING_HEADING)].map((match) => match[1]!)));
+  return { text: readFileSync(data + "source/multiplayer.txt", "utf8"), rulingIds };
+}
+
+export function buildAtoms(crText: string, faqText: string, multiplayer: { text: string; rulingIds: ReadonlySet<string> } = readMultiplayerSource()): RuleAtom[] {
+  const others = [...parseCr(crText), ...parseFaq(faqText)];
+  return [...others, ...parseMultiplayer(multiplayer.text, others, multiplayer.rulingIds)];
 }
 
 // --- scanning the test sources for coverage ----------------------------------
