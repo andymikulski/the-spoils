@@ -41,6 +41,7 @@ const CONTEXT_PARTS = [
   "resolvedPicked",
   "named",
   "resourceRevealOffered",
+  "chosenPlayers",
   "event"
 ] as const;
 

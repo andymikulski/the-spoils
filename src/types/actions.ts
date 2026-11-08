@@ -6,6 +6,16 @@ import type { AbilityId, CardInstanceId, PlayerId } from "./ids.js";
 import type { BattleDamageAssignment } from "./state.js";
 import type { TriggerRef } from "./choices.js";
 
+/**
+ * The players an action names, keyed by what they answer: `opponent` is the block's opponent ("your opponent",
+ * "both players", MP 2 / MP 3), asked before any target is chosen and required whenever the block says so and the
+ * controller has two or more opponents (left out, or naming nobody that is an opponent in the game, it is refused;
+ * with one opponent left it is not needed and must not name anybody else). Every other key is the id of a
+ * `playerChoices` entry (`{ type: "chosenPlayer", id }` reads it back). `SpoilsEngine.getPlayRequirements` lists
+ * what is still missing.
+ */
+export type PlayerAnswers = Record<string, PlayerId>;
+
 export type GameAction =
   | {
       type: "playCard";
@@ -34,6 +44,8 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /** Players named with the action: see `PlayerAnswers`. */
+      players?: PlayerAnswers;
     }
   | {
       type: "activateAbility";
@@ -56,6 +68,8 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /** Players named with the action: see `PlayerAnswers`. */
+      players?: PlayerAnswers;
     }
   | {
       /**
@@ -94,6 +108,8 @@ export type GameAction =
        * `SpoilsEngine.getPaymentOptions` says how many and from which cards.
        */
       payWith?: CardInstanceId[];
+      /** Players named with the action: see `PlayerAnswers`. */
+      players?: PlayerAnswers;
     }
   | {
       type: "passPriority";
@@ -217,6 +233,8 @@ export type GameAction =
             /** The chosen card's own extra-cost target declarations, same shape as playCard's `selected`. */
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
+            /** The chosen card's players, same shape as playCard's `players`. */
+            players?: PlayerAnswers;
           }
         | {
             kind: "distributeAmong";
@@ -242,8 +260,12 @@ export type GameAction =
             /** The revealed card's own extra-cost target declarations, same shape as playCard's `selected`. */
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
+            /** The revealed card's players, same shape as playCard's `players`. */
+            players?: PlayerAnswers;
           }
         | { kind: "chooseNumber"; value: number }
+        /** Answers a `choosePlayer` prompt: one of its `candidates`. */
+        | { kind: "choosePlayer"; playerId: PlayerId }
         | { kind: "mayPay"; pay: boolean }
         | { kind: "alternatingPay"; pay: boolean }
         | { kind: "anyPlayerMayPay"; pay: boolean }
@@ -253,6 +275,8 @@ export type GameAction =
             abilityId?: AbilityId;
             selected?: Record<string, CardInstanceId[]>;
             variables?: Record<string, number>;
+            /** The ability's players, same shape as activateAbility's `players`. */
+            players?: PlayerAnswers;
           }
         | {
             kind: "useAnyAbility";

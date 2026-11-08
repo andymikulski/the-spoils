@@ -364,6 +364,8 @@ class Driver {
       }
       case "variables":
         return { kind: "variables", values: this.variableValues(requirement.variables) };
+      case "players":
+        return { kind: "players", values: Object.fromEntries(requirement.choices.map(choice => [choice.id, this.pick(choice.candidates)])) };
       case "pick": {
         const chosen = this.choosePick(requirement);
         return { kind: "pick", id: requirement.requirement.id, ...chosen };
@@ -469,7 +471,7 @@ class Driver {
     for (let step = 0; step < 12; step++) {
       const requirements = this.engine.getSelectionRequirements({ ...input, selected, variables });
       const first = requirements[0];
-      if (!first || first.kind === "mode" || first.kind === "flipUpOption") break;
+      if (!first || first.kind === "mode" || first.kind === "flipUpOption" || first.kind === "players") break;
       if (first.kind === "variables") {
         Object.assign(variables, this.variableValues(first.variables));
         continue;
@@ -677,6 +679,10 @@ class Driver {
         yield answer({ kind: "chooseNumber", value: min });
         return;
       }
+
+      case "choosePlayer":
+        for (const playerId of shuffled(pending.candidates, this.rng)) yield answer({ kind: "choosePlayer", playerId });
+        return;
 
       case "alternatingPay":
       case "anyPlayerMayPay":

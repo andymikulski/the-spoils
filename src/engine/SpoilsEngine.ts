@@ -6,6 +6,9 @@ import type {
   AbilityDefinition,
   AbilityId,
   ActivatedAbility,
+  OpponentFrom,
+  PlayerAnswers,
+  PlayerChoiceDeclaration,
   BattleDamageAssignment,
   BattleId,
   BattleRound,
@@ -69,6 +72,7 @@ import type {
   PendingChoice,
   PlayerId,
   PlayerRef,
+  PlayerScope,
   PlayerState,
   ResolutionContext,
   ReplacementTrigger,
@@ -105,6 +109,7 @@ import {
   withBuiltInFactionDefaults
 } from "./utilities.js";
 import { cardTextToPlain } from "../cardText.js";
+import { abilityNamesOpponent, abilityOpponentFrom, blockOpponentFrom, namesOpponent } from "./opponentBinding.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
 import { StateMap, StateSet, emptyEngineMemory, normalizeEngineMemory } from "./engineMemory.js";
@@ -391,6 +396,13 @@ interface BattleDamageGroup {
   contributors: BattleDamageAssignment[];
 }
 type BattleDamageGroups = Map<string, BattleDamageGroup>;
+
+/** What a block of rules text asks of the players when it begins (see `resolveActionPlayers`). */
+interface PlayerSpec {
+  /** Where the block's "your opponent" comes from; absent when the block says none. */
+  from?: OpponentFrom;
+  choices: PlayerChoiceDeclaration[];
+}
 
 export class SpoilsEngine {
   readonly definitions: Record<CardDefinitionId, CardDefinition>;
@@ -1231,11 +1243,11 @@ export class SpoilsEngine {
   private getRevealedZones(): GameFlowView["revealed"] {
     const deckTopFor = new Set<PlayerId>();
     const handFor = new Set<PlayerId>();
-    this.forEachActiveContinuous((source, ability) => {
+    this.forEachActiveContinuous((source, ability, context) => {
       const rule = ability.grantsReveal;
       if (!rule) return;
       for (const playerId of Object.keys(this.state.players) as PlayerId[]) {
-        if (!this.scopeMatchesPlayer(rule.of, source.controllerId, playerId)) continue;
+        if (!this.scopeMatchesPlayer(rule.of, source.controllerId, playerId, context.opponentId)) continue;
         (rule.zone === "hand" ? handFor : deckTopFor).add(playerId);
       }
     });
@@ -2105,6 +2117,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { __candidate: [cardId] }
         };
         if (
@@ -2162,6 +2175,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { __candidate: [cardId] }
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -2428,6 +2442,7 @@ export class SpoilsEngine {
             sourceId: source.id,
             controllerId: source.controllerId,
             abilityId: ability.id,
+            ...this.lastingOpponent(source, ability.id),
             selected: { __candidate: [cardId] }
           };
           if (ability.condition && !this.evaluateCondition(ability.condition, context)) continue;
@@ -2722,6 +2737,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, sourceContext)) continue;
@@ -2810,7 +2826,7 @@ export class SpoilsEngine {
         for (const mod of ability.influenceModifiers ?? []) {
           if (mod.direction !== "any" && mod.direction !== dir) continue;
           if (
-            !this.scopeMatchesPlayer(mod.player, source.controllerId, playerId)
+            !this.scopeMatchesPlayer(mod.player, source.controllerId, playerId, context.opponentId)
           )
             continue;
           // `delta` is subtracted from the magnitude: positive reduces it
@@ -2836,7 +2852,7 @@ export class SpoilsEngine {
       this.forEachActiveContinuous((source, ability, context) => {
         for (const mod of ability.drawModifiers ?? []) {
           if (
-            !this.scopeMatchesPlayer(mod.player, source.controllerId, playerId)
+            !this.scopeMatchesPlayer(mod.player, source.controllerId, playerId, context.opponentId)
           )
             continue;
           if (mod.prevent) {
@@ -3995,6 +4011,7 @@ export class SpoilsEngine {
         const context: ResolutionContext = {
           sourceId: area.sourceId ?? cardId,
           controllerId: area.controllerId,
+          ...(area.opponentId !== undefined ? { opponentId: area.opponentId } : {}),
           abilityId: area.sourceAbilityId,
           selected: { __candidate: [cardId] }
         };
@@ -4135,13 +4152,16 @@ export class SpoilsEngine {
    * live sources disagree.
    */
   private opponentAbilityBorrowMode(
-    playerId: PlayerId
+    playerId: PlayerId,
+    cardControllerId: PlayerId
   ): "ownNumeric" | "asOpponent" | undefined {
     let mode: "ownNumeric" | "asOpponent" | undefined;
-    this.forEachActiveContinuous((source, ability) => {
+    this.forEachActiveContinuous((source, ability, context) => {
       if (!ability.canUseOpponentAbilities || source.controllerId !== playerId) {
         return;
       }
+      // "Your opponent's cards": the card belongs to the opponent this text selected (RQ-mp-5), not to any player.
+      if (cardControllerId !== this.opponentOf(source.controllerId, context.opponentId)) return;
       if (ability.canUseOpponentAbilities === "asOpponent") {
         mode ??= "asOpponent";
       } else {
@@ -4169,7 +4189,7 @@ export class SpoilsEngine {
     ) {
       return undefined;
     }
-    return this.opponentAbilityBorrowMode(playerId);
+    return this.opponentAbilityBorrowMode(playerId, card.controllerId);
   }
 
   /**
@@ -4314,6 +4334,29 @@ export class SpoilsEngine {
     ability: ActivatedAbility,
     borrowMode: "ownNumeric" | "asOpponent" | undefined
   ): AbilityUnavailableReason | undefined {
+    // A block that says "your opponent" is usable when it is for some opponent the player could select (the opponent
+    // is part of the action, MPX-select (2)); a battle or response block has its opponent fixed by the situation.
+    const asId = borrowMode ? card.controllerId : playerId;
+    const live = this.getOpponents(asId);
+    const from = live.length >= 2 ? blockOpponentFrom(ability) : undefined;
+    if (from === undefined) return this.abilityCostReasonFor(playerId, card, ability, borrowMode);
+    const fixed = from === "battle" ? this.battleOpponentOf(asId) : from === "respondedTo" ? this.respondedToController(asId) : undefined;
+    let first: AbilityUnavailableReason | undefined;
+    for (const opponentId of fixed !== undefined ? [fixed] : live) {
+      const reason = this.abilityCostReasonFor(playerId, card, ability, borrowMode, opponentId);
+      if (reason === undefined) return undefined;
+      first ??= reason;
+    }
+    return first;
+  }
+
+  private abilityCostReasonFor(
+    playerId: PlayerId,
+    card: CardInstance,
+    ability: ActivatedAbility,
+    borrowMode: "ownNumeric" | "asOpponent" | undefined,
+    opponentId?: PlayerId
+  ): AbilityUnavailableReason | undefined {
     // The printed threshold, judged for the player the ability resolves as: the first gate `activateAbility` makes
     // after the timing ones.
     if (!this.abilityThresholdMet(borrowMode ? card.controllerId : playerId, ability)) return "threshold";
@@ -4339,6 +4382,7 @@ export class SpoilsEngine {
       sourceId: card.id,
       controllerId: asPlayerId,
       abilityId: ability.id,
+      ...(opponentId !== undefined ? { opponentId } : {}),
       ...(borrowMode ? { payerId: playerId } : {}),
       selected: {}
     };
@@ -4689,6 +4733,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, context)) continue;
@@ -4976,7 +5021,7 @@ export class SpoilsEngine {
       const idBase = `${source.id}:${ability.id}`;
       const named = prefix(source.id);
       (ability.drawModifiers ?? []).forEach((mod, index) => {
-        if (!this.scopeMatchesPlayer(mod.player, source.controllerId, playerId)) return;
+        if (!this.scopeMatchesPlayer(mod.player, source.controllerId, playerId, context.opponentId)) return;
         if (mod.prevent) {
           add(
             {
@@ -5003,7 +5048,7 @@ export class SpoilsEngine {
         );
       });
       const rule = ability.preventsDefeat;
-      if (rule && this.scopeMatchesPlayer(rule.player, source.controllerId, playerId)) {
+      if (rule && this.scopeMatchesPlayer(rule.player, source.controllerId, playerId, context.opponentId)) {
         add(
           {
             id: `${idBase}:preventsDefeat`,
@@ -5279,23 +5324,25 @@ export class SpoilsEngine {
     for (const w of this.state.handMoveRedirects) {
       if (!sourceLive(w.duration, w.sourceId)) continue;
       const owner = cardId !== undefined ? this.state.cards[cardId]?.ownerId : undefined;
-      if (owner !== undefined && !this.scopeMatchesPlayer(w.who, w.sourceControllerId, owner)) continue;
+      if (owner !== undefined && !this.scopeMatchesPlayer(w.who, w.sourceControllerId, owner, w.opponentId)) continue;
       const d = this.protectionDuration(w.duration);
       const whose =
         w.who === "any"
           ? "any player's hand"
           : w.who === "self"
             ? `${this.logPlayerName(w.sourceControllerId)}'s hand`
-            : `${this.logPlayerName(this.getOpponent(w.sourceControllerId).id)}'s hand`;
+            : w.who === "opponents"
+              ? "each opponent's hand"
+              : `${this.logPlayerName(this.opponentOf(w.sourceControllerId, w.opponentId) ?? w.sourceControllerId)}'s hand`;
       add(
         {
           id: w.id,
           kind: "handMoveRedirect",
           mode: "redirect",
           controllerId: w.sourceControllerId,
-          ...(w.who === "any"
+          ...(w.who === "any" || w.who === "opponents"
             ? {}
-            : { playerId: w.who === "self" ? w.sourceControllerId : this.getOpponent(w.sourceControllerId).id }),
+            : { playerId: w.who === "self" ? w.sourceControllerId : (this.opponentOf(w.sourceControllerId, w.opponentId) ?? w.sourceControllerId) }),
           ...d,
           text: `${prefix(this.publicSourceId(w.sourceId))}Cards that would enter ${whose} go to the ${w.to} instead${turnSuffix(d.duration)}`
         },
@@ -5633,6 +5680,15 @@ export class SpoilsEngine {
         selected: {},
         ...extraContext
       };
+      // "Your opponent" in the condition: it holds when it holds for some opponent the player could select.
+      const live = this.getOpponents(playerId);
+      if (live.length >= 2 && extraContext.opponentId === undefined && namesOpponent(playCondition)) {
+        const from = blockOpponentFrom(this.getPlayVariableSource(definition));
+        const fixed = from === "battle" ? this.battleOpponentOf(playerId) : undefined;
+        return (fixed !== undefined ? [fixed] : live).some(opponentId =>
+          this.evaluateCondition(playCondition, { ...probeContext, opponentId })
+        );
+      }
       return this.evaluateCondition(playCondition, probeContext);
     } catch {
       // Not evaluable as a read-only probe (needs selections/state we
@@ -5823,6 +5879,7 @@ export class SpoilsEngine {
       ...(action.named ? { named: { ...action.named } } : {}),
       ...(action.type === "flipUp" ? { deployedViaFlipUp: true } : {})
     };
+    this.resolveActionPlayers(context, this.specOfPlay(action), action.players, true);
     const probe = this.cloneForProbe();
     probe.beingDeployedId = beingPlayed ? card.id : undefined;
     probe.rehearseCostsBefore(costs, declarations, declarationId, context);
@@ -5928,6 +5985,8 @@ export class SpoilsEngine {
       variables: { ...(base?.variables ?? {}), ...input.variables },
       ...(named ? { named } : {})
     };
+    // The players the play names (the opponent a pick is tied to) come from the action it belongs to.
+    if (input.play) this.resolveActionPlayers(context, this.specOfPlay(input.play), input.play.players, true);
     const gates: PlayRequirement[] = [];
     if (input.variableSource) {
       const source = {
@@ -6253,6 +6312,9 @@ export class SpoilsEngine {
       ...(action.named ? { named: { ...action.named } } : {}),
       ...(action.type === "flipUp" ? { deployedViaFlipUp: true } : {})
     };
+    // Players first (MPX-select (2)): the picks below can depend on the opponent.
+    const named = this.resolveActionPlayers(baseContext, this.specOfPlay(action), action.players, true);
+    if (named.missing.length > 0) gates.unshift({ kind: "players", choices: named.missing });
     const chosen = this.playerChosenVariableIds(source);
     const context: ResolutionContext = {
       ...baseContext,
@@ -6564,6 +6626,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -6688,6 +6751,7 @@ export class SpoilsEngine {
         sourceId: cardId,
         controllerId: card.controllerId,
         abilityId: ability.id,
+        ...this.lastingOpponent(card, ability.id),
         selected: {}
       };
       if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -6761,7 +6825,8 @@ export class SpoilsEngine {
         false,
         action.mode,
         undefined,
-        action.named
+        action.named,
+        action.players
       );
     } finally {
       this.costResume = undefined;
@@ -6774,7 +6839,7 @@ export class SpoilsEngine {
 
     // "Your opponents cannot respond to this card." (Swindle) — resolve the
     // just-pushed stack item straight away, no response window of its own.
-    if (this.getDefinition(action.cardId).behavior?.noResponse) {
+    if (this.nobodyMayRespond(this.responseStack[this.responseStack.length - 1])) {
       this.resolveTopOfStack();
       this.checkStateBasedActions();
 
@@ -6815,7 +6880,8 @@ export class SpoilsEngine {
     ignoreThreshold = false,
     mode?: number,
     trustedVariables?: Record<string, number>,
-    named?: Record<string, string>
+    named?: Record<string, string>,
+    players?: PlayerAnswers
   ): void {
     try {
       this.deployCardInner(
@@ -6829,7 +6895,8 @@ export class SpoilsEngine {
         ignoreThreshold,
         mode,
         trustedVariables,
-        named
+        named,
+        players
       );
     } finally {
       this.beingDeployedId = undefined;
@@ -6865,7 +6932,9 @@ export class SpoilsEngine {
      */
     trustedVariables?: Record<string, number>,
     /** `nameValue` cost answers, keyed by `storeAs` (see `GameAction` `named`). */
-    named?: Record<string, string>
+    named?: Record<string, string>,
+    /** The players the play names (`GameAction` `players`). */
+    players?: PlayerAnswers
   ): void {
     const card = this.requireCard(cardId);
     const definition = this.getDefinition(card.id);
@@ -6940,6 +7009,8 @@ export class SpoilsEngine {
       variables: { ...variables },
       ...(named ? { named: { ...named } } : {})
     };
+    // Players are named before anything else is judged (MPX-select (2)): which picks are legal can depend on them.
+    this.bindActionPlayers(context, this.playSpec(definition, mode, false), players);
 
     // The card is in Being Deployed from here on (CR 604.1): no cost or pick can use it.
     this.beingDeployedId = card.id;
@@ -7193,7 +7264,8 @@ export class SpoilsEngine {
     ignoreThreshold = false,
     payCost = false,
     after?: { effects: Effect[]; context: ResolutionContext },
-    costOverride?: number
+    costOverride?: number,
+    players?: PlayerAnswers
   ): void {
     // An engine-offered candidate the deployer doesn't own or control — an
     // opponent's card parked out of play ("you may deploy it for free" — I
@@ -7213,7 +7285,11 @@ export class SpoilsEngine {
         !payCost,
         fromZone,
         costOverride,
-        ignoreThreshold
+        ignoreThreshold,
+        undefined,
+        undefined,
+        undefined,
+        players
       );
     } catch (error) {
       card.controllerId = previousController;
@@ -7251,7 +7327,7 @@ export class SpoilsEngine {
     // effect that played it has finished (`resumeEffectFrames` opens the
     // window). Only "your opponent cannot respond to this card" resolves at once.
     const played = this.getDefinition(cardId);
-    if (played.type === "tactic" && !played.behavior?.noResponse) {
+    if (played.type === "tactic" && !this.nobodyMayRespond(this.responseStack[this.responseStack.length - 1])) {
       this.resumeEffectFrames();
       return;
     }
@@ -7612,7 +7688,10 @@ export class SpoilsEngine {
       fromZone,
       costOverride,
       ignoreThreshold,
-      mode
+      mode,
+      ...(context.opponentId !== undefined || context.chosenPlayers
+        ? { players: { ...(context.opponentId !== undefined ? { opponent: context.opponentId } : {}), ...(context.chosenPlayers ?? {}) } }
+        : {})
     };
     const held = this.heldCoinRoll;
     this.heldCoinRoll = undefined;
@@ -7892,6 +7971,8 @@ export class SpoilsEngine {
       variables: { ...(action.variables ?? {}) },
       ...(action.named ? { named: { ...action.named } } : {})
     };
+    // Players are named before any target is chosen (MPX-select (2)).
+    this.bindActionPlayers(context, this.abilitySpec(ability), action.players);
 
     this.assertChosenVariablesPresent(
       this.playerChosenVariableIds(ability),
@@ -8348,6 +8429,7 @@ export class SpoilsEngine {
       ...(action.named ? { named: { ...action.named } } : {}),
       deployedViaFlipUp: true
     };
+    this.bindActionPlayers(context, this.playSpec(definition, action.mode, true), action.players);
     // The card being flipped up cannot be picked or used by its own costs (CR 604.1; it is Being Deployed).
     this.beingDeployedId = card.id;
 
@@ -8635,7 +8717,7 @@ export class SpoilsEngine {
       this.endEventBatch();
     }
 
-    if (definition.behavior?.noResponse) {
+    if (this.nobodyMayRespond(this.responseStack[this.responseStack.length - 1])) {
       this.resolveTopOfStack();
       this.checkStateBasedActions();
       return;
@@ -8681,7 +8763,7 @@ export class SpoilsEngine {
     if (this.responseStack.length > 0) {
       const top = this.responseStack[this.responseStack.length - 1];
       window.passed = [...(window.passed ?? []), playerId];
-      const next = this.nextResponder(top.controllerId, playerId, false, window.passed);
+      const next = this.nextResponder(top.controllerId, playerId, false, window.passed, this.silencedPlayer(top));
       if (next !== undefined) {
         window.priorityPlayerId = next;
         this.state.priorityPlayerId = next;
@@ -8712,18 +8794,38 @@ export class SpoilsEngine {
    * `includeFrom`) who is still in the game, is not `controllerId` (CR 607.1) and has not passed on it. Undefined
    * when nobody is left, so the item resolves.
    */
+  /**
+   * The one player a played card says cannot respond to it ("your opponent cannot respond", `noResponse: "opponent"`:
+   * the block's opponent; every other player may). `undefined` for any other item.
+   */
+  private silencedPlayer(item: StackItem | undefined): PlayerId | undefined {
+    if (!item || item.kind !== "card" || this.getDefinition(item.sourceId).behavior?.noResponse !== "opponent") return undefined;
+    return this.opponentOf(item.controllerId, item.context.opponentId);
+  }
+
+  /** Whether nobody at all may respond to `item`: `noResponse: true`, or `"opponent"` with the opponent the only one who could. */
+  private nobodyMayRespond(item: StackItem | undefined): boolean {
+    if (!item || item.kind !== "card") return false;
+    const rule = this.getDefinition(item.sourceId).behavior?.noResponse;
+    if (rule === true) return true;
+    if (rule !== "opponent") return false;
+    const silenced = this.silencedPlayer(item);
+    return this.getOpponents(item.controllerId).every(id => id === silenced);
+  }
+
   private nextResponder(
     controllerId: PlayerId,
     from: PlayerId,
     includeFrom: boolean,
-    passed: readonly PlayerId[]
+    passed: readonly PlayerId[],
+    silenced?: PlayerId
   ): PlayerId | undefined {
     const seats = this.state.seats;
     const at = seats.indexOf(from);
     assert(at >= 0, `Unknown player '${from}'.`);
     for (let step = includeFrom ? 0 : 1; step <= seats.length; step++) {
       const id = seats[(at + step) % seats.length];
-      if (id === controllerId || this.state.players[id].eliminated || passed.includes(id)) continue;
+      if (id === controllerId || id === silenced || this.state.players[id].eliminated || passed.includes(id)) continue;
       return id;
     }
     return undefined;
@@ -8733,7 +8835,7 @@ export class SpoilsEngine {
   private offerTopItem(window: ResponseWindowState, from: PlayerId, includeFrom: boolean): boolean {
     const top = this.responseStack[this.responseStack.length - 1];
     window.passed = [];
-    const first = this.nextResponder(top.controllerId, from, includeFrom, []);
+    const first = this.nextResponder(top.controllerId, from, includeFrom, [], this.silencedPlayer(top));
     if (first === undefined) return false;
     window.priorityPlayerId = first;
     this.state.priorityPlayerId = first;
@@ -8881,11 +8983,17 @@ export class SpoilsEngine {
 
     // CR 407.1a: an ability used by its card's controller, whose card has
     // since come under another player's control, is controlled by that player.
+    let reselectOpponent = false;
     if (item.followsSourceController) {
       const source = this.state.cards[item.sourceId];
       if (source && source.zone === "play" && source.controllerId !== item.controllerId) {
         item.controllerId = source.controllerId;
         item.context.controllerId = source.controllerId;
+        // The new controller cannot be their own opponent: they select again.
+        if (item.context.opponentId === source.controllerId) {
+          delete item.context.opponentId;
+          reselectOpponent = this.getOpponents(source.controllerId).length >= 2;
+        }
       }
     }
 
@@ -8895,6 +9003,25 @@ export class SpoilsEngine {
     // the draw comes first. If that raises a prompt, the resolution resumes
     // once it is answered (the picks' zones are recorded then).
     item.context.unitId = this.newUnitId();
+    if (reselectOpponent) {
+      this.state.pendingChoice = {
+        kind: "choosePlayer",
+        id: this.nextId("choice"),
+        playerId: item.controllerId,
+        candidates: this.getOpponents(item.controllerId),
+        sourceId: item.sourceId,
+        ...(item.abilityId ? { abilityId: item.abilityId } : {}),
+        bind: { type: "blockOpponent" }
+      };
+      this.frames.push({
+        effects: item.effects,
+        index: 0,
+        context: item.context,
+        finishStackItem: item,
+        recordPickZones: true
+      });
+      return false;
+    }
     this.announceDeckSearches(item.context);
     if (this.state.pendingChoice) {
       this.frames.push({
@@ -8940,10 +9067,10 @@ export class SpoilsEngine {
       if (selector.fromTop !== undefined) continue;
       if (context.selected[declinedKey(declaration.id)] !== undefined) continue;
       const who = selector.owner ?? selector.controller;
-      if (who === "any") continue;
+      if (who === "any" || who === "opponents") continue;
       const searcherId =
         who === "opponent"
-          ? this.getOpponent(context.controllerId).id
+          ? (this.opponentOf(context.controllerId, context.opponentId) ?? context.controllerId)
           : context.controllerId;
       this.announceDeckSearch(searcherId);
       if (this.state.pendingChoice) return;
@@ -9154,6 +9281,10 @@ export class SpoilsEngine {
       this.emit({ type: "playerEliminated", playerId: id });
     }
     this.clearEliminatedPlayers(new Set(losers));
+    // Text that kept an eliminated player as its opponent selects again (RQ-mp-5).
+    while (!this.state.pendingChoice && this.syncLastingOpponents()) {
+      // each pass binds or asks for one more
+    }
   }
 
   /**
@@ -9254,7 +9385,7 @@ export class SpoilsEngine {
       }
       const holder = window.priorityPlayerId;
       if (!out.has(holder)) return;
-      const next = this.nextResponder(top.controllerId, holder, false, window.passed ?? []);
+      const next = this.nextResponder(top.controllerId, holder, false, window.passed ?? [], this.silencedPlayer(top));
       if (next === undefined) {
         window.phase = "resolving";
         return;
@@ -9357,11 +9488,11 @@ export class SpoilsEngine {
     if (!players.some(player => player.influence <= 0 || player.deck.length === 0)) return;
 
     const shielded = new Set<PlayerId>();
-    this.forEachActiveContinuous((source, ability) => {
+    this.forEachActiveContinuous((source, ability, context) => {
       const rule = ability.preventsDefeat;
       if (!rule) return;
       for (const p of players) {
-        if (this.scopeMatchesPlayer(rule.player, source.controllerId, p.id)) {
+        if (this.scopeMatchesPlayer(rule.player, source.controllerId, p.id, context.opponentId)) {
           shielded.add(p.id);
         }
       }
@@ -9474,6 +9605,7 @@ export class SpoilsEngine {
             turnScheduled: this.state.turn,
             sourceId: frame.context.sourceId,
             controllerId: frame.context.controllerId,
+            ...(frame.context.opponentId !== undefined ? { opponentId: frame.context.opponentId } : {}),
             effects: rest,
             event: frame.context.event ? structuredClone(frame.context.event) : undefined,
             selected: structuredClone(frame.context.selected)
@@ -9521,7 +9653,7 @@ export class SpoilsEngine {
       const top = this.responseStack[this.responseStack.length - 1];
       this.openResponseWindow(
         "action",
-        this.nextSeat(top.controllerId),
+        this.nextResponder(top.controllerId, top.controllerId, false, [], this.silencedPlayer(top)) ?? this.nextSeat(top.controllerId),
         { type: "main" },
         []
       );
@@ -9555,7 +9687,15 @@ export class SpoilsEngine {
       // offer starts at the actor's left as for any fresh item.
       if (this.state.pendingChoice) {
         delete existing.passed;
-        const first = this.nextResponder(actingPlayerId, actingPlayerId, false, []) ?? actingPlayerId;
+        const topItem = this.responseStack[this.responseStack.length - 1];
+        const first =
+          this.nextResponder(
+            actingPlayerId,
+            actingPlayerId,
+            false,
+            [],
+            topItem?.controllerId === actingPlayerId ? this.silencedPlayer(topItem) : undefined
+          ) ?? actingPlayerId;
         existing.priorityPlayerId = first;
         this.state.priorityPlayerId = first;
         return;
@@ -9574,9 +9714,12 @@ export class SpoilsEngine {
     // A main-phase deploy / ability: its stack item drives the whole
     // window. Only the opponent responds and it closes once the item
     // resolves — there is no top-level responder queue (CR §607.2b).
+    const offered = this.responseStack[this.responseStack.length - 1];
     this.openResponseWindow(
       "action",
-      this.nextSeat(actingPlayerId),
+      offered
+        ? (this.nextResponder(offered.controllerId, actingPlayerId, false, [], this.silencedPlayer(offered)) ?? this.nextSeat(actingPlayerId))
+        : this.nextSeat(actingPlayerId),
       { type: "main" },
       []
     );
@@ -10004,6 +10147,7 @@ export class SpoilsEngine {
               sourceId: source.id,
               controllerId: source.controllerId,
               abilityId: ability.id,
+              ...this.lastingOpponent(source, ability.id),
               selected: {}
             })
           ) {
@@ -10151,10 +10295,8 @@ export class SpoilsEngine {
             : {})
         };
 
-        if (
-          !ability.condition ||
-          this.evaluateCondition(ability.condition, context)
-        ) {
+        const bound = this.bindTriggerOpponent(ability, context);
+        if (bound.holds) {
           // Spent when it fires (queued), not when it resolves: a second
           // matching event before this one resolves must not fire it again.
           if (usesKey !== undefined) {
@@ -10165,13 +10307,95 @@ export class SpoilsEngine {
             sourceId: card.id,
             ability,
             context,
-            batchId
+            batchId,
+            ...(bound.candidates ? { opponentCandidates: bound.candidates } : {})
           });
         }
       }
     }
 
     return results;
+  }
+
+  /**
+   * Whether a trigger's condition holds, and how it binds "your opponent" (MPX-select (2), MPQ-P5, MPQ-P8). At a table
+   * with one opponent left this is only the condition. With two or more:
+   * - `"event"` (a condition that names the opponent through the event's player): the condition is met by any
+   *   opponent's event, and the first opponent for whom it holds is the block's opponent: nobody chooses.
+   * - `"battle"`: the other side of the battle the controller is in, when there is one.
+   * - `"respondedTo"`: the controller of the card or ability being responded to.
+   * - `"acting"`: the acting player (the event's player, else the active player) selects later, among their own
+   *   opponents.
+   * - `"choose"`: the controller selects when the trigger is about to be followed. A condition that names the
+   *   opponent through a state test holds when it holds for some opponent, and only those are offered.
+   */
+  private bindTriggerOpponent(
+    ability: Extract<AbilityDefinition, { type: "triggered" }>,
+    context: ResolutionContext
+  ): { holds: boolean; candidates?: PlayerId[] } {
+    const holds = (ctx: ResolutionContext): boolean => !ability.condition || this.evaluateCondition(ability.condition, ctx);
+    const controller = context.controllerId;
+    const live = this.getOpponents(controller);
+    const from = live.length >= 2 ? abilityOpponentFrom(ability) : undefined;
+    if (from === undefined) return { holds: holds(context) };
+
+    if (from === "acting") {
+      const eventPlayer = (context.event as { playerId?: PlayerId } | undefined)?.playerId;
+      context.actingPlayerId = eventPlayer !== undefined && this.state.players[eventPlayer] ? eventPlayer : this.state.activePlayerId;
+    }
+    const fixed =
+      from === "battle" ? this.battleOpponentOf(controller) : from === "respondedTo" ? this.respondedToController(controller) : undefined;
+    if (fixed !== undefined) {
+      context.opponentId = fixed;
+      return { holds: holds(context) };
+    }
+
+    if (from === "event" || namesOpponent(ability.condition)) {
+      const satisfying = live.filter(opponent => holds({ ...context, opponentId: opponent }));
+      if (satisfying.length === 0) return { holds: false };
+      if (from === "event") {
+        context.opponentId = satisfying[0];
+        return { holds: true };
+      }
+      return from === "choose" || from === "battle" || from === "respondedTo" ? { holds: true, candidates: satisfying } : { holds: true };
+    }
+    return { holds: holds(context) };
+  }
+
+  /**
+   * A trigger about to be followed whose "your opponent" is still to be selected (MPX-select (2)): the controller (the
+   * acting player, for text from another player's point of view) is asked through a `choosePlayer` prompt before the
+   * trigger's targets, because which targets are legal can depend on it. Returns true when the prompt was opened.
+   */
+  private askTriggerOpponent(trigger: TriggerResolution): boolean {
+    const context = trigger.context;
+    if (context.opponentId !== undefined) return false;
+    const from = abilityOpponentFrom(trigger.ability);
+    if (from === undefined || from === "event") return false;
+    const controller = context.controllerId;
+    const chooser = from === "acting" ? (context.actingPlayerId ?? this.state.activePlayerId) : controller;
+    const live = this.getOpponents(chooser);
+    if (this.getOpponents(controller).length < 2 && from !== "acting") return false;
+    if (live.length < 2) {
+      if (live.length === 1 && from === "acting" && this.getOpponents(controller).length >= 2) context.opponentId = live[0];
+      return false;
+    }
+    const offered = from === "acting" ? live : (trigger.opponentCandidates ?? live).filter(id => live.includes(id));
+    if (offered.length === 0) return false;
+    if (offered.length === 1) {
+      context.opponentId = offered[0];
+      return false;
+    }
+    this.state.pendingChoice = {
+      kind: "choosePlayer",
+      id: this.nextId("choice"),
+      playerId: chooser,
+      candidates: offered,
+      sourceId: trigger.sourceId,
+      abilityId: trigger.ability.id,
+      bind: { type: "triggerOpponent" }
+    };
+    return true;
   }
 
   private hasCardEnteredPlayTwin(
@@ -10211,6 +10435,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -10263,6 +10488,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -10401,7 +10627,36 @@ export class SpoilsEngine {
     return this.scopedRead("effectiveContinuous", cardId, () => this.computeEffectiveContinuousAbilities(cardId, granters));
   }
 
+  /**
+   * `cardId`'s continuous abilities with the ones whose "your opponent" is not selected yet taken out: text that keeps
+   * applying starts applying when its controller has selected the opponent (RQ-mp-5). With one opponent left every
+   * ability is selected already.
+   */
   private computeEffectiveContinuousAbilities(
+    cardId: CardInstanceId,
+    granters?: CardInstance[]
+  ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
+    const all = this.allContinuousAbilities(cardId, granters);
+    const target = this.state.cards[cardId];
+    if (!target || target.zone !== "play" || target.faceDown) return all;
+    if (!all.some(ability => abilityNamesOpponent(ability))) return all;
+    const live = this.getOpponents(target.controllerId);
+    if (live.length < 2) return all;
+    return all.filter(ability => {
+      if (!abilityNamesOpponent(ability)) return true;
+      const bound = this.lastingOpponent(target, ability.id).opponentId;
+      return bound !== undefined && live.includes(bound);
+    });
+  }
+
+  /** The lasting opponent `source` holds for its ability `abilityId`, as the `opponentId` a resolution context carries. */
+  private lastingOpponent(source: CardInstance, abilityId: AbilityId): { opponentId?: PlayerId } {
+    const bound = source.boundOpponents?.[abilityId];
+    return bound !== undefined && bound !== source.controllerId ? { opponentId: bound } : {};
+  }
+
+  /** Every continuous ability of `cardId` (own and granted), selected or not. */
+  private allContinuousAbilities(
     cardId: CardInstanceId,
     granters?: CardInstance[]
   ): Array<Extract<AbilityDefinition, { type: "continuous" }>> {
@@ -10422,6 +10677,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (
@@ -10471,6 +10727,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (
@@ -10495,7 +10752,7 @@ export class SpoilsEngine {
     this.forEachActiveContinuous((source, ability, context) => {
       const rule = ability.searchTax;
       if (!rule) return;
-      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, playerId)) {
+      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, playerId, context.opponentId)) {
         return;
       }
       tax += Math.max(
@@ -10506,15 +10763,20 @@ export class SpoilsEngine {
     return tax;
   }
 
-  /** Resolve a `"self" | "opponent" | "any"` player scope against a source. */
+  /**
+   * Resolve a player scope against a source: `"opponent"` is the block's opponent (`opponentId`, or the only opponent
+   * left), `"opponents"` every player but the source's controller.
+   */
   private scopeMatchesPlayer(
-    scope: "self" | "opponent" | "any",
+    scope: PlayerScope,
     sourceControllerId: PlayerId,
-    playerId: PlayerId
+    playerId: PlayerId,
+    opponentId?: PlayerId
   ): boolean {
     if (scope === "any") return true;
     if (scope === "self") return sourceControllerId === playerId;
-    return this.getOpponent(sourceControllerId).id === playerId;
+    if (scope === "opponents") return sourceControllerId !== playerId;
+    return this.opponentOf(sourceControllerId, opponentId) === playerId;
   }
 
   /**
@@ -10613,6 +10875,9 @@ export class SpoilsEngine {
 
         return;
       }
+
+      // "Your opponent" is selected as the trigger is about to be followed, before its targets (MPX-select (2)).
+      if (this.askTriggerOpponent(trigger)) return;
 
       const declarations = trigger.ability.targets ?? [];
       const unresolved = this.findUnresolvedTargetDeclarations(
@@ -10749,6 +11014,14 @@ export class SpoilsEngine {
     condition: Condition,
     context: ResolutionContext
   ): boolean {
+    // A player word `"opponents"` in a condition holds when it holds for some opponent ("if an opponent ...").
+    for (const key of ["player", "controlledBy", "by"] as const) {
+      if ((condition as Record<string, unknown>)[key] === "opponents") {
+        return this.getOpponents(context.controllerId).some(opponentId =>
+          this.evaluateCondition({ ...condition, [key]: { type: "player", id: opponentId } } as Condition, context)
+        );
+      }
+    }
     switch (condition.type) {
       case "and":
         return condition.conditions.every(condition =>
@@ -12244,14 +12517,23 @@ export class SpoilsEngine {
   private selectorPlayerMatch(
     value: unknown,
     context: ResolutionContext
-  ): PlayerId | "any" | "none" {
+  ): PlayerId | "any" | "opponents" | "none" {
     if (value === "any") return "any";
+    if (value === "opponents") return "opponents";
     if (value === "self") return context.controllerId;
-    if (value === "opponent") return this.getOpponent(context.controllerId).id;
+    if (value === "opponent") return this.opponentOf(context.controllerId, context.opponentId) ?? "none";
     if (value && typeof value === "object") {
       return this.resolvePlayerRefIfKnown(value as PlayerRef, context)?.id ?? "none";
     }
     return "none";
+  }
+
+  /** Whether `playerId` is the player a selector's `owner` / `controller` value (see `selectorPlayerMatch`) names. */
+  private selectorAdmitsPlayer(wanted: PlayerId | "any" | "opponents" | "none", playerId: PlayerId, context: ResolutionContext): boolean {
+    if (wanted === "none") return false;
+    if (wanted === "any") return true;
+    if (wanted === "opponents") return playerId !== context.controllerId;
+    return playerId === wanted;
   }
 
   /**
@@ -12284,8 +12566,7 @@ export class SpoilsEngine {
   ): boolean {
     if (selector.controller) {
       const wanted = this.selectorPlayerMatch(selector.controller, context);
-      if (wanted === "none") return false;
-      if (wanted !== "any" && card.controllerId !== wanted) return false;
+      if (!this.selectorAdmitsPlayer(wanted, card.controllerId, context)) return false;
     }
 
     if (selector.owner) {
@@ -12293,8 +12574,7 @@ export class SpoilsEngine {
       // a `toPlayer` put someone else's card there.
       const ownerId = this.zoneHolderId(card);
       const wanted = this.selectorPlayerMatch(selector.owner, context);
-      if (wanted === "none") return false;
-      if (wanted !== "any" && ownerId !== wanted) return false;
+      if (!this.selectorAdmitsPlayer(wanted, ownerId, context)) return false;
     }
 
     // CR §402.3 / §402.3a: a selector that doesn't name a game area affects
@@ -12366,7 +12646,8 @@ export class SpoilsEngine {
         if (other.zone !== "play" || this.isFaceDownInPlay(other.id)) return false;
         const sameSide = other.controllerId === context.controllerId;
         if (wantedControl === "self" && !sameSide) return false;
-        if (wantedControl === "opponent" && sameSide) return false;
+        if (wantedControl === "opponents" && sameSide) return false;
+        if (wantedControl === "opponent" && other.controllerId !== this.opponentOf(context.controllerId, context.opponentId)) return false;
         return this.getDefinition(other.id).name === definition.name;
       });
       if (anonymous || taken) return false;
@@ -12827,6 +13108,7 @@ export class SpoilsEngine {
     ) {
       return undefined;
     }
+    if (typeof ref === "object" && ref.type === "chosenPlayer" && !context.chosenPlayers?.[ref.id]) return undefined;
     return this.resolvePlayerRef(ref, context);
   }
 
@@ -12851,7 +13133,21 @@ export class SpoilsEngine {
     }
 
     if (ref === "opponent") {
-      return this.getOpponent(context.controllerId);
+      const opponentId = this.opponentOf(context.controllerId, context.opponentId);
+      assert(opponentId, "'opponent' is not bound: the block's opponent has not been selected.");
+      return this.requirePlayer(opponentId);
+    }
+
+    assert(ref !== "opponents", "'opponents' names several players here: wrap the effect in forEachPlayer { players: \"opponents\" }.");
+
+    if (ref === "acting") {
+      return this.requirePlayer(context.actingPlayerId ?? this.state.activePlayerId);
+    }
+
+    if (ref.type === "chosenPlayer") {
+      const chosen = context.chosenPlayers?.[ref.id];
+      assert(chosen, `No player was chosen for '${ref.id}'.`);
+      return this.requirePlayer(chosen);
     }
 
     if (ref.type === "ownerOf") {
@@ -14184,6 +14480,7 @@ export class SpoilsEngine {
           sourceId: src.id,
           controllerId: src.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(src, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -14200,7 +14497,7 @@ export class SpoilsEngine {
               src.controllerId === playerId) ||
             (m.scope === "opponentCharacters" &&
               this.hasCardType(sourceCardId, "character") &&
-              userId === this.getOpponent(src.controllerId).id);
+              userId !== src.controllerId);
           if (!applies) continue;
           adjusts.push({
             delta: this.evaluateNumber(m.delta, ctx),
@@ -14233,6 +14530,8 @@ export class SpoilsEngine {
     this.requirePlayer(newControllerId).play.push(cardId);
 
     card.controllerId = newControllerId;
+    // The new controller selects the opponent of the card's lasting text again; the old selection ends (RQ-mp-10).
+    delete card.boundOpponents;
     // It did not start this turn under its new controller (CR 204.3), and a
     // control change breaks "controlled since the start of the turn" (CR 608.1b)
     // even when the card comes straight back.
@@ -14260,6 +14559,16 @@ export class SpoilsEngine {
     // An eliminated player's effects, and everything on an eliminated active player's turn, do nothing more
     // (MPX-elim (3), (5); RQ-mp-14).
     if (this.resolutionAbandoned(context)) return;
+    // `player: "opponents"` is every opponent: the effect happens to each one in turn, the active player first and
+    // then clockwise (MPX-vocab-each (2), CR 402.2).
+    if ((effect as { player?: unknown }).player === "opponents") {
+      const controller = context.controllerId;
+      for (const opponentId of this.getPlayersInSeatOrder(this.state.activePlayerId).filter(id => id !== controller)) {
+        this.resolveEffect({ ...effect, player: { type: "player", id: opponentId } } as Effect, context);
+        if (this.state.pendingChoice) return;
+      }
+      return;
+    }
     effect = this.normalizeEffectDuration(effect, context);
     // Whatever effect is resolving, its controller is the "cause" of any
     // destroy / move / damage it goes on to perform (and of the state-based
@@ -14846,7 +15155,8 @@ export class SpoilsEngine {
 
       case "partitionAndPick": {
         const a = context.controllerId;
-        const b = this.getOpponent(a).id;
+        const b = this.opponentOf(a, context.opponentId);
+        assert(b, "'opponent' is not bound: the block's opponent has not been selected.");
         const revealed: Record<PlayerId, CardInstanceId[]> = {
           [a]: this.requirePlayer(a).deck.slice(0, effect.count),
           [b]: this.requirePlayer(b).deck.slice(0, effect.count)
@@ -15524,6 +15834,7 @@ export class SpoilsEngine {
           sourceId: context.sourceId,
           sourceAbilityId: context.abilityId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           selector: effect.selector,
           stat: effect.stat,
           operation: effect.operation,
@@ -15854,7 +16165,7 @@ export class SpoilsEngine {
           targetId,
           keyword: effect.keyword,
           duration: effect.duration,
-          ...(effect.condition ? { condition: effect.condition, controllerId: context.controllerId } : {}),
+          ...(effect.condition ? { condition: effect.condition, controllerId: context.controllerId, ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}) } : {}),
           ...(this.hasCardType(targetId, "character") ? { whileCharacter: true } : {}),
           createdTurn: this.state.turn
         });
@@ -16115,6 +16426,7 @@ export class SpoilsEngine {
           id: this.nextId("handMoveRedirect"),
           sourceId: context.sourceId,
           sourceControllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           who: effect.who,
           to: effect.to,
           duration: effect.duration,
@@ -16128,6 +16440,7 @@ export class SpoilsEngine {
           id: this.nextId("runtimeReplacement"),
           sourceId: context.sourceId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           replaces: effect.replaces,
           condition: effect.condition,
           effects: effect.effects,
@@ -16159,6 +16472,7 @@ export class SpoilsEngine {
           turnScheduled: this.state.turn,
           sourceId: context.sourceId,
           controllerId: context.controllerId,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           condition: effect.condition,
           effects: effect.effects,
           event: context.event ? structuredClone(context.event) : undefined,
@@ -16273,7 +16587,8 @@ export class SpoilsEngine {
               const sel = effect.declaration.selector as { owner?: string; controller?: string };
               const who = sel.owner ?? sel.controller;
               if (who === undefined || who === "self" || who === "opponent") {
-                this.shuffleDeckOf((who === "opponent" ? this.getOpponent(chooser.id) : chooser).id);
+                const opponentId = who === "opponent" ? this.opponentOf(context.controllerId, context.opponentId) : undefined;
+                this.shuffleDeckOf(opponentId ?? chooser.id);
               }
             }
             for (const nested of effect.effects) {
@@ -16606,15 +16921,10 @@ export class SpoilsEngine {
       }
 
       case "forEachPlayer": {
-        const order = [
-          this.state.activePlayerId,
-          this.getOpponent(this.state.activePlayerId).id
-        ];
+        const order = this.forEachPlayerOrder(effect, context);
+        const contextFor = (playerId: PlayerId): ResolutionContext => this.forEachPlayerContext(effect, context, playerId);
         for (let pi = 0; pi < order.length; pi++) {
-          const pctx: ResolutionContext = {
-            ...context,
-            controllerId: order[pi]
-          };
+          const pctx = contextFor(order[pi]);
           const framesBefore = this.frames.length;
           const done = this.runEffectFrame({
             effects: effect.effects,
@@ -16632,7 +16942,7 @@ export class SpoilsEngine {
               this.frames.push({
                 effects: effect.effects,
                 index: 0,
-                context: { ...context, controllerId: order[rj] }
+                context: contextFor(order[rj])
               });
             }
             this.frames.push(...remainder);
@@ -16805,10 +17115,16 @@ export class SpoilsEngine {
       }
 
       case "anyPlayerMayPay": {
-        const order = [
-          this.state.activePlayerId,
-          this.getOpponent(this.state.activePlayerId).id
-        ];
+        // MPQ-P7: "any opponent" is offered clockwise from the seat after the controller; "any player" the active
+        // player first, then clockwise (CR 402.2). Players still in the game only. Nobody to offer: "Otherwise".
+        const order =
+          effect.offerTo === "opponents"
+            ? this.getOpponents(context.controllerId)
+            : this.getPlayersInSeatOrder(this.state.activePlayerId);
+        if (order.length === 0) {
+          if (effect.elseEffects?.length) this.frames.push({ effects: effect.elseEffects, index: 0, context });
+          return;
+        }
         this.state.pendingChoice = {
           kind: "anyPlayerMayPay",
           id: this.nextId("choice"),
@@ -16816,7 +17132,28 @@ export class SpoilsEngine {
           remaining: order.slice(1),
           cost: structuredClone(effect.costs),
           effects: effect.effects,
+          ...(effect.elseEffects ? { elseEffects: effect.elseEffects } : {}),
           context
+        };
+        return;
+      }
+
+      case "choosePlayer": {
+        const chooser = effect.chooser ? this.resolvePlayerRef(effect.chooser, context).id : context.controllerId;
+        const candidates = effect.from === "opponents" ? this.getOpponents(chooser) : this.getPlayersInSeatOrder(chooser);
+        if (candidates.length === 0) return;
+        if (candidates.length === 1) {
+          context.chosenPlayers = { ...(context.chosenPlayers ?? {}), [effect.id]: candidates[0] };
+          return;
+        }
+        this.state.pendingChoice = {
+          kind: "choosePlayer",
+          id: this.nextId("choice"),
+          playerId: chooser,
+          candidates,
+          sourceId: context.sourceId,
+          ...(context.abilityId ? { abilityId: context.abilityId } : {}),
+          bind: { type: "chosenPlayer", id: effect.id }
         };
         return;
       }
@@ -17210,6 +17547,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { __candidate: [cardId] }
         };
 
@@ -17294,6 +17632,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { __candidate: [targetId] }
         };
 
@@ -17536,6 +17875,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {
             target: [targetId]
           }
@@ -17644,6 +17984,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {
             target: [targetId]
           }
@@ -17711,6 +18052,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { target: [targetId] }
         };
 
@@ -17790,6 +18132,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {
             target: [targetId]
           }
@@ -17882,6 +18225,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (
@@ -17934,6 +18278,7 @@ export class SpoilsEngine {
             sourceId: source.id,
             controllerId: source.controllerId,
             abilityId: ability.id,
+            ...this.lastingOpponent(source, ability.id),
             selected: {}
           })
         ) {
@@ -17941,12 +18286,7 @@ export class SpoilsEngine {
         }
 
         for (const entry of ability.playRestrictions) {
-          const targeted =
-            entry.player === "any"
-              ? true
-              : entry.player === "self"
-                ? source.controllerId === playerId
-                : this.getOpponent(source.controllerId).id === playerId;
+          const targeted = this.scopeMatchesPlayer(entry.player, source.controllerId, playerId, this.lastingOpponent(source, ability.id).opponentId);
           if (!targeted) continue;
           if (
             entry.timing === "notActivePlayer" &&
@@ -17988,7 +18328,7 @@ export class SpoilsEngine {
     if (!card) return undefined;
     let redirect: Zone | undefined;
     for (const w of this.state.handMoveRedirects) {
-      if (this.scopeMatchesPlayer(w.who, w.sourceControllerId, handOwnerId)) {
+      if (this.scopeMatchesPlayer(w.who, w.sourceControllerId, handOwnerId, w.opponentId)) {
         redirect = w.to;
       }
     }
@@ -18023,17 +18363,13 @@ export class SpoilsEngine {
             sourceId: source.id,
             controllerId: source.controllerId,
             abilityId: ability.id,
+            ...this.lastingOpponent(source, ability.id),
             selected: {}
           })
         ) {
           continue;
         }
-        const targeted =
-          rule.player === "any"
-            ? true
-            : rule.player === "self"
-              ? source.controllerId === handOwnerId
-              : this.getOpponent(source.controllerId).id === handOwnerId;
+        const targeted = this.scopeMatchesPlayer(rule.player, source.controllerId, handOwnerId, this.lastingOpponent(source, ability.id).opponentId);
         if (targeted && rule.fromZones.includes(fromZone)) return true;
       }
     }
@@ -18134,6 +18470,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         // Whom it reaches is settled first: the condition of a suppressor that does not reach `cardId` is not this
@@ -18270,6 +18607,7 @@ export class SpoilsEngine {
         sourceId: card.id,
         controllerId: card.controllerId,
         abilityId: ability.id,
+        ...this.lastingOpponent(card, ability.id),
         selected: {}
       };
       if (
@@ -18344,6 +18682,95 @@ export class SpoilsEngine {
     return true;
   }
 
+  /**
+   * Keeps every in-play continuous ability that says "your opponent" bound (RQ-mp-5, MPQ-P2): a binding that names a
+   * player no longer in the game is dropped, and an unbound ability asks its controller (a `choosePlayer` prompt)
+   * while two or more opponents are left. With one opponent left nothing is stored and nobody is asked. Returns true
+   * when it changed something or opened the prompt.
+   */
+  private syncLastingOpponents(): boolean {
+    for (const card of Object.values(this.state.cards)) {
+      if (card.zone !== "play" || card.faceDown) continue;
+      const controller = this.state.players[card.controllerId];
+      if (!controller || controller.eliminated) continue;
+      const live = this.getOpponents(card.controllerId);
+      for (const ability of this.allContinuousAbilities(card.id)) {
+        if (!abilityNamesOpponent(ability)) continue;
+        const bound = card.boundOpponents?.[ability.id];
+        if (live.length < 2) {
+          if (bound !== undefined) {
+            delete card.boundOpponents![ability.id];
+            if (Object.keys(card.boundOpponents!).length === 0) delete card.boundOpponents;
+            return true;
+          }
+          continue;
+        }
+        if (bound !== undefined && live.includes(bound)) continue;
+        this.state.pendingChoice = {
+          kind: "choosePlayer",
+          id: this.nextId("choice"),
+          playerId: card.controllerId,
+          candidates: live,
+          sourceId: card.id,
+          abilityId: ability.id,
+          bind: { type: "lasting" }
+        };
+        return true;
+      }
+    }
+
+    // The lasting records a block created keep reading the opponent it selected; when that player is out of the game
+    // the creator selects again (MPX-lasting (3)), or the record moves to the only opponent left (MPX-lasting (4)).
+    for (const { list, records, creatorOf } of this.lastingRecordLists()) {
+      for (const record of records) {
+        const bound = record.opponentId;
+        if (bound === undefined) continue;
+        const creator = creatorOf(record);
+        if (creator === undefined || !this.state.players[creator] || this.state.players[creator].eliminated) continue;
+        if (bound === creator) continue;
+        const live = this.getOpponents(creator);
+        if (live.length === 0 || live.includes(bound)) continue;
+        if (live.length === 1) {
+          delete record.opponentId;
+          return true;
+        }
+        this.state.pendingChoice = {
+          kind: "choosePlayer",
+          id: this.nextId("choice"),
+          playerId: creator,
+          candidates: live,
+          sourceId: record.sourceId ?? creator,
+          bind: { type: "createdRecord", list, recordId: record.id }
+        };
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /** The lists of lasting records that keep an `opponentId`, with the player who created each record. */
+  private lastingRecordLists(): Array<{
+    list: string;
+    records: Array<{ id: string; sourceId?: CardInstanceId; opponentId?: PlayerId }>;
+    creatorOf: (record: { id: string }) => PlayerId | undefined;
+  }> {
+    const state = this.state;
+    return [
+      { list: "areaModifiers", records: state.areaModifiers, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId },
+      { list: "keywordGrants", records: state.keywordGrants, creatorOf: r => (r as unknown as { createdBy?: PlayerId }).createdBy },
+      { list: "runtimeReplacements", records: state.runtimeReplacements, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId },
+      { list: "handMoveRedirects", records: state.handMoveRedirects, creatorOf: r => (r as unknown as { sourceControllerId: PlayerId }).sourceControllerId },
+      { list: "scheduledEffects", records: state.scheduledEffects, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId }
+    ];
+  }
+
+  /** A lasting record's new opponent, after the creator selected again (`createdRecord` prompt). */
+  private rebindRecord(list: string, recordId: string, opponentId: PlayerId): void {
+    const found = this.lastingRecordLists().find(entry => entry.list === list);
+    const record = found?.records.find(candidate => candidate.id === recordId);
+    if (record) record.opponentId = opponentId;
+  }
+
   private checkStateBasedActions(): void {
     let changed = true;
 
@@ -18361,6 +18788,13 @@ export class SpoilsEngine {
       // (or leaves) play, before anything below is judged against who controls
       // what.
       if (this.syncSeatSwap()) {
+        changed = true;
+        continue;
+      }
+
+      // Continuous text that says "your opponent" selects its opponent as it starts applying, and again once that
+      // player is out of the game or control of the card changed (RQ-mp-5, RQ-mp-10).
+      if (this.syncLastingOpponents()) {
         changed = true;
         continue;
       }
@@ -18765,7 +19199,9 @@ export class SpoilsEngine {
           pending.costOverride,
           pending.ignoreThreshold,
           pending.mode,
-          pending.variables
+          pending.variables,
+          undefined,
+          pending.players
         );
         return;
       }
@@ -19013,6 +19449,7 @@ export class SpoilsEngine {
           sourceId: pr.sourceId,
           controllerId: playerId,
           abilityId: pr.abilityId,
+          ...(pr.opponentId !== undefined ? { opponentId: pr.opponentId } : {}),
           selected: { ...(pr.selected ?? {}), __candidate: [pr.affectedCardId] }
         };
 
@@ -19255,7 +19692,13 @@ export class SpoilsEngine {
       case "anyPlayerMayPay": {
         assert(pending.kind === "anyPlayerMayPay", "This choice does not match the pending decision.");
 
-        const payCtx = { ...pending.context, controllerId: pending.playerId };
+        // "They" is the player who pays: the effects resolve under them, the first to pay settles it (MPQ-P7).
+        const { opponentId: blockOpponent, ...rest } = pending.context;
+        const payCtx: ResolutionContext = {
+          ...rest,
+          controllerId: pending.playerId,
+          ...(blockOpponent !== undefined && blockOpponent !== pending.playerId ? { opponentId: blockOpponent } : {})
+        };
         if (choice.pay && this.canPayWithReductions(pending.cost, payCtx)) {
           this.state.pendingChoice = undefined;
           this.payWithReductions(pending.cost, payCtx);
@@ -19282,6 +19725,8 @@ export class SpoilsEngine {
           return;
         }
         this.state.pendingChoice = undefined;
+        // Everyone declined: "Otherwise, ..." happens, under the controller (MPQ-P7).
+        if (pending.elseEffects?.length) this.frames.push({ effects: pending.elseEffects, index: 0, context: pending.context });
         this.resumeEffectFrames();
         // A sibling trigger from the same batch may still be queued — see
         // the `mayPay` case.
@@ -19350,7 +19795,12 @@ export class SpoilsEngine {
           choice.variables ?? {},
           false,
           false,
-          revealDef.revealFromHand.cost
+          revealDef.revealFromHand.cost,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          choice.players
         );
         for (const effect of revealDef.revealFromHand.effects ?? []) {
           this.resolveEffect(effect, {
@@ -19403,6 +19853,93 @@ export class SpoilsEngine {
         // it parked wait for that answer, whose own case resumes them in order (nested-pause-resume.test.ts).
         if (!this.state.pendingChoice) this.resumeEffectFrames();
         if (!this.state.pendingChoice) this.processImmediateQueue();
+        return;
+      }
+
+      case "choosePlayer": {
+        assert(pending.kind === "choosePlayer", "This choice does not match the pending decision.");
+        assert(
+          pending.candidates.includes(choice.playerId),
+          "That player is not one of the choices."
+        );
+        const chosen = choice.playerId;
+        const bind = pending.bind;
+
+        if (bind.type === "triggerOpponent") {
+          const trigger = this.immediateQueue[0];
+          assert(
+            trigger && trigger.sourceId === pending.sourceId && trigger.ability.id === pending.abilityId,
+            "The pending trigger is no longer waiting to resolve."
+          );
+          this.state.pendingChoice = undefined;
+          trigger.context.opponentId = chosen;
+          this.processImmediateQueue();
+          if (!this.state.pendingChoice) this.resumeEffectFrames();
+          return;
+        }
+
+        if (bind.type === "lasting") {
+          const card = this.requireCard(pending.sourceId);
+          this.state.pendingChoice = undefined;
+          card.boundOpponents = { ...(card.boundOpponents ?? {}), [pending.abilityId!]: chosen };
+          this.processImmediateQueue();
+          this.checkStateBasedActions();
+          if (!this.state.pendingChoice) this.resumeEffectFrames();
+          return;
+        }
+
+        if (bind.type === "replacementOpponent") {
+          const waiting = this.state.pendingReplacementPick;
+          assert(waiting?.awaitingOpponent, "No pending replacement is waiting for its opponent.");
+          this.state.pendingChoice = undefined;
+          this.state.pendingReplacementPick = undefined;
+          const saved = {
+            cause: this.currentCause,
+            causeSource: this.currentCauseSourceId,
+            battle: this.destroyingByBattleDamage,
+            lethal: this.destroyingByLethalDamage
+          };
+          this.currentCause = waiting.cause;
+          this.currentCauseSourceId = waiting.causeSourceId;
+          this.destroyingByBattleDamage = waiting.byBattleDamage ? waiting.affectedCardId : undefined;
+          this.destroyingByLethalDamage = waiting.byLethalDamage ? waiting.affectedCardId : undefined;
+          try {
+            this.applyReplacement(waiting.affectedCardId, waiting.trigger, waiting.scope, waiting.keys[0], chosen);
+          } finally {
+            this.currentCause = saved.cause;
+            this.currentCauseSourceId = saved.causeSource;
+            this.destroyingByBattleDamage = saved.battle;
+            this.destroyingByLethalDamage = saved.lethal;
+          }
+          this.processImmediateQueue();
+          this.checkStateBasedActions();
+          this.resumeEffectFrames();
+          return;
+        }
+
+        if (bind.type === "createdRecord") {
+          this.state.pendingChoice = undefined;
+          this.rebindRecord(bind.list, bind.recordId, chosen);
+          this.processImmediateQueue();
+          this.checkStateBasedActions();
+          if (!this.state.pendingChoice) this.resumeEffectFrames();
+          return;
+        }
+
+        this.state.pendingChoice = undefined;
+        if (bind.type === "blockOpponent") {
+          if (pending.effects) {
+            this.frames.push({ effects: pending.effects, index: 0, context: { ...pending.context!, opponentId: chosen } });
+          } else {
+            this.frames.rewriteContexts(context => ({ ...context, opponentId: chosen }));
+          }
+        } else {
+          this.frames.rewriteContexts(context => ({
+            ...context,
+            chosenPlayers: { ...(context.chosenPlayers ?? {}), [bind.id]: chosen }
+          }));
+        }
+        this.resumeEffectFrames();
         return;
       }
 
@@ -19486,6 +20023,7 @@ export class SpoilsEngine {
               selected: choice.selected ?? {},
               variables: choice.variables ?? {}
             };
+            this.bindActionPlayers(ctx, this.abilitySpec(ability), choice.players);
             this.applyVariableRolls(ability.variables, ability.variableBounds, ctx);
             this.validateTargetDeclarations(ability.targets ?? [], ctx);
             this.payWithReductions(ability.costs ?? [], ctx);
@@ -19763,7 +20301,11 @@ export class SpoilsEngine {
             !(pending.payCost ?? false),
             false,
             undefined,
-            false
+            false,
+            undefined,
+            undefined,
+            undefined,
+            choice.players
           );
           this.state.pendingChoice = undefined;
           const settled = this.resolveTopOfStack();
@@ -19815,7 +20357,8 @@ export class SpoilsEngine {
           pending.afterDeploy
             ? { effects: pending.afterDeploy, context: pending.context }
             : undefined,
-          pending.costOverride
+          pending.costOverride,
+          choice.players
         );
         return;
       }
@@ -20359,6 +20902,7 @@ export class SpoilsEngine {
 
     if (to !== "play") {
       card.faceDown = false;
+      delete card.boundOpponents;
       // Depletion and damage are play-zone concepts (a "tapped" or damaged
       // card in hand/deck/discard is meaningless) — leaving play clears
       // both, the same way a location's turn-spanning damage still resets
@@ -20604,7 +21148,7 @@ export class SpoilsEngine {
    * `ReplacementAbility` and a runtime `installReplacement` alike.
    */
   private causeFitsReplacement(
-    by: "self" | "opponent" | "any" | undefined,
+    by: PlayerScope | undefined,
     bySource: CardSelector | undefined,
     sourceId: CardInstanceId,
     sourceControllerId: PlayerId
@@ -20625,7 +21169,7 @@ export class SpoilsEngine {
     if (by !== undefined && by !== "any") {
       const causedBySelf = this.currentCause === sourceControllerId;
       if (by === "self" && !causedBySelf) return false;
-      if (by === "opponent" && (causedBySelf || this.currentCause === undefined)) return false;
+      if ((by === "opponent" || by === "opponents") && (causedBySelf || this.currentCause === undefined)) return false;
     }
     return true;
   }
@@ -20638,6 +21182,7 @@ export class SpoilsEngine {
     return {
       sourceId: rr.sourceId,
       controllerId: rr.controllerId,
+      ...(rr.opponentId !== undefined ? { opponentId: rr.opponentId } : {}),
       selected: { ...rr.selected, __candidate: [cardId] }
     };
   }
@@ -20676,7 +21221,9 @@ export class SpoilsEngine {
     trigger: ReplacementTrigger,
     scope: "all" | "attached" | "runtime" = "all",
     /** Set when answering a CR 506.4 pick: the key of the replacement that was chosen. */
-    chosenKey?: string
+    chosenKey?: string,
+    /** Set when answering the `choosePlayer` of MPQ-P3: the opponent the replacement applies with. */
+    chosenOpponent?: PlayerId
   ): boolean {
     const attachedOnly = scope === "attached";
     const chain = this.appliedReplacements.get(cardId);
@@ -20693,6 +21240,8 @@ export class SpoilsEngine {
       optional?: { chooserId: PlayerId; cost: Cost[] };
       effects: Effect[];
       context: ResolutionContext;
+      /** The card ability's "your opponent" still has to be selected when it applies (MPQ-P3), among these (default: every opponent). */
+      selectsOpponent?: { candidates?: PlayerId[] };
     }> = [];
 
     const affected = this.state.cards[cardId];
@@ -20725,7 +21274,7 @@ export class SpoilsEngine {
         // Whose card, and who caused it: both relative to the installer.
         const rel = rr.replaces.controlledBy ?? "any";
         const sameController = affected.controllerId === rr.controllerId;
-        if ((rel === "self" && !sameController) || (rel === "opponent" && sameController)) continue;
+        if ((rel === "self" && !sameController) || ((rel === "opponent" || rel === "opponents") && sameController)) continue;
         if (!this.causeFitsReplacement(rr.replaces.by, rr.replaces.bySource, rr.sourceId, rr.controllerId)) continue;
       }
 
@@ -20796,7 +21345,7 @@ export class SpoilsEngine {
             (ownerZone ? affected.ownerId : affected.controllerId) ===
             source.controllerId;
           if (rel === "self" && !sameController) continue;
-          if (rel === "opponent" && sameController) continue;
+          if ((rel === "opponent" || rel === "opponents") && sameController) continue;
         }
 
         if (
@@ -20814,6 +21363,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: { __candidate: [cardId] },
           ...(trigger.event === "damage"
             ? {
@@ -20828,7 +21378,28 @@ export class SpoilsEngine {
             : {})
         };
 
-        if (
+        // "Your opponent" in a replacement is selected at the moment it applies (MPQ-P3); text about a battle or a
+        // response is fixed by the situation (MPQ-P8, MPQ-P4).
+        let selectsOpponent: { candidates?: PlayerId[] } | undefined;
+        const liveOpponents = this.getOpponents(source.controllerId);
+        const from = liveOpponents.length >= 2 ? abilityOpponentFrom(ability) : undefined;
+        const fixed =
+          from === "battle"
+            ? this.battleOpponentOf(source.controllerId)
+            : from === "respondedTo"
+              ? this.respondedToController(source.controllerId)
+              : undefined;
+        if (fixed !== undefined) context.opponentId = fixed;
+        else if (from !== undefined && chosenOpponent !== undefined) context.opponentId = chosenOpponent;
+        if (from !== undefined && fixed === undefined && chosenOpponent === undefined) {
+          if (ability.condition && namesOpponent(ability.condition)) {
+            const satisfying = liveOpponents.filter(o => this.evaluateCondition(ability.condition!, { ...context, opponentId: o }));
+            if (satisfying.length === 0) continue;
+            selectsOpponent = { candidates: satisfying };
+          } else {
+            selectsOpponent = {};
+          }
+        } else if (
           ability.condition &&
           !this.evaluateCondition(ability.condition, context)
         ) {
@@ -20871,7 +21442,8 @@ export class SpoilsEngine {
           label: ability.name,
           ...(optional ? { optional } : {}),
           effects: ability.effects,
-          context
+          context,
+          ...(selectsOpponent ? { selectsOpponent } : {})
         });
       }
     }
@@ -20916,6 +21488,38 @@ export class SpoilsEngine {
       return true;
     }
 
+    // MPQ-P3: the controller selects the replacement's opponent now, then the replaced event goes on.
+    if (pick.selectsOpponent && chosenOpponent === undefined) {
+      const offered = (pick.selectsOpponent.candidates ?? this.getOpponents(pick.controllerId)).filter(id =>
+        this.getOpponents(pick.controllerId).includes(id)
+      );
+      if (offered.length === 1) {
+        pick.context.opponentId = offered[0];
+      } else if (offered.length > 1) {
+        this.state.pendingChoice = {
+          kind: "choosePlayer",
+          id: this.nextId("choice"),
+          playerId: pick.controllerId,
+          candidates: offered,
+          sourceId: pick.sourceId,
+          abilityId: pick.abilityId,
+          bind: { type: "replacementOpponent" }
+        };
+        this.state.pendingReplacementPick = {
+          affectedCardId: cardId,
+          trigger: structuredClone(trigger),
+          scope,
+          keys: [pick.key],
+          awaitingOpponent: true,
+          cause: this.currentCause,
+          causeSourceId: this.currentCauseSourceId,
+          byBattleDamage: this.destroyingByBattleDamage === cardId,
+          byLethalDamage: this.destroyingByLethalDamage === cardId
+        };
+        return true;
+      }
+    }
+
     // "The next time ...": used up once it is the replacement that applies
     // (or is offered); an unchosen one keeps waiting (CR 506.4).
     const runtime = pick.runtime;
@@ -20951,6 +21555,7 @@ export class SpoilsEngine {
         cost: structuredClone(pick.optional.cost),
         effects: structuredClone(pick.effects),
         ...(runtime ? { selected: structuredClone(runtime.selected) } : {}),
+        ...(pick.context.opponentId !== undefined ? { opponentId: pick.context.opponentId } : {}),
         key: pick.key,
         causeSourceId: this.currentCauseSourceId,
         byLethalDamage: this.destroyingByLethalDamage === cardId
@@ -21722,6 +22327,7 @@ export class SpoilsEngine {
       const ctx: ResolutionContext = {
         sourceId: s.sourceId,
         controllerId: s.controllerId,
+        ...(s.opponentId !== undefined ? { opponentId: s.opponentId } : {}),
         event: s.event,
         selected: s.selected ? structuredClone(s.selected) : {}
       };
@@ -22070,7 +22676,7 @@ export class SpoilsEngine {
       if (prevented) return;
       const rule = ability.preventsAttackOnFaction;
       if (!rule) return;
-      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId)) return;
+      if (!this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId, context.opponentId)) return;
       const partyMatches =
         !rule.partyAllMatch ||
         attackerIds.every(attackerId =>
@@ -22376,7 +22982,7 @@ export class SpoilsEngine {
       if (rule.player === "activePlayer") {
         // charged to whoever is declaring the attack, regardless of source
       } else if (
-        !this.scopeMatchesPlayer(rule.player, source.controllerId, playerId)
+        !this.scopeMatchesPlayer(rule.player, source.controllerId, playerId, context.opponentId)
       ) {
         return;
       }
@@ -23224,6 +23830,7 @@ export class SpoilsEngine {
         sourceId: cardId,
         controllerId: card.controllerId,
         abilityId: ability.id,
+        ...this.lastingOpponent(card, ability.id),
         selected: {}
       };
       if (ability.condition && !this.evaluateCondition(ability.condition, context)) {
@@ -24000,6 +24607,7 @@ export class SpoilsEngine {
           sourceId: source.id,
           controllerId: source.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(source, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx))
@@ -24083,6 +24691,7 @@ export class SpoilsEngine {
           sourceId: attackerId,
           controllerId: card.controllerId,
           abilityId: ability.id,
+          ...this.lastingOpponent(card, ability.id),
           selected: {}
         };
         if (ability.condition && !this.evaluateCondition(ability.condition, ctx)) {
@@ -24445,6 +25054,7 @@ export class SpoilsEngine {
       this.evaluateCondition(grant.condition, {
         sourceId: grant.sourceId ?? cardId,
         controllerId: grant.controllerId ?? this.state.cards[cardId]?.controllerId ?? this.state.activePlayerId,
+        ...(grant.opponentId !== undefined ? { opponentId: grant.opponentId } : {}),
         selected: { __candidate: [cardId] }
       })
     );
@@ -24569,6 +25179,215 @@ export class SpoilsEngine {
       if (!this.state.players[id].eliminated) return id;
     }
     return playerId;
+  }
+
+  /**
+   * The player "your opponent" means for `controllerId` (MP 2): `opponentId` (the block's selection) while that player
+   * is still in the game; otherwise the only opponent left, which needs no selection. `undefined` when two or more
+   * opponents are left and none has been selected. A selection whose player has since been eliminated still names
+   * that player while two or more opponents remain (nothing of theirs is left to affect).
+   */
+  private opponentOf(controllerId: PlayerId, opponentId?: PlayerId): PlayerId | undefined {
+    const live = this.getOpponents(controllerId);
+    if (opponentId !== undefined && this.state.players[opponentId]) {
+      if (live.includes(opponentId)) return opponentId;
+      if (live.length === 1) return live[0];
+      return opponentId;
+    }
+    if (live.length === 1) return live[0];
+    if (live.length === 0) return this.state.seats.find(id => id !== controllerId);
+    return undefined;
+  }
+
+  /**
+   * Who a `forEachPlayer` iterates and in what order (CR 402.2: the active player first, then clockwise; players still
+   * in the game only), for the effect's `players` set (default every player) minus `except`.
+   */
+  private forEachPlayerOrder(
+    effect: Extract<Effect, { type: "forEachPlayer" }>,
+    context: ResolutionContext
+  ): PlayerId[] {
+    const controller = context.controllerId;
+    const turnOrder = this.getPlayersInSeatOrder(this.state.activePlayerId);
+    let set: PlayerId[];
+    switch (effect.players ?? "all") {
+      case "opponents":
+        set = turnOrder.filter(id => id !== controller);
+        break;
+      case "others":
+        set = turnOrder.filter(id => id !== controller);
+        break;
+      case "pair": {
+        const opponentId = this.opponentOf(controller, context.opponentId);
+        assert(opponentId, "'both players' needs the block's opponent, which has not been selected.");
+        const first = context.actingPlayerId ?? controller;
+        set = turnOrder.filter(id => id === first || id === opponentId);
+        break;
+      }
+      case "selfAndOpponents":
+      case "all":
+      default:
+        set = turnOrder;
+    }
+    if (effect.except !== undefined) {
+      const skipped = this.resolvePlayerRef(effect.except, context).id;
+      set = set.filter(id => id !== skipped);
+    }
+    return set;
+  }
+
+  /**
+   * The context `effects` of a `forEachPlayer` run in for `playerId`: they are the controller. Inside `"pair"` the other
+   * of the two is their opponent (MPX-vocab-your (3)); otherwise the block's opponent stays unless it is that player.
+   */
+  private forEachPlayerContext(
+    effect: Extract<Effect, { type: "forEachPlayer" }>,
+    context: ResolutionContext,
+    playerId: PlayerId
+  ): ResolutionContext {
+    const { opponentId, actingPlayerId, ...rest } = context;
+    const next: ResolutionContext = { ...rest, controllerId: playerId, ...(actingPlayerId !== undefined ? { actingPlayerId } : {}) };
+    if (effect.players === "pair") {
+      const other = [actingPlayerId ?? context.controllerId, this.opponentOf(context.controllerId, opponentId)].find(id => id !== playerId);
+      if (other !== undefined && this.getOpponents(playerId).length >= 2) next.opponentId = other;
+    } else if (opponentId !== undefined && opponentId !== playerId) {
+      next.opponentId = opponentId;
+    }
+    return next;
+  }
+
+  /** The two sides of the battle: the opponent of `controllerId` when they are the attacking or the defending player (MPQ-P8). */
+  private battleOpponentOf(controllerId: PlayerId): PlayerId | undefined {
+    const battle = this.state.battle;
+    if (!battle || battle.phase === "finished") return undefined;
+    if (battle.attackerPlayerId === controllerId) return battle.defenderPlayerId;
+    if (battle.defenderPlayerId === controllerId) return battle.attackerPlayerId;
+    return undefined;
+  }
+
+  /** The controller of the card or ability on top of the response stack that `controllerId` is responding to (MPQ-P4). */
+  private respondedToController(controllerId: PlayerId): PlayerId | undefined {
+    for (let i = this.responseStack.length - 1; i >= 0; i--) {
+      if (this.responseStack[i].controllerId !== controllerId) return this.responseStack[i].controllerId;
+    }
+    return undefined;
+  }
+
+  /** The player words a played card's block (or a flip-up) says, from the card's data. */
+  private playSpec(definition: CardDefinition, mode: number | undefined, viaFlipUp: boolean): PlayerSpec {
+    const source = this.getPlayVariableSource(definition, mode) as Record<string, unknown> | undefined;
+    let from = blockOpponentFrom(source);
+    if (from === undefined && viaFlipUp && definition.flipUp && namesOpponent(definition.flipUp)) from = "choose";
+    return { from, choices: (source?.playerChoices as PlayerChoiceDeclaration[] | undefined) ?? [] };
+  }
+
+  private abilitySpec(ability: ActivatedAbility): PlayerSpec {
+    return { from: blockOpponentFrom(ability), choices: ability.playerChoices ?? [] };
+  }
+
+  /** The player spec of the block a play, an ability use or a FLIP UP starts. */
+  private specOfPlay(action: PlayAction): PlayerSpec {
+    if (action.type === "activateAbility") {
+      const ability = this.getCardActivatedAbilities(action.cardId).find(a => a.id === action.abilityId);
+      return ability ? this.abilitySpec(ability) : { choices: [] };
+    }
+    return this.playSpec(this.getDefinition(action.cardId), action.mode, action.type === "flipUp");
+  }
+
+  /**
+   * Binds the players an action names into `context` (MP 2, MP 3, MPX-select (1)-(4)): the block's opponent
+   * (`players.opponent`) and every `playerChoices` entry. Nobody is asked, and nothing is stored, when only one opponent
+   * is left; a battle block takes the other side of the battle (MPQ-P8) and a response the controller of what it
+   * answers (MPQ-P4). `missing` lists what a two-or-more-opponent table still has to say; `problems` what was named
+   * wrongly. Writes only what is valid.
+   */
+  private resolveActionPlayers(
+    context: ResolutionContext,
+    spec: PlayerSpec,
+    players: Readonly<Record<string, PlayerId>> | undefined,
+    /** A query (`getPlayRequirements`): a wrong answer counts as not answered yet instead of as a problem. */
+    lenient = false
+  ): { missing: Array<{ id: string; candidates: PlayerId[] }>; problems: string[] } {
+    const controller = context.controllerId;
+    const live = this.getOpponents(controller);
+    const given: Record<string, PlayerId> = { ...(players ?? {}) };
+    const missing: Array<{ id: string; candidates: PlayerId[] }> = [];
+    const problems: string[] = [];
+    const take = (id: string): PlayerId | undefined => {
+      const value = given[id];
+      delete given[id];
+      return value;
+    };
+    const check = (value: unknown, candidates: PlayerId[], what: string): value is PlayerId => {
+      if (lenient) {
+        if (typeof value === "string" && candidates.includes(value) && !this.state.players[value]?.eliminated) return true;
+        missing.push({ id: what, candidates });
+        return false;
+      }
+      if (typeof value !== "string" || !this.state.players[value]) problems.push(`${what}: '${String(value)}' is not a player in this game.`);
+      else if (this.state.players[value].eliminated) problems.push(`${what}: that player has been eliminated.`);
+      else if (value === controller && !candidates.includes(value)) problems.push(`${what}: you cannot choose yourself.`);
+      else if (!candidates.includes(value)) problems.push(`${what}: that player is not one of the choices.`);
+      else return true;
+      return false;
+    };
+
+    if (spec.from !== undefined) {
+      const fixed =
+        spec.from === "battle"
+          ? this.battleOpponentOf(controller)
+          : spec.from === "respondedTo"
+            ? this.respondedToController(controller)
+            : undefined;
+      const value = take("opponent");
+      if (fixed !== undefined) {
+        if (value !== undefined && value !== fixed) problems.push("opponent: your opponent here is fixed by the situation, it is not chosen.");
+        if (live.length >= 2 && live.includes(fixed)) context.opponentId = fixed;
+      } else if (live.length >= 2) {
+        if (value === undefined) missing.push({ id: "opponent", candidates: live });
+        else if (check(value, live, "opponent")) context.opponentId = value;
+      } else if (value !== undefined && live[0] !== undefined && value !== live[0]) {
+        problems.push("opponent: the only opponent left is the opponent.");
+      }
+    }
+
+    for (const choice of spec.choices) {
+      if (choice.condition && !this.evaluateCondition(choice.condition, context)) {
+        if (given[choice.id] !== undefined) problems.push(`${choice.id}: this choice does not exist right now.`);
+        delete given[choice.id];
+        continue;
+      }
+      const candidates = choice.from === "opponents" ? live : this.getPlayersInSeatOrder(controller);
+      const value = take(choice.id);
+      if (candidates.length === 0) continue;
+      let chosen: PlayerId | undefined;
+      if (candidates.length === 1) {
+        if (value !== undefined && value !== candidates[0]) problems.push(`${choice.id}: that player is not one of the choices.`);
+        chosen = candidates[0];
+      } else if (value === undefined) {
+        missing.push({ id: choice.id, candidates });
+      } else if (check(value, candidates, choice.id)) {
+        chosen = value;
+      }
+      if (chosen !== undefined) context.chosenPlayers = { ...(context.chosenPlayers ?? {}), [choice.id]: chosen };
+    }
+
+    if (!lenient) for (const id of Object.keys(given)) problems.push(`${id}: this play names no such player.`);
+    return { missing, problems };
+  }
+
+  /** `resolveActionPlayers` for an action that is being performed: a missing or wrong player is refused. */
+  private bindActionPlayers(
+    context: ResolutionContext,
+    spec: PlayerSpec,
+    players: Readonly<Record<string, PlayerId>> | undefined
+  ): void {
+    const { missing, problems } = this.resolveActionPlayers(context, spec, players);
+    assert(problems.length === 0, problems[0] ?? "");
+    assert(
+      missing.length === 0,
+      `Choose ${missing[0]?.id === "opponent" ? "your opponent" : `a player for '${missing[0]?.id}'`} (players.${missing[0]?.id}): ${(missing[0]?.candidates ?? []).join(", ")}.`
+    );
   }
 
   private getOpponent(

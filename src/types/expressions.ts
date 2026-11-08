@@ -6,12 +6,36 @@ import type { CardInstanceId, CardType, PlayerId, Stat, Zone } from "./ids.js";
 import type { Condition } from "./conditions.js";
 import type { ResourceIcon } from "./cards.js";
 
+/**
+ * A player word in a selector, a scope or a restriction: whose cards or whose actions it covers. `"opponent"` is
+ * "your opponent" (the block's opponent, MP 2); `"opponents"` is every opponent still in the game ("each opponent",
+ * "your opponents", "an opponent" over a set of cards).
+ */
+export type PlayerScope = "self" | "opponent" | "opponents" | "any";
+
 export type PlayerRef =
   | "controller"
   | "owner"
   | "activePlayer"
+  /**
+   * "Your opponent": the opponent bound to the block (`ResolutionContext.opponentId`, MP 2). With exactly one opponent
+   * left it is that player and nothing is bound or asked.
+   */
   | "opponent"
+  /**
+   * Every opponent still in the game. As the `player` of an effect the effect happens once to each opponent, the active
+   * player first and then clockwise (CR 402.2); a selector or scope reads it as "any opponent".
+   */
+  | "opponents"
+  /**
+   * The acting player of a block written from another player's point of view (`opponentFrom: "acting"`, MPQ-P10: "that
+   * player", "both players" on another player's turn): the player of the triggering event, else the active player.
+   * `"opponent"` in such a block is the opponent that player selected.
+   */
+  | "acting"
   | { type: "player"; id: PlayerId }
+  /** The player a `playerChoices` entry or a `choosePlayer` effect named `id` (CR 405: a player choice is not a pick). */
+  | { type: "chosenPlayer"; id: string }
   /** The owner of a targeted card (e.g. "any one deck" — the caster picks a faction card, this resolves to that player). */
   | { type: "ownerOf"; target: TargetRef }
   /** The *current controller* of a targeted card ("that character's controller ..."), which can differ from its owner after a take-control effect. */
@@ -369,8 +393,8 @@ export type NumberExpression =
     };
 
 export interface CardSelector {
-  controller?: "self" | "opponent" | "any";
-  owner?: "self" | "opponent" | "any";
+  controller?: PlayerScope;
+  owner?: PlayerScope;
 
   /**
    * The game area(s) this selector looks in. **When omitted, it matches
@@ -398,7 +422,7 @@ export interface CardSelector {
    * player (`"self"` = the effect's controller, `"opponent"`, or `"any"`
    * player). Face-down cards have no name (CR 411.1). Key to the City.
    */
-  nameNotControlledBy?: "self" | "opponent" | "any";
+  nameNotControlledBy?: PlayerScope;
   /**
    * "a card voided by this card" / "a card removed from the game by this
    * card": only cards in the void (or, for "remove from the game", the

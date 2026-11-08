@@ -5,7 +5,7 @@
 import type { AbilityId, CardDefinitionId, CardType, Keyword, Trade, Zone } from "./ids.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
-import type { CardSelector, NumberExpression, PlayerRef, TargetDeclaration, TargetRef } from "./expressions.js";
+import type { CardSelector, NumberExpression, PlayerRef, PlayerScope, TargetDeclaration, TargetRef } from "./expressions.js";
 import type {
   CostModifierDefinition,
   DamageModifierDefinition,
@@ -445,6 +445,8 @@ export interface CardDefinition {
      */
     onPlay?: {
       condition?: Condition;
+      /** Players named with the play, before any pick (`PlayerChoiceDeclaration`). */
+      playerChoices?: PlayerChoiceDeclaration[];
       costs?: Cost[];
       targets?: TargetDeclaration[];
       effects?: Effect[];
@@ -462,8 +464,10 @@ export interface CardDefinition {
     /**
      * "Your opponents cannot respond to this card." — a tactic that opens
      * no response window when it's played; it resolves immediately. Swindle.
+     * `true`: nobody may respond. `"opponent"` ("your opponent cannot respond"):
+     * only the block's opponent may not; every other player may respond to it.
      */
-    noResponse?: boolean;
+    noResponse?: true | "opponent";
     /**
      * "This card does not leave play if the attached card leaves play."
      * (Everlasting Blade of Light). An "Attach to X" card is normally put
@@ -502,6 +506,7 @@ export interface CardDefinition {
     modes?: Array<{
       label?: string;
       condition?: Condition;
+      playerChoices?: PlayerChoiceDeclaration[];
       costs?: Cost[];
       /** This mode's own "reduce this card's numeric cost by..." — see `onPlay.costAdjust`. */
       costAdjust?: NumberExpression;
@@ -519,9 +524,44 @@ export type AbilityDefinition =
   | ContinuousAbility
   | ReplacementAbility;
 
+/**
+ * Where a block of rules text that says "your opponent" takes its opponent from (MP 2, MPX-select). Default
+ * `"choose"`. With exactly one opponent left every value binds that player and nobody is asked.
+ * - `"choose"`: the block's controller selects one other player in the game. A played card or an activated ability
+ *   takes it from the action (`players.opponent`) before any target is chosen; a triggered ability or a replacement
+ *   asks through a `choosePlayer` pending choice when it resolves or applies (MPQ-P3); continuous text asks when it
+ *   starts applying and again when that player is eliminated or control of the card changes (RQ-mp-5, RQ-mp-10).
+ * - `"event"`: a trigger whose condition names the opponent (`eventPlayerIs`, `eventCardControlledBy`): any
+ *   opponent's event satisfies it, and that opponent is the block's opponent (MPQ-P5). The engine reads this from the
+ *   condition when the field is absent.
+ * - `"battle"`: the other side of the battle the controller is in (MPQ-P8). The engine reads this from a
+ *   `battleRole` condition or a battle-only trigger when the field is absent.
+ * - `"respondedTo"`: the controller of the card or ability being responded to (MPQ-P4).
+ * - `"acting"`: text written from another player's point of view (MPQ-P10): the acting player (the player of the
+ *   triggering event, else the active player) selects one of their own opponents.
+ */
+export type OpponentFrom = "choose" | "event" | "battle" | "respondedTo" | "acting";
+
+/** Who a player choice offers: `"opponents"` the chooser's opponents still in the game, `"players"` every player still in the game. */
+export type PlayerChoiceFrom = "opponents" | "players";
+
+/**
+ * A player named while an action is announced ("an opponent", "a player" that nothing else in the sentence settles):
+ * the action carries it in `players[id]` and `{ type: "chosenPlayer", id }` reads it back. Not a pick (CR 405): it
+ * does not target cards and sets off no "picked" trigger. With one candidate left nothing is asked.
+ */
+export interface PlayerChoiceDeclaration {
+  id: string;
+  from: PlayerChoiceFrom;
+  /** The choice exists only while this holds (evaluated when the action is announced). */
+  condition?: Condition;
+}
+
 export interface AbilityBase {
   id: AbilityId;
   name?: string;
+  /** Where this block's "your opponent" comes from (default `"choose"`, see `OpponentFrom`). */
+  opponentFrom?: OpponentFrom;
 }
 
 export interface ActivatedAbility extends AbilityBase {
@@ -550,6 +590,8 @@ export interface ActivatedAbility extends AbilityBase {
    */
   threshold?: string | number;
   condition?: Condition;
+  /** Players named with the action, before any pick (`PlayerChoiceDeclaration`). */
+  playerChoices?: PlayerChoiceDeclaration[];
   costs?: Cost[];
   /**
    * Only meaningful on a TACTIC's play source (its first activated ability),
@@ -684,9 +726,9 @@ export interface ReplacementAbility extends AbilityBase {
         zone: Zone;
         cardType?: CardType;
         /** Whose card — relative to the replacement's source controller. */
-        controlledBy?: "self" | "opponent" | "any";
+        controlledBy?: PlayerScope;
         /** Who initiated it — relative to the source controller (default `"any"`). */
-        by?: "self" | "opponent" | "any";
+        by?: PlayerScope;
         /**
          * Only a card moving FROM this zone: `"play"` for "from play"
          * (Geiseric, Dethmürderblüdgeon), `"hand"` for "if you would discard"
@@ -700,9 +742,9 @@ export interface ReplacementAbility extends AbilityBase {
     | {
         event: "destroy";
         cardType?: CardType;
-        controlledBy?: "self" | "opponent" | "any";
+        controlledBy?: PlayerScope;
         /** Who initiated it — relative to the source controller (default `"any"`). */
-        by?: "self" | "opponent" | "any";
+        by?: PlayerScope;
         /**
          * Only a destruction by an effect whose source card matches this
          * selector (candidate bound to `{ type: "selected", id:
@@ -730,7 +772,7 @@ export interface ReplacementAbility extends AbilityBase {
         battleOnly?: boolean;
         cardType?: CardType;
         /** Whose card — relative to the replacement's source controller. */
-        controlledBy?: "self" | "opponent" | "any";
+        controlledBy?: PlayerScope;
       }
     | {
         /**
@@ -872,7 +914,7 @@ export interface ContinuousAbility extends AbilityBase {
    * standard "faction at <= 0 influence loses" state-based check is
    * suppressed for the matching faction.
    */
-  preventsDefeat?: { player: "self" | "opponent" | "any" };
+  preventsDefeat?: { player: PlayerScope };
 
   /**
    * "When a player has no cards in their deck, they lose the game." (Trickster's
@@ -908,7 +950,7 @@ export interface ContinuousAbility extends AbilityBase {
    */
   grantsReveal?: {
     zone: "deckTop" | "hand";
-    of: "self" | "opponent" | "any";
+    of: PlayerScope;
   };
 
   /**
@@ -920,7 +962,7 @@ export interface ContinuousAbility extends AbilityBase {
    * gated by a hand-size `condition`) — Beatrix Winterbottom.
    */
   drawModifiers?: Array<{
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     delta?: NumberExpression;
     prevent?: boolean;
   }>;
@@ -934,7 +976,7 @@ export interface ContinuousAbility extends AbilityBase {
    * delta: 1 }`).
    */
   influenceModifiers?: Array<{
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     direction: "loss" | "gain" | "any";
     delta: NumberExpression;
     minAmount?: number;
@@ -952,7 +994,7 @@ export interface ContinuousAbility extends AbilityBase {
    * to `{ type: "selected", id: "__candidate" }`).
    */
   attackTax?: {
-    player: "opponent" | "any" | "activePlayer";
+    player: Exclude<PlayerScope, "self"> | "activePlayer";
     amount: NumberExpression;
     requiresAttackerMatch?: CardSelector;
   };
@@ -965,7 +1007,7 @@ export interface ContinuousAbility extends AbilityBase {
    * search". Department of Rejections (`player: "opponent"`, `amount: 2`).
    */
   searchTax?: {
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     amount?: NumberExpression;
   };
 
@@ -991,7 +1033,7 @@ export interface ContinuousAbility extends AbilityBase {
    * Senate of Marduun (`player: "self"`).
    */
   preventsAttackOnFaction?: {
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     /**
      * Only attacking parties whose every member matches this selector are
      * stopped (candidate bound to `{ type: "selected", id: "__candidate" }`).
@@ -1165,7 +1207,7 @@ export interface ContinuousAbility extends AbilityBase {
    * during their own turn" (Geldale, City-Fortress).
    */
   playRestrictions?: Array<{
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     /**
      * `{ named }` — no player may deploy a card whose printed name equals
      * the `nameValue` (`valueKind: "cardName"`) stored on the source under
@@ -1185,7 +1227,7 @@ export interface ContinuousAbility extends AbilityBase {
    * Aeons — `player: "opponent"`, `fromZones: ["void", "discard", "play"]`).
    */
   restrictReturnToHand?: {
-    player: "self" | "opponent" | "any";
+    player: PlayerScope;
     fromZones: Zone[];
   };
 

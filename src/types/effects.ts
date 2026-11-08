@@ -3,7 +3,7 @@
 // -----------------------------------------------------------------------------
 
 import type { CardType, Duration, Keyword, ModifierOperation, Restriction, Stat, Trade, Zone } from "./ids.js";
-import type { CardSelector, NumberExpression, PlayerRef, TargetDeclaration, TargetRef } from "./expressions.js";
+import type { CardSelector, NumberExpression, PlayerRef, PlayerScope, TargetDeclaration, TargetRef } from "./expressions.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
 import type { ResourceIcon } from "./cards.js";
@@ -1283,13 +1283,41 @@ export type Effect =
   | {
       /**
        * Resolves `effects` once per player, in turn order starting from the
-       * active player (or `order: "startingWith"` + `player`), rebinding
-       * `controller`/`owner` to that player. "Each player may draw a card
-       * or play a resource." Nested chooser effects pause per player, the
-       * same as anywhere else.
+       * active player (CR 402.2: then clockwise, players still in the game
+       * only), rebinding `controller`/`owner` to that player. "Each player
+       * may draw a card or play a resource." Nested chooser effects pause per
+       * player, the same as anywhere else.
+       *
+       * `players` says who is iterated (default `"all"`, every player):
+       * - `"opponents"`: every opponent of the controller ("each opponent").
+       * - `"others"`: every player but the controller ("each other player").
+       * - `"pair"`: the controller and the block's opponent ("both players",
+       *   MP 3), in turn order. Inside it `"opponent"` is the other of the two.
+       * - `"selfAndOpponents"`: the controller and every opponent ("both
+       *   players" on The Knitting Coalition, RQ-mp-6).
+       * `except` leaves one player out of whichever set `players` names
+       * ("each other player's faction gains X" after a pick, Gideon's Legacy).
        */
       type: "forEachPlayer";
+      players?: "opponents" | "all" | "others" | "pair" | "selfAndOpponents";
+      except?: PlayerRef;
       effects: Effect[];
+    }
+  | {
+      /**
+       * `chooser` (default the controller) names one player from `from` while
+       * the block resolves; `{ type: "chosenPlayer", id }` reads it for the
+       * rest of the block. The player-choice form of "an opponent" / "a
+       * player" when nothing in the sentence settles which one, made at
+       * resolution (an action-time choice is a `playerChoices` entry). Not a
+       * pick (CR 405). `from: "opponents"` offers the chooser's own opponents,
+       * so a block written from another player's point of view (MPQ-P10) names
+       * `chooser`. With one candidate nothing is asked.
+       */
+      type: "choosePlayer";
+      id: string;
+      from: "opponents" | "players";
+      chooser?: PlayerRef;
     }
   | {
       /**
@@ -1344,6 +1372,16 @@ export type Effect =
       type: "anyPlayerMayPay";
       costs: Cost[];
       effects: Effect[];
+      /** "Otherwise, ...": resolved under the controller when every player offered it declines (MPQ-P7). */
+      elseEffects?: Effect[];
+      /**
+       * Who is offered it (MPQ-P7). `"players"` (default): every player in
+       * the game, the active player first, then clockwise (CR 402.2).
+       * `"opponents"` ("any opponent may pay"): the controller's opponents,
+       * clockwise starting with the seat after the controller. The first to
+       * accept settles it.
+       */
+      offerTo?: "opponents" | "players";
     }
   | {
       /**
@@ -1549,7 +1587,7 @@ export type Effect =
        * fires on a card leaving *play*.
        */
       type: "redirectHandMoves";
-      who: "self" | "opponent" | "any";
+      who: PlayerScope;
       to: Zone;
       duration: Duration;
     }
@@ -1571,7 +1609,7 @@ export type Effect =
             event: "destroy";
             cardType?: CardType;
             /** Whose card — relative to the installer (`"self"` = a card the installing ability's controller controls). Default `"any"`. */
-            controlledBy?: "self" | "opponent" | "any";
+            controlledBy?: PlayerScope;
             /**
              * Who caused the destruction — relative to the installer, the same scope as
              * `ReplacementAbility.replaces.by`: the controller of the effect being resolved, or of the
@@ -1581,7 +1619,7 @@ export type Effect =
              * be destroyed by cards or abilities your opponents control" (Escort Ally):
              * `controlledBy: "self", by: "opponent"`.
              */
-            by?: "self" | "opponent" | "any";
+            by?: PlayerScope;
             /**
              * Only a destruction by an effect whose source card matches this selector (candidate bound
              * to `__candidate`, relative to the installer) — never battle damage or a destruction with

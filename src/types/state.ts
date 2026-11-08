@@ -26,7 +26,7 @@ import type { AbilityDefinition, ActivatedAbility } from "./cards.js";
 import type { Condition } from "./conditions.js";
 import type { Cost } from "./costs.js";
 import type { Effect } from "./effects.js";
-import type { CardSelector, NumberExpression } from "./expressions.js";
+import type { CardSelector, NumberExpression, PlayerScope } from "./expressions.js";
 import type { CreatedAbilitySpec } from "./createdAbility.js";
 
 export interface CardInstance {
@@ -48,6 +48,15 @@ export interface CardInstance {
    * removed) still belongs to `ownerId`. Absent means the owner holds it.
    */
   heldBy?: PlayerId;
+
+  /**
+   * The opponent each of this card's continuous abilities that says "your opponent" holds, by ability id (RQ-mp-5,
+   * MPX-lasting): selected by the controller when the ability starts applying, kept while it lasts, selected again
+   * when that player is eliminated and when control of the card changes (RQ-mp-10). Written only when the
+   * controller has two or more opponents to choose from; with one opponent left the ability reads that player and
+   * nothing is stored. Cleared when the card leaves play.
+   */
+  boundOpponents?: Record<AbilityId, PlayerId>;
 
   /**
    * The ability the players wrote for this faction card before the game
@@ -226,6 +235,12 @@ export interface RuntimeAreaModifier {
   sourceAbilityId?: AbilityId;
   /** The controller of the effect when it resolved. */
   controllerId: PlayerId;
+  /**
+   * The opponent the block that created this record selected ("your opponent", MP 2): the record keeps reading that
+   * player after the block is done (MPX-lasting). Stored only at tables of three or more; selected again when that
+   * player is eliminated (RQ-mp-5).
+   */
+  opponentId?: PlayerId;
   selector: CardSelector;
 
   stat: Stat;
@@ -246,6 +261,12 @@ export interface RuntimeKeywordGrant extends CreatedByPlayer {
   keyword: Keyword;
 
   duration: Duration;
+  /**
+   * The opponent the block that created this record selected ("your opponent", MP 2): the record keeps reading that
+   * player after the block is done (MPX-lasting). Stored only at tables of three or more; selected again when that
+   * player is eliminated (RQ-mp-5).
+   */
+  opponentId?: PlayerId;
   /** Only counts while this holds (the effect's `condition`), evaluated as `controllerId`'s effect from `sourceId`. */
   condition?: Condition;
   controllerId?: PlayerId;
@@ -345,6 +366,12 @@ export interface RuntimeReplacement {
   id: ModifierId;
   sourceId: CardInstanceId;
   controllerId: PlayerId;
+  /**
+   * The opponent the block that created this record selected ("your opponent", MP 2): the record keeps reading that
+   * player after the block is done (MPX-lasting). Stored only at tables of three or more; selected again when that
+   * player is eliminated (RQ-mp-5).
+   */
+  opponentId?: PlayerId;
   /** Same shape as `installReplacement.replaces`; `controlledBy` / `by` are relative to `controllerId`. */
   replaces: Extract<Effect, { type: "installReplacement" }>["replaces"];
   condition?: Condition;
@@ -375,7 +402,13 @@ export interface RuntimeHandMoveRedirect {
   /** The card whose effect installed it (read-only info for `getActiveProtections`). */
   sourceId?: CardInstanceId;
   sourceControllerId: PlayerId;
-  who: "self" | "opponent" | "any";
+  who: PlayerScope;
+  /**
+   * The opponent the block that created this record selected ("your opponent", MP 2): the record keeps reading that
+   * player after the block is done (MPX-lasting). Stored only at tables of three or more; selected again when that
+   * player is eliminated (RQ-mp-5).
+   */
+  opponentId?: PlayerId;
   to: Zone;
   duration: Duration;
   createdTurn: number;
@@ -479,6 +512,12 @@ export interface ScheduledEffect {
   turnScheduled: number;
   sourceId: CardInstanceId;
   controllerId: PlayerId;
+  /**
+   * The opponent the block that created this record selected ("your opponent", MP 2): the record keeps reading that
+   * player after the block is done (MPX-lasting). Stored only at tables of three or more; selected again when that
+   * player is eliminated (RQ-mp-5).
+   */
+  opponentId?: PlayerId;
   condition?: Condition;
   effects: Effect[];
   /** The event that triggered the scheduling ability (SYS-48): a rider's `target: "eventCard"` keeps resolving when it fires later. */
@@ -1667,6 +1706,8 @@ export interface GameState {
     selected?: Record<string, CardInstanceId[]>;
     /** Identifies the replacement for CR 506.5 (each applies at most once to the same thing). */
     key?: string;
+    /** The opponent the replacement was applied with (MPQ-P3). */
+    opponentId?: PlayerId;
     /** For a replaced destruction: the card whose effect destroys it, and whether lethal damage does (CR 506.6). */
     causeSourceId?: CardInstanceId;
     byLethalDamage?: boolean;
@@ -1682,6 +1723,8 @@ export interface GameState {
     trigger: ReplacementTrigger;
     scope: "all" | "attached" | "runtime";
     keys: string[];
+    /** The pick is waiting for the controller to select the replacement's opponent (`choosePlayer`, MPQ-P3), not for a choice among `keys`. */
+    awaitingOpponent?: boolean;
     /** The cause bookkeeping the replaced event was running under. */
     cause?: PlayerId;
     causeSourceId?: CardInstanceId;

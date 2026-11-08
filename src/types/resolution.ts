@@ -28,6 +28,22 @@ export interface ResolutionContext {
 
   event?: GameEvent;
 
+  /**
+   * The block's opponent: the one player "your opponent" / "both players" mean in this block of rules text (MP 2,
+   * MP 3, MP 4). Set only when the controller had two or more opponents to choose from; with exactly one opponent
+   * left it is never stored and every `"opponent"` reads that player. Lasting records a block creates copy it.
+   */
+  opponentId?: PlayerId;
+
+  /**
+   * The acting player of a block written from another player's point of view (`opponentFrom: "acting"`, MPQ-P10):
+   * "both players" is this player and `opponentId`.
+   */
+  actingPlayerId?: PlayerId;
+
+  /** Players named by `playerChoices` / `choosePlayer`, keyed by choice id (`{ type: "chosenPlayer", id }`). */
+  chosenPlayers?: Record<string, PlayerId>;
+
   selected: Record<string, CardInstanceId[]>;
 
   /** "the picked character" refs (`respondedToPicked`) already resolved by an earlier effect of this resolution, so a later "if you do" still sees a card that has since moved. */
@@ -81,6 +97,12 @@ export interface TriggerResolution {
    * is raised, so the same player keeps deciding the rest of the batch (CR 503.4a).
    */
   orderedBy?: PlayerId;
+  /**
+   * Engine bookkeeping, only at tables of three or more: the opponents the controller may select for this trigger's
+   * "your opponent" when its condition names the opponent through a state test (`opponentFrom: "choose"`): the ones
+   * for whom the condition held when the event happened.
+   */
+  opponentCandidates?: PlayerId[];
   /** Engine bookkeeping: this trigger's own target picks were already announced (`cardPicked`). */
   picksAnnounced?: boolean;
   /**

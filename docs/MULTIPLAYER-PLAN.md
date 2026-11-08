@@ -325,6 +325,24 @@ into `ffa` once the two-player replays are recorded.
 - **Offers (MPQ-P7).** `anyPlayerMayPay` gets `offerTo: "opponents" |
   "players"`. The offer goes clockwise, and the first payer settles it.
 
+### As built (Phase 3 step 5)
+
+The design above stands, with these differences:
+
+- **`playerChoices`** are `{ id, from: "opponents" | "players", condition? }`, always made by the controller with the
+  action. The `chooser` of the plan lives on the `choosePlayer` effect instead, where a block written from
+  another player's point of view needs it (`from` is read relative to that chooser).
+- **`{ type: "choosePlayer" }` is an effect** (`id`, `from`, `chooser?`); the pending choice has a `bind` that says
+  what the answer writes (the block's opponent, a trigger's, a named player, a lasting ability's, a replacement's,
+  a lasting record's).
+- **`"acting"`** is also a `PlayerRef` (the acting player of an `opponentFrom: "acting"` block) and
+  `ResolutionContext.actingPlayerId` carries it; `forEachPlayer players: "pair"` is the acting player (else the
+  controller) plus the block's opponent.
+- **`anyPlayerMayPay`** also gets `elseEffects` (the "Otherwise" branch).
+- **`players`** is typed `PlayerAnswers`; the `deployForFree`, `resourceReveal` and `useTargetAbility` answers
+  carry it too, because they start plays. `getPlayRequirements` lists a `{ kind: "players" }` requirement first.
+- The opponent is stored only at tables of three or more, so nothing new appears in a two-player state.
+
 ### Choices, actions and setup
 
 - **`PendingChoice` kind `choosePlayer`**: `{ playerId, id, candidates,

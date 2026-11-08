@@ -69,6 +69,8 @@ export interface PendingDeployTargetChoice {
   costOverride?: number;
   ignoreThreshold: boolean;
   mode?: number;
+  /** The players the play named (`GameAction` `players`), reused verbatim on resume. */
+  players?: Record<string, PlayerId>;
 }
 
 /** Identifies one queued trigger: the card it came from and which ability. */
@@ -352,6 +354,8 @@ export interface PendingAnyPlayerMayPayChoice {
   remaining: PlayerId[];
   cost: Cost[];
   effects: Effect[];
+  /** Resolved under the controller when every player offered it declines. */
+  elseEffects?: Effect[];
   context: ResolutionContext;
   /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
   contextId?: ContextId;
@@ -367,6 +371,43 @@ export interface PendingChooseNumberChoice {
   max: number;
   effects: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
+}
+
+/**
+ * A player is chosen: `playerId` names one of `candidates` (the players in the game they may choose from, clockwise
+ * from their own seat). What the answer binds is `bind`; nobody is asked when there is a single candidate.
+ * - `blockOpponent`: the opponent of the block `effects` belong to ("your opponent", MP 2): a replacement that
+ *   applies (MPQ-P3), a block written from another player's point of view (MPQ-P10). Written to `context.opponentId`.
+ * - `triggerOpponent`: the opponent of the trigger waiting at the head of the queue, chosen as it is about to be
+ *   followed (before its targets).
+ * - `chosenPlayer`: a `choosePlayer` effect's choice, written to `context.chosenPlayers[id]`.
+ * - `replacementOpponent`: the opponent of a replacement that is about to apply (MPQ-P3), chosen at that moment;
+ *   the replaced event then goes on.
+ * - `lasting`: the opponent of `sourceId`'s continuous ability `abilityId`, chosen when it starts applying (RQ-mp-5)
+ *   and again when its player is eliminated or control of the card changes (RQ-mp-10). Written to
+ *   `CardInstance.boundOpponents`.
+ * - `createdRecord`: the opponent of a lasting record a block created, chosen again after its player was eliminated.
+ * Answered with `{ kind: "choosePlayer", playerId }`.
+ */
+export interface PendingChoosePlayerChoice {
+  kind: "choosePlayer";
+  id: string;
+  playerId: PlayerId;
+  candidates: PlayerId[];
+  sourceId: CardInstanceId;
+  abilityId?: AbilityId;
+  bind:
+    | { type: "blockOpponent" }
+    | { type: "triggerOpponent" }
+    | { type: "chosenPlayer"; id: string }
+    | { type: "lasting" }
+    | { type: "replacementOpponent" }
+    | { type: "createdRecord"; list: string; recordId: string };
+  /** The effects that continue once it is answered (`blockOpponent`, `chosenPlayer`), run in `context`. */
+  effects?: Effect[];
+  context?: ResolutionContext;
   /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
   contextId?: ContextId;
 }
@@ -636,6 +677,7 @@ export type PendingChoice =
   | PendingChooseReplacementChoice
   | PendingNameValueChoice
   | PendingChooseNumberChoice
+  | PendingChoosePlayerChoice
   | PendingAlternatingPayChoice
   | PendingAnyPlayerMayPayChoice
   | PendingMayPayChoice

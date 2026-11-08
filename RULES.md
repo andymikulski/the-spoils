@@ -2017,3 +2017,44 @@ table size that draw is between every player still in the game (MPX-loop).
 increasing number or passing; a player who passes is out; the last player
 in wins the bid. Bidding starts with the active player and goes clockwise;
 every player in the game takes part, and a player who has passed is skipped.
+
+## 15. Multiplayer: "your opponent" (MP 2–4, MPX-select, MPX-lasting)
+
+**(MP 2, MP 4)** A block of rules text that says "your opponent" (one activated ability, one triggered
+ability, one paragraph of continuous text, or the effect text of one card) selects one other player in the
+game as its opponent, once per block and anew each time the block is followed. **(MP 3)** "Both players" is
+the controller and that same opponent. **(MPX-select (3))** With exactly one opponent left nobody is asked and
+nothing extra is stored: every binding reads that player, so a two-player game plays as it always has.
+
+**(engine-derived)** In card data the player word `"opponent"` is the block's opponent; `"opponents"` is every
+opponent ("each opponent"), selects nobody, and in a condition holds for any opponent. A block names its
+opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
+
+- **Played cards and abilities (MPX-select (2)):** the opponent is part of the action (`players.opponent`),
+  required at two or more opponents, refused if it is yourself, a player who has lost or a non-player, and
+  listed first by `getPlayRequirements` (`kind: "players"`), because the legal picks depend on it. A
+  `playerChoices` entry names any other player the same way and `{ type: "chosenPlayer", id }` reads it; a
+  `choosePlayer` effect asks at resolution. A player choice is not a pick (CR 405).
+- **Triggers and replacements:** asked through a `choosePlayer` prompt when the trigger is about to be followed
+  (before its targets) and at the moment a replacement applies (MPQ-P3).
+- **`opponentFrom`:** a trigger whose condition names the opponent through the event's player is met by any
+  opponent's event and that opponent is the block's opponent (`"event"`, MPQ-P5); text only a battle the
+  controller is in can set off (a `battleRole` gate, "when this card attacks / is blocked", damage to a faction
+  by this card) takes the other side of the battle (`"battle"`, MPQ-P8); `"respondedTo"` is the controller of
+  the card or ability answered (MPQ-P4); `"acting"` is text written from another player's point of view: the
+  acting player (the event's player, else the active player) selects one of their own opponents and "both
+  players" is that player plus the selection (MPQ-P10). Written, the field wins; absent, the engine derives it.
+- **Continuous text (RQ-mp-5, RQ-mp-10, MPQ-P2):** selected by the controller as the text starts applying and
+  kept on the card (`boundOpponents`); until then the text does not apply. When the selected player is
+  eliminated the controller selects again (the only opponent left is taken without asking); when control of the
+  card changes the new controller selects again, even if the old selection is a valid opponent for them.
+  Lasting records a block creates (area modifiers, conditional keyword grants, replacements, hand redirects,
+  delayed effects) keep reading the opponent the block selected and are re-selected when that player is out.
+- **Iteration (CR 402.2):** `forEachPlayer` runs for the active player first, then clockwise, players still in the
+  game only; `players` picks `all` (default), `opponents`, `others`, `pair` or `selfAndOpponents`, and `except`
+  leaves one player out (MPQ-P11). `anyPlayerMayPay` offers "any opponent" clockwise from the controller's left
+  and "any player" from the active player; the first to pay settles it, otherwise `elseEffects` (MPQ-P7).
+- **`noResponse: "opponent"`:** only the block's opponent may not respond; with nobody else able to, it
+  resolves at once like `true`.
+- **Open reading (RQ-mp-3 and MPX-select (4)):** a stack item whose selected opponent is eliminated before it
+  resolves keeps naming that player (their cards are gone, so nothing of theirs is affected).

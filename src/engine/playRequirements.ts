@@ -89,6 +89,13 @@ export type PlayRequirement =
       kind: "flipUpOption";
       options: Array<{ index: number; cost: number; threshold: string | number; available: boolean; reason?: string }>;
     }
+  /**
+   * Players still to name (MP 2, MPX-select): `id: "opponent"` is the block's opponent ("your opponent", "both
+   * players"), listed first and only while the controller has two or more opponents to choose from; every other id
+   * is a `playerChoices` entry. Send `players` with one candidate per id. Asked before any pick, because which
+   * cards may be picked can depend on the player.
+   */
+  | { kind: "players"; choices: Array<{ id: string; candidates: PlayerId[] }> }
   /** "Choose a number for X": every id in `variables` must be sent (0 is legal; negative / fractional is refused). */
   | { kind: "variables"; variables: Array<{ id: string; min: number; max: number }> }
   | PickStep;
@@ -98,6 +105,7 @@ export type PlayAnswer =
   | { kind: "mode"; index: number }
   | { kind: "flipUpOption"; index: number }
   | { kind: "variables"; values: Record<string, number> }
+  | { kind: "players"; values: Record<string, PlayerId> }
   | { kind: "pick"; id: string; cardIds: CardInstanceId[]; declined?: boolean };
 
 /** Input of `getSelectionRequirements`: the picks of a pending-choice sub-selection (`selectTargets`, `chooserSelectsTarget`, `useTargetAbility`), with no play to read them from. */
@@ -155,6 +163,8 @@ export function answerPlayRequirement(given: DeepReadonly<PlayAction>, answer: D
       return action.type === "flipUp" ? { ...action, flipUpOption: answer.index } : action;
     case "variables":
       return { ...action, variables: { ...(action.variables ?? {}), ...answer.values } };
+    case "players":
+      return { ...action, players: { ...(action.players ?? {}), ...answer.values } };
     case "pick": {
       const selected = { ...(action.selected ?? {}), [answer.id]: answer.declined ? [] : [...answer.cardIds] };
       if (answer.declined) selected[declinedKey(answer.id)] = [];
