@@ -26,7 +26,7 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost."
+            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost (costs holds two steps today, so this is a new costs[2])."
           },
           {
             "path": "behavior.abilities[2].effects[0].chooser",
@@ -1093,7 +1093,7 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no abilities. TEAMWORK needs a new activated ability with a pick of another player (a new pick step) and a give-control effect to that player."
+            "why": "The faction has no abilities field. TEAMWORK needs a new activated ability (a new faction.abilities[0]) with a pick of another player (a new pick step) and a give-control effect to that player."
           }
         ],
         "test3": "P1 (SLEA) activates TEAMWORK: pays 2, picks a card P1 controls, then chooses another player; the options are P2 and P3 only (P1 is not offered). Choose P3: P3 takes control of the card; P2 does not. Repeat choosing P2: P2 takes control, P3 does not."

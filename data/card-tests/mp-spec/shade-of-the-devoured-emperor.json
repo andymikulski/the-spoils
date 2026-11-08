@@ -661,6 +661,13 @@
         ],
         "dataChanges": [
           {
+            "path": "behavior.abilities[0].costs[0]",
+            "now": null,
+            "meaning": "anyOneOpponent",
+            "edit": true,
+            "why": "The ability has no costs field. 'Pick an opponent' is the printed cost, so a new costs[0] pick step is needed; the chooser and selector below read its result."
+          },
+          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
@@ -670,9 +677,9 @@
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
-            "meaning": "anyOneOpponent",
+            "meaning": "refersBack",
             "edit": true,
-            "why": "Structural: the data has no \"pick an opponent\" step. The controller must first pick one opponent (part of the cost or effect, as printed) and this site then means that picked player."
+            "why": "'That opponent': the opponent picked in the cost. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site above)."
           }
         ],
         "test3": "P1 plays it and picks an opponent as part of the cost (P2 or P3), say P2. P2 discards 2 cards of P2's choice from P2's hand; P3's hand is unchanged. P1 draws a card. Repeat picking P3. A pick of P1 is not offered."

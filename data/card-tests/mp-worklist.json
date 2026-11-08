@@ -1,6 +1,6 @@
 {
   "total": {
-    "sites": 361,
+    "sites": 362,
     "clauses": 243
   },
   "sets": {
@@ -20,10 +20,12 @@
           "card": "Nearby Serpent",
           "id": "26186aa1-0ff0-4f34-9a82-8ec01ffb3eef",
           "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].player",
-          "now": "ownerOf",
+          "path": "behavior.abilities[0].effects[0].declaration.selector",
+          "now": {
+            "type": "faction"
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "57bc8ac147d4"
+          "snapshot": "f0999d2595b0"
         },
         {
           "card": "Voidal Replication",
@@ -125,10 +127,13 @@
           "card": "Arcanist's Almanac",
           "id": "28addfe9-b290-465c-a241-ce788297665a",
           "clause": "0:ability:almanac-foresight",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "ownerOf",
+          "path": "behavior.abilities[0].targets[0].selector",
+          "now": {
+            "zone": "play",
+            "type": "faction"
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "57bc8ac147d4"
+          "snapshot": "ba8a097723ed"
         },
         {
           "card": "Ashes of Zenobia",
@@ -151,10 +156,12 @@
           "card": "Nearby Serpent",
           "id": "f96cbc48-3e51-48d9-9ac6-3537d1c78e6d",
           "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].player",
-          "now": "ownerOf",
+          "path": "behavior.abilities[0].effects[0].declaration.selector",
+          "now": {
+            "type": "faction"
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "57bc8ac147d4"
+          "snapshot": "f0999d2595b0"
         },
         {
           "card": "Voidal Replication",
@@ -537,10 +544,13 @@
           "card": "Arcanist's Almanac",
           "id": "f09cc7b1-96fd-47e5-946d-324962b9efe9",
           "clause": "0:ability:almanac-foresight",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "ownerOf",
+          "path": "behavior.abilities[0].targets[0].selector",
+          "now": {
+            "zone": "play",
+            "type": "faction"
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "57bc8ac147d4"
+          "snapshot": "ba8a097723ed"
         },
         {
           "card": "Ashes of Zenobia",
@@ -563,10 +573,12 @@
           "card": "Nearby Serpent",
           "id": "9b13c156-b7f9-4678-93ff-062a78e3bc5a",
           "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].player",
-          "now": "ownerOf",
+          "path": "behavior.abilities[0].effects[0].declaration.selector",
+          "now": {
+            "type": "faction"
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "57bc8ac147d4"
+          "snapshot": "f0999d2595b0"
         },
         {
           "card": "Spastic Tentacles",
@@ -636,7 +648,7 @@
           "id": "1999770c-5f2d-415d-8da1-8efe44ef3e41",
           "clause": "1:rule",
           "path": "behavior.abilities[0].swapsSides",
-          "now": "true",
+          "now": true,
           "meaning": "chosenPair"
         },
         {
@@ -674,10 +686,14 @@
           "card": "Forbidden Knowledge",
           "id": "40a1b99a-a5b6-4356-b84c-3cc41a5e6db2",
           "clause": "0:rule",
-          "path": "behavior.abilities[0].effects",
-          "now": "[draw 1] only; no look effect and no player word for the opponent",
+          "path": "behavior.abilities[0].effects[0]",
+          "now": {
+            "type": "draw",
+            "player": "controller",
+            "amount": 1
+          },
           "meaning": "chosenOpponent",
-          "snapshot": "a1d7ab4d0cf0"
+          "snapshot": "ff839d8bc0fc"
         },
         {
           "card": "Obscene Communion",
@@ -749,7 +765,9 @@
           "id": "61688c92-96d1-40ae-ac64-2975d292b0d9",
           "clause": "1:rule",
           "path": "behavior.abilities[1].preventsAttackOnFaction",
-          "now": "{ player: \"self\" }",
+          "now": {
+            "player": "self"
+          },
           "meaning": "chosenOpponent",
           "snapshot": "032e380bffcc"
         },
@@ -758,7 +776,9 @@
           "id": "9f06b372-48a0-49eb-a2df-a4c5c923694b",
           "clause": "1:rule",
           "path": "behavior.abilities[0].preventsAttackOnFaction",
-          "now": "{ player: \"self\" }",
+          "now": {
+            "player": "self"
+          },
           "meaning": "chosenOpponent",
           "snapshot": "032e380bffcc"
         },
@@ -767,7 +787,10 @@
           "id": "c5262c5b-9ef2-40ed-9f16-29b391b39a11",
           "clause": "0:rule",
           "path": "behavior.abilities[0].restrictions[0]",
-          "now": "{ target: \"source\", restriction: \"cannotBeTakenControl\" }",
+          "now": {
+            "target": "source",
+            "restriction": "cannotBeTakenControl"
+          },
           "meaning": "chosenOpponent",
           "snapshot": "97948fdf738c"
         },
@@ -822,7 +845,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
           "now": "controller",
-          "meaning": "chosenOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "Meat of the Mountain",
@@ -830,7 +853,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
           "now": "self",
-          "meaning": "chosenOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "Meat of the Mountain",
@@ -838,7 +861,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
           "now": "controller",
-          "meaning": "chosenOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "Meat of the Mountain",
@@ -846,7 +869,7 @@
           "clause": "1:rule",
           "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
           "now": "self",
-          "meaning": "chosenOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "I Drink Your Milkshake!",
@@ -1245,10 +1268,14 @@
           "card": "Forbidden Knowledge",
           "id": "6242776d-806e-4e6b-a360-30c791143c36",
           "clause": "0:rule",
-          "path": "behavior.abilities[0].effects",
-          "now": "[draw 1] only; no look effect and no player word for the opponent",
+          "path": "behavior.abilities[0].effects[0]",
+          "now": {
+            "type": "draw",
+            "player": "controller",
+            "amount": 1
+          },
           "meaning": "anyOneOpponent",
-          "snapshot": "a1d7ab4d0cf0"
+          "snapshot": "ff839d8bc0fc"
         },
         {
           "card": "Imperial Thaumaturge",
@@ -1718,7 +1745,14 @@
           "id": "8bed01de-3627-4ae9-92dc-fc065e9e5de7",
           "clause": "0:ability:outsmart",
           "path": "behavior.abilities[0].effects[0]",
-          "now": "grantKeyword cannotBeBlocked (no player field)",
+          "now": {
+            "type": "grantKeyword",
+            "target": "source",
+            "keyword": "cannotBeBlocked",
+            "duration": {
+              "type": "untilEndOfTurn"
+            }
+          },
           "meaning": "refersBack",
           "snapshot": "8f002642608e"
         },
@@ -1878,7 +1912,7 @@
       ]
     },
     "shade-of-the-devoured-emperor": {
-      "sites": 53,
+      "sites": 54,
       "clauses": 28,
       "pending": [
         {
@@ -2061,6 +2095,15 @@
           "card": "Violating Ritual",
           "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
           "clause": "0:ability",
+          "path": "behavior.abilities[0].costs[0]",
+          "now": null,
+          "meaning": "anyOneOpponent",
+          "snapshot": "2be88ca4242c"
+        },
+        {
+          "card": "Violating Ritual",
+          "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
+          "clause": "0:ability",
           "path": "behavior.abilities[0].effects[0].chooser",
           "now": "opponent",
           "meaning": "refersBack"
@@ -2071,7 +2114,7 @@
           "clause": "0:ability",
           "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
           "now": "opponent",
-          "meaning": "anyOneOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "Voidal Trinket",
@@ -2679,10 +2722,10 @@
           "card": "Devilfang Thunderhoof",
           "id": "e1d91071-20c5-4eac-9dec-5b147de9804e",
           "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].costs",
-          "now": "(no opponent pick; sites below use `opponent`)",
+          "path": "behavior.abilities[2].costs[2]",
+          "now": null,
           "meaning": "anyOneOpponent",
-          "snapshot": "f100199630a9"
+          "snapshot": "2be88ca4242c"
         },
         {
           "card": "Drill Garrison",
@@ -2809,7 +2852,28 @@
           "id": "c27110b6-26bc-473b-874c-0461819ee0d3",
           "clause": "1:rule",
           "path": "behavior.abilities[0].effects[0]",
-          "now": "(no opponent pick; sites use `opponent`)",
+          "now": {
+            "type": "chooserSelectsTarget",
+            "chooser": "opponent",
+            "declaration": {
+              "id": "disc",
+              "selector": {
+                "controller": "opponent",
+                "zone": "hand"
+              },
+              "count": 1
+            },
+            "effects": [
+              {
+                "type": "moveCard",
+                "target": {
+                  "type": "selected",
+                  "id": "disc"
+                },
+                "to": "discard"
+              }
+            ]
+          },
           "meaning": "anyOneOpponent",
           "snapshot": "b9ce95ba29fe"
         },
@@ -2826,7 +2890,20 @@
           "id": "2f870c54-2a0f-470c-a73e-2939196e0853",
           "clause": "1:rule",
           "path": "behavior.abilities[0].effects[0]",
-          "now": "(no opponent pick; selector uses `opponent`)",
+          "now": {
+            "type": "createAreaModifier",
+            "selector": {
+              "controller": "opponent",
+              "zone": "play",
+              "type": "character"
+            },
+            "stat": "speed",
+            "operation": "set",
+            "value": 0,
+            "duration": {
+              "type": "untilEndOfTurn"
+            }
+          },
           "meaning": "anyOneOpponent",
           "snapshot": "51d9c758fac1"
         },
@@ -2979,7 +3056,81 @@
           "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
           "clause": "1:rule",
           "path": "behavior.abilities[0].effects[0]",
-          "now": "chooserSelectsOption (no opponent pick)",
+          "now": {
+            "type": "chooserSelectsOption",
+            "chooser": "controller",
+            "options": [
+              {
+                "label": "Look at the opponent's hand; they discard a non-resource card of your choice",
+                "effects": [
+                  {
+                    "type": "chooserSelectsTarget",
+                    "chooser": "controller",
+                    "declaration": {
+                      "id": "look",
+                      "selector": {
+                        "owner": "opponent",
+                        "zone": "hand",
+                        "conditions": [
+                          {
+                            "type": "not",
+                            "condition": {
+                              "type": "cardTypeIs",
+                              "target": {
+                                "type": "selected",
+                                "id": "__candidate"
+                              },
+                              "cardType": "resource"
+                            }
+                          }
+                        ]
+                      },
+                      "count": 1,
+                      "optional": false
+                    },
+                    "effects": [
+                      {
+                        "type": "moveCard",
+                        "target": {
+                          "type": "selected",
+                          "id": "look"
+                        },
+                        "to": "discard"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "The opponent destroys a character they control",
+                "effects": [
+                  {
+                    "type": "chooserSelectsTarget",
+                    "chooser": "opponent",
+                    "declaration": {
+                      "id": "sac",
+                      "selector": {
+                        "controller": "opponent",
+                        "zone": "play",
+                        "type": "character"
+                      },
+                      "count": 1,
+                      "optional": false
+                    },
+                    "effects": [
+                      {
+                        "type": "destroy",
+                        "target": {
+                          "type": "selected",
+                          "id": "sac"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
           "meaning": "anyOneOpponent",
           "snapshot": "3e442c6fa077"
         },
@@ -3011,8 +3162,8 @@
           "card": "Violating Ritual",
           "id": "575ecc83-447b-4e43-9e61-87d6513b7949",
           "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs",
-          "now": "(no opponent pick; effect sites use `opponent`)",
+          "path": "behavior.abilities[0].costs[0]",
+          "now": null,
           "meaning": "anyOneOpponent",
           "snapshot": "2be88ca4242c"
         },

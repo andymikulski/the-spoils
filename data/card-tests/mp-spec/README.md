@@ -55,6 +55,16 @@ There is one file per set: `<set id>.json`. Writers work set by set.
     step, iteration, or a new field. A site with no player word yet (a
     boolean flag such as `noResponse`, a missing pick) is listed with its real
     path and `edit: true`.
+- **`now` is the stored data at `path`**, never prose, so the gate can compare
+  it directly: a player word, a flag (a JSON boolean, not `"true"`), a number,
+  or the node's JSON (an object or list).
+  - Where a site is a whole node, `path` points at the exact player-word leaf
+    when there is one.
+  - A new field or step that goes into an existing node (a new restriction on a
+    selector, a pick step inserted before an effect) names that node and records
+    its stored JSON; the `why` says what is added.
+  - A path that does not exist yet (no `costs` field, no `faction.abilities`)
+    keeps `now: null`, and the `why` says so.
 - **`unchanged`** — no `dataChanges` entry has `edit: true`. The clause
   behaves identically at every table size. Its
   player words are only `self` / controller / owner of a specific card, or it

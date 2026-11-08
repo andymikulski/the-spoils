@@ -272,38 +272,38 @@
           {
             "phrase": "opponent",
             "at": 25,
-            "meaning": "chosenOpponent",
-            "note": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (not by the card's controller). When the drawer is P1 it is P1's chosen opponent; when the drawer is P2 or P3, the drawer picks among the other players, which can include P1."
+            "meaning": "refersBack",
+            "note": "MPQ-P10: 'That player's opponent' refers back to 'that player' (the drawer): one of the drawer's own opponents, picked by the drawer (not by the card's controller). When the drawer is P1 it is one of P2 or P3; when the drawer is P2 or P3, the drawer picks among the other players, which can include P1."
           }
         ],
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "chosenOpponent",
+            "meaning": "refersBack",
             "edit": true,
-            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
+            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "chosenOpponent",
+            "meaning": "refersBack",
             "edit": true,
-            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
+            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
             "now": "controller",
-            "meaning": "chosenOpponent",
+            "meaning": "refersBack",
             "edit": true,
-            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
+            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
           },
           {
             "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
             "now": "self",
-            "meaning": "chosenOpponent",
+            "meaning": "refersBack",
             "edit": true,
-            "why": "MPQ-P10: the discarding player is the opponent the drawer picks among the drawer's own opponents. The data's controller/self assumed the other player was the card's controller, so it must become the drawer's picked opponent."
+            "why": "MPQ-P10: 'That player's opponent' is one of the drawer's own opponents, picked by the drawer (the acting player), not by the card's controller. The stored value assumes the drawer's opponent is the card's controller. A player choice made by the drawer (a choosePlayer step in this option, chooser the drawing player, from the drawer's opponents) is added before this step, and this site becomes { type: \"chosenPlayer\", id } of that choice."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",

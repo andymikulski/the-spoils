@@ -43,11 +43,21 @@
         ],
         "dataChanges": [
           {
-            "path": "behavior.abilities[0].effects[0].player",
-            "now": "ownerOf",
+            "path": "behavior.abilities[0].targets[0].selector",
+            "now": {
+              "zone": "play",
+              "type": "faction"
+            },
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "ownerOf the picked faction lets the pick be any faction at the table; the pick must be limited to P1's faction or the chosen opponent's faction."
+            "why": "'either deck' (MPQ-P6) is the controller's deck or one chosen opponent's deck. The faction pick has no restriction today, so it can name any faction at the table. This pick is what changes: it must be limited to the controller's faction or the block's chosen opponent's faction (a new restriction on this selector, or an equivalent two-choice structure). `now` is the selector stored here today."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].player",
+            "now": "ownerOf",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "ownerOf the picked faction is the owner of that card (cardRelative). It stays as it is: it already means whichever deck was picked, and the restriction on the pick (previous entry) is what keeps that to the controller or the chosen opponent."
           }
         ],
         "test3": "P1 (with P2 and P3 in the game) activates FORESIGHT, depleting the card. Before targets P1 is offered the opponent choice {P2, P3}. Choose P2: P1 is offered exactly two decks, P1's and P2's; P3's deck is not offered. P1 picks P2's deck, looks at up to the top 5 cards (0 to 5 are legal) and puts them back in any order; nothing changes zone, and the decks of P1 and P3 keep their order. A second run picks P1's own deck from the same two: only P1's deck is reordered. Rerun choosing P3: the decks offered are P1's and P3's, never P2's. With P3 eliminated (only P2 left) no opponent choice is offered and the decks offered are P1's and P2's."
@@ -457,11 +467,20 @@
         ],
         "dataChanges": [
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].player",
-            "now": "ownerOf",
+            "path": "behavior.abilities[0].effects[0].declaration.selector",
+            "now": {
+              "type": "faction"
+            },
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "ownerOf the picked faction lets the pick be any faction at the table; the pick must be limited to P1's faction or the chosen opponent's faction."
+            "why": "'either deck' (MPQ-P6) is the controller's deck or one chosen opponent's deck. The faction pick has no restriction today, so it can name any faction at the table. This pick is what changes: it must be limited to the controller's faction or the block's chosen opponent's faction (a new restriction on this selector, or an equivalent two-choice structure). `now` is the selector stored here today."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].player",
+            "now": "ownerOf",
+            "meaning": "cardRelative",
+            "edit": false,
+            "why": "ownerOf the picked faction is the owner of that card (cardRelative). It stays as it is: it already means whichever deck was picked, and the restriction on the pick (previous entry) is what keeps that to the controller or the chosen opponent."
           }
         ],
         "test3": "P1 plays Nearby Serpent with P2 and P3 in the game. When it enters play and the trigger resolves, P1 is offered the opponent choice {P2, P3}. Choose P2: P1 is offered exactly two decks, P1's and P2's; P3's deck is not offered. P1 picks P2's deck, looks at up to the top 5 cards (0 to 5 are legal) and puts them back in any order; nothing changes zone, and the decks of P1 and P3 keep their order. A second run picks P1's own deck from the same two: only P1's deck is reordered. Rerun choosing P3: the decks offered are P1's and P3's, never P2's. With P3 eliminated (only P2 left) no opponent choice is offered and the decks offered are P1's and P2's."

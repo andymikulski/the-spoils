@@ -416,7 +416,7 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no 'pick an opponent' step; a new cost step is needed so the opponent is picked as part of the cost."
+            "why": "The ability has no costs field. 'Pick an opponent' is part of the printed extra cost, so a new costs[0] step (pick an opponent) is needed so the opponent is picked as part of the cost."
           },
           {
             "path": "behavior.abilities[0].effects[1].chooser",
@@ -608,11 +608,15 @@
         "note": "The data has only the draw: the look (hand, top card, face-down resources of one opponent) has no player word or effect. It needs a look at one chosen opponent's three zones.",
         "dataChanges": [
           {
-            "path": "behavior.abilities[0].effects",
-            "now": "[draw 1] only; no look effect and no player word for the opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "now": {
+              "type": "draw",
+              "player": "controller",
+              "amount": 1
+            },
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The look (hand, top card of deck, face-down resources of one opponent) has no data. New look effects are needed, all aimed at the one chosen opponent."
+            "why": "The data has only the draw (this step), so there is no look and no player word to bind. New look steps are inserted before it (the text looks first, then draws), all aimed at one opponent. 'an opponent's': one opponent for all three looks; a player choice from the opponents, read back with chosenPlayer. `now` is the draw step stored here today."
           }
         ],
         "test3": "P1 plays the card. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 may look at P2's hand, the top card of P2's deck and P2's face-down resources; nothing of P3's is shown to P1. P1 draws a card either way. Choose P3: P1 may look at P3's hand, the top card of P3's deck and P3's face-down resources; nothing of P2's is shown to P1. P1 draws a card either way."
@@ -1894,7 +1898,7 @@
             },
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data triggers on battleStarted with battleRole 'defender' (the controller being attacked). At 3+ players an opponent can attack another opponent and the printed text still triggers, so the condition must become 'an opponent attacks'."
+            "why": "`battleRole` is not a player word and not an event-player test: the engine evaluates it as 'the controller is the battle's defender' (battle.defenderPlayerId === the controller), so the engine does not bind it to an opponent. It only fires for attacks on the controller, and the battleStarted event carries no playerId, so MPQ-P5's general binding of the event's player has nothing to match. The printed text fires on any opponent's attack, whoever is attacked (3+ seats: an opponent attacking another opponent), so the condition itself must be replaced by an 'an opponent attacks' condition (the battle's attacker is an opponent). The edit flag stays true."
           }
         ],
         "test3": "P1 controls the Accumulator. P2 attacks P1: P1 may put a token on it. P3 attacks P2 (P1 is not attacked): P1 may still put a token on it. P2 attacks P3: P1 may put a token. P1 attacks P2: no trigger. Each trigger offers a decline option."
@@ -2991,7 +2995,14 @@
           },
           {
             "path": "behavior.abilities[0].effects[0]",
-            "now": "grantKeyword cannotBeBlocked (no player field)",
+            "now": {
+              "type": "grantKeyword",
+              "target": "source",
+              "keyword": "cannotBeBlocked",
+              "duration": {
+                "type": "untilEndOfTurn"
+              }
+            },
             "meaning": "refersBack",
             "edit": true,
             "why": "MPQ-P9: the keyword grant has no player. It must say the Gamer cannot be blocked by the chosen opponent's characters (other opponents' characters can still block it)."
@@ -3051,7 +3062,7 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no 'pick an opponent' step; a new cost step is needed so the opponent is picked as part of the cost."
+            "why": "The ability has no costs field. 'Pick an opponent' is part of the printed extra cost, so a new costs[0] step (pick an opponent) is needed so the opponent is picked as part of the cost."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
