@@ -9164,6 +9164,16 @@ export class SpoilsEngine {
         this.offerTopItem(existing, actingPlayerId, false);
         return;
       }
+      // The play paused on a choice before its item reached the stack (a pick
+      // made while paying an extra cost): the item will be the actor's, so the
+      // offer starts at the actor's left as for any fresh item.
+      if (this.state.pendingChoice) {
+        delete existing.passed;
+        const first = this.nextResponder(actingPlayerId, actingPlayerId, false, []) ?? actingPlayerId;
+        existing.priorityPlayerId = first;
+        this.state.priorityPlayerId = first;
+        return;
+      }
       // The action left nothing on the stack (a tactic terminated as it was
       // deployed): the top-level responder whose opportunity it was keeps it
       // (CR 607.2: "you may make another response").
@@ -21792,10 +21802,11 @@ export class SpoilsEngine {
       "An attacker was selected more than once."
     );
 
-    // An announcement that names no target attacks the opponent's faction (CR 608.1a).
+    // An announcement that names no target, or a faction but no player, attacks the opponent's faction (CR 608.1a).
+    // With more than one opponent left there is no single default (MPX-attack-default): the attacker must choose.
     let target = declaredTarget;
-    if (!target) {
-      const opponents = Object.keys(this.state.players).filter(otherId => otherId !== playerId);
+    if (!target || (target.type === "faction" && target.playerId === undefined)) {
+      const opponents = this.getOpponents(playerId);
       assert(opponents.length === 1, "Choose a target for the attack.");
       target = { type: "faction", playerId: opponents[0]! };
     }

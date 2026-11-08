@@ -168,3 +168,20 @@ describe("MPX-attack — whom you may attack", () => {
     );
   });
 });
+
+describe("MPX-attack-default — no default target with two or more opponents", () => {
+  rule(["MPX-attack-default", "CR 608.1a"], "3 seats: an attack naming no target is refused; once one opponent is left it defaults to that faction", () => {
+    const build = () =>
+      buildGame({ ...plainSeats(3), cards: [{ key: "atk", def: character({ name: "Attacker", strength: 1, life: 2, speed: 1 }), owner: P1, zone: "play" }] });
+    const two = build();
+    refused(
+      () => two.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [two.id("atk")] }),
+      "two opponents: the attacker must choose",
+      /Choose a target/
+    );
+    const one = build();
+    one.engine.state.players[P2].eliminated = { turn: 1 };
+    one.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [one.id("atk")] });
+    assert.equal(one.engine.state.battle?.defenderPlayerId, P3, "control: the only opponent left is the default");
+  });
+});

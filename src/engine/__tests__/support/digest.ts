@@ -18,10 +18,33 @@ export const DIGEST_LENGTH = 16;
  * - `gameLog`: the running log is a human-readable narration of events (wording, ordering of
  *   informational lines, per-viewer redaction text). No rule reads it, so a change in log wording
  *   is not a change in rules behavior and must not invalidate recorded replays.
+ *
+ * Multiplayer bookkeeping that carries no information at two seats (docs/MULTIPLAYER-PLAN.md,
+ * "Replay digest"). Each is fully determined by the rest of the state when there are two players,
+ * so leaving it out cannot hide a two-player behavior change:
+ *
+ * - `seats`: with two players there is one possible circle; "clockwise from X" is the other player
+ *   whichever way the two entries are ordered.
+ * - `responseWindow.passed`: who has declined the top item. At two seats only the one opponent can
+ *   decline, and their pass is already visible as the window's `phase` turning to "resolving".
+ * - `responseWindow.resumeWith`: the maker of the item being resolved. At two seats that is always
+ *   the opponent of the controller of the item beneath it, which `priorityPlayerId` then shows.
+ * - `players[*].eliminated`: at two seats a player is eliminated only as the game ends, which
+ *   `winner` already records.
  */
 export function projectForDigest(state: GameState): Record<string, unknown> {
-  const { gameLog: _gameLog, ...rules } = state;
-  return rules;
+  const { gameLog: _gameLog, seats: _seats, ...rules } = state;
+  const players: Record<string, unknown> = {};
+  for (const [id, player] of Object.entries(state.players)) {
+    const { eliminated: _eliminated, ...rest } = player;
+    players[id] = rest;
+  }
+  const projected: Record<string, unknown> = { ...rules, players };
+  if (state.responseWindow) {
+    const { passed: _passed, resumeWith: _resumeWith, ...window } = state.responseWindow;
+    projected.responseWindow = window;
+  }
+  return projected;
 }
 
 const keyText = new Map<string, string>();
