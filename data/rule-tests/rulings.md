@@ -284,7 +284,7 @@ The ruling is the reading the user chose: for "literal" answers, the reading the
 
 ## Multiplayer (free-for-all) rulings, 2026-11-07
 
-The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leave several free-for-all points open. The user ruled on them on 2026-11-07, answering the questions as written in `docs/MULTIPLAYER-PLAN.md` (Phase 1), each with a recommendation. "Spec" names the atom of `data/rule-tests/source/multiplayer.txt` that states the reading for tests; the engine does not implement these yet.
+The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leave several free-for-all points open. The user ruled on them on 2026-11-07, answering the questions as written in `docs/MULTIPLAYER-PLAN.md` (Phase 1), each with a recommendation. RQ-mp-8 to RQ-mp-11 were put afterwards and answered the same day, as were the card pattern rulings MPQ-P1 to MPQ-P11 (put as the "Pattern rulings" of `data/card-tests/mp-spec/README.md`). "Spec" names the atom of `data/rule-tests/source/multiplayer.txt` that states the reading for tests; the engine does not implement these yet.
 
 ## RQ-mp-1. With N players, who may respond to the top item of the response stack, in what order, and when does it resolve?
 
@@ -297,7 +297,7 @@ The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leav
 
 - **Question as put:** In 608.1c and 609.1a ("then your opponent / the defending player may do the same") and 610.1 ("their opponent has had a chance to respond"), can players other than the attacker and defender act? Recommendation: in battle, the attacker, then the defender, then the other players clockwise; at end of turn, every other player clockwise.
 - **Ruling (other, 2026-11-07):** "yes".
-- **Spec:** MPX-battle-window (attacker, then defender, then the other players clockwise; where that clockwise order starts with two or more other players is the open RQ-mp-8) and MPX-endturn (every other player may respond, clockwise).
+- **Spec:** MPX-battle-window (attacker, then defender, then the other players clockwise; where that order starts is RQ-mp-8) and MPX-endturn (every other player may respond, clockwise).
 - **Rules text:** CR 608.1c, 609.1a, 609.1e: "The attacking player may deploy tactics and use abilities as many times as they want. Then, the defending player may do the same." CR 610.1: "the turn doesn't actually end until their opponent has had a chance to respond."
 
 ## RQ-mp-3. What happens to a player who loses?
@@ -318,7 +318,7 @@ The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leav
 
 - **Question as put:** Continuous or static text (Underdog, Mud Prison, Silencer, Escort Ally, Foreclosure Overseer, and others): when is the opponent chosen, and what happens if that player is eliminated? Recommendation: the controller chooses when the effect starts applying (the card enters play, or the effect is created). The choice lasts as long as the effect does. If the chosen player is eliminated, the controller chooses again.
 - **Ruling (other, 2026-11-07):** "yes".
-- **Spec:** MPX-lasting. The case of the card's controller changing is not covered by this ruling (open: RQ-mp-10).
+- **Spec:** MPX-lasting. The case of the card's controller changing is RQ-mp-10.
 - **Rules text:** MP 2 and MP 4 select an opponent "for the current block of rules text", which says nothing about text that keeps applying. CR 504.1 (conditionals), CR 505.1 (requirements).
 
 ## RQ-mp-6. "Both players may use this ability" (The Knitting Coalition), HIDDEN INFLUENCE and PULLING STRINGS: one chosen opponent, or every opponent?
@@ -339,3 +339,119 @@ The Comprehensive Rules, the FAQ and the Multi-Player Guidelines (MP 1–5) leav
 - **Ruling (other, 2026-11-07):** "if a player hits 0 faction they basically shouldn't be able to respond or anything".
 - **Spec:** MPX-elim-timing. The rest of the table plays on per RQ-mp-3 (MPX-elim).
 - **Rules text:** CR 102.1: "If at any time a faction's influence score is 0, the owner of that faction immediately loses the game." See also the ruling quoted under RQ-r11-4.
+
+## RQ-mp-8. In a battle window, where does "the other players clockwise" start?
+
+- **Question as put:** RQ-mp-2 says that in battle the attacker acts first, then the defender, then the other players clockwise. CR 608.1c, 609.1a and 609.1e only name the attacking and defending players, so which seat does the "other players clockwise" order start from (after the defender, or after the attacker)? With 4 or more seats it can differ: seats 1 to 4 clockwise, attacker in seat 1, defender in seat 3 gives seat 4 then seat 2 after the defender, but seat 2 then seat 4 after the attacker. Recommendation: reading A, continue clockwise from the defender, skipping the attacker.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". After the defender, the other players go clockwise from the defender's seat, skipping the attacking player.
+- **Spec:** MPX-battle-window (attacking player, defending player, then every other player in the game clockwise starting with the seat after the defender, skipping the attacker; at 3 seats the order is the same either way).
+- **Rules text:** CR 608.1c, 609.1a, 609.1e: "The attacking player may deploy tactics and use abilities as many times as they want. Then, the defending player may do the same."
+
+## RQ-mp-9. What happens to triggers waiting to resolve that an eliminated player controls?
+
+- **Question as put:** RQ-mp-3 removes an eliminated player's stack items and pending choices. CR 503.2 says triggers are not stack items, and CR 503.1 says a trigger is followed "even if ... the source of the trigger has left play". A trigger set off by the unit that eliminated a player can belong to that player (a "when this card leaves play" trigger on a card they own, a "when your faction loses influence" trigger). Is such a waiting trigger followed or removed? Recommendation: reading A, removed with the rest of what waits on the player, in line with "if a player hits 0 faction they basically shouldn't be able to respond or anything".
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". Triggers waiting to resolve that an eliminated player controls are removed without being followed.
+- **Spec:** MPX-elim (3) and MPX-elim-timing (2).
+- **Rules text:** CR 503.1: "If the trigger condition happens, you must immediately follow the instructions of the trigger as they were written when it happened, even if you are in the middle of resolving ..." CR 503.2: triggers are not stack items and cannot be responded to. The ruling takes the eliminated player's triggers out of the game together with their other waiting items (RQ-mp-3, RQ-mp-timing).
+
+## RQ-mp-10. If the controller of a card with lasting "your opponent" text changes, does the new controller select the opponent again?
+
+- **Question as put:** RQ-mp-5 says the opponent for lasting text is chosen when the effect starts applying, lasts as long as the effect, and is chosen again if that player is eliminated. CR 407.2 says "you" and "your" always mean the card's current controller, and CR 407.3 allows control to change while a card stays in play (Emergency Obfuscation, control-stealing effects). When a card's controller changes while its continuous text (Mud Prison, Underdog, Silencer and others) keeps applying, does the new controller select an opponent again? Recommendation: reading A, yes: "your" always means the current controller, so the effect is the new controller's from the moment control changes.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". If control of a card with lasting "your opponent" text changes, the new controller selects the opponent again; the old selection ends.
+- **Spec:** MPX-lasting (6).
+- **Rules text:** CR 407.2: "you" and "your" in rules text always mean the card's current controller. CR 407.3, 407.3a: control of a card can change while it stays in play.
+
+## RQ-mp-11. In a multi-player action loop the active player is not involved in, who chooses?
+
+- **Question as put:** CR 414.3b: "The active player chooses a number, followed by their opponent." CR 414.3c: "During the last repetition of the loop, the active player may choose any point in the loop at which to stop." With three or more players a voluntary loop can involve two players who are both not the active player. Who chooses the numbers and the stopping point then? Recommendation: reading A, only involved players choose, clockwise starting from the active player's seat, and the first of them chooses the stopping point in the last repetition.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". In a loop the active player is not involved in, only the involved players choose, clockwise from the active player's seat, and the first of them chooses the stopping point.
+- **Spec:** MPX-loop (3), (4), (5).
+- **Rules text:** CR 414.3b and 414.3c as quoted above; both assume the active player takes part in the loop.
+
+## MPQ-P1. Emergency Obfuscation and other cards whose archival text differs from the printed text: which text is the spec?
+
+- **Question as put:** The archival `text` field of a card rewords some cards. Which is the spec: the printed markup (or `corrections.json`), or the archival text? Emergency Obfuscation's printed "both players switch seats. Both players are in control of their opponent's side." can be read as the controller and one selected opponent swapping, or as every seat rotating one place left. Recommendation: the printed text governs; the card swaps seats and sides between the controller and one selected opponent.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". The printed text governs; the archival rewording is ignored. Emergency Obfuscation swaps seats and sides between the controller and one `chosenOpponent` (MP 3); nobody else moves. Its meaning is `chosenPair`, not `seatRotation`.
+- **Cards:** Emergency Obfuscation.
+- **Spec:** MPX-swap.
+- **Rules text:** MP 3: "'both players' means you and the opponent selected for that block of rules text."
+
+## MPQ-P2. Conditional lasting text: "While your opponent controls / has ..."
+
+- **Question as put:** Clockman Pickpocket, Cute Cutpurse, Adroit Marauder and Sleeping Guard keep applying "while your opponent controls / has ...". Is the opponent chosen as for other lasting text? Recommendation: yes, per RQ-mp-5.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". The opponent is chosen when the effect starts applying, kept while it lasts, and chosen again if that player is eliminated (RQ-mp-5).
+- **Cards:** Clockman Pickpocket, Cute Cutpurse, Adroit Marauder, Sleeping Guard.
+- **Spec:** MPX-lasting (7).
+- **Rules text:** CR 504.1: "Conditionals use the word while followed by a condition to define rules text that is only active while the condition is true." MP 2, MP 4.
+
+## MPQ-P3. "Your opponent" in a replacement
+
+- **Question as put:** Phalludrix and Lucky Bastard name "your opponent" in a replacement. When is the opponent chosen? Recommendation: at the moment the replacement applies.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". "Your opponent" in a replacement is chosen at the moment the replacement applies.
+- **Cards:** Phalludrix, Lucky Bastard.
+- **Spec:** MPX-select (2).
+- **Rules text:** CR 506.1: "Replacements use the word instead to define one thing that completely replaces another." MP 2, MP 4.
+
+## MPQ-P4. Mistaken Identity: whose "opponent"?
+
+- **Question as put:** Mistaken Identity answers a card or ability with text naming "your opponent". Who is that opponent? Recommendation: the controller of the card or ability being responded to; nobody chooses.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". "Your opponent" is the controller of the card or ability being responded to. Nobody chooses.
+- **Cards:** Mistaken Identity.
+- **Spec:** MPX-vocab-your (5).
+- **Rules text:** CR 607.1: "You cannot respond to your own actions." MP 2.
+
+## MPQ-P5. Trigger conditions naming "your opponent"
+
+- **Question as put:** "If your opponent plays / attacks / plays a resource ...", "If a character enters play under your opponent's control", "If a character your opponent controls is destroyed": with several opponents, which opponent's action triggers it, and is an opponent chosen? Recommendation: any opponent's action triggers it, and that opponent is the trigger's `chosenOpponent` with no choice offered. This overrides RQ-mp-5 for trigger conditions; RQ-mp-5 still governs lasting static text.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". Any opponent's action triggers it; that opponent is the block's chosen opponent for that trigger, with no choice offered.
+- **Cards:** Slingerang, Guardforce Morphmajig, Sadistic Colonel, Runivoltaic Accumulator, Watchtower, Swinish Elder, Silencer, Octo-Ba-Ba.
+- **Spec:** MPX-trigger-condition.
+- **Rules text:** CR 503.1: "Triggers begin with the words if, when, or at and are followed by a trigger condition. If the trigger condition happens, you must immediately follow the instructions of the trigger ..." MP 2.
+
+## MPQ-P6. "Either deck" / "any deck"
+
+- **Question as put:** Nearby Serpent, Arcanist's Almanac, Rigged Tables, Sly Bilker and Infatuated Armchair refer to "either deck" or "any deck". Which decks? Recommendation: the controller's deck, or the deck of one opponent the controller chooses; where the printed text says "any deck" (Rigged Tables), every player's deck.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". "Either deck" is the controller's deck or the deck of one opponent the controller chooses (`chosenOpponent`). Where the printed text says "any deck" (Rigged Tables' "any deck" reading), it is every player's deck.
+- **Cards:** Nearby Serpent, Arcanist's Almanac, Rigged Tables, Sly Bilker, Infatuated Armchair.
+- **Spec:** MPX-either-deck.
+- **Rules text:** MP 2, MP 3. CR 403.1a: a deck is "the pile of cards you brought to the game, excluding your faction".
+
+## MPQ-P7. "Any opponent may pay N. If they do ... Otherwise ..." and "any player may pay"
+
+- **Question as put:** Who is offered the payment, in what order, who settles it, and what if nobody pays? Recommendation: each eligible player in turn (any opponent: clockwise from the controller's left; any player: the active player first, then clockwise, CR 402.2); the first to pay settles it ("they" is that player); if everyone declines, the "Otherwise" branch happens.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". As recommended.
+- **Cards:** Additional Tribute, Offering of False Friendship, Thabbashite Barbeque, Unloyal Necromorph, Tedious TriAdic Truculence, Recycling Scheme Facility.
+- **Spec:** MPX-offer.
+- **Rules text:** CR 402.2: "If an effect instructs multiple players to do something at the same time, the active player takes the action first, then continues clockwise."
+
+## MPQ-P8. "Your opponent" in battle text
+
+- **Question as put:** On a card whose text is about a battle the controller is in, which player is "your opponent"? Recommendation: the other side of that battle (the defending player if the controller attacks, the attacking player if the controller defends), with no choice offered; outside a battle MP 2 applies.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". As recommended.
+- **Cards:** Wyrmfang Deathskull, Bask Bomb, Dragon Tank, Venomous Sacspider, Catastrophic Betrayal, Sarcophyle Matriculation, Lugubrian Octopod and the like.
+- **Spec:** MPX-battle-opponent.
+- **Rules text:** CR 302.4: the defending player is the controller of the target. MP 2.
+
+## MPQ-P9. "An opponent" with a superlative, total or "all"
+
+- **Question as put:** With several opponents, what does "an opponent" with a superlative ("the most", "the fewest"), a total, or "all" range over? Recommendation: one opponent is chosen (`anyOneOpponent`) and the superlative, count or "all" is evaluated within that opponent's cards only; a multi-card pick from "an opponent's discard pile" comes from one pile.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". As recommended.
+- **Cards:** Subordinate Demotivation, Juice Sale!, Spitting Sarume, Drivey Car, Time Traveler Tourist Trap, Carnival Whipmaster (both cards from the same opponent), Martial Arts Wannabe and Underhanded Gamer ("those players" is the chosen opponent).
+- **Spec:** MPX-an-superlative.
+- **Rules text:** MP 2: "select one of the other players as your opponent for the current block of rules text."
+
+## MPQ-P10. Text written from another player's point of view
+
+- **Question as put:** Free Trade Agreement ("that player ... their opponent"), Obscene Communion ("both players" on another player's turn) and Meat of the Mountain ("that player's opponent") speak from the acting player's point of view; Mercenary's Creed says "Both players may use this ability". Recommendation: the acting player picks one of their own opponents and "both players" is the acting player plus that pick; Mercenary's Creed is ruled like The Knitting Coalition (RQ-mp-6).
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". As recommended: Mercenary's Creed's "Both players may use this ability" means the controller and every opponent may use it (`selfAndEachOpponent`).
+- **Cards:** Free Trade Agreement, Obscene Communion, Meat of the Mountain, Mercenary's Creed.
+- **Spec:** MPX-other-pov (the first three) and MPX-knitting (4) (Mercenary's Creed).
+- **Rules text:** MP 3: "'both players' means you and the opponent selected for that block of rules text." RQ-mp-6.
+
+## MPQ-P11. Gideon's Legacy: "each other player's faction gains X"
+
+- **Question as put:** On Gideon's Legacy, who is "each other player"? Recommendation: every player except the picked player.
+- **Ruling (recommended, 2026-11-07):** "all recommended keep going". "Each other player's faction gains X" means every player except the picked player.
+- **Cards:** Gideon's Legacy.
+- **Spec:** MPX-vocab-players (7).
+- **Rules text:** MP 2 and the pick the card makes; no rule defines "each other player" relative to a pick.

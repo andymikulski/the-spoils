@@ -34,7 +34,7 @@ export interface RuleAtom {
   answer?: string;
   /** Multiplayer only: a short name for the atom. */
   title?: string;
-  /** Multiplayer only: the CR / FAQ / MP atoms and rulings (`RQ-n`) the reading rests on. */
+  /** Multiplayer only: the CR / FAQ / MP atoms and rulings (`RQ-n`, `MPQ-Pn`) the reading rests on. */
   cites?: string[];
   batch: string;
 }
@@ -152,7 +152,7 @@ export function parseFaq(text: string): RuleAtom[] {
 }
 
 const MP_HEADER = /^== (MP \d+|MPX-[a-z0-9]+(?:-[a-z0-9]+)*) \| (\S.*)$/;
-const RULING_HEADING = /^#{2,4}\s+(RQ-[\w-]+)/gm;
+const RULING_HEADING = /^#{2,4}\s+((?:RQ|MPQ)-[\w-]+)/gm;
 
 /**
  * Parses data/rule-tests/source/multiplayer.txt: records start with

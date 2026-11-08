@@ -272,8 +272,9 @@ true while a card waits (e.g. that costs were already paid).
   `kind: "heading"` and need no coverage. `data/rule-tests/atoms.json` is
   generated from the committed source text (`data/rule-tests/source/`) by
   `npm run rule-tests -- build` and checked by the gate.
-- **Batches.** `BATCHES` in `rules/_atoms.ts` groups the CR sections into 12
-  batches. A batch's files are `rules/<batch>.test.ts` (or
+- **Batches.** `BATCHES` in `rules/_atoms.ts` groups the CR sections, the FAQ and the
+  multiplayer atoms (`source/multiplayer.txt`, each citing the rulings in
+  `rulings.md` it rests on: `RQ-n` and `MPQ-Pn`) into 13 batches. A batch's files are `rules/<batch>.test.ts` (or
   `<batch>.pN.test.ts`).
 - **Markers** (`rules/_rule.ts`). Every rule atom must be named by one of:
   - `rule(ids, title, fn)` — a test that the engine follows the rule(s);
