@@ -45,7 +45,23 @@ a faction's influence is 0, that faction's owner immediately loses.** The
 other player then wins.
 
 - **(CR §102.2 / §306.4)** If every player still in the game loses at the
-  same time, the game is a **draw** between them.
+  same time, the game is a **draw** between them. **(user ruling RQ-r11-2,
+  2026-11-07)** "At the same time" means within one *unit*: one resolving
+  card or ability's own effects, one triggered ability's own effects, or one
+  batch of simultaneous battle damage. A triggered ability set off while a
+  unit resolves is its own, later unit, even though the engine runs it in the
+  middle of that resolution. The game is decided by the first unit in which
+  any faction reached 0, when that unit ends: every player who reached 0
+  within it loses together (all of them: a draw; one: the other player wins),
+  and losses in any other unit do not count, because the game was already
+  over. A tactic that takes P2 to 0 and a trigger it sets off that takes P1 to
+  0: P1 wins. Effect 1 takes P2 to 0, a trigger runs, effect 2 takes P1 to 0:
+  a draw. This holds however an ability is written (two influence effects,
+  `forEachPlayer`, `forEach` over the factions) and whichever faction fell
+  first. **(user ruling RQ-r11-4, 2026-11-07)** A player who reached 0 inside
+  the unit loses when it ends even if a later effect of the unit raises their
+  influence again: a faction at 0 gets no chance to recover. Costs are not part
+  of a resolution: a cost that takes your faction to 0 loses at once.
 - **(CR §102.1a / §306.2)** Running out of cards in your deck does **not**
   lose you the game — you simply fail to draw the cards you can't. *Trickster's
   Globe* overrides this while it is in play (CR §101.1; §12 Ungodly Mess
@@ -1334,7 +1350,11 @@ same: after every effect or resolution, in a loop until nothing changes —
   fires "put into a discard pile" triggers and honours discard
   replacements.
 - Any faction at 0 influence loses the game for its owner immediately — a
-  draw if more than one loses at once (CR §102.1 / §102.2). While an
+  draw if more than one loses at once (CR §102.1 / §102.2). "At once" is one
+  unit (§1): the check is made after every effect, but the game is decided
+  when the unit in which a faction first reached 0 has ended, for everyone
+  found out within that unit (`GameState.pendingLoss`, which also survives a
+  save while the unit is parked on a player choice). While an
   `emptyDeckLoses` ability (Trickster's Globe) is live, a player with an
   empty deck loses in the same check. Checked last,
   after all destruction above settles. The owner is read from the faction

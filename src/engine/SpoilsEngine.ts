@@ -383,6 +383,17 @@ export class SpoilsEngine {
   private eventBatchDepth = 0;
 
   /**
+   * The units (resolving card or ability, triggered ability, battle-damage
+   * batch) currently running, innermost last. One unit is one instant for the
+   * win condition (CR 102.2): the game is decided when the unit in which a
+   * faction first reached 0 ends. Empty between `perform()` calls, including
+   * while a resolution is parked on a player choice (the call stack has
+   * unwound by then); what must outlive the pause is in
+   * `GameState.pendingLoss` and the `unitId` on the parked frames.
+   */
+  private readonly unitStack: string[] = [];
+
+  /**
    * Whether `emit()` and the flow markers append to `state.gameLog`. On by
    * default; `setLogEnabled(false)` turns recording off (the already-recorded
    * entries stay). Not serialized — it's an engine-run setting, not game
@@ -855,6 +866,8 @@ export class SpoilsEngine {
     this.immediateQueue.splice(0);
     this.queueGuard = undefined;
     this.eventBatchDepth = 0;
+    this.unitStack.length = 0;
+    delete this.state.pendingLoss;
     this.triggerNesting = 0;
     const state = this.state;
     state.pendingEffectFrames = [];
@@ -8666,6 +8679,7 @@ export class SpoilsEngine {
     // zone: INVEST, SERAPHIM FUSION) is announced before it is carried out, so
     // the draw comes first. If that raises a prompt, the resolution resumes
     // once it is answered (the picks' zones are recorded then).
+    item.context.unitId = this.newUnitId();
     this.announceDeckSearches(item.context);
     if (this.state.pendingChoice) {
       this.state.pendingEffectFrames.push({
@@ -8851,6 +8865,105 @@ export class SpoilsEngine {
   private retrySearchFrame?: PendingEffectFrame;
 
   private runEffectFrame(frame: PendingEffectFrame): boolean {
+    // A frame that starts no unit of its own (a copy's effects, scheduled effects at the top level) belongs to the unit
+    // running now.
+    frame.context.unitId ??= this.unitStack[this.unitStack.length - 1] ?? this.newUnitId();
+    return this.inUnit(frame.context.unitId, () => this.runEffectFrameEffects(frame));
+  }
+
+  /** A fresh unit id, minted from `GameState.idSeq` so a restored game numbers units exactly as the original. */
+  private newUnitId(): string {
+    return this.nextId("unit");
+  }
+
+  /** Whether `unitId` is still running or has a frame parked on a player choice. */
+  private unitIsLive(unitId: string): boolean {
+    return (
+      this.unitStack.includes(unitId) ||
+      this.state.pendingEffectFrames.some(frame => frame.context.unitId === unitId)
+    );
+  }
+
+  /**
+   * Runs `run` as (part of) the unit `unitId`. A faction already at 0 when a different unit starts inside another one
+   * (a triggered ability set off mid-resolution) reached 0 in the enclosing unit, so that is noted first. When the
+   * unit is over, the game is decided if it was the one in which a faction first reached 0.
+   */
+  private inUnit<T>(unitId: string, run: () => T): T {
+    if (this.unitStack.length > 0 && this.unitStack[this.unitStack.length - 1] !== unitId) {
+      this.noteFactionsAtZero();
+    }
+    this.unitStack.push(unitId);
+    let result: T;
+    try {
+      result = run();
+      this.noteFactionsAtZero();
+    } finally {
+      this.unitStack.pop();
+    }
+    const loss = this.state.pendingLoss;
+    if (loss && !this.state.winner && !this.unitIsLive(loss.unitId)) this.checkStateBasedActions();
+    return result;
+  }
+
+  /**
+   * Records the players out right now (a faction at 0 influence not shielded by `preventsDefeat`; an empty deck under
+   * Trickster's Globe) against the unit running now. Only the first unit in which anyone is out counts.
+   */
+  private noteFactionsAtZero(): void {
+    if (this.state.winner) return;
+    const players = Object.values(this.state.players);
+    if (!players.some(player => player.influence <= 0 || player.deck.length === 0)) return;
+
+    const shielded = new Set<PlayerId>();
+    this.forEachActiveContinuous((source, ability) => {
+      const rule = ability.preventsDefeat;
+      if (!rule) return;
+      for (const p of players) {
+        if (this.scopeMatchesPlayer(rule.player, source.controllerId, p.id)) {
+          shielded.add(p.id);
+        }
+      }
+    });
+
+    // The loser is the faction's *owner* (CR §102.1), which differs from
+    // the player holding it while the seats are swapped — "the owner of
+    // the winning deck wins the game" (Emergency Obfuscation).
+    const out = new Set(
+      players
+        .filter(player => player.influence <= 0)
+        .map(player => this.factionOwnerId(player))
+        .filter(loserId => !shielded.has(loserId))
+    );
+
+    // "When a player has no cards in their deck, they lose the game."
+    // (Trickster's Globe — overrides CR §102.1a while it is in play.)
+    let emptyDeckLoses = false;
+    this.forEachActiveContinuous((_source, ability) => {
+      if (ability.emptyDeckLoses) emptyDeckLoses = true;
+    });
+    if (emptyDeckLoses) {
+      for (const player of players) {
+        if (player.deck.length === 0) out.add(player.id);
+      }
+    }
+    if (out.size === 0) return;
+
+    const unitId = this.unitStack[this.unitStack.length - 1] ?? "";
+    const loss = this.state.pendingLoss;
+    if (!loss) {
+      this.state.pendingLoss = { unitId, players: [...out] };
+      return;
+    }
+    // A player already counted (here or in another unit) stays where they were first found out.
+    for (const playerId of out) {
+      if (loss.players.includes(playerId) || loss.elsewhere?.includes(playerId)) continue;
+      if (loss.unitId === unitId) loss.players.push(playerId);
+      else (loss.elsewhere ??= []).push(playerId);
+    }
+  }
+
+  private runEffectFrameEffects(frame: PendingEffectFrame): boolean {
     if (frame.recordPickZones) {
       this.recordResolutionPickZones(frame.context);
       frame = { ...frame, recordPickZones: undefined };
@@ -10095,7 +10208,7 @@ export class SpoilsEngine {
       const completed = this.runEffectFrame({
         effects: trigger.ability.effects,
         index: 0,
-        context: trigger.context
+        context: { ...trigger.context, unitId: this.newUnitId() }
       });
 
       if (!completed) {
@@ -17886,50 +17999,19 @@ export class SpoilsEngine {
       // Victory: a faction at 0 influence ends the game (RULES.md §1) —
       // unless an in-play `preventsDefeat` ability shields that faction
       // (Armored Keep — "You do not lose the game because your faction has
-      // 0 influence").
+      // 0 influence"). The game is decided when the unit (resolving card or
+      // ability, triggered ability, battle-damage batch) in which a faction
+      // first reached 0 has ended: everyone found out within it loses
+      // together (CR 102.2), even if a later effect of the unit raised them
+      // again, and nothing in another unit counts. A unit parked on a player
+      // choice has not ended.
       if (!this.state.winner) {
-        const shielded = new Set<PlayerId>();
-        this.forEachActiveContinuous((source, ability) => {
-          const rule = ability.preventsDefeat;
-          if (!rule) return;
-          for (const p of Object.values(this.state.players)) {
-            if (
-              this.scopeMatchesPlayer(rule.player, source.controllerId, p.id)
-            ) {
-              shielded.add(p.id);
-            }
-          }
-        });
-
-        // The loser is the faction's *owner* (CR §102.1), which differs from
-        // the player holding it while the seats are swapped — "the owner of
-        // the winning deck wins the game" (Emergency Obfuscation).
-        const losers = new Set(
-          Object.values(this.state.players)
-            .filter(player => player.influence <= 0)
-            .map(player => this.factionOwnerId(player))
-            .filter(loserId => !shielded.has(loserId))
-        );
-
-        // "When a player has no cards in their deck, they lose the game."
-        // (Trickster's Globe — overrides CR §102.1a while it is in play.)
-        let emptyDeckLoses = false;
-        this.forEachActiveContinuous((_source, ability) => {
-          if (ability.emptyDeckLoses) emptyDeckLoses = true;
-        });
-        if (emptyDeckLoses) {
-          for (const player of Object.values(this.state.players)) {
-            if (player.deck.length === 0) losers.add(player.id);
-          }
-        }
-
-        if (losers.size >= 2) {
-          this.state.winner = "draw";
-        } else if (losers.size === 1) {
-          this.state.winner = this.getOpponent([...losers][0]).id;
-        }
-
-        if (this.state.winner) {
+        this.noteFactionsAtZero();
+        const loss = this.state.pendingLoss;
+        if (loss && !this.unitIsLive(loss.unitId)) {
+          delete this.state.pendingLoss;
+          this.state.winner =
+            loss.players.length >= 2 ? "draw" : this.getOpponent(loss.players[0]).id;
           this.emit({ type: "gameEnded", winnerId: this.state.winner });
         }
       }
@@ -22958,6 +23040,13 @@ export class SpoilsEngine {
   }
 
   private inflictLockedBattleDamage(
+    battle: BattleState
+  ): void {
+    // One batch of battle damage is one instant for the win condition (CR 102.2).
+    this.inUnit(this.newUnitId(), () => this.inflictBattleDamageBatch(battle));
+  }
+
+  private inflictBattleDamageBatch(
     battle: BattleState
   ): void {
     const assignments = [

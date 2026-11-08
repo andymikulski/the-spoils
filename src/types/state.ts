@@ -1441,6 +1441,17 @@ export interface GameState {
   /** Set once a player's faction reaches 0 influence (or both do, for a draw). */
   winner?: GameWinner;
 
+  /**
+   * The unit (`ResolutionContext.unitId`: one resolving card or ability, one triggered ability, or one batch of
+   * simultaneous battle damage) in which a faction first reached 0 influence (or a player's deck ran out under
+   * Trickster's Globe), and the players found out within it. The game is decided when that unit ends (CR 102.2):
+   * every player listed loses, even one whose influence a later effect of the unit raised again, and nothing that
+   * happens in another unit counts (a triggered ability set off by the unit is its own, later unit). Absent while
+   * nobody is out, and always between units except while one is parked on a player choice.
+   * `elsewhere` lists players found out in some other unit after that: they are not counted.
+   */
+  pendingLoss?: { unitId: string; players: PlayerId[]; elsewhere?: PlayerId[] };
+
   /** Blocks perform() except resolvePendingChoice until a player answers it. */
   pendingChoice?: PendingChoice;
 

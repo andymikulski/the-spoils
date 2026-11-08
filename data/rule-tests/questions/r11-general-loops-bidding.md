@@ -6,13 +6,6 @@
 - Tested today: with `minimumSize` passed explicitly, 74 / 75 and 39 / 40 behave correctly, the faction card is not counted and there is no maximum (those are `rule` tests). The two `ruleOpen` tests state reading A (no copy limit in Limited; 75 default minimum) and run as `todo`.
 - Recommendation: reading A for the copy limit (the rules differ by format and the engine already hosts the Constructed rules), with the format defaulting to Constructed.
 
-## RQ-r11-2. Are the two influence losses of one "each player loses N influence" instruction simultaneous for CR 102.2?
-- Atoms: CR 102.2 (also CR 102.1, "immediately loses")
-- The rule: "If all players still in the game lose the game at the same time, the game is a draw."
-- Engine today: the win check runs after each influence change. An effect authored as `forEach` over the factions with `dealDamage` (Hideous Hexapede's "Inflict 6 damage to all factions") ends in a draw, but the same instruction authored as `forEachPlayer` + `modifyInfluence`, or as two consecutive `modifyInfluence` effects, declares the player whose faction is processed first the loser and the other the winner, although both end the instruction at 0.
-- Readings: (A) all the influence changes of one resolving instruction or ability are simultaneous, so both reaching 0 is a draw. (B) Each change is its own moment, and "immediately loses" (102.1) means the first faction to hit 0 loses before the other change happens.
-- Recommendation: reading A for a single instruction that names every player ("each player", "all factions") and reading B for separate sentences; the engine would then need the same deferral for `forEachPlayer` that `forEach` over factions already gets.
-
 ## RQ-r11-3. In a bid, if the first bidder passes, does the remaining player win without bidding, and what if both pass?
 - Atoms: CR 413.1
 - The rule: "Bidding continues until only 1 player remains, that player wins the bid. All other players lose the bid." A player who passes may not bid again (413.1b).

@@ -305,9 +305,8 @@ describe("CR 102 — object of the game", () => {
     assert.equal(engine.state.winner, P1, "P2 lost alone, so P1 wins rather than a draw");
   });
 
-  ruleOpen(
+  rule(
     "CR 102.2",
-    "RQ-r11-2",
     "'each player's faction loses N influence' written as forEachPlayer + modifyInfluence is one simultaneous loss: a draw",
     () => {
       const mutual = tactic({

@@ -14,6 +14,13 @@ export interface ResolutionContext {
   abilityId?: AbilityId;
 
   /**
+   * The unit this resolution belongs to for the win condition (CR 102.2): one resolving card or ability, or one
+   * triggered ability, with all of its own effects. Set by the engine when the resolution starts and carried by every
+   * nested effect list and parked frame, so it survives a pause on a player choice.
+   */
+  unitId?: string;
+
+  /**
    * The player actually satisfying the costs when that is not `controllerId`: an ability used "as though you were
    * your opponent" pays its costs with only what that player knows (CR 401.2a).
    */
