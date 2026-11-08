@@ -259,45 +259,98 @@ Work happens on branch `ffa`. Status:
 
 ## Phase 2 — Types (lead session)
 
-- **`GameState`.**
-  - `seats: PlayerId[]`: clockwise seat order. Emergency Obfuscation's swap
-    exchanges two entries while it lasts (MPX-swap).
-  - `PlayerState.lostTurn?: number` plus a `playerLost` event. Every
-    "players still in the game" query reads this.
-  - `GameWinner` is unchanged (`PlayerId | "draw"`).
-- **Player vocabulary: one term per printed phrase.** The text-to-data lint
-  can then match exactly.
-  - `"opponent"` keeps its spelling but now strictly means "your opponent",
-    the block's chosen opponent.
-  - New: "an opponent" (one opponent, chosen by the pick or choice; a
-    selector matches any opponent).
-  - New: "each opponent" / "opponents" (all opponents).
-  - Final names are settled while drafting the types. They apply to
-    `PlayerRef`, selector `controller`/`owner`, scopes,
-    `usableBy`, `otherPlayerChooses.chooser`, play restrictors and expression
-    counts.
-- **Block binding.**
-  - `ResolutionContext.opponentId`, bound once per block of rules text.
-    Stack items, delayed effects, modifiers, area modifiers and lasting
-    restrictions created by the block keep it.
-  - A "block" is one `AbilityDefinition`. Where the data splits one printed
-    paragraph across several definitions, an optional `block` key ties them
-    together. The inventory finds those cases.
-- **Choices and actions.**
-  - `pendingChoice.kind: "chooseOpponent"`, with the legal opponents, for
-    triggers and lasting effects.
-  - An optional `opponentId` on `playCard` / `activateAbility` / `flipUp`.
-    It is chosen before targets, because target legality depends on it. It is
-    required only when two or more opponents are left. Refused when it names
-    yourself or a player who has lost.
-- **Setup.**
-  - `createFactionGame({ players: FactionPlayerSetup[] })`, where array order
-    is seat order.
-  - `createTwoPlayerFactionGame` stays as the 2-seat form of the same
-    function. It is a public entry point and the existing tests use it.
-- **Response windows.** The shape that RQ-mp-1/2 require. Most likely a
-  per-item pass set plus a clockwise cursor, replacing the single "opponent"
-  hand-off.
+Implemented on branch `ffa-engine` (worktree `../spoils-db-engine`), merged
+into `ffa` once the two-player replays are recorded.
+
+### State
+
+- **`GameState.seats: PlayerId[]`**: the clockwise seat order. It is set at
+  setup from the order the players are given. Emergency Obfuscation's swap
+  exchanges two entries while it lasts.
+- **`PlayerState.eliminated?: { turn: number }`**: set when the unit that
+  brought the player to 0 ends (MPX-elim-timing). "Players still in the game"
+  means every seat without it.
+- **`GameState.pendingLoss`** (RQ-r11-2) keeps its shape. At the end of the
+  unit, the listed players are eliminated. The game ends only when one player
+  is left (that player wins) or none (a draw).
+- **Bindings.**
+  - `ResolutionContext.opponentId?`: the block's opponent.
+  - `ResolutionContext.chosenPlayers?: Record<string, PlayerId>`: named player
+    choices.
+  - Lasting abilities keep their binding on the card instance, in
+    `CardInstance.boundOpponents?: Record<AbilityId, PlayerId>`.
+  - Every lasting record a block creates (delayed effect, modifier, area
+    modifier, player effect, restriction) copies `opponentId` from its
+    context. The record keeps reading the same player after the block
+    finishes.
+
+### Player vocabulary
+
+| Printed meaning (spec) | Data |
+|---|---|
+| `chosenOpponent` | `"opponent"` (same spelling, now the block's opponent) |
+| `anyOneOpponent`, settled by a pick | `{ type: "controllerOf" / "ownerOf", target }` of that pick (existing) |
+| `anyOneOpponent`, nothing settles it | a player choice `{ id, from: "opponents" }` plus `{ type: "chosenPlayer", id }` |
+| selector or scope over any opponent | `"opponents"` (new value next to `"self" / "opponent" / "any"`) |
+| `eachOpponent`, `eachPlayer`, `eachOtherPlayer`, `chosenPair`, `selfAndEachOpponent` | `forEachPlayer` with `players: "opponents" / "all" / "others" / "pair" / "selfAndOpponents"` and an optional `except: PlayerRef` (Gideon's Legacy) |
+| `refersBack` | `{ type: "chosenPlayer", id }` or the existing card-relative refs |
+
+- **How the block's opponent is bound.** Each ability gets
+  `opponentFrom?: "choose" | "event" | "battle" | "respondedTo" | "acting"`.
+  The default is `"choose"`. The other values cover MPQ-P5, MPQ-P8, MPQ-P4 and
+  MPQ-P10.
+- **When `"choose"` happens.**
+  - Played cards and activated abilities choose with the action
+    (`players.opponent`), before targets.
+  - Triggers and replacements choose through a `choosePlayer` pending choice
+    when they resolve or apply.
+  - Lasting abilities choose when they start applying. With one opponent left,
+    nobody is asked.
+- **Player choices.**
+  - An ability's `playerChoices?: { id, from, chooser?, condition? }[]` are
+    made at play or activation time, through the action's `players` record.
+  - A `choosePlayer` effect makes the same choice at resolution.
+  - A player choice is not a pick (CR 405): it does not target cards and does
+    not trigger "picked" abilities.
+- **`noResponse?: true | "opponent"`.** `true` means nobody may respond;
+  `"opponent"` means the block's opponent may not.
+- **Offers (MPQ-P7).** `anyPlayerMayPay` gets `offerTo: "opponents" |
+  "players"`. The offer goes clockwise, and the first payer settles it.
+
+### Choices, actions and setup
+
+- **`PendingChoice` kind `choosePlayer`**: `{ playerId, id, candidates,
+  sourceId, abilityId }`.
+- **`players?: Record<string, PlayerId>`** on `playCard`, `activateAbility`
+  and `flipUp`. It is validated against the ability's player choices and the
+  implicit `opponent`, and refused if a player is yourself where an opponent is
+  required, or has been eliminated.
+- **`createFactionGame({ players: FactionPlayerSetup[] })`**, where array order
+  is seat order. `createTwoPlayerFactionGame` stays as its 2-seat form.
+
+### Response windows
+
+- **`ResponseWindowState.passed: PlayerId[]`**: the players who have passed in
+  a row on the current offer. The window still has a single
+  `priorityPlayerId` cursor.
+- **How the cursor moves.**
+  - It moves clockwise and skips the item's controller and anyone already in
+    `passed`.
+  - The item resolves once every other living player is in `passed`
+    (MPX-priority).
+  - `pendingResponders` keeps the top-level order for battle and end-of-turn
+    windows (MPX-battle-window, MPX-endturn).
+
+### Replay digest
+
+These fields are new in every game, two-player included:
+
+- `seats` (one possible order at two seats, set once);
+- `eliminated` (set only when a game ends, at two seats);
+- the new `ResponseWindowState.passed` bookkeeping.
+
+They are excluded from the two-player digest in `projectForDigest`, each with
+its reason. No other field may be excluded.
 
 ## Phase 3 — Engine core (lead session; rules-suite tests written alongside)
 
