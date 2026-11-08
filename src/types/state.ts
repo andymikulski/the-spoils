@@ -319,6 +319,12 @@ export interface RuntimeRestriction extends CreatedByPlayer {
   targetId: CardInstanceId;
   restriction: Restriction;
 
+  /**
+   * The opponent the block that granted this selected ("your opponent", MP 2), kept for `cannotBePickedByOpponent`
+   * and selected again when that player is eliminated (RQ-mp-5). Stored only at tables of three or more.
+   */
+  opponentId?: PlayerId;
+
   duration: Duration;
   createdTurn: number;
 }
@@ -924,6 +930,27 @@ export interface ResponseWindowState {
 export type GameSetupState =
   | {
       /**
+       * The opponent a faction with `setup.startingResources.matchOpponentCount`
+       * (The Union of Unextraordinary Miners — MONEY FOR NOTHING: "Your
+       * opponent starts with ... enough staple resources so that both players
+       * have the same number") selects as its block of rules text begins to be
+       * followed, before any starting resource is placed (MP 2, MPX-select).
+       * Each `order` seat with two or more opponents is asked in turn through a
+       * `choosePlayer` pending choice (`bind: { type: "matchOpponent" }`); a
+       * seat with one opponent is not asked. The phase is absent when nobody
+       * has a choice to make. The rest of setup waits for the last answer.
+       */
+      phase: "chooseMatchOpponent";
+      order: PlayerId[];
+      currentIndex: number;
+      /** The selections made so far. */
+      matchOpponents: Record<PlayerId, PlayerId>;
+      /** Setup options the placement that follows needs (`FactionGameSetupOptions`). */
+      chooseStartingResources?: boolean;
+      startingResourceX?: Record<PlayerId, number>;
+    }
+  | {
+      /**
        * A player whose deck runs more than one kind of staple resource picks
        * which staples their faction starts with in play (most factions —
        * "find 2 staple resources"). Runs before `mulligan`; the deck shuffle
@@ -1343,10 +1370,20 @@ export interface GameStateSnapshot {
  * so every "your faction", "your characters", "your resources" lookup follows
  * control. Ownership never changes (CR §407.8); hands, decks, discard piles,
  * voids and the removed zone are untouched.
+ *
+ * A swap is between two players only: a source's controller and the opponent it
+ * selected (MP 3, MPX-swap); every other player keeps their seat and side.
  */
 export interface SeatSwapState {
+  /** One entry per pair of players currently switched (a pair held by an even number of sources is not switched). */
+  swaps: SeatSwap[];
+}
+
+export interface SeatSwap {
+  /** The two players who switched seats and sides. */
+  players: [PlayerId, PlayerId];
   /**
-   * Every card that was in play when the seats swapped, with the controller it
+   * Every card of either player that was in play when the seats swapped, with the controller it
    * had just before. Lifting the swap returns each one that is still in play
    * and still under the controller the swap gave it; a card that entered play
    * later was never part of the exchange and keeps whoever controls it.
@@ -1469,9 +1506,10 @@ export interface GameState {
   }>;
 
   /**
-   * Present exactly while the seats are swapped (an odd number of live
-   * `ContinuousAbility.swapsSides` sources are in play — Emergency
-   * Obfuscation). `checkStateBasedActions` applies and lifts the swap, so it
+   * Present exactly while some pair of players has switched seats (an odd
+   * number of live `ContinuousAbility.swapsSides` sources name that pair — a
+   * source's controller and the opponent it selected; Emergency
+   * Obfuscation). `checkStateBasedActions` applies and lifts each swap, so it
    * takes effect the moment the card enters play and ends the moment it
    * leaves. Absent otherwise.
    */

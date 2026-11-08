@@ -44,14 +44,17 @@ export interface GameEventMap {
   };
 
   /**
-   * The players switched seats (`swapped: true` — control of every card in
-   * play and of both factions passed to the opposing player) or switched
+   * Two players switched seats (`swapped: true` — control of every card of
+   * theirs in play and of both factions passed to the other player of the
+   * pair) or switched
    * back (`swapped: false`). Fired when `ContinuousAbility.swapsSides` takes
    * or loses effect (Emergency Obfuscation). Informational; no rule keys off
    * it.
    */
   seatsSwapped: {
     swapped: boolean;
+    /** The two players who switched (or switched back); no other player moves (MPX-swap). */
+    players: [PlayerId, PlayerId];
   };
 
   cardPlayed: {
@@ -264,6 +267,8 @@ export interface GameEventMap {
     sourceId: CardInstanceId;
     controllerId: PlayerId;
     when: ScheduledEffect["when"];
+    /** The opponent "your opponent's next turn" names, stored only at tables of three or more (MP 2). */
+    opponentId?: PlayerId;
   };
 
   /**

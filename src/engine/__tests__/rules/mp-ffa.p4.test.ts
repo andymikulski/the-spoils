@@ -51,6 +51,11 @@ function game(factions: CardDefinition[], options: FactionGameSetupOptions = {})
   });
 }
 
+/** Answers the Union's opponent selection (`chooseMatchOpponent` setup phase) for `playerId`. */
+function selectMatchOpponent(engine: SpoilsEngine, playerId: PlayerId, opponent: PlayerId): void {
+  engine.perform({ type: "resolvePendingChoice", playerId, choice: { kind: "choosePlayer", playerId: opponent } });
+}
+
 const handSize = (engine: SpoilsEngine, playerId: PlayerId) => engine.state.players[playerId]!.hand.length;
 const handSizes = (engine: SpoilsEngine, count: number) => SEATS.slice(0, count).map(id => handSize(engine, id));
 const resources = (engine: SpoilsEngine, playerId: PlayerId) =>
@@ -357,12 +362,8 @@ describe("MPX-setup — the Union of Unextraordinary Miners with several opponen
     rule(["MPX-setup", "MPX-select"], `${seats} seats: the Union's controller chooses the opponent it matches; only that opponent is topped up`, () => {
       const factions = unionTable(seats);
       for (const chosen of SEATS.slice(0, seats).filter(id => id !== P2)) {
-        const engine = game(factions, {
-          firstPlayerId: P1,
-          seed: 5,
-          startingResourceX: { [P2]: 3 },
-          startingResourceOpponent: { [P2]: chosen }
-        });
+        const engine = game(factions, { firstPlayerId: P1, seed: 5, startingResourceX: { [P2]: 3 } });
+        selectMatchOpponent(engine, P2, chosen);
         assert.equal(resources(engine, P2).length, 4, "the Union starts with 3 staples and 1 Deception");
         assert.ok(resourceNames(engine, P2).includes("Deception"), "and the Union's own Deception");
         for (const id of SEATS.slice(0, seats)) {
@@ -376,14 +377,35 @@ describe("MPX-setup — the Union of Unextraordinary Miners with several opponen
       }
     });
 
-    rule(["MPX-setup", "MPX-select"], `${seats} seats: the Union's opponent must be named, and must be another player`, () => {
+    rule(["MPX-setup", "MPX-select"], `${seats} seats: the Union's controller is asked for the opponent before any starting resource is placed, and cannot pick itself`, () => {
       const factions = unionTable(seats);
-      const build = (opponent: Record<PlayerId, PlayerId> | undefined) =>
-        game(factions, { firstPlayerId: P1, startingResourceX: { [P2]: 3 }, ...(opponent ? { startingResourceOpponent: opponent } : {}) });
-      refused(() => build(undefined), "with several opponents the Union must choose one", /must choose which opponent/);
-      refused(() => build({ [P2]: P2 }), "the Union cannot choose itself", /must choose which opponent/);
-      refused(() => build({ [P2]: "nobody" }), "the Union cannot choose a non-player", /must choose which opponent/);
-      assert.equal(resources(build({ [P2]: P1 }), P1).length, 4, "control: a named opponent is accepted");
+      const engine = game(factions, { firstPlayerId: P1, startingResourceX: { [P2]: 3 } });
+      const setup = engine.state.setup;
+      assert.ok(setup.phase === "chooseMatchOpponent", "setup waits for the Union's selection");
+      assert.deepEqual(setup.order, [P2], "only the Union's controller is asked");
+      assert.equal(engine.getFlowView().mode, "pendingChoice");
+      for (const id of SEATS.slice(0, seats)) assert.equal(resources(engine, id).length, 0, `${id} has no starting resource yet`);
+      const pending = engine.state.pendingChoice;
+      assert.ok(pending?.kind === "choosePlayer" && pending.bind.type === "matchOpponent", "the prompt is the Union's opponent selection");
+      assert.equal(pending.playerId, P2);
+      assert.deepEqual(pending.candidates, engine.getOpponents(P2), "every other player, clockwise from the Union's left");
+      refused(
+        () => engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "choosePlayer", playerId: P2 } }),
+        "the Union cannot choose itself",
+        /not one of the choices/
+      );
+      refused(
+        () => engine.perform({ type: "resolvePendingChoice", playerId: P2, choice: { kind: "choosePlayer", playerId: "nobody" } }),
+        "the Union cannot choose a non-player",
+        /not one of the choices/
+      );
+      refused(
+        () => engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "choosePlayer", playerId: P3 } }),
+        "only the Union's controller answers",
+        /./
+      );
+      selectMatchOpponent(engine, P2, P1);
+      assert.equal(resources(engine, P1).length, 4, "control: a selected opponent is accepted");
     });
   }
 
@@ -398,6 +420,7 @@ describe("MPX-setup — the Union of Unextraordinary Miners with several opponen
     });
     assert.equal(resources(engine, P1).length, 4);
     assert.equal(resources(engine, P2).length, 4, "topped up without being asked to choose");
+    assert.equal(engine.state.pendingChoice, undefined, "nothing was asked");
   });
 
   rule(["MPX-setup", "MPX-select", "CR 601.1b"], "3 seats with the staple choice on: the chosen opponent picks the extra staples in a second round, clockwise setup order kept", () => {
@@ -406,9 +429,9 @@ describe("MPX-setup — the Union of Unextraordinary Miners with several opponen
       firstPlayerId: P3,
       chooseStartingResources: true,
       seed: 14,
-      startingResourceX: { [P2]: 3 },
-      startingResourceOpponent: { [P2]: P1 }
+      startingResourceX: { [P2]: 3 }
     });
+    selectMatchOpponent(engine, P2, P1);
     const first = engine.state.setup;
     assert.ok(first.phase === "chooseStartingResources", "setup is choosing starting resources");
     assert.deepEqual(first.order, [P3, P1, P2], "clockwise from the first player, P3");

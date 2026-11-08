@@ -83,7 +83,7 @@ import type {
   Restriction,
   RuntimeCostReduction,
   RuntimeModifier,
-  SeatSwapState,
+  SeatSwap,
   SnapshotCard,
   SnapshotPlayer,
   StackItem,
@@ -127,6 +127,7 @@ import type {
 // after both modules have finished evaluating.
 import {
   continueSetupAfterFirstPlayer,
+  answerMatchOpponent,
   continueStartingDrawSearch,
   finishFactionSetup,
   openingDrawFor,
@@ -156,6 +157,7 @@ const ALL_RESTRICTIONS: readonly Restriction[] = [
   "cannotBeRestoredByRule",
   "cannotBePicked",
   "cannotBePickedByOpponents",
+  "cannotBePickedByOpponent",
   "mustBePicked",
   "attackOncePerTurn",
   "cannotBeTakenControl"
@@ -1829,7 +1831,8 @@ export class SpoilsEngine {
           kind: "info",
           message: `${this.logCardName(event.sourceId)} sets up a delayed effect for ${this.describeDelayedWhen(
             event.when,
-            event.controllerId
+            event.controllerId,
+            event.opponentId
           )}`
         };
 
@@ -2384,9 +2387,10 @@ export class SpoilsEngine {
   getDevelopChoices(playerId: PlayerId): DevelopChoice[] {
     // "Your opponent ignores their faction's DEVELOP RULE." (The Knitting
     // Coalition — PULLING STRINGS): an opposing in-play faction can suppress
-    // this player's Develop Rule entirely.
-    const opponentFaction = this.getFactionDefinition(this.getOpponent(playerId).id);
-    if (opponentFaction?.overridesOpponent?.suppressDevelop) {
+    // this player's Develop Rule entirely. "Your opponent" there means every
+    // opponent of that faction's controller (RQ-mp-6, MPX-knitting (2)), so
+    // any other player in the game with such a faction suppresses it.
+    if (this.getOpponents(playerId).some(id => this.getFactionDefinition(id)?.overridesOpponent?.suppressDevelop)) {
       return [];
     }
     return structuredClone(
@@ -4753,9 +4757,8 @@ export class SpoilsEngine {
   getPendingDelayedEffects(playerId?: PlayerId): PendingDelayedEffect[] {
     if (playerId !== undefined) this.requirePlayer(playerId);
     const result: PendingDelayedEffect[] = [];
-    const activeId = this.state.activePlayerId;
-    // The next turn belonging to `owner` (turns strictly alternate); the current turn's start has already passed.
-    const nextTurnOf = (owner: PlayerId): number => this.state.turn + (owner === activeId ? 2 : 1);
+    // The next turn belonging to `owner`, following the seat order; the current turn's start has already passed.
+    const nextTurnOf = (owner: PlayerId): number => this.nextTurnNumberOf(owner);
 
     for (const s of this.state.scheduledEffects) {
       const affected = new Set<CardInstanceId>();
@@ -4767,9 +4770,11 @@ export class SpoilsEngine {
           ? s.turnScheduled
           : s.when === "startOfNextTurn"
             ? nextTurnOf(s.controllerId)
-            : s.when === "startOfOpponentNextTurn" || s.when === "startOfTheNextTurn"
-              ? s.turnScheduled + 1
-              : undefined;
+            : s.when === "startOfOpponentNextTurn"
+              ? this.nextOpponentTurnNumber(s)
+              : s.when === "startOfTheNextTurn"
+                ? s.turnScheduled + 1
+                : undefined;
       result.push({
         id: s.id,
         kind: "scheduledEffect",
@@ -4778,7 +4783,7 @@ export class SpoilsEngine {
         when: s.when,
         ...(turn !== undefined ? { turn } : {}),
         ...(affected.size > 0 ? { affectedCardIds: [...affected] } : {}),
-        text: `${this.logCardName(s.sourceId)}: ${this.describeDelayedWhen(s.when, s.controllerId)}`
+        text: `${this.logCardName(s.sourceId)}: ${this.describeDelayedWhen(s.when, s.controllerId, s.opponentId)}`
       });
     }
 
@@ -5640,14 +5645,88 @@ export class SpoilsEngine {
     return entries;
   }
 
+  /**
+   * The number of the next turn that belongs to `owner`, counting from the current turn and following the seat order
+   * (MPX-turn (2)): a turn passes to the next seat still in the game, so with three or more players it is not the turn
+   * right after this one.
+   */
+  private nextTurnNumberOf(owner: PlayerId): number {
+    assert(this.getPlayersInSeatOrder().includes(owner), `Player '${owner}' is not in the game.`);
+    let turn = this.state.turn;
+    let at = this.state.activePlayerId;
+    do {
+      at = this.nextSeat(at);
+      turn++;
+    } while (at !== owner);
+    return turn;
+  }
+
+  /**
+   * The turn numbers stamped on "until the start / end of your next turn" durations and on skipped Restore Rules
+   * count the turns of the seat order at the time. When that order changes (a seat swap, a player eliminated) the
+   * numbers still waiting are stamped again against the new order, so each still lands on its player's next turn.
+   * At a table of two seats the order cannot change the numbers, so nothing is touched.
+   */
+  private restampTurnNumbers(): void {
+    if (this.state.seats.length < 3) return;
+    const inGame = this.getPlayersInSeatOrder();
+    const round = inGame.length;
+    const state = this.state as unknown as Record<string, unknown>;
+    for (const value of Object.values(state)) {
+      if (!Array.isArray(value)) continue;
+      for (const record of value as Array<{ duration?: Duration; createdBy?: PlayerId; createdTurn?: number }>) {
+        const duration = record?.duration;
+        const owner = record?.createdBy;
+        if (!duration || owner === undefined || !inGame.includes(owner)) continue;
+        if (duration.type === "untilStartOfNextTurn" && duration.untilTurn !== undefined) {
+          duration.untilTurn = this.nextTurnNumberOf(owner);
+        } else if (duration.type === "untilEndOfNextTurn" && duration.untilTurn !== undefined) {
+          // Their next turn has already started when they are the active player and made this on an earlier turn.
+          const started = this.state.activePlayerId === owner && (record.createdTurn ?? this.state.turn) < this.state.turn;
+          duration.untilTurn = started ? this.state.turn + 1 : this.nextTurnNumberOf(owner) + 1;
+        }
+      }
+    }
+    for (const [owner, turns] of Object.entries(this.state.restoreRuleSkips)) {
+      if (!inGame.includes(owner)) continue;
+      const waiting = turns.filter(turn => turn > this.state.turn);
+      if (waiting.length === 0) continue;
+      const first = this.nextTurnNumberOf(owner);
+      this.state.restoreRuleSkips[owner] = [
+        ...turns.filter(turn => turn <= this.state.turn),
+        ...waiting.map((_, i) => first + round * i)
+      ];
+    }
+  }
+
+  /**
+   * The turn number a `startOfOpponentNextTurn` delayed effect is waiting for: the next turn of the opponent it
+   * selected. While that opponent's own start-of-turn wave is still resolving, that turn is the current one.
+   */
+  private nextOpponentTurnNumber(scheduled: ScheduledEffect): number | undefined {
+    const opponent = this.opponentOf(scheduled.controllerId, scheduled.opponentId);
+    if (opponent === undefined || this.isEliminated(opponent)) return undefined;
+    if (
+      this.state.startingTurnFor === opponent &&
+      this.state.activePlayerId === opponent &&
+      this.state.turn > scheduled.turnScheduled
+    ) {
+      return this.state.turn;
+    }
+    return this.nextTurnNumberOf(opponent);
+  }
+
   /** "the start of Alice's next turn" — the moment phrase shared by the delayed-effect log line and `getPendingDelayedEffects`. */
-  private describeDelayedWhen(when: ScheduledEffect["when"], controllerId: PlayerId): string {
+  private describeDelayedWhen(when: ScheduledEffect["when"], controllerId: PlayerId, opponentId?: PlayerId): string {
     const who = this.logPlayerName(controllerId);
     switch (when) {
       case "startOfNextTurn":
         return `the start of ${who}'s next turn`;
-      case "startOfOpponentNextTurn":
-        return `the start of ${this.logPlayerName(this.getOpponent(controllerId).id)}'s next turn`;
+      case "startOfOpponentNextTurn": {
+        // The opponent the block selected (MP 2); with one opponent left it is that player.
+        const opponent = this.opponentOf(controllerId, opponentId);
+        return `the start of ${opponent !== undefined ? this.logPlayerName(opponent) : "your opponent"}'s next turn`;
+      }
       case "startOfTheNextTurn":
         return "the start of the next turn";
       case "endOfTurn":
@@ -6687,6 +6766,7 @@ export class SpoilsEngine {
       ) {
         return false;
       }
+      if (this.pickBarredToOpponent(card.id, pickerId)) return false;
       // "this card cannot be picked by <cardType>s" (Parkour Hoodlum) —
       // scoped on the card/ability doing the picking.
       for (const type of this.ignoredSourceTypesFor(card.id)) {
@@ -9280,7 +9360,13 @@ export class SpoilsEngine {
       this.state.players[id].eliminated = { turn: this.state.turn };
       this.emit({ type: "playerEliminated", playerId: id });
     }
+    // A swap with an eliminated player ends first: the factions and cards return to the side they came from, so the
+    // owner's cards leave the game with them and the rest return to their owners (MPX-elim (1), (2)).
+    for (const swap of [...(this.state.seatSwap?.swaps ?? [])].reverse()) {
+      if (swap.players.some(id => losers.includes(id))) this.liftSeatSwap(swap);
+    }
     this.clearEliminatedPlayers(new Set(losers));
+    this.restampTurnNumbers();
     // Text that kept an eliminated player as its opponent selects again (RQ-mp-5).
     while (!this.state.pendingChoice && this.syncLastingOpponents()) {
       // each pass binds or asks for one more
@@ -14497,7 +14583,10 @@ export class SpoilsEngine {
               src.controllerId === playerId) ||
             (m.scope === "opponentCharacters" &&
               this.hasCardType(sourceCardId, "character") &&
-              userId !== src.controllerId);
+              userId !== src.controllerId) ||
+            (m.scope === "chosenOpponentCharacters" &&
+              this.hasCardType(sourceCardId, "character") &&
+              userId === this.opponentOf(src.controllerId, ctx.opponentId));
           if (!applies) continue;
           adjusts.push({
             delta: this.evaluateNumber(m.delta, ctx),
@@ -15302,10 +15391,12 @@ export class SpoilsEngine {
         const player = this.resolvePlayerRef(effect.player, context);
         // "On your next turn" names a specific turn: the player's next one.
         // Several skips naming the same turn skip it once (Q32).
-        const first =
-          this.state.turn + (this.state.activePlayerId === player.id ? 2 : 1);
+        // The player's turns come once every round of the seats still in the game.
+        if (player.eliminated) return;
+        const first = this.nextTurnNumberOf(player.id);
+        const round = this.getPlayersInSeatOrder().length;
         const skips = new Set(this.state.restoreRuleSkips[player.id] ?? []);
-        for (let i = 0; i < (effect.turns ?? 1); i++) skips.add(first + 2 * i);
+        for (let i = 0; i < (effect.turns ?? 1); i++) skips.add(first + round * i);
         this.state.restoreRuleSkips[player.id] = [...skips].sort((a, b) => a - b);
         return;
       }
@@ -15911,13 +16002,8 @@ export class SpoilsEngine {
         // control (CR §407.3a), so the seat swap no longer decides where the
         // card goes when it is lifted. A durationed grab reverts to the
         // swapped-to controller, which lifting the swap still knows how to undo.
-        if (
-          this.state.seatSwap &&
-          (!effect.duration || effect.duration.type === "permanent")
-        ) {
-          this.state.seatSwap.exchanged = this.state.seatSwap.exchanged.filter(
-            e => e.cardId !== targetId
-          );
+        if (!effect.duration || effect.duration.type === "permanent") {
+          this.forgetSwappedCard(targetId);
         }
         this.reassignControl(targetId, newController.id);
         return;
@@ -16200,6 +16286,7 @@ export class SpoilsEngine {
           sourceId: context.sourceId,
           targetId,
           restriction: effect.restriction,
+          ...(context.opponentId !== undefined ? { opponentId: context.opponentId } : {}),
           duration: effect.duration,
           createdTurn: this.state.turn
         });
@@ -16485,7 +16572,8 @@ export class SpoilsEngine {
           scheduledId: scheduled.id,
           sourceId: context.sourceId,
           controllerId: context.controllerId,
-          when: scheduled.when
+          when: scheduled.when,
+          ...(scheduled.opponentId !== undefined ? { opponentId: scheduled.opponentId } : {})
         });
         return;
       }
@@ -18376,6 +18464,31 @@ export class SpoilsEngine {
     return false;
   }
 
+  /**
+   * "Your opponent cannot pick this card" (`cannotBePickedByOpponent`): whether the opponent the restriction's block
+   * selected is `pickerId`. A restriction from a continuous ability reads the opponent its source holds; one an
+   * effect granted reads the opponent that effect's block selected.
+   */
+  private pickBarredToOpponent(cardId: CardInstanceId, pickerId: PlayerId): boolean {
+    const barsPicker = (controllerId: PlayerId | undefined, opponentId: PlayerId | undefined): boolean =>
+      controllerId !== undefined && pickerId !== controllerId && pickerId === this.opponentOf(controllerId, opponentId);
+    if (
+      this.state.restrictions.some(
+        grant =>
+          grant.targetId === cardId &&
+          grant.restriction === "cannotBePickedByOpponent" &&
+          barsPicker(grant.createdBy, grant.opponentId)
+      )
+    ) {
+      return true;
+    }
+    return this.getContinuousRestrictionGrantEntries(cardId).some(entry => {
+      if (entry.restriction !== "cannotBePickedByOpponent") return false;
+      const source = this.requireCard(entry.sourceId);
+      return barsPicker(source.controllerId, this.lastingOpponent(source, entry.abilityId).opponentId);
+    });
+  }
+
   /** Public: a renderer needs a card's live restriction set; same check battle legality uses. */
   hasRestriction(
     cardId: CardInstanceId,
@@ -18516,80 +18629,132 @@ export class SpoilsEngine {
   }
 
   /**
-   * True when the seats should currently be swapped: an odd number of live
-   * `swapsSides` abilities are in play. Two swaps cancel — the players are
-   * back in their own seats.
+   * The pairs of players that should currently be switched (MPX-swap): every live `swapsSides` source names the pair
+   * of its controller and the opponent it selected, and a pair named by an odd number of sources is switched; two
+   * sources naming the same pair cancel. A source whose selection is not made yet (or names a player who has lost)
+   * names no pair until the controller selects again.
    */
-  private seatSwapWanted(): boolean {
-    let sources = 0;
-    this.forEachActiveContinuous((_source, ability) => {
-      if (ability.swapsSides) sources += 1;
+  private seatSwapsWanted(): Array<[PlayerId, PlayerId]> {
+    const counts = new Map<string, { pair: [PlayerId, PlayerId]; count: number }>();
+    this.forEachActiveContinuous((source, ability, context) => {
+      if (!ability.swapsSides) return;
+      const opponent = this.opponentOf(source.controllerId, context.opponentId);
+      if (opponent === undefined || opponent === source.controllerId || this.isEliminated(opponent)) return;
+      const key = [source.controllerId, opponent].sort().join("\n");
+      const entry = counts.get(key) ?? { pair: [source.controllerId, opponent], count: 0 };
+      entry.count += 1;
+      counts.set(key, entry);
     });
-    return sources % 2 === 1;
+    return [...counts.values()].filter(entry => entry.count % 2 === 1).map(entry => entry.pair);
+  }
+
+  /** A card no seat swap will return: it left play, or a permanent effect set its control later (CR 407.3a). */
+  private forgetSwappedCard(cardId: CardInstanceId): void {
+    for (const swap of this.state.seatSwap?.swaps ?? []) {
+      swap.exchanged = swap.exchanged.filter(entry => entry.cardId !== cardId);
+    }
+  }
+
+  /** The swap currently in effect between exactly `a` and `b`, if any. */
+  private seatSwapBetween(a: PlayerId, b: PlayerId): SeatSwap | undefined {
+    return this.state.seatSwap?.swaps.find(swap => swap.players.includes(a) && swap.players.includes(b));
   }
 
   /**
-   * Brings `GameState.seatSwap` in line with `seatSwapWanted()` — applying the
-   * swap when the first source enters play, lifting it when the last one
-   * leaves. Returns whether anything changed.
+   * Brings `GameState.seatSwap` in line with `seatSwapsWanted()` — applying a pair's swap when the first source naming
+   * it enters play, lifting it when the last one leaves. Returns whether anything changed.
    */
   private syncSeatSwap(): boolean {
     if (!this.mayHaveSeatSwapSource()) return false;
-    const wanted = this.seatSwapWanted();
-    const swapped = this.state.seatSwap !== undefined;
-    if (wanted === swapped) return false;
-    if (wanted) this.applySeatSwap();
-    else this.liftSeatSwap();
-    return true;
+    const wanted = this.seatSwapsWanted();
+    const isWanted = (swap: SeatSwap): boolean =>
+      wanted.some(([a, b]) => swap.players.includes(a) && swap.players.includes(b));
+    for (const swap of [...(this.state.seatSwap?.swaps ?? [])].reverse()) {
+      if (isWanted(swap)) continue;
+      this.liftSeatSwap(swap);
+      return true;
+    }
+    for (const [a, b] of wanted) {
+      if (this.seatSwapBetween(a, b)) continue;
+      this.applySeatSwap(a, b);
+      return true;
+    }
+    return false;
   }
 
   /**
-   * The players switch seats (RULES.md §12 "Seat swap"): every card in play,
-   * both factions included, passes to the opposing player, and the players
+   * `a` and `b` switch seats (RULES.md §12 "Seat swap", MPX-swap): every card of theirs in
+   * play, both factions included, passes to the other of the two, and they
    * exchange their `factionId` / `influence` so "your faction" follows
-   * control. A card that "cannot be taken control of" keeps its controller.
+   * control, and their places in the seat order. A card that "cannot be taken
+   * control of" keeps its controller. No other player is affected.
    */
-  private applySeatSwap(): void {
-    const exchanged: SeatSwapState["exchanged"] = [];
+  private applySeatSwap(a: PlayerId, b: PlayerId): void {
+    const exchanged: SeatSwap["exchanged"] = [];
     for (const card of Object.values(this.state.cards)) {
-      if (card.zone !== "play") continue;
+      if (card.zone !== "play" || (card.controllerId !== a && card.controllerId !== b)) continue;
       if (this.hasRestriction(card.id, "cannotBeTakenControl")) continue;
       exchanged.push({ cardId: card.id, previousControllerId: card.controllerId });
     }
     for (const { cardId, previousControllerId } of exchanged) {
-      this.reassignControl(cardId, this.getOpponent(previousControllerId).id);
+      this.reassignSwapped(cardId, previousControllerId === a ? b : a);
     }
-    this.exchangeFactionSeats();
-    this.state.seatSwap = { exchanged };
-    this.emit({ type: "seatsSwapped", swapped: true });
+    this.exchangeFactionSeats(a, b);
+    this.state.seatSwap = { swaps: [...(this.state.seatSwap?.swaps ?? []), { players: [a, b], exchanged }] };
+    this.emit({ type: "seatsSwapped", swapped: true, players: [a, b] });
   }
 
   /**
-   * The players switch back. Each exchanged card still in play and still
+   * The two players of `swap` switch back. Each exchanged card still in play and still
    * under the controller the swap gave it returns to its previous controller;
    * a card whose control something else changed since (a later "take
    * control", CR §407.3a) or that entered play after the swap is left alone.
    */
-  private liftSeatSwap(): void {
-    const swap = this.state.seatSwap;
-    this.state.seatSwap = undefined;
-    if (!swap) return;
+  private liftSeatSwap(swap: SeatSwap): void {
+    const [a, b] = swap.players;
+    const rest = (this.state.seatSwap?.swaps ?? []).filter(other => other !== swap);
+    this.state.seatSwap = rest.length > 0 ? { swaps: rest } : undefined;
     for (const { cardId, previousControllerId } of swap.exchanged) {
       const card = this.state.cards[cardId];
       if (!card || card.zone !== "play") continue;
-      if (card.controllerId === this.getOpponent(previousControllerId).id) {
-        this.reassignControl(cardId, previousControllerId);
+      if (card.controllerId === (previousControllerId === a ? b : a)) {
+        this.reassignSwapped(cardId, previousControllerId);
       }
     }
-    this.exchangeFactionSeats();
-    this.emit({ type: "seatsSwapped", swapped: false });
+    this.exchangeFactionSeats(a, b);
+    this.emit({ type: "seatsSwapped", swapped: false, players: [a, b] });
   }
 
-  /** Swap which faction (and influence pool) each of the two players holds. */
-  private exchangeFactionSeats(): void {
-    const [first, second] = Object.values(this.state.players);
+  /**
+   * Moves `cardId` to `newControllerId` as part of a seat swap. A swap source's own selection is the pair itself, so
+   * it stays: after the move it names the player who controlled the card before (the other of the pair), which is
+   * the same pair read from its new controller's side. Every other lasting selection ends with the control change
+   * (RQ-mp-10).
+   */
+  private reassignSwapped(cardId: CardInstanceId, newControllerId: PlayerId): void {
+    const card = this.state.cards[cardId];
+    const previousControllerId = card?.controllerId;
+    const kept: Record<AbilityId, PlayerId> = {};
+    if (card?.boundOpponents && previousControllerId !== undefined) {
+      for (const ability of this.allContinuousAbilities(cardId)) {
+        if (ability.swapsSides && card.boundOpponents[ability.id] === newControllerId) kept[ability.id] = previousControllerId;
+      }
+    }
+    this.reassignControl(cardId, newControllerId);
+    if (Object.keys(kept).length > 0 && this.getOpponents(newControllerId).length >= 2) card.boundOpponents = kept;
+  }
+
+  /** Swap which faction (and influence pool) the two players hold, and their places in the seat order. */
+  private exchangeFactionSeats(a: PlayerId, b: PlayerId): void {
+    const first = this.requirePlayer(a);
+    const second = this.requirePlayer(b);
     [first.factionId, second.factionId] = [second.factionId, first.factionId];
     [first.influence, second.influence] = [second.influence, first.influence];
+    const seats = this.state.seats;
+    const at = seats.indexOf(a);
+    const other = seats.indexOf(b);
+    [seats[at], seats[other]] = [seats[other], seats[at]];
+    this.restampTurnNumbers();
   }
 
   /**
@@ -18760,7 +18925,8 @@ export class SpoilsEngine {
       { list: "keywordGrants", records: state.keywordGrants, creatorOf: r => (r as unknown as { createdBy?: PlayerId }).createdBy },
       { list: "runtimeReplacements", records: state.runtimeReplacements, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId },
       { list: "handMoveRedirects", records: state.handMoveRedirects, creatorOf: r => (r as unknown as { sourceControllerId: PlayerId }).sourceControllerId },
-      { list: "scheduledEffects", records: state.scheduledEffects, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId }
+      { list: "scheduledEffects", records: state.scheduledEffects, creatorOf: r => (r as unknown as { controllerId: PlayerId }).controllerId },
+      { list: "restrictions", records: state.restrictions, creatorOf: r => (r as unknown as { createdBy?: PlayerId }).createdBy }
     ];
   }
 
@@ -18963,7 +19129,10 @@ export class SpoilsEngine {
       // choice has not ended.
       if (!this.state.winner) {
         this.noteFactionsAtZero();
+        const inGame = this.getPlayersInSeatOrder().length;
         this.settleLosses();
+        // A player eliminated changes who is left to be anyone's opponent: judge the table again.
+        if (!this.state.winner && this.getPlayersInSeatOrder().length !== inGame) changed = true;
       }
     }
   }
@@ -19914,6 +20083,12 @@ export class SpoilsEngine {
           this.processImmediateQueue();
           this.checkStateBasedActions();
           this.resumeEffectFrames();
+          return;
+        }
+
+        if (bind.type === "matchOpponent") {
+          this.state.pendingChoice = undefined;
+          answerMatchOpponent(this, pending.playerId, chosen);
           return;
         }
 
@@ -20943,11 +21118,7 @@ export class SpoilsEngine {
       this.state.controlGrants = this.state.controlGrants.filter(
         g => g.cardId !== cardId
       );
-      if (this.state.seatSwap) {
-        this.state.seatSwap.exchanged = this.state.seatSwap.exchanged.filter(
-          e => e.cardId !== cardId
-        );
-      }
+      this.forgetSwappedCard(cardId);
       this.state.blockRestrictionGrants = this.state.blockRestrictionGrants.filter(
         g => g.targetId !== cardId && g.sourceId !== cardId
       );
@@ -22229,15 +22400,13 @@ export class SpoilsEngine {
     if (duration.type === "untilStartOfNextTurn" && duration.untilTurn === undefined) {
       duration = {
         type: "untilStartOfNextTurn",
-        untilTurn:
-          this.state.turn + (this.state.activePlayerId === context.controllerId ? 2 : 1)
+        untilTurn: this.nextTurnNumberOf(context.controllerId)
       };
     }
     if (duration.type === "untilEndOfNextTurn" && duration.untilTurn === undefined) {
       duration = {
         type: "untilEndOfNextTurn",
-        untilTurn:
-          this.state.turn + (this.state.activePlayerId === context.controllerId ? 3 : 2)
+        untilTurn: this.nextTurnNumberOf(context.controllerId) + 1
       };
     }
     if (duration === raw) return effect;
@@ -22263,7 +22432,7 @@ export class SpoilsEngine {
       const until = entry.duration.untilTurn;
       return until !== undefined
         ? this.state.turn < until
-        : entry.createdTurn > this.state.turn - 2;
+        : entry.createdTurn > this.state.turn - this.getPlayersInSeatOrder().length;
     }
 
     // "until the end of your next turn" — gone at the start-of-turn point
@@ -22306,11 +22475,13 @@ export class SpoilsEngine {
       }
       if (when === "endOfTurn") return s.turnScheduled === this.state.turn;
       if (when === "startOfOpponentNextTurn") {
-        // The turn immediately after it was scheduled, which (turns strictly
-        // alternate) belongs to the scheduler's opponent = `forActivePlayer`.
+        // The first turn after it was scheduled that belongs to the opponent
+        // the block selected (MP 2, MPX-lasting): a turn of another opponent
+        // does not fire it.
         return (
-          s.controllerId !== forActivePlayer &&
-          this.state.turn === s.turnScheduled + 1
+          forActivePlayer !== undefined &&
+          forActivePlayer === this.opponentOf(s.controllerId, s.opponentId) &&
+          this.state.turn > s.turnScheduled
         );
       }
       return s.controllerId === forActivePlayer && this.state.turn > s.turnScheduled;
@@ -22670,13 +22841,20 @@ export class SpoilsEngine {
    * `ContinuousAbility.preventsAttackOnFaction` bars this party from
    * attacking `defenderId`'s faction.
    */
-  private factionAttackPrevented(defenderId: PlayerId, attackerIds: CardInstanceId[]): boolean {
+  private factionAttackPrevented(attackingPlayerId: PlayerId, defenderId: PlayerId, attackerIds: CardInstanceId[]): boolean {
     let prevented = false;
     this.forEachActiveContinuous((source, ability, context) => {
       if (prevented) return;
       const rule = ability.preventsAttackOnFaction;
       if (!rule) return;
       if (!this.scopeMatchesPlayer(rule.player, source.controllerId, defenderId, context.opponentId)) return;
+      // "Your opponent cannot attack ..." bars the block's selected opponent only; the default bars every opponent.
+      if (
+        rule.attacker === "opponent" &&
+        attackingPlayerId !== this.opponentOf(source.controllerId, context.opponentId)
+      ) {
+        return;
+      }
       const partyMatches =
         !rule.partyAllMatch ||
         attackerIds.every(attackerId =>
@@ -22750,7 +22928,7 @@ export class SpoilsEngine {
     const targets: AttackTarget[] = [];
     if (party.length > 0) {
       for (const otherId of this.getOpponents(playerId)) {
-        if (this.factionAttackPrevented(otherId, party)) continue;
+        if (this.factionAttackPrevented(playerId, otherId, party)) continue;
         targets.push({ type: "faction", playerId: otherId });
       }
       for (const card of Object.values(this.state.cards)) {
@@ -22875,7 +23053,7 @@ export class SpoilsEngine {
     // `ContinuousAbility.preventsAttackOnFaction`.
     if (target.type === "faction") {
       assert(
-        !this.factionAttackPrevented(defenderId, attackerIds),
+        !this.factionAttackPrevented(playerId, defenderId, attackerIds),
         "That faction cannot be attacked."
       );
     }
@@ -25390,19 +25568,5 @@ export class SpoilsEngine {
     );
   }
 
-  private getOpponent(
-    playerId: PlayerId
-  ): PlayerState {
-    const opponent = Object.values(
-      this.state.players
-    ).find(player => player.id !== playerId);
-
-    assert(
-      opponent,
-      "This barebones engine currently expects exactly two players."
-    );
-
-    return opponent;
-  }
 }
 

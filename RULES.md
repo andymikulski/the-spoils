@@ -332,9 +332,11 @@ carry activated abilities, usable any time you could use an ability
   specific sub-rules of the **opponent's** faction (The Knitting Coalition):
   `startingDraw` makes the opponent's opening hand use *this* faction's
   `setup.openingHand` sizes (HIDDEN INFLUENCE — resolved in
-  `createTwoPlayerFactionGame`), `suppressDevelop` gives the opponent no
+  `createFactionGame`), `suppressDevelop` gives the opponent no
   Develop Rule at all (PULLING STRINGS — `getDevelopChoices` returns `[]`
-  for them). 2-player only.
+  for them). Both apply to **every** opponent of the faction's holder
+  (RQ-mp-6, MPX-knitting): at three or more seats each other player in the
+  game ignores their Develop Rule.
 - **`setup.startingResources`** beyond the flat `{ count, names?,
   stapleOnly? }` — `slots` is a per-slot program (a `"resource"` slot puts a
   face-up resource, unless its own `faceDown: true` puts it into play
@@ -1781,7 +1783,10 @@ of the Devoured Emperor additions")**
     number of live sources are in play (`GameState.seatSwap`, the
     `seatsSwapped` event, `GameFlowView.seatsSwapped`), control of every
     card in play — both factions and the source itself — has passed to the
-    other player; two sources cancel. A card that "cannot be taken control
+    other player; two sources cancel. (At three or more seats "both
+    players" is the source's controller and the opponent it selected, §15;
+    only those two players and their cards are affected, and the sources
+    that cancel are the ones naming the same pair.) A card that "cannot be taken control
     of" (Gigantitect's Giant Giant) keeps its controller.
   - The players also exchange `factionId` / `influence`, so "your faction"
     is the faction you hold: its develop / restore / start-of-turn rules
@@ -2056,5 +2061,22 @@ opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
   and "any player" from the active player; the first to pay settles it, otherwise `elseEffects` (MPQ-P7).
 - **`noResponse: "opponent"`:** only the block's opponent may not respond; with nobody else able to, it
   resolves at once like `true`.
+- **Delayed "your opponent's next turn" (MPX-lasting, MPX-turn):** `scheduleEffect` `startOfOpponentNextTurn`
+  names the block's opponent: it waits for that player's own next turn (the first turn after it was scheduled whose
+  active player is that opponent, following the seat order) and no other opponent's turn fires it. It is
+  re-selected like any lasting record when that player is eliminated. "Your next turn" durations and skipped
+  Restore Rules count turns through the seat order too, and are stamped again whenever the order changes (a seat
+  swap, an elimination).
+- **Singular forms of lasting text:** `cannotBePickedByOpponent` (only the selected opponent cannot pick the card),
+  `abilityCostModifiers` scope `chosenOpponentCharacters` and `preventsAttackOnFaction.attacker: "opponent"` read
+  the selected opponent; their plural counterparts (`cannotBePickedByOpponents`, `opponentCharacters`, no
+  `attacker`) cover every opponent.
+- **Setup (MPX-setup, MPX-select):** a faction whose starting resources name "your opponent" (The Union of
+  Unextraordinary Miners) asks its player for the opponent when the starting resources step begins, before any
+  starting resource is placed; with one opponent nobody is asked.
+- **Seat swap (MPX-swap):** `swapsSides` is lasting "both players" text: the controller selects the opponent when
+  the card enters play and only those two players switch seats, sides and factions. Each pair named by an odd
+  number of sources is switched (`GameState.seatSwap.swaps`); when a player of the pair is eliminated the swap
+  ends first and the controller selects again.
 - **Open reading (RQ-mp-3 and MPX-select (4)):** a stack item whose selected opponent is eliminated before it
   resolves keeps naming that player (their cards are gone, so nothing of theirs is affected).

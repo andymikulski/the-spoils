@@ -546,8 +546,9 @@ export type Effect =
       /**
        * Registers a one-shot delayed effect fired at the next `endOfTurn`
        * (the current turn's end), `startOfNextTurn` (the source controller's
-       * next turn), `startOfOpponentNextTurn` (the *other* player's next
-       * turn — i.e. the immediately following turn; Final Countdown), or
+       * next turn), `startOfOpponentNextTurn` (the next turn of the block's
+       * selected opponent, MP 2 — the immediately following turn when there
+       * is one opponent; Final Countdown), or
        * `endOfBattle`, then discarded. `condition`, if set, is checked at
        * fire time. "At the start of your next turn, if this card is in play,
        * put the voided character into play." (Gilded Yurt); "At the end of

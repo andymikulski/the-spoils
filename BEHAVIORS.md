@@ -1676,7 +1676,7 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
   `startingDraw` makes the opponent's opening hand use *this* faction's
   `setup.openingHand`; `suppressDevelop` gives the opponent no Develop Rule
   (`getDevelopChoices` → `[]`). The Knitting Coalition (HIDDEN INFLUENCE /
-  PULLING STRINGS). 2-player only.
+  PULLING STRINGS). Both apply to every opponent of the holder.
 - **`setup.startingResources`** — beyond `{ count, names?, stapleOnly? }`:
   - `slots: [{ kind: "resource", staple?, name? } | { kind: "anyCard" }]`
     — a per-slot program. `"resource"` places a face-up resource;
@@ -1687,8 +1687,11 @@ A faction card's mechanical text lives in `CardDefinition.faction`, not
     `FactionGameSetupOptions.startingResourceX`, clamped to `[min, max]`,
     default `min`) plus the named `plus` resources ("...and 1 Deception" —
     The Union of Unextraordinary Miners' MONEY FOR NOTHING).
-  - `matchOpponentCount: true` — after both players are set up, top the
-    **opponent** up with staples until the counts match.
+  - `matchOpponentCount: true` — after every player is set up, top the
+    **opponent** up with staples until the counts match. With two or more
+    opponents the faction's player selects it first, before any starting
+    resource is placed (a `choosePlayer` prompt, `bind: { type:
+    "matchOpponent" }`, in the `chooseMatchOpponent` setup phase).
   As with the flat form the engine picks in deck order — the player does
   not choose which staple / card.
 - **`behavior.developDrawReplacement`** (on a non-faction card) —

@@ -88,6 +88,12 @@ export type Restriction =
    * still pick it. Martial Artist, Martial Arts Trainee, Camouflaged Urchin.
    */
   | "cannotBePickedByOpponents"
+  /**
+   * "Your opponent cannot pick this card." — only the block's selected opponent (MP 2) cannot pick it; the
+   * card's controller and every other opponent still can. Selected when the restriction starts applying
+   * (MPX-lasting) and bound like any "your opponent".
+   */
+  | "cannotBePickedByOpponent"
   /** "This card can attack only once each turn." — `declareAttack` rejects a character that already attacked this turn while it has this restriction. Granted statically or as a continuous aura. */
   | "attackOncePerTurn"
   /**

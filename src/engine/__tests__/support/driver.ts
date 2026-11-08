@@ -96,7 +96,6 @@ export function createEngine(setup: GameSetupInputs): SpoilsEngine {
     cardCatalog: CARD_NAME_CATALOG,
     ...(setup.firstPlayerId !== undefined ? { firstPlayerId: setup.firstPlayerId } : {}),
     ...(setup.startingResourceX ? { startingResourceX: setup.startingResourceX } : {}),
-    ...(setup.startingResourceOpponent ? { startingResourceOpponent: setup.startingResourceOpponent } : {}),
     ...(setup.createdAbility ? { createdAbility: setup.createdAbility } : {})
   });
 }

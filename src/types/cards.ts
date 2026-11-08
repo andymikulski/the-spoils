@@ -102,8 +102,10 @@ export interface FactionDefinition {
        * faction's OPPONENT up with staple resources until the two hold the
        * same number of starting resources ("...enough staple resources so
        * that both players have the same number of starting resources"). With
-       * several opponents it is the one the player chose before the game
-       * began (`FactionGameSetupOptions.startingResourceOpponent`, MP 2).
+       * several opponents it is the one the player selects as the starting
+       * resources step begins (a `choosePlayer` prompt in the
+       * `chooseMatchOpponent` setup phase, MP 2); with one opponent nobody is
+       * asked.
        */
       matchOpponentCount?: boolean;
     };
@@ -240,8 +242,8 @@ export interface FactionDefinition {
    * "your opponent ignores their faction's STARTING DRAW rule and uses
    * this card's rule instead"; PULLING STRINGS: "your opponent ignores
    * their faction's DEVELOP RULE"). Resolved before setup (opening hand)
-   * and consulted live (`getDevelopChoices`). `startingDraw` applies to
-   * every opponent (RQ-mp-6); `suppressDevelop` reads a single opponent.
+   * and consulted live (`getDevelopChoices`). Both apply to every opponent
+   * of the faction's holder (RQ-mp-6, MPX-knitting).
    */
   overridesOpponent?: {
     /** Opponent's opening hand uses THIS faction's `setup.openingHand` sizes. */
@@ -869,14 +871,17 @@ export interface ContinuousAbility extends AbilityBase {
    * controls), `"opponentCharacters"` (abilities on characters the
    * source-controller's *opponent* controls — "Your opponents must pay 2 to
    * use a character's ability", including abilities used while the character
-   * is not in play; Department of Rejections).
+   * is not in play; Department of Rejections), `"chosenOpponentCharacters"`
+   * (the same for the one opponent the block selected, MP 2: "Your opponent
+   * must pay 2 to use a character's ability").
    */
   abilityCostModifiers?: Array<{
     scope:
       | "factionAbilities"
       | "self"
       | "controlledCharacters"
-      | "opponentCharacters";
+      | "opponentCharacters"
+      | "chosenOpponentCharacters";
     delta: NumberExpression;
     minCost?: number;
   }>;
@@ -1034,6 +1039,13 @@ export interface ContinuousAbility extends AbilityBase {
    */
   preventsAttackOnFaction?: {
     player: PlayerScope;
+    /**
+     * Whose attacks are stopped. Omitted: every player but the defender ("Your
+     * opponents cannot attack your faction"). `"opponent"`: only the one
+     * opponent the block selected (MP 2) — "Your opponent cannot attack your
+     * faction".
+     */
+    attacker?: "opponent";
     /**
      * Only attacking parties whose every member matches this selector are
      * stopped (candidate bound to `{ type: "selected", id: "__candidate" }`).
@@ -1243,14 +1255,15 @@ export interface ContinuousAbility extends AbilityBase {
   destroysSource?: boolean;
 
   /**
-   * While the source is in play (and `condition` holds), the two players
-   * switch seats and each is in control of the other's side: control of every
-   * card in play — both factions included — passes to the other player
+   * While the source is in play (and `condition` holds), "both players" — its
+   * controller and the one opponent it selected (MP 3, MPX-swap) — switch
+   * seats and each is in control of the other's side: control of every
+   * card of theirs in play — both factions included — passes to the other player
    * (`GameState.seatSwap`; RULES.md §12 "Seat swap"). Hands, decks, discard
    * piles, voids and the removed-from-game zone stay with their owners, and a
    * faction at 0 influence still costs its *owner* the game (CR §102.1), so
-   * "the owner of the winning deck wins". An odd number of live sources leaves
-   * the seats swapped; an even number cancels out. Emergency Obfuscation.
+   * "the owner of the winning deck wins". An odd number of live sources naming
+   * the same pair leaves them swapped; an even number cancels out. Emergency Obfuscation.
    */
   swapsSides?: boolean;
 }

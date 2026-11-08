@@ -389,6 +389,9 @@ export interface PendingChooseNumberChoice {
  *   and again when its player is eliminated or control of the card changes (RQ-mp-10). Written to
  *   `CardInstance.boundOpponents`.
  * - `createdRecord`: the opponent of a lasting record a block created, chosen again after its player was eliminated.
+ * - `matchOpponent`: the opponent a faction's setup rule names (The Union of Unextraordinary Miners — MONEY FOR
+ *   NOTHING), selected by `playerId` as setup begins to follow it (MP 2); written to the `chooseMatchOpponent`
+ *   setup phase's `matchOpponents`.
  * Answered with `{ kind: "choosePlayer", playerId }`.
  */
 export interface PendingChoosePlayerChoice {
@@ -404,7 +407,8 @@ export interface PendingChoosePlayerChoice {
     | { type: "chosenPlayer"; id: string }
     | { type: "lasting" }
     | { type: "replacementOpponent" }
-    | { type: "createdRecord"; list: string; recordId: string };
+    | { type: "createdRecord"; list: string; recordId: string }
+    | { type: "matchOpponent" };
   /** The effects that continue once it is answered (`blockOpponent`, `chosenPlayer`), run in `context`. */
   effects?: Effect[];
   context?: ResolutionContext;

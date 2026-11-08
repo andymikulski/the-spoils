@@ -61,15 +61,6 @@ export interface FactionGameSetupOptions {
    */
   startingResourceX?: Record<PlayerId, number>;
   /**
-   * The opponent a faction with `setup.startingResources.matchOpponentCount`
-   * (The Union of Unextraordinary Miners — MONEY FOR NOTHING: "Your opponent
-   * starts with ... enough staple resources so that both players have the same
-   * number") makes the match with, per such player. The player chooses it before
-   * the game begins (MP 2): required when that player has two or more
-   * opponents, implied (and ignored) when there is one.
-   */
-  startingResourceOpponent?: Record<PlayerId, PlayerId>;
-  /**
    * Let a player pick *which* staples their faction starts with in play,
    * when their deck runs more than one kind (most factions — "find 2 staple
    * resources"). Adds a `chooseStartingResources` setup phase before the
@@ -717,29 +708,101 @@ export function createFactionGame(
   const engine = new SpoilsEngine(normalizedDefinitions, state, undefined, options.cardCatalog);
   if (options.createdAbility) engine.applyCreatedFactionAbility(options.createdAbility);
 
-  // MONEY FOR NOTHING's "your opponent" is the one opponent its controller
-  // chooses before the game begins (MP 2); with a single opponent it is that player.
-  const matchOpponents: Record<PlayerId, PlayerId> = {};
-  players.forEach((player, seat) => {
-    if (!resolved[seat]!.factionDefinition.faction!.setup.startingResources.matchOpponentCount) return;
-    const opponents = engine.getOpponents(player.id);
-    if (opponents.length < 2) return;
-    const chosen = options.startingResourceOpponent?.[player.id];
-    assert(
-      chosen !== undefined && opponents.includes(chosen),
-      `Player '${player.id}' must choose which opponent starts with matching resources (startingResourceOpponent).`
-    );
-    matchOpponents[player.id] = chosen;
-  });
+  // MONEY FOR NOTHING's "your opponent" is selected by its controller as the starting resources step begins
+  // (MP 2, MPX-select (2)): each such player with two or more opponents is asked before any starting resource is
+  // placed, clockwise from the first player; with a single opponent it is that player and nobody is asked.
+  const startingOptions: StartingResourceOptions = {
+    chooseStartingResources: options.chooseStartingResources === true,
+    ...(options.startingResourceX ? { startingResourceX: options.startingResourceX } : {})
+  };
+  const askers = engine
+    .getPlayersInSeatOrder(firstPlayerId)
+    .filter(playerId => needsMatchOpponent(engine, playerId));
+  if (askers.length > 0) {
+    state.setup = {
+      phase: "chooseMatchOpponent",
+      order: askers,
+      currentIndex: 0,
+      matchOpponents: {},
+      ...(startingOptions.chooseStartingResources ? { chooseStartingResources: true } : {}),
+      ...(startingOptions.startingResourceX ? { startingResourceX: startingOptions.startingResourceX } : {})
+    };
+    promptMatchOpponent(engine, askers[0]!);
+    return engine;
+  }
+
+  placeStartingResources(engine, startingOptions, {});
+  return engine;
+}
+
+/** The setup options the starting-resources step needs once any opponent selections are in. */
+interface StartingResourceOptions {
+  chooseStartingResources: boolean;
+  startingResourceX?: Record<PlayerId, number>;
+}
+
+/** Whether `playerId`'s faction names "your opponent" in its starting resources and has two or more opponents to choose from. */
+function needsMatchOpponent(engine: SpoilsEngine, playerId: PlayerId): boolean {
+  return (
+    !!engine.getFactionDefinition(playerId)?.setup.startingResources.matchOpponentCount &&
+    engine.getOpponents(playerId).length >= 2
+  );
+}
+
+function promptMatchOpponent(engine: SpoilsEngine, playerId: PlayerId): void {
+  engine.state.pendingChoice = {
+    kind: "choosePlayer",
+    id: `matchOpponent_${playerId}`,
+    playerId,
+    candidates: engine.getOpponents(playerId),
+    sourceId: engine.state.players[playerId].factionId!,
+    bind: { type: "matchOpponent" }
+  };
+}
+
+/**
+ * A `matchOpponent` answer: `chosen` is `playerId`'s opponent for MONEY FOR NOTHING. Asks the next player who has a
+ * selection to make, or goes on to place the starting resources once the last one is in.
+ */
+export function answerMatchOpponent(engine: SpoilsEngine, playerId: PlayerId, chosen: PlayerId): void {
+  const setup = engine.state.setup;
+  assert(setup.phase === "chooseMatchOpponent", "No opponent selection is being made.");
+  assert(setup.order[setup.currentIndex] === playerId, "It is not this player's opponent selection.");
+  setup.matchOpponents[playerId] = chosen;
+  setup.currentIndex++;
+  if (setup.currentIndex < setup.order.length) {
+    promptMatchOpponent(engine, setup.order[setup.currentIndex]!);
+    return;
+  }
+  placeStartingResources(
+    engine,
+    {
+      chooseStartingResources: setup.chooseStartingResources === true,
+      ...(setup.startingResourceX ? { startingResourceX: setup.startingResourceX } : {})
+    },
+    setup.matchOpponents
+  );
+}
+
+/**
+ * The starting resources step (CR 601.1b): every player's starting resources go in play, clockwise from the first
+ * player, then the rest of setup runs (`finishFactionSetup`) — directly when no player has a staple choice, or once the
+ * last `chooseStartingResources` action is answered.
+ */
+function placeStartingResources(
+  engine: SpoilsEngine,
+  options: StartingResourceOptions,
+  matchOpponents: Record<PlayerId, PlayerId>
+): void {
+  const state = engine.state;
   const matchOpponentsField = Object.keys(matchOpponents).length > 0 ? { matchOpponents } : {};
 
   // Prompts and placements run clockwise from the first player.
-  const clockwise = engine.getPlayersInSeatOrder(firstPlayerId);
+  const clockwise = engine.getPlayersInSeatOrder(state.activePlayerId);
 
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
-  players.forEach((player, seat) => {
-    const playerId = player.id;
-    const rule = resolved[seat]!.factionDefinition.faction!.setup.startingResources;
+  for (const playerId of state.seats) {
+    const rule = engine.getFactionDefinition(playerId)!.setup.startingResources;
     const chosenX = options.startingResourceX?.[playerId];
     const choiceCount = options.chooseStartingResources
       ? stapleChoiceCountFor(engine, playerId, rule, chosenX)
@@ -749,7 +812,7 @@ export function createFactionGame(
       // This player picks which staples they start with — deferred to the
       // `chooseStartingResources` phase below.
       choosers.push({ playerId, count: choiceCount });
-      return;
+      continue;
     }
 
     // No real choice (one staple kind, or a name-pinned faction) — place the
@@ -757,11 +820,11 @@ export function createFactionGame(
     for (const pick of chooseStartingResources(engine, playerId, rule, chosenX)) {
       moveSetupCardToPlay(state, playerId, pick.cardId, pick.faceDown);
     }
-  });
+  }
 
   if (choosers.length === 0) {
-    finishFactionSetup(engine, options.chooseStartingResources === true, matchOpponents);
-    return engine;
+    finishFactionSetup(engine, options.chooseStartingResources, matchOpponents);
+    return;
   }
 
   // Hand off to the interactive phase: each `order` seat dispatches a
@@ -781,8 +844,6 @@ export function createFactionGame(
     ...(options.chooseStartingResources ? { askStartingDrawSearch: true } : {}),
     ...matchOpponentsField
   };
-
-  return engine;
 }
 
 /** A two-seat game: `createFactionGame` with `playerA` in the first seat and `playerB` in the second. */

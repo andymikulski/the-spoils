@@ -19,6 +19,12 @@ export function namesOpponent(node: unknown): boolean {
   if (node && typeof node === "object") {
     // "Both players" (MP 3) is the controller and the block's opponent.
     if ((node as Record<string, unknown>).type === "forEachPlayer" && (node as Record<string, unknown>).players === "pair") return true;
+    // "At the start of your opponent's next turn": the delayed effect names the block's opponent in its `when`.
+    // Singular forms spelled as enum values: "your opponent cannot pick this card", "your opponent must pay ... to use a
+    // character's ability".
+    if ((node as Record<string, unknown>).restriction === "cannotBePickedByOpponent") return true;
+    if ((node as Record<string, unknown>).scope === "chosenOpponentCharacters") return true;
+    if ((node as Record<string, unknown>).type === "scheduleEffect" && (node as Record<string, unknown>).when === "startOfOpponentNextTurn") return true;
     for (const [key, value] of Object.entries(node)) {
       if (NOT_A_PLAYER_WORD.has(key)) continue;
       if (namesOpponent(value)) return true;
@@ -98,9 +104,14 @@ function stripEventTests(condition: unknown): unknown {
   return condition;
 }
 
-/** Continuous flags that are an implicit "your opponent" with no player word of their own. */
+/**
+ * Continuous flags that are an implicit "your opponent" with no player word of their own: `canUseOpponentAbilities`,
+ * and `swapsSides` ("both players switch seats": the controller and the block's opponent, MP 3).
+ */
 function continuousFlagNamesOpponent(ability: AbilityDefinition): boolean {
-  return ability.type === "continuous" && !!(ability as unknown as Node).canUseOpponentAbilities;
+  if (ability.type !== "continuous") return false;
+  const flags = ability as unknown as Node;
+  return !!flags.canUseOpponentAbilities || !!flags.swapsSides;
 }
 
 /** True when this ability's own text says "your opponent" (a player word `"opponent"`, outside the event tests of a trigger). */

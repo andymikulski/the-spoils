@@ -17,7 +17,7 @@ describe("driver setup at several seats", () => {
         assert.deepEqual(engine.getSeats(), setup.players.map(player => player.id), `seed ${seed}: seats are the players in order`);
         const phase = engine.state.setup.phase;
         assert.ok(
-          phase === "chooseStartingResources" || phase === "chooseFirstPlayer" || phase === "mulligan" || phase === "complete",
+          phase === "chooseMatchOpponent" || phase === "chooseStartingResources" || phase === "chooseFirstPlayer" || phase === "mulligan" || phase === "complete",
           `seed ${seed}: setup is at a real step (${phase})`
         );
         if (setup.firstPlayerId !== undefined) {
@@ -26,21 +26,21 @@ describe("driver setup at several seats", () => {
       }
     });
 
-    test(`${seats} seats: a Union of Unextraordinary Miners seat names the opponent it matches`, () => {
+    test(`${seats} seats: a Union of Unextraordinary Miners seat is asked for the opponent it matches`, () => {
       assert.ok(union, "the Union is a playable catalog faction");
       for (let seed = 1; seed <= 10; seed++) {
         const setup = randomSetup(seed, { seats, factions: [undefined, union] });
-        const chosen = setup.startingResourceOpponent?.[setup.players[1]!.id];
-        assert.ok(chosen && chosen !== setup.players[1]!.id, `seed ${seed}: the Union chose another player`);
         const engine = createEngine(setup);
         assert.equal(engine.getSeats().length, seats);
+        const pending = engine.state.pendingChoice;
+        assert.ok(pending?.kind === "choosePlayer" && pending.bind.type === "matchOpponent", `seed ${seed}: setup asks for the Union's opponent`);
+        assert.equal(pending.playerId, setup.players[1]!.id);
       }
     });
   }
 
-  test("two seats: the Union has one opponent, so none is chosen", () => {
+  test("two seats: the Union has one opponent, so none is asked", () => {
     const setup = randomSetup(7, { seats: 2, factions: [union, undefined] });
-    assert.equal(setup.startingResourceOpponent, undefined, "with one opponent nothing is chosen");
-    createEngine(setup);
+    assert.equal(createEngine(setup).state.pendingChoice, undefined, "with one opponent nothing is asked");
   });
 });
