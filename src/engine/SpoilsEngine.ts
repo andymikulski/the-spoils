@@ -65,8 +65,8 @@ import type {
   GameStateSnapshot,
   Keyword,
   NumberExpression,
+  ContextId,
   PendingChoice,
-  PendingEffectFrame,
   PlayerId,
   PlayerRef,
   PlayerState,
@@ -107,6 +107,8 @@ import {
 import { cardTextToPlain } from "../cardText.js";
 import { buildCreatedAbility } from "./createdAbility.js";
 import { drawRandom, randomSeed } from "./rng.js";
+import { StateMap, StateSet, emptyEngineMemory, normalizeEngineMemory } from "./engineMemory.js";
+import { ContextTable, FrameStack, type EffectFrame } from "./effectFrames.js";
 import type {
   DeclarationRequirement,
   PickStep,
@@ -394,7 +396,16 @@ export class SpoilsEngine {
   readonly definitions: Record<CardDefinitionId, CardDefinition>;
   readonly state: GameState;
 
-  readonly immediateQueue: TriggerResolution[] = [];
+  /** The resolution contexts parked frames and the open choice refer to (`EngineMemory.contexts`). */
+  private readonly contextTable = new ContextTable(() => this.state.engineMemory);
+
+  /** The effect lists parked on a player's choice (`GameState.pendingEffectFrames`), read and written with their contexts attached. */
+  private readonly frames = new FrameStack(() => this.state, this.contextTable);
+
+  /** The triggers waiting to resolve (`EngineMemory.immediateQueue`); they live in the game state, so a save carries them. */
+  get immediateQueue(): TriggerResolution[] {
+    return this.state.engineMemory.immediateQueue;
+  }
 
   /**
    * Event batches delay triggered-ability execution until a simultaneous group
@@ -448,10 +459,7 @@ export class SpoilsEngine {
    * from the source of that destruction (CR 506.6). `last` is the source(s) of
    * the most recent damage. Starts afresh whenever the card holds no damage.
    */
-  private readonly damageSources = new Map<
-    CardInstanceId,
-    { bySource: Map<string, number>; last: Set<string> }
-  >();
+  private readonly damageSources = new StateMap(() => this.state.engineMemory.damageSources);
 
   /** The card the state check is destroying because of lethal damage right now; the source of that destruction is whoever dealt the last damage. */
   private destroyingByLethalDamage: CardInstanceId | undefined;
@@ -549,10 +557,20 @@ export class SpoilsEngine {
    * (e.g. a state-based check with no preceding effect), which never
    * satisfies a scoped `by: "self" | "opponent"`.
    */
-  private currentCause: PlayerId | undefined;
+  private get currentCause(): PlayerId | undefined {
+    return this.state.engineMemory.currentCause;
+  }
+  private set currentCause(value: PlayerId | undefined) {
+    this.state.engineMemory.currentCause = value;
+  }
 
   /** The card whose effect is driving `currentCause`, when there is one. Read for `replaces.bySource`. */
-  private currentCauseSourceId: CardInstanceId | undefined;
+  private get currentCauseSourceId(): CardInstanceId | undefined {
+    return this.state.engineMemory.currentCauseSourceId;
+  }
+  private set currentCauseSourceId(value: CardInstanceId | undefined) {
+    this.state.engineMemory.currentCauseSourceId = value;
+  }
 
   /**
    * Per-card "who last dealt it damage" — set while battle damage is
@@ -562,7 +580,7 @@ export class SpoilsEngine {
    * the attacker/blocker that dealt it. Non-battle `dealDamage` is already
    * covered by the `resolveEffect` cause hook.
    */
-  private readonly lethalDamageCause = new Map<CardInstanceId, PlayerId>();
+  private readonly lethalDamageCause = new StateMap(() => this.state.engineMemory.lethalDamageCause);
   /**
    * The card whose destruction (by lethal BATTLE damage) is being checked
    * for replacements right now — lets the `destroyedByBattleDamage`
@@ -577,7 +595,7 @@ export class SpoilsEngine {
    */
   private followingEffect: Effect | undefined;
   /** Cards the state check destroyed because of lethal damage; cleared when a `dealDamage` effect next targets the card (`destroyedByDamage`). */
-  private readonly destroyedByDamage = new Set<CardInstanceId>();
+  private readonly destroyedByDamage = new StateSet(() => this.state.engineMemory.destroyedByDamage);
 
   /**
    * Snapshot of a card's `attachedTo` / `linkedTargets` taken the instant it
@@ -609,7 +627,7 @@ export class SpoilsEngine {
    * with less strength than that character had" (Gosche's Restoration
    * Fortress), whose self-buffs no longer apply once it has left.
    */
-  private readonly lastKnownCounters = new Map<CardInstanceId, Record<string, number>>();
+  private readonly lastKnownCounters = new StateMap(() => this.state.engineMemory.lastKnownCounters);
 
   /**
    * Counters on `cardId` for a rules read: the live counters while it is in
@@ -631,7 +649,7 @@ export class SpoilsEngine {
     return card?.counters?.[counter] ?? 0;
   }
 
-  private readonly lastKnownStats = new Map<CardInstanceId, Record<"strength" | "life" | "speed" | "structure", number>>();
+  private readonly lastKnownStats = new StateMap(() => this.state.engineMemory.lastKnownStats);
 
   /**
    * Who controlled a card in play at the instant it left (CR last-known
@@ -641,7 +659,7 @@ export class SpoilsEngine {
    * Gladhander) would otherwise see the owner. Forgotten when the card enters
    * play again.
    */
-  private readonly lastKnownController = new Map<CardInstanceId, PlayerId>();
+  private readonly lastKnownController = new StateMap(() => this.state.engineMemory.lastKnownController);
 
   /**
    * Last-known information for token instances that have ceased to exist.
@@ -656,7 +674,7 @@ export class SpoilsEngine {
    * whole game rather than per-`perform()`, since a queued trigger can
    * resolve in a later action.
    */
-  private readonly departedTokens = new Map<CardInstanceId, CardInstance>();
+  private readonly departedTokens = new StateMap(() => this.state.engineMemory.departedTokens);
 
   /**
    * Cards whose `faceDown` flag a caller cleared *before* the `moveCard`
@@ -672,13 +690,13 @@ export class SpoilsEngine {
    * choice answers continuing it). The UNIQUE rule treats a removed *new*
    * copy as never having entered play (user ruling Q53 follow-up).
    */
-  private readonly recentlyEntered = new Set<CardInstanceId>();
+  private readonly recentlyEntered = new StateSet(() => this.state.engineMemory.recentlyEntered);
   /**
    * A new UNIQUE copy being removed by the rule: its departure (destroyed /
    * leaves play) raises no triggers — its own or anyone else's — because it
    * never entered play.
    */
-  private readonly silentDepartures = new Set<CardInstanceId>();
+  private readonly silentDepartures = new StateSet(() => this.state.engineMemory.silentDepartures);
   /**
    * The copies a `uniqueSurvivor` answer is destroying right now: they no
    * longer count as controlled copies, so destroying the first of several
@@ -690,7 +708,7 @@ export class SpoilsEngine {
    * effect's source. Unique does not try to destroy such a copy again while
    * the source is still there (CR 507.5b).
    */
-  private readonly uniquePrevented = new Map<CardInstanceId, { cardId?: CardInstanceId; runtimeId?: string }>();
+  private readonly uniquePrevented = new StateMap(() => this.state.engineMemory.uniquePrevented);
   /** The source of the replacement that most recently took over an event in `applyReplacement`. */
   private lastReplacer: { cardId?: CardInstanceId; runtimeId?: string } | undefined;
 
@@ -797,6 +815,7 @@ export class SpoilsEngine {
 
     // Normalize partially-specified states (test fixtures, hand-built saves).
     this.state.responseStack ??= [];
+    this.state.engineMemory = normalizeEngineMemory(this.state.engineMemory);
     this.state.gameLog ??= [];
     this.state.setup ??= { phase: "complete" };
     this.state.started ??= true;
@@ -872,12 +891,45 @@ export class SpoilsEngine {
   /** `perform` for an action this engine already owns (a copy it made, or one it built itself). */
   private performOwned(action: GameAction): void {
     this.readMemo = undefined;
+    this.acting = true;
     try {
       this.performAndSettle(action);
     } catch (error) {
       if (!(error instanceof EndlessLoopError)) throw error;
       this.endGameAsEndlessLoop();
+    } finally {
+      this.acting = false;
+      this.settleParked();
     }
+  }
+
+  /** True while `perform` runs. */
+  private acting = false;
+
+  /**
+   * Run when an action ends: the open choice's `context` becomes a snapshot of the context the engine keeps for it
+   * (`contextId`, so the choice and the parked frames of its resolution share one context by id, not by object), and
+   * contexts nothing refers to any more are dropped.
+   */
+  private settleParked(): void {
+    const keep = this.frames.contextIds();
+    if (this.state.pendingCoinFlip) keep.add(this.state.pendingCoinFlip.contextId);
+    const choice = this.state.pendingChoice as { kind: string; context?: ResolutionContext; contextId?: ContextId } | undefined;
+    // A trigger's `selectTargets` prompt carries a private copy of the queued trigger's context and answers into the queue.
+    if (choice?.context && choice.kind !== "selectTargets") {
+      const held = this.contextTable.find(choice.contextId);
+      const id = held && choice.contextId !== undefined ? choice.contextId : this.contextTable.idOf(choice.context);
+      choice.contextId = id;
+      choice.context = structuredClone(this.contextTable.get(id));
+      keep.add(id);
+    }
+    this.contextTable.prune(keep);
+  }
+
+  /** `pending` with its `context` the live one the engine keeps under `contextId`, the context an answer is written into. */
+  private liveChoice<T extends PendingChoice>(pending: T): T {
+    const held = this.contextTable.find((pending as { contextId?: ContextId }).contextId);
+    return held ? { ...pending, context: held } : pending;
   }
 
   /**
@@ -896,7 +948,6 @@ export class SpoilsEngine {
    */
   private endGameAsEndlessLoop(): void {
     this.immediateQueue.splice(0);
-    this.queueGuard = undefined;
     this.eventBatchDepth = 0;
     this.unitStack.length = 0;
     delete this.state.pendingLoss;
@@ -989,6 +1040,11 @@ export class SpoilsEngine {
     }
     this.beingDeployedId = undefined;
     this.costAnswers = {};
+    // Where the effect list being run stands is only meaningful while it runs, never from one action to the next.
+    this.runningFrame = undefined;
+    this.followingEffect = undefined;
+    this.announcedSearch = undefined;
+    this.retrySearchFrame = undefined;
     this.departedLinks.clear();
     this.departedAbilityGrants.clear();
     this.faceDownDeparture.clear();
@@ -1400,7 +1456,7 @@ export class SpoilsEngine {
       kind: described.kind,
       message: described.message,
       ...(redacted ? { redacted } : {}),
-      event
+      event: structuredClone(event)
     });
   }
 
@@ -2857,7 +2913,7 @@ export class SpoilsEngine {
    * face-down card flipped up, ...), read when `cardEnteredPlay` is emitted
    * so the event can report where the card came from (`from`).
    */
-  private enterOrigin = new Map<CardInstanceId, Zone>();
+  private readonly enterOrigin = new StateMap(() => this.state.engineMemory.enterOrigin);
 
   /**
    * Hand cards of `playerId` that offer "reveal this card as you are playing
@@ -2966,6 +3022,7 @@ export class SpoilsEngine {
       playerId: this.state.activePlayerId
     });
     this.completeTurnStart();
+    if (!this.acting) this.settleParked();
   }
 
   /**
@@ -3543,19 +3600,19 @@ export class SpoilsEngine {
     // Judged now, not when the trigger was queued: a Knitting Coalition may have come into play since.
     const choices = this.getDevelopChoices(playerId);
     const left = uses ?? this.developsAllowed(playerId);
-    const again: Effect[] = left > 1 ? [{ type: "developRule", remaining: left - 1 }] : [];
+    const again = (): Effect[] => (left > 1 ? [{ type: "developRule", remaining: left - 1 }] : []);
 
     const options: EffectOption[] = [];
     for (const choice of choices) {
       if (choice.type === "draw") {
         options.push({
           label: `Draw ${choice.count} card${choice.count === 1 ? "" : "s"}`,
-          effects: [{ type: "developRule", draw: choice.count }, ...again]
+          effects: [{ type: "developRule", draw: choice.count }, ...again()]
         });
       } else if (this.requirePlayer(playerId).hand.length > 0) {
         options.push({
           label: choice.count === 1 ? "Play a resource" : `Play ${choice.count} resources`,
-          effects: [...Array.from({ length: choice.count }, (): Effect => ({ type: "playResource" })), ...again]
+          effects: [...Array.from({ length: choice.count }, (): Effect => ({ type: "playResource" })), ...again()]
         });
       }
     }
@@ -3645,7 +3702,7 @@ export class SpoilsEngine {
         event: "turnStarted",
         effects: [rule.effect]
       },
-      context: { sourceId: factionId, controllerId: playerId, abilityId: rule.id, event, selected: {} },
+      context: { sourceId: factionId, controllerId: playerId, abilityId: rule.id, event: structuredClone(event), selected: {} },
       batchId
     }));
   }
@@ -3667,7 +3724,7 @@ export class SpoilsEngine {
       return {
         sourceId: factionId,
         ability: { type: "triggered", id, name: "End of turn", event: "turnEnding", effects: [effect] },
-        context: { sourceId: factionId, controllerId: playerId, abilityId: id, event, selected: {} },
+        context: { sourceId: factionId, controllerId: playerId, abilityId: id, event: structuredClone(event), selected: {} },
         batchId
       };
     });
@@ -7168,7 +7225,7 @@ export class SpoilsEngine {
     // "...and terminate your opponent's card" rides on the deploy actually
     // happening (Q22); it runs when the frames resume.
     if (after) {
-      this.state.pendingEffectFrames.push({
+      this.frames.push({
         effects: after.effects,
         index: 0,
         context: after.context
@@ -7553,7 +7610,7 @@ export class SpoilsEngine {
     if (held) {
       // The coin was lost and the flipper holds a "may reflip" replacement (Two-Headed Coin): offer it before the pick.
       this.state.pendingCoinFlip = {
-        context,
+        contextId: this.contextTable.idOf(context),
         flipperId: held.flipperId,
         winEffects: [],
         loseEffects: [],
@@ -8770,7 +8827,7 @@ export class SpoilsEngine {
     if (!window || window.phase !== "resolving") return;
     // Still mid-resolution somewhere up the call chain — don't act yet.
     if (this.state.pendingChoice) return;
-    if (this.state.pendingEffectFrames.length > 0) return;
+    if (this.frames.length > 0) return;
 
     if (this.responseStack.length > 0) {
       const top = this.responseStack[this.responseStack.length - 1];
@@ -8831,7 +8888,7 @@ export class SpoilsEngine {
     item.context.unitId = this.newUnitId();
     this.announceDeckSearches(item.context);
     if (this.state.pendingChoice) {
-      this.state.pendingEffectFrames.push({
+      this.frames.push({
         effects: item.effects,
         index: 0,
         context: item.context,
@@ -9011,9 +9068,9 @@ export class SpoilsEngine {
   /** The search effect whose `deckSearched` announcement was already answered (see `chooserSelectsTarget`). */
   private announcedSearch?: Effect;
   /** Set by a search effect that paused on its own announcement: the running frame re-runs it (on top of its own remainder). */
-  private retrySearchFrame?: PendingEffectFrame;
+  private retrySearchFrame?: EffectFrame;
 
-  private runEffectFrame(frame: PendingEffectFrame): boolean {
+  private runEffectFrame(frame: EffectFrame): boolean {
     // A frame that starts no unit of its own (a copy's effects, scheduled effects at the top level) belongs to the unit
     // running now.
     frame.context.unitId ??= this.unitStack[this.unitStack.length - 1] ?? this.newUnitId();
@@ -9029,7 +9086,7 @@ export class SpoilsEngine {
   private unitIsLive(unitId: string): boolean {
     return (
       this.unitStack.includes(unitId) ||
-      this.state.pendingEffectFrames.some(frame => frame.context.unitId === unitId)
+      this.frames.some(frame => frame.context.unitId === unitId)
     );
   }
 
@@ -9112,7 +9169,7 @@ export class SpoilsEngine {
     }
   }
 
-  private runEffectFrameEffects(frame: PendingEffectFrame): boolean {
+  private runEffectFrameEffects(frame: EffectFrame): boolean {
     if (frame.recordPickZones) {
       this.recordResolutionPickZones(frame.context);
       frame = { ...frame, recordPickZones: undefined };
@@ -9135,7 +9192,7 @@ export class SpoilsEngine {
         (current.type === "forEach" || current.type === "moveCard") &&
         JSON.stringify(current).includes('"to":"deck"');
       const totalBefore = intoDeck ? deckTotal() : 0;
-      if (frame.announcedEffect === current) {
+      if (frame.announcedIndex === i) {
         this.announcedSearch = current;
       }
       this.resolveEffect(frame.effects[i], frame.context);
@@ -9144,11 +9201,11 @@ export class SpoilsEngine {
       this.checkStateBasedActions();
 
       if (this.state.pendingChoice) {
-        this.state.pendingEffectFrames.push({ ...frame, index: i + 1 });
+        this.frames.push({ ...frame, index: i + 1 });
         if (this.retrySearchFrame) {
           // The search paused on its own announcement: run it again (with the
           // announcement marked answered) before the rest of this list.
-          this.state.pendingEffectFrames.push(this.retrySearchFrame);
+          this.frames.push(this.retrySearchFrame);
           this.retrySearchFrame = undefined;
         }
         return false;
@@ -9196,14 +9253,14 @@ export class SpoilsEngine {
    * follow-up effects (if any) have been pushed as a new frame.
    */
   private resumeEffectFrames(): void {
-    while (this.state.pendingEffectFrames.length > 0) {
-      const frame = this.state.pendingEffectFrames.pop()!;
+    while (this.frames.length > 0) {
+      const frame = this.frames.pop()!;
       const completed = this.runEffectFrame(frame);
       if (!completed) return;
     }
     // Every parked frame of the trigger that was resolving has run: the
     // triggers that were queued behind it may go on now.
-    this.queueGuard = undefined;
+    for (const queued of this.immediateQueue) delete queued.held;
 
     // Triggers queued behind the one that just finished (two copies of the
     // same card, SYS-62) are still waiting: carry on with them before the
@@ -9836,13 +9893,13 @@ export class SpoilsEngine {
           sourceId: card.id,
           controllerId: this.controllerAtEvent(event, card),
           abilityId: ability.id,
-          event,
+          event: structuredClone(event),
           selected:
             eventCardId === card.id && this.entrySelections[card.id]
               ? { ...this.entrySelections[card.id] }
               : {},
           ...(eventCardId === card.id && this.entryPickZones[card.id]
-            ? { pickZones: this.entryPickZones[card.id] }
+            ? { pickZones: { ...this.entryPickZones[card.id] } }
             : {})
         };
 
@@ -10220,8 +10277,6 @@ export class SpoilsEngine {
    * the middle: they would prompt over the paused trigger's pick. Cleared when
    * `resumeEffectFrames` has run every parked frame.
    */
-  private queueGuard: Set<TriggerResolution> | undefined;
-
   private processImmediateQueue(): void {
     if (this.endlessLoopFound) return;
     // Triggers that re-trigger themselves through the effects they resolve
@@ -10263,7 +10318,7 @@ export class SpoilsEngine {
       // choice, it must stay at the head of the queue so resolvePendingChoice
       // can resume exactly here afterward.
       const trigger = this.immediateQueue[0];
-      if (this.queueGuard?.has(trigger)) return;
+      if (trigger.held) return;
 
       // CR §507.5 (Unique) is enforced immediately: a second copy that just
       // entered play makes its controller keep one BEFORE any queued trigger
@@ -10381,7 +10436,7 @@ export class SpoilsEngine {
       });
 
       if (!completed) {
-        this.queueGuard = new Set(this.immediateQueue);
+        for (const queued of this.immediateQueue) queued.held = true;
         return;
       }
     }
@@ -11968,9 +12023,8 @@ export class SpoilsEngine {
         out[key] = who === "none" ? "__none__" : { type: "player", id: who };
       }
     }
-    return out
-      ? { ...declaration, selector: out as unknown as CardSelector }
-      : declaration;
+    // A copy either way: the prompt holds it in the state next to the effect it came from.
+    return structuredClone(out ? { ...declaration, selector: out as unknown as CardSelector } : declaration);
   }
 
   private matchesSelector(
@@ -13061,6 +13115,10 @@ export class SpoilsEngine {
     // Drop `gameLog` before the deep clone — the probe never appends to it
     // and it grows unbounded over a game.
     const clone = structuredClone({ ...this.state, gameLog: [] });
+    // A rehearsal starts with none of the live game's memory (its waiting triggers are handed over by the callers that
+    // want them), except the contexts the parked frames and the open choice refer to.
+    const { contexts, nextContextId } = clone.engineMemory;
+    clone.engineMemory = { ...emptyEngineMemory(), contexts, nextContextId };
     // The clone draws from its own copy of rngState, so a rehearsal can never advance the real game's
     // stream. A caller-supplied random function (a scripted test stream) is shared state we cannot copy:
     // the rehearsal gets a fixed one, so it never eats the values the real payment is about to draw.
@@ -15358,15 +15416,15 @@ export class SpoilsEngine {
               context: nestedCtx(candidateIds[ci])
             });
             if (!done) {
-              const remainder = this.state.pendingEffectFrames.pop()!;
+              const remainder = this.frames.pop()!;
               for (let rj = candidateIds.length - 1; rj > ci; rj--) {
-                this.state.pendingEffectFrames.push({
+                this.frames.push({
                   effects: effect.effects,
                   index: 0,
                   context: nestedCtx(candidateIds[rj])
                 });
               }
-              this.state.pendingEffectFrames.push(remainder);
+              this.frames.push(remainder);
               return;
             }
           }
@@ -15388,14 +15446,14 @@ export class SpoilsEngine {
               // remaining candidates wait for the answer, then resume.
               if (this.state.pendingChoice) {
                 for (let rj = candidateIds.length - 1; rj > ci; rj--) {
-                  this.state.pendingEffectFrames.push({
+                  this.frames.push({
                     effects: effect.effects,
                     index: 0,
                     context: nestedCtx(candidateIds[rj])
                   });
                 }
                 if (ni + 1 < effect.effects.length) {
-                  this.state.pendingEffectFrames.push({
+                  this.frames.push({
                     effects: effect.effects,
                     index: ni + 1,
                     context: nestedCtx(candidateIds[ci])
@@ -15426,13 +15484,13 @@ export class SpoilsEngine {
             context: { ...context, selected: { ...context.selected } }
           });
           if (!done) {
-            const remainder = this.state.pendingEffectFrames.pop()!;
-            this.state.pendingEffectFrames.push({
+            const remainder = this.frames.pop()!;
+            this.frames.push({
               effects: [{ ...effect, maxPasses: maxPasses - pass - 1 }],
               index: 0,
               context
             });
-            this.state.pendingEffectFrames.push(remainder);
+            this.frames.push(remainder);
             return;
           }
         }
@@ -15889,7 +15947,7 @@ export class SpoilsEngine {
           // it set off): the rest of the branch waits for the answer instead
           // of overwriting it (two Milkshakes echoing one deploy, SYS-62).
           if (this.state.pendingChoice && n < branch.length - 1) {
-            this.state.pendingEffectFrames.push({
+            this.frames.push({
               effects: branch.slice(n + 1),
               index: 0,
               context
@@ -15928,7 +15986,7 @@ export class SpoilsEngine {
           if (this.selectorNamesZone(effect.declaration.selector, "deck") && !peeksTopOnly) {
             const authored = effect.effects.some(e => e.type === "shuffleDeck");
             const laterShuffle =
-              this.state.pendingEffectFrames.some(f =>
+              this.frames.some(f =>
                 JSON.stringify(f.effects.slice(f.index)).includes('"shuffleDeck"')
               ) ||
               (this.runningFrame !== undefined &&
@@ -16065,7 +16123,7 @@ export class SpoilsEngine {
               effects: [effect],
               index: 0,
               context,
-              announcedEffect: effect
+              announcedIndex: 0
             };
             return;
           }
@@ -16282,7 +16340,7 @@ export class SpoilsEngine {
             ...context,
             controllerId: order[pi]
           };
-          const framesBefore = this.state.pendingEffectFrames.length;
+          const framesBefore = this.frames.length;
           const done = this.runEffectFrame({
             effects: effect.effects,
             index: 0,
@@ -16294,15 +16352,15 @@ export class SpoilsEngine {
             // `retrySearchFrame`) on top of pendingEffectFrames; move them
             // above the still-to-go players so resume order is
             // [this player's remainder, next player, ...].
-            const remainder = this.state.pendingEffectFrames.splice(framesBefore);
+            const remainder = this.frames.splice(framesBefore);
             for (let rj = order.length - 1; rj > pi; rj--) {
-              this.state.pendingEffectFrames.push({
+              this.frames.push({
                 effects: effect.effects,
                 index: 0,
                 context: { ...context, controllerId: order[rj] }
               });
             }
-            this.state.pendingEffectFrames.push(...remainder);
+            this.frames.push(...remainder);
             return;
           }
         }
@@ -16547,7 +16605,7 @@ export class SpoilsEngine {
           const repl = this.findCoinFlipLossReplacement(flipper.id, context);
           if (repl) {
             this.state.pendingCoinFlip = {
-              context,
+              contextId: this.contextTable.idOf(context),
               flipperId: flipper.id,
               winEffects: structuredClone(effect.winEffects),
               loseEffects: structuredClone(effect.loseEffects),
@@ -16781,7 +16839,7 @@ export class SpoilsEngine {
     merged.__paidByFirst = pending.tallies[pending.players[0]] ?? 0;
     merged.__paidByOpponent = pending.tallies[pending.players[1]] ?? 0;
     for (const p of pending.players) merged[`paid:${p}`] = pending.tallies[p] ?? 0;
-    this.state.pendingEffectFrames.push({
+    this.frames.push({
       effects: pending.onEnd,
       index: 0,
       context: { ...pending.context, variables: merged }
@@ -17061,14 +17119,14 @@ export class SpoilsEngine {
     if (dealt.length === 0) return;
     let tally = this.damageSources.get(card.id);
     if (!tally || card.damage <= 0) {
-      tally = { bySource: new Map(), last: new Set() };
+      tally = { bySource: {}, last: [] };
       this.damageSources.set(card.id, tally);
     }
-    tally.last = new Set();
+    tally.last = [];
     for (const { sourceId, amount } of dealt) {
       const key = sourceId ?? "";
-      tally.bySource.set(key, (tally.bySource.get(key) ?? 0) + amount);
-      tally.last.add(key);
+      tally.bySource[key] = (tally.bySource[key] ?? 0) + amount;
+      if (!tally.last.includes(key)) tally.last.push(key);
     }
   }
 
@@ -17086,7 +17144,7 @@ export class SpoilsEngine {
     const card = this.state.cards[cardId];
     if (!card || card.damage <= 0) return;
     const tally = this.damageSources.get(cardId);
-    if (lethal && (!tally || tally.last.size === 0)) {
+    if (lethal && (!tally || tally.last.length === 0)) {
       // No record of who dealt it (damage the card was set up with): all of it.
       card.damage = 0;
       return;
@@ -17097,10 +17155,10 @@ export class SpoilsEngine {
         ? [destroyerId]
         : [];
     for (const key of sources) {
-      const dealt = Math.min(tally?.bySource.get(key) ?? 0, card.damage);
+      const dealt = Math.min(tally?.bySource[key] ?? 0, card.damage);
       if (dealt <= 0) continue;
       card.damage -= dealt;
-      tally!.bySource.set(key, 0);
+      tally!.bySource[key] = 0;
     }
     if (lethal) {
       // Still at or over its limit (the limit dropped since): it would re-die
@@ -18205,9 +18263,9 @@ export class SpoilsEngine {
     playerId: PlayerId,
     choice: Extract<GameAction, { type: "resolvePendingChoice" }>["choice"]
   ): void {
-    const pending = this.state.pendingChoice;
-
-    assert(pending, "There is no pending choice.");
+    const stored = this.state.pendingChoice;
+    assert(stored, "There is no pending choice.");
+    const pending = this.liveChoice(stored);
     assert(
       pending.kind === choice.kind,
       "This choice does not match the pending decision."
@@ -18598,7 +18656,7 @@ export class SpoilsEngine {
             const text = JSON.stringify(followUps);
             // A shuffle already authored after the search (a sibling effect of
             // the same ability) does the job; do not shuffle twice.
-            const laterShuffle = this.state.pendingEffectFrames.some(f =>
+            const laterShuffle = this.frames.some(f =>
               JSON.stringify(f.effects.slice(f.index)).includes('"shuffleDeck"')
             );
             if (!laterShuffle && !text.includes('"shuffleDeck"') && !text.includes('"to":"deck"')) {
@@ -18612,7 +18670,7 @@ export class SpoilsEngine {
             }
           }
         }
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: followUps,
           index: 0,
           context: pending.context
@@ -18654,7 +18712,7 @@ export class SpoilsEngine {
           } as GameAction);
           return;
         }
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: pending.options[choice.index].effects,
           index: 0,
           context: pending.context
@@ -18823,7 +18881,7 @@ export class SpoilsEngine {
               })()
             : pending.elseEffects;
 
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: branch,
           index: 0,
           context: pending.context
@@ -18897,7 +18955,7 @@ export class SpoilsEngine {
         // Run the option's effects, then re-open the menu (LIFO: push the
         // re-opener first so the option's effects finish — and any pause
         // resumes — before it fires).
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: [
             {
               type: "spendCountersMenu",
@@ -18910,7 +18968,7 @@ export class SpoilsEngine {
           index: 0,
           context: pending.context
         });
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: option.effects,
           index: 0,
           context: pending.context
@@ -18926,7 +18984,7 @@ export class SpoilsEngine {
         if (choice.pay && this.canPayWithReductions(pending.cost, payCtx)) {
           this.state.pendingChoice = undefined;
           this.payWithReductions(pending.cost, payCtx);
-          this.state.pendingEffectFrames.push({
+          this.frames.push({
             effects: pending.effects,
             index: 0,
             context: payCtx
@@ -18962,7 +19020,7 @@ export class SpoilsEngine {
         // The interrupted `playResource` carries on afterwards (CR 605.1c:
         // the resource still enters play) -- parked below anything the
         // reveal-deploy itself raises, and told this card's offer is made.
-        const carryOn: PendingEffectFrame = {
+        const carryOn: EffectFrame = {
           effects: [pending.effect],
           index: 0,
           context: {
@@ -18976,7 +19034,7 @@ export class SpoilsEngine {
 
         if (!choice.cardId) {
           this.state.pendingChoice = undefined;
-          this.state.pendingEffectFrames.push(carryOn);
+          this.frames.push(carryOn);
           this.resumeEffectFrames();
           if (!this.state.pendingChoice) this.processImmediateQueue();
           return;
@@ -19035,7 +19093,7 @@ export class SpoilsEngine {
         ) {
           carryOn.context = pending.context;
         }
-        this.state.pendingEffectFrames.push(carryOn);
+        this.frames.push(carryOn);
         // The deployed card resolves now, like any effect-made deploy; a
         // pause of its own (its enters-play prompt) holds the carry-on frame.
         if (this.resolveTopOfStack()) this.resumeEffectFrames();
@@ -19085,7 +19143,7 @@ export class SpoilsEngine {
         this.state.pendingChoice = undefined;
         if (pending.effects) {
           // Self-contained sub-list to run with the chosen number bound.
-          this.state.pendingEffectFrames.push({
+          this.frames.push({
             effects: pending.effects,
             index: 0,
             context: {
@@ -19105,15 +19163,13 @@ export class SpoilsEngine {
           // nested inside `forEachPlayer`, the outer ability frame is
           // re-parked on top of the frame that actually needs the value,
           // so a "top frame only" write would miss it.
-          for (const parked of this.state.pendingEffectFrames) {
-            parked.context = {
-              ...parked.context,
-              variables: {
-                ...parked.context.variables,
-                [pending.storeAs]: choice.value
-              }
-            };
-          }
+          this.frames.rewriteContexts(context => ({
+            ...context,
+            variables: {
+              ...context.variables,
+              [pending.storeAs]: choice.value
+            }
+          }));
         }
         this.resumeEffectFrames();
         return;
@@ -19642,6 +19698,7 @@ export class SpoilsEngine {
         );
         const cf = this.state.pendingCoinFlip;
         assert(cf, "No coin flip is waiting on a reflip decision.");
+        const cfContext = this.contextTable.get(cf.contextId);
 
         this.state.pendingChoice = undefined;
         this.state.pendingCoinFlip = undefined;
@@ -19665,9 +19722,9 @@ export class SpoilsEngine {
         // CR 506.5: each Coin applies to each lost flip, so a reflip that
         // loses again may use another Coin (the used one has left play).
         if (!won && rider.length > 0) {
-          const next = this.findCoinFlipLossReplacement(cf.flipperId, cf.context);
+          const next = this.findCoinFlipLossReplacement(cf.flipperId, cfContext);
           if (next) {
-            this.state.pendingEffectFrames.push({
+            this.frames.push({
               effects: rider,
               index: 0,
               context: replContext
@@ -19684,7 +19741,7 @@ export class SpoilsEngine {
               playerId: cf.flipperId,
               cost: structuredClone(next.cost),
               sourceId: next.sourceId,
-              flipSourceId: cf.context.sourceId,
+              flipSourceId: cfContext.sourceId,
               won: false
             };
             return;
@@ -19695,7 +19752,7 @@ export class SpoilsEngine {
         if (cf.then && cf.rollId !== undefined) {
           // A coin that sized a pick (Hammer Smash): the settled flip gives X, the rider runs, then the pick is asked.
           if (rider.length > 0) {
-            this.state.pendingEffectFrames.push({ effects: rider, index: 0, context: replContext });
+            this.frames.push({ effects: rider, index: 0, context: replContext });
           }
           const picks = cf.then;
           if (picks.kind === "selectDeployTargets") {
@@ -19707,16 +19764,16 @@ export class SpoilsEngine {
         }
         // LIFO: the coin-flip branch resolves, then the replacement's rider.
         if (rider.length > 0) {
-          this.state.pendingEffectFrames.push({
+          this.frames.push({
             effects: rider,
             index: 0,
             context: replContext
           });
         }
-        this.state.pendingEffectFrames.push({
+        this.frames.push({
           effects: won ? cf.winEffects : cf.loseEffects,
           index: 0,
-          context: cf.context
+          context: cfContext
         });
         this.resumeEffectFrames();
         return;
@@ -20615,7 +20672,7 @@ export class SpoilsEngine {
         affectedCardId: cardId,
         sourceId: pick.sourceId,
         abilityId: pick.abilityId,
-        original,
+        original: { ...original },
         cost: structuredClone(pick.optional.cost),
         effects: structuredClone(pick.effects),
         ...(runtime ? { selected: structuredClone(runtime.selected) } : {}),
@@ -21421,7 +21478,7 @@ export class SpoilsEngine {
   private turnWaveBlocked(): boolean {
     return !!(
       this.state.pendingChoice ||
-      this.state.pendingEffectFrames.length > 0 ||
+      this.frames.length > 0 ||
       this.immediateQueue.length > 0 ||
       this.state.responseWindow ||
       this.state.battle

@@ -8,6 +8,7 @@ import type {
   CardDefinitionId,
   CardInstanceId,
   CardType,
+  ContextId,
   Duration,
   Keyword,
   ModifierId,
@@ -17,7 +18,7 @@ import type {
   Stat,
   Zone
 } from "./ids.js";
-import type { ResolutionContext, StackItem } from "./resolution.js";
+import type { ResolutionContext, StackItem, TriggerResolution } from "./resolution.js";
 import type { GameLogEntry } from "./log.js";
 import type { GameEvent } from "./events.js";
 import type { PendingChoice, ReplacementTrigger } from "./choices.js";
@@ -554,12 +555,84 @@ export interface RuntimeCostReduction {
 export interface PendingEffectFrame {
   effects: Effect[];
   index: number;
-  context: ResolutionContext;
-  finishStackItem?: StackItem;
+  /** The resolution context this list runs in: a key of `EngineMemory.contexts`. Frames of one resolution name the same one. */
+  contextId: ContextId;
+  /**
+   * The stack item being resolved, less what the frame already holds: its `effects` are this frame's `effects`, its
+   * `context` is the one `contextId` names.
+   */
+  finishStackItem?: Omit<StackItem, "context" | "effects">;
   /** Record where each pick is (`context.pickZones`) when this frame starts running (a stack item's resolution). */
   recordPickZones?: boolean;
-  /** The effect at `index` is a deck search whose `deckSearched` announcement was already answered. */
-  announcedEffect?: Effect;
+  /** Index (into `effects`) of a deck search whose `deckSearched` announcement was already answered. */
+  announcedIndex?: number;
+}
+
+/**
+ * What the engine remembers between `perform()` calls that no other `GameState` field holds: the triggers waiting
+ * behind an open choice, last-known information about cards that left play, and the bookkeeping of the action a
+ * choice interrupted. It is part of the state (and of a save) so a game restored at any point, mid-resolution
+ * included, carries on exactly as the original would. Every record is plain JSON keyed by id.
+ *
+ * Most of it exists only for the engine's own reads and is never inspected by a client. Everything here is
+ * derived from the game's history; none of it is a rule input a client could set.
+ */
+export interface EngineMemory {
+  /**
+   * Triggered abilities waiting to resolve, in order, including the ones queued behind a trigger that paused on a
+   * choice (and so behind an `orderTriggers` / `selectTargets` prompt). The head is the one a choice is about.
+   */
+  immediateQueue: TriggerResolution[];
+
+  /** Cards that entered play during the current top-level action (and the choice answers continuing it). */
+  recentlyEntered: Record<CardInstanceId, true>;
+
+  /** New UNIQUE copies the rule is removing: their departure raises no triggers. Kept while a replacement paused for a choice. */
+  silentDepartures: Record<CardInstanceId, true>;
+
+  /** Extra copies whose Unique destruction an effect replaced, with that effect's source (CR 507.5b). */
+  uniquePrevented: Record<CardInstanceId, { cardId?: CardInstanceId; runtimeId?: string }>;
+
+  /** The zone each card being deployed came from, kept until it resolves into play. */
+  enterOrigin: Record<CardInstanceId, Zone>;
+
+  /** Last-known counters of cards that left play (CR last-known information); forgotten when the card re-enters play. */
+  lastKnownCounters: Record<CardInstanceId, Record<string, number>>;
+
+  /** Last-known stats of cards that left play. */
+  lastKnownStats: Record<CardInstanceId, Record<"strength" | "life" | "speed" | "structure", number>>;
+
+  /** Who controlled a card in play at the instant it left; forgotten when the card re-enters play. */
+  lastKnownController: Record<CardInstanceId, PlayerId>;
+
+  /** Tokens that ceased to exist, as they were: the event about their departure is emitted after they are gone. */
+  departedTokens: Record<CardInstanceId, CardInstance>;
+
+  /** Damage each card has taken, tallied per source (key `""` when unknown); `last` is the source(s) of the latest damage (CR 506.6). */
+  damageSources: Record<CardInstanceId, { bySource: Record<string, number>; last: string[] }>;
+
+  /** Cards the state check destroyed because of lethal damage; cleared when a `dealDamage` effect next targets the card. */
+  destroyedByDamage: Record<CardInstanceId, true>;
+
+  /** Per card, who last dealt it battle damage (read when it dies to lethal damage). */
+  lethalDamageCause: Record<CardInstanceId, PlayerId>;
+
+  /** The player causing the mutations running now (or last), read for `replaces.by`. */
+  currentCause?: PlayerId;
+
+  /** The card whose effect is driving `currentCause`, when there is one. */
+  currentCauseSourceId?: CardInstanceId;
+
+  /**
+   * The resolution contexts that parked effect frames and the open choice refer to, by id. A resolution's effect
+   * lists, the stack item they belong to and the choice they opened all read and write one context (an answer is
+   * written once and every later effect list sees it), so it is held here exactly once and the others name it:
+   * `PendingEffectFrame.contextId`, `PendingChoice.contextId`. No two entries share a nested object.
+   */
+  contexts: Record<ContextId, ResolutionContext>;
+
+  /** Counter behind the ids in `contexts`. */
+  nextContextId: number;
 }
 
 export interface BattleDamageAssignment {
@@ -1468,6 +1541,9 @@ export interface GameState {
   /** Suspended effect-list resumption points — see PendingEffectFrame. Only the top of the stack is "live." */
   pendingEffectFrames: PendingEffectFrame[];
 
+  /** What the engine carries from one `perform()` to the next besides the fields above — see EngineMemory. */
+  engineMemory: EngineMemory;
+
   battle?: BattleState;
 
   /** Set once a player's faction reaches 0 influence (or both do, for a draw). */
@@ -1515,7 +1591,8 @@ export interface GameState {
    * `replacementEffects`. On decline: run `loseEffects`.
    */
   pendingCoinFlip?: {
-    context: ResolutionContext;
+    /** The context the flip resolves in: a key of `EngineMemory.contexts`. */
+    contextId: ContextId;
     flipperId: PlayerId;
     winEffects: Effect[];
     loseEffects: Effect[];

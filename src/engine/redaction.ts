@@ -24,6 +24,7 @@ import type {
 import { logMessageFor, type GameLogEntry } from "../types/log.js";
 import type { PendingChoice } from "../types/choices.js";
 import type { CardDefinitionId, CardInstanceId, PlayerId } from "../types/ids.js";
+import { emptyEngineMemory } from "./engineMemory.js";
 
 /** A seated player, or a neutral onlooker with no hidden information of their own. */
 export type Viewer = PlayerId | "spectator";
@@ -193,7 +194,9 @@ export function redactStateFor(
     pendingReplacement: undefined,
     pendingCoinFlip: undefined,
     pendingAuction: undefined,
-    pendingPartition: undefined
+    pendingPartition: undefined,
+    // Waiting triggers' contexts and last-known card information: engine bookkeeping, never needed to draw the game.
+    engineMemory: emptyEngineMemory()
   };
 }
 

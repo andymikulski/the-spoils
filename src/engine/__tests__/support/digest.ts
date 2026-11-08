@@ -19,6 +19,14 @@ export const DIGEST_LENGTH = 16;
  *   informational lines, per-viewer redaction text). No rule reads it, so a change in log wording
  *   is not a change in rules behavior and must not invalidate recorded replays.
  *
+ * - `engineMemory`: what the engine carries between actions that no other field holds (waiting triggers,
+ *   last-known information about departed cards). It joined the state after the corpus was recorded, when it
+ *   was still engine-instance memory, so the recorded digests cannot cover it. It is derived from the actions
+ *   already digested, and anything in it that changes what a rule does shows up in the digest of the very next
+ *   step it affects. One part of it was in the recorded digests and stays covered: the resolution contexts of
+ *   the parked effect frames, which the recording held inline in each frame (and in each frame's stack item).
+ *   They are put back inline here, and the `contextId` that now names them is left out.
+ *
  * Multiplayer bookkeeping that carries no information at two seats (docs/MULTIPLAYER-PLAN.md,
  * "Replay digest"). Each is fully determined by the rest of the state when there are two players,
  * so leaving it out cannot hide a two-player behavior change:
@@ -33,13 +41,30 @@ export const DIGEST_LENGTH = 16;
  *   `winner` already records.
  */
 export function projectForDigest(state: GameState): Record<string, unknown> {
-  const { gameLog: _gameLog, seats: _seats, ...rules } = state;
+  const { gameLog: _gameLog, seats: _seats, engineMemory: _engineMemory, ...rules } = state;
   const players: Record<string, unknown> = {};
   for (const [id, player] of Object.entries(state.players)) {
     const { eliminated: _eliminated, ...rest } = player;
     players[id] = rest;
   }
   const projected: Record<string, unknown> = { ...rules, players };
+  projected.pendingEffectFrames = state.pendingEffectFrames.map(parked => {
+    const { contextId, finishStackItem, ...frame } = parked;
+    const context = state.engineMemory.contexts[contextId];
+    return {
+      ...frame,
+      context,
+      ...(finishStackItem ? { finishStackItem: { ...finishStackItem, effects: parked.effects, context } } : {})
+    };
+  });
+  if (state.pendingCoinFlip) {
+    const { contextId, ...flip } = state.pendingCoinFlip;
+    projected.pendingCoinFlip = { ...flip, context: state.engineMemory.contexts[contextId] };
+  }
+  if (state.pendingChoice && "contextId" in state.pendingChoice) {
+    const { contextId: _contextId, ...choice } = state.pendingChoice;
+    projected.pendingChoice = choice;
+  }
   if (state.responseWindow) {
     const { passed: _passed, resumeWith: _resumeWith, ...window } = state.responseWindow;
     projected.responseWindow = window;

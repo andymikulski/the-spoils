@@ -11,7 +11,7 @@
 // answered. This is the hook a future UI drives to render "it's your call"
 // moments instead of the engine silently guessing.
 
-import type { AbilityId, CardInstanceId, PlayerId, Zone } from "./ids.js";
+import type { AbilityId, CardInstanceId, ContextId, PlayerId, Zone } from "./ids.js";
 import type { CardSelector, TargetDeclaration } from "./expressions.js";
 import type { Cost, CostAnswer } from "./costs.js";
 import type { Effect, EffectOption } from "./effects.js";
@@ -98,6 +98,8 @@ export interface PendingChooserTargetChoice {
   declaration: TargetDeclaration;
   effects: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
   /**
    * Set when this pick is part of PAYING for a player action (the mandatory
    * "and play a resource" of a FLIP UP cost, CR 507.4c; "Destroy a token you
@@ -132,6 +134,8 @@ export interface PendingChooserOptionChoice {
   style?: "yesNo" | "oneOf" | "costBranch";
 
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
   /**
    * Set when the options are the branches of a `oneOf` COST ("Pay 1 or
    * destroy a token"): nothing has been paid yet. Answering re-runs this
@@ -187,6 +191,8 @@ export interface PendingDeployForFreeChoice {
   /** Legal hand cards (matching maxCost/selector) at the moment this paused. */
   candidates: CardInstanceId[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
   /**
    * Set by the `deployForFree` effect (not `deployFromZone`): the cost cap the engine resolved when it raised this
    * choice, i.e. `maxCost` evaluated (an X, a stat, a count ...), lowered to the remaining `budget` in budget mode.
@@ -241,6 +247,8 @@ export interface PendingDistributeChoice {
   caps?: Record<CardInstanceId, number>;
   effects: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
   /**
    * Set when the division is a `distribute` COST step: nothing has been paid yet. The shares are stored under
    * `costStepKey` and `resumeAction` re-run (the step's own `effects` run when the cost is paid, not now).
@@ -262,6 +270,8 @@ export interface PendingPileAssignmentChoice {
   /** Who then chooses which pile gets `pile1Effects` (see `separateIntoPiles.picker`); absent: the first pile does. */
   pickerId?: PlayerId;
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /** "If this card would be destroyed / bounced, you may ... instead" — an optional replacement. */
@@ -343,6 +353,8 @@ export interface PendingAnyPlayerMayPayChoice {
   cost: Cost[];
   effects: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /** "That character's controller chooses a number for X." (see the `chooserSelectsNumber` effect). */
@@ -355,6 +367,8 @@ export interface PendingChooseNumberChoice {
   max: number;
   effects: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /** "You may pay <cost>. If you do, the other player may. Repeat until someone doesn't." (see the `alternatingPayLoop` effect). */
@@ -374,6 +388,8 @@ export interface PendingAlternatingPayChoice {
   tallies: Record<PlayerId, number>;
   onEnd: Effect[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
   /**
    * Set when the loop is an `alternatingPay` COST step (Negotiation Ceremonies): each payment is spent at once, and
    * when the loop ends the tallies are stored under `costStepKey` and `resumeAction` (the paused play) is re-run.
@@ -397,6 +413,8 @@ export interface PendingMayPayChoice {
   /** The `mayPay` effect's `payAndPick`. */
   payAndPick?: boolean;
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /** "You may use one of the card's abilities." */
@@ -424,6 +442,8 @@ export interface PendingUseAnyAbilityChoice {
   /** In-play cards `playerId` controls that have at least one activated ability. */
   candidateCardIds: CardInstanceId[];
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /** MUSTACHE SHOWDOWN, step 1 — `playerId` splits `cardIds` into `piles` non-empty face-down piles (see the `partitionAndPick` effect). */
@@ -545,6 +565,8 @@ export interface PendingSpendCountersMenuChoice {
   /** Current marker count available on each pool card. */
   available: Record<CardInstanceId, number>;
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 /**
@@ -593,6 +615,8 @@ export interface PendingResourceRevealChoice {
   /** The interrupted `playResource` effect, carried on after the choice. */
   effect: Effect;
   context: ResolutionContext;
+  /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
+  contextId?: ContextId;
 }
 
 export type PendingChoice =

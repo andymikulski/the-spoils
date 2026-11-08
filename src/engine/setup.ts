@@ -13,6 +13,7 @@ import type {
 } from "../types/index.js";
 import { assert, deriveIdSeq, nextId } from "./utilities.js";
 import { randomSeed } from "./rng.js";
+import { emptyEngineMemory } from "./engineMemory.js";
 
 /**
  * A fresh `CardInstance`. `id` defaults to the process-global counter
@@ -181,6 +182,7 @@ export function createGame(
     responseStack: [],
     gameLog: [],
     pendingEffectFrames: [],
+    engineMemory: emptyEngineMemory(),
     turnEventTally: {},
     turnDeploys: {},
     turnDestroyed: [],

@@ -77,6 +77,13 @@ export interface TriggerResolution {
   batchId: string;
   /** Engine bookkeeping: this trigger's own target picks were already announced (`cardPicked`). */
   picksAnnounced?: boolean;
+  /**
+   * Engine bookkeeping: this trigger was already waiting when an earlier trigger's effects paused on a player choice
+   * (two Mau Caravans: the sibling copy's trigger). While that trigger's parked frames are still being resumed it must
+   * not start: an event emitted by one of them (a cost paid, a card picked) would otherwise prompt over the paused pick.
+   * Cleared from every trigger once the parked frames have all run.
+   */
+  held?: boolean;
 }
 
 export interface StackItem {

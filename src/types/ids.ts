@@ -5,6 +5,9 @@
 export type PlayerId = string;
 export type CardDefinitionId = string;
 export type CardInstanceId = string;
+
+/** Names a `ResolutionContext` held in `EngineMemory.contexts`. */
+export type ContextId = string;
 export type AbilityId = string;
 export type ModifierId = string;
 export type BattleId = string;

@@ -377,7 +377,20 @@ compares a digest of the rules state after every action.
   in the same commit.
 - **Save/load points**: a game is saved only where a save -> JSON -> load continues
   to the recorded digests for the next 40 actions; the recorder searches forward
-  from 25 / 50 / 75 % of the game for such a moment.
+  from 25 / 50 / 75 % of the game for such a moment. A save works at any moment,
+  mid-resolution included: what the engine carries between actions
+  (`GameState.engineMemory`: the trigger queue, last-known information about departed
+  cards, the resolution contexts parked frames share) is part of the state, and nothing
+  in the state is reachable by two paths: a context several parked frames and the open
+  choice share is held once, by id. The committed `index.json` lists 41
+  `roundTripFailures` from before that was so; they are pinned by
+  `regressions/save-load-round-trip.test.ts`, which also sweeps the corpus (a
+  deterministic sample of games and mid-resolution moments; `SAVE_LOAD_SWEEP=full` tries
+  every one), and `regressions/state-has-no-aliases.test.ts` scans every state of a
+  sample of games for shared objects (`ALIAS_SCAN=all` scans every game).
+  `projectForDigest` leaves `engineMemory` out because it did not exist (it was
+  engine-instance memory) when the corpus was recorded, except the parked frames'
+  contexts, which it puts back inline as recorded.
 
 ## Engine-driving notes
 
