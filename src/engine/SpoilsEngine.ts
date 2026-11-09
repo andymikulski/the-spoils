@@ -9844,11 +9844,11 @@ export class SpoilsEngine {
       if (this.state.pendingChoice) {
         // What this step left parked (a nested list, the players of an iteration still to go) is its unfinished part:
         // it runs before the effects that follow it in this list, so those go beneath it. Frames a trigger set off
-        // during the step stay beneath them. With no effect left to run, the list's remainder only closes its stack
-        // item, and stays on top.
+        // during the step stay beneath them. Even when no effect is left to run, the list's remainder (which only closes
+        // its stack item) goes beneath them: the step finishes before its stack item does.
         const parked = this.frames.splice(ownStart);
-        const unfinished = i + 1 < frame.effects.length ? parked.slice(0, ownParked) : [];
-        this.frames.push(...parked.slice(unfinished.length), { ...frame, index: i + 1 }, ...unfinished);
+        const unfinished = parked.slice(0, ownParked);
+        this.frames.push(...parked.slice(ownParked), { ...frame, index: i + 1 }, ...unfinished);
         if (this.retrySearchFrame) {
           // The search paused on its own announcement: run it again (with the
           // announcement marked answered) before the rest of this list.
@@ -15305,17 +15305,45 @@ export class SpoilsEngine {
 
         this.beginEventBatch();
         try {
-          if (matchId) {
-            const matchCtx: ResolutionContext = {
-              ...context,
-              selected: { ...context.selected, [effect.bindAs]: [matchId] }
-            };
-            for (const sub of effect.onMatch) this.resolveEffect(sub, matchCtx);
-          } else {
-            for (const sub of effect.onEmpty ?? []) this.resolveEffect(sub, context);
+          const matchCtx: ResolutionContext = matchId
+            ? { ...context, selected: { ...context.selected, [effect.bindAs]: [matchId] } }
+            : context;
+          const framesBefore = this.frames.length;
+          const branchDone = this.runNestedEffects(matchId ? effect.onMatch : effect.onEmpty ?? [], matchCtx);
+          const rest = effect.rest ?? "shuffle";
+          if (!branchDone) {
+            // A choice inside onMatch / onEmpty pauses it. The revealed cards wait under the deck, and what is done with
+            // them is the rest of this step: it runs once the branch has finished, beneath what the branch parked.
+            const branchParked = this.takeStepParked();
+            for (const id of others) player.deck.push(id);
+            const restEffects: Effect[] =
+              others.length === 0
+                ? []
+                : rest === "shuffle"
+                  ? [{ type: "shuffleDeck", player: { type: "player", id: player.id } }]
+                  : [
+                      {
+                        type: "forEach",
+                        selected: "__revealedRest",
+                        effects: [
+                          {
+                            type: "moveCard",
+                            target: { type: "selected", id: "__candidate" },
+                            to: rest === "bottom" ? "deck" : rest,
+                            ...(rest === "bottom" ? { position: "bottom" as const } : {})
+                          }
+                        ]
+                      }
+                    ];
+            this.frames.insertAt(framesBefore, {
+              effects: restEffects,
+              index: 0,
+              context: { ...context, selected: { ...context.selected, __revealedRest: [...others] } }
+            });
+            this.stepParked = branchParked + 1;
+            return;
           }
 
-          const rest = effect.rest ?? "shuffle";
           if (rest === "shuffle") {
             for (const id of others) player.deck.push(id);
             if (others.length > 0) this.shuffleDeckOf(player.id);
@@ -16270,6 +16298,10 @@ export class SpoilsEngine {
           // Remember what removed it ("a tactic removed by this card": `voidedBySource`).
           const removed = this.state.cards[targetId];
           if (removed?.zone === "removed") removed.voidedBy = context.sourceId;
+          if (effect.faceDown && removed?.zone === "removed") {
+            removed.faceDown = true;
+            removed.faceDownBy = context.controllerId;
+          }
         }
 
         return;
@@ -16885,7 +16917,7 @@ export class SpoilsEngine {
               index: 0,
               context
             });
-            if (ownParked > 0) this.stepParked = ownParked + 1;
+            this.stepParked = ownParked + 1;
             return;
           }
         }
@@ -17199,7 +17231,7 @@ export class SpoilsEngine {
         const player = { id: payers[0] };
         const payCtx = player.id === undefined ? context : payContextOf(player.id);
         if (offered ? payers.length === 0 : !canAfford(player.id)) {
-          for (const e of effect.elseEffects ?? []) this.resolveEffect(e, context);
+          this.runNestedEffects(effect.elseEffects ?? [], context);
           return;
         }
         // "you may pay 2 and pick a character": nothing to pick means the
@@ -17215,7 +17247,7 @@ export class SpoilsEngine {
               this.resolvePlayerRef(firstEffect.chooser, payCtx).id
             ).length === 0
           ) {
-            for (const e of effect.elseEffects ?? []) this.resolveEffect(e, context);
+            this.runNestedEffects(effect.elseEffects ?? [], context);
             return;
           }
         }
@@ -21728,6 +21760,14 @@ export class SpoilsEngine {
     };
   }
 
+  /** Whether replacement `key` is being applied to `cardId` now: its effects are running, or paused on a choice (CR 506.5). */
+  private replacementApplied(cardId: CardInstanceId, key: string): boolean {
+    return (
+      this.appliedReplacements.get(cardId)?.has(key) === true ||
+      this.frames.some(frame => frame.endsReplacement?.cardId === cardId && frame.endsReplacement.key === key)
+    );
+  }
+
   /**
    * Runs `effects` as replacement `key` of `cardId`'s event: while they run the
    * replacement is not offered again for that card (CR 506.5).
@@ -21752,7 +21792,14 @@ export class SpoilsEngine {
     // `forEachPlayer`) before the replacement is done.
     this.replacementEffectDepth++;
     try {
-      for (const effect of effects) this.resolveEffect(effect, context);
+      // As a list, so a choice inside it pauses it and the rest waits for the answer. The replacement then stays applied
+      // (CR 506.5) until its last parked frame has run: a marker frame beneath them says so.
+      const framesBefore = this.frames.length;
+      if (!this.runNestedEffects(effects, context)) {
+        const parked = this.takeStepParked();
+        this.frames.insertAt(framesBefore, { effects: [], index: 0, context, endsReplacement: { cardId, key } });
+        this.stepParked = parked + 1;
+      }
     } finally {
       this.replacementEffectDepth--;
       this.currentCause = savedCause.cause;
@@ -21772,7 +21819,7 @@ export class SpoilsEngine {
     chosenOpponent?: PlayerId
   ): boolean {
     const attachedOnly = scope === "attached";
-    const chain = this.appliedReplacements.get(cardId);
+    const alreadyApplied = (key: string): boolean => this.replacementApplied(cardId, key);
     /** Every replacement that applies to this event now (CR 506.4 chooses among them). */
     const candidates: Array<{
       key: string;
@@ -21828,7 +21875,7 @@ export class SpoilsEngine {
       if (rr.condition && !this.evaluateCondition(rr.condition, context)) continue;
 
       const key = `runtime:${rr.id}`;
-      if (chain?.has(key)) continue;
+      if (alreadyApplied(key)) continue;
       candidates.push({
         key,
         signature: key,
@@ -21953,7 +22000,7 @@ export class SpoilsEngine {
         }
 
         const key = `${source.id}:${ability.id}`;
-        if (chain?.has(key)) continue;
+        if (alreadyApplied(key)) continue;
 
         // Optional replacement ("you may pay/choose ... instead"): the
         // chooser is the source's controller by default, or a `PlayerRef`

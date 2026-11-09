@@ -631,7 +631,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(FK, "0:rule", "MP-seed-saga-101", `${count} seats: the look also covers the named opponent's face-down resources (and no other opponent's)`, () => {
+  clause(FK, "0:rule", `${count} seats: the look also covers the named opponent's face-down resources (and no other opponent's)`, () => {
     for (const chosen of others(count)) {
       const t = forbidden(count);
       play(t.engine, P1, t.id("fk"), { players: { opp: chosen } });

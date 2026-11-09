@@ -1010,17 +1010,19 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition.left.selector.owner",
+            "movedTo": "behavior.abilities[0].restrictions[0].opponentCondition.left.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "the 10-card test is per opponent: it is true for an opponent whose own discard pile holds at least 10 cards. Counting the piles of all opponents together would be wrong, and the \"cannot be picked\" restriction must bind only to that opponent"
+            "edit": false,
+            "why": "The word stays: the 10-card test moved into the restriction's opponentCondition, where \"opponent\" is each opponent in turn (RULES.md section 15, MPX-vocab-an). The structural edit is the opponentCondition, listed below."
           },
           {
             "path": "behavior.abilities[0].restrictions[0].restriction",
+            "movedTo": "behavior.abilities[0].restrictions[0].opponentCondition",
             "now": "cannotBePickedByOpponents",
             "meaning": "refersBack",
             "edit": true,
-            "why": "this enum names \"opponents\" generally; it must bind to only the opponent whose pile holds at least 10 cards (\"that player\"), so another opponent with fewer than 10 can still pick this card"
+            "why": "cannotBePickedByOpponents now carries an opponentCondition (the 10-card test), so it binds exactly the opponents whose own discard pile holds at least 10 cards."
           }
         ],
         "test3": "P2's discard pile holds 10 cards and P3's holds 9: P2 cannot pick Omahkapi'si (an effect of P2 refuses it) while P3 can. P3's pile reaching 10 blocks P3 as well. The two piles are not added together: P2 at 6 and P3 at 6 blocks neither. P1's own pile has no effect."

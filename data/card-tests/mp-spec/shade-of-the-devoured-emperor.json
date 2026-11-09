@@ -350,7 +350,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent",
@@ -369,15 +369,15 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true,
-            "why": "Refers to the opponent picked by the printed \"Pick an opponent\" (needs that pick step, see the pick site / why on the other paths of this clause). This player picks the card to discard."
+            "edit": false,
+            "why": "\"Pick an opponent. That player ...\": in a triggered ability \"opponent\" is the one opponent the controller selects when the trigger resolves (RULES.md section 15), the same player at every \"opponent\" of the block, so the stored word is already the picked opponent (opponentFrom: \"choose\", the default). Tested at 3 seats."
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true,
-            "why": "Structural: the data has no \"pick an opponent\" step. The controller must first pick one opponent (part of the cost or effect, as printed) and this site then means that picked player."
+            "edit": false,
+            "why": "\"Pick an opponent. That player ...\": in a triggered ability \"opponent\" is the one opponent the controller selects when the trigger resolves (RULES.md section 15), the same player at every \"opponent\" of the block, so the stored word is already the picked opponent (opponentFrom: \"choose\", the default). Tested at 3 seats."
           },
           {
             "path": "behavior.abilities[1].condition.conditions[2].player",
@@ -532,10 +532,11 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0].player",
+            "movedTo": "behavior.abilities[0].effects[0].offerTo",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Any opponent may pay 3\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single-opponent mayPay must become an offer to each opponent in turn (opponents only; the controller is never offered)"
+            "why": "\"Any opponent may pay 3\" is an offer made to each opponent in turn (mayPay offerTo: \"opponents\", MPQ-P7), not a pick by the controller: the effect's player key is replaced by offerTo."
           }
         ],
         "test3": "P1 plays it, picking 3 characters with different names. The payment of 3 is offered to P2, then P3 (clockwise from P1's left; P1 is never offered). P2 declines and P3 pays 3 from P3's own resources: P1 looks at the top 3 cards of P1's deck and reorders them; Tedious TriAdic Truculence is terminated; the picked characters survive; P2 pays nothing. Both decline: each picked character with strength 3 or less is destroyed. P2 pays: P3 is never offered."
@@ -671,6 +672,7 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].costs[0]",
+            "movedTo": "behavior.abilities[0].playerChoices[0]",
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
@@ -718,10 +720,11 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].costs[1]",
+            "movedTo": "behavior.abilities[0].costs[1].chooser",
             "now": "otherPlayerChooses",
             "meaning": "refersBack",
             "edit": true,
-            "why": "Refers to the opponent picked by the printed \"Pick an opponent\" (needs that pick step, see the pick site / why on the other paths of this clause). The other-player-chooses cost belongs to the picked player only."
+            "why": "The other player in the cost is the opponent the ability named with its playerChoices entry: the chooser reads { type: \"chosenPlayer\", id: \"picked\" }."
           },
           {
             "path": "behavior.abilities[0].costs[1].chooser",
@@ -1057,10 +1060,11 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].costs[1]",
+            "movedTo": "behavior.abilities[0].costs[1].chooser",
             "now": "otherPlayerChooses",
             "meaning": "refersBack",
             "edit": true,
-            "why": "Refers to the opponent picked by the printed \"Pick an opponent\" (needs that pick step, see the pick site / why on the other paths of this clause). The other-player-chooses cost belongs to the picked player only."
+            "why": "The other player in the cost is the opponent the ability named with its playerChoices entry: the chooser reads { type: \"chosenPlayer\", id: \"picked\" }."
           },
           {
             "path": "behavior.abilities[0].costs[1].chooser",
@@ -1342,7 +1346,7 @@
     "clauses": [
       {
         "key": "0:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "any opponent",
@@ -1356,8 +1360,8 @@
             "path": "behavior.abilities[0].condition.right.selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "the comparison counts the characters of the one chosen opponent only (MPQ-P9); the stored count would otherwise total the characters of every opponent"
+            "edit": false,
+            "why": "MPQ-P9: the one opponent the controller selects when the text applies (a lasting condition / the play's opponent) is the only one whose cards are counted, and the clause test asserts that selection; the stored word is already that opponent."
           }
         ],
         "test3": "P1 controls 3 characters, P2 controls 2 and P3 controls 3. The controller chooses one opponent (P2 and P3 are offered) and the comparison uses only that opponent's characters. With P2 chosen, P1 controls more characters than P2, so the Wannabe cannot be picked; with P3 chosen, P1 does not control more (3 against 3), so it can be picked. The total of all opponents' characters (5) is never used. With P1 at 3, P2 at 2 and P3 at 2, either choice makes the Wannabe unpickable."
@@ -1370,7 +1374,7 @@
     "clauses": [
       {
         "key": "1:ability",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent's",
@@ -1384,8 +1388,8 @@
             "path": "behavior.onPlay.targets[0].selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "The up-to-4 cards come from one opponent's discard pile (\"an opponent's discard pile\" is a single pile); the controller picks which opponent's pile."
+            "edit": false,
+            "why": "MPQ-P9: one opponent is named with the play (a players choice \"opponent\") and every removed card comes from that opponent's pile only; the stored word is already that named opponent (clause test asserts the naming and the single pile)."
           }
         ],
         "test3": "P1 plays Opportunistic Pirate. Both P2 and P3 have discard cards. P1 may remove up to 4 cards from P2's discard pile or up to 4 cards from P3's discard pile (the cards come from one pile; P1's own discard pile is not offered). Removing 3 from P3's pile reduces the Pirate's numeric cost by 3; P2's pile is unchanged. Removing none is allowed."

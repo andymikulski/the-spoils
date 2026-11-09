@@ -6243,61 +6243,44 @@
           "effects": [
             {
               "type": "chooserSelectsOption",
-              "chooser": "activePlayer",
+              "chooser": "acting",
               "options": [
                 {
                   "label": "You draw a card; opponents may play a resource",
                   "effects": [
                     {
                       "type": "mayPay",
-                      "player": "activePlayer",
+                      "player": "acting",
                       "costs": [],
                       "effects": [
                         {
                           "type": "draw",
-                          "player": "activePlayer",
+                          "player": "acting",
                           "amount": 1
                         }
                       ]
                     },
                     {
-                      "type": "forEachPlayer",
+                      "type": "chooserSelectsTarget",
+                      "chooser": "opponent",
+                      "declaration": {
+                        "id": "h",
+                        "selector": {
+                          "owner": "opponent",
+                          "zone": "hand"
+                        },
+                        "count": 1,
+                        "optional": true
+                      },
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
+                          "type": "playResource",
+                          "target": {
+                            "type": "selected",
+                            "id": "h"
                           },
-                          "effects": [
-                            {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
-                                  },
-                                  "faceDown": "auto",
-                                  "player": "controller"
-                                }
-                              ]
-                            }
-                          ]
+                          "faceDown": "auto",
+                          "player": "opponent"
                         }
                       ]
                     }
@@ -6307,69 +6290,38 @@
                   "label": "You may play a resource; opponents may draw",
                   "effects": [
                     {
-                      "type": "forEachPlayer",
+                      "type": "chooserSelectsTarget",
+                      "chooser": "acting",
+                      "declaration": {
+                        "id": "h",
+                        "selector": {
+                          "owner": "acting",
+                          "zone": "hand"
+                        },
+                        "count": 1,
+                        "optional": true
+                      },
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "isActivePlayer",
-                            "player": "controller"
+                          "type": "playResource",
+                          "target": {
+                            "type": "selected",
+                            "id": "h"
                           },
-                          "effects": [
-                            {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
-                                  },
-                                  "faceDown": "auto",
-                                  "player": "controller"
-                                }
-                              ]
-                            }
-                          ]
+                          "faceDown": "auto",
+                          "player": "acting"
                         }
                       ]
                     },
                     {
-                      "type": "forEachPlayer",
+                      "type": "mayPay",
+                      "player": "opponent",
+                      "costs": [],
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
-                          "effects": [
-                            {
-                              "type": "mayPay",
-                              "player": "controller",
-                              "costs": [],
-                              "effects": [
-                                {
-                                  "type": "draw",
-                                  "player": "controller",
-                                  "amount": 1
-                                }
-                              ]
-                            }
-                          ]
+                          "type": "draw",
+                          "player": "opponent",
+                          "amount": 1
                         }
                       ]
                     }

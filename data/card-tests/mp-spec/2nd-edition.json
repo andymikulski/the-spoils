@@ -1131,41 +1131,46 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false
+            "meaning": "refersBack",
+            "edit": true,
+            "why": "MPQ-P10: \"that player\" picks the option, the player whose turn is starting. In the block written from that player's point of view it becomes \"acting\" (the ability holds opponentFrom \"acting\")."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[0].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "forEachPlayer filtered to the active player: 'that player' may play a resource. Correct at any table size."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1184,7 +1189,7 @@
         ],
         "test3": "P1 controls Free Trade Agreement. At the start of P1's turn P1 chooses one of the four options (OPTION 1-4 are offered); at the start of P2's turn P2 (not P1) is offered the four options and chooses; at the start of P3's turn P3 chooses. Neither of the other two is offered the choice. Exactly one option is applied per turn start.",
         "test4": "4 seats P1-P4 (P1 controls the card). Start of P4's turn: P4 chooses and P1, P2, P3 do not. With P3 eliminated, P3's turn never happens and no choice is ever offered to P3; the trigger still fires at the starts of P1's, P2's and P4's turns. Seats rotate P1, P2, P3, P4.",
-        "note": "Text from the active player's point of view (MPQ-P10, MPX-other-pov): \"that player\" is the player whose turn is starting (activePlayer, unchanged), \"their opponent\" is the opponent that player selects, and \"both players\" is that player plus that opponent. opponentFrom \"acting\" on the ability makes plain \"opponent\" that selection and lets forEachPlayer { players: \"pair\" } be that player and that opponent; the chooser stays activePlayer."
+        "note": "Text from the active player's point of view (MPQ-P10, MPX-other-pov): \"that player\" is the player whose turn is starting (activePlayer, unchanged), \"their opponent\" is the opponent that player selects, and \"both players\" is that player plus that opponent. opponentFrom \"acting\" on the ability makes plain \"opponent\" that selection and lets forEachPlayer { players: \"pair\" } be that player and that opponent; the menu chooser, the \"that player\" draws and plays, and the \"pair\" iterations read the acting player."
       },
       {
         "key": "1:option:OPTION 1",
@@ -1207,44 +1212,46 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "meaning": "refersBack",
+            "edit": true,
+            "why": "MPQ-P10: \"that player may draw a card\": the player whose turn is starting, written \"acting\" in the point-of-view block."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "meaning": "refersBack",
+            "edit": true,
+            "why": "MPQ-P10: the draw is \"that player's\": \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "A forEachPlayer filtered to \"not the active player\" is the two-player proxy for \"their opponent\": at 3+ seats it gives every other player the effect. With opponentFrom \"acting\" the effect is written once with player \"opponent\", the one opponent the active player selected, in place of the iteration."
+            "why": "MPQ-P10: \"their opponent\" is the opponent the active player selects (opponentFrom \"acting\" on the ability), written once as plain \"opponent\"; the forEachPlayer filtered to \"not the active player\" (every other player at 3+ seats) is gone. The node holds the opponent's own optional pick and the opponent's draw / playResource with chooser / player / owner \"opponent\".",
+            "movedTo": "behavior.abilities[0].effects[0].options[0].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1284,44 +1291,46 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[0].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
-            "meaning": "activePlayer",
-            "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "meaning": "refersBack",
+            "edit": true,
+            "why": "MPQ-P10: \"that player may play a resource\" was a forEachPlayer filtered to the active player; it is now that player's own optional pick and playResource with chooser \"acting\" (no iteration)."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "A forEachPlayer filtered to \"not the active player\" is the two-player proxy for \"their opponent\": at 3+ seats it gives every other player the effect. With opponentFrom \"acting\" the effect is written once with player \"opponent\", the one opponent the active player selected, in place of the iteration."
+            "why": "MPQ-P10: \"their opponent\" is the opponent the active player selects (opponentFrom \"acting\" on the ability), written once as plain \"opponent\"; the forEachPlayer filtered to \"not the active player\" (every other player at 3+ seats) is gone. The node holds the opponent's own optional pick and the opponent's draw / playResource with chooser / player / owner \"opponent\".",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1355,51 +1364,53 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[0].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "forEachPlayer iterates every player; \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
+            "why": "MPQ-P10: \"both players\" is forEachPlayer { players: \"pair\" }: the active player and the opponent that player selects (opponentFrom \"acting\"), active player first."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
@@ -1426,44 +1437,46 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].effects[0].player",
             "now": "activePlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[0].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
             "now": "forEachPlayer",
-            "meaning": "activePlayer",
+            "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
             "now": "forEachPlayer",
             "meaning": "chosenOpponent",
             "edit": false,
-            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1]"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
@@ -1477,7 +1490,7 @@
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "forEachPlayer iterates every player; \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
+            "why": "MPQ-P10: \"both players\" is forEachPlayer { players: \"pair\" }: the active player and the opponent that player selects (opponentFrom \"acting\"), active player first."
           }
         ],
         "test3": "It is P3's turn; P3 picked OPTION 4 and selects P1 as the opponent. P3 and P1 each may play up to 2 resources (P3 first); P2 plays none. A second run selects P2: P3 and P2 may play and P1 may not."

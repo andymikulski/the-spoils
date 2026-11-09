@@ -130,5 +130,5 @@ export const sorted = (ids: readonly string[]): string[] => [...ids].sort();
 export const pickIds = (t: Table, who: PlayerId, ...selected: string[]): void =>
   answer(t, "chooserSelectsTarget", who, { kind: "chooserSelectsTarget", selected });
 
-/** Answers an `anyPlayerMayPay` offer addressed to `who`. */
-export const offer = (t: Table, who: PlayerId, pay: boolean): void => answer(t, "anyPlayerMayPay", who, { kind: "anyPlayerMayPay", pay });
+/** Answers an "any opponent may pay" offer (a `mayPay` with `offerTo`) addressed to `who`. */
+export const offer = (t: Table, who: PlayerId, pay: boolean): void => answer(t, "mayPay", who, { kind: "mayPay", pay });

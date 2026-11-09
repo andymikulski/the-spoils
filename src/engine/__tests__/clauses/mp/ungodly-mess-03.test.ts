@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { bank, character, item, resolvePendingResponses, tactic } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, activate, answerChoice, choosePlayer, chooseIndex, handOf, pending, play, playRaw, playerAsk, ready, seated, table, type Table } from "./_ungodly-mess.js";
 import type { PlayerId } from "../../../../engine.js";
 
@@ -238,7 +238,7 @@ function omahkapiTable(pile2: number, pile3: number, pile1 = 0) {
   ]);
 }
 
-clauseMismatch(OMAHKAPI, "1:rule", "MP-ungodly-mess-2", "3 seats: with 10 cards in P2's discard pile and 9 in P3's, P2 cannot pick it and P3 can; nobody is asked to choose an opponent", () => {
+clause(OMAHKAPI, "1:rule", "3 seats: with 10 cards in P2's discard pile and 9 in P3's, P2 cannot pick it and P3 can; nobody is asked to choose an opponent", () => {
   const t = omahkapiTable(10, 9);
   assert.equal(pending(t), undefined, "'an opponent' is never chosen by the controller");
   assert.equal(picksOmahkapi(t, P2), false, "P2 has 10 cards in its pile");
@@ -248,7 +248,7 @@ clauseMismatch(OMAHKAPI, "1:rule", "MP-ungodly-mess-2", "3 seats: with 10 cards 
   assert.equal(picksOmahkapi(swapped, P3), false);
 });
 
-clauseMismatch(OMAHKAPI, "1:rule", "MP-ungodly-mess-2", "3 seats: the piles are not added together (6 and 6 block neither), and P1's own pile has no effect", () => {
+clause(OMAHKAPI, "1:rule", "3 seats: the piles are not added together (6 and 6 block neither), and P1's own pile has no effect", () => {
   const t = omahkapiTable(6, 6, 20);
   assert.equal(picksOmahkapi(t, P2), true);
   assert.equal(picksOmahkapi(t, P3), true);

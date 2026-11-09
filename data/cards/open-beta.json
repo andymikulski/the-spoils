@@ -3996,49 +3996,31 @@
           "effects": [
             {
               "type": "chooserSelectsOption",
-              "chooser": "activePlayer",
+              "chooser": "acting",
               "options": [
                 {
                   "label": "That player may draw a card; their opponent may play a resource",
                   "effects": [
                     {
                       "type": "mayPay",
-                      "player": "activePlayer",
+                      "player": "acting",
                       "costs": [],
                       "effects": [
                         {
                           "type": "draw",
-                          "player": "activePlayer",
+                          "player": "acting",
                           "amount": 1
                         }
                       ]
                     },
                     {
-                      "type": "choosePlayer",
-                      "id": "their",
-                      "from": "opponents",
-                      "chooser": "activePlayer"
-                    },
-                    {
                       "type": "chooserSelectsTarget",
-                      "chooser": {
-                        "type": "chosenPlayer",
-                        "id": "their"
-                      },
+                      "chooser": "opponent",
                       "declaration": {
                         "id": "h",
                         "selector": {
-                          "owner": "any",
-                          "zone": "hand",
-                          "conditions": [
-                            {
-                              "type": "targetOwnedBy",
-                              "player": {
-                                "type": "chosenPlayer",
-                                "id": "their"
-                              }
-                            }
-                          ]
+                          "owner": "opponent",
+                          "zone": "hand"
                         },
                         "count": 1,
                         "optional": true
@@ -4051,10 +4033,7 @@
                             "id": "h"
                           },
                           "faceDown": "auto",
-                          "player": {
-                            "type": "chosenPlayer",
-                            "id": "their"
-                          }
+                          "player": "opponent"
                         }
                       ]
                     }
@@ -4064,63 +4043,37 @@
                   "label": "That player may play a resource; their opponent may draw a card",
                   "effects": [
                     {
-                      "type": "forEachPlayer",
+                      "type": "chooserSelectsTarget",
+                      "chooser": "acting",
+                      "declaration": {
+                        "id": "h",
+                        "selector": {
+                          "owner": "acting",
+                          "zone": "hand"
+                        },
+                        "count": 1,
+                        "optional": true
+                      },
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "isActivePlayer",
-                            "player": "controller"
+                          "type": "playResource",
+                          "target": {
+                            "type": "selected",
+                            "id": "h"
                           },
-                          "effects": [
-                            {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
-                                  },
-                                  "faceDown": "auto",
-                                  "player": "controller"
-                                }
-                              ]
-                            }
-                          ]
+                          "faceDown": "auto",
+                          "player": "acting"
                         }
                       ]
                     },
                     {
-                      "type": "choosePlayer",
-                      "id": "their",
-                      "from": "opponents",
-                      "chooser": "activePlayer"
-                    },
-                    {
                       "type": "mayPay",
-                      "player": {
-                        "type": "chosenPlayer",
-                        "id": "their"
-                      },
+                      "player": "opponent",
                       "costs": [],
                       "effects": [
                         {
                           "type": "draw",
-                          "player": {
-                            "type": "chosenPlayer",
-                            "id": "their"
-                          },
+                          "player": "opponent",
                           "amount": 1
                         }
                       ]

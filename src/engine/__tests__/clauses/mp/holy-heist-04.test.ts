@@ -3,7 +3,7 @@
 // opponent prompt appears. Real printings, real games, `perform` only.
 
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, printing } from "../_clause.js";
+import { clause, printing } from "../_clause.js";
 import type { CardDefinition, PlayerId } from "../../../../engine.js";
 import { buildGame, noDevelopFaction, tactic } from "../../support/fixtures.js";
 import { developFaction, resourceCard } from "../../per-card/_harness.js";
@@ -362,7 +362,7 @@ function fcCheck(chosen: PlayerId, skipped: PlayerId): void {
   }
 }
 
-clauseMismatch(FC, "1:rule", "MP-holy-heist-20", "3 seats: with two opponents the block's opponent is a required step at play (a players step comes first and the play is refused without it), and a stated opponent is accepted", () => {
+clause(FC, "1:rule", "3 seats: with two opponents the block's opponent is a required step at play (a players step comes first and the play is refused without it), and a stated opponent is accepted", () => {
   const t = fcTable();
   assert.equal(playRequirements(t, P1, "fc").map((r) => r.kind)[0], "players", "the block's opponent is asked first");
   refusal(() => play(t, P1, "fc"));
@@ -371,8 +371,8 @@ clauseMismatch(FC, "1:rule", "MP-holy-heist-20", "3 seats: with two opponents th
   assert.equal(zoneOf(t, "fc"), "discard");
 });
 
-clauseMismatch(FC, "1:rule", "MP-holy-heist-20", "3 seats: P1 plays it choosing P3 through the action's players field, draws 4 at once, and the rest fires only at the start of P3's next turn, once; P2's turn start does nothing", () => fcCheck(P3, P2));
-clauseMismatch(FC, "1:rule", "MP-holy-heist-20", "3 seats: choosing P2 instead, the effect fires at the start of P2's turn only, once, and not at P3's", () => fcCheck(P2, P3));
+clause(FC, "1:rule", "3 seats: P1 plays it choosing P3 through the action's players field, draws 4 at once, and the rest fires only at the start of P3's next turn, once; P2's turn start does nothing", () => fcCheck(P3, P2));
+clause(FC, "1:rule", "3 seats: choosing P2 instead, the effect fires at the start of P2's turn only, once, and not at P3's", () => fcCheck(P2, P3));
 
 // --- Leaping Sarume ------------------------------------------------------------------------------------------------
 // TACTICAL -- EXTRA COST: Deploy this only not during a battle. -- When this card enters play, inflict 1 damage to all characters.

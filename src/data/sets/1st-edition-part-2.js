@@ -23,7 +23,7 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsNumber",
-              "chooser": "activePlayer",
+              "chooser": "acting",
               "storeAs": "x",
               "min": 0,
               "max": 99,
@@ -72,11 +72,13 @@ const cards = [
                         "id": "bot"
                       }
                     }
-                  ]
+                  ],
+                  "players": "pair"
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }

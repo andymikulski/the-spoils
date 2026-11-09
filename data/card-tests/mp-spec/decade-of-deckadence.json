@@ -760,7 +760,7 @@
     "clauses": [
       {
         "key": "1:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "an opponent",
@@ -779,7 +779,8 @@
             "path": "behavior.abilities[0].effects[0].selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true
+            "edit": false,
+            "why": "\"Pick an opponent. ... that opponent controls\" is a lasting area modifier: \"opponent\" is the one opponent the controller selects when the trigger resolves and the effect starts applying, kept for the whole lasting record (RQ-mp-5, RULES.md section 15). The stored word is that opponent; a choosePlayer reference would not bind a lasting record."
           },
           {
             "path": "behavior.abilities[0].effects[0]",
@@ -798,8 +799,8 @@
               }
             },
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "No 'pick an opponent' step exists. A pick step (a choosePlayer step, from the opponents) must be inserted before the area modifier, and the sites below read it. `now` is the step stored at this path today, which moves down one place. The modifier's selector.controller (above) then becomes the picked opponent."
+            "edit": false,
+            "why": "\"Pick an opponent. ... that opponent controls\" is a lasting area modifier: \"opponent\" is the one opponent the controller selects when the trigger resolves and the effect starts applying, kept for the whole lasting record (RQ-mp-5, RULES.md section 15). The stored word is that opponent; a choosePlayer reference would not bind a lasting record."
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. The trigger resolves and P1 picks an opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): Another character enters play under P1; P1 picks P2. This turn the speed of every character P2 controls is 0 (including ones that enter later this turn); P3's characters keep their speed and so do P1's. At end of turn speeds return. Run B (P1 picks P3): Another character enters play under P1; P1 picks P3. This turn the speed of every character P3 controls is 0 (including ones that enter later this turn); P2's characters keep their speed and so do P1's. At end of turn speeds return. In both runs the opponent not picked is unaffected."
@@ -1003,10 +1004,11 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"if an opponent's faction lost influence this turn\": met when any opponent's faction lost influence; that opponent becomes the one used below (P1 picks among those that qualify)."
+            "why": "\"If an opponent's faction lost influence this turn\": \"opponents\" in a condition holds when any opponent's faction lost influence; which opponent is then chosen by the choosePlayer step below (only opponents who lost influence are offered)."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].target.player",
+            "movedTo": "behavior.abilities[0].effects[1].effects[0].target.player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
@@ -1014,10 +1016,18 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].declaration.selector.controller",
+            "movedTo": "behavior.abilities[0].effects[1].effects[1].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
             "why": "\"that opponent controls\": the same opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "anyOneOpponent",
+            "edit": true,
+            "why": "New choosePlayer step before the \"you may\" (the opponent is settled by the if clause: \"that faction\" is already one opponent's): from the opponents, keeping only those whose faction lost influence this turn, read back with chosenPlayer \"o\". The old effects[0] (the mayPay) is now effects[1]."
           }
         ],
         "test3": "Shriever General enters play under P1. Run A: only P2's faction lost influence this turn: P1 may inflict 2 damage to P2's faction and pick a character P2 controls (P3's characters are not legal) and inflict 2 damage to it. Run B: only P3's faction lost influence: the same with P3. Run C: both lost influence: P1 picks which one, and the faction and the character are the same opponent's. Run D: neither lost influence: nothing happens. A loss of P1's own faction does not count."

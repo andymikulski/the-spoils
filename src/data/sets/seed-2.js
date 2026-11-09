@@ -1265,7 +1265,7 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsOption",
-              "chooser": "opponent",
+              "chooser": "acting",
               "options": [
                 {
                   "label": "Do nothing",
@@ -1292,11 +1292,11 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "controller",
+                          "chooser": "opponent",
                           "declaration": {
                             "id": "meat-opponent-d0",
                             "selector": {
-                              "controller": "self",
+                              "controller": "opponent",
                               "zone": "hand"
                             },
                             "count": 1
@@ -1326,19 +1326,19 @@ const cards = [
                       "effects": [
                         {
                           "type": "mayPay",
-                          "player": "opponent",
+                          "player": "acting",
                           "costs": [],
                           "effects": [
                             {
                               "type": "lookAndReorder",
-                              "player": "opponent",
+                              "player": "acting",
                               "count": 2
                             },
                             {
                               "type": "moveCard",
                               "target": {
                                 "type": "deckPosition",
-                                "player": "opponent",
+                                "player": "acting",
                                 "from": "top"
                               },
                               "to": "hand"
@@ -1347,7 +1347,7 @@ const cards = [
                               "type": "moveCard",
                               "target": {
                                 "type": "deckPosition",
-                                "player": "opponent",
+                                "player": "acting",
                                 "from": "top"
                               },
                               "to": "deck",
@@ -1369,7 +1369,7 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
+                          "chooser": "acting",
                           "declaration": {
                             "id": "meat-opponent-p2",
                             "count": 1,
@@ -1438,12 +1438,22 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
+                          "chooser": "acting",
                           "declaration": {
                             "id": "meat-opponent-r3",
                             "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
+                              "controller": "any",
+                              "zone": "hand",
+                              "conditions": [
+                                {
+                                  "type": "targetOwnedBy",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "player": "acting"
+                                }
+                              ]
                             },
                             "count": 1,
                             "optional": true
@@ -1466,7 +1476,7 @@ const cards = [
                                     "id": "meat-opponent-r3"
                                   },
                                   "faceDown": "auto",
-                                  "player": "opponent"
+                                  "player": "acting"
                                 }
                               ]
                             }
@@ -1504,11 +1514,11 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "controller",
+                          "chooser": "opponent",
                           "declaration": {
                             "id": "meat-opponent-d0",
                             "selector": {
-                              "controller": "self",
+                              "controller": "opponent",
                               "zone": "hand"
                             },
                             "count": 1
@@ -1538,19 +1548,19 @@ const cards = [
                       "effects": [
                         {
                           "type": "mayPay",
-                          "player": "opponent",
+                          "player": "acting",
                           "costs": [],
                           "effects": [
                             {
                               "type": "lookAndReorder",
-                              "player": "opponent",
+                              "player": "acting",
                               "count": 2
                             },
                             {
                               "type": "moveCard",
                               "target": {
                                 "type": "deckPosition",
-                                "player": "opponent",
+                                "player": "acting",
                                 "from": "top"
                               },
                               "to": "hand"
@@ -1559,7 +1569,7 @@ const cards = [
                               "type": "moveCard",
                               "target": {
                                 "type": "deckPosition",
-                                "player": "opponent",
+                                "player": "acting",
                                 "from": "top"
                               },
                               "to": "deck",
@@ -1581,7 +1591,7 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
+                          "chooser": "acting",
                           "declaration": {
                             "id": "meat-opponent-p2",
                             "count": 1,
@@ -1650,12 +1660,22 @@ const cards = [
                       "effects": [
                         {
                           "type": "chooserSelectsTarget",
-                          "chooser": "opponent",
+                          "chooser": "acting",
                           "declaration": {
                             "id": "meat-opponent-r3",
                             "selector": {
-                              "controller": "opponent",
-                              "zone": "hand"
+                              "controller": "any",
+                              "zone": "hand",
+                              "conditions": [
+                                {
+                                  "type": "targetOwnedBy",
+                                  "target": {
+                                    "type": "selected",
+                                    "id": "__candidate"
+                                  },
+                                  "player": "acting"
+                                }
+                              ]
                             },
                             "count": 1,
                             "optional": true
@@ -1678,7 +1698,7 @@ const cards = [
                                     "id": "meat-opponent-r3"
                                   },
                                   "faceDown": "auto",
-                                  "player": "opponent"
+                                  "player": "acting"
                                 }
                               ]
                             }
@@ -1690,7 +1710,8 @@ const cards = [
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -8007,7 +8028,6 @@ const cards = [
               "declaration": {
                 "id": "voided",
                 "selector": {
-                  "owner": "opponent",
                   "zone": "removed",
                   "conditions": [
                     {
@@ -8019,7 +8039,8 @@ const cards = [
                       "other": "eventCard"
                     }
                   ],
-                  "voidedBySource": true
+                  "voidedBySource": true,
+                  "owner": "opponents"
                 },
                 "count": 1,
                 "optional": true

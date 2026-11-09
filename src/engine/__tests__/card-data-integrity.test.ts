@@ -191,6 +191,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "modifyIncomingDamage", "simultaneousDamage", "destroyedByDamage",
   // Free-for-all multiplayer: a player choice (effect) and its read-back (player reference)
   "choosePlayer", "chosenPlayer",
+  // ... an any-opponent condition, a player a card remembers, and the defending player of a battle
+  "anyOpponent", "rememberPlayer", "rememberedPlayer", "defendingPlayerIs",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected", "revealSelf",

@@ -613,7 +613,7 @@ const LECRAM = "52575cdb-9125-474c-8dea-0506f28f8ee0";
     ...many("c-", 4, P3, "deck", (i) => character({ name: `P3 deck ${i}` }))
   ];
   const coinFlips = (engine: ReturnType<typeof coinTable>["engine"]) =>
-    engine.getLog().filter((e) => e.event?.type === "coinFlipped").map((e) => e.event as unknown as { playerId: string; won: boolean });
+    engine.getLog().filter((e) => e.event?.type === "coinFlipped").map((e) => ({ playerId: (e.event as unknown as { playerId: string }).playerId, won: (e.event as unknown as { won: boolean }).won }));
 
   clauseMismatch(LECRAM, "2:rule", "MP-seed-saga-301", "3 seats: at the end of P1's turn only P1 flips a coin; on a win P1 chooses P2 or P3 and looks at the top card of that player's deck only (never the other deck); on a loss P1 looks at nothing", () => {
     for (const chosen of [P2, P3]) {
@@ -681,7 +681,7 @@ const LUCKY = "4513085a-6185-4ef5-ba9c-7af3c3af30d4";
     [3, [[[5, 4, 5], true], [[5, 4, 6], false], [[5, 3, 3], true], [[5, 6, 2], false]]],
     [4, [[[5, 4, 5, 3], true], [[5, 4, 3, 6], false], [[5, 5, 5, 5], true]]]
   ] as Array<[3 | 4, Array<[number[], boolean]>]>) {
-    clauseMismatch(LUCKY, "1:rule", "MP-seed-saga-303", `${count} seats: if it would be destroyed every player removes the top card of their own deck from the game; P1's card cost must be at least EVERY opponent's removed card cost (never summed, never against one opponent only): then P1 draws and the damage becomes 0, otherwise Lucky Bastard is removed from the game`, () => {
+    clause(LUCKY, "1:rule", `${count} seats: if it would be destroyed every player removes the top card of their own deck from the game; P1's card cost must be at least EVERY opponent's removed card cost (never summed, never against one opponent only): then P1 draws and the damage becomes 0, otherwise Lucky Bastard is removed from the game`, () => {
       for (const [costs, survives] of scenarios) {
         const t = table(count, [
           { key: "lb", def: printing(LUCKY), owner: P1, zone: "play", damage: 2 },
@@ -739,7 +739,7 @@ const CHARM = "9db2e287-ca92-4304-814f-10b7eb99ef4b";
   });
 
   for (const count of [3, 4] as const) {
-    clauseMismatch(CHARM, "1:rule", "MP-seed-saga-302", `${count} seats: every opponent of P1 must pay 1 to pick a character P1 controls; P1 picking its own character pays nothing; opponents picking each other's characters pay nothing`, () => {
+    clause(CHARM, "1:rule", `${count} seats: every opponent of P1 must pay 1 to pick a character P1 controls; P1 picking its own character pays nothing; opponents picking each other's characters pay nothing`, () => {
       const board = (picker: PlayerId) =>
         table(
           count,
@@ -879,14 +879,14 @@ const MUSTACHE = "f276a0be-6c30-4276-a743-30e63619dc41";
       step("partitionCards", chosen, { piles: [[top(chosen)[0]!], [top(chosen)[1]!, top(chosen)[2]!]] });
       step("pickPile", P1, { index: 0 });
       step("pickPile", chosen, { index: 0 });
-      drain(t.engine, declineAll);
+      drain(t.engine, (pc) => (pc.kind === "takeFromPile" ? { kind: "takeFromPile", cardIds: [] } : declineAll(pc)));
       assert.ok(seen.every(([, who]) => who === P1 || who === chosen), "no other opponent is asked anything");
       for (const p of opponentsOf(count).filter((x) => x !== chosen)) {
         assert.deepEqual(deck(t.engine, p), decks[p], `${p} is not involved: its deck is not looked at or shuffled, keeping its order`);
         assert.equal(hand(t.engine, p).length, 0);
       }
     };
-    clauseMismatch(MUSTACHE, "0:ability:mustache-showdown", "MP-seed-saga-304", `${count} seats: P1 activates MUSTACHE SHOWDOWN and names one opponent; only P1 and that opponent look at their own top 3, divide them, and choose a pile of the other; the remaining opponents are not involved and their decks are not touched`, () => {
+    clause(MUSTACHE, "0:ability:mustache-showdown", `${count} seats: P1 activates MUSTACHE SHOWDOWN and names one opponent; only P1 and that opponent look at their own top 3, divide them, and choose a pile of the other; the remaining opponents are not involved and their decks are not touched`, () => {
       for (const chosen of opponentsOf(count)) run(chosen);
     });
   }

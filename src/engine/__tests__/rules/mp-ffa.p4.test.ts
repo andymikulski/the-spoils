@@ -125,7 +125,9 @@ for (const { seats, factions } of TABLES) {
         assert.ok(factionId, `${id} has a faction`);
         assert.equal(engine.state.cards[factionId]!.zone, "play", `${id}'s faction starts in play (CR 601.1a)`);
         assert.equal(engine.getDefinition(factionId).name, factions[seat]!.name, `${id} sits with their own faction`);
-        assert.equal(engine.state.players[id]!.influence, factions[seat]!.faction!.startingInfluence);
+        // The Evil Alliance counts its opponents (X = seats - 1): 15 + 10X influence, 1 + X staples.
+        const own = factions[seat] === ALLIANCE ? 15 + 10 * (seats - 1) : factions[seat]!.faction!.startingInfluence;
+        assert.equal(engine.state.players[id]!.influence, own);
       }
     });
 
@@ -179,7 +181,8 @@ for (const { seats, factions } of TABLES) {
       const { engine } = deciderOf(factions, 5);
       for (const id of ids) {
         assert.equal(handSize(engine, id), 0, `${id} has not drawn yet`);
-        assert.equal(resources(engine, id).length, 2, `${id}'s starting resources are in play`);
+        const staples = factions[ids.indexOf(id)] === ALLIANCE ? seats : 2; // The Evil Alliance: 1 + X, X = seats - 1
+        assert.equal(resources(engine, id).length, staples, `${id}'s starting resources are in play`);
       }
     });
   });
@@ -251,7 +254,8 @@ for (const { seats, factions } of TABLES) {
       const engine = game(factions, { firstPlayerId: P1, seed: 6 });
       for (const [seat, id] of ids.entries()) {
         const inPlay = engine.state.players[id]!.play.filter(cardId => cardId !== engine.state.players[id]!.factionId);
-        assert.equal(inPlay.length, 2, `${id} (${factions[seat]!.name}) starts with two cards in play`);
+        const staples = factions[seat] === ALLIANCE ? seats : 2; // The Evil Alliance: 1 + X, X = seats - 1
+        assert.equal(inPlay.length, staples, `${id} (${factions[seat]!.name}) starts with ${staples} cards in play`);
         for (const cardId of inPlay) assert.equal(engine.state.cards[cardId]!.faceDown, false, "flipped face-up");
         assert.ok(
           inPlay.every(cardId => engine.state.cards[cardId]!.ownerId === id),
@@ -370,7 +374,7 @@ describe("MPX-setup — the Union of Unextraordinary Miners with several opponen
           if (id === P2) continue;
           assert.equal(
             resources(engine, id).length,
-            id === chosen ? 4 : 2,
+            id === chosen ? 4 : factions[SEATS.indexOf(id)] === ALLIANCE ? seats : 2, // The Evil Alliance keeps its own 1 + X staples, X = seats - 1
             `${id}: ${id === chosen ? "topped up to match the Union" : "keeps its usual starting resources"}`
           );
         }

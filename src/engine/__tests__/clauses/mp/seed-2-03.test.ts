@@ -2,7 +2,7 @@
 // opponent" written from the point of view of whichever player drew). Expectations come from the printed text.
 
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import {
   activateAs, answerPlayer, answerTargets, character, choosePlayer, deckOf, handSize, hands, idsOf, item, location, others, P1, pending, perSeat, pickable, resourceCard, resources,
   seatsFor, settle, table, tokensOn, zoneOf
@@ -48,7 +48,7 @@ function drawThenChoose(t: Board, count: number, who: PlayerId, opponent: Player
 }
 
 for (const count of [3, 4] as const) {
-  clauseMismatch(MEAT, "0:rule", "MP-seed-2-3", `${count} seats: a draw by any player (you or an opponent) sets it off once, and only the player who drew chooses whether to add or remove a token`, () => {
+  clause(MEAT, "0:rule", `${count} seats: a draw by any player (you or an opponent) sets it off once, and only the player who drew chooses whether to add or remove a token`, () => {
     for (const drawer of seatsFor(count)) {
       const t = meatBoard(count, drawer, 0);
       const handBefore = Object.fromEntries(seatsFor(count).map((seat) => [seat, handSize(t, seat)]));
@@ -67,7 +67,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(MEAT, "1:rule", "MP-seed-2-3", `${count} seats: 0 TOKENS: "that player's opponent discards a card": one of the drawer's own opponents (which can be you), selected by the drawer, and nobody else discards`, () => {
+  clause(MEAT, "1:rule", `${count} seats: 0 TOKENS: "that player's opponent discards a card": one of the drawer's own opponents (which can be you), selected by the drawer, and nobody else discards`, () => {
     for (const drawer of seatsFor(count)) {
       for (const chosen of others(count, drawer)) {
         const t = meatBoard(count, drawer, 1);
@@ -89,7 +89,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(MEAT, "2:rule", "MP-seed-2-3", `${count} seats: 1 TOKEN: the player who drew looks at the top 2 cards of their own deck, 1 into their hand, 1 on the bottom`, () => {
+  clause(MEAT, "2:rule", `${count} seats: 1 TOKEN: the player who drew looks at the top 2 cards of their own deck, 1 into their hand, 1 on the bottom`, () => {
     for (const drawer of seatsFor(count)) {
       const t = meatBoard(count, drawer, 0);
       drawThenChoose(t, count, drawer, others(count, drawer)[0]!);
@@ -113,7 +113,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(MEAT, "3:rule", "MP-seed-2-3", `${count} seats: 2 TOKENS: the player who drew may pick any character or location and put it into its owner's hand`, () => {
+  clause(MEAT, "3:rule", `${count} seats: 2 TOKENS: the player who drew may pick any character or location and put it into its owner's hand`, () => {
     for (const drawer of seatsFor(count)) {
       const t = meatBoard(count, drawer, 1);
       drawThenChoose(t, count, drawer, others(count, drawer)[0]!);
@@ -131,7 +131,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(MEAT, "4:rule", "MP-seed-2-3", `${count} seats: AT LEAST 3 TOKENS: the player who drew may play a resource from their own hand`, () => {
+  clause(MEAT, "4:rule", `${count} seats: AT LEAST 3 TOKENS: the player who drew may play a resource from their own hand`, () => {
     for (const drawer of seatsFor(count)) {
       const t = meatBoard(count, drawer, 2);
       drawThenChoose(t, count, drawer, others(count, drawer)[0]!);

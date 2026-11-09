@@ -13,7 +13,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[1].offerTo"
           }
         ],
         "test3": "P2 deploys a character (a non-tactic card) while P3 is also in the game. P1 may deploy Additional Tribute in response. The same works in response to a non-tactic card P3 deploys. It is refused in response to a tactic P2 or P3 deploys, and when no card is being deployed. P1 cannot respond to P1's own deployment."
@@ -28,7 +29,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[1].offerTo"
           }
         ],
         "test3": "With P1 controlling [V][V][V], when Additional Tribute resolves P1 may look at the top card of P1's own deck (only P1 sees it) and may put it on the bottom; P2 and P3 see nothing. Without the threshold the look is not offered. This does not depend on the other players."
@@ -50,7 +52,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn"
+            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn Edit: the mayPay drops \"player\" and takes offerTo: \"opponents\" (each opponent in turn, clockwise from the controller's left; the first to pay settles it).",
+            "movedTo": "behavior.abilities[0].effects[1].offerTo"
           }
         ],
         "test3": "P3 deploys a character while P2 is also in the game. P1 deploys Additional Tribute in response. The payment of 1 is offered to P2 first, then P3 (clockwise from P1's left). If P2 pays 1: P1 (not the payer) draws a card, Additional Tribute is terminated, the character resolves and P3 is never asked. If P2 declines and P3 pays 1: the same with P3 as the payer. If both decline: the character being deployed is terminated and P1 draws nothing."
@@ -170,7 +173,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].offerTo"
           }
         ],
         "test3": "P1 plays Offering of False Friendship picking a character: any character in play can be picked (P1's own, P2's or P3's). No chooseOpponent step appears at play; the opponents' offer comes at resolution."
@@ -192,7 +196,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn"
+            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn Edit: the mayPay drops \"player\" and takes offerTo: \"opponents\" (each opponent in turn, clockwise from the controller's left; the first to pay settles it).",
+            "movedTo": "behavior.abilities[0].effects[0].offerTo"
           }
         ],
         "test3": "P1 picks a P2 character named \"Echo\"; P3 controls another \"Echo\" and P1 controls a third. The payment of 2 is offered to P2 first, then P3. If either pays 2, Offering is terminated and no character moves, and the other is not asked after a payment. If both decline, every character named \"Echo\" in play (P2's, P3's and P1's) goes to the bottom of its owner's deck."
@@ -303,7 +308,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].offerTo"
           },
           {
             "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
@@ -345,7 +351,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn"
+            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn Edit: the mayPay drops \"player\" and takes offerTo: \"opponents\" (each opponent in turn, clockwise from the controller's left; the first to pay settles it).",
+            "movedTo": "behavior.abilities[0].effects[0].offerTo"
           },
           {
             "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
@@ -517,8 +524,8 @@
             "path": "behavior.abilities[1].usableBy",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "\"Only an opponent may use this ability\": usable by whichever opponent chooses to use it (P2 or P3), each paying their own 3; not by the controller"
+            "edit": false,
+            "why": "\"Only an opponent may use this ability\": usableBy \"opponent\" already means any opponent (hidden from the controller, resolved under whichever opponent activates it and pays their own 3). The engine reads the stored value at any table size, so it stays."
           }
         ],
         "test3": "The De-Itemizer is under P1's control attached to an item, so the attached card has no rules text. P2 can activate RESET (paying 3 from P2's own resources) and so can P3; P1 cannot. After it resolves the De-Itemizer loses all rules text this turn, so the attached card has its rules text back until end of turn, then loses it again. Nothing else about P1, P2 or P3 changes."
@@ -552,7 +559,7 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn"
+            "why": "\"Any opponent may pay\" is an offer made to each opponent in turn, clockwise from the controller's left, not a pick by the controller (MPQ-P7): the first opponent to pay settles it and the others are not asked; if every opponent declines the Otherwise branch happens. The stored single \"opponent\" player must become an offer to each opponent in turn Edit: the replacement's chooser is \"opponents\" (offered to each opponent in turn; the first to pay takes control, all decline: it is destroyed)."
           }
         ],
         "test3": "P1's Unloyal Necromorph would be destroyed with 2 damage on it. The payment of 2 is offered to P2 first, then P3 (clockwise from P1's left). If P2 pays 2, P2 (not P3) takes control of the Necromorph instead of it being destroyed and its damage this turn is reduced to 0; P3 is never asked. If P2 declines and P3 pays 2, P3 takes control. If both decline, it is destroyed."

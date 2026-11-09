@@ -1175,7 +1175,7 @@
               }
             },
             {
-              "affects": "opponent",
+              "affects": "opponents",
               "delta": 2,
               "selector": {
                 "subtypeVar": "banned",
@@ -3317,7 +3317,12 @@
             }
           ]
         }
-      ]
+      ],
+      "perExtraOpponent": {
+        "influence": 10,
+        "startingResources": 1,
+        "developUses": 1
+      }
     },
     "trade": "Universal",
     "rarity": "e-sle",

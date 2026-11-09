@@ -44,22 +44,30 @@
         ],
         "dataChanges": [
           {
+            "path": "behavior.abilities[0].opponentFrom",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "MPQ-P10: a new field on the ability; there is no opponentFrom yet (the path does not exist). \"acting\" makes the player whose turn is starting select one of their own opponents for \"both players\"."
+          },
+          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "activePlayer",
-            "meaning": "activePlayer",
-            "edit": false,
-            "why": "\"that player picks a number for X\": the active player of the turn that is starting; the stored \"activePlayer\" chooser already names that player at any table size"
+            "meaning": "refersBack",
+            "edit": true,
+            "why": "\"that player picks a number for X\": the player whose turn is starting; in the point-of-view block it is \"acting\"."
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0]",
             "now": "forEachPlayer",
             "meaning": "chosenPair",
             "edit": true,
-            "why": "Iterates only the controller and the one opponent chosen when the trigger resolves (MP 3), not every player. Order: active player first, then clockwise (CR 402.2), skipping seats outside the pair. The trigger itself still fires at the start of every player's turn."
+            "why": "MPQ-P10: \"both players\" is the player whose turn is starting and the opponent that player selects, not the controller and the controller's opponent: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". Order: active player first, then clockwise (CR 402.2). The trigger still fires at the start of every player's turn."
           }
         ],
-        "test3": "P1 controls Ambiguity Embiggener. At the start of P3's turn (P3 active) the trigger resolves; P1 is offered P2 and P3 as the opponent and picks P2. P3 (active player, not in the pair) picks X=2. P1 and P2 each put 2 cards from their own hand on the bottom of their own deck in an order they choose, then each draws the top Y cards of their own deck where Y is the number that player put on the bottom. P3's hand and deck are untouched. If P2 holds only 1 card, P2 puts that 1 card and draws 1. Repeat at the start of P1's turn (P1 picks X, pair is P1 and P3 after P1 picks P3): P2 untouched. Repeat at the start of P2's turn, pick P3: P1 and P3 act, P2 (active, picked X) does not.",
-        "test4": "P1 controls it; P2, P3, P4 follow clockwise. At the start of P4's turn P1 picks P3 as the opponent (offered P2, P3, P4). P4 picks X=1. The pair acts in order active-first-then-clockwise: P1, then P3 (P4 is active but not in the pair, so skipped). P2 and P4 hands and decks are untouched. Then at the start of P2's turn P1 picks P4: P2 picks X, P4 and P1 act (order from P2 clockwise: P4 then P1), P3 untouched."
+        "test3": "P1 controls Ambiguity Embiggener. At the start of P3's turn (P3 active) the trigger resolves; P3 (not P1) is offered P1 and P2 as the opponent and picks P2, then P3 picks X=2. P3 and P2 each put 2 cards from their own hand on the bottom of their own deck in an order they choose, then each draws the top Y cards of their own deck where Y is the number that player put on the bottom. P1 (the controller, not in the pair) is untouched. If P2 holds only 1 card, P2 puts that 1 card and draws 1. Repeat at the start of P1's turn (P1 selects P3 and picks X; the pair is P1 and P3): P2 untouched. Repeat at the start of P2's turn (P2 selects P1 and picks X; P2 acts first, then P1): P3 untouched.",
+        "test4": "P1 controls it; P2, P3, P4 follow clockwise. At the start of P4's turn P4 selects P2 (offered P1, P2, P3) and picks X=1. The pair acts in order active-first-then-clockwise: P4, then P2. P1 and P3 hands and decks are untouched. Then at the start of P2's turn P2 selects P4 and picks X: P2 acts, then P4; P1 and P3 are untouched.",
+        "note": "Text from the active player's point of view (MPQ-P10, MPX-other-pov): \"that player\" is the player whose turn is starting, who picks X and selects the opponent; \"both players\" is that player and that opponent, whoever controls the card (the controller is untouched unless it is one of the two)."
       }
     ]
   },

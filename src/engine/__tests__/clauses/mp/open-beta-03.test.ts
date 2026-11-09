@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { autoResolveBattle, character, developFaction, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { developPlay } from "../_turn.js";
 import {
   activate,

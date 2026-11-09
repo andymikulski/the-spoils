@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { autoResolveBattle, character, developFaction, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { developPlay } from "../_turn.js";
 import {
   activate,
@@ -858,7 +858,7 @@ function voidalBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clauseMismatch(VOIDAL, "0:rule", "MP-1st-edition-1", `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
+  clause(VOIDAL, "0:rule", `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
     for (const chosen of choices(count)) {
       const t = voidalBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("vr") });
@@ -870,7 +870,7 @@ for (const count of TABLES) {
   });
 }
 
-clauseMismatch(VOIDAL, "0:rule", "MP-1st-edition-1", "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
+clause(VOIDAL, "0:rule", "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
   const counter = tactic({ name: "Counter", cost: 0, behavior: { abilities: [{ id: "c", type: "activated", effects: [{ type: "draw", player: "controller", amount: 1 }] }] } });
   const t = seatTable(3, [
     { key: "vr", def: printing(VOIDAL), owner: P1, zone: "hand" },

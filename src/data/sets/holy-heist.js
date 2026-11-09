@@ -85,7 +85,6 @@ const cards = [
             },
             {
               "type": "mayPay",
-              "player": "opponent",
               "costs": [
                 {
                   "type": "payResources",
@@ -104,7 +103,8 @@ const cards = [
                   "type": "terminate",
                   "scope": "respondedItem"
                 }
-              ]
+              ],
+              "offerTo": "opponents"
             }
           ]
         }
@@ -1366,7 +1366,6 @@ const cards = [
           "effects": [
             {
               "type": "mayPay",
-              "player": "opponent",
               "costs": [
                 {
                   "type": "payResources",
@@ -1406,7 +1405,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "offerTo": "opponents"
             }
           ]
         }
@@ -2148,7 +2148,6 @@ const cards = [
           "effects": [
             {
               "type": "mayPay",
-              "player": "opponent",
               "costs": [
                 {
                   "type": "payResources",
@@ -2214,7 +2213,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "offerTo": "opponents"
             }
           ]
         }
@@ -3309,7 +3309,7 @@ const cards = [
           "modifiers": [],
           "costModifiers": [
             {
-              "affects": "opponent",
+              "affects": "opponents",
               "delta": 0,
               "minCost": 3,
               "selector": {
@@ -5494,7 +5494,7 @@ const cards = [
               "amount": 2
             }
           ],
-          "chooser": "opponent",
+          "chooser": "opponents",
           "effects": [
             {
               "type": "takeControl",

@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, developFaction, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import {
   activate,
   answer,
@@ -340,7 +340,7 @@ for (const count of TABLES) {
 // With a single opponent left for the active player, "their opponent" is that one player and nobody is asked.
 for (const count of TABLES) {
   for (const [index, label, key] of [[0, "OPTION 1", "1:option:OPTION 1"], [1, "OPTION 2", "2:option:OPTION 2"]] as const) {
-    clauseMismatch(FTA, key, "MP-open-beta-11", `${count} seats: ${label} names "their opponent" once: the active player is asked to select exactly one opponent for the block`, () => {
+    clause(FTA, key, `${count} seats: ${label} names "their opponent" once: the active player is asked to select exactly one opponent for the block`, () => {
       const t = ftaBoard(count, P2);
       const run = ftaTurn(t, P2, index, P1);
       assert.equal(run.candidates.length, 1, `one selection prompt, not ${run.candidates.length}`);
@@ -1082,7 +1082,7 @@ const withOpponent = (t: SeatTable, chosen: string): Record<string, unknown> => 
 };
 
 for (const count of TABLES) {
-  clauseMismatch(VACATION, "0:rule", "MP-open-beta-1", `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
+  clause(VACATION, "0:rule", `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
     for (const chosen of choices(count)) {
       const t = vacationBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("tv") });
@@ -1094,7 +1094,7 @@ for (const count of TABLES) {
   });
 }
 
-clauseMismatch(VACATION, "0:rule", "MP-open-beta-1", "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
+clause(VACATION, "0:rule", "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
   const t = vacationBoard(3);
   playCard(t.engine, P1, t.id("tv"), { players: { opponent: P2 } });
   refused(() => playCard(t.engine, P2, t.id("probe" + P2)), "the chosen opponent cannot respond", /priority/);

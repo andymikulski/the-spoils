@@ -416,15 +416,15 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0]",
-            "movedTo": "behavior.abilities[0].effects[2]",
+            "movedTo": "behavior.abilities[0].effects[3]",
             "now": {
               "type": "draw",
               "player": "controller",
               "amount": 1
             },
             "meaning": "chosenOpponent",
-            "edit": true,
-            "why": "The data has only the draw (this step), so there is no look and no player word to bind. New look steps are inserted before it (the text looks first, then draws), all aimed at one opponent. All three looks (hand, top card of the deck, face-down resources) read the one chosen opponent ('your opponent's', MP 2). `now` is the draw step stored here today."
+            "edit": false,
+            "why": "The draw has no player word and keeps its value; it moved from effects[0] to effects[3] when the three looks (hand, top card of the deck, face-down resources) were inserted before it."
           },
           {
             "path": "behavior.abilities[0].effects[0].of",
@@ -439,6 +439,13 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "New node: the look at the top card of the chosen opponent's deck; path does not exist before the edit."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].of",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "New node: the look at the chosen opponent's face-down resources (a reveal of zone faceDownResources, viewer controller), read from the same one opponent as the other two looks; path does not exist before the edit."
           }
         ],
         "test3": "P1 plays Forbidden Knowledge. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 may look at P2's hand, P2's top deck card and P2's face-down resources and sees none of P3's hidden information. Choose P3 (second run): P1 may look at P3's hand, P3's top deck card and P3's face-down resources and sees none of P2's hidden information. P1 draws a card in both runs."
@@ -967,7 +974,8 @@
             },
             "meaning": "other",
             "edit": true,
-            "why": "`battleRole` is not a player word and not an event-player test: the engine evaluates it as 'the controller is the battle's defender' (battle.defenderPlayerId === the controller), so the engine does not bind it to an opponent. MPQ-P8 binds 'your opponent' to the other side of the battle only when the controller is a party to it, and 'defender' covers exactly that case. The printed text ('only while your opponent is attacking') is also met when two other players fight (MP 2: the controller picks an attacking opponent), which 'defender' refuses, so the condition must change. The edit flag stays true."
+            "why": "`battleRole` is not a player word and not an event-player test: the engine evaluates it as 'the controller is the battle's defender' (battle.defenderPlayerId === the controller), so the engine does not bind it to an opponent. MPQ-P8 binds 'your opponent' to the other side of the battle only when the controller is a party to it, and 'defender' covers exactly that case. The printed text ('only while your opponent is attacking') is also met when two other players fight (MP 2: the controller picks an attacking opponent), which 'defender' refuses, so the condition must change. The edit flag stays true. Edit done: the condition is now battleActive and isActivePlayer { player: \"opponent\" } (the battle's attacker is the active player), and the ability holds opponentFrom \"battle\", so the opponent is the other side of the battle when the controller is in it (no choice) and the attacking opponent otherwise.",
+            "movedTo": "behavior.abilities[0].condition"
           }
         ],
         "test3": "P2 attacks P1's faction. P1 plays Architectural Restitution: no opponent choice is offered (the attacker is the other side of the battle). P1 picks a location in P1's discard pile; it enters under P1's control and P2's attack is redirected to it. Then P2 attacks P3: P1 (not a party to the attack) may also play it; P1 chooses an opponent and only P2 (the attacker) is a legal choice (P3 is not attacking), and P2's attack is redirected to the location. P3 playing it while defending against P2: no choice is offered and P2's attack is redirected. It is refused on P1's own turn while P1 attacks (no attacking opponent) and when nobody is attacking."
@@ -1361,7 +1369,7 @@
             },
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "The restriction has no player: it blocks every taker. It needs a field naming the player barred from taking control (the chosen opponent)."
+            "why": "The restriction has no player: it blocks every taker. It needs a field naming the player barred from taking control (the chosen opponent). Engine gap: cannotBeTakenControl is read without a player (takeControl fizzles for every other controller) and no restriction form yet names the one barred opponent; the site stays pending."
           }
         ],
         "test3": "P1 controls Mountainous Golem. The opponent is chosen when the static text starts applying (RQ-mp-5), kept while it applies, and re-chosen if that player is eliminated: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: an effect controlled by P2 cannot take control of the Golem; an effect controlled by P3 can (literal reading of MP 2). Choose P3 (second run): an effect controlled by P3 cannot take control of the Golem; an effect controlled by P2 can (literal reading of MP 2)."
@@ -1435,7 +1443,8 @@
             },
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "`battleRole` is not a player word and not an event-player test: the engine evaluates it as 'the controller is the battle's defender' (battle.defenderPlayerId === the controller), so the engine does not bind it to an opponent. It only fires for attacks on the controller, and the battleStarted event carries no playerId, so MPQ-P5's general binding of the event's player has nothing to match. The printed text fires on any opponent's attack, whoever is attacked (3+ seats: an opponent attacking another opponent), so the condition itself must be replaced by an 'an opponent attacks' condition (the battle's attacker is an opponent). The edit flag stays true."
+            "why": "`battleRole` is not a player word and not an event-player test: the engine evaluates it as 'the controller is the battle's defender' (battle.defenderPlayerId === the controller), so the engine does not bind it to an opponent. It only fires for attacks on the controller, and the battleStarted event carries no playerId, so MPQ-P5's general binding of the event's player has nothing to match. The printed text fires on any opponent's attack, whoever is attacked (3+ seats: an opponent attacking another opponent), so the condition itself must be replaced by an 'an opponent attacks' condition (the battle's attacker is an opponent). The edit flag stays true. Edit done: the condition is now isActivePlayer { player: \"opponent\" } (the attacker is the active player) with opponentFrom \"battle\", so any opponent's attack, whoever is attacked, lets the controller put a token.",
+            "movedTo": "behavior.abilities[0].condition"
           }
         ],
         "test3": "P2 attacks P1: the trigger fires and P1 may put a token on Runivoltaic Accumulator. P2 attacks P3 (P1 is not the defender): it also fires for P1. P3 attacks P1 or P2: it fires. P1 attacks: it does not fire. No chooseOpponent step is offered. One trigger per attack, and declining adds no token."

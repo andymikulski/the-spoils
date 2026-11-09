@@ -1177,7 +1177,7 @@ const cards = [
               }
             },
             {
-              "affects": "opponent",
+              "affects": "opponents",
               "delta": 2,
               "selector": {
                 "subtypeVar": "banned",
@@ -3319,7 +3319,12 @@ const cards = [
             }
           ]
         }
-      ]
+      ],
+      "perExtraOpponent": {
+        "influence": 10,
+        "startingResources": 1,
+        "developUses": 1
+      }
     },
     "trade": "Universal",
     "rarity": "e-sle",

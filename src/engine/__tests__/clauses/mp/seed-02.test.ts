@@ -1,5 +1,5 @@
 // Multiplayer clause tests for the Seed set (3 and 4 seats), part 2: the remaining clauses whose data changed, and the
-// three that wait for engine vocabulary (clauseMismatch). Expectations come from each card's PRINTED text, the
+// Mountainous Golem, which waits for engine vocabulary (clauseMismatch). Expectations come from each card's PRINTED text, the
 // multiplayer atoms (data/rule-tests/source/multiplayer.txt) and data/card-tests/mp-spec/seed.json.
 
 import assert from "node:assert/strict";
@@ -342,7 +342,7 @@ clause(DEN, "0:rule", "3 seats: it fires only at the start of P1's own turn, not
 });
 
 // =================================================================================
-// Architectural Restitution  (MP-seed-1: no "an opponent is attacking" condition in the vocabulary)
+// Architectural Restitution  (MP-seed-1: an opponent is attacking)
 // Play this only while your opponent is attacking. Pick a location in your discard pile.
 // Put the location into play under your control. Change the target of your opponent's attack to the location.
 // =================================================================================
@@ -377,7 +377,7 @@ function passUntil(t: Table, who: PlayerId): void {
   assert.fail(`${who} never got priority`);
 }
 
-clauseMismatch(RESTITUTION, "0:ability", "MP-seed-1", "3 seats: playable while any opponent is attacking (the attacker is the opponent, no choice when P1 is a party, only the attacker legal otherwise), refused when no opponent attacks", () => {
+clause(RESTITUTION, "0:ability", "3 seats: playable while any opponent is attacking (the attacker is the opponent, no choice when P1 is a party, only the attacker legal otherwise), refused when no opponent attacks", () => {
   // P2 attacks P1's faction: P1 plays it as the defender, nobody is asked
   const a = restitutionTable(3, P2);
   a.engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [a.id("c-p2")], target: { type: "faction", playerId: P1 } } as never);
@@ -457,7 +457,7 @@ clauseMismatch(GOLEM, "0:rule", "MP-seed-2", "3 seats: the opponent P1 chooses w
 });
 
 // =================================================================================
-// Runivoltaic Accumulator  (MP-seed-3: the trigger only fires when the controller is defended on)
+// Runivoltaic Accumulator  (MP-seed-3: any opponent's attack)
 // If your opponent attacks, you may put a token on this card.
 // =================================================================================
 
@@ -475,7 +475,7 @@ function accumulatorTable(attacker: PlayerId): Table {
   );
 }
 
-clauseMismatch(ACCUMULATOR, "0:rule", "MP-seed-3", "3 seats: any opponent's attack lets P1 put a token (whoever is attacked, once per attack, declining adds none, no opponent is asked); P1's own attack does not", () => {
+clause(ACCUMULATOR, "0:rule", "3 seats: any opponent's attack lets P1 put a token (whoever is attacked, once per attack, declining adds none, no opponent is asked); P1's own attack does not", () => {
   for (const [attacker, defender, fires] of [
     [P2, P1, true],
     [P2, P3, true],

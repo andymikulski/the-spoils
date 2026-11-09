@@ -210,6 +210,12 @@ export type Effect =
       /** "Remove from the game" (RULES.md §2) — permanent, unlike moveCard to any tracked zone. */
       type: "removeFromGame";
       target: TargetRef;
+      /**
+       * Remove it FACE-DOWN: "Remove the top 4 cards of your opponent's deck from the game face-down. (You are
+       * still allowed to look at them.)" (Pant Swipe, Seed). Only the player who removed it sees it (and anyone a
+       * standing "you may look at" ability names); the next move clears it like any other.
+       */
+      faceDown?: boolean;
     }
   | {
       /**

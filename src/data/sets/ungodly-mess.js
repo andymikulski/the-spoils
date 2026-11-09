@@ -4126,7 +4126,7 @@ const cards = [
           "modifiers": [],
           "costModifiers": [
             {
-              "affects": "opponent",
+              "affects": "opponents",
               "delta": 1
             }
           ]
@@ -11565,23 +11565,23 @@ const cards = [
         {
           "id": "hide",
           "type": "continuous",
-          "condition": {
-            "type": "numberCompare",
-            "left": {
-              "type": "count",
-              "selector": {
-                "zone": "discard",
-                "owner": "opponent"
-              }
-            },
-            "operator": ">=",
-            "right": 10
-          },
           "modifiers": [],
           "restrictions": [
             {
               "restriction": "cannotBePickedByOpponents",
-              "target": "source"
+              "target": "source",
+              "opponentCondition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "zone": "discard",
+                    "owner": "opponent"
+                  }
+                },
+                "operator": ">=",
+                "right": 10
+              }
             }
           ]
         },

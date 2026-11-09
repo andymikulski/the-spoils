@@ -5,7 +5,7 @@
 Counts are per rules group (printings identical in everything the engine reads count once), attributed to the
 group's earliest-released set. "Distinct cards" counts distinct card names. Phrases include reminder text unless noted.
 
-1773 rules groups, 3548 clauses: 2245 with `mp` set (75 `"quantified"`), 552 with a printed player phrase, 2186 with a behavior player word (481 with a word other than controller, self, owner, all or a PlayerRef).
+1773 rules groups, 3548 clauses: 2244 with `mp` set (75 `"quantified"`), 552 with a printed player phrase, 2182 with a behavior player word (467 with a word other than controller, self, owner, all or a PlayerRef).
 
 ## Printed phrases by category
 
@@ -36,16 +36,16 @@ group's earliest-released set. "Distinct cards" counts distinct card names. Phra
 
 | value | occurrences | distinct cards |
 |---|---|---|
-| `controller` | 2335 | 765 |
-| `self` | 893 | 466 |
-| `opponent` | 451 | 185 |
+| `controller` | 2325 | 765 |
+| `self` | 888 | 466 |
+| `opponent` | 436 | 179 |
 | `ownerOf` | 78 | 46 |
 | `controllerOf` | 55 | 30 |
-| `forEachPlayer` | 49 | 26 |
+| `forEachPlayer` | 47 | 27 |
 | `all` | 43 | 19 |
 | `owner` | 25 | 3 |
-| `any` | 16 | 12 |
-| `activePlayer` | 15 | 6 |
+| `any` | 17 | 12 |
+| `activePlayer` | 6 | 4 |
 | `otherPlayerChooses` | 6 | 6 |
 | `anyPlayer` | 5 | 4 |
 | `auctionForCard` | 2 | 1 |
@@ -55,24 +55,24 @@ group's earliest-released set. "Distinct cards" counts distinct card names. Phra
 | `anyPlayerMayPay` | 1 | 1 |
 | `separateIntoPiles` | 1 | 1 |
 
-Mapping of behavior words to clauses: ref 841, flipUp 40, fealty 4, exclusive 1615, shared 1479.
+Mapping of behavior words to clauses: ref 841, flipUp 40, fealty 4, exclusive 1611, shared 1443.
 
 ## Per set (rules groups by earliest set)
 
 | set | rules groups | printed phrases | behavior words | cards with mp | cards quantified |
 |---|---|---|---|---|---|
-| Open Beta | 206 | 72 | 354 | 146 | 2 |
+| Open Beta | 206 | 72 | 348 | 146 | 2 |
 | 1st Edition | 105 | 36 | 201 | 77 | 0 |
-| 1st Edition Part 2 | 165 | 80 | 320 | 124 | 2 |
-| Seed | 226 | 68 | 486 | 161 | 2 |
-| Seed 2 | 110 | 45 | 361 | 93 | 0 |
-| 2nd Edition | 153 | 91 | 391 | 131 | 2 |
-| Seed 3 | 38 | 33 | 132 | 35 | 5 |
-| Shade of the Devoured Emperor | 130 | 60 | 289 | 100 | 13 |
-| Holy Heist | 145 | 54 | 329 | 109 | 5 |
-| Ungodly Mess | 156 | 49 | 361 | 121 | 10 |
-| Seed Saga | 213 | 108 | 514 | 174 | 21 |
-| Decade of Deckadence | 126 | 41 | 241 | 107 | 7 |
+| 1st Edition Part 2 | 165 | 80 | 319 | 124 | 2 |
+| Seed | 226 | 68 | 490 | 161 | 2 |
+| Seed 2 | 110 | 45 | 345 | 93 | 0 |
+| 2nd Edition | 153 | 91 | 379 | 131 | 2 |
+| Seed 3 | 38 | 33 | 131 | 35 | 5 |
+| Shade of the Devoured Emperor | 130 | 60 | 288 | 100 | 13 |
+| Holy Heist | 145 | 54 | 324 | 109 | 5 |
+| Ungodly Mess | 156 | 49 | 360 | 121 | 10 |
+| Seed Saga | 213 | 108 | 516 | 174 | 21 |
+| Decade of Deckadence | 126 | 41 | 238 | 107 | 7 |
 
 ### Printed phrases per set and category
 
@@ -100,17 +100,18 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 |---|---|---|---|
 | `bothPlayers-no-iteration` |  | 8 | 8 |
 | `eachOfYou-no-iteration` |  | 1 | 1 |
-| `eachOpponent-no-iteration` |  | 44 | 43 |
-| `eachPlayer-no-iteration` |  | 2 | 2 |
+| `eachOpponent-no-iteration` |  | 43 | 42 |
+| `eachPlayer-no-iteration` |  | 1 | 1 |
 | `playersBare-no-iteration` |  | 2 | 2 |
 | `xPlayers-no-iteration` |  | 1 | 1 |
 | `data-word-no-printed-phrase` |  | 15 | 14 |
-| `printed-no-data-word` |  | 59 | 45 |
-| `anOpponent-vs-opponent` | expected in two-player (count only) | 23 | 23 |
-| `anyOpponent-vs-opponent` | expected in two-player (count only) | 6 | 6 |
+| `printed-no-data-word` |  | 62 | 48 |
+| `anOpponent-vs-opponent` | expected in two-player (count only) | 20 | 20 |
+| `anyOpponent-vs-opponent` | expected in two-player (count only) | 1 | 1 |
 | `opponentBare-vs-opponent` | expected in two-player (count only) | 2 | 2 |
-| `thatOpponent-vs-opponent` | expected in two-player (count only) | 4 | 4 |
-| `yourOpponent-vs-opponent` | expected in two-player (count only) | 223 | 153 |
+| `thatOpponent-vs-opponent` | expected in two-player (count only) | 3 | 3 |
+| `theirOpponent-vs-opponent` | expected in two-player (count only) | 2 | 1 |
+| `yourOpponent-vs-opponent` | expected in two-player (count only) | 225 | 155 |
 
 ### `bothPlayers-no-iteration` (8)
 
@@ -127,7 +128,7 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 
 - Mustache Aficionado (`f276a0be-6c30-4276-a743-30e63619dc41`) `0:ability:mustache-showdown` — printed "Each of you"; data has "partitionAndPick" and no forEachPlayer / alternating iteration
 
-### `eachOpponent-no-iteration` (44)
+### `eachOpponent-no-iteration` (43)
 
 - Voidal Replication (`b9e94612-3cbd-44ff-9aac-a553a49c0955`) `0:extraCost` — printed "Your opponents"; data has no player words and no forEachPlayer / alternating iteration
 - Spatchcocking (`d23a3fbd-0bf3-4937-9b29-570c55a418b8`) `1:ability:spatchcocking-recur` — printed "Each opponent"; data has "opponent", "all" and no forEachPlayer / alternating iteration
@@ -146,7 +147,7 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Craniata Nester (`1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7`) `0:rule`, `1:rule` — printed "each opponent's"; data has "controller" and no forEachPlayer / alternating iteration
 - Underdog (`d000169f-1416-41e4-a603-3fc3bed83e46`) `0:rule` — printed "your opponents"; data has no player words and no forEachPlayer / alternating iteration
 - Lockbox of the Aeons (`2475968c-7bb5-43c1-8225-1bf9d8fdc059`) `0:rule` — printed "your opponents"; data has no player words and no forEachPlayer / alternating iteration
-- Foreclosure Overseer (`d56e0e61-ff37-4424-b089-83d879c37d98`) `0:rule` — printed "your opponents"; data has "opponent" and no forEachPlayer / alternating iteration
+- Foreclosure Overseer (`d56e0e61-ff37-4424-b089-83d879c37d98`) `0:rule` — printed "your opponents"; data has no player words and no forEachPlayer / alternating iteration
 - Yenassa Shipping, LLP (`453a6b4d-a4c3-46f7-a9cc-9e043cde9f50`) `1:rule`, `2:rule` — printed "your opponents"; data has "controller" and no forEachPlayer / alternating iteration
 - God's Blessing of Readiness (`c71f0071-5ef8-4b3b-9356-149cad14c9bd`) `2:rule`, `3.0:grant-rule`, `3.1:grant-rule` — printed "each opponent's"; data has "self", "controller" and no forEachPlayer / alternating iteration
 - Undesirable Intrusion (`cbffb937-448e-425e-ac37-fa1d856a07c8`) `0:extraCost`, `1:rule` — printed "Your opponents"; data has "controllerOf" and no forEachPlayer / alternating iteration
@@ -163,8 +164,7 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Mountainous Golem (`fe48adc4-e74d-46ce-9b4c-c94ff00f932b`) `0:rule` — printed "Your opponents"; data has no player words and no forEachPlayer / alternating iteration
 - Mud Prison (`73aa24ca-a9d9-480b-a83e-efa6571a5307`) `0:rule`, `1:rule` — printed "your opponents"; data has "controller" and no forEachPlayer / alternating iteration
 - P3pp3r 0f 1n54n17y (`3cd39b3f-5db3-4d53-95de-16b2b502890c`) `1:rule`, `2:rule` — printed "each opponent's"; data has "opponent" and no forEachPlayer / alternating iteration
-- Lucky Bastard (`4513085a-6185-4ef5-ba9c-7af3c3af30d4`) `0:rule`, `1:rule` — printed "each opponents'"; data has "controller", "opponent" and no forEachPlayer / alternating iteration
-- Lucky Charm (`9db2e287-ca92-4304-814f-10b7eb99ef4b`) `0:rule`, `1:rule` — printed "Your opponents"; data has "controller", "opponent", "self" and no forEachPlayer / alternating iteration
+- Lucky Charm (`9db2e287-ca92-4304-814f-10b7eb99ef4b`) `0:rule`, `1:rule` — printed "Your opponents"; data has "controller", "self" and no forEachPlayer / alternating iteration
 - Draconarius Slitherform (`b6a07adb-0334-454a-a8d4-019dabbdcc8b`) `1:rule`, `2:rule` — printed "your opponents'"; data has "controller" and no forEachPlayer / alternating iteration
 - Goutflame Talonclaw (`cb503376-78b8-447c-9119-734f992429c9`) `1:rule`, `2:rule`, `3:rule` — printed "Opponents"; data has "controller" and no forEachPlayer / alternating iteration
 - Phalludrix, the Impotenator (`513334b0-8ed9-4d1b-9eea-86af96f9247e`) `1:rule`, `2:ability`, `3:rule`, `4:rule` — printed "each opponent's"; data has "opponent", "controller", "self" and no forEachPlayer / alternating iteration
@@ -174,15 +174,14 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Temple of Rantzigore (`66d4842a-f209-4ff8-bf29-935596d08bb7`) `1:rule` — printed "your opponents"; data has no player words and no forEachPlayer / alternating iteration
 - The Ministry of Other Smaller Smaller Ministries (`03793397-ca23-4bda-b0ec-3a1597874ab8`) `0:rule` — printed "Each opponent"; data has no player words and no forEachPlayer / alternating iteration
 
-### `eachPlayer-no-iteration` (2)
+### `eachPlayer-no-iteration` (1)
 
 - Mirthless Altar (`9e0f839e-f482-42b1-b6d4-4c19dbdcd70a`) `0:rule` — printed "each player's"; data has "controller" and no forEachPlayer / alternating iteration
-- Lucky Bastard (`4513085a-6185-4ef5-ba9c-7af3c3af30d4`) `0:rule`, `1:rule` — printed "each player"; data has "controller", "opponent" and no forEachPlayer / alternating iteration
 
 ### `playersBare-no-iteration` (2)
 
 - Narrow Passage (`a29a0fb1-c505-410f-8a78-55380f603326`) `0:rule` — printed "Players"; data has no player words and no forEachPlayer / alternating iteration
-- Port Manteau (`e2f64e14-2f97-4905-8bb0-8bea33994928`) `0:rule`, `1:rule` — printed "Players"; data has "controller", "opponent" and no forEachPlayer / alternating iteration
+- Port Manteau (`e2f64e14-2f97-4905-8bb0-8bea33994928`) `0:rule`, `1:rule` — printed "Players"; data has "controller" and no forEachPlayer / alternating iteration
 
 ### `xPlayers-no-iteration` (1)
 
@@ -206,7 +205,7 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Purifier of the Fallen (`f74f67af-3f00-4937-a79d-7e3c53858d85`) `0:rule`, `1:rule` — data "any"; no printed player phrase
 - Tempered Rage (`79e1db0c-a18b-4a66-ad29-1fd522a41f2e`) `1:ability:fire-up` — data "forEachPlayer"; no printed player phrase
 
-### `printed-no-data-word` (59)
+### `printed-no-data-word` (62)
 
 - Voidal Replication (`b9e94612-3cbd-44ff-9aac-a553a49c0955`) `0:extraCost` — printed eachOpponent; no player word in the behavior data
 - The Billionaire (`2ec131a8-26eb-4dd7-914d-ced1ca9e770c`) `1:rule` — printed yourOpponent; no player word in the behavior data
@@ -230,6 +229,8 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Bottlebeard Brandyshanks (`2b1308a7-014c-4924-b430-0448854cb6cc`) `1:rule` — printed eachOpponent; no player word in the behavior data
 - Bottlebeard Brandyshanks (`2b1308a7-014c-4924-b430-0448854cb6cc`) `2:ability:bottlebeard-chug` — printed anOpponent, thatPlayer; no player word in the behavior data
 - Juice Sale! (`a5290ff5-114a-4ed7-804f-f751a1abf086`) `0:ability` — printed anOpponent; no player word in the behavior data
+- Offering of False Friendship (`7e7c80fc-1697-426e-b962-768196f6f2da`) `1:rule` — printed anyOpponent; no player word in the behavior data
+- Canny Bailiff (`efac6670-d61f-42ba-aee9-e897b774e395`) `0:rule` — printed anOpponent; no player word in the behavior data
 - 0v3rw0rk3d 31f (`7dd26a5f-d0dc-4231-b70a-d11b189f28db`) `1:rule@eeeeee` — printed eachOpponent; no player word in the behavior data
 - Thabbashite Urchin (`e4730213-75fc-4614-9466-1b3c1e42e630`) `0:rule@vvv` — printed anOpponent; no player word in the behavior data
 - Torchlight Sarcophyle (`b6bc3557-e0d3-4bfc-9bc1-138d0d27fb31`) `0:rule` — printed anyPlayer; no player word in the behavior data
@@ -239,6 +240,7 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 - Lockbox of the Aeons (`2475968c-7bb5-43c1-8225-1bf9d8fdc059`) `0:rule` — printed eachOpponent; no player word in the behavior data
 - Seance Ritualist (`58fd9f77-2796-4601-be97-d5015bb05145`) `0:ability:violate` — printed anOpponent, thatPlayer; no player word in the behavior data
 - Thabbashite Penumbra (`8817125b-0cc8-43ba-a08e-c6711a79ecaa`) `0:ability:veil` — printed anOpponent, thatPlayer; no player word in the behavior data
+- Foreclosure Overseer (`d56e0e61-ff37-4424-b089-83d879c37d98`) `0:rule` — printed eachOpponent; no player word in the behavior data
 - Camouflaged Urchin (`a138d554-4fdb-4234-9362-d120f7b13bd2`) `0:rule` — printed eachOpponent; no player word in the behavior data
 - Moment of Annihilation (`c35705f0-9e26-4e6d-a682-0ff4d029166f`) `0:extraCost` — printed anOpponent; no player word in the behavior data
 - Omahkapi'si Pi'kssii (`7a1759c9-392a-4655-94c7-8d9893904130`) `2:ability:flex` — printed anOpponent; no player word in the behavior data

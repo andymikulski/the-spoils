@@ -1,7 +1,7 @@
 {
   "total": {
-    "sites": 89,
-    "clauses": 53
+    "sites": 17,
+    "clauses": 6
   },
   "sets": {
     "1st-edition": {
@@ -10,137 +10,29 @@
       "pending": []
     },
     "1st-edition-part-2": {
-      "sites": 1,
-      "clauses": 1,
-      "pending": [
-        {
-          "card": "Ambiguity Embiggener",
-          "id": "88ddad6c-4df5-4baa-b1b8-c7492f67d42e",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "2nd-edition": {
-      "sites": 2,
-      "clauses": 2,
-      "pending": [
-        {
-          "card": "Free Trade Agreement",
-          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
-          "clause": "2:option:OPTION 2",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "holy-heist": {
-      "sites": 6,
-      "clauses": 6,
-      "pending": [
-        {
-          "card": "Additional Tribute",
-          "id": "a64326fe-e6a2-4398-ad70-88e4584fb7af",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Offering of False Friendship",
-          "id": "7e7c80fc-1697-426e-b962-768196f6f2da",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Thabbashite Barbeque",
-          "id": "cb0c54e5-f40b-4fb7-aeb2-01d0ab697f4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Canny Bailiff",
-          "id": "efac6670-d61f-42ba-aee9-e897b774e395",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].costModifiers[0].affects",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "iDumb De-Itemizer",
-          "id": "a0403283-f513-4822-9e8d-afc862ff08b3",
-          "clause": "2:ability:idumb-reset",
-          "path": "behavior.abilities[1].usableBy",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Unloyal Necromorph",
-          "id": "420418bb-f8a7-435a-a0eb-1dec094e3805",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "open-beta": {
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
+    },
+    "seed": {
       "sites": 1,
       "clauses": 1,
       "pending": [
-        {
-          "card": "Emergency Obfuscation",
-          "id": "1999770c-5f2d-415d-8da1-8efe44ef3e41",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].swapsSides",
-          "now": true,
-          "meaning": "chosenPair"
-        }
-      ]
-    },
-    "seed": {
-      "sites": 4,
-      "clauses": 4,
-      "pending": [
-        {
-          "card": "Forbidden Knowledge",
-          "id": "40a1b99a-a5b6-4356-b84c-3cc41a5e6db2",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "movedTo": "behavior.abilities[0].effects[2]",
-          "now": {
-            "type": "draw",
-            "player": "controller",
-            "amount": 1
-          },
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Architectural Restitution",
-          "id": "b4c72134-5c83-4a88-af75-e16482ccd0b1",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].condition",
-          "now": {
-            "type": "battleRole",
-            "role": "defender"
-          },
-          "meaning": "other"
-        },
         {
           "card": "Mountainous Golem",
           "id": "c5262c5b-9ef2-40ed-9f16-29b391b39a11",
@@ -151,230 +43,18 @@
             "restriction": "cannotBeTakenControl"
           },
           "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Runivoltaic Accumulator",
-          "id": "6f9876af-52c0-46e5-a06f-22e488ba54a8",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].condition",
-          "now": {
-            "type": "battleRole",
-            "role": "defender"
-          },
-          "meaning": "chosenOpponent"
         }
       ]
     },
     "seed-2": {
-      "sites": 24,
-      "clauses": 7,
-      "pending": [
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].opponentFrom",
-          "now": null,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
-          "now": "controller",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
-          "now": "self",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
-          "now": "controller",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
-          "now": "self",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[1].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[2].effects[0].effects[2].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[1].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[2].effects[0].effects[2].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "3:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[3].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "3:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[3].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[4].effects[0].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Meat of the Mountain",
-          "id": "60eab41e-55d8-428c-991a-de347296fa4f",
-          "clause": "4:rule",
-          "path": "behavior.abilities[1].effects[0].options[2].effects[4].effects[0].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "I Drink Your Milkshake!",
-          "id": "6f1bdb80-2506-4724-bf83-950a81cc531a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Mustache Aficionado",
-          "id": "1dffc074-b158-4134-b52e-9e6e56541cf0",
-          "clause": "0:ability:mustache-showdown",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "partitionAndPick",
-          "meaning": "chosenPair"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "seed-3": {
-      "sites": 19,
-      "clauses": 10,
+      "sites": 10,
+      "clauses": 1,
       "pending": [
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "186b8e6c-7c64-42e9-b885-bf7b26fdf387",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].costs[2]",
-          "now": null,
-          "meaning": "anyOneOpponent"
-        },
         {
           "card": "Spatchcocking",
           "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
@@ -454,96 +134,13 @@
           "path": "behavior.abilities[1].effects[5].selector.controller",
           "now": "opponent",
           "meaning": "eachOpponent"
-        },
-        {
-          "card": "Port Manteau",
-          "id": "e2f64e14-2f97-4905-8bb0-8bea33994928",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].costModifiers[1].affects",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "The Evil Alliance",
-          "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
-          "clause": "0:rule",
-          "path": "faction.startingInfluence",
-          "now": 25,
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "The Evil Alliance",
-          "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
-          "clause": "1:rule:STARTING RESOURCES",
-          "path": "faction.setup.startingResources.count",
-          "now": 2,
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "The Evil Alliance",
-          "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
-          "clause": "4:rule:DEVELOP RULE",
-          "path": "faction.turn.develop",
-          "now": {
-            "choices": [
-              {
-                "type": "draw",
-                "count": 1
-              },
-              {
-                "type": "playResource",
-                "count": 1
-              }
-            ]
-          },
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "The Knitting Coalition",
-          "id": "c58d0e3c-4f76-4665-aca4-2ba01a42d863",
-          "clause": "3:rule:HIDDEN INFLUENCE",
-          "path": "faction.overridesOpponent.startingDraw",
-          "now": true,
-          "meaning": "eachOpponentOfSelf"
-        },
-        {
-          "card": "The Knitting Coalition",
-          "id": "c58d0e3c-4f76-4665-aca4-2ba01a42d863",
-          "clause": "4:rule:DEVELOP RULE - PULLING STRINGS",
-          "path": "faction.overridesOpponent.suppressDevelop",
-          "now": true,
-          "meaning": "eachOpponentOfSelf"
-        },
-        {
-          "card": "The Open R&D Faction",
-          "id": "ebef8b79-0dcb-401f-81e9-eafd9235fd7d",
-          "clause": "7:rule:RESEARCH & DEVELOPMENT",
-          "path": "faction.playerCreatedAbility",
-          "now": true,
-          "meaning": "chosenPair"
-        },
-        {
-          "card": "The Union of Unextraordinary Miners",
-          "id": "71038369-24cc-48d9-a58c-e658edc01944",
-          "clause": "2:rule",
-          "path": "faction.setup.startingResources.matchOpponentCount",
-          "now": true,
-          "meaning": "chosenPair"
         }
       ]
     },
     "seed-saga": {
-      "sites": 16,
-      "clauses": 11,
+      "sites": 6,
+      "clauses": 4,
       "pending": [
-        {
-          "card": "Enter The Demon Knights",
-          "id": "1848963f-93a8-4eae-8977-f76b2547bce5",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs[0]",
-          "now": null,
-          "meaning": "anyOneOpponent"
-        },
         {
           "card": "Nefarious Horror",
           "id": "6a568b43-e53e-4c0f-915d-df90aa61872e",
@@ -551,14 +148,6 @@
           "path": "behavior.abilities[0].condition.left.selector.controller",
           "now": "opponent",
           "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Department of Rejections",
-          "id": "a3a69878-9f2a-49d3-9c4b-81887058890a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].abilityCostModifiers[0].scope",
-          "now": "opponentCharacters",
-          "meaning": "eachOpponent"
         },
         {
           "card": "I Drink Your Milkshake!",
@@ -585,62 +174,6 @@
           "meaning": "anyOneOpponent"
         },
         {
-          "card": "Lucky Bastard",
-          "id": "4513085a-6185-4ef5-ba9c-7af3c3af30d4",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[1].value.target.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Lucky Bastard",
-          "id": "4513085a-6185-4ef5-ba9c-7af3c3af30d4",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[3].target.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Lucky Charm",
-          "id": "9db2e287-ca92-4304-814f-10b7eb99ef4b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].pickTax[0].affects",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Mustache Aficionado",
-          "id": "f276a0be-6c30-4276-a743-30e63619dc41",
-          "clause": "0:ability:mustache-showdown",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "partitionAndPick",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Rosy Palmer, and Her Five Friends",
-          "id": "fdfd2018-584b-4fa7-b9d9-e29f7961337a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].of",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Rosy Palmer, and Her Five Friends",
-          "id": "fdfd2018-584b-4fa7-b9d9-e29f7961337a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Rosy Palmer, and Her Five Friends",
-          "id": "fdfd2018-584b-4fa7-b9d9-e29f7961337a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
           "card": "Underhanded Gamer",
           "id": "8bed01de-3627-4ae9-92dc-fc065e9e5de7",
           "clause": "0:ability:outsmart",
@@ -662,175 +195,23 @@
             }
           },
           "meaning": "refersBack"
-        },
-        {
-          "card": "Well Laid Plans",
-          "id": "5989ea37-35f7-443c-9b79-64ce0475309c",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs[0]",
-          "now": null,
-          "meaning": "anyOneOpponent"
         }
       ]
     },
     "shade-of-the-devoured-emperor": {
-      "sites": 8,
-      "clauses": 7,
-      "pending": [
-        {
-          "card": "Neuralyzer Agent",
-          "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Neuralyzer Agent",
-          "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Tedious TriAdic Truculence",
-          "id": "5379e1b4-5ccc-457d-8490-82d85615143e",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].costs[0]",
-          "now": null,
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Voidal Trinket",
-          "id": "e7db74e2-02ff-4297-ac9a-860b2bd3c263",
-          "clause": "0:ability:voidal-trinket-augur",
-          "path": "behavior.abilities[0].costs[1]",
-          "now": "otherPlayerChooses",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Micromajigmakermachinemajig",
-          "id": "67fe9bf8-04c3-4ea0-bbde-0ec94e33b56e",
-          "clause": "0:ability:mmm-release",
-          "path": "behavior.abilities[0].costs[1]",
-          "now": "otherPlayerChooses",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Martial Arts Wannabe",
-          "id": "53598621-abf6-4b9f-bc94-6c70bd77cb10",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].condition.right.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Opportunistic Pirate",
-          "id": "81f3e9be-87fd-4626-9206-c54b6d7be32e",
-          "clause": "1:ability",
-          "path": "behavior.onPlay.targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "ungodly-mess": {
-      "sites": 3,
-      "clauses": 2,
-      "pending": [
-        {
-          "card": "Foreclosure Overseer",
-          "id": "d56e0e61-ff37-4424-b089-83d879c37d98",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].costModifiers[0].affects",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Omahkapi'si Pi'kssii",
-          "id": "7a1759c9-392a-4655-94c7-8d9893904130",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].condition.left.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Omahkapi'si Pi'kssii",
-          "id": "7a1759c9-392a-4655-94c7-8d9893904130",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].restrictions[0].restriction",
-          "now": "cannotBePickedByOpponents",
-          "meaning": "refersBack"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "decade-of-deckadence": {
-      "sites": 5,
-      "clauses": 2,
-      "pending": [
-        {
-          "card": "Rasputin Unleashed",
-          "id": "2f870c54-2a0f-470c-a73e-2939196e0853",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Rasputin Unleashed",
-          "id": "2f870c54-2a0f-470c-a73e-2939196e0853",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": {
-            "type": "createAreaModifier",
-            "selector": {
-              "controller": "opponent",
-              "zone": "play",
-              "type": "character"
-            },
-            "stat": "speed",
-            "operation": "set",
-            "value": 0,
-            "duration": {
-              "type": "untilEndOfTurn"
-            }
-          },
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Shriever General",
-          "id": "2ac6e84e-f9c7-4c31-9cbb-c7572cb99858",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].condition.conditions[1].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Shriever General",
-          "id": "2ac6e84e-f9c7-4c31-9cbb-c7572cb99858",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Shriever General",
-          "id": "2ac6e84e-f9c7-4c31-9cbb-c7572cb99858",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     }
   }
 }

@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard } from "../../support/fixtures.js";
 import { developFaction } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { endTurn } from "../_turn.js";
 import { answer, cardsOf, controllerOf, expectChoice, handOf, offered, pickTargets, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
@@ -26,7 +26,8 @@ for (const count of [3, 4] as const) {
     FOES.slice(0, count - 1).forEach((faction, index) => {
       const seat = [P2, P3, P4][index]!;
       assert.equal(engine.getDefinition(engine.state.players[seat]!.factionId!).name, faction.name);
-      assert.equal(engine.state.players[seat]!.influence, faction.faction!.startingInfluence);
+      const own = faction === ALLIANCE_OF_TWO ? 15 + 10 * (count - 1) : faction.faction!.startingInfluence; // The Evil Alliance counts its opponents (X)
+      assert.equal(engine.state.players[seat]!.influence, own);
     });
   });
 
@@ -34,7 +35,7 @@ for (const count of [3, 4] as const) {
     const engine = factionGame([coalition(), ...FOES.slice(0, count - 1)], { firstPlayerId: P1 });
     assert.deepEqual(resourcesOf(engine, P1), ["Greed", "Greed"]);
     assert.equal(resourcesOf(engine, P2).length, 2, "the Tournament Faction's own 2 staples");
-    assert.equal(resourcesOf(engine, P3).length, 2, "the Evil Alliance's own 2 staples");
+    assert.equal(resourcesOf(engine, P3).length, count, "the Evil Alliance's own 1+X staples, X = the number of its opponents");
     if (count === 4) assert.deepEqual(resourcesOf(engine, P4), ["Rage", "Rage"], "Imperial Army starts with 2 Rage, not Greed");
   });
 }
@@ -143,7 +144,7 @@ for (const [count, users] of [[3, [P1, P2, P3]], [4, [P1, P2, P3, P4]]] as const
   });
 }
 
-clauseMismatch(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", "MP-seed-3-3", "3 seats, the Coalition in the second seat: both of its opponents (the seats on either side) lose their Develop Rule, not just one", () => {
+clause(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", "3 seats, the Coalition in the second seat: both of its opponents (the seats on either side) lose their Develop Rule, not just one", () => {
   const t = table(3, [], { factions: { [P2]: coalition(), [P1]: developFaction(), [P3]: developFaction() } });
   assert.deepEqual(t.engine.getDevelopChoices(P1), [], "P1 ignores its Develop Rule");
   assert.deepEqual(t.engine.getDevelopChoices(P3), [], "P3 ignores its Develop Rule");

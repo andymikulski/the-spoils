@@ -1483,6 +1483,12 @@
               "viewer": "controller"
             },
             {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "faceDownResources",
+              "viewer": "controller"
+            },
+            {
               "type": "draw",
               "player": "controller",
               "amount": 1
@@ -3965,8 +3971,16 @@
           "id": "body",
           "type": "activated",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "and",
+            "conditions": [
+              {
+                "type": "battleActive"
+              },
+              {
+                "type": "isActivePlayer",
+                "player": "opponent"
+              }
+            ]
           },
           "targets": [
             {
@@ -3995,7 +4009,8 @@
                 "id": "l"
               }
             }
-          ]
+          ],
+          "opponentFrom": "battle"
         }
       ]
     },
@@ -9923,8 +9938,8 @@
           "type": "triggered",
           "event": "battleStarted",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "isActivePlayer",
+            "player": "opponent"
           },
           "effects": [
             {
@@ -9948,7 +9963,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "battle"
         },
         {
           "id": "energize",
@@ -13569,7 +13585,8 @@
                   "target": {
                     "type": "selected",
                     "id": "__candidate"
-                  }
+                  },
+                  "faceDown": true
                 },
                 {
                   "type": "grantVoidPlay",

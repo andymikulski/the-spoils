@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character } from "../../support/fixtures.js";
-import { clause, clauseMismatch, isDevelopRuleOffer, printing, refused } from "../_clause.js";
+import { clause, isDevelopRuleOffer, printing, refused } from "../_clause.js";
 import { answer, controllerOf, settle, staples, table } from "./_seed-3.js";
 import type { PlayerId, SpoilsEngine } from "./_seed-3.js";
 import { factionGame, handSize, IMPERIAL, resourcesOf, TOURNAMENT } from "./_seed-3-factions.js";
@@ -23,20 +23,20 @@ const SEATED = [TOURNAMENT, IMPERIAL, TOURNAMENT];
 
 for (const count of [3, 4] as const) {
   const x = count - 1;
-  clauseMismatch(EVIL, "0:rule", "MP-seed-3-5", `${count} seats: X is ${x}, so the Evil Alliance's controller starts with ${15 + 10 * x} influence; the other seats start with their own factions' influence`, () => {
+  clause(EVIL, "0:rule", `${count} seats: X is ${x}, so the Evil Alliance's controller starts with ${15 + 10 * x} influence; the other seats start with their own factions' influence`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     assert.equal(engine.state.players[P1]!.influence, 15 + 10 * x);
     assert.equal(engine.state.players[P2]!.influence, TOURNAMENT.faction!.startingInfluence);
   });
 
-  clauseMismatch(EVIL, "1:rule:STARTING RESOURCES", "MP-seed-3-5", `${count} seats: the Evil Alliance's controller starts with 1+${x} = ${1 + x} staple resources; the other seats start with their own factions' counts`, () => {
+  clause(EVIL, "1:rule:STARTING RESOURCES", `${count} seats: the Evil Alliance's controller starts with 1+${x} = ${1 + x} staple resources; the other seats start with their own factions' counts`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     assert.equal(resourcesOf(engine, P1).length, 1 + x);
     assert.equal(resourcesOf(engine, P2).length, 2, "the Tournament Faction's own count");
     if (count === 4) assert.equal(resourcesOf(engine, P3).length, 2, "Imperial Army's own 2 Rage");
   });
 
-  clauseMismatch(EVIL, "4:rule:DEVELOP RULE", "MP-seed-3-5", `${count} seats: the Evil Alliance's Develop Rule happens ${x} times at the start of its controller's turn (once, then repeated ${x - 1} times); the other seats develop once`, () => {
+  clause(EVIL, "4:rule:DEVELOP RULE", `${count} seats: the Evil Alliance's Develop Rule happens ${x} times at the start of its controller's turn (once, then repeated ${x - 1} times); the other seats develop once`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     // Keep every hand, then count the Develop Rule offers raised at the first turn start (P1's).
     for (let guard = 0; engine.state.setup.phase === "mulligan" && guard < 10; guard++) {
@@ -89,18 +89,18 @@ for (const count of [3, 4] as const) {
 // The Open R&D Faction
 // =====================================================================================
 
-clauseMismatch(OPEN_RD, "7:rule:RESEARCH & DEVELOPMENT", "MP-seed-3-4", "3 seats: the created ability can be used by the controller and the one chosen opponent only; the other opponent is refused", () => {
+clause(OPEN_RD, "7:rule:RESEARCH & DEVELOPMENT", "3 seats: the created ability can be used by the controller and the one chosen opponent only; the other opponent is refused", () => {
   const spec = { costs: [{ kind: "pay" as const, amount: 1 }], effect: { kind: "draw" as const, amount: 1 } };
   const make = (active: PlayerId) => {
     const t = table(3, [...staples("rage", 1, P1), ...staples("rage", 1, P2), ...staples("rage", 1, P3), ...[P1, P2, P3].flatMap((seat) => [0, 1].map((i) => ({ key: `d-${seat}-${i}`, def: character({ name: `Deck ${seat} ${i}` }), owner: seat, zone: "deck" as const })))], {
       active,
       factions: { [P1]: printing(OPEN_RD) }
     });
-    t.engine.applyCreatedFactionAbility(spec);
+    t.engine.applyCreatedFactionAbility(spec, P2);
     return t;
   };
   const abilityOf = (engine: SpoilsEngine) => engine.state.cards[engine.state.players[P1]!.factionId!]!.createdAbility!.ability.id;
-  // P2 is the chosen opponent (the engine has no way to say so): P2 and P1 may use it, P3 may not.
+  // P2 is the chosen opponent (named when the text was written): P2 and P1 may use it, P3 may not.
   const chosen = make(P2);
   chosen.engine.perform({ type: "activateAbility", playerId: P2, cardId: chosen.engine.state.players[P1]!.factionId!, abilityId: abilityOf(chosen.engine) });
   settle(chosen);

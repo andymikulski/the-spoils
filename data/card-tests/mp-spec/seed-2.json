@@ -262,6 +262,34 @@
             "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls Meat of the Mountain. P2 draws cards: the trigger fires once for P2 and only P2 (not P1 or P3) is asked whether to add a token, remove a token or do nothing (remove is offered only with at least 1 token). P3's draw fires it for P3 with P3 choosing. P1's draw fires it with P1 choosing. A draw by one player never lets another choose.",
@@ -635,6 +663,34 @@
             "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "1 TOKEN reached after P2 drew: P2 (not P1, not P3) may look at the top 2 cards of P2's deck, put 1 into P2's hand and 1 on the bottom of P2's deck; P1's and P3's decks are untouched. Same for P3 drawing, and P1 drawing uses P1's deck."
@@ -804,6 +860,34 @@
             "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 4:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "2 TOKENS reached after P2 drew: P2 may pick any character or location (P1's, P2's or P3's) and put it into its owner's hand (a P3 character goes to P3's hand); P1 and P3 make no pick. Same with P3 or P1 drawing."
@@ -973,6 +1057,34 @@
             "meaning": "refersBack",
             "edit": false,
             "why": "Shared with clause 3:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].chooser",
+            "now": "controller",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].options[2].effects[1].effects[0].declaration.selector.controller",
+            "now": "self",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "At least 3 tokens after P2 drew: P2 may play a resource from P2's own hand (not from P1's or P3's); P1 and P3 do not. Same with P3 or P1 drawing."
@@ -1481,9 +1593,9 @@
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
-            "meaning": "cardRelative",
+            "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The removed card belongs to the opponent whose deck was searched, who is not necessarily the opponent whose play triggered it (MPQ-P5). The selector can no longer use the triggering opponent; it must find the card this card removed, whoever owns it."
+            "why": "The removed card belongs to the opponent whose deck was searched, who is not necessarily the opponent whose play triggered it (MPQ-P5), so the selector cannot read the triggering opponent. It becomes \"opponents\" (any opponent); voidedBySource still finds only the card this card removed."
           },
           {
             "path": "behavior.abilities[0].targets[0].selector.owner",
@@ -1593,7 +1705,7 @@
     "clauses": [
       {
         "key": "0:ability:mustache-showdown",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Both players",
@@ -1619,8 +1731,8 @@
             "path": "behavior.abilities[0].effects[0]",
             "now": "partitionAndPick",
             "meaning": "chosenPair",
-            "edit": true,
-            "why": "The effect (count 3, piles 2, compareBy cost, winnerTakes 1) has no player fields, so the engine assumes the two seats. It needs the participating players (the controller and the block's chosen opponent) and each participant choosing among the other participant's piles."
+            "edit": false,
+            "why": "No data change: partitionAndPick without an opponent field takes the block's opponent, the one the controller chose for this activation (\"Both players\" is the controller and that opponent)."
           }
         ],
         "test3": "P1 activates MUSTACHE SHOWDOWN (deplete). The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 and P2 each look at the top 3 cards of their own deck and divide them into 2 face-down piles of at least 1 card; P1 chooses one of P2's piles and P2 chooses one of P1's; the chosen piles are revealed; the owner of the higher-total pile may put one card from it into hand; the remaining cards shuffle into their owner's decks (P1's and P2's decks, not P3's); P3's deck is untouched. Choose P3 (second run): P1 and P3 each look at the top 3 cards of their own deck and divide them into 2 face-down piles of at least 1 card; P1 chooses one of P3's piles and P3 chooses one of P1's; the chosen piles are revealed; the owner of the higher-total pile may put one card from it into hand; the remaining cards shuffle into their owner's decks (P1's and P3's decks, not P2's); P2's deck is untouched."

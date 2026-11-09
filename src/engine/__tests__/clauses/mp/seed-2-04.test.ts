@@ -2,7 +2,7 @@
 // Identity, Lucky Bastard and Spry Archer. Expectations come from the printed text of each clause.
 
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import {
   answerPlayer, answerTargets, askedPlayers, character, choosePlayer, deckOf, handSize, hands, idsOf, others, P1, P2, P3, P4, pending, perSeat, pickable, resourceCard, resources,
   seatsFor, settle, table, tactic, zoneOf
@@ -86,7 +86,7 @@ for (const count of COUNTS) {
 
   // The removed card belongs to P2 (its deck was searched), but P3 (or P4) playing a "Foo" sets the trigger off too: the card to reveal is the one
   // this card removed, whoever owns it.
-  clauseMismatch(MILKSHAKE, "0:rule", "MP-seed-2-1", `${count} seats: another opponent playing a card with the same name sets it off with no opponent choice, and the card removed from the searched opponent's deck can be revealed`, () => {
+  clause(MILKSHAKE, "0:rule", `${count} seats: another opponent playing a card with the same name sets it off with no opponent choice, and the card removed from the searched opponent's deck can be revealed`, () => {
     const t = milkshakeBoard(count);
     search(t, P2);
     const player = others(count, P1, P2)[0]!;
@@ -108,7 +108,7 @@ for (const count of COUNTS) {
 
 // "Both players look at the top 3 cards of their deck ... Both players choose one of their opponent's piles": the controller and the one chosen opponent.
 // The data names no opponent (partitionAndPick has no player field), so the engine asks for none and cannot run the showdown beyond two seats.
-clauseMismatch(MUSTACHE, "0:ability:mustache-showdown", "MP-seed-2-2", "3 seats: the opponent is chosen before the showdown, only you and that opponent split and pick piles, the other deck is untouched", () => {
+clause(MUSTACHE, "0:ability:mustache-showdown", "3 seats: the opponent is chosen before the showdown, only you and that opponent split and pick piles, the other deck is untouched", () => {
   for (const chosen of others(3, P1)) {
     const t = table(3, [
       { key: "stache", def: printing(MUSTACHE), owner: P1, zone: "play" },

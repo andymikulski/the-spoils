@@ -94,7 +94,7 @@ Discard Pile, Out of Game, and Void. The engine's `Zone` values map to them:
 | `deploying` | Being Deployed (CR §403.3) | Where a non-resource card sits after you play it from hand, cost paid, while the opponent may respond, until it resolves. Exists so responses can be raised against it before it lands. |
 | `play` | In Play (CR §403.4) | Characters, items, locations, and the faction card live here while active. Resources (face-up or face-down) also live here, attached to the controller's faction. |
 | `discard` | Discard Pile (CR §403.5) | Destroyed permanents (CR §304.1) and resolved tactics (CR §205.2) land here, face-up. Order need not be maintained (CR §403.5b). |
-| `removed` | Out of Game (CR §403.6) | "Removed from the game" — the card is set aside face-up for the rest of the game. Nothing in the effect vocabulary moves a card back out, by design. Reached via `removeFromGame`. |
+| `removed` | Out of Game (CR §403.6) | "Removed from the game" — the card is set aside face-up for the rest of the game. Nothing in the effect vocabulary moves a card back out, by design. Reached via `removeFromGame`; a card whose text says to remove it face-down (Pant Swipe) is set aside face-down (`faceDown: true`): only the player who removed it sees it, as in the void. |
 | `void` **(card-verified)** | Void (CR §403.7) | A distinct set-aside zone. A card is sent there face-up or face-down depending on the effect (CR §403.7a). Cards return from the void only via effects that explicitly reference it (e.g. *Eldridge Gosche, Godstealer*, *Deity Delimitation Device*). **(CR §403.7b)** You may not pick or choose a face-down card in the void unless an effect specifically picks/chooses a face-down card in the void. Ordinary destruction goes to `discard`, never the void. |
 
 **Damage / depletion are In-Play-only.** **(CR §408.9)** When a card changes
@@ -2117,7 +2117,12 @@ opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
 - **An iteration finishes before its list goes on (CR 402.2, `engine-derived`):** when a choice inside `forEachPlayer`,
   a sequential `forEach`, a `repeatWhile` pass or an `if` branch pauses, the players or cards still to go and the
   rest of that step run before the effects that follow it (Swindle: every opponent attaches before the controller
-  draws). A list whose last effect is the iteration keeps closing its stack item first, as before.
+  draws). This holds with no exception: a list whose last effect is the iteration closes its stack item only after the
+  iteration is done, and an `if` branch that paused keeps its remaining effects ahead of the list's next effect. The
+  other lists a step runs inside itself pause the same way: the else-effects of a `mayPay` that cannot be paid, the
+  `onMatch` / `onEmpty` of `revealFromTopUntil` (the other revealed cards wait under the deck and are dealt with, per
+  `rest`, once the branch has finished) and the effects of a replacement (the replaced event is settled when the
+  replacement is applied; the effects that remain run after the answer).
 - **"An opponent ..." per opponent (MPX-vocab-an, MPX-an-superlative):** the condition `anyOpponent` holds when its
   inner condition holds for at least one opponent, each judged on their own with `"opponent"` meaning that
   opponent (Nefarious Horror: "an opponent controls more ... than you"). A restriction grant of

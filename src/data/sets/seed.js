@@ -1485,6 +1485,12 @@ const cards = [
               "viewer": "controller"
             },
             {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "faceDownResources",
+              "viewer": "controller"
+            },
+            {
               "type": "draw",
               "player": "controller",
               "amount": 1
@@ -3967,8 +3973,16 @@ const cards = [
           "id": "body",
           "type": "activated",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "and",
+            "conditions": [
+              {
+                "type": "battleActive"
+              },
+              {
+                "type": "isActivePlayer",
+                "player": "opponent"
+              }
+            ]
           },
           "targets": [
             {
@@ -3997,7 +4011,8 @@ const cards = [
                 "id": "l"
               }
             }
-          ]
+          ],
+          "opponentFrom": "battle"
         }
       ]
     },
@@ -9925,8 +9940,8 @@ const cards = [
           "type": "triggered",
           "event": "battleStarted",
           "condition": {
-            "type": "battleRole",
-            "role": "defender"
+            "type": "isActivePlayer",
+            "player": "opponent"
           },
           "effects": [
             {
@@ -9950,7 +9965,8 @@ const cards = [
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "battle"
         },
         {
           "id": "energize",
@@ -13571,7 +13587,8 @@ const cards = [
                   "target": {
                     "type": "selected",
                     "id": "__candidate"
-                  }
+                  },
+                  "faceDown": true
                 },
                 {
                   "type": "grantVoidPlay",

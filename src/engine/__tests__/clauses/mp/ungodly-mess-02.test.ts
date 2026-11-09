@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { autoResolveBattle, bank, character, item, tactic } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
 import { declareAttackBy } from "../_battle.js";
-import { clause, clauseMismatch, drain, printing, refused } from "../_clause.js";
+import { clause, drain, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, choose, choosePlayer, handOf, hasKey, mayPay, offered, pending, play, playerAsk, ready, seated, table, type Table } from "./_ungodly-mess.js";
 import type { PlayerId } from "../../../../engine.js";
 
@@ -382,7 +382,7 @@ function foreclosureTurn(t: Table, active: PlayerId, depleted: boolean): void {
 }
 
 for (const [seats, who] of [[3, P2], [3, P3], [4, P4]] as const)
-  clauseMismatch(FORECLOSURE, "0:rule", "MP-ungodly-mess-1", `${seats} seats: while depleted, ${who} pays 1 more to deploy a cost 1 card (2 in all), as does every other opponent; P1 pays nothing extra; nobody is asked which opponent`, () => {
+  clause(FORECLOSURE, "0:rule", `${seats} seats: while depleted, ${who} pays 1 more to deploy a cost 1 card (2 in all), as does every other opponent; P1 pays nothing extra; nobody is asked which opponent`, () => {
     const taxed = foreclosureTable(seats);
     assert.equal(pending(taxed), undefined, "\"your opponents\" is every opponent: no opponent is chosen");
     foreclosureTurn(taxed, who, true);

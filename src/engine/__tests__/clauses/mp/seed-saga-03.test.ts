@@ -2,7 +2,7 @@
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../../engine.js";
-import { clause, clauseMismatch, refused } from "../_clause.js";
+import { clause, refused } from "../_clause.js";
 import { activate, answer, askedPlayers, choosePlayer, declineAll, deck, drain, hand, influence, many, pending, play, printing, ready, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
 import type { CardPlacement } from "./_mp.js";
 import { declareAttackBy, declareAttackOpenWindow } from "../_battle.js";

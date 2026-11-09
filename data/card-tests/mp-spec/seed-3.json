@@ -26,7 +26,8 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost (costs holds two steps today, so this is a new costs[2])."
+            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost (costs holds two steps today, so this is a new costs[2]). Done as the ability's playerChoices entry { id: \"who\", from: \"opponents\" }, read back with chosenPlayer \"who\".",
+            "movedTo": "behavior.abilities[2].playerChoices[0]"
           },
           {
             "path": "behavior.abilities[2].effects[0].chooser",
@@ -771,7 +772,8 @@
             "now": 25,
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "A fixed 25 today; it must be 15 + 10 times the number of opponents at the start of the game, with no player word to hold that count."
+            "why": "A fixed 25 today; it must be 15 + 10 times the number of opponents at the start of the game, with no player word to hold that count. Done with faction.perExtraOpponent (added for every opponent beyond the first; the stored figure stays the one-opponent value).",
+            "movedTo": "faction.perExtraOpponent.influence"
           }
         ],
         "test3": "3 seats: P1 plays The Evil Alliance (X = 2 opponents): P1 starts with 15 + 10*2 = 35 influence; P2 and P3 start with their own factions' printed influence. X does not change if P2 is later eliminated: P1's influence is not recomputed.",
@@ -795,7 +797,8 @@
             "now": 2,
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "A fixed 2 today (correct for one opponent only); it must be 1 plus the number of opponents at the start of the game, with no player word to hold that count."
+            "why": "A fixed 2 today (correct for one opponent only); it must be 1 plus the number of opponents at the start of the game, with no player word to hold that count. Done with faction.perExtraOpponent (added for every opponent beyond the first; the stored figure stays the one-opponent value).",
+            "movedTo": "faction.perExtraOpponent.startingResources"
           }
         ],
         "test3": "3 seats: P1 plays The Evil Alliance (X = 2 opponents): P1 chooses 1 + 2 = 3 staple resources at setup (any staples, in seat order with the other starting choices) and puts them into play; P2 and P3 start with their own factions' printed number of starting resources. The count is fixed at setup and is not recomputed later.",
@@ -830,7 +833,8 @@
             },
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "The Develop Rule is performed once per turn today. It must be performed X times (the choice repeated X-1 times), X = the number of opponents at the start of the game: the node gains a repeat count that is not a fixed value (the existing usesPerTurn is a plain number). Each use is still one draw or one play."
+            "why": "The Develop Rule is performed once per turn today. It must be performed X times (the choice repeated X-1 times), X = the number of opponents at the start of the game: the node gains a repeat count that is not a fixed value (the existing usesPerTurn is a plain number). Each use is still one draw or one play. Done with faction.perExtraOpponent (added for every opponent beyond the first; the stored figure stays the one-opponent value).",
+            "movedTo": "faction.perExtraOpponent.developUses"
           }
         ],
         "test3": "3 seats: at the start of P1's turn (P1 plays The Evil Alliance, X = 2) the Develop Rule happens twice: P1 draws a card or plays a resource, then draws a card or plays a resource again, each time choosing freely (draw twice, play twice or one of each). P2 and P3 develop once at the start of their own turns under their own factions' rules. X is fixed at the start of the game: with P2 eliminated, P1 still develops twice.",
@@ -913,7 +917,7 @@
       },
       {
         "key": "3:rule:HIDDEN INFLUENCE",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -928,8 +932,8 @@
             "path": "faction.overridesOpponent.startingDraw",
             "now": true,
             "meaning": "eachOpponentOfSelf",
-            "edit": true,
-            "why": "The flag has no player word; it has to apply to every opponent, not one."
+            "edit": false,
+            "why": "No data change (RQ-mp-6, MPX-knitting): overridesOpponent already applies to every opponent of the faction's holder; the flag keeps its value and only the engine's reading changed."
           },
           {
             "path": "faction.abilities[0].usableBy",
@@ -951,7 +955,7 @@
       },
       {
         "key": "4:rule:DEVELOP RULE - PULLING STRINGS",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -966,8 +970,8 @@
             "path": "faction.overridesOpponent.suppressDevelop",
             "now": true,
             "meaning": "eachOpponentOfSelf",
-            "edit": true,
-            "why": "The flag has no player word; it has to apply to every opponent, not one."
+            "edit": false,
+            "why": "No data change (RQ-mp-6, MPX-knitting): overridesOpponent already applies to every opponent of the faction's holder; the flag keeps its value and only the engine's reading changed."
           },
           {
             "path": "faction.abilities[0].usableBy",
@@ -1078,7 +1082,7 @@
     "clauses": [
       {
         "key": "7:rule:RESEARCH & DEVELOPMENT",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "both players",
@@ -1099,8 +1103,8 @@
             "path": "faction.playerCreatedAbility",
             "now": true,
             "meaning": "chosenPair",
-            "edit": true,
-            "why": "The flag has no player word. Who creates the ability text and who may use it has to be limited to the controller and the chosen opponent."
+            "edit": false,
+            "why": "No data change: the flag stays; the engine limits the created ability to the controller and one selected opponent."
           }
         ],
         "test3": "3 seats: before the game begins P1 (Open R&D) chooses an opponent (P2 or P3). Choose P2: P1 and P2 create the ability text; P1 and P2 can use the created ability (test with a synthetic 'Pay 1: draw a card'), P3 is refused when trying to use it and does not create text. With P3 chosen instead, P3 can use it and P2 is refused. If the chosen opponent is eliminated, P1 chooses again."
@@ -1113,7 +1117,7 @@
     "clauses": [
       {
         "key": "2:rule",
-        "status": "changes",
+        "status": "unchanged",
         "readings": [
           {
             "phrase": "Your opponent",
@@ -1134,8 +1138,8 @@
             "path": "faction.setup.startingResources.matchOpponentCount",
             "now": true,
             "meaning": "chosenPair",
-            "edit": true,
-            "why": "The flag has no player word. It must equalize with the chosen opponent only, never with every opponent."
+            "edit": false,
+            "why": "No data change: the engine asks the faction's player for the opponent when the starting resources step begins; the flag keeps its value."
           }
         ],
         "test3": "3 seats. P1 (Union) chooses X = 3: P1 starts with 3 staple resources + 1 Deception = 4 starting resources. Before the game begins P1 chooses an opponent (P2 or P3), one chooseOpponent step. Choose P2, whose faction normally starts with 2 resources: P2 starts with its usual 2 plus 2 staple resources = 4. P3 (faction usual 2) starts with exactly 2. Repeat choosing P3: P3 gets the 2 extra staples, P2 starts with 2."

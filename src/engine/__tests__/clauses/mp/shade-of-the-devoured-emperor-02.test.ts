@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard, tactic } from "../../support/fixtures.js";
 import { bank } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { 
   answer, choosePlayer, filler, go, hand, needs, offered, pay, pcOf, pickCandidates, pickCards, play, settleOrder, table, unit, use, zone, P1, P2, P3, P4, type Board, type Pid, type Placement
  } from "./_shade.js";
@@ -29,7 +29,7 @@ const onFaction = (owner: Pid, n: number): Placement[] =>
 
 // --- Tedious TriAdic Truculence ----------------------------------------------------------------
 
-clauseMismatch(TEDIOUS, "0:ability", "MP-shade-of-the-devoured-emperor-1", "3 seats: no opponent is chosen; the payment of 3 is offered to P2 then P3 (clockwise from P1's left, never P1); the first to pay settles it, the rest are not asked; if all decline each picked character with strength 3 or less is destroyed", () => {
+clause(TEDIOUS, "0:ability", "3 seats: no opponent is chosen; the payment of 3 is offered to P2 then P3 (clockwise from P1's left, never P1); the first to pay settles it, the rest are not asked; if all decline each picked character with strength 3 or less is destroyed", () => {
   const board = () =>
     table(3, [
       { key: "ttt", def: printing(TEDIOUS), owner: P1, zone: "hand" },
@@ -46,10 +46,10 @@ clauseMismatch(TEDIOUS, "0:ability", "MP-shade-of-the-devoured-emperor-1", "3 se
   const paid = board();
   assert.equal(needs(paid, play(paid, P1, "ttt")).some((r) => r.kind === "players"), false, "'Any opponent may pay' names no opponent when the card is played");
   go(paid, play(paid, P1, "ttt", { selected: picks(paid) }));
-  assert.deepEqual([pcOf(paid.engine)?.kind, pcOf(paid.engine)?.playerId], ["anyPlayerMayPay", P2], "offered to P2 first, never to P1");
-  pay(paid, P2, false, "anyPlayerMayPay");
-  assert.deepEqual([pcOf(paid.engine)?.kind, pcOf(paid.engine)?.playerId], ["anyPlayerMayPay", P3], "then to P3");
-  pay(paid, P3, true, "anyPlayerMayPay");
+  assert.deepEqual([pcOf(paid.engine)?.kind, pcOf(paid.engine)?.playerId], ["mayPay", P2], "offered to P2 first, never to P1");
+  pay(paid, P2, false, "mayPay");
+  assert.deepEqual([pcOf(paid.engine)?.kind, pcOf(paid.engine)?.playerId], ["mayPay", P3], "then to P3");
+  pay(paid, P3, true, "mayPay");
   assert.equal(paid.engine.state.players[P3].play.filter((id) => paid.engine.state.cards[id]!.attachedTo === undefined).length >= 0, true);
   assert.equal(pcOf(paid.engine)?.kind, "reorderDeck", "the controller looks at the top 3 of their own deck");
   assert.equal(pcOf(paid.engine)?.playerId, P1);
@@ -57,13 +57,13 @@ clauseMismatch(TEDIOUS, "0:ability", "MP-shade-of-the-devoured-emperor-1", "3 se
   // everyone declines
   const declined = board();
   go(declined, play(declined, P1, "ttt", { selected: picks(declined) }));
-  pay(declined, P2, false, "anyPlayerMayPay");
-  pay(declined, P3, false, "anyPlayerMayPay");
+  pay(declined, P2, false, "mayPay");
+  pay(declined, P3, false, "mayPay");
   assert.deepEqual(["weak1", "weak2", "strong"].map((key) => zone(declined, key)), ["discard", "discard", "play"]);
   // P2 pays: P3 is never asked
   const first = board();
   go(first, play(first, P1, "ttt", { selected: picks(first) }));
-  pay(first, P2, true, "anyPlayerMayPay");
+  pay(first, P2, true, "mayPay");
   assert.notEqual(pcOf(first.engine)?.playerId, P3, "P3 is never offered once P2 paid");
 });
 
@@ -276,7 +276,7 @@ function swindle(seats: 3 | 4, spare: Partial<Record<Pid, number>>): Board {
     ...([P1, P2, P3, P4] as Pid[]).slice(0, seats).flatMap((owner) => spareResources(owner, spare[owner] ?? 0))
   ]);
 }
-clauseMismatch(SWINDLE, "0:ability", "MP-shade-of-the-devoured-emperor-2", "3 seats: nobody may respond; each opponent in turn attaches one of their own unattached resources to their own faction; P1 then draws and discards once", () => {
+clause(SWINDLE, "0:ability", "3 seats: nobody may respond; each opponent in turn attaches one of their own unattached resources to their own faction; P1 then draws and discards once", () => {
   const b = swindle(3, { [P1]: 2, [P2]: 2, [P3]: 2 });
   b.engine.perform(play(b, P1, "sw"));
   assert.equal(b.engine.state.responseWindow, undefined, "no opponent may respond to it");
@@ -299,7 +299,7 @@ clauseMismatch(SWINDLE, "0:ability", "MP-shade-of-the-devoured-emperor-2", "3 se
   pickCards(none, P2, ["spare-p2-0"]);
   assert.equal(pcOf(none.engine)?.playerId, P1, "P3 has no unattached resource and attaches nothing: straight to the controller's discard");
 });
-clauseMismatch(SWINDLE, "0:ability", "MP-shade-of-the-devoured-emperor-2", "4 seats: none of the three opponents may respond; each attaches one of their own in turn; P1 draws and discards once", () => {
+clause(SWINDLE, "0:ability", "4 seats: none of the three opponents may respond; each attaches one of their own in turn; P1 draws and discards once", () => {
   const b = swindle(4, { [P2]: 1, [P3]: 1, [P4]: 1 });
   b.engine.perform(play(b, P1, "sw"));
   assert.equal(b.engine.state.responseWindow, undefined);

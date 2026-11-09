@@ -10461,11 +10461,23 @@ const cards = [
               },
               {
                 "type": "lostInfluenceThisTurn",
-                "player": "opponent"
+                "player": "opponents"
               }
             ]
           },
           "effects": [
+            {
+              "type": "choosePlayer",
+              "id": "o",
+              "from": "opponents",
+              "condition": {
+                "type": "lostInfluenceThisTurn",
+                "player": {
+                  "type": "chosenPlayer",
+                  "id": "__candidate"
+                }
+              }
+            },
             {
               "type": "mayPay",
               "player": "controller",
@@ -10475,7 +10487,10 @@ const cards = [
                   "type": "dealDamage",
                   "target": {
                     "type": "factionOf",
-                    "player": "opponent"
+                    "player": {
+                      "type": "chosenPlayer",
+                      "id": "o"
+                    }
                   },
                   "amount": 2
                 },
@@ -10485,7 +10500,10 @@ const cards = [
                   "declaration": {
                     "id": "c",
                     "selector": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "o"
+                      },
                       "zone": "play",
                       "type": "character"
                     },

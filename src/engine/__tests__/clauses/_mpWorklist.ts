@@ -151,7 +151,8 @@ export type Slot = "chooser" | "target" | "effect" | "condition" | "selector" | 
 /** The slot a player word at `path` sits in. */
 export function slotOf(path: string): Slot {
   const leaf = [...path.matchAll(SEGMENT)].filter((match) => match[1] !== undefined).map((match) => match[1]!).pop();
-  if (leaf === "chooser") return "chooser";
+  // A replacement ability's own `chooser` is the offer "any opponent may pay ..." (`"opponents"`: each opponent in turn), not an effect's chooser.
+  if (leaf === "chooser") return /^(?:behavior|faction)\.abilities\[\d+\]\.chooser$/.test(path) ? "scope" : "chooser";
   if (/\.target\.player$/.test(path)) return "target";
   if (/(?:effects|elseEffects)\[\d+\]\.player$/i.test(path)) return "effect";
   if (leaf === "controller" || leaf === "owner") return "selector";

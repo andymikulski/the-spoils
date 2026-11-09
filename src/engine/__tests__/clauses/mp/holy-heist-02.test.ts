@@ -1,9 +1,8 @@
-﻿// Multiplayer clause tests, Holy Heist part 2: the clauses whose data needs a step the vocabulary gate cannot yet judge
-// (an inserted choice, or the "any opponent may pay" offer). Written from the printed text; they run green against the
-// target data and are `clauseMismatch` while the catalog still holds the two-player form.
+﻿// Multiplayer clause tests, Holy Heist part 2: the clauses with an inserted choice or the "any opponent may
+// pay" offer. Written from the printed text.
 
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, printing } from "../_clause.js";
+import { clause, printing } from "../_clause.js";
 import type { CardDefinition, PlayerId } from "../../../../engine.js";
 import { item, tactic } from "../../support/fixtures.js";
 import { developResource } from "../_turn.js";
@@ -45,7 +44,7 @@ const respondWithTribute = (t: Table): void => {
   resolvePendingResponses(t.engine);
 };
 
-clauseMismatch(TRIBUTE, "0:extraCost", "MP-holy-heist-1", "3 seats: P1 may deploy it in response to a non-tactic card P2 or P3 deploys; refused in response to a tactic, with nothing being deployed, and to P1's own deployment", () => {
+clause(TRIBUTE, "0:extraCost", "3 seats: P1 may deploy it in response to a non-tactic card P2 or P3 deploys; refused in response to a tactic, with nothing being deployed, and to P1's own deployment", () => {
   for (const deployer of [P2, P3] as const) {
     const t = tributeTable(deployer);
     playOpen(t, deployer, "foe");
@@ -66,7 +65,7 @@ clauseMismatch(TRIBUTE, "0:extraCost", "MP-holy-heist-1", "3 seats: P1 may deplo
   refusal(() => playOpen(own, P1, "at"));
 });
 
-clauseMismatch(TRIBUTE, "1:rule", "MP-holy-heist-1", "3 seats: with [V][V][V] P1 alone may look at the top card of P1's deck and put it on the bottom; without the threshold the look is not offered", () => {
+clause(TRIBUTE, "1:rule", "3 seats: with [V][V][V] P1 alone may look at the top card of P1's deck and put it on the bottom; without the threshold the look is not offered", () => {
   const t = tributeTable(P3, { volition: 3 });
   playOpen(t, P3, "foe");
   const top = deckOf(t, P1)[0]!;
@@ -85,12 +84,12 @@ clauseMismatch(TRIBUTE, "1:rule", "MP-holy-heist-1", "3 seats: with [V][V][V] P1
   assert.notEqual(pending(without)?.kind, "chooserSelectsOption", "no look without the threshold");
 });
 
-clauseMismatch(TRIBUTE, "2:rule", "MP-holy-heist-1", "3 seats: the payment of 1 is offered to P2 first, then P3; the first to pay settles it (P1 draws, the card resolves, the other is not asked); if both decline the card being deployed is terminated and P1 draws nothing", () => {
+clause(TRIBUTE, "2:rule", "3 seats: the payment of 1 is offered to P2 first, then P3; the first to pay settles it (P1 draws, the card resolves, the other is not asked); if both decline the card being deployed is terminated and P1 draws nothing", () => {
   const paid = tributeTable(P3);
   playOpen(paid, P3, "foe");
   const handBefore = handOf(paid, P1).length;
   respondWithTribute(paid);
-  assert.equal(pending(paid)?.kind, "anyPlayerMayPay");
+  assert.equal(pending(paid)?.kind, "mayPay");
   assert.equal(pending(paid)?.playerId, P2, "clockwise from P1's left: P2 first");
   const readyBefore = SPENT(paid, P2);
   offer(paid, P2, true);
@@ -141,15 +140,15 @@ function offeringTable(): Table {
   ]);
 }
 
-clauseMismatch(OFFERING, "0:extraCost", "MP-holy-heist-1", "3 seats: any character in play can be picked (P1's, P2's or P3's) and no opponent is selected at play", () => {
+clause(OFFERING, "0:extraCost", "3 seats: any character in play can be picked (P1's, P2's or P3's) and no opponent is selected at play", () => {
   const t = offeringTable();
   assert.deepEqual(sorted(pickCandidates(t, P1, "of", "c")), sorted(["e1", "e2", "e3", "other"].map((k) => t.id(k))));
   assert.deepEqual(playRequirements(t, P1, "of").filter((r) => r.kind === "players"), []);
   play(t, P1, "of", { selected: { c: [t.id("e2")] } });
-  assert.equal(pending(t)?.kind, "anyPlayerMayPay", "the offer comes at resolution");
+  assert.equal(pending(t)?.kind, "mayPay", "the offer comes at resolution");
 });
 
-clauseMismatch(OFFERING, "1:rule", "MP-holy-heist-1", "3 seats: 2 is offered to P2 then P3; a payment terminates the card and nothing moves (the other is not asked); if both decline every Echo goes to the bottom of its owner's deck", () => {
+clause(OFFERING, "1:rule", "3 seats: 2 is offered to P2 then P3; a payment terminates the card and nothing moves (the other is not asked); if both decline every Echo goes to the bottom of its owner's deck", () => {
   const first = offeringTable();
   play(first, P1, "of", { selected: { c: [first.id("e2")] } });
   assert.equal(pending(first)?.playerId, P2);
@@ -199,7 +198,7 @@ function barbequeTable(): Table {
   ]);
 }
 
-clauseMismatch(BARBEQUE, "0:extraCost", "MP-holy-heist-1", "3 seats: any non-resource card in play can be picked (P1's, P2's or P3's) and no opponent is selected at play", () => {
+clause(BARBEQUE, "0:extraCost", "3 seats: any non-resource card in play can be picked (P1's, P2's or P3's) and no opponent is selected at play", () => {
   const t = barbequeTable();
   const ids = pickCandidates(t, P1, "bq", "picked");
   for (const key of ["picked", "mine", "item3"]) assert.ok(ids.includes(t.id(key)), `${key} can be picked`);
@@ -207,7 +206,7 @@ clauseMismatch(BARBEQUE, "0:extraCost", "MP-holy-heist-1", "3 seats: any non-res
   assert.deepEqual(playRequirements(t, P1, "bq").filter((r) => r.kind === "players"), []);
 });
 
-clauseMismatch(BARBEQUE, "1:rule", "MP-holy-heist-1", "3 seats: 2 is offered to P2 then P3, and a payment returns Barbeque to P1's hand, keeps the picked card and looks at no hand; if both decline the picked card goes to its owner's hand, then P1 chooses one opponent, looks at only that player's hand and that player discards a non-resource card", () => {
+clause(BARBEQUE, "1:rule", "3 seats: 2 is offered to P2 then P3, and a payment returns Barbeque to P1's hand, keeps the picked card and looks at no hand; if both decline the picked card goes to its owner's hand, then P1 chooses one opponent, looks at only that player's hand and that player discards a non-resource card", () => {
   const paid = barbequeTable();
   play(paid, P1, "bq", { selected: { picked: [paid.id("picked")] } });
   assert.equal(pending(paid)?.playerId, P2);
@@ -251,7 +250,7 @@ function necroTable(): Table {
 }
 const replacementAnswer = (t: Table, who: PlayerId, apply: boolean): void => answer(t, "replacementChoice", who, { kind: "replacementChoice", apply });
 
-clauseMismatch(NECRO, "0:rule", "MP-holy-heist-2", "3 seats: the payment of 2 is offered to P2 first, then P3; the first to pay takes control (P3 is never asked, and damage this turn is reduced to 0); if both decline it is destroyed", () => {
+clause(NECRO, "0:rule", "3 seats: the payment of 2 is offered to P2 first, then P3; the first to pay takes control (P3 is never asked, and damage this turn is reduced to 0); if both decline it is destroyed", () => {
   const first = necroTable();
   play(first, P1, "kill", { selected: { t: [first.id("necro")] } });
   assert.equal(pending(first)?.kind, "replacementChoice");
@@ -282,7 +281,7 @@ clauseMismatch(NECRO, "0:rule", "MP-holy-heist-2", "3 seats: the payment of 2 is
 
 const BAILIFF = "efac6670-d61f-42ba-aee9-e897b774e395";
 
-clauseMismatch(BAILIFF, "0:rule", "MP-holy-heist-3", "3 seats: a cost-1 tactic costs 3 for P2 and for P3, a cost-5 tactic stays 5, P1's own cost-1 tactic is unchanged", () => {
+clause(BAILIFF, "0:rule", "3 seats: a cost-1 tactic costs 3 for P2 and for P3, a cost-5 tactic stays 5, P1's own cost-1 tactic is unchanged", () => {
   const t = table(
     3,
     [

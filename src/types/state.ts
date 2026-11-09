@@ -640,6 +640,11 @@ export interface PendingEffectFrame {
   recordPickZones?: boolean;
   /** Index (into `effects`) of a deck search whose `deckSearched` announcement was already answered. */
   announcedIndex?: number;
+  /**
+   * Marks the last frame of a replacement's effects that paused on a choice: while it is parked, the replacement `key`
+   * is still being applied to `cardId` and is not offered for it again (CR 506.5).
+   */
+  endsReplacement?: { cardId: CardInstanceId; key: string };
 }
 
 /**

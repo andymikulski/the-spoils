@@ -2178,6 +2178,15 @@ const cards = [
               "viewer": "controller"
             },
             {
+              "type": "reveal",
+              "of": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
+              "zone": "faceDownResources",
+              "viewer": "controller"
+            },
+            {
               "type": "draw",
               "player": "controller",
               "amount": 1
@@ -22353,15 +22362,56 @@ const cards = [
             },
             {
               "type": "bind",
-              "id": "oppCost",
-              "value": {
-                "type": "cardCost",
-                "target": {
-                  "type": "deckPosition",
-                  "player": "opponent",
-                  "from": "top"
+              "id": "higher",
+              "value": 0
+            },
+            {
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "bind",
+                  "id": "oppCost",
+                  "value": {
+                    "type": "cardCost",
+                    "target": {
+                      "type": "deckPosition",
+                      "player": "controller",
+                      "from": "top"
+                    }
+                  }
+                },
+                {
+                  "type": "bind",
+                  "id": "higher",
+                  "value": {
+                    "type": "add",
+                    "values": [
+                      {
+                        "type": "variable",
+                        "id": "higher"
+                      },
+                      {
+                        "type": "conditional",
+                        "if": {
+                          "type": "numberCompare",
+                          "left": {
+                            "type": "variable",
+                            "id": "oppCost"
+                          },
+                          "operator": ">",
+                          "right": {
+                            "type": "variable",
+                            "id": "mineCost"
+                          }
+                        },
+                        "then": 1,
+                        "else": 0
+                      }
+                    ]
+                  }
                 }
-              }
+              ]
             },
             {
               "type": "removeFromGame",
@@ -22372,12 +22422,18 @@ const cards = [
               }
             },
             {
-              "type": "removeFromGame",
-              "target": {
-                "type": "deckPosition",
-                "player": "opponent",
-                "from": "top"
-              }
+              "type": "forEachPlayer",
+              "players": "opponents",
+              "effects": [
+                {
+                  "type": "removeFromGame",
+                  "target": {
+                    "type": "deckPosition",
+                    "player": "controller",
+                    "from": "top"
+                  }
+                }
+              ]
             },
             {
               "type": "if",
@@ -22385,13 +22441,10 @@ const cards = [
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "higher"
                 },
-                "operator": ">=",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": "=",
+                "right": 0
               },
               "effects": [
                 {
@@ -22415,13 +22468,10 @@ const cards = [
                 "type": "numberCompare",
                 "left": {
                   "type": "variable",
-                  "id": "mineCost"
+                  "id": "higher"
                 },
-                "operator": "<",
-                "right": {
-                  "type": "variable",
-                  "id": "oppCost"
-                }
+                "operator": ">",
+                "right": 0
               },
               "effects": [
                 {
@@ -22491,7 +22541,7 @@ const cards = [
           "modifiers": [],
           "pickTax": [
             {
-              "affects": "opponent",
+              "affects": "opponents",
               "amount": 1,
               "selector": {
                 "type": "character",
@@ -22991,7 +23041,17 @@ const cards = [
               "count": 3,
               "piles": 2,
               "compareBy": "cost",
-              "winnerTakes": 1
+              "winnerTakes": 1,
+              "opponent": {
+                "type": "chosenPlayer",
+                "id": "o"
+              }
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "o",
+              "from": "opponents"
             }
           ]
         }

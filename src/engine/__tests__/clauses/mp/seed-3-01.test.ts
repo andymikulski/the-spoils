@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, tactic } from "../../support/fixtures.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import { answer, bounce, cardsOf, controllerOf, expectChoice, handOf, kill, offered, othersOf, P1, P2, P3, P4, pending, pickTargets, settle, staples, table, tokensOn, zoneOf } from "./_seed-3.js";
 import type { PlayerId, Table } from "./_seed-3.js";
 

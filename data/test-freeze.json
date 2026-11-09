@@ -347,8 +347,8 @@
       "reason": "Lines 494 and 505 declared an attack on { type: \"faction\", playerId: <P2's faction card id> }, a card id where a player id belongs; the engine now refuses an attack on an unknown player. Corrected to playerId: P2, the test's stated intent. Approved by the user 2026-11-07."
     },
     "src/engine/__tests__/card-data-integrity.test.ts": {
-      "sha256": "43466457bb8f76d258ea69ae53fe01754ec81dd230098aff76b6cb8bd32d7c87",
-      "reason": "KNOWN_TYPE_TAGS gains the free-for-all multiplayer vocabulary tags choosePlayer (effect) and chosenPlayer (player reference), which card data now uses; nothing else in the file changes. Approved by the user 2026-11-08."
+      "sha256": "f9af6c0ef4aefbfb485ea4f9b27666ea78e6efb2790b2621c9b2a27fd05f9d23",
+      "reason": "KNOWN_TYPE_TAGS gains the free-for-all multiplayer vocabulary tags card data now uses: choosePlayer (effect), chosenPlayer (player reference), anyOpponent (condition), rememberPlayer (effect), rememberedPlayer (player reference), defendingPlayerIs (condition); nothing else in the file changes. Approved by the user 2026-11-08 (add only the new multiplayer vocabulary tags)."
     },
     "src/engine/__tests__/per-card/1st-edition-part-2.test.ts": {
       "sha256": "c2fce88300920be733630013957b47202987775e71945dc828052cc9500d45e0",

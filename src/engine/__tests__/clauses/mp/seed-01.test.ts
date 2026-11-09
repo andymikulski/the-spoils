@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
 import { resourceCard } from "../../support/fixtures.js";
-import { clause, clauseMismatch, printing } from "../_clause.js";
+import { clause, printing } from "../_clause.js";
 import {
   answerFor,
   assertOpponentAsked,
@@ -123,10 +123,9 @@ for (const count of [3, 4] as const) {
   });
 }
 
-// "...and their face-down resources": no reveal form reaches face-down cards in play (`reveal` knows only a hand and a
-// deck top; `revealCards` is reserved for printings that print "reveal").
+// "...and their face-down resources": a `reveal` of the chosen opponent's `faceDownResources`.
 for (const count of [3, 4] as const) {
-  clauseMismatch(FK, "0:rule", "MP-seed-5", `${count} seats: P1 also sees the chosen opponent's face-down resources, and no other seat's`, () => {
+  clause(FK, "0:rule", `${count} seats: P1 also sees the chosen opponent's face-down resources, and no other seat's`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = fkTable(count);
       playCard(t, P1, "fk", { players: { opponent: pick } });

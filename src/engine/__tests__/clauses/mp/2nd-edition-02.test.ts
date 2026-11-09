@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, resourceCard } from "../../per-card/_harness.js";
-import { clause, clauseMismatch, declineAll, drain, printing } from "../_clause.js";
+import { clause, declineAll, drain, printing } from "../_clause.js";
 import { COUNTS, answerFor, others, passive, pickable, startOfTurn } from "./_seats2ndEdition.js";
 import { choosePlayer, deckOf, endTurn, handOf, open, P1, P2, P3, P4, resolvePendingResponses, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -145,7 +145,7 @@ for (const count of COUNTS) {
 // every player but the active one, so at three or more seats every other player is offered it.
 
 for (const count of COUNTS) {
-  clauseMismatch(FTA, "1:option:OPTION 1", "MP-2nd-edition-1", `${count} seats: the active player may draw a card and only the opponent they selected may play a resource`, () => {
+  clause(FTA, "1:option:OPTION 1", `${count} seats: the active player may draw a card and only the opponent they selected may play a resource`, () => {
     for (const opponent of [P3, P1]) {
       const t = ftaTable(count);
       startOfTurn(t, P2);
@@ -158,7 +158,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clauseMismatch(FTA, "2:option:OPTION 2", "MP-2nd-edition-2", `${count} seats: the active player may play a resource and only the opponent they selected may draw a card`, () => {
+  clause(FTA, "2:option:OPTION 2", `${count} seats: the active player may play a resource and only the opponent they selected may draw a card`, () => {
     for (const opponent of [P1, P2]) {
       const t = ftaTable(count);
       startOfTurn(t, P3);

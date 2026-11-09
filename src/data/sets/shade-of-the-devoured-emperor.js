@@ -1705,7 +1705,7 @@ const cards = [
           "effects": [
             {
               "type": "mayPay",
-              "player": "opponent",
+              "offerTo": "opponents",
               "costs": [
                 {
                   "type": "payResources",

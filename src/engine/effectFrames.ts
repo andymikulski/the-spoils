@@ -30,6 +30,7 @@ export interface EffectFrame {
   finishStackItem?: StackItem;
   recordPickZones?: boolean;
   announcedIndex?: number;
+  endsReplacement?: { cardId: string; key: string };
 }
 
 /** The parts of a context that are objects of their own. Each context in the table owns its own copies. */

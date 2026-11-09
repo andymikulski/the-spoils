@@ -3,7 +3,7 @@
 // data/card-tests/mp-spec/1st-edition-part-2.json.
 
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -109,7 +109,7 @@ function noResponseScenario(count: Count, key: string, check: (t: Table, pick: P
 const SUB5 = "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a";
 
 for (const count of [3, 4] as const) {
-  clauseMismatch(SUB5, "0:rule", "MP-1st-edition-part-2-2", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the card resolves only after they pass`, () => {
+  clause(SUB5, "0:rule", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the card resolves only after they pass`, () => {
     noResponseScenario(count, "sub", (t) => {
       assert.equal(handOf(t, P2).length, 2, "the terminated ability drew nothing for its controller");
       assert.equal(handOf(t, P1).length, 3, "P1 drew a card from the card itself");
@@ -128,7 +128,7 @@ for (const count of [3, 4] as const) {
 const PUPPET = "ab111049-6ba1-430e-8d27-f647bcd5ac35";
 
 for (const count of [3, 4] as const) {
-  clauseMismatch(PUPPET, "0:rule", "MP-1st-edition-part-2-2", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the character is destroyed`, () => {
+  clause(PUPPET, "0:rule", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the character is destroyed`, () => {
     noResponseScenario(count, "pup", (t) => {
       assert.equal(zoneOf(t, "foe"), "discard", "the character whose ability it was is destroyed");
       assert.equal(zoneOf(t, "foe2"), "play", "no other character is destroyed");
@@ -205,15 +205,16 @@ for (const count of [3, 4] as const) {
 // Both players put the top Y cards of their deck into their hand, where Y is the number of cards that player put on the
 // bottom of their deck.
 //
-// Implements the spec's test3 / test4 literally: "both players" is the controller and the opponent the controller
-// selects when the trigger resolves (MP 3), while the player whose turn it starts picks X.
+// Text from the point of view of the player whose turn it is (MPQ-P10): "that player" picks X, and "both players" is that
+// player and the opponent that player selects, whoever controls the card. The controller is not involved unless it is
+// one of the two.
 // =================================================================================
 
 const EMBIGGENER = "88ddad6c-4df5-4baa-b1b8-c7492f67d42e";
 
 /**
- * P1 controls the Embiggener; the turn passes to `turnOf` and its start trigger resolves. P1 selects `pick`, `turnOf`
- * picks X = `x`, and the pair (P1 and `pick`) each put X cards on the bottom and draw as many.
+ * P1 controls the Embiggener; the turn passes to `turnOf` and its start trigger resolves. `turnOf` selects the opponent
+ * `pick` and picks X = `x`, and the pair (`turnOf` and `pick`) each put X cards on the bottom and draw as many.
  */
 function embiggenerTurn(t: Table, previous: PlayerId, turnOf: PlayerId, pick: PlayerId, x: number, handSizes: Record<PlayerId, number>): void {
   const deckBefore = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));
@@ -221,14 +222,14 @@ function embiggenerTurn(t: Table, previous: PlayerId, turnOf: PlayerId, pick: Pl
   pass(t, previous);
   assert.equal(t.engine.state.activePlayerId, turnOf);
   orderStart(t, "emb");
-  // P1 (the Embiggener's controller) selects the opponent that "both players" pairs it with, from every opponent
-  choosePlayer(t, P1, t.seats.slice(1), pick);
+  // the player whose turn it is selects the opponent that "both players" pairs it with, from its own opponents
+  choosePlayer(t, turnOf, t.seats.filter((seat) => seat !== turnOf), pick);
   // the player whose turn it is picks X
   assert.equal(open(t)?.kind, "chooseNumber");
   assert.equal(open(t)?.playerId, turnOf, "the player whose turn it is picks the number");
   answerPending(t.engine, "chooseNumber", { value: x });
   // the pair acts in turn order starting from the active player, so seats outside the pair are skipped
-  const order = t.seats.slice(t.seats.indexOf(turnOf)).concat(t.seats.slice(0, t.seats.indexOf(turnOf))).filter((seat) => seat === P1 || seat === pick);
+  const order = t.seats.slice(t.seats.indexOf(turnOf)).concat(t.seats.slice(0, t.seats.indexOf(turnOf))).filter((seat) => seat === turnOf || seat === pick);
   const put: Record<PlayerId, string[]> = {};
   for (const seat of order) {
     const n = Math.min(x, handSizes[seat]!);
@@ -267,21 +268,21 @@ function embiggenerTable(count: Count, active: PlayerId, hands: Record<PlayerId,
   );
 }
 
-clauseMismatch(EMBIGGENER, "0:rule", "MP-1st-edition-part-2-1", "3 seats: both players are P1 and the opponent P1 selects; the player whose turn it is picks X and may be neither of them", () => {
+clause(EMBIGGENER, "0:rule", "3 seats: both players are the player whose turn it is and the opponent that player selects, whoever controls the card", () => {
   const sizes = { [P1]: 3, [P2]: 1, [P3]: 3 };
-  // the start of P3's turn: P1 selects P2; P3 (not in the pair) picks X = 2; P2 holds only 1 card, so puts that one and draws 1
+  // the start of P3's turn: P3 selects P2 and picks X = 2; P2 holds only 1 card, so puts that one and draws 1; P1, the controller, is untouched
   embiggenerTurn(embiggenerTable(3, P2, { [P2]: 1 }), P2, P3, P2, 2, sizes);
   // the start of P1's turn: P1 picks X and selects P3; P2 is untouched
   const t = embiggenerTable(3, P3);
   embiggenerTurn(t, P3, P1, P3, 1, { [P1]: 3, [P2]: 3, [P3]: 3 });
-  // the start of P2's turn: P1 selects P3, P2 picks X; P1 and P3 act (P3 first, going clockwise from P2), P2 does not
-  embiggenerTurn(t, P1, P2, P3, 2, { [P1]: 3, [P2]: 3, [P3]: 3 });
+  // the start of P2's turn: P2 selects P1 and picks X; P2 acts first, then P1; P3 does not
+  embiggenerTurn(t, P1, P2, P1, 2, { [P1]: 3, [P2]: 3, [P3]: 3 });
 });
 
-clauseMismatch(EMBIGGENER, "0:rule", "MP-1st-edition-part-2-1", "4 seats: the pair acts active-player-first then clockwise, and the two other seats are untouched", () => {
+clause(EMBIGGENER, "0:rule", "4 seats: the pair acts active-player-first then clockwise, and the two other seats are untouched", () => {
   const sizes = { [P1]: 3, [P2]: 3, [P3]: 3, [P4]: 3 };
-  // the start of P4's turn: P1 selects P3 (offered P2, P3, P4); P4 picks X = 1; the pair acts P1 then P3
-  embiggenerTurn(embiggenerTable(4, P3), P3, P4, P3, 1, sizes);
-  // the start of P2's turn: P1 selects P4; P2 picks X; the pair acts P4 then P1 (clockwise from P2); P3 untouched
+  // the start of P4's turn: P4 selects P2 (offered P1, P2, P3) and picks X = 1; the pair acts P4 then P2; P1 and P3 are untouched
+  embiggenerTurn(embiggenerTable(4, P3), P3, P4, P2, 1, sizes);
+  // the start of P2's turn: P2 selects P4 and picks X; the pair acts P2 then P4; P1 and P3 are untouched
   embiggenerTurn(embiggenerTable(4, P1), P1, P2, P4, 2, sizes);
 });
