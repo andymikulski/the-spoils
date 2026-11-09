@@ -44,6 +44,12 @@ export interface ResolutionContext {
   /** Players named by `playerChoices` / `choosePlayer`, keyed by choice id (`{ type: "chosenPlayer", id }`). */
   chosenPlayers?: Record<string, PlayerId>;
 
+  /**
+   * Ids of `choosePlayer` choices that nobody qualified for (their `condition` held for no candidate): the choice
+   * could not be made, and an effect that reads one of them does not happen.
+   */
+  unchosenPlayers?: string[];
+
   selected: Record<string, CardInstanceId[]>;
 
   /** "the picked character" refs (`respondedToPicked`) already resolved by an earlier effect of this resolution, so a later "if you do" still sees a card that has since moved. */

@@ -1,72 +1,17 @@
 {
   "total": {
-    "sites": 382,
-    "clauses": 249
+    "sites": 89,
+    "clauses": 53
   },
   "sets": {
     "1st-edition": {
-      "sites": 6,
-      "clauses": 6,
-      "pending": [
-        {
-          "card": "Degenerate Molestation",
-          "id": "d0f8ae01-7941-4b39-9292-1ad30f8eec9d",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Nearby Serpent",
-          "id": "26186aa1-0ff0-4f34-9a82-8ec01ffb3eef",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector",
-          "now": {
-            "type": "faction"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "f0999d2595b0"
-        },
-        {
-          "card": "Voidal Replication",
-          "id": "7416a581-63a8-495f-a845-f79eeddf2eea",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "3p1ph4ny 31f",
-          "id": "579cf37c-1b99-47a8-b090-96bc06ea81b9",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Research Investment",
-          "id": "ec646752-561a-4ba7-9c0c-69eb41457d56",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Tremor Engine",
-          "id": "37a2c6f2-a2aa-434c-92d3-0d5e7ab38cbc",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "1st-edition-part-2": {
-      "sites": 5,
-      "clauses": 5,
+      "sites": 1,
+      "clauses": 1,
       "pending": [
         {
           "card": "Ambiguity Embiggener",
@@ -74,112 +19,21 @@
           "clause": "0:rule",
           "path": "behavior.abilities[0].effects[0].effects[0]",
           "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Subsection 5, Paragraph 12",
-          "id": "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Exploding Sock Puppet!",
-          "id": "ab111049-6ba1-430e-8d27-f647bcd5ac35",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Martial Artist",
-          "id": "b2ceefd9-cf5e-459b-adba-6c0f3a806c58",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].restrictions[0].restriction",
-          "now": "cannotBePickedByOpponents",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Martial Arts Trainee",
-          "id": "3142de68-bfda-45ce-b3a6-c1b085f51664",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].restrictions[0].restriction",
-          "now": "cannotBePickedByOpponents",
-          "meaning": "chosenOpponent"
+          "meaning": "chosenPair"
         }
       ]
     },
     "2nd-edition": {
-      "sites": 14,
-      "clauses": 14,
+      "sites": 2,
+      "clauses": 2,
       "pending": [
-        {
-          "card": "Arcanist's Almanac",
-          "id": "28addfe9-b290-465c-a241-ce788297665a",
-          "clause": "0:ability:almanac-foresight",
-          "path": "behavior.abilities[0].targets[0].selector",
-          "now": {
-            "zone": "play",
-            "type": "faction"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "ba8a097723ed"
-        },
-        {
-          "card": "Ashes of Zenobia",
-          "id": "b175a535-2a58-4df1-806d-6828e76d2868",
-          "clause": "2:ability:nullify",
-          "path": "behavior.abilities[1].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Degenerate Molestation",
-          "id": "12cfc4e1-e8f7-431e-a37a-593210181b0c",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Nearby Serpent",
-          "id": "f96cbc48-3e51-48d9-9ac6-3537d1c78e6d",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector",
-          "now": {
-            "type": "faction"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "f0999d2595b0"
-        },
-        {
-          "card": "Voidal Replication",
-          "id": "63369e53-e89b-4b7d-beb0-7110cb1290ce",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].opponentFrom",
-          "now": null,
-          "meaning": "chosenOpponent",
-          "snapshot": "2be88ca4242c"
-        },
         {
           "card": "Free Trade Agreement",
           "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
           "clause": "1:option:OPTION 1",
           "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
           "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Free Trade Agreement",
@@ -187,65 +41,13 @@
           "clause": "2:option:OPTION 2",
           "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
           "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
-          "clause": "3:option:OPTION 3",
-          "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "6a09105b-8cde-488e-ae5b-89ebc81beade",
-          "clause": "4:option:OPTION 4",
-          "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Subsection 5, Paragraph 12",
-          "id": "23fe59c9-9bf1-49d1-bfc4-084c556aca80",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "3p1ph4ny 31f",
-          "id": "3398fc6e-d1fd-487d-85f2-59486e3256eb",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Exploding Sock Puppet!",
-          "id": "300ab3d1-3214-4fa5-9000-d657e6e7816d",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Tactician Vacation",
-          "id": "4181e922-7ffb-4c71-aef6-17adf4f006c7",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
           "meaning": "chosenOpponent"
         }
       ]
     },
     "holy-heist": {
-      "sites": 35,
-      "clauses": 28,
+      "sites": 6,
+      "clauses": 6,
       "pending": [
         {
           "card": "Additional Tribute",
@@ -256,22 +58,6 @@
           "meaning": "anyOneOpponent"
         },
         {
-          "card": "Forbidden Bibliotheca",
-          "id": "dd781007-94ae-48b3-a0dc-7a3a3d983bcf",
-          "clause": "4:ability:bib-checkout",
-          "path": "behavior.abilities[3].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Forbidden Bibliotheca",
-          "id": "dd781007-94ae-48b3-a0dc-7a3a3d983bcf",
-          "clause": "4:ability:bib-checkout",
-          "path": "behavior.abilities[3].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
           "card": "Offering of False Friendship",
           "id": "7e7c80fc-1697-426e-b962-768196f6f2da",
           "clause": "1:rule",
@@ -280,26 +66,10 @@
           "meaning": "anyOneOpponent"
         },
         {
-          "card": "Profane Proposal",
-          "id": "7f75ce4c-b81e-45a9-973a-1bbe50fb43e4",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
           "card": "Thabbashite Barbeque",
           "id": "cb0c54e5-f40b-4fb7-aeb2-01d0ab697f4f",
           "clause": "1:rule",
           "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Thabbashite Barbeque",
-          "id": "cb0c54e5-f40b-4fb7-aeb2-01d0ab697f4f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
           "now": "opponent",
           "meaning": "anyOneOpponent"
         },
@@ -326,325 +96,13 @@
           "path": "behavior.abilities[0].chooser",
           "now": "opponent",
           "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "0v3rw0rk3d 31f",
-          "id": "7dd26a5f-d0dc-4231-b70a-d11b189f28db",
-          "clause": "1:rule@eeeeee",
-          "path": "behavior.abilities[1].modifiers[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Subdermal Micromajig",
-          "id": "7a303331-f7dd-4abc-b223-ef0b033db6b9",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Subdermal Micromajig",
-          "id": "7a303331-f7dd-4abc-b223-ef0b033db6b9",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Cheats, the Dirty Rotten",
-          "id": "6d385d6a-39e5-4b8f-b68b-3519ca99268a",
-          "clause": "1:extraCost",
-          "path": "behavior.onPlay.targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Cheats, the Dirty Rotten",
-          "id": "6d385d6a-39e5-4b8f-b68b-3519ca99268a",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Cheats, the Dirty Rotten",
-          "id": "6d385d6a-39e5-4b8f-b68b-3519ca99268a",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Chum, the Ugliest Sarume",
-          "id": "30b358cd-6c60-4e9e-b341-7d04fd80e135",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].effects[2].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Chum, the Ugliest Sarume",
-          "id": "30b358cd-6c60-4e9e-b341-7d04fd80e135",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].effects[3].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Craniata Nester",
-          "id": "1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Craniata Nester",
-          "id": "1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Craniata Nester",
-          "id": "1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7",
-          "clause": "1:rule",
-          "path": "behavior.abilities[2].modifiers[0].value.selector.owner",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Craniata Nester",
-          "id": "1a1d1224-d3ac-4a6f-bf31-01cd5477f1d7",
-          "clause": "1:rule",
-          "path": "behavior.abilities[2].modifiers[1].value.selector.owner",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Inebriated Defenestration",
-          "id": "ebac9b53-26af-491e-b251-a43a908d992f",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Thabbashite Urchin",
-          "id": "e4730213-75fc-4614-9466-1b3c1e42e630",
-          "clause": "0:rule@vvv",
-          "path": "behavior.abilities[0].condition.conditions[1].left.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Theological Theft",
-          "id": "9d9b004f-6491-4e6e-a79b-dd2a479c637f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Thieving Casino",
-          "id": "c1fdf3be-4790-4560-a4a0-920a951833a4",
-          "clause": "1:ability:thieving-casino-cashout",
-          "path": "behavior.abilities[1].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Underdog",
-          "id": "d000169f-1416-41e4-a603-3fc3bed83e46",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].modifiers[0].value.selector.owner",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Gathering of Unlikely Heroes",
-          "id": "b8166db8-01ba-4103-bfee-dfece934c330",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Blitz of Destruction",
-          "id": "3f5aab3e-81e1-46be-98e7-b55fbd60c047",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].condition.left.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Blitz of Destruction",
-          "id": "3f5aab3e-81e1-46be-98e7-b55fbd60c047",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Blitz of Destruction",
-          "id": "3f5aab3e-81e1-46be-98e7-b55fbd60c047",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Dizzying Blow",
-          "id": "b6b6b202-7629-49e6-a451-7b2e3feb6c11",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Phantasmagoric Tollbooth",
-          "id": "d70efc6c-9a6e-41ab-92a2-cb97662f172f",
-          "clause": "2:rule@rrrrrr",
-          "path": "behavior.abilities[1].condition.conditions[3].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Raging Ferocity",
-          "id": "9192b2fa-b568-4ac1-bfd9-b9cb31d8fa42",
-          "clause": "2:ability:flip-it",
-          "path": "behavior.abilities[0].effects[1].amount.else.values[0].selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Suicide Smash",
-          "id": "519a6b1a-f64e-4fe1-b586-39b32f7b328a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
         }
       ]
     },
     "open-beta": {
-      "sites": 15,
-      "clauses": 15,
+      "sites": 1,
+      "clauses": 1,
       "pending": [
-        {
-          "card": "Arcanist's Almanac",
-          "id": "f09cc7b1-96fd-47e5-946d-324962b9efe9",
-          "clause": "0:ability:almanac-foresight",
-          "path": "behavior.abilities[0].targets[0].selector",
-          "now": {
-            "zone": "play",
-            "type": "faction"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "ba8a097723ed"
-        },
-        {
-          "card": "Ashes of Zenobia",
-          "id": "b3c323b0-c7ea-4970-a286-92df7d2fe2f3",
-          "clause": "2:ability:nullify",
-          "path": "behavior.abilities[1].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Degenerate Molestation",
-          "id": "f77f9b48-ebfb-4f8f-a32d-46a0309da781",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "Nearby Serpent",
-          "id": "9b13c156-b7f9-4678-93ff-062a78e3bc5a",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector",
-          "now": {
-            "type": "faction"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "f0999d2595b0"
-        },
-        {
-          "card": "Spastic Tentacles",
-          "id": "9b955719-5c5a-4401-8a40-d41c7390829e",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].opponentFrom",
-          "now": null,
-          "meaning": "chosenOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
-          "clause": "2:option:OPTION 2",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
-          "clause": "3:option:OPTION 3",
-          "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Free Trade Agreement",
-          "id": "234559f8-329c-4c05-bc09-c34e087a4182",
-          "clause": "4:option:OPTION 4",
-          "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "3p1ph4ny 31f",
-          "id": "0de292e7-cc1a-481a-ad01-697f928caac1",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenOpponent",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Research Investment",
-          "id": "828a6b95-9e5f-4035-b348-6258c1937c87",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
         {
           "card": "Emergency Obfuscation",
           "id": "1999770c-5f2d-415d-8da1-8efe44ef3e41",
@@ -652,96 +110,25 @@
           "path": "behavior.abilities[0].swapsSides",
           "now": true,
           "meaning": "chosenPair"
-        },
-        {
-          "card": "Tremor Engine",
-          "id": "f58d1a64-ffe6-44e6-a0fb-7fee920c215d",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Tactician Vacation",
-          "id": "5ca25182-e910-4f21-97d0-b30298e7d4af",
-          "clause": "0:rule",
-          "path": "behavior.noResponse",
-          "now": true,
-          "meaning": "chosenOpponent"
         }
       ]
     },
     "seed": {
-      "sites": 15,
-      "clauses": 14,
+      "sites": 4,
+      "clauses": 4,
       "pending": [
         {
           "card": "Forbidden Knowledge",
           "id": "40a1b99a-a5b6-4356-b84c-3cc41a5e6db2",
           "clause": "0:rule",
           "path": "behavior.abilities[0].effects[0]",
+          "movedTo": "behavior.abilities[0].effects[2]",
           "now": {
             "type": "draw",
             "player": "controller",
             "amount": 1
           },
-          "meaning": "chosenOpponent",
-          "snapshot": "ff839d8bc0fc"
-        },
-        {
-          "card": "Obscene Communion",
-          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].opponentFrom",
-          "now": null,
-          "meaning": "chosenPair",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Obscene Communion",
-          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.abilities[0].effects[0].options[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Obscene Communion",
-          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
-          "clause": "2:option:OPTION 2",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Obscene Communion",
-          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
-          "clause": "3:option:OPTION 3",
-          "path": "behavior.abilities[0].effects[0].options[2].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Obscene Communion",
-          "id": "604a992d-9d16-41db-b9f7-7face9e9a3da",
-          "clause": "4:option:OPTION 4",
-          "path": "behavior.abilities[0].effects[0].options[3].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Thabbashite Wizard",
-          "id": "2c419c3a-cd05-4d6c-b6c4-6d2e64655218",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Architectural Restitution",
@@ -752,38 +139,7 @@
             "type": "battleRole",
             "role": "defender"
           },
-          "meaning": "other",
-          "snapshot": "9a66ad25d935"
-        },
-        {
-          "card": "Department of Rejections",
-          "id": "0b6dc892-f833-4ab1-b1c5-c185ff0ca0f1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].abilityCostModifiers[0].scope",
-          "now": "opponentCharacters",
-          "meaning": "chosenOpponent"
-        },
-        {
-          "card": "High Court of Demands",
-          "id": "61688c92-96d1-40ae-ac64-2975d292b0d9",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].preventsAttackOnFaction",
-          "now": {
-            "player": "self"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "032e380bffcc"
-        },
-        {
-          "card": "Theocratic Senate of Marduun",
-          "id": "9f06b372-48a0-49eb-a2df-a4c5c923694b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].preventsAttackOnFaction",
-          "now": {
-            "player": "self"
-          },
-          "meaning": "chosenOpponent",
-          "snapshot": "032e380bffcc"
+          "meaning": "other"
         },
         {
           "card": "Mountainous Golem",
@@ -794,8 +150,7 @@
             "target": "source",
             "restriction": "cannotBeTakenControl"
           },
-          "meaning": "chosenOpponent",
-          "snapshot": "97948fdf738c"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Runivoltaic Accumulator",
@@ -806,50 +161,21 @@
             "type": "battleRole",
             "role": "defender"
           },
-          "meaning": "chosenOpponent",
-          "snapshot": "9a66ad25d935"
-        },
-        {
-          "card": "Gambling Den",
-          "id": "ee8821d4-4933-4e4b-a632-c4db1b91ea95",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Gambling Den",
-          "id": "ee8821d4-4933-4e4b-a632-c4db1b91ea95",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].elseEffects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
+          "meaning": "chosenOpponent"
         }
       ]
     },
     "seed-2": {
-      "sites": 26,
-      "clauses": 9,
+      "sites": 24,
+      "clauses": 7,
       "pending": [
-        {
-          "card": "Hideous Hexapede of Horror",
-          "id": "de6f188a-119d-4da0-9965-70b258c40ec5",
-          "clause": "0:ability:hellish-hex",
-          "path": "behavior.abilities[0].effects[2]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
         {
           "card": "Meat of the Mountain",
           "id": "60eab41e-55d8-428c-991a-de347296fa4f",
           "clause": "0:rule",
           "path": "behavior.abilities[1].opponentFrom",
           "now": null,
-          "meaning": "chosenOpponent",
-          "snapshot": "2be88ca4242c"
+          "meaning": "chosenOpponent"
         },
         {
           "card": "Meat of the Mountain",
@@ -1033,22 +359,13 @@
           "clause": "0:ability:mustache-showdown",
           "path": "behavior.abilities[0].effects[0]",
           "now": "partitionAndPick",
-          "meaning": "chosenPair",
-          "snapshot": "f5c86e03df59"
-        },
-        {
-          "card": "Resistance Fighter",
-          "id": "54acfe5d-ccfe-4f8e-b324-65b65e6d927f",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].condition.left.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
+          "meaning": "chosenPair"
         }
       ]
     },
     "seed-3": {
-      "sites": 29,
-      "clauses": 15,
+      "sites": 19,
+      "clauses": 10,
       "pending": [
         {
           "card": "Devilfang Thunderhoof",
@@ -1056,24 +373,7 @@
           "clause": "3:ability:thunderhoof-disrupt",
           "path": "behavior.abilities[2].costs[2]",
           "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "186b8e6c-7c64-42e9-b885-bf7b26fdf387",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "186b8e6c-7c64-42e9-b885-bf7b26fdf387",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
+          "meaning": "anyOneOpponent"
         },
         {
           "card": "Spatchcocking",
@@ -1164,63 +464,6 @@
           "meaning": "eachOpponent"
         },
         {
-          "card": "Hilarious Refrigerator Alarm",
-          "id": "febadb33-11cf-4dec-815b-5e86d03488f0",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].condition.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Hilarious Refrigerator Alarm",
-          "id": "febadb33-11cf-4dec-815b-5e86d03488f0",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[2].condition.condition.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Hilarious Refrigerator Alarm",
-          "id": "febadb33-11cf-4dec-815b-5e86d03488f0",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Hilarious Refrigerator Alarm",
-          "id": "febadb33-11cf-4dec-815b-5e86d03488f0",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Community Chest",
-          "id": "fe7095e0-d918-420c-9303-fbc5054d2564",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": "forEachPlayer",
-          "meaning": "chosenPair",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Ipsighast, the Lustful",
-          "id": "3b6e1bd0-98bb-423e-adcd-eda67697c487",
-          "clause": "1:ability:ipsighast-exhume",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Giada, the Elegant",
-          "id": "0b67c755-4053-4bfb-9aef-e3a990501e0d",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].replaces.by",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
           "card": "The Evil Alliance",
           "id": "9dc309f4-d43f-4515-841e-ed982ce026e7",
           "clause": "0:rule",
@@ -1253,8 +496,7 @@
               }
             ]
           },
-          "meaning": "eachOpponent",
-          "snapshot": "9e9e013258b6"
+          "meaning": "eachOpponent"
         },
         {
           "card": "The Knitting Coalition",
@@ -1287,202 +529,19 @@
           "path": "faction.setup.startingResources.matchOpponentCount",
           "now": true,
           "meaning": "chosenPair"
-        },
-        {
-          "card": "Slightly Less Evil Alliance",
-          "id": "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb",
-          "clause": "3:ability",
-          "path": "faction.abilities[0]",
-          "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
         }
       ]
     },
     "seed-saga": {
-      "sites": 95,
-      "clauses": 62,
+      "sites": 16,
+      "clauses": 11,
       "pending": [
-        {
-          "card": "A Death Fit for a King",
-          "id": "605554df-72a7-4b72-91cc-f6983165d620",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].conditions[1].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Cryptic Athenaeum",
-          "id": "746d863d-9b90-4cca-8896-a111523d4f7a",
-          "clause": "1:rule@ooo",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Cryptic Athenaeum",
-          "id": "746d863d-9b90-4cca-8896-a111523d4f7a",
-          "clause": "1:rule@ooo",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Cryptic Athenaeum",
-          "id": "746d863d-9b90-4cca-8896-a111523d4f7a",
-          "clause": "2:rule@ooooo",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Cryptic Athenaeum",
-          "id": "746d863d-9b90-4cca-8896-a111523d4f7a",
-          "clause": "2:rule@ooooo",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Day of the Tentacle",
-          "id": "d5690716-c88f-4297-8a2a-54392c6ac1b5",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Day of the Tentacle",
-          "id": "d5690716-c88f-4297-8a2a-54392c6ac1b5",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].effects[0].controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Death of the Demon Knights",
-          "id": "053823cb-77ae-494e-83a1-b19084e9038d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Death of the Demon Knights",
-          "id": "053823cb-77ae-494e-83a1-b19084e9038d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Death of the Demon Knights",
-          "id": "053823cb-77ae-494e-83a1-b19084e9038d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Defiler of Innocence",
-          "id": "48097f03-931c-4241-bfed-2ccd8e731546",
-          "clause": "1:ability:defile",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Encumber",
-          "id": "55946c3c-d213-4948-9656-53bb189e4d49",
-          "clause": "2:ability:recur",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
         {
           "card": "Enter The Demon Knights",
           "id": "1848963f-93a8-4eae-8977-f76b2547bce5",
           "clause": "0:extraCost",
           "path": "behavior.abilities[0].costs[0]",
           "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Enter The Demon Knights",
-          "id": "1848963f-93a8-4eae-8977-f76b2547bce5",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Essence of Obsession",
-          "id": "629788f8-2303-4e43-be24-719ef508dc4e",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.modes[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Essence of Obsession",
-          "id": "629788f8-2303-4e43-be24-719ef508dc4e",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Flagitious Denunciator",
-          "id": "7599bef0-0817-4597-b58b-b4903cd54069",
-          "clause": "1:ability:denounce",
-          "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Forbidden Knowledge",
-          "id": "6242776d-806e-4e6b-a360-30c791143c36",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": {
-            "type": "draw",
-            "player": "controller",
-            "amount": 1
-          },
-          "meaning": "anyOneOpponent",
-          "snapshot": "ff839d8bc0fc"
-        },
-        {
-          "card": "Imperial Thaumaturge",
-          "id": "7c5a0e32-65ca-4f3d-937e-91df2737cdd1",
-          "clause": "0:ability:tickle",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Imperial Thaumaturge",
-          "id": "7c5a0e32-65ca-4f3d-937e-91df2737cdd1",
-          "clause": "0:ability:tickle",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Living God of Thabbash",
-          "id": "f0bbd413-27be-4fb1-ac4a-f12f0dc29860",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Living God of Thabbash",
-          "id": "f0bbd413-27be-4fb1-ac4a-f12f0dc29860",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
           "meaning": "anyOneOpponent"
         },
         {
@@ -1494,257 +553,12 @@
           "meaning": "anyOneOpponent"
         },
         {
-          "card": "Perturb",
-          "id": "7b12a2d9-6874-4141-8028-66581431090a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Perturbatious Warlock",
-          "id": "82b1ad07-d0b7-4a8a-820e-f4587d4ec574",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Perturbatious Warlock",
-          "id": "82b1ad07-d0b7-4a8a-820e-f4587d4ec574",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "d329cfed-7a85-4e4e-86e9-65b7fa01cb6b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Stupidify",
-          "id": "f76b5c48-1fab-4235-8279-9785524413b0",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Stupidify",
-          "id": "f76b5c48-1fab-4235-8279-9785524413b0",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Stupidify",
-          "id": "f76b5c48-1fab-4235-8279-9785524413b0",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Stupidify",
-          "id": "f76b5c48-1fab-4235-8279-9785524413b0",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Tumescent Guilt Bladder",
-          "id": "a7351707-259c-4414-b734-962d4dc33634",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Department of Rejections",
-          "id": "a3a69878-9f2a-49d3-9c4b-81887058890a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].searchTax.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
           "card": "Department of Rejections",
           "id": "a3a69878-9f2a-49d3-9c4b-81887058890a",
           "clause": "1:rule",
           "path": "behavior.abilities[0].abilityCostModifiers[0].scope",
           "now": "opponentCharacters",
           "meaning": "eachOpponent"
-        },
-        {
-          "card": "Gideon's Legacy",
-          "id": "05cfbc47-195f-4da5-81d0-f6e7f1da6b15",
-          "clause": "1:ability:hide",
-          "path": "behavior.abilities[1].effects[3]",
-          "now": "forEachPlayer",
-          "meaning": "other",
-          "snapshot": "0f070713dc18"
-        },
-        {
-          "card": "Subordinate Demotivation",
-          "id": "4d54e821-c642-4b77-86a2-58514c2f1173",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Subordinate Demotivation",
-          "id": "4d54e821-c642-4b77-86a2-58514c2f1173",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].among.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Drivey Car",
-          "id": "d74d373d-baab-4886-b893-93cc0f1f84ed",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].count.values[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Mud Prison",
-          "id": "73aa24ca-a9d9-480b-a83e-efa6571a5307",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Mud Prison",
-          "id": "73aa24ca-a9d9-480b-a83e-efa6571a5307",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].suppressAllAbilities.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Runivoltaic Accumulator",
-          "id": "c21dbc74-cf52-4375-a701-14c5052cf13e",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].condition",
-          "now": {
-            "type": "battleRole",
-            "role": "defender"
-          },
-          "meaning": "anyOneOpponent",
-          "snapshot": "9a66ad25d935"
-        },
-        {
-          "card": "Time Traveler Tourist Trap",
-          "id": "03441b15-b428-4453-9d12-89fd64e73c58",
-          "clause": "1:ability:micromajig-apocalypse",
-          "path": "behavior.abilities[1].effects[0].count.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Ashara, Gideon's Twin",
-          "id": "5d139b84-9808-49e5-8779-667c0ae91a29",
-          "clause": "1:extraCost",
-          "path": "behavior.onPlay.targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Essence of Deception",
-          "id": "6bccbbec-9b1d-4091-b711-33e05c00446c",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Essence of Deception",
-          "id": "6bccbbec-9b1d-4091-b711-33e05c00446c",
-          "clause": "1:option:OPTION 1",
-          "path": "behavior.modes[0].effects[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Heist Training Grounds",
-          "id": "6da2fd15-6bc5-4b73-b21c-d281e6b9b544",
-          "clause": "2:rule@ddddd",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Heist Training Grounds",
-          "id": "6da2fd15-6bc5-4b73-b21c-d281e6b9b544",
-          "clause": "2:rule@ddddd",
-          "path": "behavior.abilities[1].effects[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Heist Training Grounds",
-          "id": "6da2fd15-6bc5-4b73-b21c-d281e6b9b544",
-          "clause": "3:rule@ddddddd",
-          "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "I Drink Your Milkshake!",
-          "id": "83807d38-2e87-4c3e-9167-5488979e4267",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "I Drink Your Milkshake!",
-          "id": "83807d38-2e87-4c3e-9167-5488979e4267",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
         },
         {
           "card": "I Drink Your Milkshake!",
@@ -1768,8 +582,7 @@
           "clause": "2:rule",
           "path": "behavior.abilities[0].effects[0].winEffects",
           "now": [],
-          "meaning": "anyOneOpponent",
-          "snapshot": "97d170e1550e"
+          "meaning": "anyOneOpponent"
         },
         {
           "card": "Lucky Bastard",
@@ -1801,39 +614,6 @@
           "clause": "0:ability:mustache-showdown",
           "path": "behavior.abilities[0].effects[0]",
           "now": "partitionAndPick",
-          "meaning": "anyOneOpponent",
-          "snapshot": "f5c86e03df59"
-        },
-        {
-          "card": "Pant Swipe",
-          "id": "3a9ab0e7-b3f3-4956-8f82-be8f0916a9da",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Peculate",
-          "id": "613fbe92-3cd5-479e-9381-438f6455f76a",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Rigged Tables",
-          "id": "4c1790d7-4cc7-4df5-aa33-2e7369bd960d",
-          "clause": "0:ability:size-up",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Rigged Tables",
-          "id": "4c1790d7-4cc7-4df5-aa33-2e7369bd960d",
-          "clause": "1:ability:rig",
-          "path": "behavior.abilities[1].effects[0].options[1].effects[0].target.player",
-          "now": "opponent",
           "meaning": "anyOneOpponent"
         },
         {
@@ -1861,54 +641,6 @@
           "meaning": "refersBack"
         },
         {
-          "card": "Shadowy Mugger",
-          "id": "eda064a7-e82c-4939-81f1-9cf4896327b3",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Shadowy Mugger",
-          "id": "eda064a7-e82c-4939-81f1-9cf4896327b3",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Smothering Corpulence",
-          "id": "6c49725e-d71b-43b3-a85f-38ec7396911d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Smothering Corpulence",
-          "id": "6c49725e-d71b-43b3-a85f-38ec7396911d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs[0].value.target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Smothering Corpulence",
-          "id": "6c49725e-d71b-43b3-a85f-38ec7396911d",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs[2].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Surprise!",
-          "id": "82f7c006-8b9f-4668-b3db-9507ce0bd479",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
           "card": "Underhanded Gamer",
           "id": "8bed01de-3627-4ae9-92dc-fc065e9e5de7",
           "clause": "0:ability:outsmart",
@@ -1929,16 +661,7 @@
               "type": "untilEndOfTurn"
             }
           },
-          "meaning": "refersBack",
-          "snapshot": "8f002642608e"
-        },
-        {
-          "card": "Vast Mastabatorium",
-          "id": "6f8bd62f-fdaa-49b6-8de8-d66c0ec28437",
-          "clause": "0:ability:you-know-you-want-to",
-          "path": "behavior.abilities[0].effects[1].effects[1].controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
+          "meaning": "refersBack"
         },
         {
           "card": "Well Laid Plans",
@@ -1946,247 +669,14 @@
           "clause": "0:extraCost",
           "path": "behavior.abilities[0].costs[0]",
           "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Well Laid Plans",
-          "id": "5989ea37-35f7-443c-9b79-64ce0475309c",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Well Laid Plans",
-          "id": "5989ea37-35f7-443c-9b79-64ce0475309c",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Chain Reaction",
-          "id": "f84bb22e-e599-4eb5-88ed-03519f86366b",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Draconarius Slitherform",
-          "id": "b6a07adb-0334-454a-a8d4-019dabbdcc8b",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Draconarius Slitherform",
-          "id": "b6a07adb-0334-454a-a8d4-019dabbdcc8b",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].targets[0].count.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Drill Garrison",
-          "id": "6d4b0079-550c-4cea-a2a0-ff889c523ab2",
-          "clause": "1:rule@rrr",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Epic Smackdown",
-          "id": "74da08f9-ea6b-4ac6-af80-2734f1860cae",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].value.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Epic Smackdown",
-          "id": "74da08f9-ea6b-4ac6-af80-2734f1860cae",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Epic Smackdown",
-          "id": "74da08f9-ea6b-4ac6-af80-2734f1860cae",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Epic Smackdown",
-          "id": "74da08f9-ea6b-4ac6-af80-2734f1860cae",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Gallant Commander",
-          "id": "256a568b-8fe3-4eee-b50a-52026ccd5b5a",
-          "clause": "0:ability:charge",
-          "path": "behavior.abilities[0].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Gideon, the Ultimate Warrior",
-          "id": "7d2c17ee-25ba-4523-813c-145587e15cae",
-          "clause": "2:rule",
-          "path": "behavior.abilities[1].influenceModifiers[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Mass Confusion",
-          "id": "da25a463-78da-4428-8d6b-eab6a76ade7c",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].amount.else.values[0].selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Phalludrix, the Impotenator",
-          "id": "513334b0-8ed9-4d1b-9eea-86af96f9247e",
-          "clause": "1:rule",
-          "path": "behavior.abilities[3].replaces.by",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Plunging Shriever",
-          "id": "ec2a5b27-94ff-4b64-912b-b4fef8895da7",
-          "clause": "1:ability:fly-away",
-          "path": "behavior.abilities[1].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Robustical Badass",
-          "id": "c1cc2de0-3430-42e2-af02-ff9418a3bdd5",
-          "clause": "0:rule@rrr",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Spitting Sarume",
-          "id": "ece06645-25f1-4680-9785-30a0a22b7837",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].selector.controller",
-          "now": "opponent",
           "meaning": "anyOneOpponent"
         }
       ]
     },
     "shade-of-the-devoured-emperor": {
-      "sites": 54,
-      "clauses": 28,
+      "sites": 8,
+      "clauses": 7,
       "pending": [
-        {
-          "card": "Contiguous Defalcating Machine",
-          "id": "25ba52f8-62c9-4e2c-8daa-7e6d841f6c76",
-          "clause": "2:option:OPTION 1",
-          "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[2].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[2].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Forgotten Tentacle",
-          "id": "2eb0069f-52fc-4ab6-a0a0-86919ba57118",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[2].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Man Shark",
-          "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].modifiers[0].value.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Man Shark",
-          "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].modifiers[1].value.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Man Shark",
-          "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
-          "clause": "1:ability:ms-follow",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Man Shark",
-          "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
-          "clause": "1:ability:ms-follow",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Man Shark",
-          "id": "efc19e34-03c2-4673-a5da-9d1f19af2409",
-          "clause": "1:ability:ms-follow",
-          "path": "behavior.abilities[1].effects[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
         {
           "card": "Neuralyzer Agent",
           "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
@@ -2202,22 +692,6 @@
           "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
           "now": "opponent",
           "meaning": "refersBack"
-        },
-        {
-          "card": "Neuralyzer Agent",
-          "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
-          "clause": "1:rule@oooooo",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Neuralyzer Agent",
-          "id": "0a7c01eb-92bd-4172-9c0d-24886de70287",
-          "clause": "1:rule@oooooo",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
         },
         {
           "card": "Tedious TriAdic Truculence",
@@ -2228,69 +702,12 @@
           "meaning": "anyOneOpponent"
         },
         {
-          "card": "The Lugubrian Council of Quotidian Affairs",
-          "id": "e2b65004-fb6d-40f2-8f4c-18ee79e934fd",
-          "clause": "3:ability:council-pass",
-          "path": "behavior.abilities[2].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "The Lugubrian Council of Quotidian Affairs",
-          "id": "e2b65004-fb6d-40f2-8f4c-18ee79e934fd",
-          "clause": "3:ability:council-pass",
-          "path": "behavior.abilities[2].effects[1].chooser",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "The Lugubrian Council of Quotidian Affairs",
-          "id": "e2b65004-fb6d-40f2-8f4c-18ee79e934fd",
-          "clause": "3:ability:council-pass",
-          "path": "behavior.abilities[2].effects[1].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Undevoted Gargantuan",
-          "id": "0070ffff-bc96-4245-a7e8-d376941be247",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Undevoted Gargantuan",
-          "id": "0070ffff-bc96-4245-a7e8-d376941be247",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
           "card": "Violating Ritual",
           "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
           "clause": "0:ability",
           "path": "behavior.abilities[0].costs[0]",
           "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "ee97a193-2abc-4f68-880f-bb128a536f28",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
+          "meaning": "anyOneOpponent"
         },
         {
           "card": "Voidal Trinket",
@@ -2298,80 +715,7 @@
           "clause": "0:ability:voidal-trinket-augur",
           "path": "behavior.abilities[0].costs[1]",
           "now": "otherPlayerChooses",
-          "meaning": "refersBack",
-          "snapshot": "8b7688186642"
-        },
-        {
-          "card": "Voidal Trinket",
-          "id": "e7db74e2-02ff-4297-ac9a-860b2bd3c263",
-          "clause": "0:ability:voidal-trinket-augur",
-          "path": "behavior.abilities[0].costs[1].chooser",
-          "now": "opponent",
           "meaning": "refersBack"
-        },
-        {
-          "card": "Voidal Trinket",
-          "id": "e7db74e2-02ff-4297-ac9a-860b2bd3c263",
-          "clause": "0:ability:voidal-trinket-augur",
-          "path": "behavior.abilities[0].costs[1].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Hassan-i of Thabbash",
-          "id": "337f6b9c-02ac-4c53-aaf2-e8301635cc03",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Hassan-i of Thabbash",
-          "id": "337f6b9c-02ac-4c53-aaf2-e8301635cc03",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Negotiation Ceremonies",
-          "id": "fc6ce67c-25c7-48b2-911c-fec7572c8154",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Negotiation Ceremonies",
-          "id": "fc6ce67c-25c7-48b2-911c-fec7572c8154",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].costs[0].opponent",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Swindle",
-          "id": "f84cac2d-0eb2-4fc8-af31-9a6754c889d6",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Swindle",
-          "id": "f84cac2d-0eb2-4fc8-af31-9a6754c889d6",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Swindle",
-          "id": "f84cac2d-0eb2-4fc8-af31-9a6754c889d6",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].effects[0].to.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
         },
         {
           "card": "Micromajigmakermachinemajig",
@@ -2379,80 +723,7 @@
           "clause": "0:ability:mmm-release",
           "path": "behavior.abilities[0].costs[1]",
           "now": "otherPlayerChooses",
-          "meaning": "refersBack",
-          "snapshot": "e0b6b50612ef"
-        },
-        {
-          "card": "Micromajigmakermachinemajig",
-          "id": "67fe9bf8-04c3-4ea0-bbde-0ec94e33b56e",
-          "clause": "0:ability:mmm-release",
-          "path": "behavior.abilities[0].costs[1].chooser",
-          "now": "opponent",
           "meaning": "refersBack"
-        },
-        {
-          "card": "Micromajigmakermachinemajig",
-          "id": "67fe9bf8-04c3-4ea0-bbde-0ec94e33b56e",
-          "clause": "0:ability:mmm-release",
-          "path": "behavior.abilities[0].costs[1].effects[0].controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Rocket Lawnchair",
-          "id": "1dd0bbbc-1202-41c2-9073-5ce87acaf67e",
-          "clause": "1:ability:rocket-lawnchair-no-eject",
-          "path": "behavior.abilities[0].effects[0].condition.conditions[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Runic Junker",
-          "id": "12b25597-1514-4fc3-9a33-3b32fc436ecb",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Stuttershy",
-          "id": "fd095fbd-7566-4b39-832e-0f40a0181289",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Bottlebeard Brandyshanks",
-          "id": "2b1308a7-014c-4924-b430-0448854cb6cc",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].grantsReveal.of",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Bottlebeard Brandyshanks",
-          "id": "2b1308a7-014c-4924-b430-0448854cb6cc",
-          "clause": "1:rule",
-          "path": "behavior.abilities[1].condition.target.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Bottlebeard Brandyshanks",
-          "id": "2b1308a7-014c-4924-b430-0448854cb6cc",
-          "clause": "2:ability:bottlebeard-chug",
-          "path": "behavior.abilities[2].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Clockman City Shuffle",
-          "id": "0a841e49-928b-4a3e-b4fa-ffdb9349bcf0",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
         },
         {
           "card": "Martial Arts Wannabe",
@@ -2469,181 +740,13 @@
           "path": "behavior.onPlay.targets[0].selector.owner",
           "now": "opponent",
           "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Sharpey Pointy Lethal Army Tool",
-          "id": "c6e93f75-e05d-4dfb-a77d-c74b662a7c02",
-          "clause": "2:ability:sharpey-unfold",
-          "path": "behavior.abilities[1].effects[0].effects[0].effects[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Sharpey Pointy Lethal Army Tool",
-          "id": "c6e93f75-e05d-4dfb-a77d-c74b662a7c02",
-          "clause": "2:ability:sharpey-unfold",
-          "path": "behavior.abilities[1].effects[0].effects[2].effects[1].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Confrontational Conflagration",
-          "id": "25d8789e-b481-4c1d-aae5-8c3cb2d22786",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].targets[1].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Flaming Cube",
-          "id": "de91eacd-1b08-4595-a238-f4654e554ab8",
-          "clause": "2:rule",
-          "path": "behavior.abilities[2].effects[1].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Juice Sale!",
-          "id": "a5290ff5-114a-4ed7-804f-f751a1abf086",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Juice Sale!",
-          "id": "a5290ff5-114a-4ed7-804f-f751a1abf086",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].targets[0].selector.conditions[0].among.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Words of Glory",
-          "id": "10d5c7f3-17fe-423e-95c7-b73715b61bc6",
-          "clause": "0:ability",
-          "path": "behavior.abilities[0].effects[0].value.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
         }
       ]
     },
     "ungodly-mess": {
-      "sites": 38,
-      "clauses": 25,
+      "sites": 3,
+      "clauses": 2,
       "pending": [
-        {
-          "card": "Extremely Tiny Bonnet of Invisibility",
-          "id": "808bd2ba-7b76-4d81-b733-425078db481a",
-          "clause": "1:extraCost",
-          "path": "behavior.onPlay.effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Extremely Tiny Bonnet of Invisibility",
-          "id": "808bd2ba-7b76-4d81-b733-425078db481a",
-          "clause": "1:extraCost",
-          "path": "behavior.onPlay.effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Flesh Deliquesce",
-          "id": "94a4916f-0dcf-48d0-b1ab-62aa40c26070",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].variables.x.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Lockbox of the Aeons",
-          "id": "2475968c-7bb5-43c1-8225-1bf9d8fdc059",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].playRestrictions[0].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Lockbox of the Aeons",
-          "id": "2475968c-7bb5-43c1-8225-1bf9d8fdc059",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].restrictReturnToHand.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Seance Ritualist",
-          "id": "58fd9f77-2796-4601-be97-d5015bb05145",
-          "clause": "0:ability:violate",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Seance Ritualist",
-          "id": "58fd9f77-2796-4601-be97-d5015bb05145",
-          "clause": "0:ability:violate",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Thabbashite Penumbra",
-          "id": "8817125b-0cc8-43ba-a08e-c6711a79ecaa",
-          "clause": "0:ability:veil",
-          "path": "behavior.abilities[0].variables.x.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Twisted Marionette",
-          "id": "f78f043a-1c35-49ae-939f-3e0efabdd810",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Voidal Bask",
-          "id": "a750d103-edca-4c5d-8724-e289ed80463e",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Wasted Wickedness",
-          "id": "feb21afe-1749-4041-b5b0-0586c4bc4964",
-          "clause": "0:extraCost",
-          "path": "behavior.modes[0].variables.x.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Wasted Wickedness",
-          "id": "feb21afe-1749-4041-b5b0-0586c4bc4964",
-          "clause": "1:rule",
-          "path": "behavior.modes[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Wasted Wickedness",
-          "id": "feb21afe-1749-4041-b5b0-0586c4bc4964",
-          "clause": "1:rule",
-          "path": "behavior.modes[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Zenobian Mechanics Explained",
-          "id": "e1c896c0-6e2b-46af-9dbb-008146423145",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
         {
           "card": "Foreclosure Overseer",
           "id": "d56e0e61-ff37-4424-b089-83d879c37d98",
@@ -2651,66 +754,6 @@
           "path": "behavior.abilities[0].costModifiers[0].affects",
           "now": "opponent",
           "meaning": "eachOpponent"
-        },
-        {
-          "card": "Yenassa Shipping, LLP",
-          "id": "453a6b4d-a4c3-46f7-a9cc-9e043cde9f50",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Yenassa Shipping, LLP",
-          "id": "453a6b4d-a4c3-46f7-a9cc-9e043cde9f50",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Candy Skull Commander",
-          "id": "4897e844-426b-4333-bc8b-3377d4ff6339",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].condition",
-          "now": {
-            "type": "battleRole",
-            "role": "defender"
-          },
-          "meaning": "anyOneOpponent",
-          "snapshot": "9a66ad25d935"
-        },
-        {
-          "card": "Carnival Whipmaster",
-          "id": "2f3399c9-e12b-423d-88e7-e23850939fab",
-          "clause": "1:ability:grand-theft",
-          "path": "behavior.abilities[0].targets[0].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Carnival Whipmaster",
-          "id": "2f3399c9-e12b-423d-88e7-e23850939fab",
-          "clause": "1:ability:grand-theft",
-          "path": "behavior.abilities[0].targets[1].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Conniving Puppeteer",
-          "id": "540939e9-45c3-4f51-bc1c-2078048463e2",
-          "clause": "0:ability:betray",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Moment of Annihilation",
-          "id": "c35705f0-9e26-4e6d-a682-0ff4d029166f",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
         },
         {
           "card": "Omahkapi'si Pi'kssii",
@@ -2727,332 +770,13 @@
           "path": "behavior.abilities[0].restrictions[0].restriction",
           "now": "cannotBePickedByOpponents",
           "meaning": "refersBack"
-        },
-        {
-          "card": "Omahkapi'si Pi'kssii",
-          "id": "7a1759c9-392a-4655-94c7-8d9893904130",
-          "clause": "2:ability:flex",
-          "path": "behavior.abilities[1].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Purloining Performance",
-          "id": "ed4e38e3-0557-4bbf-92c3-6e02a2596bd3",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Purloining Performance",
-          "id": "ed4e38e3-0557-4bbf-92c3-6e02a2596bd3",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Purloining Performance",
-          "id": "ed4e38e3-0557-4bbf-92c3-6e02a2596bd3",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Purloining Performance",
-          "id": "ed4e38e3-0557-4bbf-92c3-6e02a2596bd3",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Big McLargehuge",
-          "id": "9f159c52-0b48-4661-b3cd-9269e4bad55d",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Big McLargehuge",
-          "id": "9f159c52-0b48-4661-b3cd-9269e4bad55d",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Corrosive Waste Dispenser",
-          "id": "083e0cca-f86f-4922-9bf5-04d254ebfc4e",
-          "clause": "2:ability:convert",
-          "path": "behavior.abilities[2].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Corrosive Waste Dispenser",
-          "id": "083e0cca-f86f-4922-9bf5-04d254ebfc4e",
-          "clause": "2:ability:convert",
-          "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Geldale, City-Fortress",
-          "id": "f4ab5680-e5ab-47b1-bf3d-953d54adc79b",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].playRestrictions[0].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Gor-blach the Endowed",
-          "id": "c257a1c0-f7f4-4bfc-a82a-5b63999808d0",
-          "clause": "1:ability:get-in-there",
-          "path": "behavior.abilities[0].effects[1].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Thabbashite Weapons Expert",
-          "id": "e8cd0ae5-9aba-4996-8a29-3f160b2d96f2",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Brainbath",
-          "id": "2bf6045a-5b3f-4189-ae91-28837c0d7b83",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Brainbath",
-          "id": "2bf6045a-5b3f-4189-ae91-28837c0d7b83",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
         }
       ]
     },
     "decade-of-deckadence": {
-      "sites": 50,
-      "clauses": 28,
+      "sites": 5,
+      "clauses": 2,
       "pending": [
-        {
-          "card": "Brainbath",
-          "id": "3bd6878a-1a14-402f-93eb-a23afac654b0",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Brainbath",
-          "id": "3bd6878a-1a14-402f-93eb-a23afac654b0",
-          "clause": "1:ability:recur",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Chain Reaction",
-          "id": "5332f878-57a2-46dd-ab1e-f7ab6113a5bd",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Deadly Striker",
-          "id": "e26eb079-952b-4396-bb5d-79894ac5417e",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "e1d91071-20c5-4eac-9dec-5b147de9804e",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "e1d91071-20c5-4eac-9dec-5b147de9804e",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Devilfang Thunderhoof",
-          "id": "e1d91071-20c5-4eac-9dec-5b147de9804e",
-          "clause": "3:ability:thunderhoof-disrupt",
-          "path": "behavior.abilities[2].costs[2]",
-          "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Drill Garrison",
-          "id": "ecf19d3f-857f-4a62-8c29-dd293164c495",
-          "clause": "1:rule@rrr",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Dual Blade Assassin",
-          "id": "ca0987a9-99ab-462e-8d61-cc898b3441dc",
-          "clause": "0:extraCost",
-          "path": "behavior.onPlay.condition.player",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Engorged Sarcophyle",
-          "id": "3ad8995c-8bd2-4e07-9e64-1be39cc38f0d",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Enlightened Sarcophyle",
-          "id": "249bf742-f624-4e5b-a236-a5757e64472a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Escort Ally",
-          "id": "0007c001-1606-422f-b1a8-cdc4c7afbce9",
-          "clause": "0:ability:escort-ally-substitute",
-          "path": "behavior.abilities[0].effects[0].replaces.by",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Finger Explosive",
-          "id": "e634a62b-1295-4fbe-8349-1434c067e9d1",
-          "clause": "0:ability:finger-explosive-pull",
-          "path": "behavior.abilities[0].targets[1].selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Illusionist's Trick",
-          "id": "ab4f55ff-fe17-4dde-b44d-a16b5f7540f6",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Insidious Brainworm",
-          "id": "0fca82df-12d4-4a50-abe5-1ed3c79d3fc1",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Ipsighast, the Lustful",
-          "id": "2a7f9474-5265-4804-865f-f4c3b63b6651",
-          "clause": "1:ability:ipsighast-exhume",
-          "path": "behavior.abilities[0].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Luteorunic Behemoth",
-          "id": "40841abf-5c44-4a67-8597-2675a2cad9bb",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Luteorunic Behemoth",
-          "id": "40841abf-5c44-4a67-8597-2675a2cad9bb",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Opportunistic Pirate",
-          "id": "fa3a29ad-e316-4e66-96f1-d367b4720d1d",
-          "clause": "1:extraCost",
-          "path": "behavior.onPlay.targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Plunging Shriever",
-          "id": "8ca591c5-d7d1-47d2-87a7-cf0a04edb205",
-          "clause": "1:ability:fly-away",
-          "path": "behavior.abilities[1].targets[0].selector.owner",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Rantzigite Inquisitor",
-          "id": "c27110b6-26bc-473b-874c-0461819ee0d3",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Rantzigite Inquisitor",
-          "id": "c27110b6-26bc-473b-874c-0461819ee0d3",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Rantzigite Inquisitor",
-          "id": "c27110b6-26bc-473b-874c-0461819ee0d3",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": {
-            "type": "chooserSelectsTarget",
-            "chooser": "opponent",
-            "declaration": {
-              "id": "disc",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand"
-              },
-              "count": 1
-            },
-            "effects": [
-              {
-                "type": "moveCard",
-                "target": {
-                  "type": "selected",
-                  "id": "disc"
-                },
-                "to": "discard"
-              }
-            ]
-          },
-          "meaning": "anyOneOpponent",
-          "snapshot": "b9ce95ba29fe"
-        },
         {
           "card": "Rasputin Unleashed",
           "id": "2f870c54-2a0f-470c-a73e-2939196e0853",
@@ -3080,96 +804,7 @@
               "type": "untilEndOfTurn"
             }
           },
-          "meaning": "anyOneOpponent",
-          "snapshot": "51d9c758fac1"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Redonkulous",
-          "id": "95277828-2708-4a76-b7ae-2615d898a7e1",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-          "now": "opponent",
-          "meaning": "cardRelative"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
           "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Ritual of the Double Monkey",
-          "id": "a013b3ee-9b2b-4ea2-b30d-90c48cacf17a",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].effects[2].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
         },
         {
           "card": "Shriever General",
@@ -3192,170 +827,6 @@
           "id": "2ac6e84e-f9c7-4c31-9cbb-c7572cb99858",
           "clause": "1:rule",
           "path": "behavior.abilities[0].effects[0].effects[1].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Temple of Rantzigore",
-          "id": "66d4842a-f209-4ff8-bf29-935596d08bb7",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].modifiers[0].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Temple of Rantzigore",
-          "id": "66d4842a-f209-4ff8-bf29-935596d08bb7",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].modifiers[1].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Temple of Rantzigore",
-          "id": "66d4842a-f209-4ff8-bf29-935596d08bb7",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].modifiers[2].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "The Ministry of Other Smaller Smaller Ministries",
-          "id": "03793397-ca23-4bda-b0ec-3a1597874ab8",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].attackTax.player",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Uhluhtc Unleashed",
-          "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": {
-            "type": "chooserSelectsOption",
-            "chooser": "controller",
-            "options": [
-              {
-                "label": "Look at the opponent's hand; they discard a non-resource card of your choice",
-                "effects": [
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "controller",
-                    "declaration": {
-                      "id": "look",
-                      "selector": {
-                        "owner": "opponent",
-                        "zone": "hand",
-                        "conditions": [
-                          {
-                            "type": "not",
-                            "condition": {
-                              "type": "cardTypeIs",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "cardType": "resource"
-                            }
-                          }
-                        ]
-                      },
-                      "count": 1,
-                      "optional": false
-                    },
-                    "effects": [
-                      {
-                        "type": "moveCard",
-                        "target": {
-                          "type": "selected",
-                          "id": "look"
-                        },
-                        "to": "discard"
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "label": "The opponent destroys a character they control",
-                "effects": [
-                  {
-                    "type": "chooserSelectsTarget",
-                    "chooser": "opponent",
-                    "declaration": {
-                      "id": "sac",
-                      "selector": {
-                        "controller": "opponent",
-                        "zone": "play",
-                        "type": "character"
-                      },
-                      "count": 1,
-                      "optional": false
-                    },
-                    "effects": [
-                      {
-                        "type": "destroy",
-                        "target": {
-                          "type": "selected",
-                          "id": "sac"
-                        }
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          "meaning": "anyOneOpponent",
-          "snapshot": "3e442c6fa077"
-        },
-        {
-          "card": "Uhluhtc Unleashed",
-          "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
-          "clause": "2:option:OPTION 1",
-          "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Uhluhtc Unleashed",
-          "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
-          "clause": "3:option:OPTION 2",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Uhluhtc Unleashed",
-          "id": "c82c7e2c-41c8-43d7-9ebe-f9fa03837ca2",
-          "clause": "3:option:OPTION 2",
-          "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "575ecc83-447b-4e43-9e61-87d6513b7949",
-          "clause": "0:extraCost",
-          "path": "behavior.abilities[0].costs[0]",
-          "now": null,
-          "meaning": "anyOneOpponent",
-          "snapshot": "2be88ca4242c"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "575ecc83-447b-4e43-9e61-87d6513b7949",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].chooser",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Violating Ritual",
-          "id": "575ecc83-447b-4e43-9e61-87d6513b7949",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
           "now": "opponent",
           "meaning": "refersBack"
         }

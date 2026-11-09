@@ -289,6 +289,8 @@ export interface PendingReplacementChoice {
   original: { event: "destroy" } | { event: "moveToZone"; zone: Zone };
   /** Costs to apply the replacement (may be empty). */
   cost: Cost[];
+  /** Players still to be offered it, in order, if `playerId` declines (`chooser: "opponents"`); absent when `playerId` is the last. */
+  remaining?: PlayerId[];
   label?: string;
 }
 
@@ -457,6 +459,12 @@ export interface PendingMayPayChoice {
   elseEffects: Effect[];
   /** The `mayPay` effect's `payAndPick`. */
   payAndPick?: boolean;
+  /**
+   * An "any opponent may pay" offer (`offerTo: "opponents"`) at a table with several opponents: the opponents who
+   * have not been offered it yet, in the order they will be. Declining (or being unable to pay) offers it to the
+   * first of them; when none is left `elseEffects` happen. Absent for a single payer, and always absent at two seats.
+   */
+  remaining?: PlayerId[];
   context: ResolutionContext;
   /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */
   contextId?: ContextId;

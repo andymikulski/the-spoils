@@ -398,11 +398,20 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].effects[0].player"
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
             "now": "opponent",
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0]",
+            "now": null,
             "meaning": "eachOpponent",
             "edit": false,
             "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
@@ -447,14 +456,23 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent (not one) may decide to put tokens."
+            "why": "Each opponent (not one) may decide to put tokens.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].effects[0].player"
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent who accepts gets 3 Micromajig tokens under their own control."
+            "why": "Each opponent who accepts gets 3 Micromajig tokens under their own control.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "New forEachPlayer { players: \"opponents\" } wrapper: \"each opponent may put 3 Micromajig tokens\" is asked of each opponent in turn, the may-pay and the token creation read the iterated opponent as \"controller\"."
           }
         ],
         "test3": "Case A: P2 played two cards named 'Foo' this turn, P3 played none: P1 puts up to 2 Micromajig tokens into play under P1's control; P2 and P3 get no tokens and are not asked. Case B: P3 (not P2) played two same-name cards: same result. Case C: P2 played 'Foo' and 'Bar', P3 played 'Foo' once (no single opponent played two of the same name, even though 'Foo' was played twice in total): P1 gets no tokens; P2 is asked, then P3; each may accept (3 tokens under their own control) or decline separately.",

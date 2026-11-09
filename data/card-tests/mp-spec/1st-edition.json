@@ -268,6 +268,13 @@
             "meaning": "cardRelative",
             "edit": false,
             "why": "ownerOf the picked faction is the owner of that card (cardRelative). It stays as it is: it already means whichever deck was picked, and the restriction on the pick (previous entry) is what keeps that to the controller or the chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "New node: \"either deck\" (MPQ-P6) limits the faction pick to the controller's faction or the block's chosen opponent's faction, written as an \"or\" of two targetOwnedBy tests (controller, opponent). The path did not exist before; the \"opponent\" in it is the block's chosen opponent, so only the engine's binding applies."
           }
         ],
         "test3": "P1 plays Nearby Serpent with P2 and P3 in the game. When it enters play and the trigger resolves, P1 is offered the opponent choice {P2, P3}. Choose P2: P1 is offered exactly two decks, P1's and P2's; P3's deck is not offered. P1 picks P2's deck, looks at its top 5 cards and puts them back in any order; nothing changes zone, and the decks of P1 and P3 keep their order. A second run picks P1's own deck from the same two: only P1's deck is reordered. Rerun choosing P3: the decks offered are P1's and P3's, never P2's. With P3 eliminated (only P2 left) no opponent choice is offered and the decks offered are P1's and P2's."
@@ -492,6 +499,13 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "forEachPlayer filtered to 'not the active player' is the two-player proxy for 'your opponent'. At 3+ seats it would offer every non-active player a free play (and is wrong whenever the controller is not the active player). It must offer exactly the block's one chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "New node: the free play of \"your opponent may do the same\" is written once for the block's chosen opponent (a deployForFree with player \"opponent\") in place of the forEachPlayer filtered to the non-active player. The path did not exist before."
           }
         ],
         "test3": "P1 (active) enters it. P1 may play a non-tactic card for free (legal: non-tactic; a tactic is refused). If P1 does: When the trigger resolves P1 is offered the opponent choice {P2, P3}. Choose P2: only P2 may play a non-tactic card for free (P2 may decline); P3 gets no offer. If P1 declines the free play, neither P2 nor P3 is offered anything. Rerun choosing P3. Same, with P3 offered and P2 not. Enters play on P2's turn (not the active player): the chosen opponent is still chosen by P1 and may be P2 or P3."

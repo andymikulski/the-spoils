@@ -189,6 +189,8 @@ const KNOWN_TYPE_TAGS = new Set([
   "redirectAttackTarget", "sumCost",
   // E10b: Fiscal Intercessor, Skin Suit, Chain Reaction
   "modifyIncomingDamage", "simultaneousDamage", "destroyedByDamage",
+  // Free-for-all multiplayer: a player choice (effect) and its read-back (player reference)
+  "choosePlayer", "chosenPlayer",
   // costs
   "payResources", "discard", "depleteSelected", "sacrificeSelected",
   "loseInfluence", "moveSelected", "revealSelf",

@@ -418,7 +418,8 @@ const cards = [
                   "count": 6,
                   "to": "removed"
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -8686,7 +8687,7 @@ const cards = [
               "type": "count",
               "selector": {
                 "controller": "self",
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "character"
               }

@@ -269,7 +269,10 @@ const cards = [
                           "declaration": {
                             "id": "res2",
                             "selector": {
-                              "controller": "opponent",
+                              "controller": {
+                                "type": "controllerOf",
+                                "target": "eventCard"
+                              },
                               "zone": "play",
                               "type": "resource"
                             },
@@ -616,11 +619,20 @@ const cards = [
         {
           "id": "ft-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "targets": [
             {
               "id": "fd",
               "selector": {
-                "controller": "opponent",
+                "controller": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "zone": "play",
                 "faceDown": true,
                 "type": "resource"
@@ -649,7 +661,10 @@ const cards = [
                     },
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "options": [
                         {
                           "label": "Decline",
@@ -660,7 +675,10 @@ const cards = [
                           "effects": [
                             {
                               "type": "draw",
-                              "player": "opponent",
+                              "player": {
+                                "type": "chosenPlayer",
+                                "id": "picked"
+                              },
                               "amount": 1
                             }
                           ]
@@ -669,11 +687,17 @@ const cards = [
                     },
                     {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "declaration": {
                         "id": "r",
                         "selector": {
-                          "controller": "opponent",
+                          "controller": {
+                            "type": "chosenPlayer",
+                            "id": "picked"
+                          },
                           "zone": "hand"
                         },
                         "count": 1,
@@ -697,7 +721,10 @@ const cards = [
                                 "id": "r"
                               },
                               "faceDown": "auto",
-                              "player": "opponent"
+                              "player": {
+                                "type": "chosenPlayer",
+                                "id": "picked"
+                              }
                             }
                           ]
                         }
@@ -881,7 +908,7 @@ const cards = [
               "value": {
                 "type": "count",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "faceDown": true,
                   "type": "resource"
@@ -899,7 +926,7 @@ const cards = [
               "value": {
                 "type": "count",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "faceDown": true,
                   "type": "resource"
@@ -915,6 +942,12 @@ const cards = [
           "id": "ms-follow",
           "name": "Follow Suit",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "payResources",
@@ -924,11 +957,17 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "c",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -941,7 +980,10 @@ const cards = [
                     "id": "c"
                   },
                   "faceDown": true,
-                  "player": "opponent"
+                  "player": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  }
                 }
               ]
             }
@@ -1125,6 +1167,7 @@ const cards = [
         {
           "id": "neuralyzer-agent-attack-discard",
           "type": "triggered",
+          "opponentFrom": "choose",
           "event": "characterAttacked",
           "condition": {
             "type": "sourceIsEventCard"
@@ -1182,11 +1225,17 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "ownerOf",
+                "target": "eventCard"
+              },
               "declaration": {
                 "id": "disc2",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "ownerOf",
+                    "target": "eventCard"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -1934,7 +1983,7 @@ const cards = [
             {
               "id": "v",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character",
                 "conditions": [
@@ -1967,11 +2016,23 @@ const cards = [
             },
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "controllerOf",
+                "target": {
+                  "type": "selected",
+                  "id": "v"
+                }
+              },
               "declaration": {
                 "id": "det",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": {
+                    "type": "controllerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "v"
+                    }
+                  },
                   "zone": "play",
                   "type": "resource",
                   "attachedToFaction": true
@@ -2284,30 +2345,36 @@ const cards = [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "det",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": true
-                },
-                "count": 3,
-                "optional": true
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "det",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "det",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": true
+                    },
+                    "count": 3,
+                    "optional": true
+                  },
                   "effects": [
                     {
-                      "type": "detach",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "det",
+                      "effects": [
+                        {
+                          "type": "detach",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2343,14 +2410,26 @@ const cards = [
         {
           "id": "violating-ritual-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "hand"
                 },
                 "count": 2,
@@ -2409,6 +2488,12 @@ const cards = [
           "id": "voidal-trinket-augur",
           "name": "Augur",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "deplete",
@@ -2416,11 +2501,17 @@ const cards = [
             },
             {
               "type": "otherPlayerChooses",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "detach",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "play",
                   "type": "resource",
                   "attachedToFaction": true
@@ -3490,24 +3581,30 @@ const cards = [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "opDestroy",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "character"
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "destroy",
-                  "target": {
-                    "type": "selected",
-                    "id": "opDestroy"
-                  }
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "opDestroy",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "type": "character"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": {
+                        "type": "selected",
+                        "id": "opDestroy"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -4171,6 +4268,12 @@ const cards = [
         {
           "id": "nc-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "effects": [
             {
               "type": "draw",
@@ -4182,7 +4285,10 @@ const cards = [
             },
             {
               "type": "draw",
-              "player": "opponent",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "amount": {
                 "type": "variable",
                 "id": "__paidByOpponent"
@@ -4193,7 +4299,10 @@ const cards = [
             {
               "type": "alternatingPay",
               "first": "controller",
-              "opponent": "opponent",
+              "opponent": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "cost": [
                 {
                   "type": "payResources",
@@ -4643,29 +4752,35 @@ const cards = [
           "type": "activated",
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "r",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": false
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "attachTo",
-                  "target": {
-                    "type": "selected",
-                    "id": "r"
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "r",
+                    "selector": {
+                      "owner": "self",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": false
+                    },
+                    "count": 1
                   },
-                  "to": {
-                    "type": "factionOf",
-                    "player": "opponent"
-                  }
+                  "effects": [
+                    {
+                      "type": "attachTo",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "to": {
+                        "type": "factionOf",
+                        "player": "controller"
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -6402,6 +6517,12 @@ const cards = [
           "id": "mmm-release",
           "name": "Release the Majigs!",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "deplete",
@@ -6409,12 +6530,18 @@ const cards = [
             },
             {
               "type": "otherPlayerChooses",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "may": true,
               "effects": [
                 {
                   "type": "createTokens",
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "count": 1,
                   "token": {
                     "name": "Micromajig",
@@ -6954,7 +7081,7 @@ const cards = [
                 "conditions": [
                   {
                     "type": "isActivePlayer",
-                    "player": "opponent"
+                    "player": "opponents"
                   },
                   {
                     "type": "or",
@@ -7090,8 +7217,16 @@ const cards = [
                   },
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "picked",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "declaration": {
                         "id": "fd",
                         "selector": {
@@ -7491,7 +7626,7 @@ const cards = [
           "effects": [
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": 1
             },
             {
@@ -7503,12 +7638,19 @@ const cards = [
                   "effects": []
                 },
                 {
-                  "label": "Put a Micromajig token into play",
+                  "label": "Put a Micromajig token into play for each influence gained",
                   "effects": [
                     {
                       "type": "createTokens",
                       "controller": "controller",
-                      "count": 1,
+                      "count": {
+                        "type": "count",
+                        "selector": {
+                          "zone": "play",
+                          "type": "faction",
+                          "controller": "opponents"
+                        }
+                      },
                       "token": {
                         "name": "Micromajig",
                         "cardType": "character",
@@ -8011,20 +8153,25 @@ const cards = [
           "modifiers": [],
           "grantsReveal": {
             "zone": "deckTop",
-            "of": "opponent"
+            "of": "opponents"
           }
         },
         {
           "id": "bottlebeard-scry-speed",
           "type": "continuous",
           "condition": {
-            "type": "cardTypeIs",
-            "target": {
-              "type": "deckPosition",
-              "player": "opponent",
-              "from": "top"
+            "type": "numberCompare",
+            "left": {
+              "type": "count",
+              "selector": {
+                "owner": "opponents",
+                "zone": "deck",
+                "fromTop": 1,
+                "type": "character"
+              }
             },
-            "cardType": "character"
+            "operator": ">=",
+            "right": 1
           },
           "modifiers": [
             {
@@ -8039,6 +8186,12 @@ const cards = [
           "id": "bottlebeard-chug",
           "name": "Chug!",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "payResources",
@@ -8050,7 +8203,10 @@ const cards = [
               "type": "moveCard",
               "target": {
                 "type": "deckPosition",
-                "player": "opponent",
+                "player": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "from": "top"
               },
               "to": "deck",
@@ -8633,7 +8789,7 @@ const cards = [
             {
               "type": "forEach",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -9593,7 +9749,7 @@ const cards = [
                     {
                       "type": "forEach",
                       "selector": {
-                        "controller": "opponent",
+                        "controller": "opponents",
                         "zone": "play",
                         "type": "character"
                       },
@@ -9670,7 +9826,7 @@ const cards = [
                     {
                       "type": "forEach",
                       "selector": {
-                        "controller": "opponent",
+                        "controller": "opponents",
                         "zone": "play",
                         "type": "character"
                       },
@@ -11210,7 +11366,7 @@ const cards = [
             {
               "id": "theirs",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11965,7 +12121,7 @@ const cards = [
             },
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -6
             }
           ]
@@ -12176,11 +12332,20 @@ const cards = [
         {
           "id": "juice-sale-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "targets": [
             {
               "id": "ch",
               "selector": {
-                "controller": "opponent",
+                "controller": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "zone": "play",
                 "type": "character",
                 "conditions": [
@@ -12193,7 +12358,10 @@ const cards = [
                     "metric": "strength",
                     "direction": "max",
                     "among": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "zone": "play",
                       "type": "character"
                     }
@@ -13313,7 +13481,7 @@ const cards = [
               "value": {
                 "type": "sumStat",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "type": "character"
                 },

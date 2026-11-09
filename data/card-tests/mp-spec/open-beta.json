@@ -58,6 +58,13 @@
             "meaning": "cardRelative",
             "edit": false,
             "why": "ownerOf the picked faction is the owner of that card (cardRelative). It stays as it is: it already means whichever deck was picked, and the restriction on the pick (previous entry) is what keeps that to the controller or the chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "New node: \"either deck\" (MPQ-P6) limits the faction pick to the controller's faction or the block's chosen opponent's faction, written as an \"or\" of two targetOwnedBy tests (controller, opponent). The path did not exist before; the \"opponent\" in it is the block's chosen opponent, so only the engine's binding applies."
           }
         ],
         "test3": "P1 (with P2 and P3 in the game) activates FORESIGHT, depleting the card. Before targets P1 is offered the opponent choice {P2, P3}. Choose P2: P1 is offered exactly two decks, P1's and P2's; P3's deck is not offered. P1 picks P2's deck, looks at its top 5 cards and puts them back in any order; nothing changes zone, and the decks of P1 and P3 keep their order. A second run picks P1's own deck from the same two: only P1's deck is reordered. Rerun choosing P3: the decks offered are P1's and P3's, never P2's. With P3 eliminated (only P2 left) no opponent choice is offered and the decks offered are P1's and P2's."
@@ -366,6 +373,13 @@
             "meaning": "cardRelative",
             "edit": false,
             "why": "ownerOf the picked faction is the owner of that card (cardRelative). It stays as it is: it already means whichever deck was picked, and the restriction on the pick (previous entry) is what keeps that to the controller or the chosen opponent."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[1].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "New node: \"either deck\" (MPQ-P6) limits the faction pick to the controller's faction or the block's chosen opponent's faction, written as an \"or\" of two targetOwnedBy tests (controller, opponent). The path did not exist before; the \"opponent\" in it is the block's chosen opponent, so only the engine's binding applies."
           }
         ],
         "test3": "P1 plays Nearby Serpent with P2 and P3 in the game. When it enters play and the trigger resolves, P1 is offered the opponent choice {P2, P3}. Choose P2: P1 is offered exactly two decks, P1's and P2's; P3's deck is not offered. P1 picks P2's deck, looks at up to the top 5 cards (0 to 5 are legal) and puts them back in any order; nothing changes zone, and the decks of P1 and P3 keep their order. A second run picks P1's own deck from the same two: only P1's deck is reordered. Rerun choosing P3: the decks offered are P1's and P3's, never P2's. With P3 eliminated (only P2 left) no opponent choice is offered and the decks offered are P1's and P2's."
@@ -981,6 +995,27 @@
             "meaning": "chosenPair",
             "edit": false,
             "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "now": "any",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "P1 controls it. At the start of P1's turn P1 picks one option; at the start of P2's turn P2 picks (not P1); at the start of P3's turn P3 picks. The trigger fires once per turn start, for every player including the controller; the picker is always the active player.",
@@ -1060,6 +1095,27 @@
             "meaning": "chosenPair",
             "edit": false,
             "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "New node: the choosePlayer effect that names \"their opponent\" is made by the active player (\"that player\"), so its chooser is activePlayer. The path did not exist before."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "now": "any",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "New node: the pick of the resource from \"their opponent's\" hand: the selector names that player's cards as \"any\" owner plus a targetOwnedBy test of the chosenPlayer the choosePlayer effect named (a selector cannot read chosenPlayer directly). The path did not exist before."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P2's turn; P2 picked OPTION 1. P2 may draw a card; P2 selects P3 as \"their opponent\"; P3 (not P1) may play a resource from hand. A second run selects P1: P1 may play a resource and P3 may not. P2 is the only one who draws."
@@ -1137,6 +1193,27 @@
             "meaning": "chosenPair",
             "edit": false,
             "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "now": "any",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "New node: the choosePlayer effect that names \"their opponent\" is made by the active player (\"that player\"), so its chooser is activePlayer. The path did not exist before."
           }
         ],
         "test3": "It is P3's turn; P3 picked OPTION 2. P3 may play a resource; P3 selects P1 as \"their opponent\"; P1 (not P2) may draw a card. A second run selects P2: P2 may draw and P1 may not."
@@ -1208,6 +1285,27 @@
             "meaning": "chosenPair",
             "edit": false,
             "why": "Shared with clause 4:option:OPTION 4: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "now": "any",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P2's turn; P2 picked OPTION 3 and selects P3 as the opponent. P2 and P3 each may draw up to 2 cards (P2 first as the active player); P1 draws nothing. A second run selects P1: P2 and P1 may draw and P3 may not."
@@ -1279,6 +1377,27 @@
             "meaning": "chosenPair",
             "edit": true,
             "why": "forEachPlayer iterates every player; \"Both players\" is the active player and the opponent the active player selects: forEachPlayer { players: \"pair\" } under opponentFrom \"acting\". chooser: activePlayer stays."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "now": "any",
+            "meaning": "refersBack",
+            "edit": false,
+            "why": "Shared with clause 1:option:OPTION 1: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "now": "activePlayer",
+            "meaning": "activePlayer",
+            "edit": false,
+            "why": "Shared with clause 2:option:OPTION 2: the same data path, listed there with the same meaning and edit flag."
           }
         ],
         "test3": "It is P3's turn; P3 picked OPTION 4 and selects P1 as the opponent. P3 and P1 each may play up to 2 resources (P3 first); P2 plays none. A second run selects P2: P3 and P2 may play and P1 may not."
@@ -1390,6 +1509,13 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "\"your opponent may do the same\": exactly the chosen opponent; the current data loops over every non-active player."
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].effects[0].player",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "New node: the free play of \"your opponent may do the same\" is written once for the block's chosen opponent (a deployForFree with player \"opponent\") in place of the forEachPlayer filtered to the non-active player. The path did not exist before."
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. The trigger fires and, when it resolves, P1 is offered the opponent choice (P2 or P3). Run A (P1 chooses P2): Epiphany enters play under P1. P1 plays a non-tactic card for free; then P2 (only P2) may play a non-tactic card for free; P3 may not. If P1 declines to play a card, P2 is offered nothing. Run B (P1 chooses P3): Epiphany enters play under P1. P1 plays a non-tactic card for free; then P3 (only P3) may play a non-tactic card for free; P2 may not. If P1 declines to play a card, P3 is offered nothing. In both runs the opponent not chosen is unaffected and gets no prompt. With P3 eliminated before the trigger resolves no prompt appears and P2 is the opponent."

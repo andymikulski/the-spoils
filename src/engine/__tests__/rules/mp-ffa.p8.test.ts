@@ -519,8 +519,8 @@ describe("MPX-offer — any opponent / any player may pay (MPQ-P7)", () => {
     ACTIVATED({
       effects: [
         {
-          type: "anyPlayerMayPay",
-          ...(offerTo ? { offerTo } : {}),
+          // "Any opponent may pay" is a `mayPay` offered to each opponent; "any player may pay" is `anyPlayerMayPay`.
+          ...(offerTo === "opponents" ? { type: "mayPay", offerTo } : { type: "anyPlayerMayPay" }),
           costs: [{ type: "payResources", amount: 1 }],
           effects: [{ type: "modifyInfluence", player: "controller", amount: 3 }],
           elseEffects: [{ type: "modifyInfluence", player: "controller", amount: 5 }]
@@ -539,16 +539,16 @@ describe("MPX-offer — any opponent / any player may pay (MPQ-P7)", () => {
     );
 
   /** Answers every offer with `pays` (who pays; everybody else declines) and returns who was offered it, in order. */
-  function offered(t: Table, pays: PlayerId | undefined): PlayerId[] {
+  function offered(t: Table, pays: PlayerId | undefined, kind: "mayPay" | "anyPlayerMayPay" = "mayPay"): PlayerId[] {
     t.engine.perform(play(t));
     const asked: PlayerId[] = [];
     for (let guard = 0; guard < 12; guard++) {
       resolvePendingResponses(t.engine);
       const choice = t.engine.state.pendingChoice;
       if (!choice) break;
-      assert.equal(choice.kind, "anyPlayerMayPay");
+      assert.equal(choice.kind, kind);
       asked.push(choice.playerId);
-      t.engine.perform({ type: "resolvePendingChoice", playerId: choice.playerId, choice: { kind: "anyPlayerMayPay", pay: choice.playerId === pays } });
+      t.engine.perform({ type: "resolvePendingChoice", playerId: choice.playerId, choice: { kind, pay: choice.playerId === pays } });
     }
     return asked;
   }
@@ -559,8 +559,8 @@ describe("MPX-offer — any opponent / any player may pay (MPQ-P7)", () => {
       const before = baseline(t);
       const asked = offered(t, P3);
       assert.deepEqual(asked, [P2, P3], "nobody after the payer is offered it");
-      assert.equal(lost(t, before, P3), -3, "they: the player who paid");
-      assert.equal(lost(t, before, P1), 0, "no Otherwise");
+      assert.equal(lost(t, before, P1), -3, "the paid-for effect is the controller's");
+      assert.equal(lost(t, before, P3), 0, "the player who paid is not the one it happens to");
     });
 
     rule(["MPX-offer"], `${count} seats: if every opponent declines, Otherwise happens, and the controller is never offered it`, () => {
@@ -574,7 +574,7 @@ describe("MPX-offer — any opponent / any player may pay (MPQ-P7)", () => {
 
     rule(["MPX-offer"], `${count} seats: "any player may pay" starts with the active player (the controller included) and goes clockwise`, () => {
       const t = offerBoard(count, undefined);
-      assert.deepEqual(offered(t, undefined), t.seats);
+      assert.deepEqual(offered(t, undefined, "anyPlayerMayPay"), t.seats);
     });
 
     rule(["MPX-offer"], `${count} seats: only players still in the game are offered it`, () => {

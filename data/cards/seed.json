@@ -1470,6 +1470,19 @@
           "type": "activated",
           "effects": [
             {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "hand",
+              "viewer": "controller"
+            },
+            {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "deckTop",
+              "count": 1,
+              "viewer": "controller"
+            },
+            {
               "type": "draw",
               "player": "controller",
               "amount": 1
@@ -2533,7 +2546,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2597,7 +2611,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2636,7 +2651,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2676,13 +2692,15 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -3524,7 +3542,8 @@
                     "id": "n"
                   }
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -4723,10 +4742,15 @@
           "searchTax": {
             "player": "opponent",
             "amount": 2
-          },
+          }
+        },
+        {
+          "id": "red-tape-abilities",
+          "type": "continuous",
+          "modifiers": [],
           "abilityCostModifiers": [
             {
-              "scope": "opponentCharacters",
+              "scope": "chosenOpponentCharacters",
               "delta": 2
             }
           ]
@@ -5364,7 +5388,8 @@
           "type": "continuous",
           "modifiers": [],
           "preventsAttackOnFaction": {
-            "player": "self"
+            "player": "self",
+            "attacker": "opponent"
           }
         }
       ]
@@ -6682,7 +6707,8 @@
           "type": "continuous",
           "modifiers": [],
           "preventsAttackOnFaction": {
-            "player": "self"
+            "player": "self",
+            "attacker": "opponent"
           }
         },
         {
@@ -12016,7 +12042,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ],
                   "elseEffects": [
@@ -12047,7 +12074,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }

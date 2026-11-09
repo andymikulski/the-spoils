@@ -214,11 +214,17 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "who"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "who"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -233,6 +239,12 @@ const cards = [
                   "to": "discard"
                 }
               ]
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "who",
+              "from": "opponents"
             }
           ]
         }
@@ -1578,7 +1590,7 @@ const cards = [
               "type": "if",
               "condition": {
                 "type": "deploySameNameThisTurn",
-                "player": "opponent",
+                "player": "opponents",
                 "operator": ">=",
                 "value": 2
               },
@@ -1618,34 +1630,40 @@ const cards = [
                 "type": "not",
                 "condition": {
                   "type": "deploySameNameThisTurn",
-                  "player": "opponent",
+                  "player": "opponents",
                   "operator": ">=",
                   "value": 2
                 }
               },
               "effects": [
                 {
-                  "type": "mayPay",
-                  "player": "opponent",
-                  "costs": [],
+                  "type": "forEachPlayer",
+                  "players": "opponents",
                   "effects": [
                     {
-                      "type": "createTokens",
-                      "controller": "opponent",
-                      "count": 3,
-                      "token": {
-                        "name": "Micromajig",
-                        "cardType": "character",
-                        "subtype": [
-                          "majig"
-                        ],
-                        "strength": 1,
-                        "life": 1,
-                        "speed": 3
-                      }
+                      "type": "mayPay",
+                      "player": "controller",
+                      "costs": [],
+                      "effects": [
+                        {
+                          "type": "createTokens",
+                          "controller": "controller",
+                          "count": 3,
+                          "token": {
+                            "name": "Micromajig",
+                            "cardType": "character",
+                            "subtype": [
+                              "majig"
+                            ],
+                            "strength": 1,
+                            "life": 1,
+                            "speed": 3
+                          }
+                        }
+                      ],
+                      "elseEffects": []
                     }
-                  ],
-                  "elseEffects": []
+                  ]
                 }
               ]
             }
@@ -2039,7 +2057,8 @@ const cards = [
                   ],
                   "elseEffects": []
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         },
@@ -2414,7 +2433,7 @@ const cards = [
             {
               "id": "c",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "character"
               },
@@ -2751,7 +2770,7 @@ const cards = [
           "replaces": {
             "event": "destroy",
             "controlledBy": "self",
-            "by": "opponent"
+            "by": "opponents"
           },
           "optional": true,
           "effects": [
@@ -4220,7 +4239,52 @@ const cards = [
             }
           ]
         }
-      }
+      },
+      "abilities": [
+        {
+          "id": "slea-teamwork",
+          "name": "Teamwork",
+          "type": "activated",
+          "playerChoices": [
+            {
+              "id": "player",
+              "from": "opponents"
+            }
+          ],
+          "costs": [
+            {
+              "type": "payResources",
+              "amount": 2
+            },
+            {
+              "type": "pick",
+              "declarationId": "card"
+            }
+          ],
+          "targets": [
+            {
+              "id": "card",
+              "selector": {
+                "controller": "self"
+              },
+              "count": 1
+            }
+          ],
+          "effects": [
+            {
+              "type": "takeControl",
+              "target": {
+                "type": "selected",
+                "id": "card"
+              },
+              "controller": {
+                "type": "chosenPlayer",
+                "id": "player"
+              }
+            }
+          ]
+        }
+      ]
     },
     "trade": "Universal",
     "rarity": "e-sle",

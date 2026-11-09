@@ -219,6 +219,23 @@ export interface FactionDefinition {
   flipsTo?: CardDefinitionId;
 
   /**
+   * The printed numbers that grow with "X is the number of opponents you have at the start of the game" (The Evil
+   * Alliance: "You start with 15 + 10 times X influence", "Any 1+X staple resources", "Draw a card or play a resource.
+   * Repeat this X-1 times"). X counts every other seat when the game starts and is never lowered by an elimination.
+   * Each field is what is added for every opponent beyond the first, so the faction's own `startingInfluence`,
+   * `setup.startingResources.count` and Develop Rule are the figures with exactly one opponent (X = 1): 25 influence
+   * is 15 + 10 * 1, 2 staples is 1 + 1, and one Develop Rule is "repeat 0 times".
+   */
+  perExtraOpponent?: {
+    /** Added to `startingInfluence`: 10 for "15 + 10X" (with `startingInfluence` 25). */
+    influence?: number;
+    /** Added to `setup.startingResources.count`: 1 for "1+X" (with a count of 2). */
+    startingResources?: number;
+    /** Added to the Develop Rule's uses per turn (each a fresh draw-or-play choice): 1 for "Repeat this X-1 times". */
+    developUses?: number;
+  };
+
+  /**
    * OMNIPOTENCE (The Evil Alliance) — the controller automatically meets
    * every threshold, regardless of which resource icons they control.
    */
@@ -555,7 +572,13 @@ export type PlayerChoiceFrom = "opponents" | "players";
 export interface PlayerChoiceDeclaration {
   id: string;
   from: PlayerChoiceFrom;
-  /** The choice exists only while this holds (evaluated when the action is announced). */
+  /**
+   * "Pick a player that controls more resources than you": only the candidates for whom this holds are offered. It is
+   * judged once per candidate, when the action is announced, with that candidate bound as
+   * `{ type: "chosenPlayer", id: "__candidate" }` (the way `{ type: "selected", id: "__candidate" }` is the card being
+   * tested). One qualifying candidate is taken without asking. When none qualifies the choice cannot be made, and an
+   * extra-cost choice that cannot be made means the card cannot be played.
+   */
   condition?: Condition;
 }
 
@@ -803,8 +826,15 @@ export interface ReplacementAbility extends AbilityBase {
    * targets the affected card's own controller ("if a character would enter
    * play under an opponent's control, THEY may pay 1" — Phantasmagoric
    * Tollbooth); `"opponent"` targets that controller's opponent ("if this
-   * would be destroyed, any opponent may pay 2" — Unloyal Necromorph).
-   * Effects then resolve with `controller` = whoever answered.
+   * would be destroyed, any opponent may pay 2" — Unloyal Necromorph at two
+   * seats). Effects then resolve with `controller` = whoever answered.
+   *
+   * `"opponents"` is the offer "any opponent may pay" (MPQ-P7, MPX-offer): it
+   * goes to each opponent of the affected card's controller still in the game
+   * who can pay, one at a time clockwise from that controller's left, and the
+   * first to pay settles it (`controller` in `effects` is that player); if
+   * every one declines the replaced event happens. No opponent is selected for
+   * the block.
    */
   chooser?: PlayerRef;
   effects: Effect[];
@@ -1020,7 +1050,8 @@ export interface ContinuousAbility extends AbilityBase {
    * "Your opponents must pay 1 to pick a character you control." — while the source is in play (and `condition`
    * holds), the matching player pays `amount` more (a "pay N" extra cost, CR 406.3) for EACH card matching
    * `selector` that a card or ability they play or use picks through its declared picks (`targets`); if they
-   * cannot pay, they cannot make that pick. `affects` is relative to the source's controller and `selector` is
+   * cannot pay, they cannot make that pick. `affects` is relative to the source's controller (`"opponents"`: every
+   * opponent pays) and `selector` is
    * matched against the picked card with "self" = the source's controller. Lucky Charm. (A pick made while an
    * effect resolves is not taxed.)
    */

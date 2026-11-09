@@ -48,10 +48,8 @@ import {
 import { buildMpInventory, renderMpSummary } from "../../src/engine/__tests__/clauses/_mpInventory.js";
 import {
   WORKLIST_FILE,
-  baselineOf,
   evaluate,
   loadSpecSites,
-  readWorklist,
   renderWorklist
 } from "../../src/engine/__tests__/clauses/_mpWorklist.js";
 import { cardTextToPlain, parseCardText, serializeCardText } from "../../src/cardText.js";
@@ -213,7 +211,7 @@ function mpInventory(): void {
 }
 
 function mpWorklist(): void {
-  const { worklist, invalid, moved, unknown } = evaluate(loadSpecSites(), baselineOf(readWorklist()));
+  const { worklist, invalid, moved, unknown } = evaluate(loadSpecSites());
   writeFileSync(WORKLIST_FILE, renderWorklist(worklist));
   for (const [set, work] of Object.entries(worklist.sets)) console.log(`${set.padEnd(32)} ${String(work.sites).padStart(4)} pending sites in ${String(work.clauses).padStart(3)} clauses`);
   console.log(`${"total".padEnd(32)} ${String(worklist.total.sites).padStart(4)} pending sites in ${String(worklist.total.clauses).padStart(3)} clauses. Wrote ${relative(ROOT, WORKLIST_FILE)}.`);

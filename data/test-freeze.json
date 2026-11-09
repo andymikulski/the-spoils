@@ -345,6 +345,14 @@
     "src/engine/__tests__/clauses/holy-heist-07.p2.test.ts": {
       "sha256": "e795c45be64a2eb7e3a36f1eb4269763bff4800a16fd48cc96d958b8447ecbf4",
       "reason": "Lines 494 and 505 declared an attack on { type: \"faction\", playerId: <P2's faction card id> }, a card id where a player id belongs; the engine now refuses an attack on an unknown player. Corrected to playerId: P2, the test's stated intent. Approved by the user 2026-11-07."
+    },
+    "src/engine/__tests__/card-data-integrity.test.ts": {
+      "sha256": "43466457bb8f76d258ea69ae53fe01754ec81dd230098aff76b6cb8bd32d7c87",
+      "reason": "KNOWN_TYPE_TAGS gains the free-for-all multiplayer vocabulary tags choosePlayer (effect) and chosenPlayer (player reference), which card data now uses; nothing else in the file changes. Approved by the user 2026-11-08."
+    },
+    "src/engine/__tests__/per-card/1st-edition-part-2.test.ts": {
+      "sha256": "c2fce88300920be733630013957b47202987775e71945dc828052cc9500d45e0",
+      "reason": "Martial Artist and Martial Arts Trainee print \"Your opponent cannot pick this card\" (singular): the data now holds the singular restriction cannotBePickedByOpponent (at 3+ seats only the selected opponent is barred). Lines 2194 and 2223 assert that restriction name instead of the plural cannotBePickedByOpponents; two-player behavior is identical. Approved by the user 2026-11-08."
     }
   }
 }

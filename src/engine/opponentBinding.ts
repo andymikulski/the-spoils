@@ -10,15 +10,19 @@
 import type { AbilityDefinition, Condition, OpponentFrom } from "../types/index.js";
 
 /** Keys whose `"opponent"` value is not a player word of the block's own text. */
-const NOT_A_PLAYER_WORD: ReadonlySet<string> = new Set(["usableBy", "opponentFrom", "id", "name", "label"]);
+const NOT_A_PLAYER_WORD: ReadonlySet<string> = new Set(["usableBy", "opponentFrom", "id", "name", "label", "opponentCondition"]);
 
 /** True when `node` holds the player word `"opponent"` anywhere. */
 export function namesOpponent(node: unknown): boolean {
   if (node === "opponent") return true;
   if (Array.isArray(node)) return node.some(namesOpponent);
   if (node && typeof node === "object") {
+    // "An opponent ..." as a condition binds its own opponent, one at a time: it never selects one for the block.
+    if ((node as Record<string, unknown>).type === "anyOpponent") return false;
     // "Both players" (MP 3) is the controller and the block's opponent.
     if ((node as Record<string, unknown>).type === "forEachPlayer" && (node as Record<string, unknown>).players === "pair") return true;
+    // The showdown of "Both players ..." is the controller and the block's opponent unless the effect names the other player.
+    if ((node as Record<string, unknown>).type === "partitionAndPick" && (node as Record<string, unknown>).opponent === undefined) return true;
     // "At the start of your opponent's next turn": the delayed effect names the block's opponent in its `when`.
     // Singular forms spelled as enum values: "your opponent cannot pick this card", "your opponent must pay ... to use a
     // character's ability".
@@ -35,6 +39,29 @@ export function namesOpponent(node: unknown): boolean {
 
 type Node = Record<string, unknown>;
 const isNode = (value: unknown): value is Node => !!value && typeof value === "object" && !Array.isArray(value);
+
+/**
+ * The id a player choice's `condition` reads its candidate under: `{ type: "chosenPlayer", id: "__candidate" }` is the
+ * player being tested, the way `{ type: "selected", id: "__candidate" }` is the card being tested.
+ */
+export const CANDIDATE_PLAYER = "__candidate";
+
+/** The ids of the named players (`{ type: "chosenPlayer", id }`) that `node` reads, in the order they first appear. */
+export function chosenPlayerIds(node: unknown, out: Set<string> = new Set()): Set<string> {
+  if (Array.isArray(node)) {
+    for (const item of node) chosenPlayerIds(item, out);
+  } else if (isNode(node)) {
+    if (node.type === "chosenPlayer" && typeof node.id === "string") out.add(node.id);
+    for (const value of Object.values(node)) chosenPlayerIds(value, out);
+  }
+  return out;
+}
+
+/** True when `node` reads one of the named players `ids`. */
+export function namesChosenPlayer(node: unknown, ids: readonly string[]): boolean {
+  for (const id of chosenPlayerIds(node)) if (ids.includes(id)) return true;
+  return false;
+}
 
 /** Every condition node in a condition tree (and / or / not descend). */
 function conditionNodes(condition: unknown, out: Node[] = []): Node[] {

@@ -1127,7 +1127,7 @@ const cards = [
                   "value": 3
                 }
               ],
-              "owner": "opponent"
+              "owner": "opponents"
             },
             "count": 1,
             "optional": true
@@ -1604,29 +1604,35 @@ const cards = [
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "__od",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "hand"
-                },
-                "count": 1,
-                "optional": false
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "__od",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "__od",
+                    "selector": {
+                      "owner": "self",
+                      "zone": "hand"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "__od",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2165,10 +2171,18 @@ const cards = [
                           },
                           "effects": [
                             {
+                              "type": "choosePlayer",
+                              "id": "opp",
+                              "from": "opponents"
+                            },
+                            {
                               "type": "dealDamage",
                               "target": {
                                 "type": "factionOf",
-                                "player": "opponent"
+                                "player": {
+                                  "type": "chosenPlayer",
+                                  "id": "opp"
+                                }
                               },
                               "amount": 1
                             },
@@ -2584,8 +2598,16 @@ const cards = [
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "amount": -4
             }
           ]
@@ -2750,11 +2772,17 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -2769,6 +2797,12 @@ const cards = [
                   "to": "discard"
                 }
               ]
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "opp",
+              "from": "opponents"
             }
           ]
         }
@@ -2830,10 +2864,18 @@ const cards = [
                   "label": "1 damage",
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "opp",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "dealDamage",
                       "target": {
                         "type": "factionOf",
-                        "player": "opponent"
+                        "player": {
+                          "type": "chosenPlayer",
+                          "id": "opp"
+                        }
                       },
                       "amount": 1
                     }
@@ -3051,7 +3093,7 @@ const cards = [
       "onPlay": {
         "condition": {
           "type": "playerInflictedDamageToFactionThisTurn",
-          "player": "opponent"
+          "player": "opponents"
         }
       }
     }
@@ -3242,7 +3284,7 @@ const cards = [
             {
               "id": "opp",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -3343,7 +3385,7 @@ const cards = [
             },
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -1
             }
           ]
@@ -3607,7 +3649,7 @@ const cards = [
                 "event": "destroy",
                 "cardType": "character",
                 "controlledBy": "self",
-                "by": "opponent"
+                "by": "opponents"
               },
               "duration": {
                 "type": "untilEndOfTurn"
@@ -4168,7 +4210,7 @@ const cards = [
             {
               "id": "theirs",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -5075,7 +5117,7 @@ const cards = [
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -5364,7 +5406,7 @@ const cards = [
           "effects": [
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -3
             }
           ]
@@ -5620,7 +5662,7 @@ const cards = [
             {
               "id": "c",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "character"
               },
@@ -5968,28 +6010,34 @@ const cards = [
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "lose",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "staple": false
-                },
-                "count": 4
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "lose",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "lose",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "staple": false
+                    },
+                    "count": 4
+                  },
                   "effects": [
                     {
-                      "type": "destroy",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "lose",
+                      "effects": [
+                        {
+                          "type": "destroy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -7961,7 +8009,10 @@ const cards = [
           {
             "id": "rem",
             "selector": {
-              "owner": "opponent",
+              "owner": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "zone": "discard"
             },
             "count": 4,
@@ -7998,7 +8049,13 @@ const cards = [
             },
             -1
           ]
-        }
+        },
+        "playerChoices": [
+          {
+            "id": "opp",
+            "from": "opponents"
+          }
+        ]
       }
     }
   },
@@ -8385,7 +8442,7 @@ const cards = [
             {
               "id": "gone",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "item"
               },
@@ -8508,7 +8565,7 @@ const cards = [
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -8975,12 +9032,23 @@ const cards = [
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -9373,82 +9441,40 @@ const cards = [
               },
               "effects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
+                  "type": "chooserSelectsTarget",
+                  "chooser": {
+                    "type": "controllerOf",
                     "target": {
                       "type": "selected",
                       "id": "char"
-                    },
-                    "player": "controller"
-                  },
-                  "effects": [
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "controller",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "self",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
                     }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
-                    "target": {
-                      "type": "selected",
-                      "id": "char"
+                  },
+                  "declaration": {
+                    "id": "redonk-d",
+                    "selector": {
+                      "controller": {
+                        "type": "controllerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "char"
+                        }
+                      },
+                      "zone": "hand"
                     },
-                    "player": "opponent"
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
+                      "type": "forEach",
+                      "selected": "redonk-d",
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
                         }
                       ]
                     }
@@ -9459,59 +9485,22 @@ const cards = [
             {
               "type": "if",
               "condition": {
-                "type": "or",
-                "conditions": [
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "controller"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "self",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": {
+                      "type": "controllerOf",
+                      "target": {
+                        "type": "selected",
+                        "id": "char"
                       }
-                    ]
-                  },
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "opponent"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "opponent",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
-                      }
-                    ]
+                    },
+                    "zone": "hand"
                   }
-                ]
+                },
+                "operator": "<=",
+                "right": 3
               },
               "effects": [
                 {
@@ -9712,12 +9701,23 @@ const cards = [
           "type": "activated",
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "dm-d1",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -9748,11 +9748,17 @@ const cards = [
               "effects": [
                 {
                   "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
+                  "chooser": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "declaration": {
                     "id": "dm-d2",
                     "selector": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "hand"
                     },
                     "count": 1
@@ -9785,11 +9791,17 @@ const cards = [
               "effects": [
                 {
                   "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
+                  "chooser": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "declaration": {
                     "id": "dm-d3",
                     "selector": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "hand"
                     },
                     "count": 1
@@ -11285,7 +11297,7 @@ const cards = [
           "modifiers": [
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11295,7 +11307,7 @@ const cards = [
             },
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11305,7 +11317,7 @@ const cards = [
             },
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11807,7 +11819,7 @@ const cards = [
           "type": "continuous",
           "modifiers": [],
           "attackTax": {
-            "player": "opponent",
+            "player": "opponents",
             "amount": 2
           }
         }
@@ -11995,6 +12007,11 @@ const cards = [
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
@@ -12007,7 +12024,10 @@ const cards = [
                       "declaration": {
                         "id": "look",
                         "selector": {
-                          "owner": "opponent",
+                          "owner": {
+                            "type": "chosenPlayer",
+                            "id": "opp"
+                          },
                           "zone": "hand",
                           "conditions": [
                             {
@@ -12044,11 +12064,17 @@ const cards = [
                   "effects": [
                     {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "declaration": {
                         "id": "sac",
                         "selector": {
-                          "controller": "opponent",
+                          "controller": {
+                            "type": "chosenPlayer",
+                            "id": "opp"
+                          },
                           "zone": "play",
                           "type": "character"
                         },
@@ -12349,11 +12375,17 @@ const cards = [
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 2,
@@ -12380,6 +12412,12 @@ const cards = [
               "type": "draw",
               "player": "controller",
               "amount": 1
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "opp",
+              "from": "opponents"
             }
           ]
         }

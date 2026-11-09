@@ -4853,7 +4853,7 @@ const cards = [
       "fromPrintingId": "23fe59c9-9bf1-49d1-bfc4-084c556aca80"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -5888,7 +5888,7 @@ const cards = [
       "fromPrintingId": "300ab3d1-3214-4fa5-9000-d657e6e7816d"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -9452,7 +9452,7 @@ const cards = [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }
@@ -9585,7 +9585,7 @@ const cards = [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }

@@ -72,6 +72,13 @@ export type Effect =
       type: "modifyInfluence";
       player: PlayerRef;
       amount: NumberExpression;
+      /**
+       * "... for each influence gained this way": adds the influence the faction actually gained, after every
+       * influence modifier (a loss, or a gain a modifier removed, adds nothing), to the numeric variable `tallyAs` of
+       * this resolution. A later effect reads the total with `{ type: "variable", id: tallyAs }`; with `player:
+       * "opponents"` it is the sum over every opponent. The variable starts at 0 when the effect first names it.
+       */
+      tallyAs?: string;
     }
   | {
       /**
@@ -960,15 +967,19 @@ export type Effect =
   | {
       /**
        * Show `count` (default 1) cards from the top of a deck / all of a
-       * hand to `viewer` — "reveal the top card of your deck", "look at an
-       * opponent's hand". Pure information: emits `cardsRevealed` and
-       * nothing else (the engine has perfect information; this is for a
-       * renderer / log). For an ongoing "revealed at all times" use
-       * `ContinuousAbility.grantsReveal`.
+       * hand / every face-down resource a player controls to `viewer` —
+       * "reveal the top card of your deck", "look at an opponent's hand",
+       * "look at their face-down resources" (`zone: "faceDownResources"`:
+       * the face-down cards `of` controls in play; `count` is ignored).
+       * Pure information: emits `cardsRevealed` and nothing else (the
+       * engine has perfect information; this is for a renderer / log). The
+       * viewer alone learns the cards' names (the log line and `viewerId`);
+       * every other player only learns that the look happened. For an
+       * ongoing "revealed at all times" use `ContinuousAbility.grantsReveal`.
        */
       type: "reveal";
       of: PlayerRef;
-      zone: "deckTop" | "hand";
+      zone: "deckTop" | "hand" | "faceDownResources";
       count?: NumberExpression;
       viewer?: PlayerRef | "all";
     }
@@ -1013,6 +1024,17 @@ export type Effect =
     }
   | {
       /**
+       * Store `player` on `source`'s `rememberedPlayers[key]` for the rest of the game: "that opponent" in a later
+       * ability of the same card ("search an opponent's deck ... For the rest of the game, when that opponent deploys
+       * a card ...", I Drink Your Milkshake! in Seed Saga). Read back with `{ type: "rememberedPlayer", key }`. Setting
+       * the key again replaces the player.
+       */
+      type: "rememberPlayer";
+      key: string;
+      player: PlayerRef;
+    }
+  | {
+      /**
        * "Duplicate the tactic." Resolve a copy of `target` (a tactic on the
        * response stack) under the current ability's controller, reusing the
        * original's already-made selections (RULES.md §12). No transient
@@ -1049,12 +1071,19 @@ export type Effect =
        * → `pickPile` → (`takeFromPile`) pending choices, one player at a
        * time. No-op if either player has fewer than `piles` cards to
        * reveal. See RULES.md §12.
+       *
+       * The other player is `opponent`: omitted it is the block's opponent
+       * (`"opponent"`, MP 2) — the printing that says "Both players" (MP 3);
+       * the printing that says "You and an opponent" names a player choice
+       * (`{ type: "chosenPlayer", id }`, a `playerChoices` entry, MPX-vocab-an
+       * (3)). It may not be the controller.
        */
       type: "partitionAndPick";
       count: number;
       piles: number;
       compareBy: "cost";
       winnerTakes: number;
+      opponent?: PlayerRef;
     }
   | {
       /**
@@ -1314,11 +1343,19 @@ export type Effect =
        * pick (CR 405). `from: "opponents"` offers the chooser's own opponents,
        * so a block written from another player's point of view (MPQ-P10) names
        * `chooser`. With one candidate nothing is asked.
+       *
+       * `condition` keeps only the candidates for whom it holds ("an
+       * opponent who controls more resources than you"): it is judged once
+       * per candidate with that candidate bound as `{ type: "chosenPlayer",
+       * id: "__candidate" }`. When no candidate qualifies the choice cannot
+       * be made: nobody is named and every later effect that reads `id` does
+       * nothing.
        */
       type: "choosePlayer";
       id: string;
       from: "opponents" | "players";
       chooser?: PlayerRef;
+      condition?: Condition;
     }
   | {
       /**
@@ -1347,10 +1384,23 @@ export type Effect =
       /**
        * "You may pay <costs>. If you do, <effects>; otherwise
        * <elseEffects>." Pauses for `player` to accept or decline; declines
-       * (or can't afford) fall through to `elseEffects`.
+       * (or can't afford) fall through to `elseEffects`. `effects` and
+       * `elseEffects` resolve under the ability's controller whoever pays.
+       *
+       * "Any opponent may pay <costs>. If they do, <effects>. Otherwise,
+       * <elseEffects>." is `offerTo: "opponents"` with no `player` (MPQ-P7,
+       * MPX-offer): the offer goes to each opponent still in the game in turn,
+       * clockwise starting with the seat after the controller; an opponent who
+       * cannot afford the costs is not offered it. The first to pay settles it
+       * and nobody after them is asked; if every opponent declines (or none
+       * can pay) `elseEffects` happen. It selects no opponent for the block.
+       * With a single opponent left it is that player's one `mayPay` prompt,
+       * the same as `player: "opponent"` would be.
        */
       type: "mayPay";
-      player: PlayerRef;
+      /** Who may pay. Omitted exactly when `offerTo` is set. */
+      player?: PlayerRef;
+      offerTo?: "opponents";
       costs: Cost[];
       effects: Effect[];
       elseEffects?: Effect[];
@@ -1367,22 +1417,16 @@ export type Effect =
       /**
        * "Any player may pay <costs> to <effects>." — offers the optional
        * paid effect to each player (active player first) in turn; the first
-       * to accept pays and resolves `effects`, then the offer stops. All
-       * decline → nothing. Recycling Scheme Facility.
+       * to accept pays and resolves `effects` under themselves ("they"), then
+       * the offer stops. All decline → `elseEffects`, under the controller.
+       * Recycling Scheme Facility. ("Any opponent may pay" is `mayPay` with
+       * `offerTo: "opponents"`.)
        */
       type: "anyPlayerMayPay";
       costs: Cost[];
       effects: Effect[];
       /** "Otherwise, ...": resolved under the controller when every player offered it declines (MPQ-P7). */
       elseEffects?: Effect[];
-      /**
-       * Who is offered it (MPQ-P7). `"players"` (default): every player in
-       * the game, the active player first, then clockwise (CR 402.2).
-       * `"opponents"` ("any opponent may pay"): the controller's opponents,
-       * clockwise starting with the seat after the controller. The first to
-       * accept settles it.
-       */
-      offerTo?: "opponents" | "players";
     }
   | {
       /**
@@ -1770,6 +1814,14 @@ export interface RestrictionGrantDefinition {
   selector?: CardSelector;
   restriction: Restriction;
   /**
+   * `cannotBePickedByOpponents` only: the restriction applies to exactly the opponents for whom this condition holds,
+   * judged for each opponent on its own with `"opponent"` meaning that opponent, as in `anyOpponent`. "While there are
+   * at least 10 cards in an opponent's discard pile, that player cannot pick this card" (Omahkapi'si Pi'kssii) is this
+   * with a `numberCompare` over `count { zone: "discard", owner: "opponent" }`; an opponent whose own pile is smaller
+   * can still pick the card. Without it the restriction covers every opponent.
+   */
+  opponentCondition?: Condition;
+  /**
    * `cannotBePicked` only: the restriction does not apply to a pick made by
    * a card (or an ability of a card) of this type — "cannot be picked by
    * NON-ITEM cards or abilities" is `cannotBePicked` with
@@ -1786,7 +1838,7 @@ export interface RestrictionGrantDefinition {
  * actual payment in `playCard`.
  */
 export interface CostModifierDefinition {
-  /** Whose deploys this affects (`controller` = the source's controller). */
+  /** Whose deploys this affects (`controller` = the source's controller; `"opponents"` = every opponent, "your opponents must pay 1"). */
   affects: PlayerRef;
   /** Added to the printed numeric cost — negative discounts, positive taxes. */
   delta: NumberExpression;

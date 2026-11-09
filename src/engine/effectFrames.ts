@@ -42,6 +42,7 @@ const CONTEXT_PARTS = [
   "named",
   "resourceRevealOffered",
   "chosenPlayers",
+  "unchosenPlayers",
   "event"
 ] as const;
 
@@ -102,6 +103,11 @@ export class FrameStack implements Iterable<EffectFrame> {
 
   push(...frames: EffectFrame[]): void {
     for (const frame of frames) this.stored.push(this.park(frame));
+  }
+
+  /** Parks `frames` at position `index`: the frames already there and above move up and run after them. */
+  insertAt(index: number, ...frames: EffectFrame[]): void {
+    this.stored.splice(Math.min(index, this.stored.length), 0, ...frames.map(frame => this.park(frame)));
   }
 
   pop(): EffectFrame | undefined {

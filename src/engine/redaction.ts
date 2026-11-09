@@ -79,6 +79,7 @@ function maskCard(card: CardInstance): CardInstance {
   const masked: CardInstance = { ...card, definitionId: HIDDEN_DEFINITION_ID };
   delete masked.namedValues;
   delete masked.linkedTargets;
+  delete masked.rememberedPlayers;
   delete masked.createdAbility;
   return masked;
 }

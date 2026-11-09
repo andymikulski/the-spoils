@@ -552,7 +552,22 @@
               "id": "deckOwner",
               "selector": {
                 "zone": "play",
-                "type": "faction"
+                "type": "faction",
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "controller"
+                      },
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "opponent"
+                      }
+                    ]
+                  }
+                ]
               },
               "count": 1
             }
@@ -719,7 +734,8 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -893,7 +909,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -2450,7 +2466,22 @@
               "declaration": {
                 "id": "f",
                 "selector": {
-                  "type": "faction"
+                  "type": "faction",
+                  "conditions": [
+                    {
+                      "type": "or",
+                      "conditions": [
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "controller"
+                        },
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "opponent"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 "count": 1
               },
@@ -5072,7 +5103,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -6374,7 +6405,8 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -6414,13 +6446,15 @@
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -8892,7 +8926,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -9663,42 +9697,25 @@
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -10780,7 +10797,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -13200,7 +13217,8 @@
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -17308,7 +17326,7 @@
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }
@@ -17476,7 +17494,7 @@
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }
@@ -18940,7 +18958,8 @@
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -23020,7 +23039,7 @@
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",

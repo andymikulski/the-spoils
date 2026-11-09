@@ -83,6 +83,12 @@ export interface FactionGameSetupOptions {
    */
   createdAbility?: CreatedAbilitySpec;
   /**
+   * With three or more players, the opponent who writes `createdAbility` with the faction's player and may use it
+   * ("both players", MP 3). Omitted, the faction's player selects that opponent through a `choosePlayer` choice when the
+   * game begins. Ignored at two seats, where it is the only opponent.
+   */
+  createdAbilityOpponent?: PlayerId;
+  /**
    * Real cards (name + type) the engine may check a named card against:
    * "name a non-resource card" (Incriminating Photograph) then refuses names
    * that are not cards, and resource cards. Omit it and any text is accepted.
@@ -702,11 +708,12 @@ export function createFactionGame(
 
   players.forEach((player, seat) => {
     state.players[player.id].factionId = factionCards[seat]!.id;
-    state.players[player.id].influence = resolved[seat]!.factionDefinition.faction!.startingInfluence;
+    const faction = resolved[seat]!.factionDefinition.faction!;
+    state.players[player.id].influence = faction.startingInfluence + (faction.perExtraOpponent?.influence ?? 0) * Math.max(0, players.length - 2);
   });
 
   const engine = new SpoilsEngine(normalizedDefinitions, state, undefined, options.cardCatalog);
-  if (options.createdAbility) engine.applyCreatedFactionAbility(options.createdAbility);
+  if (options.createdAbility) engine.applyCreatedFactionAbility(options.createdAbility, options.createdAbilityOpponent);
 
   // MONEY FOR NOTHING's "your opponent" is selected by its controller as the starting resources step begins
   // (MP 2, MPX-select (2)): each such player with two or more opponents is asked before any starting resource is
@@ -802,7 +809,11 @@ function placeStartingResources(
 
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
   for (const playerId of state.seats) {
-    const rule = engine.getFactionDefinition(playerId)!.setup.startingResources;
+    const printed = engine.getFactionDefinition(playerId)!;
+    const rule = {
+      ...printed.setup.startingResources,
+      count: printed.setup.startingResources.count + (printed.perExtraOpponent?.startingResources ?? 0) * engine.extraOpponentsAtStart()
+    };
     const chosenX = options.startingResourceX?.[playerId];
     const choiceCount = options.chooseStartingResources
       ? stapleChoiceCountFor(engine, playerId, rule, chosenX)

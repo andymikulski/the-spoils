@@ -416,6 +416,7 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].effects[0]",
+            "movedTo": "behavior.abilities[0].effects[2]",
             "now": {
               "type": "draw",
               "player": "controller",
@@ -424,6 +425,20 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "The data has only the draw (this step), so there is no look and no player word to bind. New look steps are inserted before it (the text looks first, then draws), all aimed at one opponent. All three looks (hand, top card of the deck, face-down resources) read the one chosen opponent ('your opponent's', MP 2). `now` is the draw step stored here today."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].of",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "New node: the look at the chosen opponent's hand (a reveal step inserted before the draw); path does not exist before the edit."
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].of",
+            "now": null,
+            "meaning": "chosenOpponent",
+            "edit": true,
+            "why": "New node: the look at the top card of the chosen opponent's deck; path does not exist before the edit."
           }
         ],
         "test3": "P1 plays Forbidden Knowledge. The opponent is chosen before targets (played card / activated ability / flip up): P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P1 may look at P2's hand, P2's top deck card and P2's face-down resources and sees none of P3's hidden information. Choose P3 (second run): P1 may look at P3's hand, P3's top deck card and P3's face-down resources and sees none of P2's hidden information. P1 draws a card in both runs."
@@ -1061,6 +1076,7 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].abilityCostModifiers[0].scope",
+            "movedTo": "behavior.abilities[1].abilityCostModifiers[0].scope",
             "now": "opponentCharacters",
             "meaning": "chosenOpponent",
             "edit": true,
@@ -1083,6 +1099,22 @@
     "name": "High Court of Demands",
     "clauses": [
       {
+        "key": "0:rule",
+        "status": "unchanged",
+        "readings": [],
+        "note": "Shared data (preventsAttackOnFaction.attacker); the attacker restriction is specified on clause 1:rule.",
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[1].preventsAttackOnFaction.attacker",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
+        "test3": "Nothing for this clause beyond clause 1:rule at any table size: its own text names no player."
+      },
+      {
         "key": "1:rule",
         "status": "changes",
         "readings": [
@@ -1101,6 +1133,13 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "Only the protected faction (self) is named; the data has no player for the attacker that is barred, so it bars every opponent. It needs a field naming the barred attacker (the chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[1].preventsAttackOnFaction.attacker",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "The attacker field the conversion added: only the opponent selected for this text is barred from attacking your faction (the stored \"opponent\" is the block's opponent)."
           }
         ],
         "test3": "P1 controls High Court of Demands. The opponent is chosen when the static text starts applying (RQ-mp-5), kept while it applies, and re-chosen if that player is eliminated: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 cannot attack P1's faction (the attack is refused) but can still attack P1's characters and locations and P3's faction; P3 can attack P1's faction. Choose P3 (second run): P3 cannot attack P1's faction (the attack is refused) but can still attack P1's characters and locations and P2's faction; P2 can attack P1's faction. If the chosen opponent is eliminated, P1 chooses again and the new choice is barred."
@@ -1165,9 +1204,32 @@
             "meaning": "chosenOpponent",
             "edit": true,
             "why": "Only the protected faction (self) is named; the data has no player for the attacker that is barred, so it bars every opponent. It needs a field naming the barred attacker (the chosen opponent)."
+          },
+          {
+            "path": "behavior.abilities[0].preventsAttackOnFaction.attacker",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "The attacker field the conversion added: only the opponent selected for this text is barred from attacking your faction (the stored \"opponent\" is the block's opponent)."
           }
         ],
         "test3": "P1 controls Theocratic Senate of Marduun. The opponent is chosen when the static text starts applying (RQ-mp-5), kept while it applies, and re-chosen if that player is eliminated: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: P2 cannot attack P1's faction but can attack P1's characters and P3's faction; P3 can attack P1's faction. Choose P3 (second run): P3 cannot attack P1's faction but can attack P1's characters and P2's faction; P2 can attack P1's faction."
+      },
+      {
+        "key": "2:rule",
+        "status": "unchanged",
+        "readings": [],
+        "note": "Shared data (preventsAttackOnFaction.attacker); the attacker restriction is specified on clause 1:rule.",
+        "dataChanges": [
+          {
+            "path": "behavior.abilities[0].preventsAttackOnFaction.attacker",
+            "now": "opponent",
+            "meaning": "chosenOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          }
+        ],
+        "test3": "Nothing for this clause beyond clause 1:rule at any table size: its own text names no player."
       }
     ]
   },

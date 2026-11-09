@@ -165,11 +165,31 @@ What it asserts:
   the spec.
 - **Pending queue**: an `edit: true` site still holding its `now` is pending;
   `mp-worklist.json` must list exactly the pending sites, grouped by set (card,
-  clause, path, `now`, target meaning), so the gate fails after a data or spec
-  change until `mp-worklist` is rerun. A site whose `now` is not a stored value
-  (`null`, `[]`, prose, or an object such as a `forEachPlayer`) carries a
-  `snapshot` in the worklist, a hash of the site's own keys and scalar fields
-  (nested nodes ignored), and is pending while that is unchanged.
+  clause, path, `movedTo` when set, `now`, target meaning), so the gate fails after
+  a data or spec change until `mp-worklist` is rerun. The verdict is computed from
+  the spec and the data alone, with no state carried between runs, so regenerating
+  the file is idempotent and a done site never returns to the queue. A site recorded
+  as node JSON (an object or list) is pending while the node's own keys and scalar
+  fields are unchanged (nested nodes ignored); a `now` word on a node (`forEachPlayer`)
+  is pending while the node still looks like it (no `players` / `except` yet).
+  `now` must be a stored value or `null`: prose is rejected.
+- **Moved sites (`movedTo`)**: a `dataChanges` entry may carry `movedTo`, the new path
+  of a site that a data edit moved (a pick step inserted before it, a wrapper added
+  around it). The gate judges the value at `movedTo` in place of `path`; the old path
+  may be gone. A `movedTo` that does not exist fails. `edit: false` must still hold
+  its `now` at `movedTo`. A player-word or `forEachPlayer` site is never pending once
+  moved and must hold a valid form there. `movedTo` may be an ability's
+  `playerChoices[n]` entry (a cost step cannot ask a question; the entry's `id` must be
+  read back with `{ type: "chosenPlayer", id }` in the same ability, `from: "opponents"`)
+  for the meanings `chosenPlayer` satisfies, or a converted node (an
+  `otherPlayerChooses` cost with converted `chooser` / selector children). The spec-gap
+  check lists `movedTo`, and every word inside a `movedTo` node.
+- **New nodes (`now: null`)**: an `edit: true` entry for a wrapper, step or field that
+  does not exist yet is pending until its path holds a valid form for its meaning
+  (a `forEachPlayer` with the right `players`, `"acting"` for `opponentFrom`, a player
+  reference, a `playerChoices` entry, a node with converted player fields), then done.
+  It never needs a baseline, and a wrong value only leaves it pending. Details in
+  `data/card-tests/mp-spec/README.md` ("Moved sites and new nodes").
 - **Valid target form**: an `edit: true` site that left its `now` must hold a
   valid form for its meaning (`MEANING_FORMS`, from the plan's "Player
   vocabulary"). It is judged only when `now` is a player word (`"opponent"`,
@@ -191,8 +211,9 @@ What it asserts:
 Paths are exact. A structural edit that moves a site (inserting a step before
 it, wrapping it in an iteration) makes the old path stale: an `edit: false`
 site there fails, and an `edit: true` site whose path vanished fails unless an
-enclosing `forEachPlayer` carries the right `players`. Update the spec's paths
-in the same change, then rerun `mp-inventory` and `mp-worklist`.
+enclosing `forEachPlayer` carries the right `players`. Record the move with
+`movedTo` (and a `now: null` entry for each new wrapper or step) in the same change,
+then rerun `mp-inventory` and `mp-worklist`.
 
 ### Rules for writing clause tests
 

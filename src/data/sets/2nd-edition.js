@@ -554,7 +554,22 @@ const cards = [
               "id": "deckOwner",
               "selector": {
                 "zone": "play",
-                "type": "faction"
+                "type": "faction",
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "controller"
+                      },
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "opponent"
+                      }
+                    ]
+                  }
+                ]
               },
               "count": 1
             }
@@ -721,7 +736,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -895,7 +911,7 @@ const cards = [
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -2452,7 +2468,22 @@ const cards = [
               "declaration": {
                 "id": "f",
                 "selector": {
-                  "type": "faction"
+                  "type": "faction",
+                  "conditions": [
+                    {
+                      "type": "or",
+                      "conditions": [
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "controller"
+                        },
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "opponent"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 "count": 1
               },
@@ -5074,7 +5105,7 @@ const cards = [
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -6376,7 +6407,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -6416,13 +6448,15 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -8894,7 +8928,7 @@ const cards = [
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -9665,42 +9699,25 @@ const cards = [
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -10782,7 +10799,7 @@ const cards = [
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -13202,7 +13219,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -17310,7 +17328,7 @@ const cards = [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }
@@ -17478,7 +17496,7 @@ const cards = [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBePickedByOpponents"
+              "restriction": "cannotBePickedByOpponent"
             }
           ]
         }
@@ -18942,7 +18960,8 @@ const cards = [
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -23022,7 +23041,7 @@ const cards = [
       "source": "printed"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",

@@ -132,14 +132,23 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "each opponent chooses their own discards; today a single chooser stands in for one opponent, so the effect needs one repetition per opponent still in the game"
+            "why": "each opponent chooses their own discards; today a single chooser stands in for one opponent, so the effect needs one repetition per opponent still in the game",
+            "movedTo": "behavior.abilities[3].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[3].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "each opponent discards from that opponent's own hand; one repetition per opponent"
+            "why": "each opponent discards from that opponent's own hand; one repetition per opponent",
+            "movedTo": "behavior.abilities[3].effects[0].effects[0].declaration.selector.controller"
+          },
+          {
+            "path": "behavior.abilities[3].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "New node: the checkout effect is wrapped in forEachPlayer { players: \"opponents\" } (one repetition per opponent); the chooser and the hand selector inside it become the iterated player's own (\"controller\" / \"self\")."
           }
         ],
         "test3": "P1 activates CHECK OUT (deplete, remove 2 tokens). P2 and P3 each choose and discard 2 cards from their own hand, in that order; P1's hand is unchanged and each player's choices come only from that player's hand.",
@@ -301,7 +310,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].elseEffects[2].declaration.selector.owner"
           }
         ],
         "test3": "P1 plays Thabbashite Barbeque picking a non-resource card: any non-resource card in play can be picked (P1's, P2's or P3's, never a resource or a faction). No chooseOpponent step appears at play."
@@ -342,7 +352,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Look at an opponent's hand and choose a non-resource card in it\": the controller picks one opponent when this sentence resolves (not tied to who was offered the payment), then looks at only that player's hand"
+            "why": "\"Look at an opponent's hand and choose a non-resource card in it\": the controller picks one opponent when this sentence resolves (not tied to who was offered the payment), then looks at only that player's hand",
+            "movedTo": "behavior.abilities[0].effects[0].elseEffects[2].declaration.selector.owner"
           }
         ],
         "test3": "P2 is offered the payment of 2 first, then P3. If one pays 2, Barbeque returns to P1's hand and is terminated; the picked card stays and no hand is looked at; the opponent after the payer is not asked. If both decline: the picked card goes to its owner's hand, then P1 is offered P2 and P3 (independent of who declined), picks P3, looks at P3's hand only (P2's stays hidden), chooses a non-resource card, and P3 discards it."
@@ -796,14 +807,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[3].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[3].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[4].player"
           }
         ],
         "test3": "P1 deploys Chum and picks a card in a discard pile as its extra cost: cards in P1's, P2's and P3's discard piles are all legal. X is the picked card's numeric cost. No chooseOpponent step appears at play."
@@ -825,14 +838,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Search an opponent's deck\": the controller chooses one opponent when the sentence resolves; the deck searched, the deck shuffled and \"their discard pile\" all belong to that one opponent. The data has no explicit single-opponent choice"
+            "why": "\"Search an opponent's deck\": the controller chooses one opponent when the sentence resolves; the deck searched, the deck shuffled and \"their discard pile\" all belong to that one opponent. The data has no explicit single-opponent choice",
+            "movedTo": "behavior.abilities[0].effects[0].effects[3].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[3].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "the deck shuffled after the search must be the same chosen opponent's"
+            "why": "the deck shuffled after the search must be the same chosen opponent's",
+            "movedTo": "behavior.abilities[0].effects[0].effects[4].player"
           },
           {
             "path": "behavior.onPlay.targets[0].selector.owner",
@@ -867,14 +882,16 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "\"the top card of their deck\": the picked opponent's; the option needs a real pick of one opponent, made when P1 takes the option"
+            "why": "\"the top card of their deck\": the picked opponent's; the option needs a real pick of one opponent, made when P1 takes the option",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].player"
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "same on the enters-play trigger: the picked opponent's deck"
+            "why": "same on the enters-play trigger: the picked opponent's deck",
+            "movedTo": "behavior.abilities[1].effects[0].options[1].effects[1].player"
           },
           {
             "path": "behavior.abilities[2].modifiers[0].value.selector.owner",
@@ -924,14 +941,16 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].player"
           },
           {
             "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 0:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[0].options[1].effects[1].player"
           }
         ],
         "test3": "P2's discard pile holds 2 character cards and a tactic; P3's holds 1 character card; P1's own holds 3 character cards. Craniata Nester gains 1 strength and 1 life for each character card in P2's and P3's piles: +3 / +3. The tactic and P1's own character cards do not count. When a character card leaves P3's pile it drops to +2 / +2.",
@@ -981,7 +1000,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"an opponent's deck\": the controller chooses one opponent when the effect resolves (nothing in the text settles it)"
+            "why": "\"an opponent's deck\": the controller chooses one opponent when the effect resolves (nothing in the text settles it)",
+            "movedTo": "behavior.abilities[0].effects[1].player"
           }
         ],
         "test3": "P1 plays Inebriated Defenestration. At resolution P1 is offered P2 and P3. P1 picks P3: the top 5 cards of P3's deck go to P3's discard pile; P2's deck is unchanged. P1 draws 2 cards. A second run picking P2 mills only P2's deck."
@@ -1037,7 +1057,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[2].declaration.selector.owner"
           }
         ],
         "test3": "With 3 players, X can be chosen from 0 to 3. With X=2, P1 picks two different players among P1, P2 and P3 (for example P2 and P3, or P1 and P3); picking the same player twice is refused. With X=3 all three are picked. No chooseOpponent step appears."
@@ -1065,7 +1086,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"Pick X characters in an opponent's discard pile\": all X characters come from one opponent's discard pile; a selector matching every opponent's pile would allow cards from several piles"
+            "why": "\"Pick X characters in an opponent's discard pile\": all X characters come from one opponent's discard pile; a selector matching every opponent's pile would allow cards from several piles",
+            "movedTo": "behavior.abilities[0].effects[2].declaration.selector.owner"
           }
         ],
         "test3": "P2 and P3 are picked (X=2): each of them (and not P1) puts the top 10 cards of their own deck into their discard pile. P1 then picks 2 characters in one opponent's discard pile, say P3's, and puts them into play under P1's control; taking one from P2's pile and one from P3's pile is refused; P1's own pile is not a legal source. Second run picking P1 and P3: P1 mills 10 too, P2 does not."
@@ -1538,7 +1560,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[1].target.player"
           }
         ],
         "test3": "P1 plays Suicide Smash picking a character P1 controls (X is its strength) and destroying it, then picking a location (any player's). Only P1's own characters can be picked for the sacrifice; no chooseOpponent step appears at play."
@@ -1560,7 +1583,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"inflict 3 damage to an opponent's faction\": no pick word in the sentence, so the controller chooses one opponent when the effect resolves"
+            "why": "\"inflict 3 damage to an opponent's faction\": no pick word in the sentence, so the controller chooses one opponent when the effect resolves",
+            "movedTo": "behavior.abilities[0].effects[0].effects[1].target.player"
           }
         ],
         "test3": "With P1 controlling [V][V][V]: after the cost, P1 is offered P2 and P3 when the effect resolves and picks P3: P3's faction takes 3 damage and P2's takes none; the picked location takes X damage and, if destroyed, P1 draws a card. Without the threshold no faction is damaged. A second run picking P2 damages only P2's faction."

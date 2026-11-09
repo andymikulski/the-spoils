@@ -141,6 +141,18 @@
         ],
         "behavior": [
           {
+            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[0].player",
+            "value": "controller",
+            "unit": "ability:almanac-foresight",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].player",
+            "value": "opponent",
+            "unit": "ability:almanac-foresight",
+            "link": "ref"
+          },
+          {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "ownerOf",
             "unit": "ability:almanac-foresight",
@@ -790,6 +802,18 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[0].player",
+            "value": "controller",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[1].player",
+            "value": "opponent",
             "unit": "ability:scry",
             "link": "exclusive"
           },
@@ -2424,36 +2448,15 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-            "value": "forEachPlayer",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].chooser",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].declaration.selector.owner",
-            "value": "self",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "value": "any",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -2494,29 +2497,8 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-            "value": "forEachPlayer",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -2624,36 +2606,15 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-            "value": "forEachPlayer",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].chooser",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].declaration.selector.owner",
-            "value": "self",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "value": "any",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -2694,29 +2655,8 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-            "value": "forEachPlayer",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -2824,36 +2764,15 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-            "value": "forEachPlayer",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].chooser",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].declaration.selector.owner",
-            "value": "self",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "value": "any",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -2894,29 +2813,8 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-            "value": "forEachPlayer",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -3019,36 +2917,15 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-            "value": "forEachPlayer",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].chooser",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].declaration.selector.owner",
-            "value": "self",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "value": "any",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -3089,29 +2966,8 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-            "value": "forEachPlayer",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -3214,36 +3070,15 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1]",
-            "value": "forEachPlayer",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].chooser",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].declaration.selector.owner",
-            "value": "self",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[0].effects[2].declaration.selector.owner",
+            "value": "any",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -3284,29 +3119,8 @@
             "sharedWith": 5
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1]",
-            "value": "forEachPlayer",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].player",
-            "value": "controller",
-            "unit": "ability:modal",
-            "link": "shared",
-            "sharedWith": 5
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
+            "value": "activePlayer",
             "unit": "ability:modal",
             "link": "shared",
             "sharedWith": 5
@@ -4281,20 +4095,8 @@
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0]",
-            "value": "forEachPlayer",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[2].effects[0].player",
+            "value": "opponent",
             "unit": "ability:etb",
             "link": "exclusive"
           }
@@ -9138,6 +8940,18 @@
             "link": "exclusive"
           },
           {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[0].player",
+            "value": "controller",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[1].player",
+            "value": "opponent",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
             "path": "behavior.abilities[0].effects[0].effects[0].player",
             "value": "ownerOf",
             "unit": "ability:scry",
@@ -10118,20 +9932,8 @@
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0]",
-            "value": "forEachPlayer",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[2].effects[0].player",
+            "value": "opponent",
             "unit": "ability:etb",
             "link": "exclusive"
           }
@@ -19588,7 +19390,31 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].player",
+            "path": "behavior.abilities[0].effects[0].of",
+            "value": "opponent",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "value": "controller",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].of",
+            "value": "opponent",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].viewer",
+            "value": "controller",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "exclusive"
@@ -22070,6 +21896,13 @@
             "unit": "ability:no-fac-attack",
             "link": "shared",
             "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[1].preventsAttackOnFaction.attacker",
+            "value": "opponent",
+            "unit": "ability:no-fac-attack",
+            "link": "shared",
+            "sharedWith": 2
           }
         ]
       },
@@ -22094,6 +21927,13 @@
           {
             "path": "behavior.abilities[1].preventsAttackOnFaction.player",
             "value": "self",
+            "unit": "ability:no-fac-attack",
+            "link": "shared",
+            "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[1].preventsAttackOnFaction.attacker",
+            "value": "opponent",
             "unit": "ability:no-fac-attack",
             "link": "shared",
             "sharedWith": 2
@@ -22853,6 +22693,13 @@
             "unit": "ability:no-fac-attack",
             "link": "shared",
             "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].preventsAttackOnFaction.attacker",
+            "value": "opponent",
+            "unit": "ability:no-fac-attack",
+            "link": "shared",
+            "sharedWith": 2
           }
         ]
       },
@@ -22864,6 +22711,13 @@
           {
             "path": "behavior.abilities[0].preventsAttackOnFaction.player",
             "value": "self",
+            "unit": "ability:no-fac-attack",
+            "link": "shared",
+            "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].preventsAttackOnFaction.attacker",
+            "value": "opponent",
             "unit": "ability:no-fac-attack",
             "link": "shared",
             "sharedWith": 2
@@ -35971,13 +35825,6 @@
             "unit": "ability:not-my-problem",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].condition.left.selector.owner",
-            "value": "opponent",
-            "unit": "ability:not-my-problem",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -35989,13 +35836,6 @@
           {
             "path": "behavior.abilities[0].condition.left.selector.controller",
             "value": "self",
-            "unit": "ability:not-my-problem",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].condition.left.selector.owner",
-            "value": "opponent",
             "unit": "ability:not-my-problem",
             "link": "shared",
             "sharedWith": 2
@@ -38003,6 +37843,18 @@
         ],
         "behavior": [
           {
+            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[0].player",
+            "value": "controller",
+            "unit": "ability:almanac-foresight",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].player",
+            "value": "opponent",
+            "unit": "ability:almanac-foresight",
+            "link": "ref"
+          },
+          {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "ownerOf",
             "unit": "ability:almanac-foresight",
@@ -38820,6 +38672,18 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[0].player",
+            "value": "controller",
+            "unit": "ability:scry",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].conditions[1].player",
+            "value": "opponent",
             "unit": "ability:scry",
             "link": "exclusive"
           },
@@ -42114,20 +41978,8 @@
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0]",
-            "value": "forEachPlayer",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].condition.condition.player",
-            "value": "controller",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[2].effects[0].player",
+            "value": "opponent",
             "unit": "ability:etb",
             "link": "exclusive"
           }
@@ -45589,20 +45441,7 @@
             "at": 84
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[2].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:thunderhoof-disrupt",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:thunderhoof-disrupt",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -46341,13 +46180,6 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:alarm-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "value": "controller",
             "unit": "ability:alarm-play",
@@ -46362,22 +46194,22 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].condition.condition.player",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].player",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].player",
+            "value": "controller",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].controller",
+            "value": "controller",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
@@ -46401,13 +46233,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:alarm-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "value": "controller",
             "unit": "ability:alarm-play",
@@ -46422,22 +46247,22 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].condition.condition.player",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].player",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].player",
+            "value": "controller",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].effects[0].controller",
+            "value": "controller",
             "unit": "ability:alarm-play",
             "link": "shared",
             "sharedWith": 2
@@ -47013,12 +46838,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:ipsighast-exhume",
-            "link": "ref"
-          },
-          {
             "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
             "unit": "ability:ipsighast-exhume",
@@ -47165,13 +46984,6 @@
             "unit": "ability:giada-guard",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].replaces.by",
-            "value": "opponent",
-            "unit": "ability:giada-guard",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -47183,13 +46995,6 @@
           {
             "path": "behavior.abilities[1].replaces.controlledBy",
             "value": "self",
-            "unit": "ability:giada-guard",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].replaces.by",
-            "value": "opponent",
             "unit": "ability:giada-guard",
             "link": "shared",
             "sharedWith": 2
@@ -49541,21 +49346,45 @@
     "clauses": [
       {
         "key": "0:rule",
-        "mp": false,
+        "mp": true,
         "phrases": [],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       },
       {
         "key": "1:ability",
-        "mp": false,
+        "mp": true,
         "phrases": [],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       },
       {
         "key": "2:ability",
-        "mp": false,
+        "mp": true,
         "phrases": [],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       },
       {
         "key": "3:ability",
@@ -49572,19 +49401,43 @@
             "at": 84
           }
         ],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       },
       {
         "key": "4:rule:YOUR TRUE COLORS ARE REVEALED",
-        "mp": false,
+        "mp": true,
         "phrases": [],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       },
       {
         "key": "5:rule",
-        "mp": false,
+        "mp": true,
         "phrases": [],
-        "behavior": []
+        "behavior": [
+          {
+            "path": "faction.abilities[0].targets[0].selector.controller",
+            "value": "self",
+            "unit": "ability:slea-teamwork",
+            "link": "shared",
+            "sharedWith": 6
+          }
+        ]
       }
     ]
   },
@@ -49695,7 +49548,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:contiguous-defalcating-machine-toll",
             "link": "shared",
             "sharedWith": 4
@@ -49758,7 +49611,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:contiguous-defalcating-machine-toll",
             "link": "shared",
             "sharedWith": 4
@@ -49821,7 +49674,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:contiguous-defalcating-machine-toll",
             "link": "shared",
             "sharedWith": 4
@@ -49884,7 +49737,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:contiguous-defalcating-machine-toll",
             "link": "shared",
             "sharedWith": 4
@@ -50227,44 +50080,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-            "value": "opponent",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[2].chooser",
-            "value": "opponent",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[2].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ft-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[2].effects[0].effects[0].player",
-            "value": "opponent",
             "unit": "ability:ft-play",
             "link": "exclusive"
           }
@@ -50400,20 +50217,7 @@
             "at": 66
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].modifiers[0].value.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ms-scale",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[1].value.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ms-scale",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:ability:ms-follow",
@@ -50430,26 +50234,7 @@
             "at": 57
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:ms-follow",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ms-follow",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:ms-follow",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -50567,14 +50352,14 @@
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:neuralyzer-agent-faction-hit-discard",
             "link": "shared",
             "sharedWith": 2
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:neuralyzer-agent-faction-hit-discard",
             "link": "shared",
             "sharedWith": 2
@@ -50615,14 +50400,14 @@
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:neuralyzer-agent-faction-hit-discard",
             "link": "shared",
             "sharedWith": 2
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:neuralyzer-agent-faction-hit-discard",
             "link": "shared",
             "sharedWith": 2
@@ -50944,20 +50729,14 @@
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[2].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:council-pass",
-            "link": "ref"
-          },
-          {
             "path": "behavior.abilities[2].effects[1].chooser",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:council-pass",
             "link": "ref"
           },
           {
             "path": "behavior.abilities[2].effects[1].declaration.selector.owner",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:council-pass",
             "link": "ref"
           }
@@ -51079,14 +50858,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:undevoted-gargantuan-detach",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:undevoted-gargantuan-detach",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:undevoted-gargantuan-detach",
             "link": "exclusive"
           }
@@ -51118,18 +50903,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "exclusive"
-          },
           {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
@@ -51167,18 +50940,6 @@
           {
             "path": "behavior.abilities[0].costs[1]",
             "value": "otherPlayerChooses",
-            "unit": "ability:voidal-trinket-augur",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].costs[1].chooser",
-            "value": "opponent",
-            "unit": "ability:voidal-trinket-augur",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].costs[1].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:voidal-trinket-augur",
             "link": "ref"
           },
@@ -51702,14 +51463,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:hassan-i-death-toll",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:hassan-i-death-toll",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:hassan-i-death-toll",
             "link": "exclusive"
           }
@@ -52045,12 +51812,6 @@
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:nc-play",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[0].costs[0]",
             "value": "alternatingPay",
             "unit": "ability:nc-play",
@@ -52059,12 +51820,6 @@
           {
             "path": "behavior.abilities[0].costs[0].first",
             "value": "controller",
-            "unit": "ability:nc-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].costs[0].opponent",
-            "value": "opponent",
             "unit": "ability:nc-play",
             "link": "exclusive"
           }
@@ -52286,20 +52041,26 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:sw-play",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controller",
             "unit": "ability:sw-play",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].to.player",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
+            "value": "self",
+            "unit": "ability:sw-play",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].to.player",
+            "value": "controller",
             "unit": "ability:sw-play",
             "link": "exclusive"
           },
@@ -53084,18 +52845,6 @@
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[0].costs[1].chooser",
-            "value": "opponent",
-            "unit": "ability:mmm-release",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].costs[1].effects[0].controller",
-            "value": "opponent",
-            "unit": "ability:mmm-release",
-            "link": "ref"
-          },
-          {
             "path": "behavior.abilities[0].effects[0].controller",
             "value": "controller",
             "unit": "ability:mmm-release",
@@ -53297,12 +53046,6 @@
             "value": "opponent",
             "unit": "ability:rocket-lawnchair-no-eject",
             "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].condition.conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:rocket-lawnchair-no-eject",
-            "link": "ref"
           }
         ]
       },
@@ -53357,19 +53100,13 @@
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:runic-junker-start",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].declaration.selector.controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].effects[1].declaration.selector.controller",
             "value": "self",
             "unit": "ability:runic-junker-start",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].effects[0].effects[0].player",
+            "path": "behavior.abilities[0].effects[0].effects[0].effects[1].effects[0].effects[0].player",
             "value": "controller",
             "unit": "ability:runic-junker-start",
             "link": "exclusive"
@@ -53495,13 +53232,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:stuttershy-flipped-down",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].effects[1].chooser",
             "value": "controller",
             "unit": "ability:stuttershy-flipped-down",
@@ -53532,13 +53262,6 @@
             "path": "behavior.abilities[0].replaces.controlledBy",
             "value": "self",
             "unit": "ability:stuttershy-flinch",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:stuttershy-flipped-down",
             "link": "shared",
             "sharedWith": 2
           },
@@ -53809,20 +53532,7 @@
             "at": 16
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].grantsReveal.of",
-            "value": "opponent",
-            "unit": "ability:bottlebeard-topcard-public",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[1].condition.target.player",
-            "value": "opponent",
-            "unit": "ability:bottlebeard-scry-speed",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:ability:bottlebeard-chug",
@@ -53839,14 +53549,7 @@
             "at": 71
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[2].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:bottlebeard-chug",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -54044,12 +53747,6 @@
           {
             "path": "behavior.abilities[0].effects[0].selector.controller",
             "value": "self",
-            "unit": "ability:clockman-city-shuffle-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].selector.controller",
-            "value": "opponent",
             "unit": "ability:clockman-city-shuffle-play",
             "link": "exclusive"
           }
@@ -54516,18 +54213,6 @@
           {
             "path": "behavior.abilities[1].costs[2].effects[0].viewer",
             "value": "all",
-            "unit": "ability:sharpey-unfold",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[0].effects[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:sharpey-unfold",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[2].effects[1].selector.controller",
-            "value": "opponent",
             "unit": "ability:sharpey-unfold",
             "link": "ref"
           },
@@ -55347,12 +55032,6 @@
             "value": "self",
             "unit": "ability:confrontational-conflagration-play",
             "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].targets[1].selector.controller",
-            "value": "opponent",
-            "unit": "ability:confrontational-conflagration-play",
-            "link": "exclusive"
           }
         ]
       },
@@ -55576,13 +55255,6 @@
             "unit": "ability:fc-tick",
             "link": "shared",
             "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[2].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:fc-boom",
-            "link": "shared",
-            "sharedWith": 4
           }
         ]
       },
@@ -55595,13 +55267,6 @@
             "path": "behavior.abilities[1].condition.player",
             "value": "controller",
             "unit": "ability:fc-tick",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[2].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:fc-boom",
             "link": "shared",
             "sharedWith": 4
           }
@@ -55624,13 +55289,6 @@
             "unit": "ability:fc-tick",
             "link": "shared",
             "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[2].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:fc-boom",
-            "link": "shared",
-            "sharedWith": 4
           }
         ]
       },
@@ -55643,13 +55301,6 @@
             "path": "behavior.abilities[1].condition.player",
             "value": "controller",
             "unit": "ability:fc-tick",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[2].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:fc-boom",
             "link": "shared",
             "sharedWith": 4
           }
@@ -55729,20 +55380,7 @@
             "at": 11
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:juice-sale-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].targets[0].selector.conditions[0].among.controller",
-            "value": "opponent",
-            "unit": "ability:juice-sale-play",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:flipUp",
@@ -56392,12 +56030,6 @@
             "value": "controller",
             "unit": "ability:words-of-glory-play",
             "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].value.selector.controller",
-            "value": "opponent",
-            "unit": "ability:words-of-glory-play",
-            "link": "exclusive"
           }
         ]
       }
@@ -56835,14 +56467,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[3].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[3].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:bib-checkout",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[3].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[3].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:bib-checkout",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[3].effects[0].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:bib-checkout",
             "link": "ref"
           }
@@ -57206,13 +56844,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:profane-proposal",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
             "unit": "ability:profane-proposal",
@@ -57267,13 +56898,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:profane-proposal",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
@@ -57515,15 +57139,8 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].elseEffects[1].chooser",
+            "path": "behavior.abilities[0].effects[0].elseEffects[2].chooser",
             "value": "controller",
-            "unit": "ability:thabbashite-barbeque",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:thabbashite-barbeque",
             "link": "shared",
             "sharedWith": 2
@@ -57559,15 +57176,8 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].elseEffects[1].chooser",
+            "path": "behavior.abilities[0].effects[0].elseEffects[2].chooser",
             "value": "controller",
-            "unit": "ability:thabbashite-barbeque",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].elseEffects[1].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:thabbashite-barbeque",
             "link": "shared",
             "sharedWith": 2
@@ -59277,17 +58887,9 @@
     "clauses": [
       {
         "key": "0:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].modifiers[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:overworked-elf-crush",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:rule@eeeeee",
@@ -59299,15 +58901,7 @@
             "at": 30
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].modifiers[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:overworked-elf-crush",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:flipUp",
@@ -60178,13 +59772,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:subdermal-micromajig",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "value": "self",
             "unit": "ability:subdermal-micromajig",
@@ -60200,7 +59787,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:subdermal-micromajig",
             "link": "shared",
             "sharedWith": 2
@@ -60231,13 +59818,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:subdermal-micromajig",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].targets[1].selector.controller",
             "value": "self",
             "unit": "ability:subdermal-micromajig",
@@ -60253,7 +59833,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:subdermal-micromajig",
             "link": "shared",
             "sharedWith": 2
@@ -60590,13 +60170,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.onPlay.targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "value": "controller",
             "unit": "ability:cheats-etb",
@@ -60605,7 +60178,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:cheats-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60619,7 +60192,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].player",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:cheats-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60643,13 +60216,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.onPlay.targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "value": "controller",
             "unit": "ability:cheats-etb",
@@ -60658,7 +60224,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:cheats-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60672,7 +60238,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].player",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:cheats-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60714,22 +60280,8 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[2].chooser",
+            "path": "behavior.abilities[0].effects[0].effects[3].chooser",
             "value": "controller",
-            "unit": "ability:chum-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[2].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:chum-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[3].player",
-            "value": "opponent",
             "unit": "ability:chum-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60755,22 +60307,8 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[2].chooser",
+            "path": "behavior.abilities[0].effects[0].effects[3].chooser",
             "value": "controller",
-            "unit": "ability:chum-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[2].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:chum-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[3].player",
-            "value": "opponent",
             "unit": "ability:chum-etb",
             "link": "shared",
             "sharedWith": 2
@@ -60844,13 +60382,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-res",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
             "unit": "ability:craniata-nester-etb",
@@ -60861,27 +60392,6 @@
             "path": "behavior.abilities[1].effects[0].chooser",
             "value": "controller",
             "unit": "ability:craniata-nester-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[2].modifiers[0].value.selector.owner",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-grow",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[2].modifiers[1].value.selector.owner",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-grow",
             "link": "shared",
             "sharedWith": 2
           }
@@ -60913,13 +60423,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-res",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
             "unit": "ability:craniata-nester-etb",
@@ -60930,27 +60433,6 @@
             "path": "behavior.abilities[1].effects[0].chooser",
             "value": "controller",
             "unit": "ability:craniata-nester-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-etb",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[2].modifiers[0].value.selector.owner",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-grow",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[2].modifiers[1].value.selector.owner",
-            "value": "opponent",
-            "unit": "ability:craniata-nester-grow",
             "link": "shared",
             "sharedWith": 2
           }
@@ -61224,13 +60706,7 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:inebriated-defenestration",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].player",
+            "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
             "unit": "ability:inebriated-defenestration",
             "link": "exclusive"
@@ -61500,14 +60976,7 @@
             "at": 17
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].condition.conditions[1].left.selector.controller",
-            "value": "opponent",
-            "unit": "ability:thabb-urchin",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -61538,21 +61007,14 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].chooser",
+            "path": "behavior.abilities[0].effects[2].chooser",
             "value": "controller",
             "unit": "ability:theological-theft",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:theological-theft",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].controller",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
             "value": "controller",
             "unit": "ability:theological-theft",
             "link": "shared",
@@ -61584,21 +61046,14 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].chooser",
+            "path": "behavior.abilities[0].effects[2].chooser",
             "value": "controller",
             "unit": "ability:theological-theft",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:theological-theft",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].controller",
+            "path": "behavior.abilities[0].effects[2].effects[0].effects[0].controller",
             "value": "controller",
             "unit": "ability:theological-theft",
             "link": "shared",
@@ -61670,12 +61125,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[1].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:thieving-casino-cashout",
-            "link": "ref"
-          },
           {
             "path": "behavior.abilities[1].effects[0].controller",
             "value": "controller",
@@ -61808,14 +61257,7 @@
             "at": 77
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].modifiers[0].value.selector.owner",
-            "value": "opponent",
-            "unit": "ability:underdog",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -62051,13 +61493,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:gathering-heroes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "ownerOf",
             "unit": "ability:gathering-heroes",
@@ -62115,13 +61550,6 @@
           {
             "path": "behavior.abilities[0].condition.conditions[0].player",
             "value": "controller",
-            "unit": "ability:gathering-heroes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
             "unit": "ability:gathering-heroes",
             "link": "shared",
             "sharedWith": 2
@@ -62271,29 +61699,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].condition.left.selector.owner",
-            "value": "opponent",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].condition.right.selector.owner",
             "value": "self",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:blitz-of-destruction",
             "link": "shared",
             "sharedWith": 2
@@ -62312,29 +61719,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].condition.left.selector.owner",
-            "value": "opponent",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].condition.right.selector.owner",
             "value": "self",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:blitz-of-destruction",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:blitz-of-destruction",
             "link": "shared",
             "sharedWith": 2
@@ -62530,13 +61916,6 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:dizzying-blow",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
             "unit": "ability:dizzying-blow",
@@ -62550,13 +61929,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:dizzying-blow",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
@@ -62950,13 +62322,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[1].condition.conditions[3].player",
-            "value": "opponent",
-            "unit": "ability:tollbooth-toll",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].effects[0].player",
             "value": "controller",
             "unit": "ability:tollbooth-toll",
@@ -62994,13 +62359,6 @@
             "path": "behavior.abilities[0].effects[0].player",
             "value": "controllerOf",
             "unit": "ability:tollbooth-gate",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].condition.conditions[3].player",
-            "value": "opponent",
-            "unit": "ability:tollbooth-toll",
             "link": "shared",
             "sharedWith": 2
           },
@@ -63071,7 +62429,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[1].amount.else.values[0].selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:flip-it",
             "link": "ref"
           },
@@ -63252,13 +62610,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:suicide-smash",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[2].effects[0].player",
             "value": "controller",
             "unit": "ability:suicide-smash",
@@ -63288,13 +62639,6 @@
           {
             "path": "behavior.abilities[0].effects[0].condition.left.player",
             "value": "controller",
-            "unit": "ability:suicide-smash",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:suicide-smash",
             "link": "shared",
             "sharedWith": 2
@@ -64803,43 +64147,13 @@
             "at": 30
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.onPlay.effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.onPlay.effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.onPlay.effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.onPlay.effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -64866,29 +64180,13 @@
             "at": 68
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].variables.x.selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].variables.x.selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -65276,20 +64574,7 @@
             "at": 34
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].playRestrictions[0].player",
-            "value": "opponent",
-            "unit": "ability:seal",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].restrictReturnToHand.player",
-            "value": "opponent",
-            "unit": "ability:seal",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -65517,20 +64802,7 @@
             "at": 112
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:violate",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:violate",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:ability:blur",
@@ -65604,14 +64876,7 @@
             "at": 92
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].variables.x.selector.controller",
-            "value": "opponent",
-            "unit": "ability:veil",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -65694,13 +64959,13 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
-            "value": "ownerOf",
+            "value": "controllerOf",
             "unit": "ability:yank",
             "link": "exclusive"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:yank",
             "link": "exclusive"
           }
@@ -65733,14 +64998,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:haunt",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:haunt",
             "link": "exclusive"
           }
@@ -65962,27 +65221,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.modes[0].variables.x.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.modes[1].variables.x.selector.controller",
             "value": "self",
             "unit": "behavior.modes",
@@ -66016,27 +65254,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.modes[0].variables.x.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.modes[1].variables.x.selector.controller",
             "value": "self",
@@ -66088,13 +65305,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].condition.left.controlledBy",
             "value": "self",
             "unit": "ability:body",
@@ -66128,13 +65338,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[1].condition.left.controlledBy",
             "value": "self",
@@ -68066,20 +67269,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:leverage",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:leverage",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].grantedAbilities[0].abilities[0].condition.player",
             "value": "controller",
             "unit": "ability:upkeep",
@@ -68100,20 +67289,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].modifiers[0].value.values[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:leverage",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[1].value.values[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:leverage",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[1].grantedAbilities[0].abilities[0].condition.player",
             "value": "controller",
@@ -69946,14 +69121,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:grand-theft",
-            "link": "ref"
-          },
-          {
             "path": "behavior.abilities[0].targets[1].selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:grand-theft",
             "link": "ref"
           },
@@ -70093,12 +69262,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:betray",
-            "link": "ref"
-          },
           {
             "path": "behavior.abilities[0].effects[0].controller",
             "value": "controller",
@@ -70603,29 +69766,13 @@
             "at": 58
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -70712,14 +69859,7 @@
             "at": 36
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:flex",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -70750,13 +69890,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].condition.conditions[0].left.controlledBy",
             "value": "self",
             "unit": "ability:body",
@@ -70766,27 +69899,6 @@
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
-            "value": "opponent",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -70817,13 +69929,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].condition.conditions[0].left.controlledBy",
             "value": "self",
             "unit": "ability:body",
@@ -70833,27 +69938,6 @@
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[2].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[3].effects[0].player",
-            "value": "opponent",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -71552,20 +70636,6 @@
             "unit": "ability:leave",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:leave",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:leave",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -71616,20 +70686,6 @@
           {
             "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
             "value": "self",
-            "unit": "ability:leave",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:leave",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:leave",
             "link": "shared",
             "sharedWith": 2
@@ -71847,14 +70903,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[2].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[2].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:convert",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[2].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:convert",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[2].effects[0].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:convert",
             "link": "ref"
           },
@@ -72124,14 +71186,7 @@
             "at": 0
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].playRestrictions[0].player",
-            "value": "opponent",
-            "unit": "ability:curfew",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -72269,12 +71324,6 @@
           {
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "value": "self",
-            "unit": "ability:get-in-there",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].target.player",
-            "value": "opponent",
             "unit": "ability:get-in-there",
             "link": "ref"
           }
@@ -72912,13 +71961,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:detonate",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].effects[0].options[1].effects[0].chooser",
             "value": "controller",
             "unit": "ability:detonate",
@@ -72949,13 +71991,6 @@
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:detonate",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].options[0].effects[0].selector.controller",
-            "value": "opponent",
             "unit": "ability:detonate",
             "link": "shared",
             "sharedWith": 2
@@ -73161,19 +72196,7 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:recur",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:recur",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[1].player",
+            "path": "behavior.abilities[1].effects[2].player",
             "value": "controller",
             "unit": "ability:recur",
             "link": "ref"
@@ -73320,29 +72343,13 @@
             "at": 94
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].conditions[1].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.conditions[0].conditions[1].conditions[1].player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:ability:recur",
@@ -73543,36 +72550,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -73626,36 +72605,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -73703,36 +72654,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -73784,18 +72707,6 @@
             "value": "controller",
             "unit": "ability:body",
             "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "exclusive"
           }
         ]
       }
@@ -73821,13 +72732,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "controller",
             "unit": "ability:body",
@@ -73836,14 +72740,14 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -73863,13 +72767,6 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "controller",
             "unit": "ability:body",
@@ -73878,14 +72775,14 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -73934,12 +72831,6 @@
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:defile",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:defile",
             "link": "ref"
           }
@@ -74027,12 +72918,6 @@
             "value": "controller",
             "unit": "ability:recur",
             "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:recur",
-            "link": "ref"
           }
         ]
       }
@@ -74060,13 +72945,6 @@
           {
             "path": "behavior.abilities[0].targets[0].selector.owner",
             "value": "self",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].chooser",
-            "value": "opponent",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -74106,13 +72984,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].chooser",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].effects[0].controller",
             "value": "controller",
             "unit": "ability:body",
@@ -74140,24 +73011,9 @@
     "clauses": [
       {
         "key": "0:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:option:OPTION 1",
@@ -74169,64 +73025,19 @@
             "at": 12
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:option:OPTION 2",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "3:option:OPTION 3",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.modes[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -74293,12 +73104,6 @@
             "value": "controller",
             "unit": "ability:denounce",
             "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:denounce",
-            "link": "ref"
           }
         ]
       }
@@ -74324,7 +73129,19 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].player",
+            "path": "behavior.abilities[0].effects[0].viewer",
+            "value": "controller",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].viewer",
+            "value": "controller",
+            "unit": "ability:body",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "exclusive"
@@ -74555,20 +73372,7 @@
             "at": 53
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:tickle",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:tickle",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -74632,18 +73436,6 @@
           {
             "path": "behavior.abilities[0].condition.conditions[2].player",
             "value": "controller",
-            "unit": "ability:toll",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:toll",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:toll",
             "link": "exclusive"
           }
@@ -75892,12 +74684,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:perturb",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
             "unit": "ability:perturb",
@@ -75925,20 +74711,7 @@
             "at": 28
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -75991,71 +74764,22 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].condition.player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[0].player",
-            "value": "controller",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[1].left.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
@@ -76068,71 +74792,22 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].condition.player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[0].player",
-            "value": "controller",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[1].left.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
@@ -76216,20 +74891,7 @@
             "at": 0
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:ability:recur",
@@ -76241,20 +74903,7 @@
             "at": 122
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:recur",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:recur",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -76380,13 +75029,6 @@
             "unit": "ability:tgb-end",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].controller",
-            "value": "opponent",
-            "unit": "ability:tgb-start",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -76426,13 +75068,6 @@
             "path": "behavior.abilities[0].effects[2].declaration.selector.controller",
             "value": "self",
             "unit": "ability:tgb-end",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].controller",
-            "value": "opponent",
-            "unit": "ability:tgb-start",
             "link": "shared",
             "sharedWith": 2
           }
@@ -77016,15 +75651,7 @@
             "at": 0
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].searchTax.player",
-            "value": "opponent",
-            "unit": "ability:red-tape",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:rule",
@@ -77036,15 +75663,7 @@
             "at": 0
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].searchTax.player",
-            "value": "opponent",
-            "unit": "ability:red-tape",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:flipUp",
@@ -77441,13 +76060,13 @@
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[3].effects[0].condition.condition.player",
-            "value": "controller",
+            "path": "behavior.abilities[1].effects[3].except",
+            "value": "ownerOf",
             "unit": "ability:hide",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[3].effects[0].effects[0].player",
+            "path": "behavior.abilities[1].effects[3].effects[0].player",
             "value": "controller",
             "unit": "ability:hide",
             "link": "ref"
@@ -78136,18 +76755,6 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:body",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.conditions[0].among.controller",
-            "value": "opponent",
             "unit": "ability:body",
             "link": "exclusive"
           }
@@ -79031,19 +77638,13 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].controller",
+            "path": "behavior.abilities[0].effects[1].controller",
             "value": "controller",
             "unit": "ability:leaves",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].count.values[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:leaves",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].count.values[1].values[0].selector.controller",
+            "path": "behavior.abilities[0].effects[1].count.values[1].values[0].selector.controller",
             "value": "self",
             "unit": "ability:leaves",
             "link": "exclusive"
@@ -79564,20 +78165,6 @@
             "unit": "ability:mire",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:mire",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].suppressAllAbilities.selector.controller",
-            "value": "opponent",
-            "unit": "ability:silence",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -79610,20 +78197,6 @@
             "path": "behavior.abilities[0].effects[0].effects[0].chooser",
             "value": "controller",
             "unit": "ability:mire",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:mire",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].suppressAllAbilities.selector.controller",
-            "value": "opponent",
-            "unit": "ability:silence",
             "link": "shared",
             "sharedWith": 2
           }
@@ -80231,12 +78804,6 @@
             "value": "controller",
             "unit": "ability:micromajig-apocalypse",
             "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].count.selector.controller",
-            "value": "opponent",
-            "unit": "ability:micromajig-apocalypse",
-            "link": "ref"
           }
         ]
       }
@@ -80373,13 +78940,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.onPlay.targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.onPlay.effects[0].effects[0].controller",
             "value": "controller",
             "unit": "behavior.onPlay",
@@ -80393,13 +78953,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.onPlay.targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.onPlay.effects[0].effects[0].controller",
             "value": "controller",
@@ -80801,20 +79354,6 @@
             "sharedWith": 4
           },
           {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].effects[1].player",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
             "path": "behavior.modes[2].effects[0].condition.by",
             "value": "any",
             "unit": "behavior.modes",
@@ -80842,20 +79381,6 @@
             "sharedWith": 4
           },
           {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].effects[1].player",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
             "path": "behavior.modes[2].effects[0].condition.by",
             "value": "any",
             "unit": "behavior.modes",
@@ -80877,20 +79402,6 @@
             "sharedWith": 4
           },
           {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].effects[1].player",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
             "path": "behavior.modes[2].effects[0].condition.by",
             "value": "any",
             "unit": "behavior.modes",
@@ -80907,20 +79418,6 @@
           {
             "path": "behavior.modes[0].effects[0].chooser",
             "value": "controller",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "behavior.modes",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.modes[0].effects[0].effects[1].player",
-            "value": "opponent",
             "unit": "behavior.modes",
             "link": "shared",
             "sharedWith": 4
@@ -81588,22 +80085,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[1].effects[0].chooser",
+            "path": "behavior.abilities[1].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[1].player",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -81616,15 +80099,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[2].effects[0].chooser",
+            "path": "behavior.abilities[2].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t7",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t7",
             "link": "shared",
             "sharedWith": 3
@@ -81664,22 +80140,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[1].effects[0].chooser",
+            "path": "behavior.abilities[1].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[1].player",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -81692,15 +80154,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[2].effects[0].chooser",
+            "path": "behavior.abilities[2].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t7",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t7",
             "link": "shared",
             "sharedWith": 3
@@ -81740,22 +80195,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[1].effects[0].chooser",
+            "path": "behavior.abilities[1].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:t5",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].effects[1].player",
-            "value": "opponent",
             "unit": "ability:t5",
             "link": "shared",
             "sharedWith": 3
@@ -81768,15 +80209,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[2].effects[0].chooser",
+            "path": "behavior.abilities[2].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:t7",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:t7",
             "link": "shared",
             "sharedWith": 3
@@ -81861,18 +80295,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:milkshake-play",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].player",
-            "value": "opponent",
-            "unit": "ability:milkshake-play",
-            "link": "exclusive"
-          },
           {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "opponent",
@@ -82383,13 +80805,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[1].player",
             "value": "controller",
             "unit": "ability:body",
@@ -82403,13 +80818,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].player",
             "value": "controller",
@@ -82447,13 +80855,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:peculate-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].controller",
             "value": "controller",
             "unit": "ability:peculate-play",
@@ -82467,13 +80868,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:peculate-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[0].controller",
             "value": "controller",
@@ -82511,13 +80905,7 @@
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:size-up",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
             "value": "controller",
             "unit": "ability:size-up",
             "link": "ref"
@@ -82538,12 +80926,6 @@
           {
             "path": "behavior.abilities[1].effects[0].options[0].effects[0].target.player",
             "value": "controller",
-            "unit": "ability:rig",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:rig",
             "link": "ref"
           }
@@ -82738,20 +81120,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].player",
-            "value": "opponent",
             "unit": "ability:etb",
             "link": "exclusive"
           }
@@ -82813,13 +81183,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:smother-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:smother-play",
@@ -82828,7 +81191,7 @@
           },
           {
             "path": "behavior.abilities[0].costs[0].value.target.player",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:smother-play",
             "link": "shared",
             "sharedWith": 2
@@ -82842,7 +81205,7 @@
           },
           {
             "path": "behavior.abilities[0].costs[2].effects[0].target.player",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:smother-play",
             "link": "shared",
             "sharedWith": 2
@@ -82862,13 +81225,6 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:smother-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:smother-play",
@@ -82877,7 +81233,7 @@
           },
           {
             "path": "behavior.abilities[0].costs[0].value.target.player",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:smother-play",
             "link": "shared",
             "sharedWith": 2
@@ -82891,7 +81247,7 @@
           },
           {
             "path": "behavior.abilities[0].costs[2].effects[0].target.player",
-            "value": "opponent",
+            "value": "controllerOf",
             "unit": "ability:smother-play",
             "link": "shared",
             "sharedWith": 2
@@ -82971,13 +81327,6 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:body",
@@ -82998,13 +81347,6 @@
         "mp": true,
         "phrases": [],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
@@ -83151,12 +81493,6 @@
             "value": "controller",
             "unit": "ability:you-know-you-want-to",
             "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[1].controller",
-            "value": "opponent",
-            "unit": "ability:you-know-you-want-to",
-            "link": "ref"
           }
         ]
       },
@@ -83292,15 +81628,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 3
@@ -83347,15 +81676,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 3
@@ -83396,15 +81718,8 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[0].effects[0].effects[1].controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 3
@@ -84419,14 +82734,7 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].player",
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "shared",
@@ -84453,14 +82761,7 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].player",
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "shared",
@@ -84553,20 +82854,6 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[1].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:ondeath",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].targets[0].count.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ondeath",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[1].effects[1].chooser",
             "value": "controller",
             "unit": "ability:ondeath",
@@ -84590,20 +82877,6 @@
             "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
             "unit": "ability:onblock",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].targets[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:ondeath",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[1].targets[0].count.selector.controller",
-            "value": "opponent",
-            "unit": "ability:ondeath",
             "link": "shared",
             "sharedWith": 2
           },
@@ -84680,13 +82953,6 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
             "unit": "ability:t5",
@@ -84736,13 +83002,6 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
             "unit": "ability:t5",
@@ -84787,13 +83046,6 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:t3",
             "link": "shared",
             "sharedWith": 3
@@ -84954,35 +83206,42 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].value.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].value.selector.controller",
+            "value": "self",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
+            "value": "controller",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[3].player",
+            "path": "behavior.abilities[0].effects[0].effects[2].effects[0].selector.controller",
+            "value": "self",
+            "unit": "ability:epic-smackdown",
+            "link": "shared",
+            "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:epic-smackdown",
             "link": "shared",
@@ -85014,35 +83273,42 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].value.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].value.selector.controller",
+            "value": "self",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
+            "value": "controller",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:epic-smackdown",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[3].player",
+            "path": "behavior.abilities[0].effects[0].effects[2].effects[0].selector.controller",
+            "value": "self",
+            "unit": "ability:epic-smackdown",
+            "link": "shared",
+            "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:epic-smackdown",
             "link": "shared",
@@ -85120,14 +83386,7 @@
             "at": 74
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:charge",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -85147,17 +83406,9 @@
       },
       {
         "key": "1:rule",
-        "mp": true,
+        "mp": false,
         "phrases": [],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].influenceModifiers[0].player",
-            "value": "opponent",
-            "unit": "ability:amplify",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:rule",
@@ -85169,15 +83420,7 @@
             "at": 5
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].influenceModifiers[0].player",
-            "value": "opponent",
-            "unit": "ability:amplify",
-            "link": "shared",
-            "sharedWith": 2
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -85587,7 +83830,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].amount.else.values[0].selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -85635,7 +83878,7 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].amount.else.values[0].selector.controller",
-            "value": "opponent",
+            "value": "ownerOf",
             "unit": "ability:body",
             "link": "shared",
             "sharedWith": 2
@@ -85734,13 +83977,6 @@
             "unit": "ability:clawback",
             "link": "shared",
             "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[3].replaces.by",
-            "value": "opponent",
-            "unit": "ability:clawback",
-            "link": "shared",
-            "sharedWith": 4
           }
         ]
       },
@@ -85769,13 +84005,6 @@
             "unit": "ability:clawback",
             "link": "shared",
             "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[3].replaces.by",
-            "value": "opponent",
-            "unit": "ability:clawback",
-            "link": "shared",
-            "sharedWith": 4
           }
         ]
       },
@@ -85801,13 +84030,6 @@
           {
             "path": "behavior.abilities[3].replaces.controlledBy",
             "value": "self",
-            "unit": "ability:clawback",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[3].replaces.by",
-            "value": "opponent",
             "unit": "ability:clawback",
             "link": "shared",
             "sharedWith": 4
@@ -85842,13 +84064,6 @@
           {
             "path": "behavior.abilities[3].replaces.controlledBy",
             "value": "self",
-            "unit": "ability:clawback",
-            "link": "shared",
-            "sharedWith": 4
-          },
-          {
-            "path": "behavior.abilities[3].replaces.by",
-            "value": "opponent",
             "unit": "ability:clawback",
             "link": "shared",
             "sharedWith": 4
@@ -85888,14 +84103,7 @@
             "at": 36
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:fly-away",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:flipUp",
@@ -85933,12 +84141,6 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:bombard",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:bombard",
             "link": "exclusive"
           }
@@ -86002,14 +84204,7 @@
             "at": 63
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "1:flipUp",
@@ -87699,14 +85894,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[1].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:recur",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].effects[0].declaration.selector.owner",
+            "value": "self",
             "unit": "ability:recur",
             "link": "ref"
           },
@@ -87893,14 +86094,7 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].player",
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "shared",
@@ -87927,14 +86121,7 @@
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].player",
+            "path": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[2].player",
             "value": "controller",
             "unit": "ability:body",
             "link": "shared",
@@ -88102,14 +86289,7 @@
             "at": 29
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:spite",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -88170,20 +86350,7 @@
             "at": 84
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[2].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:thunderhoof-disrupt",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:thunderhoof-disrupt",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -88222,13 +86389,6 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:t3",
             "link": "shared",
             "sharedWith": 3
@@ -88283,13 +86443,6 @@
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
             "path": "behavior.abilities[1].condition.conditions[0].player",
             "value": "controller",
             "unit": "ability:t5",
@@ -88334,13 +86487,6 @@
           {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:t3",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
-            "value": "opponent",
             "unit": "ability:t3",
             "link": "shared",
             "sharedWith": 3
@@ -88433,14 +86579,7 @@
             "at": 56
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.onPlay.condition.player",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -88498,12 +86637,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:engorged-sarcophyle-lava",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[0].effects[0].chooser",
             "value": "ownerOf",
             "unit": "ability:engorged-sarcophyle-lava",
@@ -88541,12 +86674,6 @@
           {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "controller",
-            "unit": "ability:enlightened-sarcophyle-horror",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].player",
-            "value": "opponent",
             "unit": "ability:enlightened-sarcophyle-horror",
             "link": "exclusive"
           }
@@ -88662,12 +86789,6 @@
           {
             "path": "behavior.abilities[0].effects[0].replaces.controlledBy",
             "value": "self",
-            "unit": "ability:escort-ally-substitute",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].replaces.by",
-            "value": "opponent",
             "unit": "ability:escort-ally-substitute",
             "link": "ref"
           }
@@ -88893,12 +87014,6 @@
           {
             "path": "behavior.abilities[0].targets[0].selector.controller",
             "value": "self",
-            "unit": "ability:finger-explosive-pull",
-            "link": "ref"
-          },
-          {
-            "path": "behavior.abilities[0].targets[1].selector.controller",
-            "value": "opponent",
             "unit": "ability:finger-explosive-pull",
             "link": "ref"
           }
@@ -89307,13 +87422,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "ownerOf",
             "unit": "ability:body",
@@ -89347,13 +87455,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:body",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[0].player",
             "value": "ownerOf",
@@ -89467,14 +87568,7 @@
             "at": 28
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].player",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -89561,12 +87655,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:ipsighast-exhume",
-            "link": "ref"
-          },
           {
             "path": "behavior.abilities[0].effects[2].chooser",
             "value": "controller",
@@ -89756,14 +87844,20 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:behemoth-deployed",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controller",
+            "unit": "ability:behemoth-deployed",
+            "link": "exclusive"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:behemoth-deployed",
             "link": "exclusive"
           }
@@ -90559,14 +88653,7 @@
             "at": 42
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.onPlay.targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "behavior.onPlay",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -90691,14 +88778,7 @@
             "at": 34
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[1].targets[0].selector.owner",
-            "value": "opponent",
-            "unit": "ability:fly-away",
-            "link": "ref"
-          }
-        ]
+        "behavior": []
       },
       {
         "key": "2:flipUp",
@@ -90863,20 +88943,6 @@
             "unit": "behavior.onPlay",
             "link": "shared",
             "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:inquisit",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:inquisit",
-            "link": "shared",
-            "sharedWith": 2
           }
         ]
       },
@@ -90900,20 +88966,6 @@
             "path": "behavior.onPlay.targets[0].selector.owner",
             "value": "self",
             "unit": "behavior.onPlay",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:inquisit",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:inquisit",
             "link": "shared",
             "sharedWith": 2
           }
@@ -91125,71 +89177,22 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].condition.player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[0].player",
-            "value": "controller",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[1].left.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
@@ -91202,71 +89205,22 @@
         "phrases": [],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].condition.player",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].chooser",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].chooser",
-            "value": "controller",
+            "path": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
           },
           {
-            "path": "behavior.abilities[0].effects[0].effects[0].effects[0].declaration.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].condition.player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[0].player",
-            "value": "controller",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[0].conditions[1].left.selector.controller",
-            "value": "self",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:redonkulous",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[1].condition.left.selector.controller",
+            "value": "controllerOf",
             "unit": "ability:redonkulous",
             "link": "shared",
             "sharedWith": 2
@@ -91334,50 +89288,14 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].condition.left.player",
-            "value": "controller",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[0].effects[2].condition.left.player",
             "value": "controller",
             "unit": "ability:double-monkey",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].effects[2].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:double-monkey",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].effects[2].effects[0].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[0].effects[3].condition.left.player",
+            "value": "controller",
             "unit": "ability:double-monkey",
             "link": "exclusive"
           }
@@ -91898,26 +89816,7 @@
             "at": 11
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].modifiers[0].selector.controller",
-            "value": "opponent",
-            "unit": "ability:temple-drain",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[1].selector.controller",
-            "value": "opponent",
-            "unit": "ability:temple-drain",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[0].modifiers[2].selector.controller",
-            "value": "opponent",
-            "unit": "ability:temple-drain",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -92097,14 +89996,7 @@
             "at": 0
           }
         ],
-        "behavior": [
-          {
-            "path": "behavior.abilities[0].attackTax.player",
-            "value": "opponent",
-            "unit": "ability:toll",
-            "link": "exclusive"
-          }
-        ]
+        "behavior": []
       }
     ]
   },
@@ -92172,36 +90064,15 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].options[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
@@ -92225,36 +90096,15 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].options[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
@@ -92273,36 +90123,15 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].chooser",
             "value": "controller",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
           },
           {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].chooser",
+            "path": "behavior.abilities[0].effects[1].options[0].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[0].effects[0].declaration.selector.owner",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:etb",
-            "link": "shared",
-            "sharedWith": 3
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
-            "value": "opponent",
             "unit": "ability:etb",
             "link": "shared",
             "sharedWith": 3
@@ -92485,20 +90314,6 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",
             "unit": "ability:violating-ritual-play",
@@ -92518,20 +90333,6 @@
           }
         ],
         "behavior": [
-          {
-            "path": "behavior.abilities[0].effects[0].chooser",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
-          {
-            "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
-            "value": "opponent",
-            "unit": "ability:violating-ritual-play",
-            "link": "shared",
-            "sharedWith": 2
-          },
           {
             "path": "behavior.abilities[0].effects[1].player",
             "value": "controller",

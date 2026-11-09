@@ -32,7 +32,7 @@ There is one file per set: `<set id>.json`. Writers work set by set.
         { "phrase": "<printed words>", "at": <offset from the inventory>, "meaning": "<meaning id below>", "note": "<optional>" }
       ],
       "dataChanges": [
-        { "path": "<behavior path, from the inventory when it lists one>", "now": "<current value>", "meaning": "<meaning id>", "edit": true, "why": "<optional>" }
+        { "path": "<behavior path, from the inventory when it lists one>", "movedTo": "<optional: where the site is after a data edit moved it>", "now": "<current value>", "meaning": "<meaning id>", "edit": true, "why": "<optional>" }
       ],
       "test3": "<what a 3-seat test asserts: name P1 (controller), P2 (left of P1), P3; who is affected, who is not, which choices appear>",
       "test4": "<required when a reading is eachOpponent / eachPlayer / eachOtherPlayer / selfAndEachOpponent / eachOpponentOfSelf: what a 4th seat does. Optional elsewhere, when a 4-seat run adds something to test3>",
@@ -64,7 +64,8 @@ There is one file per set: `<set id>.json`. Writers work set by set.
     selector, a pick step inserted before an effect) names that node and records
     its stored JSON; the `why` says what is added.
   - A path that does not exist yet (no `costs` field, no `faction.abilities`)
-    keeps `now: null`, and the `why` says so.
+    keeps `now: null`, and the `why` says so. See "Moved sites and new nodes"
+    below.
 - **`unchanged`** — no `dataChanges` entry has `edit: true`. The clause
   behaves identically at every table size. Its
   player words are only `self` / controller / owner of a specific card, or it
@@ -119,6 +120,67 @@ One rule per kind of site, applied the same way in every set. The flag belongs t
   share a site, the pick clause ("Pick an opponent") owns it.
 - **Readings the inventory did not detect** ("any deck", "opposing", "all
   factions") use their offset in the printed text.
+
+### Moved sites and new nodes
+
+A data edit can change where a site lives, or add a node that has no site yet.
+Both are recorded in the spec, never by rewriting `path` or `now`.
+
+**`movedTo`.** Add `"movedTo": "<new path>"` to a `dataChanges` entry when the
+edit moved the site: a pick step inserted before it, a wrapper (`forEachPlayer`)
+added around it, a cost step replaced by a converted node. `path` and `now` keep
+describing the site as it was before the edit.
+
+- The gate reads the value at `movedTo` and judges it exactly as it would at `path`.
+  The original `path` may be gone or hold something else.
+- `movedTo` must exist in the card's data. A path that does not exist is a failure
+  (`movedTo <path> does not exist in the card`), for `edit: true` and `edit: false`
+  alike.
+- `edit: false` with `movedTo`: the value at `movedTo` must still be `now`.
+- `edit: true` with `movedTo` and a `now` that is a player word or `forEachPlayer`:
+  never pending (you declared the edit done); the value at `movedTo` must be a valid
+  form for the meaning (table below). `"opponent"` left under a
+  `forEachPlayer { players: "opponents" }` wrapper is valid for `eachOpponent`.
+  Any other `now` (a flag, a number, node JSON): pending while the value at `movedTo`
+  is still `now`, done once it differs.
+- `movedTo` may point to an ability's (or `onPlay`'s) `playerChoices[n]` entry. A
+  "pick an opponent" cost step cannot ask a question, so the player choice
+  `{ id, from: "opponents" }`, read back with `{ type: "chosenPlayer", id }`, stands
+  in for it. Accepted for `anyOneOpponent`, `chosenOpponent` and `refersBack` (the
+  meanings `chosenPlayer` satisfies), when the entry has an `id`, `from` is
+  `"opponents"` (`refersBack` also takes `"players"`), and a `chosenPlayer` with that
+  `id` appears somewhere inside the same ability (or `onPlay`).
+- `movedTo` may point to a converted node, for example an `otherPlayerChooses` cost
+  whose `chooser` / selector children were converted. The node is valid when at least
+  one player field inside it (`chooser`, `player`, `controller`, `owner`, ...) holds a
+  valid form for the meaning, and none still holds the recorded `now` word.
+- The spec-gap check treats `movedTo` as listed, and every inventory word at or
+  inside a `movedTo` node as listed. An inventory word that moved with its site
+  therefore needs no second entry.
+
+**New nodes (`now: null`).** A wrapper, step or field that does not exist yet is an
+`edit: true` entry with `now: null`; `path` is where the new node will be (its real
+path; use `movedTo` only if the node ends up elsewhere).
+
+- It is **pending** while that path is missing or does not hold a valid form for the
+  meaning, and **done** as soon as it does. It never depends on any earlier run or file:
+  the verdict comes from the spec and the card data alone.
+- Valid forms: for an iteration meaning (`eachOpponent`, `eachPlayer`,
+  `eachOtherPlayer`, `chosenPair`, `selfAndEachOpponent`, `other`) a `forEachPlayer` with
+  the right `players` (see the table below); an `opponentFrom` path holds `"acting"`;
+  for a meaning read through player references (`anyOneOpponent`, `chosenOpponent`,
+  `refersBack`, `cardRelative`) a form from the table, a `playerChoices` entry as above,
+  or a node holding converted player fields as above (a new cost step, a new ability).
+  A meaning the gate does not constrain is done once the path exists.
+- List the new wrapper at its real path (`now: null`) and the site it wraps by its old
+  `path` plus `movedTo`; the spec-gap check needs both.
+- A wrong value never turns a new node into a failure: it just stays pending.
+- `now` of every other `edit: true` entry must be the stored value (a word, flag,
+  number, node JSON or list); prose is rejected.
+
+The worklist (`mp-worklist.json`) is regenerated from the spec and the data only, so
+rerunning `npm run card-tests -- mp-worklist` gives the same file, and a done site
+never returns to the queue. A pending entry that has `movedTo` lists it.
 
 ### Target forms the gate accepts
 

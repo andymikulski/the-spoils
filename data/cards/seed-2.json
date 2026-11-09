@@ -416,7 +416,8 @@
                   "count": 6,
                   "to": "removed"
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -8684,7 +8685,7 @@
               "type": "count",
               "selector": {
                 "controller": "self",
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "character"
               }

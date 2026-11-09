@@ -1472,6 +1472,19 @@ const cards = [
           "type": "activated",
           "effects": [
             {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "hand",
+              "viewer": "controller"
+            },
+            {
+              "type": "reveal",
+              "of": "opponent",
+              "zone": "deckTop",
+              "count": 1,
+              "viewer": "controller"
+            },
+            {
               "type": "draw",
               "player": "controller",
               "amount": 1
@@ -2535,7 +2548,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2599,7 +2613,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2638,7 +2653,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -2678,13 +2694,15 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -3526,7 +3544,8 @@ const cards = [
                     "id": "n"
                   }
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -4725,10 +4744,15 @@ const cards = [
           "searchTax": {
             "player": "opponent",
             "amount": 2
-          },
+          }
+        },
+        {
+          "id": "red-tape-abilities",
+          "type": "continuous",
+          "modifiers": [],
           "abilityCostModifiers": [
             {
-              "scope": "opponentCharacters",
+              "scope": "chosenOpponentCharacters",
               "delta": 2
             }
           ]
@@ -5366,7 +5390,8 @@ const cards = [
           "type": "continuous",
           "modifiers": [],
           "preventsAttackOnFaction": {
-            "player": "self"
+            "player": "self",
+            "attacker": "opponent"
           }
         }
       ]
@@ -6684,7 +6709,8 @@ const cards = [
           "type": "continuous",
           "modifiers": [],
           "preventsAttackOnFaction": {
-            "player": "self"
+            "player": "self",
+            "attacker": "opponent"
           }
         },
         {
@@ -12018,7 +12044,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ],
                   "elseEffects": [
@@ -12049,7 +12076,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }

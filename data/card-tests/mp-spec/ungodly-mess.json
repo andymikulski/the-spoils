@@ -360,7 +360,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "the controller picks one opponent when the trigger resolves, then looks at only that player's hand and chooses a card in it; a selector that matches every opponent's hand at once would let the controller see and choose across several hands"
+            "why": "the controller picks one opponent when the trigger resolves, then looks at only that player's hand and chooses a card in it; a selector that matches every opponent's hand at once would let the controller see and choose across several hands",
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "Voidal Bask (P1) leaves play. A choice offers P2 and P3 to P1. P1 picks P3: P1 sees P3's hand (and not P2's) and chooses one card in it; P3 discards that card. P2's hand is unchanged and stays hidden from P1. Second run picking P2: only P2's hand is looked at and P2 discards the chosen card."
@@ -1194,14 +1195,16 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].declaration.selector.controller"
           }
         ],
         "test3": "P1 deploys Big McLargehuge: the extra cost destroys 2 resources P1 controls (chosen at random from P1's resources); P2's and P3's resources are untouched."
@@ -1229,14 +1232,16 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "the player who destroys is the picked opponent (\"that player destroys\"); the option needs its own pick of one opponent (made when the option is chosen)"
+            "why": "the player who destroys is the picked opponent (\"that player destroys\"); the option needs its own pick of one opponent (made when the option is chosen)",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "the face-down resources are the picked opponent's; the option needs its own pick of one opponent"
+            "why": "the face-down resources are the picked opponent's; the option needs its own pick of one opponent",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].declaration.selector.controller"
           }
         ],
         "test3": "Big McLargehuge leaves play. P1 chooses the option \"pick an opponent\": the pick offers P2 and P3. P1 picks P3: P3 (not P2) chooses and destroys a face-down resource P3 controls; P2's resources are unchanged. Choosing the other option (\"play a resource\") offers no opponent pick. A second run picking P2 affects only P2."
@@ -1314,14 +1319,23 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "each opponent makes their own choice; today a single chooser stands in for one opponent, so the effect needs one repetition per opponent still in the game"
+            "why": "each opponent makes their own choice; today a single chooser stands in for one opponent, so the effect needs one repetition per opponent still in the game",
+            "movedTo": "behavior.abilities[2].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "each opponent destroys a character that opponent controls; one repetition per opponent"
+            "why": "each opponent destroys a character that opponent controls; one repetition per opponent",
+            "movedTo": "behavior.abilities[2].effects[0].effects[0].declaration.selector.controller"
+          },
+          {
+            "path": "behavior.abilities[2].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "New node: the chooserSelectsTarget is wrapped in forEachPlayer { players: \"opponents\" } so each opponent makes their own choice (the chooser and the selector controller inside it are the iterated player)."
           }
         ],
         "test3": "P1 activates CONVERT on P1's turn (pays 1, removes a token, destroys one of P1's own non-micromajig characters). P2 destroys a character P2 controls and P3 destroys a character P3 controls, each chosen by that player in that order; a player with no character destroys nothing; P1 is not asked beyond the cost. The choice lists contain only the deciding player's own characters.",
@@ -1379,7 +1393,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"an opponent's faction\": no pick word in the sentence, so P1 chooses one opponent when the effect resolves"
+            "why": "\"an opponent's faction\": no pick word in the sentence, so P1 chooses one opponent when the effect resolves",
+            "movedTo": "behavior.abilities[0].effects[2].target.player"
           }
         ],
         "test3": "P1's attacking character is blocked by a P2 character while P3 also exists. P1 activates GET IN THERE (deplete Gor-blach, pick the blocked character, pay X): the character is destroyed, then P1 is offered P2 and P3 (the blocking defender is not forced). P1 picks P3: P3's faction takes X damage and P2's takes none; Gor-blach takes X damage. A second run choosing P2 damages only P2's faction."
@@ -1494,14 +1509,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "the opponent who discards is the one opponent the controller chooses when the effect resolves"
+            "why": "the opponent who discards is the one opponent the controller chooses when the effect resolves",
+            "movedTo": "behavior.abilities[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "the discarded card comes from that one opponent's hand"
+            "why": "the discarded card comes from that one opponent's hand",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 activates RECUR from P1's discard pile (pays 4, removes it from the game). At resolution P1 is offered P2 and P3. P1 picks P3: P3 chooses and discards a card from P3's hand (Q17); P2's hand is unchanged. P1 then draws a card. A second run picking P2 affects only P2."

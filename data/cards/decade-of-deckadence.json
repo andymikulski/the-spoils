@@ -1125,7 +1125,7 @@
                   "value": 3
                 }
               ],
-              "owner": "opponent"
+              "owner": "opponents"
             },
             "count": 1,
             "optional": true
@@ -1602,29 +1602,35 @@
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "__od",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "hand"
-                },
-                "count": 1,
-                "optional": false
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "__od",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "__od",
+                    "selector": {
+                      "owner": "self",
+                      "zone": "hand"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "__od",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2163,10 +2169,18 @@
                           },
                           "effects": [
                             {
+                              "type": "choosePlayer",
+                              "id": "opp",
+                              "from": "opponents"
+                            },
+                            {
                               "type": "dealDamage",
                               "target": {
                                 "type": "factionOf",
-                                "player": "opponent"
+                                "player": {
+                                  "type": "chosenPlayer",
+                                  "id": "opp"
+                                }
                               },
                               "amount": 1
                             },
@@ -2582,8 +2596,16 @@
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "amount": -4
             }
           ]
@@ -2748,11 +2770,17 @@
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -2767,6 +2795,12 @@
                   "to": "discard"
                 }
               ]
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "opp",
+              "from": "opponents"
             }
           ]
         }
@@ -2828,10 +2862,18 @@
                   "label": "1 damage",
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "opp",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "dealDamage",
                       "target": {
                         "type": "factionOf",
-                        "player": "opponent"
+                        "player": {
+                          "type": "chosenPlayer",
+                          "id": "opp"
+                        }
                       },
                       "amount": 1
                     }
@@ -3049,7 +3091,7 @@
       "onPlay": {
         "condition": {
           "type": "playerInflictedDamageToFactionThisTurn",
-          "player": "opponent"
+          "player": "opponents"
         }
       }
     }
@@ -3240,7 +3282,7 @@
             {
               "id": "opp",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -3341,7 +3383,7 @@
             },
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -1
             }
           ]
@@ -3605,7 +3647,7 @@
                 "event": "destroy",
                 "cardType": "character",
                 "controlledBy": "self",
-                "by": "opponent"
+                "by": "opponents"
               },
               "duration": {
                 "type": "untilEndOfTurn"
@@ -4166,7 +4208,7 @@
             {
               "id": "theirs",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -5073,7 +5115,7 @@
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -5362,7 +5404,7 @@
           "effects": [
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -3
             }
           ]
@@ -5618,7 +5660,7 @@
             {
               "id": "c",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "character"
               },
@@ -5966,28 +6008,34 @@
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "lose",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "staple": false
-                },
-                "count": 4
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "lose",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "lose",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "staple": false
+                    },
+                    "count": 4
+                  },
                   "effects": [
                     {
-                      "type": "destroy",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "lose",
+                      "effects": [
+                        {
+                          "type": "destroy",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -7959,7 +8007,10 @@
           {
             "id": "rem",
             "selector": {
-              "owner": "opponent",
+              "owner": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "zone": "discard"
             },
             "count": 4,
@@ -7996,7 +8047,13 @@
             },
             -1
           ]
-        }
+        },
+        "playerChoices": [
+          {
+            "id": "opp",
+            "from": "opponents"
+          }
+        ]
       }
     }
   },
@@ -8383,7 +8440,7 @@
             {
               "id": "gone",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "item"
               },
@@ -8506,7 +8563,7 @@
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -8973,12 +9030,23 @@
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -9371,82 +9439,40 @@
               },
               "effects": [
                 {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
+                  "type": "chooserSelectsTarget",
+                  "chooser": {
+                    "type": "controllerOf",
                     "target": {
                       "type": "selected",
                       "id": "char"
-                    },
-                    "player": "controller"
-                  },
-                  "effects": [
-                    {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "controller",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "self",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
-                      "effects": [
-                        {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
-                        }
-                      ]
                     }
-                  ]
-                },
-                {
-                  "type": "if",
-                  "condition": {
-                    "type": "targetControlledBy",
-                    "target": {
-                      "type": "selected",
-                      "id": "char"
+                  },
+                  "declaration": {
+                    "id": "redonk-d",
+                    "selector": {
+                      "controller": {
+                        "type": "controllerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "char"
+                        }
+                      },
+                      "zone": "hand"
                     },
-                    "player": "opponent"
+                    "count": 2
                   },
                   "effects": [
                     {
-                      "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
-                      "declaration": {
-                        "id": "redonk-d",
-                        "selector": {
-                          "controller": "opponent",
-                          "zone": "hand"
-                        },
-                        "count": 2
-                      },
+                      "type": "forEach",
+                      "selected": "redonk-d",
                       "effects": [
                         {
-                          "type": "forEach",
-                          "selected": "redonk-d",
-                          "effects": [
-                            {
-                              "type": "moveCard",
-                              "target": {
-                                "type": "selected",
-                                "id": "__candidate"
-                              },
-                              "to": "discard"
-                            }
-                          ]
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
                         }
                       ]
                     }
@@ -9457,59 +9483,22 @@
             {
               "type": "if",
               "condition": {
-                "type": "or",
-                "conditions": [
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "controller"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "self",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": {
+                      "type": "controllerOf",
+                      "target": {
+                        "type": "selected",
+                        "id": "char"
                       }
-                    ]
-                  },
-                  {
-                    "type": "and",
-                    "conditions": [
-                      {
-                        "type": "targetControlledBy",
-                        "target": {
-                          "type": "selected",
-                          "id": "char"
-                        },
-                        "player": "opponent"
-                      },
-                      {
-                        "type": "numberCompare",
-                        "left": {
-                          "type": "count",
-                          "selector": {
-                            "controller": "opponent",
-                            "zone": "hand"
-                          }
-                        },
-                        "operator": "<=",
-                        "right": 3
-                      }
-                    ]
+                    },
+                    "zone": "hand"
                   }
-                ]
+                },
+                "operator": "<=",
+                "right": 3
               },
               "effects": [
                 {
@@ -9710,12 +9699,23 @@
           "type": "activated",
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "dm-d1",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -9746,11 +9746,17 @@
               "effects": [
                 {
                   "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
+                  "chooser": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "declaration": {
                     "id": "dm-d2",
                     "selector": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "hand"
                     },
                     "count": 1
@@ -9783,11 +9789,17 @@
               "effects": [
                 {
                   "type": "chooserSelectsTarget",
-                  "chooser": "opponent",
+                  "chooser": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "declaration": {
                     "id": "dm-d3",
                     "selector": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "hand"
                     },
                     "count": 1
@@ -11283,7 +11295,7 @@
           "modifiers": [
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11293,7 +11305,7 @@
             },
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11303,7 +11315,7 @@
             },
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11805,7 +11817,7 @@
           "type": "continuous",
           "modifiers": [],
           "attackTax": {
-            "player": "opponent",
+            "player": "opponents",
             "amount": 2
           }
         }
@@ -11993,6 +12005,11 @@
           },
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsOption",
               "chooser": "controller",
               "options": [
@@ -12005,7 +12022,10 @@
                       "declaration": {
                         "id": "look",
                         "selector": {
-                          "owner": "opponent",
+                          "owner": {
+                            "type": "chosenPlayer",
+                            "id": "opp"
+                          },
                           "zone": "hand",
                           "conditions": [
                             {
@@ -12042,11 +12062,17 @@
                   "effects": [
                     {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "declaration": {
                         "id": "sac",
                         "selector": {
-                          "controller": "opponent",
+                          "controller": {
+                            "type": "chosenPlayer",
+                            "id": "opp"
+                          },
                           "zone": "play",
                           "type": "character"
                         },
@@ -12347,11 +12373,17 @@
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "hand"
                 },
                 "count": 2,
@@ -12378,6 +12410,12 @@
               "type": "draw",
               "player": "controller",
               "amount": 1
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "opp",
+              "from": "opponents"
             }
           ]
         }

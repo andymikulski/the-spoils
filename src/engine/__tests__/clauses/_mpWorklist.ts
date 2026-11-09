@@ -5,18 +5,23 @@
 // reads the spec against the live card data and answers, per site:
 //   - `edit: true`  -> still pending (the site holds its recorded `now`), or done, or changed to
 //                      something that is not a valid target form for its meaning ("invalid");
+//   - `edit: true, now: null` (a new node: a wrapper, a step, a field) -> pending until its path
+//                      holds a valid form for its meaning, then done;
 //   - `edit: false` -> must still hold its `now`.
+// A `movedTo` path (a data edit moved the site) is judged in place of `path`.
 // The pending sites are the work queue, written to data/card-tests/mp-worklist.json by
 // `npm run card-tests -- mp-worklist` and checked by `mp-vocabulary.test.ts`.
 //
+// The verdict is a pure function of the spec and the card data: no state is carried between runs, so
+// regenerating the worklist never changes a verdict.
+//
 // Shared by the CLI and the gate so the file and the check can never drift.
 
-import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { CardDefinition } from "../../../engine.js";
 import { CATALOG } from "./_manifest.js";
-import type { MpGroup } from "./_mpInventory.js";
+import { PLAYER_FIELDS, type MpGroup } from "./_mpInventory.js";
 
 const DATA = fileURLToPath(new URL("../../../../data/", import.meta.url));
 export const WORKLIST_FILE = DATA + "card-tests/mp-worklist.json";
@@ -26,6 +31,8 @@ const SPEC_DIR = DATA + "card-tests/mp-spec/";
 
 export interface SpecDataChange {
   path: string;
+  /** Where the site is after a data edit moved it (a pick step inserted before it, a wrapper added around it). Judged in place of `path`. */
+  movedTo?: string;
   now: unknown;
   meaning: string;
   edit: boolean;
@@ -66,7 +73,6 @@ export function loadSpecSites(): Site[] {
   return sites;
 }
 
-const siteKey = (site: Pick<Site, "id" | "clause" | "path">): string => `${site.id}|${site.clause}|${site.path}`;
 export const describeSite = (site: Pick<Site, "card" | "clause" | "path">): string => `${site.card} ${site.clause} ${site.path}`;
 
 // --- Reading the data -----------------------------------------------------------------
@@ -102,20 +108,31 @@ function shallow(value: unknown): unknown {
   if (Array.isArray(value)) return value.map((item) => (isObject(item) ? own(item) : item !== null && typeof item === "object" ? "#" : item));
   return isObject(value) ? own(value) : value === undefined ? null : value;
 }
-const snapshotOf = (value: unknown): string => createHash("sha1").update(JSON.stringify(shallow(value))).digest("hex").slice(0, 12);
 
-/** A `now` that names a stored value (a word, flag, number or PlayerRef object); anything else (null, [], prose) describes a missing or new shape. */
+/** A `now` that names a stored value (a word, flag, number, node JSON or list). `null` is a new node; anything else (prose) is not a stored value. */
 const isRecordedValue = (now: unknown): boolean =>
-  typeof now === "boolean" || typeof now === "number" || (typeof now === "string" && /^\w+$/.test(now)) || isObject(now);
+  typeof now === "boolean" || typeof now === "number" || (typeof now === "string" && /^\w+$/.test(now)) || isObject(now) || Array.isArray(now);
 
 /** Whether the stored primitive `value` is the recorded `now` (`true` also matches `"true"`). */
 const primitiveIs = (value: unknown, now: unknown): boolean => deepEqual(value, now) || (typeof value !== "object" && typeof now === "string" && String(value) === now);
 
-/** Whether a node still looks like the recorded `now`, judged without a baseline: the same word (a `forEachPlayer` that has since gained `players` / `except` no longer does). */
+/** Whether a node still looks like the recorded word `now`: the same word (a `forEachPlayer` that has since gained `players` / `except` no longer does). */
 function looksLikeNow(value: unknown, now: unknown): boolean {
   if (deepEqual(value, now)) return true;
   if (!isObject(value) || typeof now !== "string" || wordOf(value) !== now) return false;
   return !(now === "forEachPlayer" && ("players" in value || "except" in value));
+}
+
+/**
+ * Whether the value at a site is still its recorded `now`, judged from the data alone. A primitive is compared
+ * directly, a recorded node by its own keys and scalar fields (an edit deeper in the subtree is not an edit of this
+ * site), a node recorded as a word by that word.
+ */
+function stillNow(live: { found: boolean; value?: unknown }, now: unknown): boolean {
+  if (!live.found) return false;
+  if (isObject(now) || Array.isArray(now)) return deepEqual(shallow(live.value), shallow(now));
+  if (live.value !== null && typeof live.value === "object") return looksLikeNow(live.value, now);
+  return primitiveIs(live.value, now);
 }
 
 // --- Target forms ---------------------------------------------------------------------------
@@ -232,37 +249,112 @@ function lineage(card: unknown, path: string): unknown[] {
   return out;
 }
 
-/** Why `live` is not a valid target form for `site`, or `undefined` when it is (or the site is not judged). */
-function invalidReason(card: CardDefinition, site: Site, live: { found: boolean; value?: unknown }): string | undefined {
+type Live = { found: boolean; value?: unknown };
+
+/** A player value that still reads as an opponent: the words and refs a site's meaning is judged by. */
+function opponentish(value: unknown): boolean {
+  if (typeof value === "string") return value === "opponent" || value === "opponents" || value === "acting";
+  return isObject(value) && (value.type === "chosenPlayer" || value.type === "controllerOf" || value.type === "ownerOf");
+}
+
+/** Whether `value` (found at `path`) carries a `{ type: "chosenPlayer", id }` read-back anywhere inside it. */
+function readsBack(value: unknown, id: string): boolean {
+  if (Array.isArray(value)) return value.some((item) => readsBack(item, id));
+  if (!isObject(value)) return false;
+  return (value.type === "chosenPlayer" && value.id === id) || Object.values(value).some((child) => readsBack(child, id));
+}
+
+/**
+ * A `playerChoices` entry as the site's value: the action names the player ("an opponent" nothing settles) and a
+ * `chosenPlayer` ref reads it back. A cost step cannot ask a question, so a "pick an opponent" cost step is this entry.
+ * `undefined` when it is a valid form for the meaning.
+ */
+function playerChoiceProblem(card: CardDefinition, site: Site, target: string, entry: unknown, forms: MeaningForms): string | undefined {
+  if (!forms.site?.includes(CHOSEN_PLAYER)) return `${site.meaning} is not read through a playerChoices entry (chosenPlayer)`;
+  if (!isObject(entry) || typeof entry.id !== "string" || (entry.from !== "opponents" && entry.from !== "players")) return `the playerChoices entry needs an id and from: "opponents" | "players"; it holds ${JSON.stringify(shallow(entry))}`;
+  if (site.meaning !== "refersBack" && entry.from !== "opponents") return `${site.meaning} needs a player choice from: "opponents"; the entry holds from: ${JSON.stringify(entry.from)}`;
+  const parentPath = target.replace(/\.playerChoices\[\d+\]$/, "");
+  const parent = resolvePath(card, parentPath);
+  return parent.found && readsBack(parent.value, entry.id) ? undefined : `no { type: "chosenPlayer", id: "${entry.id}" } reads the playerChoices entry back inside ${parentPath}`;
+}
+
+/**
+ * A node that holds converted player references (an `otherPlayerChooses` cost whose `chooser` / selector children were
+ * converted, a new step, a new ability): it needs a player field holding a valid form for the meaning, and none that
+ * still holds the site's recorded word. `undefined` when it does.
+ */
+function convertedProblem(card: CardDefinition, site: Site, target: string, value: unknown, forms: MeaningForms): string | undefined {
+  if (!forms.site) return `${site.meaning} is not read through player references`;
+  const leaves: Array<{ path: string; value: unknown }> = [];
+  const walk = (node: unknown, path: string): void => {
+    if (Array.isArray(node)) node.forEach((item, index) => walk(item, `${path}[${index}]`));
+    else if (isObject(node))
+      for (const [key, child] of Object.entries(node)) {
+        if (PLAYER_FIELDS.has(key) && opponentish(child)) leaves.push({ path: `${path}.${key}`, value: child });
+        else walk(child, `${path}.${key}`);
+      }
+  };
+  walk(value, target);
+  const accepted = (leaf: { path: string; value: unknown }): boolean =>
+    forms.site!.some((form) => formMatches(form, leaf.value, slotOf(leaf.path)) && (form !== ACTING || abilityOf(card, leaf.path)?.opponentFrom === "acting"));
+  const stale = leaves.filter((leaf) => typeof site.now === "string" && leaf.value === site.now && !accepted(leaf));
+  if (stale.length) return `${stale.map((leaf) => leaf.path).join(", ")} still hold ${JSON.stringify(site.now)}`;
+  return leaves.some(accepted) ? undefined : `the node holds no player reference that is a valid form for ${site.meaning} (${forms.site.map(formText).join(" | ")})`;
+}
+
+/** The iteration forms of a meaning: a `forEachPlayer` with the right `players` (and `except`), or, for a single opponent, no iteration at all. */
+function iteratorProblem(site: Site, forms: MeaningForms, live: Live, holds: string): string | undefined {
+  const value = live.value;
+  const iterating = isObject(value) && value.type === "forEachPlayer";
+  if (forms.noIteration && site.now === "forEachPlayer") return iterating ? `${site.meaning} must no longer iterate over players; the site is still a forEachPlayer` : undefined;
+  if (!forms.iterator) return undefined;
+  const need = forms.iterator;
+  const ok = iterating && need.players.includes((value as Record<string, unknown>).players as string) && (!need.except || "except" in (value as object));
+  return ok ? undefined : `${site.meaning} must be forEachPlayer { players: ${need.players.map((players) => `"${players}"`).join(" | ")}${need.except ? ", except: PlayerRef" : ""} }; the site holds ${holds}`;
+}
+
+/** Whether a site's `now` is one the gate judges: a player word, `forEachPlayer`, or `null` (a new node). */
+const isJudged = (now: unknown): boolean => now === null || now === "forEachPlayer" || (typeof now === "string" && PLAYER_WORD_NOW.has(now));
+
+/**
+ * Why `live` (the value at `target`: the site's `movedTo`, else its `path`) is not a valid form for `site`, or
+ * `undefined` when it is (or the site is not judged).
+ */
+function invalidReason(card: CardDefinition, site: Site, target: string, live: Live): string | undefined {
   // The ability-level `opponentFrom` of a block written from another player's point of view (MPQ-P10).
-  if (/\.opponentFrom$/.test(site.path)) return live.found && live.value === "acting" ? undefined : `opponentFrom must be "acting" (text from another player's point of view, MPQ-P10); the site holds ${live.found ? JSON.stringify(live.value) : "nothing"}`;
+  if (/\.opponentFrom$/.test(target)) return live.found && live.value === "acting" ? undefined : `opponentFrom must be "acting" (text from another player's point of view, MPQ-P10); the site holds ${live.found ? JSON.stringify(live.value) : "nothing"}`;
   const forms = MEANING_FORMS[site.meaning];
-  if (!forms) return undefined;
+  if (!forms || !isJudged(site.now)) return undefined;
   const holds = live.found ? JSON.stringify(shallow(live.value)) : "(nothing: the path no longer exists)";
-  if (typeof site.now === "string" && PLAYER_WORD_NOW.has(site.now)) {
-    const slot = slotOf(site.path);
-    const matched = live.found ? forms.site?.find((form) => formMatches(form, live.value, slot)) : undefined;
-    if (matched === ACTING) {
-      return abilityOf(card, site.path)?.opponentFrom === "acting" ? undefined : `${site.meaning} reads "acting", which needs opponentFrom: "acting" on the ability the site is in`;
-    }
-    if (matched) return undefined;
-    if (forms.wrap && lineage(card, site.path).some((node) => isObject(node) && node.type === "forEachPlayer" && forms.wrap!.includes(node.players as string))) return undefined;
-    // A selector cannot read "acting": it names the acting player's cards through a condition instead.
-    if (site.meaning === "refersBack" && slot === "selector" && live.found && live.value === "any" && selectorNamesActing(card, site.path) && abilityOf(card, site.path)?.opponentFrom === "acting") return undefined;
-    const expected = [...(forms.site ?? []).map(formText), ...(forms.wrap ?? []).map((players) => `inside forEachPlayer { players: "${players}" }`)];
-    const extra = site.meaning === "refersBack" && slot === "selector" ? ` (a selector's controller / owner cannot read "acting": use "any" with a targetOwnedBy { player: "acting" } condition in an opponentFrom "acting" ability)` : "";
-    return expected.length ? `${site.meaning} must become ${expected.join(" | ")}${extra}; the site holds ${holds} (read as ${slot})` : undefined;
+  // A site that was an iteration, or a new node whose meaning is an iteration.
+  let iteration: string | undefined;
+  if (site.now === "forEachPlayer" || (site.now === null && forms.iterator)) {
+    iteration = iteratorProblem(site, forms, live, holds);
+    if (iteration === undefined) return undefined;
+    if (site.now === "forEachPlayer") return iteration;
   }
-  if (site.now === "forEachPlayer") {
-    const value = live.value;
-    const iterating = isObject(value) && value.type === "forEachPlayer";
-    if (forms.noIteration) return iterating ? `${site.meaning} must no longer iterate over players; the site is still a forEachPlayer` : undefined;
-    if (!forms.iterator) return undefined;
-    const need = forms.iterator;
-    const ok = iterating && need.players.includes((value as Record<string, unknown>).players as string) && (!need.except || "except" in (value as object));
-    return ok ? undefined : `${site.meaning} must be forEachPlayer { players: ${need.players.map((players) => `"${players}"`).join(" | ")}${need.except ? ", except: PlayerRef" : ""} }; the site holds ${holds}`;
+  // A player word, or a new node whose meaning is read through a player reference.
+  const slot = slotOf(target);
+  const matched = live.found ? forms.site?.find((form) => formMatches(form, live.value, slot)) : undefined;
+  if (matched === ACTING) {
+    return abilityOf(card, target)?.opponentFrom === "acting" ? undefined : `${site.meaning} reads "acting", which needs opponentFrom: "acting" on the ability the site is in`;
   }
-  return undefined;
+  if (matched) return undefined;
+  if (forms.wrap && lineage(card, target).some((node) => isObject(node) && node.type === "forEachPlayer" && forms.wrap!.includes(node.players as string))) return undefined;
+  // A selector cannot read "acting": it names the acting player's cards through a condition instead.
+  if (site.meaning === "refersBack" && slot === "selector" && live.found && live.value === "any" && selectorNamesActing(card, target) && abilityOf(card, target)?.opponentFrom === "acting") return undefined;
+  // A moved site or a new node may be a player choice, or a node whose child references were converted.
+  let moveNote = "";
+  if ((site.movedTo !== undefined || site.now === null) && live.found) {
+    const entry = /\.playerChoices\[\d+\]$/.test(target);
+    const problem = entry ? playerChoiceProblem(card, site, target, live.value, forms) : isObject(live.value) || Array.isArray(live.value) ? convertedProblem(card, site, target, live.value, forms) : "the value is not a node";
+    if (problem === undefined) return undefined;
+    moveNote = ` (${entry ? "as a playerChoices entry" : "as a converted node"}: ${problem})`;
+  }
+  const expected = [...(forms.site ?? []).map(formText), ...(forms.wrap ?? []).map((players) => `inside forEachPlayer { players: "${players}" }`)];
+  const extra = site.meaning === "refersBack" && slot === "selector" ? ` (a selector's controller / owner cannot read "acting": use "any" with a targetOwnedBy { player: "acting" } condition in an opponentFrom "acting" ability)` : "";
+  if (!expected.length) return iteration;
+  return `${iteration ? `${iteration}; or ` : `${site.meaning} must become `}${expected.join(" | ")}${extra}; the site holds ${holds} (read as ${slot})${moveNote}`;
 }
 
 // --- The work queue --------------------------------------------------------------------------
@@ -273,11 +365,11 @@ export interface WorkEntry {
   id: string;
   clause: string;
   path: string;
+  /** Present when the site's data edit moved it (the spec's `movedTo`). */
+  movedTo?: string;
   now: unknown;
   /** The target meaning (`mp-spec/README.md`, "Meanings"). */
   meaning: string;
-  /** A fingerprint of the site's untouched value, present when `now` alone cannot tell an edited site from an unedited one (an object, a missing path, a described new shape). */
-  snapshot?: string;
 }
 export interface SetWork {
   sites: number;
@@ -291,19 +383,12 @@ export interface Worklist {
 
 export interface Findings {
   worklist: Worklist;
-  /** `edit: true` sites that changed to something that is not a valid target form. */
+  /** `edit: true` sites that changed to something that is not a valid target form, or whose `movedTo` / `now` cannot be read. */
   invalid: string[];
-  /** `edit: false` sites that no longer hold their `now`. */
+  /** `edit: false` sites that no longer hold their `now` (at `movedTo`, when set). */
   moved: string[];
   /** Spec entries that name a group or card that does not exist. */
   unknown: string[];
-}
-
-/** The snapshots recorded in a committed worklist, by site. */
-export function baselineOf(worklist: Worklist | undefined): Map<string, string> {
-  const out = new Map<string, string>();
-  for (const set of Object.values(worklist?.sets ?? {})) for (const entry of set.pending) if (entry.snapshot !== undefined) out.set(siteKey({ id: entry.id, clause: entry.clause, path: entry.path }), entry.snapshot);
-  return out;
 }
 
 export function readWorklist(): Worklist | undefined {
@@ -315,10 +400,16 @@ export function renderWorklist(worklist: Worklist): string {
 }
 
 /**
- * Judge every spec site against the card data. `baseline` is the committed worklist's snapshots: a site whose value
- * is an object, missing, or described rather than recorded stays pending while its snapshot is unchanged.
+ * Judge every spec site against the card data. The verdict depends on the spec and the data alone (nothing is
+ * remembered between runs), so regenerating the worklist is idempotent.
+ *
+ * For each site, `target` is its `movedTo` when set (the original `path` may be gone or hold something else), else its `path`.
+ * - `edit: false`: the value at `target` is still the recorded `now`.
+ * - `edit: true`, `now: null` (a new node): done once `target` holds a valid form for the meaning, pending until then.
+ * - `edit: true`, `now` a player word or `forEachPlayer`, with `movedTo`: never pending, judged at `target`.
+ * - `edit: true`, any other `now`: pending while the value at `target` is still `now`; once it left, judged.
  */
-export function evaluate(sites: Site[], baseline: Map<string, string>, catalog: CardDefinition[] = CATALOG): Findings {
+export function evaluate(sites: Site[], catalog: CardDefinition[] = CATALOG): Findings {
   const byId = new Map(catalog.map((card) => [card.id, card]));
   const sets: Record<string, SetWork> = {};
   const invalid: string[] = [];
@@ -333,29 +424,39 @@ export function evaluate(sites: Site[], baseline: Map<string, string>, catalog: 
       unknown.push(`${site.card} (${site.id}): no such printing`);
       continue;
     }
-    const live = resolvePath(card, site.path);
-    const primitive = isRecordedValue(site.now) && live.found && (live.value === null || typeof live.value !== "object");
-    if (!site.edit) {
-      if (owned.has(`${site.id}|${site.path}`)) continue;
-      const holds = primitive ? primitiveIs(live.value, site.now) : live.found && (deepEqual(live.value, site.now) || wordOf(live.value) === site.now);
-      if (!holds) moved.push(`${describeSite(site)}: edit false, recorded ${JSON.stringify(site.now)}, now ${live.found ? JSON.stringify(shallow(live.value)) : "missing"}`);
+    if (!site.edit && owned.has(`${site.id}|${site.path}`)) continue;
+    const target = site.movedTo ?? site.path;
+    const live = resolvePath(card, target);
+    const where = site.movedTo === undefined ? "" : ` (moved to ${site.movedTo})`;
+    if (site.movedTo !== undefined && !live.found) {
+      (site.edit ? invalid : moved).push(`${describeSite(site)}: movedTo ${site.movedTo} does not exist in the card; point movedTo at where the site is now, or remove it`);
       continue;
     }
-    // edit: true. A recorded primitive is compared directly; otherwise the baseline snapshot decides.
+    if (!site.edit) {
+      const primitive = isRecordedValue(site.now) && live.found && (live.value === null || typeof live.value !== "object");
+      const holds = primitive ? primitiveIs(live.value, site.now) : live.found && (deepEqual(live.value, site.now) || wordOf(live.value) === site.now);
+      if (!holds) moved.push(`${describeSite(site)}: edit false, recorded ${JSON.stringify(site.now)}, now ${live.found ? JSON.stringify(shallow(live.value)) : "missing"}${where}`);
+      continue;
+    }
+    // edit: true
+    if (site.now !== null && !isRecordedValue(site.now)) {
+      invalid.push(`${describeSite(site)}: now must be the stored value at the path (a word, flag, number, node JSON or list), or null for a node that does not exist yet; it holds ${JSON.stringify(site.now)}`);
+      continue;
+    }
     let pending: boolean;
-    let snapshot: string | undefined;
-    if (primitive) pending = primitiveIs(live.value, site.now);
-    else {
-      snapshot = snapshotOf(live.found ? live.value : undefined);
-      const recorded = baseline.get(siteKey(site));
-      pending = recorded !== undefined ? snapshot === recorded : !isRecordedValue(site.now) || (live.found && looksLikeNow(live.value, site.now));
+    let reason: string | undefined;
+    if (site.now === null) {
+      reason = live.found ? invalidReason(card, site, target, live) : undefined;
+      pending = !live.found || reason !== undefined;
+    } else {
+      pending = !(site.movedTo !== undefined && isJudged(site.now)) && stillNow(live, site.now);
+      if (!pending) reason = invalidReason(card, site, target, live);
     }
     if (pending) {
-      set.pending.push({ card: site.card, id: site.id, clause: site.clause, path: site.path, now: site.now, meaning: site.meaning, ...(snapshot !== undefined ? { snapshot } : {}) });
+      set.pending.push({ card: site.card, id: site.id, clause: site.clause, path: site.path, ...(site.movedTo !== undefined ? { movedTo: site.movedTo } : {}), now: site.now, meaning: site.meaning });
       continue;
     }
-    const reason = invalidReason(card, site, live);
-    if (reason) invalid.push(`${describeSite(site)}: ${reason}`);
+    if (reason) invalid.push(`${describeSite(site)}: ${reason}${where}`);
   }
   let totalSites = 0;
   let totalClauses = 0;
@@ -375,17 +476,30 @@ const PLAIN_WORDS: ReadonlySet<string> = new Set(["self", "controller", "owner",
 
 /**
  * Every relevant site in the inventory (a behavior word other than plain self / controller / owner / card-relative
- * refs) that the spec's `dataChanges` for its clause does not list at the same path; plus spec entries naming a
- * group or clause the inventory does not have.
+ * refs) that the spec's `dataChanges` for its clause does not list; plus spec entries naming a group or clause the
+ * inventory does not have. An entry lists a word by its `path`, by its `movedTo`, or, when `movedTo` names a node
+ * (a converted child, a new step), by any path inside that node. A new node is listed by its real path.
  */
 export function specGaps(inventory: MpGroup[], sites: Site[]): string[] {
-  const listed = new Set(sites.map((site) => siteKey(site)));
+  const listed = new Map<string, { exact: Set<string>; inside: string[] }>();
+  for (const site of sites) {
+    const entry = listed.get(`${site.id}|${site.clause}`) ?? { exact: new Set<string>(), inside: [] };
+    entry.exact.add(site.path);
+    if (site.movedTo !== undefined) {
+      entry.exact.add(site.movedTo);
+      entry.inside.push(site.movedTo);
+    }
+    listed.set(`${site.id}|${site.clause}`, entry);
+  }
+  const covered = (id: string, clause: string, path: string): boolean => {
+    const entry = listed.get(`${id}|${clause}`);
+    return entry !== undefined && (entry.exact.has(path) || entry.inside.some((node) => path.startsWith(`${node}.`) || path.startsWith(`${node}[`)));
+  };
   const out: string[] = [];
   for (const group of inventory)
     for (const clause of group.clauses)
       for (const word of clause.behavior)
-        if (!PLAIN_WORDS.has(word.value) && !listed.has(siteKey({ id: group.id, clause: clause.key, path: word.path })))
-          out.push(`${group.name} ${clause.key} ${word.path} (${word.value}): no spec dataChanges entry`);
+        if (!PLAIN_WORDS.has(word.value) && !covered(group.id, clause.key, word.path)) out.push(`${group.name} ${clause.key} ${word.path} (${word.value}): no spec dataChanges entry`);
   const clauses = new Set(inventory.flatMap((group) => group.clauses.map((clause) => `${group.id}|${clause.key}`)));
   for (const site of sites) if (!clauses.has(`${site.id}|${site.clause}`)) out.push(`${site.card} ${site.clause}: the spec names a clause the inventory does not have`);
   return out;

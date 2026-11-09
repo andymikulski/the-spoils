@@ -781,28 +781,34 @@
           ],
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "od",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand"
-                },
-                "count": 2
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "od",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "od",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "hand"
+                    },
+                    "count": 2
+                  },
                   "effects": [
                     {
-                      "type": "moveCard",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "to": "discard"
+                      "type": "forEach",
+                      "selected": "od",
+                      "effects": [
+                        {
+                          "type": "moveCard",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "to": "discard"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1534,7 +1540,7 @@
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -2164,12 +2170,20 @@
                   "to": "hand"
                 },
                 {
+                  "type": "choosePlayer",
+                  "id": "opp",
+                  "from": "opponents"
+                },
+                {
                   "type": "chooserSelectsTarget",
                   "chooser": "controller",
                   "declaration": {
                     "id": "d",
                     "selector": {
-                      "owner": "opponent",
+                      "owner": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "hand",
                       "conditions": [
                         {
@@ -5561,7 +5575,7 @@
           "modifiers": [
             {
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "location"
               },
@@ -7559,7 +7573,7 @@
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -7600,7 +7614,13 @@
               "declaration": {
                 "id": "atk",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "ownerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "p"
+                    }
+                  },
                   "zone": "play",
                   "type": "character",
                   "conditions": [
@@ -8144,7 +8164,7 @@
           {
             "id": "opp",
             "selector": {
-              "owner": "opponent",
+              "owner": "opponents",
               "zone": "play",
               "type": "faction"
             },
@@ -8177,7 +8197,13 @@
                   "declaration": {
                     "id": "loot",
                     "selector": {
-                      "owner": "opponent",
+                      "owner": {
+                        "type": "ownerOf",
+                        "target": {
+                          "type": "selected",
+                          "id": "opp"
+                        }
+                      },
                       "zone": "deck",
                       "conditions": [
                         {
@@ -8241,7 +8267,13 @@
                 },
                 {
                   "type": "shuffleDeck",
-                  "player": "opponent"
+                  "player": {
+                    "type": "ownerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "opp"
+                    }
+                  }
                 }
               ]
             }
@@ -8331,12 +8363,20 @@
                   }
                 },
                 {
+                  "type": "choosePlayer",
+                  "id": "opp",
+                  "from": "opponents"
+                },
+                {
                   "type": "chooserSelectsTarget",
                   "chooser": "controller",
                   "declaration": {
                     "id": "tut",
                     "selector": {
-                      "owner": "opponent",
+                      "owner": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "zone": "deck",
                       "conditions": [
                         {
@@ -8372,7 +8412,10 @@
                 },
                 {
                   "type": "shuffleDeck",
-                  "player": "opponent"
+                  "player": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  }
                 }
               ]
             }
@@ -8488,11 +8531,19 @@
                   "effects": []
                 },
                 {
-                  "label": "Mill the opponent's top card",
+                  "label": "Pick an opponent and mill their top card",
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "opp",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "mill",
-                      "player": "opponent",
+                      "player": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "count": 1
                     }
                   ]
@@ -8530,11 +8581,19 @@
                   "effects": []
                 },
                 {
-                  "label": "Mill the opponent's top card",
+                  "label": "Pick an opponent and mill their top card",
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "opp",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "mill",
-                      "player": "opponent",
+                      "player": {
+                        "type": "chosenPlayer",
+                        "id": "opp"
+                      },
                       "count": 1
                     }
                   ]
@@ -8554,7 +8613,7 @@
               "value": {
                 "type": "count",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": "opponents",
                   "zone": "discard",
                   "type": "character"
                 }
@@ -8567,7 +8626,7 @@
               "value": {
                 "type": "count",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": "opponents",
                   "zone": "discard",
                   "type": "character"
                 }
@@ -9315,8 +9374,16 @@
           "type": "activated",
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "mill",
-              "player": "opponent",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              },
               "count": 5
             },
             {
@@ -10122,7 +10189,7 @@
                 "left": {
                   "type": "count",
                   "selector": {
-                    "controller": "opponent",
+                    "controller": "opponents",
                     "zone": "play",
                     "type": "item"
                   }
@@ -10214,12 +10281,20 @@
               ]
             },
             {
+              "type": "choosePlayer",
+              "id": "opp",
+              "from": "opponents"
+            },
+            {
               "type": "chooserSelectsTarget",
               "chooser": "controller",
               "declaration": {
                 "id": "chars",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
                   "zone": "discard",
                   "type": "character"
                 },
@@ -10350,7 +10425,7 @@
             {
               "id": "ch",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "discard",
                 "type": "character"
               },
@@ -10590,7 +10665,7 @@
               "value": {
                 "type": "count",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": "opponents",
                   "zone": "play",
                   "type": "character"
                 }
@@ -11083,7 +11158,7 @@
             {
               "id": "p",
               "selector": {
-                "owner": "opponent",
+                "owner": "opponents",
                 "zone": "play",
                 "type": "faction"
               },
@@ -11443,7 +11518,10 @@
             "left": {
               "type": "count",
               "selector": {
-                "owner": "opponent",
+                "owner": {
+                  "type": "chosenPlayer",
+                  "id": "p"
+                },
                 "zone": "play",
                 "type": "resource"
               }
@@ -11461,11 +11539,17 @@
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "p"
+              },
               "declaration": {
                 "id": "doomed",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "p"
+                  },
                   "zone": "play",
                   "type": "resource",
                   "faceDown": true
@@ -11481,6 +11565,12 @@
                   }
                 }
               ]
+            }
+          ],
+          "playerChoices": [
+            {
+              "id": "p",
+              "from": "opponents"
             }
           ]
         }
@@ -11995,9 +12085,13 @@
                     "condition": {
                       "type": "battleTargetIs"
                     }
+                  },
+                  {
+                    "type": "battleRole",
+                    "role": "defender"
                   }
                 ],
-                "controller": "opponent"
+                "controller": "opponents"
               },
               "count": 1
             }
@@ -12966,7 +13060,7 @@
               {
                 "type": "targetOwnedBy",
                 "target": "eventCard",
-                "player": "opponent"
+                "player": "opponents"
               }
             ]
           },
@@ -13084,7 +13178,13 @@
                     {
                       "type": "count",
                       "selector": {
-                        "controller": "opponent",
+                        "controller": {
+                          "type": "ownerOf",
+                          "target": {
+                            "type": "selected",
+                            "id": "fac"
+                          }
+                        },
                         "zone": "play",
                         "type": "resource"
                       }
@@ -13471,10 +13571,18 @@
               },
               "effects": [
                 {
+                  "type": "choosePlayer",
+                  "id": "opp",
+                  "from": "opponents"
+                },
+                {
                   "type": "dealDamage",
                   "target": {
                     "type": "factionOf",
-                    "player": "opponent"
+                    "player": {
+                      "type": "chosenPlayer",
+                      "id": "opp"
+                    }
                   },
                   "amount": 3
                 }

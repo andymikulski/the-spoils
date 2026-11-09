@@ -624,14 +624,23 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent in turn is the chooser for their own detach."
+            "why": "Each opponent in turn is the chooser for their own detach.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent detaches only their own resources. Iterates over every opponent: order active player first then clockwise (CR 402.2), the controller never acts."
+            "why": "Each opponent detaches only their own resources. Iterates over every opponent: order active player first then clockwise (CR 402.2), the controller never acts.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "The new forEachPlayer { players: \"opponents\" } wrapper that runs the effect once per opponent, the active player first and then clockwise (CR 402.2); inside it \"controller\" is the iterated opponent."
           }
         ],
         "test3": "P1's Gargantuan enters play on P1's turn. Each opponent in order (P2, then P3; P1 is not asked) may detach up to 3 of their own resources from their own faction; P3's choice does not depend on P2's. P1's resources are unchanged. If P2 declines (0) and P3 detaches 3, only P3's change.",
@@ -820,14 +829,23 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent picks their own character."
+            "why": "Each opponent picks their own character.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent picks among characters they control. Iterates over every opponent: active player first then clockwise (CR 402.2)."
+            "why": "Each opponent picks among characters they control. Iterates over every opponent: active player first then clockwise (CR 402.2).",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "The new forEachPlayer { players: \"opponents\" } wrapper that runs the effect once per opponent, the active player first and then clockwise (CR 402.2); inside it \"controller\" is the iterated opponent."
           }
         ],
         "test3": "P1's Hassan-i is destroyed. Each opponent in order (P2 then P3; P1 is not asked) must destroy a character they control; each picks their own from their own characters. P3 with no characters destroys nothing. P1's characters are untouched.",
@@ -964,21 +982,31 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent picks their own resource. Iterate over every opponent: active player first then clockwise (CR 402.2); the controller does not take part."
+            "why": "Each opponent picks their own resource. Iterate over every opponent: active player first then clockwise (CR 402.2); the controller does not take part.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent picks among their own unattached resources."
+            "why": "Each opponent picks among their own unattached resources.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[0].to.player",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Each opponent attaches the resource to their own faction (the faction of the player currently iterated)."
+            "why": "Each opponent attaches the resource to their own faction (the faction of the player currently iterated).",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].effects[0].to.player"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "The new forEachPlayer { players: \"opponents\" } wrapper that runs the effect once per opponent, the active player first and then clockwise (CR 402.2); inside it \"controller\" is the iterated opponent."
           }
         ],
         "test3": "P1 plays Swindle; neither P2 nor P3 may respond to it. Each opponent in order (P2 then P3, starting from the active player when it is P1's turn) picks one of their own unattached resources and attaches it to their own faction; P1's resources are not touched. P3 with no unattached resource attaches nothing. P1 then draws a card and discards a card (once only, not per opponent).",
@@ -1119,7 +1147,8 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "Refers to the opponent picked by the printed \"Pick an opponent\" (needs that pick step, see the pick site / why on the other paths of this clause). This player picks one of the controller's face-down resources. Structural: the data has no \"pick an opponent\" step. The controller must first pick one opponent (part of the cost or effect, as printed) and this site then means that picked player."
+            "why": "Refers to the opponent picked by the printed \"Pick an opponent\" (needs that pick step, see the pick site / why on the other paths of this clause). This player picks one of the controller's face-down resources. Structural: the data has no \"pick an opponent\" step. The controller must first pick one opponent (part of the cost or effect, as printed) and this site then means that picked player.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].effects[1].chooser"
           }
         ],
         "test3": "Start of P1's turn: P1 pays 4 and controls at least 2 face-down resources, so P1 picks an opponent (P2 or P3), say P3. P3 (not P2) picks a face-down resource P1 controls; if it is a character or item P1 may play it for free (thresholds and extra costs still apply). P2 makes no pick. If P1 controls fewer than 2 face-down resources no opponent is picked. If P1 does not pay 4 nothing happens. Repeat picking P2."
@@ -1243,7 +1272,8 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "the condition looks at the top card of every opponent's deck and holds if at least one of those cards is a character (\"If any of those cards are a character\"); the stored single \"opponent\" would check one player"
+            "why": "the condition looks at the top card of every opponent's deck and holds if at least one of those cards is a character (\"If any of those cards are a character\"); the stored single \"opponent\" would check one player",
+            "movedTo": "behavior.abilities[1].condition.left.selector.owner"
           }
         ],
         "test3": "P1 controls Bottlebeard. The top cards of P2's deck and P3's deck are revealed at all times (P1's own deck top is not). P2's top is a character, P3's a tactic: Bottlebeard has +3 speed. P2's top becomes a tactic: no bonus. Only P3's top a character: +3 speed. Both characters: still +3 (not +6).",

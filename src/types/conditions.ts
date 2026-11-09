@@ -10,6 +10,17 @@ export type Condition =
   | { type: "and"; conditions: Condition[] }
   | { type: "or"; conditions: Condition[] }
   | { type: "not"; condition: Condition }
+  | {
+      /**
+       * "An opponent ...": true when `condition` holds for at least one opponent still in the game, judged for each
+       * opponent in turn with `"opponent"` (`PlayerRef`, `PlayerScope`) meaning that opponent. The test is made within
+       * one opponent's cards, never over several opponents together (MPX-vocab-an, MPX-an-superlative): "an opponent
+       * controls more characters than you" compares each opponent's characters on their own with yours. The nested
+       * `"opponent"` is bound by this condition, not by the block, so it never makes the block select an opponent.
+       */
+      type: "anyOpponent";
+      condition: Condition;
+    }
   | { type: "sourceInZone"; zone: Zone }
   | {
       /**
@@ -382,6 +393,19 @@ export type Condition =
        */
       type: "battleRole";
       role: "attacker" | "defender";
+    }
+  | {
+      /**
+       * True while a battle is under way and `player` is its defending
+       * player. "Cannot be blocked by that player's characters" is
+       * `grantKeyword` of `cannotBeBlocked` with this condition: the keyword
+       * only counts in a battle against that player (any other defender may
+       * still block). `player` is the block's opponent (`"opponent"`), a
+       * named player (`{ type: "chosenPlayer", id }`) or any other player
+       * reference; a reference that names nobody yet is false.
+       */
+      type: "defendingPlayerIs";
+      player: PlayerRef;
     }
   | {
       /**

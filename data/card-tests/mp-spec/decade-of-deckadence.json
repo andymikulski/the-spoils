@@ -26,6 +26,13 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true
+          },
+          {
+            "path": "behavior.abilities[1].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "\"All opponents discard a card\": the discard now runs inside a new forEachPlayer { players: \"opponents\" } wrapper (the chooser and selector.owner sites above sit one level down, at effects[0].effects[0])."
           }
         ],
         "test3": "Table: P1 controls Brainbath in P1's discard pile, P2 left of P1, P3 after P2. On P1's turn P1 activates RECUR (pays 4, voids the card). P2 chooses and discards a card, then P3 chooses and discards a card; P1 discards nothing; then P1 draws a card. Each opponent chooses their own card. If P3 is eliminated only P2 discards.",
@@ -68,7 +75,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"an opponent\": one opponent picked by P1 when this part of the effect resolves, not the single opponent the two-player collapse has."
+            "why": "\"an opponent\": one opponent picked by P1 when this part of the effect resolves, not the single opponent the two-player collapse has.",
+            "movedTo": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].target.player"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card and the effect resolves. No opponent is picked up front; the pick happens only when the last step is reached. Both P2 and P3 are legal. Run A (P1 picks P2): The picked location is destroyed by 3 damage; P1 picks a character, inflicts 2 damage and it is destroyed; at that point P1 picks P2: P2's faction takes 1 damage and P1 draws a card; P3's faction is unchanged. If the chain stops before the character dies, no opponent is picked and nobody's faction is hit. Run B (P1 picks P3): The picked location is destroyed by 3 damage; P1 picks a character, inflicts 2 damage and it is destroyed; at that point P1 picks P3: P3's faction takes 1 damage and P1 draws a card; P2's faction is unchanged. If the chain stops before the character dies, no opponent is picked and nobody's faction is hit. In both runs the opponent not picked is unaffected."
@@ -94,7 +102,8 @@
             "path": "behavior.abilities[0].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].player"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. When Deadly Striker is destroyed the trigger resolves and P1 picks the opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): Deadly Striker is destroyed; P1 picks P2: P2's faction loses 4 influence; P3's faction is unchanged and P1's is unchanged. Run B (P1 picks P3): Deadly Striker is destroyed; P1 picks P3: P3's faction loses 4 influence; P2's faction is unchanged and P1's is unchanged. In both runs the opponent not picked is unaffected."
@@ -139,7 +148,8 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost (costs holds two steps today, so this is a new costs[2])."
+            "why": "The data has no 'pick an opponent' cost step; a new cost step is needed so the opponent is picked as part of the cost (costs holds two steps today, so this is a new costs[2]).",
+            "movedTo": "behavior.abilities[2].playerChoices[0]"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 activates DISRUPT; the opponent is picked as part of the cost. Both P2 and P3 are legal. Run A (P1 picks P2): P1 pays 2, removes a token and picks P2 as part of the cost. P2 (not P3) chooses and discards a card from P2's hand; P3's hand is unchanged. Run B (P1 picks P3): P1 pays 2, removes a token and picks P3 as part of the cost. P3 (not P2) chooses and discards a card from P3's hand; P2's hand is unchanged. In both runs the opponent not picked is unaffected."
@@ -165,7 +175,8 @@
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].target.player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. At the start of P1's turn the trigger resolves and P1 picks the opponent (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): P1 controls RRR; at the start of P1's turn P1 may inflict 1 damage to an opponent and picks P2: P2's faction takes 1 damage; P3's faction is unchanged. Without RRR the clause is inactive. The trigger does not fire at the start of P2's or P3's turn. Run B (P1 picks P3): P1 controls RRR; at the start of P1's turn P1 may inflict 1 damage to an opponent and picks P3: P3's faction takes 1 damage; P2's faction is unchanged. Without RRR the clause is inactive. The trigger does not fire at the start of P2's or P3's turn. In both runs the opponent not picked is unaffected."
@@ -482,6 +493,13 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "\"all opponents must destroy 4 non-staple cards\": the destroy now runs inside a new forEachPlayer { players: \"opponents\" } wrapper (the chooser and selector.controller sites above sit one level down, at effects[0].effects[0])."
           }
         ],
         "test3": "Table: P1 deploys it, P2 left of P1, P3 after P2. P2 chooses and destroys 4 non-staple cards P2 controls, then P3 does the same; P1's cards are untouched. Each opponent makes their own choice; with fewer than 4 non-staple cards a player destroys all they have.",
@@ -693,13 +711,15 @@
             "path": "behavior.abilities[0].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[0]",
@@ -843,31 +863,36 @@
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "\"that character's controller\": the controller of the picked character at any table size; the data branches on controller vs a single opponent. Replace with a controllerOf the picked character reference (also for the `condition.player` / `selector.controller` / `chooser` sites)."
+            "why": "\"that character's controller\": the controller of the picked character at any table size; the data branches on controller vs a single opponent. Replace with a controllerOf the picked character reference (also for the `condition.player` / `selector.controller` / `chooser` sites).",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "cardRelative",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
             "now": "opponent",
             "meaning": "cardRelative",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].condition.left.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].condition.left.selector.controller"
           }
         ],
         "test3": "P1 deploys Redonkulous via FLIP UP. Run A: picked character is controlled by P3: P3 chooses and discards 2 cards; if P3 then has 3 or fewer cards in hand the character is voided; P2's hand is untouched. Run B: picked character is controlled by P2: the same with P2; P3's hand is untouched. Run C: picked character is P1's own: P1 discards 2 and is the one checked. Without FLIP UP (cast normally) nobody discards, but the 3-or-fewer void check still follows the printed text."
@@ -906,28 +931,32 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it)."
+            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it).",
+            "movedTo": "behavior.abilities[0].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it)."
+            "why": "\"An opponent\": one opponent picked by P1 when the effect resolves (nothing in the sentence settles it).",
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "\"that opponent\": the same opponent picked for the first discard."
+            "why": "\"that opponent\": the same opponent picked for the first discard.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "\"that opponent\": the same opponent picked for the first discard."
+            "why": "\"that opponent\": the same opponent picked for the first discard.",
+            "movedTo": "behavior.abilities[0].effects[2].effects[0].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].chooser",
@@ -1270,7 +1299,8 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "\"that player\": the opponent picked in clause 1."
+            "why": "\"that player\": the opponent picked in clause 1.",
+            "movedTo": "behavior.abilities[0].effects[1].options[0].effects[0].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].chooser",
@@ -1313,13 +1343,15 @@
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "\"That player\": the opponent picked in clause 1."
+            "why": "\"That player\": the opponent picked in clause 1.",
+            "movedTo": "behavior.abilities[0].effects[1].options[1].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "refersBack",
-            "edit": true
+            "edit": true,
+            "movedTo": "behavior.abilities[0].effects[1].options[1].effects[0].declaration.selector.controller"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. As clause 1: P1 has picked P2 or P3 before choosing OPTION 2. Both P2 and P3 are legal. Run A (P1 picks P2): P1 picked P2 and chose OPTION 2: P2 chooses and destroys a character P2 controls; P3's characters are untouched. Run B (P1 picks P3): P1 picked P3 and chose OPTION 2: P3 chooses and destroys a character P3 controls; P2's characters are untouched. In both runs the opponent not picked is unaffected."
@@ -1380,7 +1412,8 @@
             "now": null,
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The ability has no costs field. 'Pick an opponent' is an extra cost, so a new costs[0] step (pick an opponent) is needed, and clause 1's chooser and selector read its result."
+            "why": "The ability has no costs field. 'Pick an opponent' is an extra cost, so a new costs[0] step (pick an opponent) is needed, and clause 1's chooser and selector read its result.",
+            "movedTo": "behavior.abilities[0].playerChoices[0]"
           }
         ],
         "test3": "Table: P1 controls the card, P2 sits left of P1, P3 after P2. P1 plays the card; the opponent is picked as part of the extra cost (P2 or P3). Both P2 and P3 are legal. Run A (P1 picks P2): P1 plays it and picks P2 as the extra cost; P3 is not picked and unaffected. Run B (P1 picks P3): P1 plays it and picks P3 as the extra cost; P2 is not picked and unaffected. In both runs the opponent not picked is unaffected."

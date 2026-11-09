@@ -322,8 +322,9 @@ into `ffa` once the two-player replays are recorded.
     not trigger "picked" abilities.
 - **`noResponse?: true | "opponent"`.** `true` means nobody may respond;
   `"opponent"` means the block's opponent may not.
-- **Offers (MPQ-P7).** `anyPlayerMayPay` gets `offerTo: "opponents" |
-  "players"`. The offer goes clockwise, and the first payer settles it.
+- **Offers (MPQ-P7).** "Any opponent may pay" is `mayPay` with `offerTo:
+  "opponents"`; "any player may pay" is `anyPlayerMayPay`. The offer goes
+  clockwise, and the first payer settles it.
 
 ### As built (Phase 3 step 5)
 

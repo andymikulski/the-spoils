@@ -105,28 +105,32 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The opponent who decides whether to draw."
+            "why": "The opponent who decides whether to draw.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The same opponent draws."
+            "why": "The same opponent draws.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].options[1].effects[0].player"
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 (with at least [O][O][O]) starts P1's turn and chooses to draw. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 is offered the optional draw and may accept (draws 1) or decline; P3 is not asked and does not draw. Choose P3: P3 is offered the optional draw and may accept (draws 1) or decline; P2 is not asked and does not draw. If P1 declines the draw, no opponent is offered one."
@@ -148,28 +152,32 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The opponent who discards."
+            "why": "The opponent who discards.",
+            "movedTo": "behavior.abilities[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The card comes from that opponent's hand."
+            "why": "The card comes from that opponent's hand.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].chooser",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].options[1].effects[0].player"
           }
         ],
         "test3": "P1 (with at least [O][O][O][O][O]) starts P1's turn. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 chooses a card from their hand and discards it; P3's hand is unchanged. Choose P3: P3 chooses a card from their hand and discards it; P2's hand is unchanged."
@@ -185,28 +193,32 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].options[1].effects[1].options[1].effects[0].player",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@ooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[2].options[1].effects[0].player"
           },
           {
             "path": "behavior.abilities[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ooooo: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 (with at least [O] x7) starts P1's turn and may pick a character (any player's, e.g. a P3 character): it goes to its owner's hand (P3's hand). No opponent selection is offered; P2 and P3 are not asked anything."
@@ -721,14 +733,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The discarding opponent."
+            "why": "The discarding opponent.",
+            "movedTo": "behavior.abilities[0].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The card is from that opponent's hand."
+            "why": "The card is from that opponent's hand.",
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 sees a P1-controlled character leave play (the trigger resolves). The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 discards a card of their choice; P3 discards nothing. Choose P3: P3 discards a card of their choice; P2 discards nothing."
@@ -1097,14 +1111,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The opponent who puts the card."
+            "why": "The opponent who puts the card.",
+            "movedTo": "behavior.abilities[0].effects[1].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The card is from that opponent's hand."
+            "why": "The card is from that opponent's hand.",
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 sees the Warlock enter play. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 chooses a card in their hand and puts it on top of their deck; P3's hand and deck are unchanged. Choose P3: P3 chooses a card in their hand and puts it on top of their deck; P2's hand and deck are unchanged."
@@ -1170,35 +1186,40 @@
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent."
+            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent."
+            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent."
+            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[0].player",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent."
+            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent.",
+            "movedTo": "behavior.abilities[0].effects[1].condition.left.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].condition.conditions[1].conditions[1].left.selector.controller",
             "now": "opponent",
             "meaning": "cardRelative",
             "edit": true,
-            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent."
+            "why": "'that character's controller' is the controller of the picked character: whichever of P2 or P3 controls it, not a chosen opponent.",
+            "movedTo": "behavior.abilities[0].effects[1].condition.left.selector.controller"
           }
         ],
         "test3": "P1 deploys Redonkulous with FLIP UP and picks P3's character (P2 also has characters). P3 (not P2) discards 2 cards. If P3 has 3 or fewer cards in hand after that (the text checks the controller's hand), the character is removed from the game; with 4 or more it stays. P2's hand is unchanged. Repeat picking P2's character: P2 discards, P3 does not. Picking P1's own character: P1 discards 2."
@@ -1313,7 +1334,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].controller"
           }
         ],
         "test3": "At the end of P1's turn a token goes on the Bladder, P1's faction loses X influence (X = tokens) and P1 may play a resource. Nothing happens at the end of P2's or P3's turn."
@@ -1335,7 +1357,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The opponent who takes control, chosen as the trigger resolves."
+            "why": "The opponent who takes control, chosen as the trigger resolves.",
+            "movedTo": "behavior.abilities[1].effects[1].controller"
           }
         ],
         "test3": "P1 controls the Bladder with at least 3 tokens at the start of a turn (any player's turn). The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P2 takes control of it; all tokens are removed; P3 does not take control. Choose P3: P3 takes control of it; all tokens are removed; P2 does not take control. With fewer than 3 tokens nothing happens."
@@ -1706,7 +1729,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "MPQ-P9: the count covers the one chosen opponent's characters, not the total over every opponent."
+            "why": "MPQ-P9: the count covers the one chosen opponent's characters, not the total over every opponent.",
+            "movedTo": "behavior.abilities[0].effects[1].count.values[0].selector.controller"
           }
         ],
         "test3": "P1 controls 1 character, P2 controls 4, P3 controls 2. Drivey Car leaves play: P1 chooses one opponent as the ability resolves (P2 or P3; exactly one choice). Choose P2: X = 4 - 1 = 3 Micromajig tokens enter play under P1's control. Choose P3 (second run): X = 2 - 1 = 1. The other opponent's characters are never counted."
@@ -2265,21 +2289,24 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].effects[1].player"
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[2].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "At the start of P1's turn (with [D][D][D]) P1 may pick a character (any player's): it gains COVERT this turn. P2 and P3 are not asked anything."
@@ -2301,21 +2328,24 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "Search one chosen opponent's deck."
+            "why": "Search one chosen opponent's deck.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
+            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site).",
+            "movedTo": "behavior.abilities[1].effects[1].effects[1].player"
           },
           {
             "path": "behavior.abilities[2].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 3:rule@ddddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[2].effects[1].declaration.selector.owner"
           }
         ],
         "test3": "P1 (with at least [D] x5) starts P1's turn and chooses to search. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 searches P2's deck for a card and puts it into P2's discard pile; P2's deck is shuffled; P3's deck and discard pile are unchanged. Choose P3: P1 searches P3's deck for a card and puts it into P3's discard pile; P3's deck is shuffled; P2's deck and discard pile are unchanged."
@@ -2337,21 +2367,24 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The random card comes from one chosen opponent's hand."
+            "why": "The random card comes from one chosen opponent's hand.",
+            "movedTo": "behavior.abilities[2].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[1].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": false,
-            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 2:rule@ddddd: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[1].effects[1].effects[1].player"
           }
         ],
         "test3": "P1 (with at least [D] x7) starts P1's turn. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: a card from P2's hand chosen at random is discarded (no choice for P2); P3's hand is unchanged. Choose P3: a card from P3's hand chosen at random is discarded (no choice for P3); P2's hand is unchanged."
@@ -2729,7 +2762,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "Today one option for 'the opponent's deck'; together with the controller's own option it must offer every player's deck (own, P2's, P3's)."
+            "why": "Today one option for 'the opponent's deck'; together with the controller's own option it must offer every player's deck (own, P2's, P3's).",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].player"
           }
         ],
         "test3": "P1 activates SIZE UP (depletes): the deck choices offered are P1's, P2's and P3's decks. Choose P3's: P1 looks at the top card of P3's deck only; P2's deck is not looked at. Choose P2's: only P2's. Choose own: P1's."
@@ -2751,7 +2785,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "Together with the controller's own option, every player's deck must be offered."
+            "why": "Together with the controller's own option, every player's deck must be offered.",
+            "movedTo": "behavior.abilities[1].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "P1 activates RIG (pays 1): the choices are P1's, P2's and P3's decks. Choose P2's: the top card of P2's deck goes on the bottom of P2's deck; P3's and P1's decks are unchanged. Choose P3's: P3's deck only."
@@ -2834,14 +2869,16 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "Search one chosen opponent's deck."
+            "why": "Search one chosen opponent's deck.",
+            "movedTo": "behavior.abilities[0].effects[1].declaration.selector.owner"
           },
           {
             "path": "behavior.abilities[0].effects[0].effects[1].player",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
+            "why": "That opponent's deck is shuffled and the card goes to that opponent's discard pile. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site).",
+            "movedTo": "behavior.abilities[0].effects[1].effects[1].player"
           }
         ],
         "test3": "P1 sees the Mugger enter play and chooses to search. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 searches P2's deck for a card and puts it into P2's discard pile; P2's deck is shuffled; P3's deck and discard pile are unchanged. Choose P3: P1 searches P3's deck for a card and puts it into P3's discard pile; P3's deck is shuffled; P2's deck and discard pile are unchanged."
@@ -3033,7 +3070,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The opponent who takes control, chosen as the end-of-turn effect resolves (not at activation)."
+            "why": "The opponent who takes control, chosen as the end-of-turn effect resolves (not at activation).",
+            "movedTo": "behavior.abilities[0].effects[1].effects[2].controller"
           }
         ],
         "test3": "P1 uses the ability once this turn (pays 1, inflicts 1 damage to P1's faction, draws a card). The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: at the end of the turn a token goes on the Mastabatorium and P2 takes control of it; P3 does not. Choose P3: at the end of the turn a token goes on the Mastabatorium and P3 takes control of it; P2 does not. Use only 5 times each turn is unchanged."
@@ -3150,7 +3188,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].target.player"
           }
         ],
         "test3": "P1 plays Chain Reaction picking a location (any player's, e.g. P2's)."
@@ -3172,7 +3211,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes the damage."
+            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes the damage.",
+            "movedTo": "behavior.abilities[0].effects[1].effects[0].effects[0].effects[1].effects[1].target.player"
           }
         ],
         "test3": "P1 deals 3 damage to a location and destroys it, picks a character, inflicts 2 damage destroying it. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: P1 draws a card and 1 damage is inflicted to P2's faction; P3's faction is unchanged. Choose P3: P1 draws a card and 1 damage is inflicted to P3's faction; P2's faction is unchanged. If the location or character survives, no opponent is chosen."
@@ -3259,7 +3299,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes the damage."
+            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes the damage.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "P1 (with at least [R][R][R]) starts P1's turn and chooses to inflict damage. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: 1 damage is inflicted to P2's faction; P3's faction is unchanged. Choose P3: 1 damage is inflicted to P3's faction; P2's faction is unchanged. P1 may decline."
@@ -3275,7 +3316,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "P1 (with [R] x5) starts P1's turn and may pick a character (any player's, e.g. P3's): it is depleted. No opponent selection is offered."
@@ -3291,7 +3333,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": false,
-            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag."
+            "why": "Shared with clause 1:rule@rrr: the same data path, listed there with the same meaning and edit flag.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "P1 (with [R] x7) starts P1's turn and may pick a character (any player's, e.g. P2's): 2 damage is inflicted to it. No opponent selection is offered."
@@ -3335,6 +3378,13 @@
             "meaning": "eachOpponent",
             "edit": false,
             "why": "Shared with clause 1:rule: the same data path, listed there with the same meaning and edit flag."
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": false,
+            "why": "Shared with clause 1:rule: the same data path"
           }
         ],
         "test3": "P1 plays Epic Smackdown choosing X = 2 and destroying 2 characters P1 controls (only P1's own characters can be chosen)."
@@ -3362,28 +3412,39 @@
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Per-opponent iteration needed: each opponent's own character count is compared with X (today one opponent's count)."
+            "why": "Per-opponent iteration needed: each opponent's own character count is compared with X (today one opponent's count).",
+            "movedTo": "behavior.abilities[0].effects[0].effects[0].value.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the iteration: that opponent chooses X characters they control."
+            "why": "Inside the iteration: that opponent chooses X characters they control.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[1].effects[0].chooser"
           },
           {
             "path": "behavior.abilities[0].effects[1].effects[0].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the iteration: characters of that opponent."
+            "why": "Inside the iteration: characters of that opponent.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[1].effects[0].declaration.selector.controller"
           },
           {
             "path": "behavior.abilities[0].effects[2].effects[0].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the iteration: 'all of that opponent's characters' for an opponent with fewer than X."
+            "why": "Inside the iteration: 'all of that opponent's characters' for an opponent with fewer than X.",
+            "movedTo": "behavior.abilities[0].effects[0].effects[2].effects[0].selector.controller"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "New forEachPlayer { players: \"opponents\" } wrapper (a new node, no player word before) around the per-opponent steps; the draw stays outside, once."
           }
         ],
         "test3": "P1 destroys 2 of its own characters (X = 2). P2 controls 3 characters: P2 chooses 2 of them and they are destroyed (1 left). P3 controls 1 character: it is destroyed (fewer than X, so all of P3's characters). P1 draws exactly one card (not one per opponent). P1's remaining characters are untouched.",
@@ -3707,7 +3768,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes 1 damage."
+            "why": "'opponent' would now mean one chosen opponent; the controller picks which opponent's faction takes 1 damage.",
+            "movedTo": "behavior.abilities[0].effects[0].options[1].effects[1].target.player"
           }
         ],
         "test3": "P1 (with at least [R][R][R]) starts P1's turn and chooses to inflict damage. The opponent is P1's choice, offered between P2 and P3 only (P1 is never offered; a pick in the sentence, if any, decides). Choose P2: 1 damage is inflicted to P2's faction; P3's faction is unchanged. Choose P3: 1 damage is inflicted to P3's faction; P2's faction is unchanged. P1 may decline."
@@ -3735,7 +3797,8 @@
             "now": "opponent",
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "MPQ-P9: the damage goes to all characters of the one chosen opponent, not to every opponent's characters."
+            "why": "MPQ-P9: the damage goes to all characters of the one chosen opponent, not to every opponent's characters.",
+            "movedTo": "behavior.abilities[0].effects[1].selector.controller"
           }
         ],
         "test3": "P2 controls characters A and A2, P3 controls character B, P1 controls character D. The Sarume enters play and P1 chooses one opponent when the trigger resolves (P2 or P3; exactly one choice). Choose P2: A and A2 take 1 damage; B and D take none. Choose P3 (second run): B takes 1 damage; A, A2 and D take none."

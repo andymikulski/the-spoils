@@ -471,7 +471,22 @@ const cards = [
               "id": "deckOwner",
               "selector": {
                 "zone": "play",
-                "type": "faction"
+                "type": "faction",
+                "conditions": [
+                  {
+                    "type": "or",
+                    "conditions": [
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "controller"
+                      },
+                      {
+                        "type": "targetOwnedBy",
+                        "player": "opponent"
+                      }
+                    ]
+                  }
+                ]
               },
               "count": 1
             }
@@ -570,7 +585,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -664,7 +680,7 @@ const cards = [
       "fromPrintingId": "12cfc4e1-e8f7-431e-a37a-593210181b0c"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -1812,7 +1828,22 @@ const cards = [
               "declaration": {
                 "id": "f",
                 "selector": {
-                  "type": "faction"
+                  "type": "faction",
+                  "conditions": [
+                    {
+                      "type": "or",
+                      "conditions": [
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "controller"
+                        },
+                        {
+                          "type": "targetOwnedBy",
+                          "player": "opponent"
+                        }
+                      ]
+                    }
+                  ]
                 },
                 "count": 1
               },
@@ -2581,7 +2612,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -3434,7 +3466,7 @@ const cards = [
       "fromPrintingId": "63369e53-e89b-4b7d-beb0-7110cb1290ce"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",
@@ -4391,7 +4423,7 @@ const cards = [
               "chooser": "activePlayer",
               "options": [
                 {
-                  "label": "You draw a card; opponents may play a resource",
+                  "label": "That player may draw a card; their opponent may play a resource",
                   "effects": [
                     {
                       "type": "mayPay",
@@ -4406,50 +4438,54 @@ const cards = [
                       ]
                     },
                     {
-                      "type": "forEachPlayer",
-                      "effects": [
-                        {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
-                          },
-                          "effects": [
+                      "type": "choosePlayer",
+                      "id": "their",
+                      "from": "opponents",
+                      "chooser": "activePlayer"
+                    },
+                    {
+                      "type": "chooserSelectsTarget",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "their"
+                      },
+                      "declaration": {
+                        "id": "h",
+                        "selector": {
+                          "owner": "any",
+                          "zone": "hand",
+                          "conditions": [
                             {
-                              "type": "chooserSelectsTarget",
-                              "chooser": "controller",
-                              "declaration": {
-                                "id": "h",
-                                "selector": {
-                                  "owner": "self",
-                                  "zone": "hand"
-                                },
-                                "count": 1,
-                                "optional": true
-                              },
-                              "effects": [
-                                {
-                                  "type": "playResource",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "h"
-                                  },
-                                  "faceDown": "auto",
-                                  "player": "controller"
-                                }
-                              ]
+                              "type": "targetOwnedBy",
+                              "player": {
+                                "type": "chosenPlayer",
+                                "id": "their"
+                              }
                             }
                           ]
+                        },
+                        "count": 1,
+                        "optional": true
+                      },
+                      "effects": [
+                        {
+                          "type": "playResource",
+                          "target": {
+                            "type": "selected",
+                            "id": "h"
+                          },
+                          "faceDown": "auto",
+                          "player": {
+                            "type": "chosenPlayer",
+                            "id": "their"
+                          }
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "label": "You may play a resource; opponents may draw",
+                  "label": "That player may play a resource; their opponent may draw a card",
                   "effects": [
                     {
                       "type": "forEachPlayer",
@@ -4490,31 +4526,26 @@ const cards = [
                       ]
                     },
                     {
-                      "type": "forEachPlayer",
+                      "type": "choosePlayer",
+                      "id": "their",
+                      "from": "opponents",
+                      "chooser": "activePlayer"
+                    },
+                    {
+                      "type": "mayPay",
+                      "player": {
+                        "type": "chosenPlayer",
+                        "id": "their"
+                      },
+                      "costs": [],
                       "effects": [
                         {
-                          "type": "if",
-                          "condition": {
-                            "type": "not",
-                            "condition": {
-                              "type": "isActivePlayer",
-                              "player": "controller"
-                            }
+                          "type": "draw",
+                          "player": {
+                            "type": "chosenPlayer",
+                            "id": "their"
                           },
-                          "effects": [
-                            {
-                              "type": "mayPay",
-                              "player": "controller",
-                              "costs": [],
-                              "effects": [
-                                {
-                                  "type": "draw",
-                                  "player": "controller",
-                                  "amount": 1
-                                }
-                              ]
-                            }
-                          ]
+                          "amount": 1
                         }
                       ]
                     }
@@ -4550,7 +4581,8 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 },
@@ -4590,13 +4622,15 @@ const cards = [
                             }
                           ]
                         }
-                      ]
+                      ],
+                      "players": "pair"
                     }
                   ]
                 }
               ]
             }
-          ]
+          ],
+          "opponentFrom": "acting"
         }
       ]
     }
@@ -6697,42 +6731,25 @@ const cards = [
               },
               "effects": [
                 {
-                  "type": "forEachPlayer",
-                  "effects": [
-                    {
-                      "type": "if",
-                      "condition": {
+                  "type": "deployForFree",
+                  "player": "opponent",
+                  "maxCost": 999,
+                  "selector": {
+                    "zone": "hand",
+                    "conditions": [
+                      {
                         "type": "not",
                         "condition": {
-                          "type": "isActivePlayer",
-                          "player": "controller"
-                        }
-                      },
-                      "effects": [
-                        {
-                          "type": "deployForFree",
-                          "player": "controller",
-                          "maxCost": 999,
-                          "selector": {
-                            "zone": "hand",
-                            "conditions": [
-                              {
-                                "type": "not",
-                                "condition": {
-                                  "type": "cardTypeIs",
-                                  "cardType": "tactic",
-                                  "target": {
-                                    "type": "selected",
-                                    "id": "__candidate"
-                                  }
-                                }
-                              }
-                            ]
+                          "type": "cardTypeIs",
+                          "cardType": "tactic",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
                           }
                         }
-                      ]
-                    }
-                  ]
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -9263,7 +9280,8 @@ const cards = [
                     }
                   ]
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -13464,7 +13482,8 @@ const cards = [
                   "player": "controller",
                   "count": 2
                 }
-              ]
+              ],
+              "players": "pair"
             }
           ]
         }
@@ -16461,7 +16480,7 @@ const cards = [
       "fromPrintingId": "4181e922-7ffb-4c71-aef6-17adf4f006c7"
     },
     "behavior": {
-      "noResponse": true,
+      "noResponse": "opponent",
       "abilities": [
         {
           "id": "body",

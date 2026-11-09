@@ -2191,7 +2191,7 @@ describe("1st Edition Part 2 — Martial Artist", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "ma", def: def("Martial Artist"), owner: P1, zone: "play" }]
     });
-    assert.ok(engine.getRestrictions(id("ma")).includes("cannotBePickedByOpponents"), "engine.getRestrictions(id(\"ma\")).includes(\"cannotBePickedByOpponents\")");
+    assert.ok(engine.getRestrictions(id("ma")).includes("cannotBePickedByOpponent"), "engine.getRestrictions(id(\"ma\")).includes(\"cannotBePickedByOpponent\")");
     assert.equal(engine.getRestrictions(id("ma")).includes("cannotBePicked"), false);
   });
 });
@@ -2220,7 +2220,7 @@ describe("1st Edition Part 2 — Martial Arts Trainee", () => {
     const { engine, id } = buildGame({
       cards: [{ key: "mat", def: def("Martial Arts Trainee"), owner: P1, zone: "play" }]
     });
-    assert.ok(engine.getRestrictions(id("mat")).includes("cannotBePickedByOpponents"), "engine.getRestrictions(id(\"mat\")).includes(\"cannotBePickedByOpponents\")");
+    assert.ok(engine.getRestrictions(id("mat")).includes("cannotBePickedByOpponent"), "engine.getRestrictions(id(\"mat\")).includes(\"cannotBePickedByOpponent\")");
     assert.equal(engine.getRestrictions(id("mat")).includes("cannotBePicked"), false);
   });
 

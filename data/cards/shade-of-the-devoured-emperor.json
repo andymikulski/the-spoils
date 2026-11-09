@@ -267,7 +267,10 @@
                           "declaration": {
                             "id": "res2",
                             "selector": {
-                              "controller": "opponent",
+                              "controller": {
+                                "type": "controllerOf",
+                                "target": "eventCard"
+                              },
                               "zone": "play",
                               "type": "resource"
                             },
@@ -614,11 +617,20 @@
         {
           "id": "ft-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "targets": [
             {
               "id": "fd",
               "selector": {
-                "controller": "opponent",
+                "controller": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "zone": "play",
                 "faceDown": true,
                 "type": "resource"
@@ -647,7 +659,10 @@
                     },
                     {
                       "type": "chooserSelectsOption",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "options": [
                         {
                           "label": "Decline",
@@ -658,7 +673,10 @@
                           "effects": [
                             {
                               "type": "draw",
-                              "player": "opponent",
+                              "player": {
+                                "type": "chosenPlayer",
+                                "id": "picked"
+                              },
                               "amount": 1
                             }
                           ]
@@ -667,11 +685,17 @@
                     },
                     {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "declaration": {
                         "id": "r",
                         "selector": {
-                          "controller": "opponent",
+                          "controller": {
+                            "type": "chosenPlayer",
+                            "id": "picked"
+                          },
                           "zone": "hand"
                         },
                         "count": 1,
@@ -695,7 +719,10 @@
                                 "id": "r"
                               },
                               "faceDown": "auto",
-                              "player": "opponent"
+                              "player": {
+                                "type": "chosenPlayer",
+                                "id": "picked"
+                              }
                             }
                           ]
                         }
@@ -879,7 +906,7 @@
               "value": {
                 "type": "count",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "faceDown": true,
                   "type": "resource"
@@ -897,7 +924,7 @@
               "value": {
                 "type": "count",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "faceDown": true,
                   "type": "resource"
@@ -913,6 +940,12 @@
           "id": "ms-follow",
           "name": "Follow Suit",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "payResources",
@@ -922,11 +955,17 @@
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "c",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -939,7 +978,10 @@
                     "id": "c"
                   },
                   "faceDown": true,
-                  "player": "opponent"
+                  "player": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  }
                 }
               ]
             }
@@ -1123,6 +1165,7 @@
         {
           "id": "neuralyzer-agent-attack-discard",
           "type": "triggered",
+          "opponentFrom": "choose",
           "event": "characterAttacked",
           "condition": {
             "type": "sourceIsEventCard"
@@ -1180,11 +1223,17 @@
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "ownerOf",
+                "target": "eventCard"
+              },
               "declaration": {
                 "id": "disc2",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "ownerOf",
+                    "target": "eventCard"
+                  },
                   "zone": "hand"
                 },
                 "count": 1
@@ -1932,7 +1981,7 @@
             {
               "id": "v",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character",
                 "conditions": [
@@ -1965,11 +2014,23 @@
             },
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "controllerOf",
+                "target": {
+                  "type": "selected",
+                  "id": "v"
+                }
+              },
               "declaration": {
                 "id": "det",
                 "selector": {
-                  "owner": "opponent",
+                  "owner": {
+                    "type": "controllerOf",
+                    "target": {
+                      "type": "selected",
+                      "id": "v"
+                    }
+                  },
                   "zone": "play",
                   "type": "resource",
                   "attachedToFaction": true
@@ -2282,30 +2343,36 @@
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "det",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": true
-                },
-                "count": 3,
-                "optional": true
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "forEach",
-                  "selected": "det",
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "det",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": true
+                    },
+                    "count": 3,
+                    "optional": true
+                  },
                   "effects": [
                     {
-                      "type": "detach",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      }
+                      "type": "forEach",
+                      "selected": "det",
+                      "effects": [
+                        {
+                          "type": "detach",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
@@ -2341,14 +2408,26 @@
         {
           "id": "violating-ritual-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "effects": [
             {
               "type": "chooserSelectsTarget",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "disc",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "hand"
                 },
                 "count": 2,
@@ -2407,6 +2486,12 @@
           "id": "voidal-trinket-augur",
           "name": "Augur",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "deplete",
@@ -2414,11 +2499,17 @@
             },
             {
               "type": "otherPlayerChooses",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "declaration": {
                 "id": "detach",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "zone": "play",
                   "type": "resource",
                   "attachedToFaction": true
@@ -3488,24 +3579,30 @@
           },
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "opDestroy",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "play",
-                  "type": "character"
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "destroy",
-                  "target": {
-                    "type": "selected",
-                    "id": "opDestroy"
-                  }
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "opDestroy",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "play",
+                      "type": "character"
+                    },
+                    "count": 1
+                  },
+                  "effects": [
+                    {
+                      "type": "destroy",
+                      "target": {
+                        "type": "selected",
+                        "id": "opDestroy"
+                      }
+                    }
+                  ]
                 }
               ]
             }
@@ -4169,6 +4266,12 @@
         {
           "id": "nc-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "effects": [
             {
               "type": "draw",
@@ -4180,7 +4283,10 @@
             },
             {
               "type": "draw",
-              "player": "opponent",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "amount": {
                 "type": "variable",
                 "id": "__paidByOpponent"
@@ -4191,7 +4297,10 @@
             {
               "type": "alternatingPay",
               "first": "controller",
-              "opponent": "opponent",
+              "opponent": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "cost": [
                 {
                   "type": "payResources",
@@ -4641,29 +4750,35 @@
           "type": "activated",
           "effects": [
             {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "r",
-                "selector": {
-                  "owner": "opponent",
-                  "zone": "play",
-                  "type": "resource",
-                  "attachedToFaction": false
-                },
-                "count": 1
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "attachTo",
-                  "target": {
-                    "type": "selected",
-                    "id": "r"
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "r",
+                    "selector": {
+                      "owner": "self",
+                      "zone": "play",
+                      "type": "resource",
+                      "attachedToFaction": false
+                    },
+                    "count": 1
                   },
-                  "to": {
-                    "type": "factionOf",
-                    "player": "opponent"
-                  }
+                  "effects": [
+                    {
+                      "type": "attachTo",
+                      "target": {
+                        "type": "selected",
+                        "id": "r"
+                      },
+                      "to": {
+                        "type": "factionOf",
+                        "player": "controller"
+                      }
+                    }
+                  ]
                 }
               ]
             },
@@ -6400,6 +6515,12 @@
           "id": "mmm-release",
           "name": "Release the Majigs!",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "deplete",
@@ -6407,12 +6528,18 @@
             },
             {
               "type": "otherPlayerChooses",
-              "chooser": "opponent",
+              "chooser": {
+                "type": "chosenPlayer",
+                "id": "picked"
+              },
               "may": true,
               "effects": [
                 {
                   "type": "createTokens",
-                  "controller": "opponent",
+                  "controller": {
+                    "type": "chosenPlayer",
+                    "id": "picked"
+                  },
                   "count": 1,
                   "token": {
                     "name": "Micromajig",
@@ -6952,7 +7079,7 @@
                 "conditions": [
                   {
                     "type": "isActivePlayer",
-                    "player": "opponent"
+                    "player": "opponents"
                   },
                   {
                     "type": "or",
@@ -7088,8 +7215,16 @@
                   },
                   "effects": [
                     {
+                      "type": "choosePlayer",
+                      "id": "picked",
+                      "from": "opponents"
+                    },
+                    {
                       "type": "chooserSelectsTarget",
-                      "chooser": "opponent",
+                      "chooser": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "declaration": {
                         "id": "fd",
                         "selector": {
@@ -7489,7 +7624,7 @@
           "effects": [
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": 1
             },
             {
@@ -7501,12 +7636,19 @@
                   "effects": []
                 },
                 {
-                  "label": "Put a Micromajig token into play",
+                  "label": "Put a Micromajig token into play for each influence gained",
                   "effects": [
                     {
                       "type": "createTokens",
                       "controller": "controller",
-                      "count": 1,
+                      "count": {
+                        "type": "count",
+                        "selector": {
+                          "zone": "play",
+                          "type": "faction",
+                          "controller": "opponents"
+                        }
+                      },
                       "token": {
                         "name": "Micromajig",
                         "cardType": "character",
@@ -8009,20 +8151,25 @@
           "modifiers": [],
           "grantsReveal": {
             "zone": "deckTop",
-            "of": "opponent"
+            "of": "opponents"
           }
         },
         {
           "id": "bottlebeard-scry-speed",
           "type": "continuous",
           "condition": {
-            "type": "cardTypeIs",
-            "target": {
-              "type": "deckPosition",
-              "player": "opponent",
-              "from": "top"
+            "type": "numberCompare",
+            "left": {
+              "type": "count",
+              "selector": {
+                "owner": "opponents",
+                "zone": "deck",
+                "fromTop": 1,
+                "type": "character"
+              }
             },
-            "cardType": "character"
+            "operator": ">=",
+            "right": 1
           },
           "modifiers": [
             {
@@ -8037,6 +8184,12 @@
           "id": "bottlebeard-chug",
           "name": "Chug!",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "costs": [
             {
               "type": "payResources",
@@ -8048,7 +8201,10 @@
               "type": "moveCard",
               "target": {
                 "type": "deckPosition",
-                "player": "opponent",
+                "player": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "from": "top"
               },
               "to": "deck",
@@ -8631,7 +8787,7 @@
             {
               "type": "forEach",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -9591,7 +9747,7 @@
                     {
                       "type": "forEach",
                       "selector": {
-                        "controller": "opponent",
+                        "controller": "opponents",
                         "zone": "play",
                         "type": "character"
                       },
@@ -9668,7 +9824,7 @@
                     {
                       "type": "forEach",
                       "selector": {
-                        "controller": "opponent",
+                        "controller": "opponents",
                         "zone": "play",
                         "type": "character"
                       },
@@ -11208,7 +11364,7 @@
             {
               "id": "theirs",
               "selector": {
-                "controller": "opponent",
+                "controller": "opponents",
                 "zone": "play",
                 "type": "character"
               },
@@ -11963,7 +12119,7 @@
             },
             {
               "type": "modifyInfluence",
-              "player": "opponent",
+              "player": "opponents",
               "amount": -6
             }
           ]
@@ -12174,11 +12330,20 @@
         {
           "id": "juice-sale-play",
           "type": "activated",
+          "playerChoices": [
+            {
+              "id": "picked",
+              "from": "opponents"
+            }
+          ],
           "targets": [
             {
               "id": "ch",
               "selector": {
-                "controller": "opponent",
+                "controller": {
+                  "type": "chosenPlayer",
+                  "id": "picked"
+                },
                 "zone": "play",
                 "type": "character",
                 "conditions": [
@@ -12191,7 +12356,10 @@
                     "metric": "strength",
                     "direction": "max",
                     "among": {
-                      "controller": "opponent",
+                      "controller": {
+                        "type": "chosenPlayer",
+                        "id": "picked"
+                      },
                       "zone": "play",
                       "type": "character"
                     }
@@ -13311,7 +13479,7 @@
               "value": {
                 "type": "sumStat",
                 "selector": {
-                  "controller": "opponent",
+                  "controller": "opponents",
                   "zone": "play",
                   "type": "character"
                 },

@@ -13,6 +13,14 @@ import type { ResourceIcon } from "./cards.js";
  */
 export type PlayerScope = "self" | "opponent" | "opponents" | "any";
 
+/**
+ * The player word of a selector's `controller` / `owner`: a `PlayerScope`, `"acting"` ("that player's cards" in a
+ * block written from another player's point of view, MPQ-P10), or a player reference that names one player from the
+ * rest of the block: `controllerOf` / `ownerOf` a pick, `chosenPlayer`, or a fixed `player`. A reference that is not
+ * known yet (a pick not made yet) matches nothing.
+ */
+export type SelectorPlayer = PlayerScope | "acting" | Extract<PlayerRef, { type: string }>;
+
 export type PlayerRef =
   | "controller"
   | "owner"
@@ -36,6 +44,8 @@ export type PlayerRef =
   | { type: "player"; id: PlayerId }
   /** The player a `playerChoices` entry or a `choosePlayer` effect named `id` (CR 405: a player choice is not a pick). */
   | { type: "chosenPlayer"; id: string }
+  /** The player the source card stored under `key` with a `rememberPlayer` effect, in this or an earlier resolution. */
+  | { type: "rememberedPlayer"; key: string }
   /** The owner of a targeted card (e.g. "any one deck" — the caster picks a faction card, this resolves to that player). */
   | { type: "ownerOf"; target: TargetRef }
   /** The *current controller* of a targeted card ("that character's controller ..."), which can differ from its owner after a take-control effect. */
@@ -393,8 +403,8 @@ export type NumberExpression =
     };
 
 export interface CardSelector {
-  controller?: PlayerScope;
-  owner?: PlayerScope;
+  controller?: SelectorPlayer;
+  owner?: SelectorPlayer;
 
   /**
    * The game area(s) this selector looks in. **When omitted, it matches

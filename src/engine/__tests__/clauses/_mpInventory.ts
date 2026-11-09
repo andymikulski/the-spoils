@@ -220,7 +220,9 @@ export const PLAYER_FIELDS: ReadonlySet<string> = new Set([
   "opponent", // alternatingPay(Loop)
   "toFaction",
   "usableBy",
-  "attachToController"
+  "attachToController",
+  "noResponse", // behavior.noResponse: "opponent" (only the selected opponent cannot respond)
+  "attacker" // preventsAttackOnFaction.attacker: "opponent" (only the selected opponent cannot attack)
 ]);
 
 /** The player words a string value can take in a player-valued field. */

@@ -152,6 +152,13 @@ export interface CardInstance {
    */
   linkedTargets?: Record<string, CardInstanceId>;
 
+  /**
+   * Players this card has remembered for the rest of the game ("that opponent", in a later ability of the same card):
+   * see the `rememberPlayer` effect and the `{ type: "rememberedPlayer", key }` PlayerRef. Kept when the card changes
+   * zones; a new `rememberPlayer` of the same key replaces it.
+   */
+  rememberedPlayers?: Record<string, PlayerId>;
+
   /** True for a token permanent (`createTokens`) — ceases to exist on leaving play. */
   isToken?: boolean;
 
@@ -241,6 +248,12 @@ export interface RuntimeAreaModifier {
    * player is eliminated (RQ-mp-5).
    */
   opponentId?: PlayerId;
+  /**
+   * The players a `choosePlayer` / `playerChoices` choice named in the block that created this record, for those its
+   * data reads (`{ type: "chosenPlayer", id }`). Kept so the record still reads them after the block is done
+   * (Rasputin Unleashed: "that opponent controls").
+   */
+  chosenPlayers?: Record<string, PlayerId>;
   selector: CardSelector;
 
   stat: Stat;
@@ -267,6 +280,8 @@ export interface RuntimeKeywordGrant extends CreatedByPlayer {
    * player is eliminated (RQ-mp-5).
    */
   opponentId?: PlayerId;
+  /** The named players the `condition` reads (see `RuntimeAreaModifier.chosenPlayers`). */
+  chosenPlayers?: Record<string, PlayerId>;
   /** Only counts while this holds (the effect's `condition`), evaluated as `controllerId`'s effect from `sourceId`. */
   condition?: Condition;
   controllerId?: PlayerId;
@@ -378,6 +393,8 @@ export interface RuntimeReplacement {
    * player is eliminated (RQ-mp-5).
    */
   opponentId?: PlayerId;
+  /** The named players its `condition` / `effects` read (see `RuntimeAreaModifier.chosenPlayers`). */
+  chosenPlayers?: Record<string, PlayerId>;
   /** Same shape as `installReplacement.replaces`; `controlledBy` / `by` are relative to `controllerId`. */
   replaces: Extract<Effect, { type: "installReplacement" }>["replaces"];
   condition?: Condition;
@@ -524,6 +541,8 @@ export interface ScheduledEffect {
    * player is eliminated (RQ-mp-5).
    */
   opponentId?: PlayerId;
+  /** The named players its `condition` / `effects` read (see `RuntimeAreaModifier.chosenPlayers`). */
+  chosenPlayers?: Record<string, PlayerId>;
   condition?: Condition;
   effects: Effect[];
   /** The event that triggered the scheduling ability (SYS-48): a rider's `target: "eventCard"` keeps resolving when it fires later. */
@@ -1746,6 +1765,10 @@ export interface GameState {
     key?: string;
     /** The opponent the replacement was applied with (MPQ-P3). */
     opponentId?: PlayerId;
+    /** The named players a runtime replacement's `effects` read (`RuntimeReplacement.chosenPlayers`). */
+    chosenPlayers?: Record<string, PlayerId>;
+    /** Players still to be offered it if the current chooser declines (`chooser: "opponents"`). */
+    remaining?: PlayerId[];
     /** For a replaced destruction: the card whose effect destroys it, and whether lethal damage does (CR 506.6). */
     causeSourceId?: CardInstanceId;
     byLethalDamage?: boolean;
