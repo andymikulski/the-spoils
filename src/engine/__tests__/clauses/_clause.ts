@@ -26,6 +26,16 @@
 // "<id>"`; keys, finding ids and reasons must be string literals:
 // `_coverage.test.ts` and the CLI find coverage by scanning the source.
 //
+// Multiplayer clause tests (clauses/mp/*.test.ts) use their own helpers, which the
+// `mp-coverage.test.ts` gate enumerates at load time (no source scan, so tests may be
+// generated in loops over seat counts):
+//   mpClause(printingId, key | keys, seats, title, fn)
+//       A `seats`-seat test of the clause (the gate counts 3 and 4). The title is free text.
+//   mpClauseMismatch(printingId, key | keys, seats, findingId, title, fn)
+//       The same, for a clause the engine is known to get wrong (as clauseMismatch).
+//   mpExempt(printingId, key | keys, reason)
+//       Declares an `mp` clause that has no multiplayer behavior to test, at any seat count.
+//
 // Board-building helpers come from ../per-card/_harness.ts; `printing(id)`
 // gives the exact catalog printing under test.
 
@@ -135,9 +145,73 @@ export function settleState(engine: SpoilsEngine): void {
   (engine as unknown as { checkStateBasedActions(): void }).checkStateBasedActions();
 }
 
+// --- multiplayer enumeration --------------------------------------------------------
+//
+// While `collectMpClauses` loads the clauses/mp test files, the helpers below record each call and register no
+// test, so the gate can list every multiplayer test without running (or double-running) any of them.
+
+/** One multiplayer clause test (or exemption) as called from a clauses/mp test file. */
+export interface MpClauseRef {
+  fn: "mpClause" | "mpClauseMismatch" | "mpExempt";
+  printingId: string;
+  keys: string[];
+  /** The table size the test runs at; undefined for an exemption (covers every size). */
+  seats?: number;
+  title?: string;
+  /** mpClauseMismatch: the finding id. mpExempt: the reason. */
+  note?: string;
+}
+
+let collecting: MpClauseRef[] | undefined;
+
+/** Runs `load` (which imports the mp test files) and returns every multiplayer helper call it made; no test is registered meanwhile. */
+export async function collectMpClauses(load: () => Promise<unknown>): Promise<MpClauseRef[]> {
+  collecting = [];
+  try {
+    await load();
+    return collecting;
+  } finally {
+    collecting = undefined;
+  }
+}
+
 /** A test that the engine does what clause `keys` of printing `printingId` says. */
 export function clause(printingId: string, keys: Keys, text: string, fn: () => void | Promise<void>): void {
+  if (collecting) return;
   test(title(printingId, keys, text), fn);
+}
+
+const asList = (keys: Keys): string[] => (typeof keys === "string" ? [keys] : [...keys]);
+
+function checkSeats(fn: string, printingId: string, seats: number): void {
+  if (!Number.isInteger(seats) || seats < 2 || seats > 6) throw new Error(`${fn}(): ${printingId} seats must be a table size from 2 to 6, got ${seats}`);
+}
+
+/** A test, at a `seats`-seat table (the gate counts 3 and 4; 2 covers a table down to one opponent), that the engine does what clause `keys` of printing `printingId` says for several opponents. */
+export function mpClause(printingId: string, keys: Keys, seats: number, text: string, fn: () => void | Promise<void>): void {
+  checkSeats("mpClause", printingId, seats);
+  if (collecting) {
+    collecting.push({ fn: "mpClause", printingId, keys: asList(keys), seats, title: text });
+    return;
+  }
+  test(title(printingId, keys, text), fn);
+}
+
+/** An mpClause test the engine is known to fail: an ordinary failing test tagged with its finding (as clauseMismatch). */
+export function mpClauseMismatch(printingId: string, keys: Keys, seats: number, findingId: string, text: string, fn: () => void | Promise<void>): void {
+  checkSeats("mpClauseMismatch", printingId, seats);
+  if (collecting) {
+    collecting.push({ fn: "mpClauseMismatch", printingId, keys: asList(keys), seats, title: text, note: findingId });
+    return;
+  }
+  test(`${title(printingId, keys, text)} — MISMATCH ${findingId}`, fn);
+}
+
+/** Declares `mp` clause `keys` as having no multiplayer behavior for the engine to do, at any table size; `reason` says why. */
+export function mpExempt(printingId: string, keys: Keys, reason: string): void {
+  if (!BY_ID.has(printingId)) throw new Error(`mpExempt(): no printing with id ${printingId}`);
+  if (!reason.trim()) throw new Error(`mpExempt(): ${printingId} needs a reason`);
+  collecting?.push({ fn: "mpExempt", printingId, keys: asList(keys), note: reason });
 }
 
 /** A clause test the engine is known to fail — an ordinary (failing) test tagged with its finding. See the file header. */
@@ -148,6 +222,7 @@ export function clauseMismatch(
   text: string,
   fn: () => void | Promise<void>
 ): void {
+  if (collecting) return;
   test(`${title(printingId, keys, text)} — MISMATCH ${findingId}`, fn);
 }
 
@@ -159,6 +234,7 @@ export function clauseUnimplemented(
   text: string,
   fn: () => void | Promise<void>
 ): void {
+  if (collecting) return;
   test(`${title(printingId, keys, text)} — UNIMPLEMENTED`, { todo: `UNIMPLEMENTED: ${reason}` }, fn);
 }
 

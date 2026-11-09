@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, tactic } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { answer, bounce, expectChoice, othersOf, P1, P2, pending, settle, staples, table, tokensOn, zoneOf } from "./_seed-3.js";
 import type { PlayerId, Table } from "./_seed-3.js";
 
@@ -40,7 +40,7 @@ function geisericTable(count: number) {
 }
 
 for (const count of [3, 4] as const) {
-  clause(GEISERIC, "1:rule", `${count} seats: a character of any one opponent put into that opponent's hand may be removed instead (no opponent is chosen); one of the controller's own is bounced normally`, () => {
+  mpClause(GEISERIC, "1:rule", count, `${count} seats: a character of any one opponent put into that opponent's hand may be removed instead (no opponent is chosen); one of the controller's own is bounced normally`, () => {
     for (const seat of othersOf(count)) {
       const t = geisericTable(count);
       bounceOf(t, `c-${seat}`);
@@ -58,7 +58,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(GEISERIC, "1:rule", "3 seats: declining the option on a P2 character sends it to P2's hand; an item put into an opponent's hand gets no option", () => {
+mpClause(GEISERIC, "1:rule", 3, "3 seats: declining the option on a P2 character sends it to P2's hand; an item put into an opponent's hand gets no option", () => {
   const t = geisericTable(3);
   bounceOf(t, "c-p2");
   expectChoice(t, "replacementChoice", P1);
@@ -94,7 +94,7 @@ const enter = (t: Table, seat: PlayerId) => {
 const damageOn = (t: Table, key: string) => t.engine.state.cards[t.id(key)]!.damage;
 
 for (const count of [3, 4] as const) {
-  clause(PONY, "0:rule", `${count} seats: a small character entering under any opponent's control is destroyed and damages Pony Slaystation; no opponent is chosen; a big one and the controller's own are untouched`, () => {
+  mpClause(PONY, "0:rule", count, `${count} seats: a small character entering under any opponent's control is destroyed and damages Pony Slaystation; no opponent is chosen; a big one and the controller's own are untouched`, () => {
     for (const seat of othersOf(count)) {
       const t = ponyTable(count, seat, { [seat]: 2 });
       enter(t, seat);
@@ -119,7 +119,7 @@ for (const count of [3, 4] as const) {
 
 const SHAME = "91803a23-9aff-4665-87cf-ff3e40580ede"; // If a character would be put into a player's hand, destroy it instead.
 
-clause(SHAME, "0:rule", "3 seats: a character put into any player's hand (the controller's, or either opponent's) is destroyed instead; an item goes to the hand normally", () => {
+mpClause(SHAME, "0:rule", 3, "3 seats: a character put into any player's hand (the controller's, or either opponent's) is destroyed instead; an item goes to the hand normally", () => {
   for (const seat of [P1, ...othersOf(3)]) {
     const t = table(3, [
       { key: "stone", def: printing(SHAME), owner: P1 },

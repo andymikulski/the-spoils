@@ -3,7 +3,7 @@
 // (data/card-tests/mp-spec/seed-2.json); engine data only drives the engine.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   allIn, answerTargets, askedPlayers, character, deckOf, handSize, hands, idsOf, item, others, P1, P2, P3, pending, perSeat, pickable, requirements, resources, seatsFor,
   setDeck, settle, statOf, table, tactic, zoneOf
@@ -26,7 +26,7 @@ const COUNTS = [3, 4] as const;
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(THAUMATURGE, "0:ability:tickle", `${count} seats: "Your opponent discards a card": the opponent is chosen first (any other seat), and only that opponent discards`, () => {
+  mpClause(THAUMATURGE, "0:ability:tickle", count, `${count} seats: "Your opponent discards a card": the opponent is chosen first (any other seat), and only that opponent discards`, () => {
     for (const chosen of others(count, P1)) {
       const t = table(count, [{ key: "th", def: printing(THAUMATURGE), owner: P1, zone: "play" }, ...resources("elitism", 2), ...hands(count)]);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("th"), abilityId: "tickle" } as const;
@@ -46,7 +46,7 @@ for (const count of COUNTS) {
   });
 }
 
-clause(THAUMATURGE, "0:ability:tickle", "3 seats: with one opponent left nobody is asked who", () => {
+mpClause(THAUMATURGE, "0:ability:tickle", 3, "3 seats: with one opponent left nobody is asked who", () => {
   const t = table(3, [{ key: "th", def: printing(THAUMATURGE), owner: P1, zone: "play" }, ...resources("elitism", 2), ...hands(3)]);
   t.engine.state.players[P2]!.eliminated = { turn: 1 };
   const action = { type: "activateAbility", playerId: P1, cardId: t.id("th"), abilityId: "tickle" } as const;
@@ -61,7 +61,7 @@ clause(THAUMATURGE, "0:ability:tickle", "3 seats: with one opponent left nobody 
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(PERTURB, "0:rule", `${count} seats: "your opponent's hand": the chosen opponent's non-resource cards are offered, that card is discarded, the follow-up pick names no player`, () => {
+  mpClause(PERTURB, "0:rule", count, `${count} seats: "your opponent's hand": the chosen opponent's non-resource cards are offered, that card is discarded, the follow-up pick names no player`, () => {
     for (const chosen of others(count, P1)) {
       const t = table(count, [
         { key: "spell", def: printing(PERTURB), owner: P1, zone: "hand" },
@@ -96,7 +96,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(RITUAL, "0:rule", `${count} seats: "Your opponent discards a card ... another card ... another card": always the same chosen opponent, one more discard at 3 and at 8 [O]`, () => {
+  mpClause(RITUAL, "0:rule", count, `${count} seats: "Your opponent discards a card ... another card ... another card": always the same chosen opponent, one more discard at 3 and at 8 [O]`, () => {
     for (const [obsession, discards] of [[3, 2], [8, 3]] as const) {
       for (const chosen of others(count, P1)) {
         const t = table(count, [
@@ -141,7 +141,7 @@ function redonkulousBoard(count: number, faceDown: boolean) {
 }
 
 for (const count of COUNTS) {
-  clause(REDONKULOUS, "0:ability", `${count} seats: FLIP UP: "your opponent discards 2 cards" and the 3-or-fewer check read the one chosen opponent only`, () => {
+  mpClause(REDONKULOUS, "0:ability", count, `${count} seats: FLIP UP: "your opponent discards 2 cards" and the 3-or-fewer check read the one chosen opponent only`, () => {
     // P2 has 5 cards: discarding 2 leaves 3, so the picked character is removed from the game; P3 has 2: discarding 2 leaves 0.
     for (const chosen of others(count, P1)) {
       const t = redonkulousBoard(count, true);
@@ -160,7 +160,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(REDONKULOUS, "0:ability", `${count} seats: played normally nobody discards, and "3 or fewer cards" reads the chosen opponent's hand, not another opponent's`, () => {
+  mpClause(REDONKULOUS, "0:ability", count, `${count} seats: played normally nobody discards, and "3 or fewer cards" reads the chosen opponent's hand, not another opponent's`, () => {
     for (const chosen of others(count, P1)) {
       const t = redonkulousBoard(count, false);
       const action = { type: "playCard", playerId: P1, cardId: t.id("spell"), selected: { char: [t.id("c-p3")] } } as const;
@@ -180,7 +180,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(PECULATE, "0:ability", `${count} seats: "a card in your opponent's discard pile": only the chosen opponent's discard pile can be picked, and the card enters play under your control`, () => {
+  mpClause(PECULATE, "0:ability", count, `${count} seats: "a card in your opponent's discard pile": only the chosen opponent's discard pile can be picked, and the card enters play under your control`, () => {
     for (const chosen of others(count, P1)) {
       const t = table(count, [
         { key: "spell", def: printing(PECULATE), owner: P1, zone: "hand" },
@@ -209,7 +209,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(TIME_TRAVELER, "1:ability:micromajig-apocalypse", `${count} seats: "the number of cards in your opponent's deck": counted in the chosen opponent's deck only`, () => {
+  mpClause(TIME_TRAVELER, "1:ability:micromajig-apocalypse", count, `${count} seats: "the number of cards in your opponent's deck": counted in the chosen opponent's deck only`, () => {
     const sizes: Record<string, number> = { p2: 7, p3: 3, p4: 5 };
     for (const chosen of others(count, P1)) {
       const t = table(count, [
@@ -232,7 +232,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(EPIC_SMACKDOWN, "0:ability", `${count} seats: X characters of one chosen opponent are destroyed by that opponent (or all of theirs when they control fewer than X); other opponents lose nothing`, () => {
+  mpClause(EPIC_SMACKDOWN, "0:ability", count, `${count} seats: X characters of one chosen opponent are destroyed by that opponent (or all of theirs when they control fewer than X); other opponents lose nothing`, () => {
     // P2 controls 3 characters, P3 one, P4 two; X = 2.
     const counts: Record<string, number> = { p2: 3, p3: 1, p4: 2 };
     for (const chosen of others(count, P1)) {
@@ -258,7 +258,7 @@ for (const count of COUNTS) {
         assert.equal(owned.filter((key) => zoneOf(t, key) === "discard").length, 2);
       } else {
         assert.equal(pending(t), undefined, "fewer than X characters: all of theirs are destroyed with no choice");
-        assert.ok(allIn(t, owned, "discard"));
+        assert.ok(allIn(t, owned, "discard"), "allIn(t, owned, 'discard')");
       }
       for (const other of others(count, P1, chosen)) {
         for (let i = 0; i < counts[other]!; i++) assert.equal(zoneOf(t, `o${i}-${other}`), "play", `${other}'s characters are untouched`);
@@ -273,7 +273,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(PLUNGING_SHRIEVER, "1:ability:fly-away", `${count} seats: "an item in your opponent's discard pile": only the chosen opponent's discard pile is offered`, () => {
+  mpClause(PLUNGING_SHRIEVER, "1:ability:fly-away", count, `${count} seats: "an item in your opponent's discard pile": only the chosen opponent's discard pile is offered`, () => {
     for (const chosen of others(count, P1)) {
       const t = table(count, [
         { key: "bird", def: printing(PLUNGING_SHRIEVER), owner: P1, zone: "play" },
@@ -301,7 +301,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(SMOTHERING, "0:ability", `${count} seats: "both players remove the top card of their deck ... your opponent's removed card": only you and the chosen opponent remove a card, X compares their two cards`, () => {
+  mpClause(SMOTHERING, "0:ability", count, `${count} seats: "both players remove the top card of their deck ... your opponent's removed card": only you and the chosen opponent remove a card, X compares their two cards`, () => {
     const cost: Record<string, number> = { p2: 5, p3: 3, p4: 4 };
     for (const chosen of others(count, P1)) {
       const t = table(count, [

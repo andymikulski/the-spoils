@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
 import { item, resourceCard, tactic } from "../../support/fixtures.js";
-import { clause, refused } from "../_clause.js";
+import { mpClause, refused } from "../_clause.js";
 import { printing } from "../_clause.js";
 import {
   abilityAction,
@@ -84,7 +84,7 @@ function brainbathTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(BRAINBATH, "1:ability:recur", `${count} seats: RECUR names the opponent first; only that opponent discards a card of its choice, and P1 draws a card`, () => {
+  mpClause(BRAINBATH, "1:ability:recur", count, `${count} seats: RECUR names the opponent first; only that opponent discards a card of its choice, and P1 draws a card`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = brainbathTable(count);
       assertOpponentAsked(t, abilityAction(t, P1, "bb", "recur"));
@@ -108,7 +108,7 @@ for (const count of [3, 4] as const) {
 const STUPIDIFY = "baef7715-05a4-4082-b546-c458ce97eeb2";
 
 for (const count of [3, 4] as const) {
-  clause(STUPIDIFY, "0:rule", `${count} seats: the opponent is chosen before targets; only that opponent discards 2 cards of its own choice`, () => {
+  mpClause(STUPIDIFY, "0:rule", count, `${count} seats: the opponent is chosen before targets; only that opponent discards 2 cards of its own choice`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "st", def: printing(STUPIDIFY), owner: P1, zone: "hand" }, ...hands(count), ...bank("obsession", 6, P1)]);
       assertOpponentAsked(t, playAction(t, P1, "st"));
@@ -119,7 +119,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(STUPIDIFY, "1:ability:recur", `${count} seats: RECUR names the opponent first; only that opponent discards a card`, () => {
+  mpClause(STUPIDIFY, "1:ability:recur", count, `${count} seats: RECUR names the opponent first; only that opponent discards a card`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "st", def: printing(STUPIDIFY), owner: P1, zone: "discard" }, ...hands(count), ...bank("obsession", 6, P1)]);
       assertOpponentAsked(t, abilityAction(t, P1, "st", "recur"));
@@ -147,7 +147,7 @@ function essenceTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ESSENCE_O, "0:rule", `${count} seats: the option choice involves only P1; only OPTION 1 then asks for an opponent (offering every other seat)`, () => {
+  mpClause(ESSENCE_O, "0:rule", count, `${count} seats: the option choice involves only P1; only OPTION 1 then asks for an opponent (offering every other seat)`, () => {
     const t = essenceTable(count);
     const first = t.engine.getPlayRequirements(playAction(t, P1, "eo") as never);
     assert.equal(first.length, 1);
@@ -157,7 +157,7 @@ for (const count of [3, 4] as const) {
     assertNoOpponentAsked(t, playAction(t, P1, "eo", { mode: 2 }));
   });
 
-  clause(ESSENCE_O, "1:option:OPTION 1", `${count} seats: OPTION 1 names the opponent first; only that opponent discards a card of its choice`, () => {
+  mpClause(ESSENCE_O, "1:option:OPTION 1", count, `${count} seats: OPTION 1 names the opponent first; only that opponent discards a card of its choice`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = essenceTable(count);
       const before = sizes(t);
@@ -167,7 +167,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ESSENCE_O, "2:option:OPTION 2", `${count} seats: OPTION 2 picks any player's character (P1's, an opponent's, the third seat's); it gains COVERT this turn; no opponent is asked and nobody discards`, () => {
+  mpClause(ESSENCE_O, "2:option:OPTION 2", count, `${count} seats: OPTION 2 picks any player's character (P1's, an opponent's, the third seat's); it gains COVERT this turn; no opponent is asked and nobody discards`, () => {
     for (const target of seatsOf(count)) {
       const t = essenceTable(count);
       const before = sizes(t);
@@ -180,7 +180,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ESSENCE_O, "3:option:OPTION 3", `${count} seats: OPTION 3 picks any player's character; it loses 2 strength this turn; no opponent is asked and nobody discards`, () => {
+  mpClause(ESSENCE_O, "3:option:OPTION 3", count, `${count} seats: OPTION 3 picks any player's character; it loses 2 strength this turn; no opponent is asked and nobody discards`, () => {
     for (const target of seatsOf(count)) {
       const t = table(count, [
         { key: "eo", def: printing(ESSENCE_O), owner: P1, zone: "hand" },
@@ -218,7 +218,7 @@ function godTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(LIVING_GOD, "0:rule", `${count} seats: when a character P1 controls leaves play P1 chooses the opponent when the trigger resolves; only that opponent discards a card of its choice`, () => {
+  mpClause(LIVING_GOD, "0:rule", count, `${count} seats: when a character P1 controls leaves play P1 chooses the opponent when the trigger resolves; only that opponent discards a card of its choice`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = godTable(count);
       const before = sizes(t);
@@ -229,7 +229,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(LIVING_GOD, "0:rule", `${count} seats: a character an opponent controls leaving play does not trigger it`, () => {
+  mpClause(LIVING_GOD, "0:rule", count, `${count} seats: a character an opponent controls leaving play does not trigger it`, () => {
     for (const owner of seatsOf(count).slice(1)) {
       const t = godTable(count);
       const before = sizes(t);
@@ -249,7 +249,7 @@ for (const count of [3, 4] as const) {
 const WARLOCK = "7d385558-dd68-4c00-9c20-0a60daf86d86";
 
 for (const count of [3, 4] as const) {
-  clause(WARLOCK, "0:rule", `${count} seats: P1 chooses the opponent when the trigger resolves; only that opponent puts a card of its choice from hand on top of its own deck`, () => {
+  mpClause(WARLOCK, "0:rule", count, `${count} seats: P1 chooses the opponent when the trigger resolves; only that opponent puts a card of its choice from hand on top of its own deck`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "pw", def: printing(WARLOCK), owner: P1, zone: "hand" }, ...hands(count), ...bank("obsession", 4, P1)]);
       const before = sizes(t);
@@ -285,7 +285,7 @@ function athenaeumTable(count: Count, obsession: number): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ATHENAEUM, "1:rule@ooo", `${count} seats: P1 draws, then only the opponent P1 chose is asked whether to draw; declining asks no opponent; nothing fires on the other seats' turns`, () => {
+  mpClause(ATHENAEUM, "1:rule@ooo", count, `${count} seats: P1 draws, then only the opponent P1 chose is asked whether to draw; declining asks no opponent; nothing fires on the other seats' turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const accept of [true, false]) {
         const t = athenaeumTable(count, 3);
@@ -309,7 +309,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ATHENAEUM, "2:rule@ooooo", `${count} seats: at the start of P1's turn the opponent P1 chooses discards a card of its choice, nobody else does, and nothing fires on the other seats' turns`, () => {
+  mpClause(ATHENAEUM, "2:rule@ooooo", count, `${count} seats: at the start of P1's turn the opponent P1 chooses discards a card of its choice, nobody else does, and nothing fires on the other seats' turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = athenaeumTable(count, 5);
       const before = sizes(t);
@@ -327,7 +327,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(ATHENAEUM, "3:rule@ooooooo", "3 seats: P1 may pick any character (P1's, P2's or P3's) and put it into its owner's hand; no opponent is asked; nothing fires on the other turns", () => {
+mpClause(ATHENAEUM, "3:rule@ooooooo", 3, "3 seats: P1 may pick any character (P1's, P2's or P3's) and put it into its owner's hand; no opponent is asked; nothing fires on the other turns", () => {
   for (const target of seatsOf(3)) {
     const t = athenaeumTable(3, 7);
     assert.equal(passTurn(t), P1);
@@ -340,7 +340,7 @@ clause(ATHENAEUM, "3:rule@ooooooo", "3 seats: P1 may pick any character (P1's, P
     // the 5-icon paragraph also fires (opponent chosen, discards): this clause is only the 7-icon pick
     assert.ok(asked.some((entry) => entry.kind === "chooserSelectsTarget" && entry.playerId === P1), "P1 picks the character");
     assert.equal(t.engine.state.cards[t.id(`c-${target}`)]!.zone, "hand", `${target}'s character went to its owner's hand`);
-    assert.ok(handOf(t, target).includes(t.id(`c-${target}`)));
+    assert.ok(handOf(t, target).includes(t.id(`c-${target}`)), "handOf(t, target).includes(t.id(`c-${target}`))");
     for (const seat of t.seats.filter((s) => s !== target)) assert.equal(t.engine.state.cards[t.id(`c-${seat}`)]!.zone, "play");
   }
 });
@@ -354,7 +354,7 @@ clause(ATHENAEUM, "3:rule@ooooooo", "3 seats: P1 may pick any character (P1's, P
 const TENTACLE = "038bef7e-0d08-4751-ab48-0d1de31e3195";
 
 for (const count of [3, 4] as const) {
-  clause(TENTACLE, "0:rule", `${count} seats: the opponent is chosen first; P1 may choose only a non-resource card from that opponent's hand; it enters play under that opponent's control face-down`, () => {
+  mpClause(TENTACLE, "0:rule", count, `${count} seats: the opponent is chosen first; P1 may choose only a non-resource card from that opponent's hand; it enters play under that opponent's control face-down`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "dt", def: printing(TENTACLE), owner: P1, zone: "hand" }, ...hands(count), ...bank("obsession", 2, P1)]);
       assertOpponentAsked(t, playAction(t, P1, "dt"));
@@ -383,7 +383,7 @@ for (const count of [3, 4] as const) {
 const DEFILER = "0f0e1fc8-b7e1-462f-a912-60d2ca99d458";
 
 for (const count of [3, 4] as const) {
-  clause(DEFILER, "1:ability:defile", `${count} seats: DEFILE names the opponent first; P1 may choose only a character in that opponent's hand and that opponent discards it`, () => {
+  mpClause(DEFILER, "1:ability:defile", count, `${count} seats: DEFILE names the opponent first; P1 may choose only a character in that opponent's hand and that opponent discards it`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "df", def: printing(DEFILER), owner: P1, zone: "play" }, ...hands(count)]);
       assertOpponentAsked(t, abilityAction(t, P1, "df", "defile"));
@@ -408,7 +408,7 @@ for (const count of [3, 4] as const) {
 const ENCUMBER = "f32de0a3-6f08-47c4-a798-679c5be50631";
 
 for (const count of [3, 4] as const) {
-  clause(ENCUMBER, "1:ability:recur", `${count} seats: RECUR names the opponent first; P1 may choose only a non-resource card in that opponent's hand and that opponent discards it`, () => {
+  mpClause(ENCUMBER, "1:ability:recur", count, `${count} seats: RECUR names the opponent first; P1 may choose only a non-resource card in that opponent's hand and that opponent discards it`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "en", def: printing(ENCUMBER), owner: P1, zone: "discard" }, ...hands(count), ...bank("obsession", 4, P1)]);
       assertOpponentAsked(t, abilityAction(t, P1, "en", "recur"));
@@ -433,7 +433,7 @@ for (const count of [3, 4] as const) {
 const DENUNCIATOR = "cae163fe-b4bb-4dde-9227-05359c5961ac";
 
 for (const count of [3, 4] as const) {
-  clause(DENUNCIATOR, "1:ability:denounce", `${count} seats: DENOUNCE bounces any player's picked character (independent of the opponent), then P1 chooses a character in the chosen opponent's hand, which that opponent discards`, () => {
+  mpClause(DENUNCIATOR, "1:ability:denounce", count, `${count} seats: DENOUNCE bounces any player's picked character (independent of the opponent), then P1 chooses a character in the chosen opponent's hand, which that opponent discards`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const bounced = seatsOf(count).filter((s) => s !== pick && s !== P1).slice(-1)[0] ?? P1;
       const t = table(count, [{ key: "fd", def: printing(DENUNCIATOR), owner: P1, zone: "play" }, ...hands(count), ...bank("obsession", 4, P1)]);

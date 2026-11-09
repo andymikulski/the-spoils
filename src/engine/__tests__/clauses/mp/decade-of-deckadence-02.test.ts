@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, location, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   accepts,
   activate,
@@ -64,7 +64,7 @@ function chainTable(count: Count): Table {
   ]);
 }
 
-clause(CHAIN_REACTION, "1:rule", "3 seats: the opponent is picked only when the last step is reached; P1 picks P2 or P3 and only that faction takes 1 while P1 draws", () => {
+mpClause(CHAIN_REACTION, "1:rule", 3, "3 seats: the opponent is picked only when the last step is reached; P1 picks P2 or P3 and only that faction takes 1 while P1 draws", () => {
   for (const chosen of [P2, P3]) {
     const t = chainTable(3);
     const before = snapshot(t);
@@ -81,7 +81,7 @@ clause(CHAIN_REACTION, "1:rule", "3 seats: the opponent is picked only when the 
   }
 });
 
-clause(CHAIN_REACTION, "1:rule", "3 seats: if the chain stops before the character dies, no opponent is picked and nobody's faction is hit", () => {
+mpClause(CHAIN_REACTION, "1:rule", 3, "3 seats: if the chain stops before the character dies, no opponent is picked and nobody's faction is hit", () => {
   const t = chainTable(3);
   const before = snapshot(t);
   playCard(t, P1, "me", { selected: { l: [t.id("place")] } });
@@ -96,7 +96,7 @@ clause(CHAIN_REACTION, "1:rule", "3 seats: if the chain stops before the charact
   for (const seat of declined.seats) assert.equal(influence(declined, seat), 25);
 });
 
-clause(CHAIN_REACTION, "1:rule", "4 seats: P2, P3 and P4 can each be picked, the others are untouched", () => {
+mpClause(CHAIN_REACTION, "1:rule", 4, "4 seats: P2, P3 and P4 can each be picked, the others are untouched", () => {
   for (const chosen of [P2, P3, P4]) {
     const t = chainTable(4);
     const before = snapshot(t);
@@ -119,7 +119,7 @@ function thunderhoofTable(count: Count): Table {
   ]);
 }
 
-clause(THUNDERHOOF, "3:ability:thunderhoof-disrupt", "3 seats: the opponent is picked as part of the cost; that opponent, and not the other, chooses and discards a card", () => {
+mpClause(THUNDERHOOF, "3:ability:thunderhoof-disrupt", 3, "3 seats: the opponent is picked as part of the cost; that opponent, and not the other, chooses and discards a card", () => {
   const probe = thunderhoofTable(3);
   const asks = needs(probe, { type: "activateAbility", playerId: P1, cardId: probe.id("me"), abilityId: "thunderhoof-disrupt" });
   assert.equal(asks[0]!.kind, "players");
@@ -181,7 +181,7 @@ function toP1Turn(t: Table): void {
   endTurnOf(t, t.seats[t.seats.length - 1]!);
 }
 
-clause(DRILL, "1:rule@rrr", "3 seats: at the start of P1's turn P1 may inflict 1 damage to an opponent, picking P2 or P3; only that faction takes it", () => {
+mpClause(DRILL, "1:rule@rrr", 3, "3 seats: at the start of P1's turn P1 may inflict 1 damage to an opponent, picking P2 or P3; only that faction takes it", () => {
   for (const chosen of [P2, P3]) {
     const t = drillTable(3, 3);
     const before = snapshot(t);
@@ -194,7 +194,7 @@ clause(DRILL, "1:rule@rrr", "3 seats: at the start of P1's turn P1 may inflict 1
   }
 });
 
-clause(DRILL, "1:rule@rrr", "3 seats: declining deals no damage and asks for no opponent; the trigger does not fire at P2's or P3's turn start; without [R][R][R] it is inactive", () => {
+mpClause(DRILL, "1:rule@rrr", 3, "3 seats: declining deals no damage and asks for no opponent; the trigger does not fire at P2's or P3's turn start; without [R][R][R] it is inactive", () => {
   const declined = drillTable(3, 3);
   toP1Turn(declined);
   option(declined, P1, 0);
@@ -226,7 +226,7 @@ function dualBladeTable(count: Count): Table {
   ]);
 }
 
-clause(DUAL_BLADE, "0:extraCost", "3 seats: P1 may deploy it after inflicting damage to P2's faction or to P3's faction; damage by someone else, to P1's own faction or none refuses it", () => {
+mpClause(DUAL_BLADE, "0:extraCost", 3, "3 seats: P1 may deploy it after inflicting damage to P2's faction or to P3's faction; damage by someone else, to P1's own faction or none refuses it", () => {
   for (const victim of [P2, P3]) {
     const t = dualBladeTable(3);
     playCard(t, P1, `hit-${victim}`);
@@ -263,7 +263,7 @@ function engorgedTable(count: Count): Table {
   ]);
 }
 
-clause(ENGORGED, "0:rule", "3 seats: P1 picks P2's or P3's faction (not their own); only the picked opponent chooses and destroys a character they control", () => {
+mpClause(ENGORGED, "0:rule", 3, "3 seats: P1 picks P2's or P3's faction (not their own); only the picked opponent chooses and destroys a character they control", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = engorgedTable(3);
@@ -296,7 +296,7 @@ function fingerTable(count: Count): Table {
   ]);
 }
 
-clause(FINGER, "0:ability:finger-explosive-pull", "3 seats: the second pick may be a character of P2 or of P3, never of P1; both picked characters and Finger Explosive are destroyed and the other opponent loses nothing", () => {
+mpClause(FINGER, "0:ability:finger-explosive-pull", 3, "3 seats: the second pick may be a character of P2 or of P3, never of P1; both picked characters and Finger Explosive are destroyed and the other opponent loses nothing", () => {
   const probe = fingerTable(3);
   const asks = needs(probe, { type: "activateAbility", playerId: P1, cardId: probe.id("me"), abilityId: "finger-explosive-pull" });
   const theirs = asks.find((step) => step.requirement?.id === "theirs");
@@ -329,7 +329,7 @@ function illusionistTable(count: Count): Table {
   ]);
 }
 
-clause(ILLUSIONIST, "0:extraCost", "3 seats: the opponent is picked as the extra cost, P2's or P3's faction; P1's own faction is refused and the unpicked opponent is unaffected", () => {
+mpClause(ILLUSIONIST, "0:extraCost", 3, "3 seats: the opponent is picked as the extra cost, P2's or P3's faction; P1's own faction is refused and the unpicked opponent is unaffected", () => {
   const probe = illusionistTable(3);
   const asks = needs(probe, { type: "playCard", playerId: P1, cardId: probe.id("me") });
   assert.deepEqual(new Set(asks.find((step) => step.requirement?.id === "p")!.candidates), new Set([factionOf(probe, P2), factionOf(probe, P3)]));
@@ -344,7 +344,7 @@ clause(ILLUSIONIST, "0:extraCost", "3 seats: the opponent is picked as the extra
   }
 });
 
-clause(ILLUSIONIST, "1:rule", "3 seats: the picked opponent puts the top cards equal to P1's highest speed (3) into their discard pile, the other opponent's deck is unchanged, and P1 draws", () => {
+mpClause(ILLUSIONIST, "1:rule", 3, "3 seats: the picked opponent puts the top cards equal to P1's highest speed (3) into their discard pile, the other opponent's deck is unchanged, and P1 draws", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = illusionistTable(3);
@@ -375,7 +375,7 @@ function ipsighastTable(count: Count): Table {
   ]);
 }
 
-clause(IPSIGHAST, "1:ability:ipsighast-exhume", "3 seats: the picked character may sit in P2's or P3's discard pile (not P1's); its owner is the opponent whose deck loses the top 3, and the other opponent is unaffected", () => {
+mpClause(IPSIGHAST, "1:ability:ipsighast-exhume", 3, "3 seats: the picked character may sit in P2's or P3's discard pile (not P1's); its owner is the opponent whose deck loses the top 3, and the other opponent is unaffected", () => {
   const probe = ipsighastTable(3);
   const asks = needs(probe, { type: "activateAbility", playerId: P1, cardId: probe.id("me"), abilityId: "ipsighast-exhume" });
   assert.deepEqual(new Set(asks.find((step) => step.requirement?.id === "c")!.candidates), new Set(ids(probe, ["p2gone", "p3gone"])));
@@ -412,7 +412,7 @@ function pirateTable(count: Count): Table {
 
 const readyOf = (t: Table, player: PlayerId): number => t.engine.getAvailableResourceCount(player);
 
-clause(PIRATE, "1:extraCost", "3 seats: the voided cards all come from one opponent's discard pile: 3 from P2 cost 4, 4 from P3 cost 3, a P2 and P3 mix is refused, none gives no reduction", () => {
+mpClause(PIRATE, "1:extraCost", 3, "3 seats: the voided cards all come from one opponent's discard pile: 3 from P2 cost 4, 4 from P3 cost 3, a P2 and P3 mix is refused, none gives no reduction", () => {
   const probe = pirateTable(3);
   const asks = needs(probe, { type: "playCard", playerId: P1, cardId: probe.id("me") });
   assert.equal(asks[0]!.kind, "players");
@@ -447,7 +447,7 @@ function shrieverTable(count: Count): Table {
   ]);
 }
 
-clause(SHRIEVER, "1:ability:fly-away", "3 seats: FLY AWAY voids an item from P2's discard pile or from P3's, and flips Shriever face-down; an item in P1's own discard pile is refused", () => {
+mpClause(SHRIEVER, "1:ability:fly-away", 3, "3 seats: FLY AWAY voids an item from P2's discard pile or from P3's, and flips Shriever face-down; an item in P1's own discard pile is refused", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = shrieverTable(3);
@@ -478,7 +478,7 @@ function inquisitorTable(count: Count, zone: "play" | "hand" = "play"): Table {
   ]);
 }
 
-clause(INQUISITOR, "1:rule", "3 seats: when it is destroyed P1 picks P2 or P3; only that opponent chooses and discards a card from their own hand", () => {
+mpClause(INQUISITOR, "1:rule", 3, "3 seats: when it is destroyed P1 picks P2 or P3; only that opponent chooses and discards a card from their own hand", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = inquisitorTable(3);
@@ -494,7 +494,7 @@ clause(INQUISITOR, "1:rule", "3 seats: when it is destroyed P1 picks P2 or P3; o
   }
 });
 
-clause(INQUISITOR, "0:extraCost", "3 seats: only an Arcanist card from P1's own hand can be discarded to deploy it free; P2's and P3's hands are not offered", () => {
+mpClause(INQUISITOR, "0:extraCost", 3, "3 seats: only an Arcanist card from P1's own hand can be discarded to deploy it free; P2's and P3's hands are not offered", () => {
   const t = inquisitorTable(3, "hand");
   const asks = needs(t, { type: "playCard", playerId: P1, cardId: t.id("me") });
   assert.deepEqual(asks.find((step) => step.requirement?.id === "tossed")!.candidates, [t.id("mineA")]);
@@ -520,7 +520,7 @@ function rasputinTable(count: Count): Table {
 
 const speedOf = (t: Table, key: string): number => t.engine.getStat(t.id(key), "speed");
 
-clause(RASPUTIN, "1:rule", "3 seats: when another character enters under P1 the opponent picked has every character's speed reduced to 0 this turn, the other opponent's and P1's keep theirs", () => {
+mpClause(RASPUTIN, "1:rule", 3, "3 seats: when another character enters under P1 the opponent picked has every character's speed reduced to 0 this turn, the other opponent's and P1's keep theirs", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = rasputinTable(3);
@@ -562,7 +562,7 @@ const flipUp = (t: Table, selected: Record<string, string[]>): void => {
   }
 };
 
-clause(REDONKULOUS, "1:rule", "3 seats: after FLIP UP the picked character's controller, whoever it is, discards 2 and is the one whose hand is checked; the other opponent's hand is untouched", () => {
+mpClause(REDONKULOUS, "1:rule", 3, "3 seats: after FLIP UP the picked character's controller, whoever it is, discards 2 and is the one whose hand is checked; the other opponent's hand is untouched", () => {
   for (const owner of [P3, P2, P1]) {
     const t = redonkulousTable(3);
     flipUp(t, { char: [`c-${owner}`] });
@@ -592,7 +592,7 @@ function ritualTable(count: Count, obsession: number): Table {
   ]);
 }
 
-clause(RITUAL, "0:rule", "3 seats: P1 picks one opponent when the effect resolves; every discard (1, 2 with [O][O][O], 3 with eight [O]) is by that opponent and the other's hand is untouched", () => {
+mpClause(RITUAL, "0:rule", 3, "3 seats: P1 picks one opponent when the effect resolves; every discard (1, 2 with [O][O][O], 3 with eight [O]) is by that opponent and the other's hand is untouched", () => {
   for (const [obsession, discards] of [[2, 1], [3, 2], [8, 3]] as const) {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
@@ -625,7 +625,7 @@ function generalTable(count: Count): Table {
   ]);
 }
 
-clause(GENERAL, "1:rule", "3 seats: only P2's faction lost influence: P1 may inflict 2 to that faction and 2 to a character P2 controls (not P3's)", () => {
+mpClause(GENERAL, "1:rule", 3, "3 seats: only P2's faction lost influence: P1 may inflict 2 to that faction and 2 to a character P2 controls (not P3's)", () => {
   for (const victim of [P2, P3]) {
     const other = victim === P2 ? P3 : P2;
     const t = generalTable(3);
@@ -644,7 +644,7 @@ clause(GENERAL, "1:rule", "3 seats: only P2's faction lost influence: P1 may inf
   }
 });
 
-clause(GENERAL, "1:rule", "3 seats: when both opponents' factions lost influence P1 picks which; the faction and the character are the same opponent's", () => {
+mpClause(GENERAL, "1:rule", 3, "3 seats: when both opponents' factions lost influence P1 picks which; the faction and the character are the same opponent's", () => {
   for (const victim of [P2, P3]) {
     const t = generalTable(3);
     playCard(t, P1, "hit-p2");
@@ -661,7 +661,7 @@ clause(GENERAL, "1:rule", "3 seats: when both opponents' factions lost influence
   }
 });
 
-clause(GENERAL, "1:rule", "3 seats: if no opponent's faction lost influence nothing happens, and a loss of P1's own faction does not count", () => {
+mpClause(GENERAL, "1:rule", 3, "3 seats: if no opponent's faction lost influence nothing happens, and a loss of P1's own faction does not count", () => {
   const none = generalTable(3);
   playCard(none, P1, "me");
   expectIdle(none, "no prompt without a qualifying faction");
@@ -690,7 +690,7 @@ function uhluhtcTable(count: Count): Table {
   ]);
 }
 
-clause(UHLUHTC, "1:rule", "3 seats: when it enters play from P1's hand P1 picks the opponent before choosing an option; the option affects that opponent only", () => {
+mpClause(UHLUHTC, "1:rule", 3, "3 seats: when it enters play from P1's hand P1 picks the opponent before choosing an option; the option affects that opponent only", () => {
   for (const chosen of [P2, P3]) {
     const t = uhluhtcTable(3);
     playCard(t, P1, "me");
@@ -707,7 +707,7 @@ clause(UHLUHTC, "1:rule", "3 seats: when it enters play from P1's hand P1 picks 
   }
 });
 
-clause(UHLUHTC, "2:option:OPTION 1", "3 seats: P1 looks at the picked opponent's hand and chooses a non-resource card there; only that opponent discards it", () => {
+mpClause(UHLUHTC, "2:option:OPTION 1", 3, "3 seats: P1 looks at the picked opponent's hand and chooses a non-resource card there; only that opponent discards it", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = uhluhtcTable(3);
@@ -723,7 +723,7 @@ clause(UHLUHTC, "2:option:OPTION 1", "3 seats: P1 looks at the picked opponent's
   }
 });
 
-clause(UHLUHTC, "3:option:OPTION 2", "3 seats: the picked opponent chooses and destroys a character they control; the other opponent's characters are untouched", () => {
+mpClause(UHLUHTC, "3:option:OPTION 2", 3, "3 seats: the picked opponent chooses and destroys a character they control; the other opponent's characters are untouched", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = uhluhtcTable(3);
@@ -753,7 +753,7 @@ function violatingTable(count: Count): Table {
   ]);
 }
 
-clause(VIOLATING, "0:extraCost", "3 seats: the opponent is picked as part of playing it, P2 or P3 (never P1, never nobody); the unpicked opponent is unaffected", () => {
+mpClause(VIOLATING, "0:extraCost", 3, "3 seats: the opponent is picked as part of playing it, P2 or P3 (never P1, never nobody); the unpicked opponent is unaffected", () => {
   const probe = violatingTable(3);
   const asks = needs(probe, { type: "playCard", playerId: P1, cardId: probe.id("me") });
   assert.equal(asks[0]!.kind, "players");
@@ -769,7 +769,7 @@ clause(VIOLATING, "0:extraCost", "3 seats: the opponent is picked as part of pla
   }
 });
 
-clause(VIOLATING, "1:rule", "3 seats: the picked opponent (not the other) chooses and discards 2 cards from their own hand, then P1 draws a card", () => {
+mpClause(VIOLATING, "1:rule", 3, "3 seats: the picked opponent (not the other) chooses and discards 2 cards from their own hand, then P1 draws a card", () => {
   for (const chosen of [P2, P3]) {
     const other = chosen === P2 ? P3 : P2;
     const t = violatingTable(3);

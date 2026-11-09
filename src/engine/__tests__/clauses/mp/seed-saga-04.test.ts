@@ -1,7 +1,7 @@
 // Multiplayer clause tests, seed-saga part 4: 3- and 4-seat tables, real catalog printings, public actions only.
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
-import { clause, declineAll, drain, refused } from "../_clause.js";
+import { mpClause, declineAll, drain, refused } from "../_clause.js";
 import { declareAttackBy } from "../_battle.js";
 import { tokensOn } from "../_board.js";
 import { activate, answer, askedPlayers, choosePlayer, deck, hand, many, pending, play, printing, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
@@ -36,7 +36,7 @@ const ACC = "c21dbc74-cf52-4375-a701-14c5052cf13e";
   const attack = (t: ReturnType<typeof accTable>, attacker: PlayerId, defender: PlayerId) =>
     declareAttackBy(t.engine, attacker, [t.id(body[attacker]!)], { type: "faction", playerId: defender });
 
-  clause(ACC, "0:rule", "3 seats: it triggers on any opponent's attack, whoever is attacked (P2 on P1, P3 on P2, P2 on P3); P1's own attack does not trigger it; each trigger offers a decline", () => {
+  mpClause(ACC, "0:rule", 3, "3 seats: it triggers on any opponent's attack, whoever is attacked (P2 on P1, P3 on P2, P2 on P3); P1's own attack does not trigger it; each trigger offers a decline", () => {
     for (const [attacker, defender] of [[P2, P1], [P3, P2], [P2, P3], [P3, P1]] as const) {
       const t = accTable(attacker);
       attack(t, attacker, defender);
@@ -82,7 +82,7 @@ const TRAP = "03441b15-b428-4453-9d12-89fd64e73c58";
       ...many("d3-", decks[P3]!, P3, "deck", (i) => character({ name: `P3 deck ${i}` }))
     ]);
 
-  clause(TRAP, "1:ability:micromajig-apocalypse", "3 seats: P1 names exactly one opponent as the ability is used; X is that opponent's deck size only (P2 25 cards: 25 tokens; P3 22 cards: 22 tokens), never the total", () => {
+  mpClause(TRAP, "1:ability:micromajig-apocalypse", 3, "3 seats: P1 names exactly one opponent as the ability is used; X is that opponent's deck size only (P2 25 cards: 25 tokens; P3 22 cards: 22 tokens), never the total", () => {
     for (const [chosen, size] of [[P2, 25], [P3, 22]] as const) {
       const t = trapTable({ [P2]: 25, [P3]: 22 });
       assert.deepEqual(
@@ -117,7 +117,7 @@ const ASH = "5d139b84-9808-49e5-8779-667c0ae91a29";
       ...res("deception", 4, P1)
     ]);
 
-  clause(ASH, "1:extraCost", "3 seats: the pick is any opponent's discard pile: A (P2, life 3) or B (P3, life 2); C (life 4) and D (own pile) are refused; no opponent is asked for", () => {
+  mpClause(ASH, "1:extraCost", 3, "3 seats: the pick is any opponent's discard pile: A (P2, life 3) or B (P3, life 2); C (life 4) and D (own pile) are refused; no opponent is asked for", () => {
     const t = ashTable();
     assert.equal(askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("a") }), undefined, "no opponent selection");
     refused(() => play(t.engine, P1, t.id("a"), { selected: { revive: [t.id("C")] } }), "life 4 is too much");
@@ -134,7 +134,7 @@ const ASH = "5d139b84-9808-49e5-8779-667c0ae91a29";
     assert.equal(zoneOf(other.engine, other.id("B")), "discard");
   });
 
-  clause(ASH, "2:rule", "3 seats: when Ashara enters play after P1 picked B from P3's discard pile, B enters play under P1's control; P2's discard pile is unchanged", () => {
+  mpClause(ASH, "2:rule", 3, "3 seats: when Ashara enters play after P1 picked B from P3's discard pile, B enters play under P1's control; P2's discard pile is unchanged", () => {
     const t = ashTable();
     const p2Discard = [...t.engine.state.players[P2]!.discard];
     play(t.engine, P1, t.id("a"), { selected: { revive: [t.id("B")] } });
@@ -164,7 +164,7 @@ const EOD = "6bccbbec-9b1d-4091-b711-33e05c00446c";
     ]);
   const ask = (t: ReturnType<typeof eodTable>, mode: number) => askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("eod"), mode });
 
-  clause(EOD, "0:rule", "3 seats: P1 plays the card and chooses the option; P2 and P3 are not asked anything (options 2 and 3 ask for no opponent at all; option 1 only names one, and only P1 answers prompts)", () => {
+  mpClause(EOD, "0:rule", 3, "3 seats: P1 plays the card and chooses the option; P2 and P3 are not asked anything (options 2 and 3 ask for no opponent at all; option 1 only names one, and only P1 answers prompts)", () => {
     const t = eodTable(3);
     assert.equal(ask(t, 1), undefined, "OPTION 2 asks for no opponent");
     assert.equal(ask(t, 2), undefined, "OPTION 3 asks for no opponent");
@@ -177,7 +177,7 @@ const EOD = "6bccbbec-9b1d-4091-b711-33e05c00446c";
   });
 
   for (const count of [3, 4] as const) {
-    clause(EOD, "1:option:OPTION 1", `${count} seats: P1 names one opponent with the play; P1 searches only that opponent's deck, the card goes to that opponent's discard pile and only that deck is shuffled; the other opponents' decks and discard piles are untouched`, () => {
+    mpClause(EOD, "1:option:OPTION 1", count, `${count} seats: P1 names one opponent with the play; P1 searches only that opponent's deck, the card goes to that opponent's discard pile and only that deck is shuffled; the other opponents' decks and discard piles are untouched`, () => {
       for (const chosen of opponentsOf(count)) {
         const t = eodTable(count);
         assert.deepEqual(ask(t, 0), [{ id: "opp", candidates: opponentsOf(count) }]);
@@ -206,7 +206,7 @@ const EOD = "6bccbbec-9b1d-4091-b711-33e05c00446c";
     });
   }
 
-  clause(EOD, "2:option:OPTION 2", "3 seats: P1 chooses OPTION 2 and picks a character of any player: it gains 1 speed this turn; no opponent selection is offered", () => {
+  mpClause(EOD, "2:option:OPTION 2", 3, "3 seats: P1 chooses OPTION 2 and picks a character of any player: it gains 1 speed this turn; no opponent selection is offered", () => {
     for (const key of ["mine", `c-${P2}`, `c-${P3}`]) {
       const t = eodTable(3);
       play(t.engine, P1, t.id("eod"), { mode: 1, selected: { c: [t.id(key)] } });
@@ -216,7 +216,7 @@ const EOD = "6bccbbec-9b1d-4091-b711-33e05c00446c";
     }
   });
 
-  clause(EOD, "3:option:OPTION 3", "3 seats: P1 chooses OPTION 3 and picks a character damaged this turn by a P2 card, a P3 card or P1's own card: it is destroyed; an undamaged character is not", () => {
+  mpClause(EOD, "3:option:OPTION 3", 3, "3 seats: P1 chooses OPTION 3 and picks a character damaged this turn by a P2 card, a P3 card or P1's own card: it is destroyed; an undamaged character is not", () => {
     // the P1 attacker A is damaged by the blocker's controller (P2 or P3); that blocker is damaged by P1's own card
     for (const defender of [P2, P3]) {
       const attackTable = () =>
@@ -272,7 +272,7 @@ const KNIFE = "00186a1f-1215-4e64-9163-8f1ff603bbee";
       { key: "killer", def: killer, owner: P1, zone: "hand" }
     ]);
 
-  clause(KNIFE, "1:rule", "3 seats: the attached character gains 2 strength whoever controls it (P1's, P2's or P3's host) and only while attached", () => {
+  mpClause(KNIFE, "1:rule", 3, "3 seats: the attached character gains 2 strength whoever controls it (P1's, P2's or P3's host) and only while attached", () => {
     for (const host of ["h1", "h2", "h3"]) {
       const t = knifeTable(host);
       for (const key of ["h1", "h2", "h3"]) assert.equal(t.engine.getStat(t.id(key), "strength"), key === host ? 4 : 2, `${key} with the knife on ${host}`);
@@ -284,7 +284,7 @@ const KNIFE = "00186a1f-1215-4e64-9163-8f1ff603bbee";
     }
   });
 
-  clause(KNIFE, "2:rule", "3 seats: the knife goes to P1's discard pile from play and P1 chooses a card type; P1's top card is revealed to all; on a hit the knife enters play attached to any character (P3's here); the top card goes to the bottom of P1's deck; P2's and P3's decks are untouched", () => {
+  mpClause(KNIFE, "2:rule", 3, "3 seats: the knife goes to P1's discard pile from play and P1 chooses a card type; P1's top card is revealed to all; on a hit the knife enters play attached to any character (P3's here); the top card goes to the bottom of P1's deck; P2's and P3's decks are untouched", () => {
     const t = knifeTable("h1");
     const mine = deck(t.engine, P1);
     const p2Deck = deck(t.engine, P2);
@@ -338,7 +338,7 @@ for (const count of [3, 4] as const) {
     );
   const toP1Turn = (t: ReturnType<typeof denTable>) => endTurn(t.engine, seats(count)[count - 1]!);
 
-  clause(DEN, "0:rule", `${count} seats: at the start of P1's turn the top card of P1's deck is revealed to all; cost 3 or less: P1, then each opponent in seat order, may draw a card, each accepting or declining on their own`, () => {
+  mpClause(DEN, "0:rule", count, `${count} seats: at the start of P1's turn the top card of P1's deck is revealed to all; cost 3 or less: P1, then each opponent in seat order, may draw a card, each accepting or declining on their own`, () => {
     const t = denTable(3);
     const decksBefore = Object.fromEntries(seats(count).map((p) => [p, deck(t.engine, p)]));
     const handsBefore = Object.fromEntries(seats(count).map((p) => [p, hand(t.engine, p).length]));
@@ -353,7 +353,7 @@ for (const count of [3, 4] as const) {
       assert.equal(pc.kind, "chooserSelectsOption");
       assert.equal(pc.playerId, p, "seat order, P1 first");
       const labels = (pc.options as Array<{ label: string }>).map((o) => o.label);
-      assert.ok(labels.includes("Draw") && !labels.includes("Play a resource"));
+      assert.ok(labels.includes("Draw") && !labels.includes("Play a resource"), "labels.includes('Draw') && !labels.includes('Play a resource')");
       answer(t.engine, "chooserSelectsOption", { index: labels.indexOf(accepting.has(p) ? "Draw" : "Decline") });
     }
     assert.equal(pending(t.engine), undefined);
@@ -364,7 +364,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(DEN, "0:rule", `${count} seats: cost 4 or more: P1, then each opponent in seat order, may play a resource instead (nobody draws)`, () => {
+  mpClause(DEN, "0:rule", count, `${count} seats: cost 4 or more: P1, then each opponent in seat order, may play a resource instead (nobody draws)`, () => {
     const t = denTable(5);
     const handsBefore = Object.fromEntries(seats(count).map((p) => [p, hand(t.engine, p).length]));
     const playBefore = Object.fromEntries(seats(count).map((p) => [p, t.engine.state.players[p]!.play.length]));
@@ -376,7 +376,7 @@ for (const count of [3, 4] as const) {
       assert.equal(pc.playerId, p, "seat order, P1 first");
       asked.push(pc.playerId as PlayerId);
       const labels = (pc.options as Array<{ label: string }>).map((o) => o.label);
-      assert.ok(labels.includes("Play a resource") && !labels.includes("Draw"));
+      assert.ok(labels.includes("Play a resource") && !labels.includes("Draw"), "labels.includes('Play a resource') && !labels.includes('Draw')");
       answer(t.engine, "chooserSelectsOption", { index: labels.indexOf(p === P2 ? "Decline" : "Play a resource") });
       // a "play a resource" asks which card of the player's hand and its face
       let guard = 0;
@@ -434,7 +434,7 @@ const HTG = "6da2fd15-6bc5-4b73-b21c-d281e6b9b544";
   };
   const noPick = () => ({ selected: [] });
 
-  clause(HTG, "1:rule@ddd", "3 seats: at the start of P1's turn (with [D][D][D]) P1 may pick a character of any player: it gains COVERT this turn; P2 and P3 are asked nothing", () => {
+  mpClause(HTG, "1:rule@ddd", 3, "3 seats: at the start of P1's turn (with [D][D][D]) P1 may pick a character of any player: it gains COVERT this turn; P2 and P3 are asked nothing", () => {
     for (const key of ["c1", "c2", "c3"]) {
       const t = htgTable(3);
       const seen = startP1Turn(t, (pc) => (pc.kind === "chooserSelectsTarget" ? { selected: [t.id(key)] } : undefined));
@@ -444,7 +444,7 @@ const HTG = "6da2fd15-6bc5-4b73-b21c-d281e6b9b544";
     }
   });
 
-  clause(HTG, "2:rule@ddddd", "3 seats: with [D] x5, P1 chooses the opponent (P2 or P3 only), searches only that opponent's deck for a card and puts it into that opponent's discard pile; that deck is shuffled; the other opponent's deck and discard pile are unchanged", () => {
+  mpClause(HTG, "2:rule@ddddd", 3, "3 seats: with [D] x5, P1 chooses the opponent (P2 or P3 only), searches only that opponent's deck for a card and puts it into that opponent's discard pile; that deck is shuffled; the other opponent's deck and discard pile are unchanged", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = htgTable(5);
@@ -470,7 +470,7 @@ const HTG = "6da2fd15-6bc5-4b73-b21c-d281e6b9b544";
     }
   });
 
-  clause(HTG, "2:rule@ddddd", "3 seats: the search can only pick cards of the chosen opponent's deck", () => {
+  mpClause(HTG, "2:rule@ddddd", 3, "3 seats: the search can only pick cards of the chosen opponent's deck", () => {
     const t = htgTable(5);
     const p2Deck = deck(t.engine, P2);
     const p3Deck = deck(t.engine, P3);
@@ -484,12 +484,12 @@ const HTG = "6da2fd15-6bc5-4b73-b21c-d281e6b9b544";
       }
       return undefined;
     });
-    assert.ok(tried);
+    assert.ok(tried, "tried");
     assert.equal(zoneOf(t.engine, p2Deck[0]!), "discard");
     assert.equal(zoneOf(t.engine, p3Deck[0]!), "deck");
   });
 
-  clause(HTG, "3:rule@ddddddd", "3 seats: with [D] x7, P1 chooses one opponent (P2 or P3 only); a card of that opponent's hand chosen at random is discarded (no choice for them); the other opponent's hand is unchanged", () => {
+  mpClause(HTG, "3:rule@ddddddd", 3, "3 seats: with [D] x7, P1 chooses one opponent (P2 or P3 only); a card of that opponent's hand chosen at random is discarded (no choice for them); the other opponent's hand is unchanged", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = htgTable(7);
@@ -538,7 +538,7 @@ const MILK = "83807d38-2e87-4c3e-9167-5488979e4267";
     assert.equal(t.engine.state.activePlayerId, who);
   };
 
-  clause(MILK, "0:rule", "3 seats: P1 names one opponent with the play and searches only that opponent's deck: the card goes to the void face-down and only that deck is shuffled; another opponent's deck cannot be searched", () => {
+  mpClause(MILK, "0:rule", 3, "3 seats: P1 names one opponent with the play and searches only that opponent's deck: the card goes to the void face-down and only that deck is shuffled; another opponent's deck cannot be searched", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = milkTable();
@@ -558,7 +558,7 @@ const MILK = "83807d38-2e87-4c3e-9167-5488979e4267";
     }
   });
 
-  clause(MILK, "0:rule", "3 seats: for the rest of the game only the opponent whose deck was searched triggers it: with P2 chosen, P3 deploying 'Foo' does nothing and P2 deploying 'Foo' lets P1 reveal and deploy the voided 'Foo' free, terminating P2's card; with P3 chosen it is the other way round", () => {
+  mpClause(MILK, "0:rule", 3, "3 seats: for the rest of the game only the opponent whose deck was searched triggers it: with P2 chosen, P3 deploying 'Foo' does nothing and P2 deploying 'Foo' lets P1 reveal and deploy the voided 'Foo' free, terminating P2's card; with P3 chosen it is the other way round", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = milkTable();
@@ -615,7 +615,7 @@ const LECRAM = "52575cdb-9125-474c-8dea-0506f28f8ee0";
   const coinFlips = (engine: ReturnType<typeof coinTable>["engine"]) =>
     engine.getLog().filter((e) => e.event?.type === "coinFlipped").map((e) => ({ playerId: (e.event as unknown as { playerId: string }).playerId, won: (e.event as unknown as { won: boolean }).won }));
 
-  clause(LECRAM, "2:rule", "3 seats: at the end of P1's turn only P1 flips a coin; on a win P1 chooses P2 or P3 and looks at the top card of that player's deck only (never the other deck); on a loss P1 looks at nothing", () => {
+  mpClause(LECRAM, "2:rule", 3, "3 seats: at the end of P1's turn only P1 flips a coin; on a win P1 chooses P2 or P3 and looks at the top card of that player's deck only (never the other deck); on a loss P1 looks at nothing", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = coinTable(lecramCards(), () => 0);
@@ -634,7 +634,7 @@ const LECRAM = "52575cdb-9125-474c-8dea-0506f28f8ee0";
       assert.deepEqual(reveals[0]!.cardIds, [decks[chosen]![0]!], "only the top card of the chosen opponent's deck");
       assert.equal(reveals[0]!.viewerId, P1, "only P1 sees it");
       for (const p of [P1, P2, P3]) assert.deepEqual(deck(t.engine, p), decks[p], `${p}'s deck keeps its order`);
-      assert.ok(other);
+      assert.ok(other, "other");
     }
     const lost = coinTable(lecramCards(), () => 0.99);
     endTurn(lost.engine, P1);
@@ -655,7 +655,7 @@ const LUCKY = "4513085a-6185-4ef5-ba9c-7af3c3af30d4";
     behavior: { abilities: [{ id: "kill", type: "activated", targets: [{ id: "t", selector: { zone: "play" }, count: 1 }], effects: [{ type: "destroy", target: { type: "selected", id: "t" } }] }] } as never
   });
 
-  clause(LUCKY, "0:rule", "3 seats: when Lucky Bastard enters play P1 draws a card; P2 and P3 draw nothing", () => {
+  mpClause(LUCKY, "0:rule", 3, "3 seats: when Lucky Bastard enters play P1 draws a card; P2 and P3 draw nothing", () => {
     const t = table(3, [
       { key: "lb", def: printing(LUCKY), owner: P1, zone: "hand" },
       ...res("deception", 7, P1),
@@ -667,7 +667,7 @@ const LUCKY = "4513085a-6185-4ef5-ba9c-7af3c3af30d4";
     assert.equal(zoneOf(t.engine, t.id("lb")), "play");
     assert.equal(pending(t.engine), undefined);
     assert.equal(hand(t.engine, P1).length, handsBefore[P1]! - 1 + 1, "P1 drew one card (and spent the Bastard from hand)");
-    assert.ok(hand(t.engine, P1).includes(decks[P1]![0]!));
+    assert.ok(hand(t.engine, P1).includes(decks[P1]![0]!), "hand(t.engine, P1).includes(decks[P1]![0]!)");
     for (const p of [P2, P3]) {
       assert.equal(hand(t.engine, p).length, handsBefore[p], `${p} drew nothing`);
       assert.deepEqual(deck(t.engine, p), decks[p]);
@@ -678,7 +678,7 @@ const LUCKY = "4513085a-6185-4ef5-ba9c-7af3c3af30d4";
     [3, [[[5, 4, 5], true], [[5, 4, 6], false], [[5, 3, 3], true], [[5, 6, 2], false]]],
     [4, [[[5, 4, 5, 3], true], [[5, 4, 3, 6], false], [[5, 5, 5, 5], true]]]
   ] as Array<[3 | 4, Array<[number[], boolean]>]>) {
-    clause(LUCKY, "1:rule", `${count} seats: if it would be destroyed every player removes the top card of their own deck from the game; P1's card cost must be at least EVERY opponent's removed card cost (never summed, never against one opponent only): then P1 draws and the damage becomes 0, otherwise Lucky Bastard is removed from the game`, () => {
+    mpClause(LUCKY, "1:rule", count, `${count} seats: if it would be destroyed every player removes the top card of their own deck from the game; P1's card cost must be at least EVERY opponent's removed card cost (never summed, never against one opponent only): then P1 draws and the damage becomes 0, otherwise Lucky Bastard is removed from the game`, () => {
       for (const [costs, survives] of scenarios) {
         const t = table(count, [
           { key: "lb", def: printing(LUCKY), owner: P1, zone: "play", damage: 2 },
@@ -719,7 +719,7 @@ const CHARM = "9db2e287-ca92-4304-814f-10b7eb99ef4b";
     behavior: { abilities: [{ id: "hit", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "dealDamage", target: { type: "selected", id: "t" }, amount: 1 }] }] } as never
   });
 
-  clause(CHARM, "0:rule", "3 seats: when Lucky Charm enters play P1 draws a card; P2 and P3 draw nothing", () => {
+  mpClause(CHARM, "0:rule", 3, "3 seats: when Lucky Charm enters play P1 draws a card; P2 and P3 draw nothing", () => {
     const t = table(3, [
       { key: "charm", def: printing(CHARM), owner: P1, zone: "hand" },
       ...res("deception", 2, P1),
@@ -736,7 +736,7 @@ const CHARM = "9db2e287-ca92-4304-814f-10b7eb99ef4b";
   });
 
   for (const count of [3, 4] as const) {
-    clause(CHARM, "1:rule", `${count} seats: every opponent of P1 must pay 1 to pick a character P1 controls; P1 picking its own character pays nothing; opponents picking each other's characters pay nothing`, () => {
+    mpClause(CHARM, "1:rule", count, `${count} seats: every opponent of P1 must pay 1 to pick a character P1 controls; P1 picking its own character pays nothing; opponents picking each other's characters pay nothing`, () => {
       const board = (picker: PlayerId) =>
         table(
           count,
@@ -796,7 +796,7 @@ const MISTAKEN = "da95244d-134d-4648-bb5d-c4e1e4fbd6ff";
     );
   const dmg = (t: ReturnType<typeof miTable>, key: string): number => t.engine.state.cards[t.id(key)]!.damage ?? 0;
 
-  clause(MISTAKEN, "1:rule", "3 seats: when P3 (or P2) plays a card that picked P2's character as a cost and P1 responds with Mistaken Identity picking another character, the card's effect happens as though its own controller had picked the other one; P1 is not asked to choose an opponent", () => {
+  mpClause(MISTAKEN, "1:rule", 3, "3 seats: when P3 (or P2) plays a card that picked P2's character as a cost and P1 responds with Mistaken Identity picking another character, the card's effect happens as though its own controller had picked the other one; P1 is not asked to choose an opponent", () => {
     for (const caster of [P3, P2]) {
       for (const [picked, other] of [[P2, P1], [P2, P3], [P1, P2]] as Array<[PlayerId, PlayerId]>) {
         const t = miTable(caster);
@@ -883,7 +883,7 @@ const MUSTACHE = "f276a0be-6c30-4276-a743-30e63619dc41";
         assert.equal(hand(t.engine, p).length, 0);
       }
     };
-    clause(MUSTACHE, "0:ability:mustache-showdown", `${count} seats: P1 activates MUSTACHE SHOWDOWN and names one opponent; only P1 and that opponent look at their own top 3, divide them, and choose a pile of the other; the remaining opponents are not involved and their decks are not touched`, () => {
+    mpClause(MUSTACHE, "0:ability:mustache-showdown", count, `${count} seats: P1 activates MUSTACHE SHOWDOWN and names one opponent; only P1 and that opponent look at their own top 3, divide them, and choose a pile of the other; the remaining opponents are not involved and their decks are not touched`, () => {
       for (const chosen of opponentsOf(count)) run(chosen);
     });
   }
@@ -907,7 +907,7 @@ const SWIPE = "3a9ab0e7-b3f3-4956-8f82-be8f0916a9da";
       ])
     ]);
 
-  clause(SWIPE, "0:rule", "3 seats: P1 names one opponent with the play; the top 4 cards of that opponent's deck go into the void face-down; the other opponent's deck is unchanged", () => {
+  mpClause(SWIPE, "0:rule", 3, "3 seats: P1 names one opponent with the play; the top 4 cards of that opponent's deck go into the void face-down; the other opponent's deck is unchanged", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = swipeTable();
@@ -926,7 +926,7 @@ const SWIPE = "3a9ab0e7-b3f3-4956-8f82-be8f0916a9da";
     }
   });
 
-  clause(SWIPE, "1:rule", "3 seats: for the rest of the game P1 may deploy the voided cards as though in hand, ignoring thresholds; P2 and P3 cannot deploy them", () => {
+  mpClause(SWIPE, "1:rule", 3, "3 seats: for the rest of the game P1 may deploy the voided cards as though in hand, ignoring thresholds; P2 and P3 cannot deploy them", () => {
     for (const chosen of [P2, P3]) {
       const t = swipeTable();
       const chosenDeck = deck(t.engine, chosen);
@@ -964,7 +964,7 @@ const PEC = "613fbe92-3cd5-479e-9381-438f6455f76a";
       { key: "C", def: location({ name: "C place", cost: 1 }), owner: P1, zone: "discard" }
     ]);
 
-  clause(PEC, "0:extraCost", "3 seats: P1 may pick a character, item or location in any opponent's discard pile (A in P2's, B in P3's) and pays X, its numeric cost; C in P1's own pile cannot be picked; no opponent is asked for", () => {
+  mpClause(PEC, "0:extraCost", 3, "3 seats: P1 may pick a character, item or location in any opponent's discard pile (A in P2's, B in P3's) and pays X, its numeric cost; C in P1's own pile cannot be picked; no opponent is asked for", () => {
     const t = pecTable();
     assert.equal(askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("pc") }), undefined, "no chooseOpponent step");
     refused(() => play(t.engine, P1, t.id("pc"), { selected: { loot: [t.id("C")] } }), "own discard pile");
@@ -982,13 +982,13 @@ const PEC = "613fbe92-3cd5-479e-9381-438f6455f76a";
     assert.equal(zoneOf(other.engine, other.id("B")), "discard");
   });
 
-  clause(PEC, "1:rule", "3 seats: the picked card from P3's discard pile enters play under P1's control", () => {
+  mpClause(PEC, "1:rule", 3, "3 seats: the picked card from P3's discard pile enters play under P1's control", () => {
     const t = pecTable();
     play(t.engine, P1, t.id("pc"), { selected: { loot: [t.id("B")] } });
     assert.equal(zoneOf(t.engine, t.id("B")), "play");
     assert.equal(t.engine.state.cards[t.id("B")]!.controllerId, P1, "under P1's control");
     assert.equal(t.engine.state.cards[t.id("B")]!.ownerId, P3);
-    assert.ok(!t.engine.state.players[P3]!.discard.includes(t.id("B")));
+    assert.ok(!t.engine.state.players[P3]!.discard.includes(t.id("B")), "!t.engine.state.players[P3]!.discard.includes(t.id('B'))");
   });
 }
 
@@ -1027,7 +1027,7 @@ const TABLES = "4c1790d7-4cc7-4df5-aa33-2e7369bd960d";
     }
   };
 
-  clause(TABLES, "0:ability:size-up", "3 seats: SIZE UP reaches every player's deck (own, P2's, P3's): the top card of the chosen deck only is looked at, no other deck is", () => {
+  mpClause(TABLES, "0:ability:size-up", 3, "3 seats: SIZE UP reaches every player's deck (own, P2's, P3's): the top card of the chosen deck only is looked at, no other deck is", () => {
     for (const who of owners()) {
       const t = tablesTable();
       pickDeck(t, "size-up", who);
@@ -1039,7 +1039,7 @@ const TABLES = "4c1790d7-4cc7-4df5-aa33-2e7369bd960d";
     }
   });
 
-  clause(TABLES, "1:ability:rig", "3 seats: RIG reaches every player's deck (own, P2's, P3's): the top card of the chosen deck goes on the bottom of that deck; the other decks are unchanged", () => {
+  mpClause(TABLES, "1:ability:rig", 3, "3 seats: RIG reaches every player's deck (own, P2's, P3's): the top card of the chosen deck goes on the bottom of that deck; the other decks are unchanged", () => {
     for (const who of owners()) {
       const t = tablesTable();
       const before = Object.fromEntries(owners().map((p) => [p, deck(t.engine, p)]));
@@ -1075,7 +1075,7 @@ const ROSY = "fdfd2018-584b-4fa7-b9d9-e29f7961337a";
       )
     ]);
 
-  clause(ROSY, "1:rule", "3 seats: when Rosy is destroyed P1 chooses one opponent (P2 or P3); the top 5 cards of that deck are revealed to all players; P1 may put a revealed character into play under P1's control; that opponent (not the other) puts the remaining cards on the bottom of their deck in any order; the other deck is unchanged", () => {
+  mpClause(ROSY, "1:rule", 3, "3 seats: when Rosy is destroyed P1 chooses one opponent (P2 or P3); the top 5 cards of that deck are revealed to all players; P1 may put a revealed character into play under P1's control; that opponent (not the other) puts the remaining cards on the bottom of their deck in any order; the other deck is unchanged", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = rosyTable();
@@ -1131,7 +1131,7 @@ const MUG = "eda064a7-e82c-4939-81f1-9cf4896327b3";
       ...[P2, P3].flatMap((p) => many(`x-${p}-`, 6, p, "deck", (i) => character({ name: `${p} card ${i}` })))
     ]);
 
-  clause(MUG, "1:rule", "3 seats: when it enters play P1 chooses one opponent (P2 or P3 only), searches only that opponent's deck and puts the card into that opponent's discard pile; that deck is shuffled; the other opponent's deck and discard pile are unchanged", () => {
+  mpClause(MUG, "1:rule", 3, "3 seats: when it enters play P1 chooses one opponent (P2 or P3 only), searches only that opponent's deck and puts the card into that opponent's discard pile; that deck is shuffled; the other opponent's deck and discard pile are unchanged", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = mugTable();

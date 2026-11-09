@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import type { PlayerId } from "../../../../engine.js";
 import { bank, character, item, resourceCard, volition, resolvePendingResponses } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { attachedCount } from "../_turn.js";
 import { P1, P2, P3, P4, act, answerChoice, choose, chooseIndex, handOf, influence, mayPay, offered, pending, play, playRaw, playerAsk, requirements, seated, spent, table, type Table } from "./_ungodly-mess.js";
 
@@ -49,7 +49,7 @@ function arrakisTable(seats: number) {
 }
 const arrakisAction = (t: Table, who: PlayerId) => ({ type: "activateAbility", playerId: P1, cardId: t.id("ae"), abilityId: "recur", selected: { p: [factionOf(t, who)] }, variables: {} });
 
-clause(ARRAKIS, "1:ability:recur", "3 seats: Pick a player offers the factions of P1, P2 and P3 (no opponent is chosen); the picked player discards 3 cards of their own choice", () => {
+mpClause(ARRAKIS, "1:ability:recur", 3, "3 seats: Pick a player offers the factions of P1, P2 and P3 (no opponent is chosen); the picked player discards 3 cards of their own choice", () => {
   const t = arrakisTable(3);
   assert.equal(playerAsk(t, arrakisAction(t, P3)), undefined, "no chooseOpponent step");
   const pick = requirements(t, { ...arrakisAction(t, P3), selected: {} }).find(need => need.kind === "pick")!;
@@ -88,7 +88,7 @@ function bonnetCovert(picked: PlayerId) {
   ]);
   act(t, { type: "playCard", playerId: P1, cardId: t.id("bon"), selected: { attachTo: [t.id("host")] }, variables: {}, players: { picked } });
   choose(t, []);
-  assert.ok(t.engine.getKeywords(t.id("host")).includes("covert"));
+  assert.ok(t.engine.getKeywords(t.id("host")).includes("covert"), "t.engine.getKeywords(t.id('host')).includes('covert')");
   assert.equal(t.engine.getKeywords(t.id("foe2")).includes("covert"), false, "P2's character does not gain COVERT");
   assert.equal(t.engine.getKeywords(t.id("foe3")).includes("covert"), false, "P3's character does not gain COVERT");
   declareAttack(t, P1, ["host"], picked === P2 ? P3 : P2);
@@ -97,14 +97,14 @@ function bonnetCovert(picked: PlayerId) {
   refused(() => t.engine.perform({ type: "declareBlockers", playerId: defender, blockerIds: [t.id(defender === P2 ? "foe2" : "foe3")] } as never), `${defender}'s non-COVERT character blocking the COVERT attacker`);
   t.engine.perform({ type: "declareBlockers", playerId: defender, blockerIds: [] } as never);
 }
-clause(BONNET, "2:rule", "3 seats: the attached character has COVERT whichever opponent was picked in the cost (P2), and the opponents' characters do not", () => bonnetCovert(P2));
-clause(BONNET, "2:rule", "3 seats: ... also when the opponent picked in the cost was P3", () => bonnetCovert(P3));
+mpClause(BONNET, "2:rule", 3, "3 seats: the attached character has COVERT whichever opponent was picked in the cost (P2), and the opponents' characters do not", () => bonnetCovert(P2));
+mpClause(BONNET, "2:rule", 3, "3 seats: ... also when the opponent picked in the cost was P3", () => bonnetCovert(P3));
 
 // ===================================================================================================================
 // Flesh Deliquesce: X is the number of detached resources that player controls ... If the character has X strength or less, destroy it.
 // ===================================================================================================================
 
-clause(FLESH, "1:rule", "3 seats: X comes only from the picked opponent (P2: 1, P3: 4); the character pick is unrestricted", () => {
+mpClause(FLESH, "1:rule", 3, "3 seats: X comes only from the picked opponent (P2: 1, P3: 4); the character pick is unrestricted", () => {
   const run = (picked: PlayerId, target: string): boolean => {
     const t = table(3, [
       { key: "fd", def: printing(FLESH), owner: P1, zone: "hand" },
@@ -148,7 +148,7 @@ function quagmireTable(seats: number) {
 const quagmireAction = (t: Table, target: string) => ({ type: "playCard", playerId: P1, cardId: t.id("qq"), selected: { c: [t.id(target)] }, variables: {} });
 const speed = (t: Table, key: string): number => t.engine.getStat(t.id(key), "speed");
 
-clause(QUAGMIRE, ["0:extraCost", "1:rule"], "3 seats: the picked character's controller (P3, not P2 or P1) is asked to detach up to 2 of their resources; then it loses 1 speed and P1 draws", () => {
+mpClause(QUAGMIRE, ["0:extraCost", "1:rule"], 3, "3 seats: the picked character's controller (P3, not P2 or P1) is asked to detach up to 2 of their resources; then it loses 1 speed and P1 draws", () => {
   const t = quagmireTable(3);
   assert.equal(playerAsk(t, quagmireAction(t, "c3")), undefined, "no opponent is chosen: the pick is a character");
   act(t, quagmireAction(t, "c3"));
@@ -178,7 +178,7 @@ clause(QUAGMIRE, ["0:extraCost", "1:rule"], "3 seats: the picked character's con
 // Theological Opportunist: This card loses strength and life equal to the number of cards in all hands.
 // ===================================================================================================================
 
-clause(OPPORTUNIST, "0:rule", "3 seats: counts the cards in every player's hand (P1 1, P2 2, P3 3: -6/-6); a card more or less in any hand changes it by one", () => {
+mpClause(OPPORTUNIST, "0:rule", 3, "3 seats: counts the cards in every player's hand (P1 1, P2 2, P3 3: -6/-6); a card more or less in any hand changes it by one", () => {
   const base = printing(OPPORTUNIST);
   const loss = (p1: number, p2: number, p3: number): number[] => {
     const t = table(3, [{ key: "to", def: printing(OPPORTUNIST), owner: P1 }, ...handCards(P1, p1, 3), ...handCards(P2, p2, 3), ...handCards(P3, p3, 3)]);
@@ -210,12 +210,12 @@ function zenobianBattle(attackers: string[]) {
   play(t, P1, "zme", { selected: { c: [t.id("c3")] } });
   return t;
 }
-clause(ZENOBIAN, "1:rule", "3 seats: with a party of 2 the owner of the returned character (P3, not P2) discards a card of their choice; with a party of 1 nobody does", () => {
+mpClause(ZENOBIAN, "1:rule", 3, "3 seats: with a party of 2 the owner of the returned character (P3, not P2) discards a card of their choice; with a party of 1 nobody does", () => {
   const t = zenobianBattle(["a1", "a2"]);
   assert.equal(zoneOf(t.engine, t.id("c3")), "hand");
   assert.equal(pending(t)!.playerId, P3);
   assert.ok(offered(t).every(id => handOf(t.engine, P3).includes(id)), "from P3's hand");
-  assert.ok(!offered(t).some(id => handOf(t.engine, P2).includes(id)));
+  assert.ok(!offered(t).some(id => handOf(t.engine, P2).includes(id)), "!offered(t).some(id => handOf(t.engine, P2).includes(id))");
   const before = handOf(t.engine, P2).length;
   choose(t, [offered(t)[0]!]);
   assert.equal(handOf(t.engine, P2).length, before, "P2's hand is never affected");
@@ -235,7 +235,7 @@ function demolitionTable(seats: number, o: { p3Resources?: boolean } = {}) {
 }
 const demolition = (t: Table, who: PlayerId) => ({ type: "playCard", playerId: P1, cardId: t.id("di"), selected: { p: [factionOf(t, who)] }, variables: {} });
 
-clause(DEMOLITION, "0:extraCost", "3 seats: Pick a player offers P1, P2 and P3 (no opponent is chosen); P1's faction loses 3 influence", () => {
+mpClause(DEMOLITION, "0:extraCost", 3, "3 seats: Pick a player offers P1, P2 and P3 (no opponent is chosen); P1's faction loses 3 influence", () => {
   const t = demolitionTable(3);
   assert.equal(playerAsk(t, demolition(t, P1)), undefined);
   const pick = requirements(t, { ...demolition(t, P1), selected: {} }).find(need => need.kind === "pick")!;
@@ -244,7 +244,7 @@ clause(DEMOLITION, "0:extraCost", "3 seats: Pick a player offers P1, P2 and P3 (
   act(t, demolition(t, P2));
   assert.ok(influence(t.engine, P1) < before + 1, "the cost is paid: 3 lost, then the destroyed card's cost gained");
 });
-clause(DEMOLITION, "1:rule", "3 seats: only the picked player (P3, not P2) reveals one of their face-down resources: P1 gains its cost and it is destroyed", () => {
+mpClause(DEMOLITION, "1:rule", 3, "3 seats: only the picked player (P3, not P2) reveals one of their face-down resources: P1 gains its cost and it is destroyed", () => {
   const t = demolitionTable(3);
   const before = influence(t.engine, P1);
   act(t, demolition(t, P3));
@@ -264,7 +264,7 @@ clause(DEMOLITION, "1:rule", "3 seats: only the picked player (P3, not P2) revea
 // Thabbashite Glutton: When this card attacks, you may pick a card in a discard pile. If you do, remove it from the game.
 // ===================================================================================================================
 
-clause(GLUTTON, "0:rule@ggvv", "3 seats: with the threshold met, cards in any player's discard pile (P1's, P2's, P3's, even P3 who is not in the battle) are legal picks, and it may be declined", () => {
+mpClause(GLUTTON, "0:rule@ggvv", 3, "3 seats: with the threshold met, cards in any player's discard pile (P1's, P2's, P3's, even P3 who is not in the battle) are legal picks, and it may be declined", () => {
   const board = () =>
     table(3, [
       { key: "gl", def: printing(GLUTTON), owner: P1 },
@@ -292,7 +292,7 @@ clause(GLUTTON, "0:rule@ggvv", "3 seats: with the threshold met, cards in any pl
 // War Racketeer: When this card enters play, draw a card for each character in play.
 // ===================================================================================================================
 
-clause(RACKETEER, "0:rule", "3 seats: draws one card for each character in play under any player (1 + 2 + 3 + itself = 7)", () => {
+mpClause(RACKETEER, "0:rule", 3, "3 seats: draws one card for each character in play under any player (1 + 2 + 3 + itself = 7)", () => {
   const t = table(3, [
     { key: "wr", def: printing(RACKETEER), owner: P1, zone: "hand" },
     ...bank("greed", 7, P1),
@@ -309,7 +309,7 @@ clause(RACKETEER, "0:rule", "3 seats: draws one card for each character in play 
 // Yenassa Shipping, LLP: All items gain the rules text "At the start of your turn, you may pay 1. If you don't, destroy this card."
 // ===================================================================================================================
 
-clause(YENASSA, "2:rule", "3 seats: every item is judged only at the start of its own controller's turn (P2's item on P2's turn), not at the others'", () => {
+mpClause(YENASSA, "2:rule", 3, "3 seats: every item is judged only at the start of its own controller's turn (P2's item on P2's turn), not at the others'", () => {
   const t = table(
     3,
     [
@@ -350,7 +350,7 @@ function jerryTable(seats: number) {
 }
 const jerry = (t: Table, opponent?: PlayerId) => ({ type: "playCard", playerId: P1, cardId: t.id("fj"), selected: { it: [t.id("mine")] }, variables: {}, ...(opponent ? { players: { opponent } } : {}) });
 
-clause(JERRY, ["0:extraCost", "1:rule"], "3 seats: the opponent is chosen when it is played (offering P2 and P3), the cost always comes from P1's own items, and the destroy option offers only the chosen opponent's items", () => {
+mpClause(JERRY, ["0:extraCost", "1:rule"], 3, "3 seats: the opponent is chosen when it is played (offering P2 and P3), the cost always comes from P1's own items, and the destroy option offers only the chosen opponent's items", () => {
   const t = jerryTable(3);
   assert.deepEqual(playerAsk(t, jerry(t)), { id: "opponent", candidates: [P2, P3] });
   act(t, jerry(t, P2));
@@ -383,7 +383,7 @@ clause(JERRY, ["0:extraCost", "1:rule"], "3 seats: the opponent is chosen when i
 // Moment of Annihilation: Pick a character. -- If the character has 4 life or less, destroy it.
 // ===================================================================================================================
 
-clause(MOMENT, "1:rule", "3 seats: a character of P1, P2 or P3 is a legal pick; 4 life or less is destroyed, 5 survives", () => {
+mpClause(MOMENT, "1:rule", 3, "3 seats: a character of P1, P2 or P3 is a legal pick; 4 life or less is destroyed, 5 survives", () => {
   const run = (key: string): string => {
     const t = table(3, [
       { key: "ma", def: printing(MOMENT), owner: P1, zone: "hand" },
@@ -404,7 +404,7 @@ clause(MOMENT, "1:rule", "3 seats: a character of P1, P2 or P3 is a legal pick; 
 // Purloining Performance: If you control an attacking party of at least 2 members, you may put up to 3 cards ... into their discard pile.
 // ===================================================================================================================
 
-clause(PURLOIN, "1:rule", "3 seats: with a party of 1 member the discard option is not offered; P2's deck and discard pile never change", () => {
+mpClause(PURLOIN, "1:rule", 3, "3 seats: with a party of 1 member the discard option is not offered; P2's deck and discard pile never change", () => {
   const t = table(3, [
     { key: "pp", def: printing(PURLOIN), owner: P1, zone: "hand" },
     ...bank("deception", 3, P1),
@@ -427,7 +427,7 @@ clause(PURLOIN, "1:rule", "3 seats: with a party of 1 member the discard option 
 // Thabbashite Weapons Expert: [V][V][V][V][V]: This card gains 2 strength.
 // ===================================================================================================================
 
-clause(WEAPONS, "1:rule@vvvvv", "3 seats: with five [V] it has 2 more strength, without them it does not, whatever the number of opponents", () => {
+mpClause(WEAPONS, "1:rule@vvvvv", 3, "3 seats: with five [V] it has 2 more strength, without them it does not, whatever the number of opponents", () => {
   const base = printing(WEAPONS).strength!;
   const withV = table(3, [{ key: "we", def: printing(WEAPONS), owner: P1 }, ...volition(5, P1)]);
   assert.equal(withV.engine.getStat(withV.id("we"), "strength"), base + 2);

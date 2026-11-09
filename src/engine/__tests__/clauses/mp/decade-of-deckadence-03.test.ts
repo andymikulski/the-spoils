@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { character, item, location, tactic } from "../../support/fixtures.js";
 import { volition } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   act,
   activate,
@@ -69,7 +69,7 @@ function toP1Turn(t: Table): void {
 
 const CHAIN_REACTION = "5332f878-57a2-46dd-ab1e-f7ab6113a5bd";
 
-clause(CHAIN_REACTION, "0:extraCost", "3 seats: the extra-cost pick is any location: P1's, P2's and P3's are all legal, a character is not; no opponent is asked for", () => {
+mpClause(CHAIN_REACTION, "0:extraCost", 3, "3 seats: the extra-cost pick is any location: P1's, P2's and P3's are all legal, a character is not; no opponent is asked for", () => {
   const t = table(3, [
     { key: "me", def: printing(CHAIN_REACTION), owner: P1, zone: "hand" },
     ...res({ rage: 2 }),
@@ -88,7 +88,7 @@ clause(CHAIN_REACTION, "0:extraCost", "3 seats: the extra-cost pick is any locat
 
 const REDONKULOUS = "95277828-2708-4a76-b7ae-2615d898a7e1";
 
-clause(REDONKULOUS, "0:extraCost", "3 seats: the extra-cost pick is any character, controlled by P1, P2 or P3; no opponent is asked for", () => {
+mpClause(REDONKULOUS, "0:extraCost", 3, "3 seats: the extra-cost pick is any character, controlled by P1, P2 or P3; no opponent is asked for", () => {
   const t = table(3, [
     { key: "me", def: printing(REDONKULOUS), owner: P1, zone: "hand" },
     ...res({ obsession: 4 }),
@@ -143,7 +143,7 @@ function driveDrill(t: Table, ability: "t5" | "t7", keys: string[]): void {
   }
 }
 
-clause(DRILL, "2:rule@rrrrr", "3 seats: at the start of P1's turn P1 may pick any character, P1's own or an opponent's, and deplete it; no opponent is picked", () => {
+mpClause(DRILL, "2:rule@rrrrr", 3, "3 seats: at the start of P1's turn P1 may pick any character, P1's own or an opponent's, and deplete it; no opponent is picked", () => {
   for (const victim of ["c-p1", "c-p2", "c-p3"]) {
     const t = drillTable(3, 5);
     toP1Turn(t);
@@ -152,7 +152,7 @@ clause(DRILL, "2:rule@rrrrr", "3 seats: at the start of P1's turn P1 may pick an
   }
 });
 
-clause(DRILL, "3:rule@rrrrrrr", "3 seats: at the start of P1's turn P1 may pick any character, P1's own or an opponent's, and inflict 2 damage to it; no opponent is picked", () => {
+mpClause(DRILL, "3:rule@rrrrrrr", 3, "3 seats: at the start of P1's turn P1 may pick any character, P1's own or an opponent's, and inflict 2 damage to it; no opponent is picked", () => {
   for (const victim of ["c-p1", "c-p2", "c-p3"]) {
     const t = drillTable(3, 7);
     toP1Turn(t);
@@ -182,7 +182,7 @@ function bothPlay(t: Table, responder: PlayerId): void {
   act(t, { type: "playCard", playerId: responder, cardId: t.id(`tactic-${responder}`) });
 }
 
-clause(MASTER_GENERAL, "0:rule", "3 seats: whoever deploys a tactic takes 3 damage to their own faction (P1, P2 or P3), nobody else does, and a non-tactic deploys damages nobody", () => {
+mpClause(MASTER_GENERAL, "0:rule", 3, "3 seats: whoever deploys a tactic takes 3 damage to their own faction (P1, P2 or P3), nobody else does, and a non-tactic deploys damages nobody", () => {
   const self = generalTable(3);
   const base = snapshot(self);
   playCard(self, P1, "tactic-p1");
@@ -241,7 +241,7 @@ function mindrenderTable(count: Count, active: PlayerId): Table {
   );
 }
 
-clause(MINDRENDER, "1:rule", "3 seats: a discard by P2, or by P3, lets P1 reveal Mindrender and deploy it for 1; a discard by P1 does not; the option comes again on a second discard", () => {
+mpClause(MINDRENDER, "1:rule", 3, "3 seats: a discard by P2, or by P3, lets P1 reveal Mindrender and deploy it for 1; a discard by P1 does not; the option comes again on a second discard", () => {
   for (const discarder of [P2, P3]) {
     const t = mindrenderTable(3, discarder);
     playCard(t, discarder, `disc-${discarder}`);
@@ -260,7 +260,7 @@ clause(MINDRENDER, "1:rule", "3 seats: a discard by P2, or by P3, lets P1 reveal
     assert.equal(zoneOf(t, "me"), "play", "revealed and deployed for 1");
     assert.equal(t.engine.getAvailableResourceCount(P1), 2, "for exactly 1");
     const revealed = t.engine.getLog().filter((entry) => entry.event?.type === "cardsRevealed");
-    assert.ok(revealed.length >= 1);
+    assert.ok(revealed.length >= 1, "revealed.length >= 1");
   }
   const own = mindrenderTable(3, P1);
   playCard(own, P1, "disc-p1");
@@ -284,14 +284,14 @@ function purifierTable(count: Count, zone: "hand" | "play"): Table {
   ]);
 }
 
-clause(PURIFIER, "0:rule", "3 seats: when it enters play the discard piles of P1, P2 and P3 are all voided", () => {
+mpClause(PURIFIER, "0:rule", 3, "3 seats: when it enters play the discard piles of P1, P2 and P3 are all voided", () => {
   const t = purifierTable(3, "hand");
   playCard(t, P1, "me");
   assert.equal(zoneOf(t, "me"), "play");
   for (const seat of t.seats) for (const n of [0, 1]) assert.equal(zoneOf(t, `${seat}x${n}`), "void", `${seat}'s discard card ${n}`);
 });
 
-clause(PURIFIER, "1:rule", "3 seats: while it is in play a card that would go to P1's, P2's or P3's discard pile is voided instead, and cards go to discard piles again once it leaves", () => {
+mpClause(PURIFIER, "1:rule", 3, "3 seats: while it is in play a card that would go to P1's, P2's or P3's discard pile is voided instead, and cards go to discard piles again once it leaves", () => {
   for (const seat of [P1, P2, P3]) {
     const t = purifierTable(3, "play");
     playCard(t, P1, "kill", { selected: { t: [t.id(`c-${seat}`)] } });
@@ -320,7 +320,7 @@ function silencerTable(count: Count): Table {
   ]);
 }
 
-clause(SILENCER, "0:rule", "3 seats: a character with a token controlled by P2 or by P3 cannot block it; a character with no token can", () => {
+mpClause(SILENCER, "0:rule", 3, "3 seats: a character with a token controlled by P2 or by P3 cannot block it; a character with no token can", () => {
   for (const defender of [P2, P3]) {
     const t = silencerTable(3);
     act(t, { type: "declareAttack", playerId: P1, attackerIds: [t.id("me")], target: { type: "faction", playerId: defender } });
@@ -344,7 +344,7 @@ function silencerTrigger(entrant: PlayerId, count: Count): Table {
   );
 }
 
-clause(SILENCER, "1:rule", "3 seats: a character entering under P2's or P3's control triggers it with nobody asked to choose; P1 may pay 1 to put a token on that character; P1's own entering character does not", () => {
+mpClause(SILENCER, "1:rule", 3, "3 seats: a character entering under P2's or P3's control triggers it with nobody asked to choose; P1 may pay 1 to put a token on that character; P1's own entering character does not", () => {
   for (const entrant of [P2, P3]) {
     const t = silencerTrigger(entrant, 3);
     playCard(t, entrant, `new-${entrant}`);
@@ -378,7 +378,7 @@ function rageTable(count: Count): Table {
   ]);
 }
 
-clause(TEMPERED_RAGE, "1:ability:fire-up", "3 seats: FIRE UP with two characters destroyed this turn makes every faction, P1's, P2's and P3's, lose 2", () => {
+mpClause(TEMPERED_RAGE, "1:ability:fire-up", 3, "3 seats: FIRE UP with two characters destroyed this turn makes every faction, P1's, P2's and P3's, lose 2", () => {
   const t = rageTable(3);
   playCard(t, P1, "kill1", { selected: { t: [t.id("c-p2")] } });
   playCard(t, P1, "kill2", { selected: { t: [t.id("c-p3")] } });
@@ -389,7 +389,7 @@ clause(TEMPERED_RAGE, "1:ability:fire-up", "3 seats: FIRE UP with two characters
   assert.deepEqual(t.seats.map((seat) => lost(t, before, seat)), [2, 2, 2]);
 });
 
-clause(TEMPERED_RAGE, "1:ability:fire-up", "4 seats: all four factions lose X, and an eliminated seat's faction is not affected", () => {
+mpClause(TEMPERED_RAGE, "1:ability:fire-up", 4, "4 seats: all four factions lose X, and an eliminated seat's faction is not affected", () => {
   const t = rageTable(4);
   playCard(t, P1, "kill1", { selected: { t: [t.id("c-p2")] } });
   playCard(t, P1, "kill2", { selected: { t: [t.id("c-p3")] } });
@@ -419,7 +419,7 @@ function upstartTable(count: Count): Table {
   ], { activePlayerId: seats[count - 1]!, turn: count });
 }
 
-clause(UPSTART, "1:rule", "3 seats: at the start of P1's turn P1 may reveal the top card of P1's deck to everyone, and take it if it is a tactic; P2's and P3's decks are unchanged", () => {
+mpClause(UPSTART, "1:rule", 3, "3 seats: at the start of P1's turn P1 may reveal the top card of P1's deck to everyone, and take it if it is a tactic; P2's and P3's decks are unchanged", () => {
   const t = upstartTable(3);
   const decks = t.seats.map((seat) => t.engine.state.players[seat]!.deck.length);
   const topId = t.engine.state.players[P1]!.deck[0]!;

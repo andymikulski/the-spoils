@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
 import { tactic } from "../../support/fixtures.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   abilityAction,
   activate,
@@ -81,7 +81,7 @@ function essenceDTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ESSENCE_D, "0:rule", `${count} seats: the option choice involves only P1; only OPTION 1 then asks for an opponent`, () => {
+  mpClause(ESSENCE_D, "0:rule", count, `${count} seats: the option choice involves only P1; only OPTION 1 then asks for an opponent`, () => {
     const t = essenceDTable(count);
     const first = t.engine.getPlayRequirements(playAction(t, P1, "ed") as never);
     assert.equal(first.length, 1);
@@ -93,7 +93,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ESSENCE_D, "1:option:OPTION 1", `${count} seats: OPTION 1 searches only the chosen opponent's deck (P1 may take only a card from it), puts the card into that deck owner's discard pile and shuffles only that deck`, () => {
+  mpClause(ESSENCE_D, "1:option:OPTION 1", count, `${count} seats: OPTION 1 searches only the chosen opponent's deck (P1 may take only a card from it), puts the card into that deck owner's discard pile and shuffles only that deck`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = essenceDTable(count);
       const before = deckOrders(t);
@@ -104,7 +104,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ESSENCE_D, "2:option:OPTION 2", `${count} seats: OPTION 2 picks any player's character; it gains 1 speed this turn; nobody is asked for an opponent`, () => {
+  mpClause(ESSENCE_D, "2:option:OPTION 2", count, `${count} seats: OPTION 2 picks any player's character; it gains 1 speed this turn; nobody is asked for an opponent`, () => {
     for (const target of seatsOf(count)) {
       const t = essenceDTable(count);
       const speeds = Object.fromEntries(t.seats.map((seat) => [seat, t.engine.getStat(t.id(`c-${seat}`), "speed")]));
@@ -114,7 +114,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ESSENCE_D, "3:option:OPTION 3", `${count} seats: OPTION 3 destroys a picked character (any player's) that was damaged this turn, and not one that was not; nobody is asked for an opponent`, () => {
+  mpClause(ESSENCE_D, "3:option:OPTION 3", count, `${count} seats: OPTION 3 destroys a picked character (any player's) that was damaged this turn, and not one that was not; nobody is asked for an opponent`, () => {
     for (const target of seatsOf(count)) {
       const damaged = seatsOf(count).filter((s) => s !== target).slice(-1)[0]!;
       const t = essenceDTable(count);
@@ -147,7 +147,7 @@ function heistTable(count: Count, deception: number): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(HEIST, "1:rule@ddd", `${count} seats: at the start of P1's turn P1 may pick any character (any seat's); it gains COVERT this turn; nothing fires on the other turns`, () => {
+  mpClause(HEIST, "1:rule@ddd", count, `${count} seats: at the start of P1's turn P1 may pick any character (any seat's); it gains COVERT this turn; nothing fires on the other turns`, () => {
     for (const target of seatsOf(count)) {
       const t = heistTable(count, 3);
       assert.equal(passTurn(t), P1);
@@ -160,7 +160,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(HEIST, "2:rule@ddddd", `${count} seats: at the start of P1's turn P1 may search only the chosen opponent's deck; the card goes to that deck's discard pile and only that deck is shuffled; nothing fires on the other turns`, () => {
+  mpClause(HEIST, "2:rule@ddddd", count, `${count} seats: at the start of P1's turn P1 may search only the chosen opponent's deck; the card goes to that deck's discard pile and only that deck is shuffled; nothing fires on the other turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = heistTable(count, 5);
       const before = deckOrders(t);
@@ -182,7 +182,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(HEIST, "3:rule@ddddddd", `${count} seats: at the start of P1's turn a random card of only the chosen opponent's hand is discarded; nothing fires on the other turns`, () => {
+  mpClause(HEIST, "3:rule@ddddddd", count, `${count} seats: at the start of P1's turn a random card of only the chosen opponent's hand is discarded; nothing fires on the other turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = heistTable(count, 7);
       const before = sizes(t);
@@ -208,7 +208,7 @@ for (const count of [3, 4] as const) {
 const MUGGER = "8c9857e6-ba59-4e6d-9459-148426e2bb4a";
 
 for (const count of [3, 4] as const) {
-  clause(MUGGER, "1:rule", `${count} seats: P1 chooses the opponent when the trigger resolves, searches only that opponent's deck, the card goes to its discard pile and only that deck is shuffled`, () => {
+  mpClause(MUGGER, "1:rule", count, `${count} seats: P1 chooses the opponent when the trigger resolves, searches only that opponent's deck, the card goes to its discard pile and only that deck is shuffled`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "sm", def: printing(MUGGER), owner: P1, zone: "hand" }, ...mixedHands(count), ...bank("deception", 4, P1)]);
       const before = deckOrders(t);
@@ -236,7 +236,7 @@ function swipeTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(PANT_SWIPE, "0:rule", `${count} seats: the opponent is chosen first; the top 4 cards of only that opponent's deck are removed from the game`, () => {
+  mpClause(PANT_SWIPE, "0:rule", count, `${count} seats: the opponent is chosen first; the top 4 cards of only that opponent's deck are removed from the game`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = swipeTable(count);
       assertOpponentAsked(t, playAction(t, P1, "ps"));
@@ -249,7 +249,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clauseMismatch(PANT_SWIPE, "0:rule", "MP-seed-4", `${count} seats: the removed cards are face-down, so only P1 may look at them and no other seat (the owner, the third player) sees them`, () => {
+  mpClause(PANT_SWIPE, "0:rule", count, `${count} seats: the removed cards are face-down, so only P1 may look at them and no other seat (the owner, the third player) sees them`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = swipeTable(count);
       const before = deckOrders(t);
@@ -262,7 +262,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(PANT_SWIPE, "1:rule", `${count} seats: for the rest of the game P1 (and no one else) may play the four removed cards as though in hand, ignoring their threshold`, () => {
+  mpClause(PANT_SWIPE, "1:rule", count, `${count} seats: for the rest of the game P1 (and no one else) may play the four removed cards as though in hand, ignoring their threshold`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = swipeTable(count);
       const before = deckOrders(t);
@@ -270,7 +270,7 @@ for (const count of [3, 4] as const) {
       const removed = before[pick]!.slice(0, 4);
       const listed = t.engine.getPlayableFromOutsideHand(P1);
       assert.deepEqual(listed.map((entry) => entry.cardId).sort(), [...removed].sort(), "P1 may play exactly the four removed cards");
-      assert.ok(listed.every((entry) => entry.ignoreThreshold && entry.playability.playable));
+      assert.ok(listed.every((entry) => entry.ignoreThreshold && entry.playability.playable), "listed.every((entry) => entry.ignoreThreshold && entry.playability.playable)");
       for (const seat of t.seats.filter((s) => s !== P1)) assert.equal(t.engine.getPlayableFromOutsideHand(seat).length, 0, `${seat} gets no play grant`);
       playCard(t, P1, `d-${pick}-0`);
       assert.equal(t.engine.state.cards[removed[0]!]!.zone, "play");
@@ -293,7 +293,7 @@ function tablesTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(TABLES, "0:ability:size-up", `${count} seats: SIZE UP names the opponent first, then P1 looks at the top card of P1's deck or of the chosen opponent's deck (two options only)`, () => {
+  mpClause(TABLES, "0:ability:size-up", count, `${count} seats: SIZE UP names the opponent first, then P1 looks at the top card of P1's deck or of the chosen opponent's deck (two options only)`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const own of [true, false]) {
         const t = tablesTable(count);
@@ -314,7 +314,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(TABLES, "1:ability:rig", `${count} seats: RIG names the opponent first, then puts the top card of P1's deck or of the chosen opponent's deck on the bottom of that deck; no other deck changes`, () => {
+  mpClause(TABLES, "1:ability:rig", count, `${count} seats: RIG names the opponent first, then puts the top card of P1's deck or of the chosen opponent's deck on the bottom of that deck; no other deck changes`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const own of [true, false]) {
         const t = tablesTable(count);
@@ -340,7 +340,7 @@ for (const count of [3, 4] as const) {
 const BILKER = "36815079-5262-4a87-b922-cd06177f6ba5";
 
 for (const count of [3, 4] as const) {
-  clause(BILKER, "0:ability:size-up", `${count} seats: SIZE UP names the opponent first, then P1 looks at the top card of P1's deck or of the chosen opponent's deck (two options only)`, () => {
+  mpClause(BILKER, "0:ability:size-up", count, `${count} seats: SIZE UP names the opponent first, then P1 looks at the top card of P1's deck or of the chosen opponent's deck (two options only)`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const own of [true, false]) {
         const t = table(count, [{ key: "sb", def: printing(BILKER), owner: P1, zone: "play" }, ...mixedHands(count), ...bank("deception", 3, P1)]);

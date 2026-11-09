@@ -2,7 +2,7 @@
 // "pick a player", "that player", "a player controls", "reveal"). Real printings, real 3-seat games, `perform` only.
 
 import assert from "node:assert/strict";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import type { CardDefinition, PlayerId } from "../../../../engine.js";
 import { buildGame, item, location as locationCard, noDevelopFaction, resourceCard } from "../../support/fixtures.js";
 import {
@@ -63,7 +63,7 @@ function discarder(who: PlayerId, count: number): CardDefinition {
   });
 }
 
-clause(BEAST, "0:rule", "3 seats: P2 discards 2 (+2/+2), then P3 discards 1 the same turn (+1/+1 more, 3/3 in all); P1's own discard adds nothing; the bonuses end with the turn", () => {
+mpClause(BEAST, "0:rule", 3, "3 seats: P2 discards 2 (+2/+2), then P3 discards 1 the same turn (+1/+1 more, 3/3 in all); P1's own discard adds nothing; the bonuses end with the turn", () => {
   const printed = printing(BEAST);
   const t = table(3, [
     { key: "bb", def: printing(BEAST), owner: P1, zone: "play" },
@@ -121,7 +121,7 @@ function declineSprinkle(t: Table): void {
   if (pending(t)?.kind === "selectTargets") answer(t, "selectTargets", P1, { kind: "selectTargets", selected: { sprinkle: [] } });
 }
 
-clause(ELDRIDGE, "3:ability:eldridge-tribute", "3 seats: the pick offers P1's, P2's and P3's factions with no opponent step; picking P3 makes P3 (not P2) discard 2 of P3's choice and P1 draws a card", () => {
+mpClause(ELDRIDGE, "3:ability:eldridge-tribute", 3, "3 seats: the pick offers P1's, P2's and P3's factions with no opponent step; picking P3 makes P3 (not P2) discard 2 of P3's choice and P1 draws a card", () => {
   const t = eldridgeTable();
   assert.deepEqual(sorted(pickCandidates(t, P1, "eg", "p", { abilityId: "eldridge-tribute" })), sorted(t.seats.map((seat) => factionOf(t, seat))));
   assert.deepEqual(playRequirements(t, P1, "eg", "eldridge-tribute").filter((r) => r.kind === "players"), [], "no opponent / player choice step");
@@ -146,7 +146,7 @@ clause(ELDRIDGE, "3:ability:eldridge-tribute", "3 seats: the pick offers P1's, P
   assert.equal(handOf(t, P1).length, hands.p1 + 1, "P1 draws a card");
 });
 
-clause(ELDRIDGE, "3:ability:eldridge-tribute", "3 seats: picking P1's own faction makes P1 discard 2 of P1's own cards and draw 1; P2's and P3's hands are unchanged", () => {
+mpClause(ELDRIDGE, "3:ability:eldridge-tribute", 3, "3 seats: picking P1's own faction makes P1 discard 2 of P1's own cards and draw 1; P2's and P3's hands are unchanged", () => {
   const t = eldridgeTable();
   activate(t, P1, "eg", "eldridge-tribute", { selected: { p: [factionOf(t, P1)] } });
   declineSprinkle(t);
@@ -173,7 +173,7 @@ function sensorTable(): Table {
   ]);
 }
 
-clause(SENSOR, "1:ability:seance-seize", "3 seats: the pick offers all three factions with no opponent step; picking P2 makes P2 (not P3) choose and discard a card; P1's and P3's hands are unchanged", () => {
+mpClause(SENSOR, "1:ability:seance-seize", 3, "3 seats: the pick offers all three factions with no opponent step; picking P2 makes P2 (not P3) choose and discard a card; P1's and P3's hands are unchanged", () => {
   const t = sensorTable();
   assert.deepEqual(sorted(pickCandidates(t, P1, "s", "p", { abilityId: "seance-seize" })), sorted(t.seats.map((seat) => factionOf(t, seat))));
   assert.deepEqual(playRequirements(t, P1, "s", "seance-seize").filter((r) => r.kind === "players"), []);
@@ -193,7 +193,7 @@ clause(SENSOR, "1:ability:seance-seize", "3 seats: the pick offers all three fac
   assert.equal(discardOf(t, P3).length, 0);
 });
 
-clause(SENSOR, "1:ability:seance-seize", "3 seats: picking P1 makes P1 discard a card of P1's own; P2 and P3 keep their hands", () => {
+mpClause(SENSOR, "1:ability:seance-seize", 3, "3 seats: picking P1 makes P1 discard a card of P1's own; P2 and P3 keep their hands", () => {
   const t = sensorTable();
   activate(t, P1, "s", "seance-seize", { selected: { p: [factionOf(t, P1)] } });
   assert.equal(pending(t)?.playerId, P1);
@@ -225,7 +225,7 @@ function resourceCardDef(name: string): CardDefinition {
   return resourceCard({ name: `Res ${name}` });
 }
 
-clause(NIUDLA, "1:ability:uhluhtc-prevail", "3 seats: P1 pays the cost and picks P3 (all three factions offered, no opponent step): P3, not P2, puts a face-down resource of P3's choice into hand; P2's resources stay", () => {
+mpClause(NIUDLA, "1:ability:uhluhtc-prevail", 3, "3 seats: P1 pays the cost and picks P3 (all three factions offered, no opponent step): P3, not P2, puts a face-down resource of P3's choice into hand; P2's resources stay", () => {
   const t = niudlaTable();
   assert.deepEqual(sorted(pickCandidates(t, P1, "un", "p", { abilityId: "uhluhtc-prevail", selected: { spent: [t.id("r1")] } })), sorted(t.seats.map((seat) => factionOf(t, seat))));
   assert.deepEqual(playRequirements(t, P1, "un", "uhluhtc-prevail").filter((r) => r.kind === "players"), []);
@@ -248,7 +248,7 @@ clause(NIUDLA, "1:ability:uhluhtc-prevail", "3 seats: P1 pays the cost and picks
   assert.equal(handOf(t, P2).length, 0);
 });
 
-clause(NIUDLA, "1:ability:uhluhtc-prevail", "3 seats: picking P2 has only P2 choose; picking P3 when P3 has no face-down resource does nothing", () => {
+mpClause(NIUDLA, "1:ability:uhluhtc-prevail", 3, "3 seats: picking P2 has only P2 choose; picking P3 when P3 has no face-down resource does nothing", () => {
   const t = niudlaTable();
   activate(t, P1, "un", "uhluhtc-prevail", { selected: { spent: [t.id("r1")], p: [factionOf(t, P2)] } });
   assert.equal(pending(t)?.playerId, P2);
@@ -295,7 +295,7 @@ const WIN = (): number => 0.1;
 const LOSE = (): number => 0.9;
 const milled = (t: Table, prefix: string, count: number): number => Array.from({ length: count }, (_, i) => zoneOf(t, `${prefix}${i}`)).filter((z) => z === "discard").length;
 
-clause(CASINO, "0:rule", "3 seats: at the start of P1's turn a won flip has P1 pick a player (all three factions); picking P3 mills the top 4 of P3's deck only; P2's and P1's decks are unchanged", () => {
+mpClause(CASINO, "0:rule", 3, "3 seats: at the start of P1's turn a won flip has P1 pick a player (all three factions); picking P3 mills the top 4 of P3's deck only; P2's and P1's decks are unchanged", () => {
   const t = casinoTable(WIN);
   startNextTurn(t, P3);
   assert.equal(t.engine.state.activePlayerId, P1, "P1's turn starts");
@@ -316,7 +316,7 @@ clause(CASINO, "0:rule", "3 seats: at the start of P1's turn a won flip has P1 p
   assert.equal(discardOf(t, P1).length, 0);
 });
 
-clause(CASINO, "0:rule", "3 seats: picking P1's own faction mills P1's own top 4 and picking P2 mills P2's only (so any of the three can be picked); a lost flip asks for no pick and mills nothing", () => {
+mpClause(CASINO, "0:rule", 3, "3 seats: picking P1's own faction mills P1's own top 4 and picking P2 mills P2's only (so any of the three can be picked); a lost flip asks for no pick and mills nothing", () => {
   const own = casinoTable(WIN);
   startNextTurn(own, P3);
   answer(own, "chooserSelectsTarget", P1, { kind: "chooserSelectsTarget", selected: [factionOf(own, P1)] });
@@ -359,7 +359,7 @@ function gatheringTable(): Table {
 
 const nameAnswer = (t: Table, who: PlayerId, value: string): void => answer(t, "nameValue", who, { kind: "nameValue", value });
 
-clause(GATHERING, "1:rule", "3 seats: with P3 picked, P3 (not P2) names 2 non-Universal trades; Universal is refused; P1 then finds a character of a named trade in P1's own deck and draws", () => {
+mpClause(GATHERING, "1:rule", 3, "3 seats: with P3 picked, P3 (not P2) names 2 non-Universal trades; Universal is refused; P1 then finds a character of a named trade in P1's own deck and draws", () => {
   const t = gatheringTable();
   const hand = handOf(t, P1).length;
   play(t, P1, "guh", { selected: { p: [factionOf(t, P3)] } });
@@ -389,7 +389,7 @@ clause(GATHERING, "1:rule", "3 seats: with P3 picked, P3 (not P2) names 2 non-Un
   assert.equal(zoneOf(t, "foe3"), "deck");
 });
 
-clause(GATHERING, "1:rule", "3 seats: with P2 picked, P2 names the trades and P3 is never asked", () => {
+mpClause(GATHERING, "1:rule", 3, "3 seats: with P2 picked, P2 names the trades and P3 is never asked", () => {
   const t = gatheringTable();
   play(t, P1, "guh", { selected: { p: [factionOf(t, P2)] } });
   assert.equal(pending(t)?.playerId, P2);
@@ -429,7 +429,7 @@ function proposalWith(picked: PlayerId): Table {
 
 const asIds = (t: Table, keys: string[]): string[] => keys.map((key) => t.id(key));
 
-clause(PROFANE, "1:rule", "3 seats: with P3 picked P1 finds 5 differently named cards in P1's own deck; P3 (not P2) separates them; P1 takes one pile and the other goes back into the deck", () => {
+mpClause(PROFANE, "1:rule", 3, "3 seats: with P3 picked P1 finds 5 differently named cards in P1's own deck; P3 (not P2) separates them; P1 takes one pile and the other goes back into the deck", () => {
   const t = proposalWith(P3);
   for (const bad of ["a0", "b0"]) assert.throws(() => t.engine.perform({ type: "resolvePendingChoice", playerId: P1, choice: { kind: "chooserSelectsTarget", selected: asIds(t, [...FIVE.slice(0, 4), bad]) } } as never), /./s, `${bad} is not in P1's deck`);
   pick(t, P1, ...FIVE);
@@ -459,7 +459,7 @@ clause(PROFANE, "1:rule", "3 seats: with P3 picked P1 finds 5 differently named 
   assert.equal(handOf(t, P3).length, 2);
 });
 
-clause(PROFANE, "1:rule", "3 seats: with P2 picked, P2 separates the piles and P3 takes no part", () => {
+mpClause(PROFANE, "1:rule", 3, "3 seats: with P2 picked, P2 separates the piles and P3 takes no part", () => {
   const t = proposalWith(P2);
   pick(t, P1, ...FIVE);
   assert.equal(pending(t)?.kind, "pileAssignment");
@@ -489,7 +489,7 @@ function sarcTable(spyOwner: PlayerId | undefined): Table {
   ]);
 }
 
-clause(SARC, "0:rule", "3 seats: no COVERT character means no COVERT; a COVERT character that only P3 controls gives it COVERT and it is lost when that character leaves; the same for P2's and for P1's own", () => {
+mpClause(SARC, "0:rule", 3, "3 seats: no COVERT character means no COVERT; a COVERT character that only P3 controls gives it COVERT and it is lost when that character leaves; the same for P2's and for P1's own", () => {
   assert.equal(hasCovert(sarcTable(undefined)), false, "control: nobody has COVERT");
   for (const owner of [P3, P2, P1]) {
     const t = sarcTable(owner);
@@ -510,7 +510,7 @@ clause(SARC, "0:rule", "3 seats: no COVERT character means no COVERT; a COVERT c
 
 const DWEEDLE = "3714b3c6-39af-4c56-a508-ad389be90933";
 
-clause(DWEEDLE, "1:ability:dweedle-bulge", "3 seats: the top card of P1's deck is revealed to every player, goes to P1's discard pile and its threshold in tokens land on Dweedle Tee; nothing is asked of P2 or P3", () => {
+mpClause(DWEEDLE, "1:ability:dweedle-bulge", 3, "3 seats: the top card of P1's deck is revealed to every player, goes to P1's discard pile and its threshold in tokens land on Dweedle Tee; nothing is asked of P2 or P3", () => {
   const t = table(3, [
     { key: "dw", def: printing(DWEEDLE), owner: P1, zone: "play" },
     ...volition(3, P1),
@@ -558,7 +558,7 @@ function elfTable(active: PlayerId, withElf: boolean): Table {
   );
 }
 
-clause(ELF, "0:rule", "3 seats: with the Elf in play a location of P1, of P2 and of P3 each refuse their activated ability; without the Elf each controller can use it", () => {
+mpClause(ELF, "0:rule", 3, "3 seats: with the Elf in play a location of P1, of P2 and of P3 each refuse their activated ability; without the Elf each controller can use it", () => {
   for (const seat of seatsOf(3)) {
     const withElf = elfTable(seat, true);
     const before = influenceOf(withElf, seat);

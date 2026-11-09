@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { bank, character, item, resolvePendingResponses, tactic, volition } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, activate, answerChoice, choose, chooseIndex, choosePlayer, handOf, influence, mayPay, offered, pass, pending, play, playRaw, seated, table, type Table } from "./_ungodly-mess.js";
 import type { PlayerId } from "../../../../engine.js";
 
@@ -44,7 +44,7 @@ const faceDownOf = (t: Table, who: PlayerId): string[] =>
     .filter(card => card.zone === "play" && card.faceDown && card.controllerId === who)
     .map(card => card.id);
 
-clause(BIG, "2:rule", "3 seats: choosing the opponent option asks which opponent (P2 or P3); only that player destroys one of their own face-down resources", () => {
+mpClause(BIG, "2:rule", 3, "3 seats: choosing the opponent option asks which opponent (P2 or P3); only that player destroys one of their own face-down resources", () => {
   const t = bigTable(3);
   const p2 = faceDownOf(t, P2);
   const p3 = faceDownOf(t, P3);
@@ -89,7 +89,7 @@ clause(BIG, "2:rule", "3 seats: choosing the opponent option asks which opponent
   assert.equal(pending(two)!.playerId, P2);
 });
 
-clause(BIG, "2:rule", "4 seats: the opponent pick offers P2, P3 and P4", () => {
+mpClause(BIG, "2:rule", 4, "4 seats: the opponent pick offers P2, P3 and P4", () => {
   const t = bigTable(4);
   play(t, P1, "smash", { selected: { t: [t.id("big")] } });
   chooseIndex(t, 1);
@@ -118,7 +118,7 @@ function corrosiveTable(seats: number, o: { p3Characters?: boolean } = {}) {
 }
 const convert = (t: Table) => activate(t, P1, "cwd", "convert", { selected: { sac: [t.id("P1 a")] } });
 
-clause(CORROSIVE, "2:ability:convert", "3 seats: each opponent, P2 then P3, destroys a character they control; each chooses from their own characters only; P1 is asked nothing beyond the cost", () => {
+mpClause(CORROSIVE, "2:ability:convert", 3, "3 seats: each opponent, P2 then P3, destroys a character they control; each chooses from their own characters only; P1 is asked nothing beyond the cost", () => {
   const t = corrosiveTable(3);
   convert(t);
   assert.equal(zoneOf(t.engine, t.id("P1 a")), "discard", "the cost destroys one of P1's own characters");
@@ -139,7 +139,7 @@ clause(CORROSIVE, "2:ability:convert", "3 seats: each opponent, P2 then P3, dest
   assert.equal(zoneOf(t.engine, t.id("P1 b")), "play", "P1's other character is not destroyed");
 });
 
-clause(CORROSIVE, "2:ability:convert", "3 seats: an opponent with no character destroys nothing and is not asked", () => {
+mpClause(CORROSIVE, "2:ability:convert", 3, "3 seats: an opponent with no character destroys nothing and is not asked", () => {
   const t = corrosiveTable(3, { p3Characters: false });
   convert(t);
   assert.equal(pending(t)!.playerId, P2);
@@ -148,7 +148,7 @@ clause(CORROSIVE, "2:ability:convert", "3 seats: an opponent with no character d
   assert.equal(zoneOf(t.engine, t.id("P2 a")), "discard");
 });
 
-clause(CORROSIVE, "2:ability:convert", "4 seats: P2, P3 and P4 each destroy a character they control, in that order; P1 does not", () => {
+mpClause(CORROSIVE, "2:ability:convert", 4, "4 seats: P2, P3 and P4 each destroy a character they control, in that order; P1 does not", () => {
   const t = corrosiveTable(4);
   convert(t);
   for (const who of [P2, P3, P4]) {
@@ -210,8 +210,8 @@ function geldaleFor(seats: number) {
     assert.equal(zoneOf(window.engine, window.id("tac-p1")), "discard", `P1 may respond to ${who}'s play with a tactic`);
   }
 }
-clause(GELDALE, "0:rule", "3 seats: P2 and P3 can each play tactics only during their own turn; P1 is unaffected", () => geldaleFor(3));
-clause(GELDALE, "0:rule", "4 seats: P2, P3 and P4 can each play tactics only during their own turn; P1 is unaffected", () => geldaleFor(4));
+mpClause(GELDALE, "0:rule", 3, "3 seats: P2 and P3 can each play tactics only during their own turn; P1 is unaffected", () => geldaleFor(3));
+mpClause(GELDALE, "0:rule", 4, "4 seats: P2, P3 and P4 can each play tactics only during their own turn; P1 is unaffected", () => geldaleFor(4));
 
 // ===================================================================================================================
 // Gor-blach the Endowed
@@ -232,7 +232,7 @@ function gorBlocked(seats: number) {
   return t;
 }
 
-clause(GOR, "1:ability:get-in-there", "3 seats: the controller chooses which opponent's faction takes X damage (not forced to be the blocking defender); the others take none", () => {
+mpClause(GOR, "1:ability:get-in-there", 3, "3 seats: the controller chooses which opponent's faction takes X damage (not forced to be the blocking defender); the others take none", () => {
   const t = gorBlocked(3);
   const before = { [P2]: influence(t.engine, P2), [P3]: influence(t.engine, P3), [P1]: influence(t.engine, P1) };
   activate(t, P1, "gb", "get-in-there", { selected: { c: [t.id("a1")] } });
@@ -261,7 +261,7 @@ clause(GOR, "1:ability:get-in-there", "3 seats: the controller chooses which opp
   assert.equal(two.engine.state.cards[two.id("gb")]!.damage, 2);
 });
 
-clause(GOR, "1:ability:get-in-there", "4 seats: the choice offers P2, P3 and P4", () => {
+mpClause(GOR, "1:ability:get-in-there", 4, "4 seats: the choice offers P2, P3 and P4", () => {
   const t = gorBlocked(4);
   const p4 = influence(t.engine, P4);
   activate(t, P1, "gb", "get-in-there", { selected: { c: [t.id("a1")] } });
@@ -301,7 +301,7 @@ const startP1Turn = (t: Table, previous: PlayerId): void => {
   }
 };
 
-clause(WEAPONS, "0:rule", "3 seats: the damage option hits the faction of each opponent (P2 and P3) for X = 2, never P1's", () => {
+mpClause(WEAPONS, "0:rule", 3, "3 seats: the damage option hits the faction of each opponent (P2 and P3) for X = 2, never P1's", () => {
   const t = weaponsTable(3);
   const before = [P1, P2, P3].map(who => influence(t.engine, who));
   startP1Turn(t, P3);
@@ -317,7 +317,7 @@ clause(WEAPONS, "0:rule", "3 seats: the damage option hits the faction of each o
   assert.equal(influence(t.engine, P1), before[0], "P1's faction takes none");
 });
 
-clause(WEAPONS, "0:rule", "3 seats: the other option (an item with cost X or less) offers the items of every player and is not about opponents", () => {
+mpClause(WEAPONS, "0:rule", 3, "3 seats: the other option (an item with cost X or less) offers the items of every player and is not about opponents", () => {
   const t = weaponsTable(3);
   startP1Turn(t, P3);
   mayPay(t, true);
@@ -327,7 +327,7 @@ clause(WEAPONS, "0:rule", "3 seats: the other option (an item with cost X or les
   assert.ok(!options.includes(t.id("dear")), "cost 5 is more than X = 2");
 });
 
-clause(WEAPONS, "0:rule", "4 seats: P2's, P3's and P4's factions each take X damage; P1's takes none", () => {
+mpClause(WEAPONS, "0:rule", 4, "4 seats: P2's, P3's and P4's factions each take X damage; P1's takes none", () => {
   const t = weaponsTable(4);
   const before = [P1, P2, P3, P4].map(who => influence(t.engine, who));
   startP1Turn(t, P4);
@@ -356,7 +356,7 @@ function brainbathTable(seats: number) {
   ]);
 }
 
-clause(BRAINBATH, "1:ability:recur", "3 seats: at resolution the controller chooses P2 or P3; only that opponent discards a card from their own hand, then P1 draws", () => {
+mpClause(BRAINBATH, "1:ability:recur", 3, "3 seats: at resolution the controller chooses P2 or P3; only that opponent discards a card from their own hand, then P1 draws", () => {
   const t = brainbathTable(3);
   activate(t, P1, "bb", "recur");
   assert.notEqual(zoneOf(t.engine, t.id("bb")), "discard", "this card is removed from the game as the cost");
@@ -389,7 +389,7 @@ clause(BRAINBATH, "1:ability:recur", "3 seats: at resolution the controller choo
   assert.equal(pending(two)!.playerId, P2);
 });
 
-clause(BRAINBATH, "1:ability:recur", "4 seats: the choice offers P2, P3 and P4", () => {
+mpClause(BRAINBATH, "1:ability:recur", 4, "4 seats: the choice offers P2, P3 and P4", () => {
   const t = brainbathTable(4);
   activate(t, P1, "bb", "recur");
   assert.deepEqual(pending(t)!.candidates, [P2, P3, P4]);

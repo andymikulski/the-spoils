@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, tactic } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, handCards, others, pinger, respondToAbility, silencedFlow, type Silenced } from "./_seats2ndEdition.js";
 import { P1, resolvePendingResponses, seatsOf, P2, P3 } from "./_seatsSeed2ndFirstP2.js";
 
@@ -53,11 +53,11 @@ const MOLEST_SPEC: Silenced = {
 
 for (const count of COUNTS) {
   const text = `${count} seats: your opponent cannot respond; the chosen opponent is skipped and the others are offered the card`;
-  clause(MOLEST, "0:rule", text, () => silencedFlow(MOLEST_SPEC, count));
+  mpClause(MOLEST, "0:rule", count, text, () => silencedFlow(MOLEST_SPEC, count));
   // The opponent is only asked for (and bound) when the play block names "opponent"; for these cards only `noResponse` does.
-  clause(TVAC, "0:rule", text, () => silencedFlow(TVAC_SPEC, count));
-  clause(VOIDAL, "0:rule", text, () => silencedFlow(VOIDAL_SPEC, count));
-  clause(SUBSECTION, "0:rule", text, () => silencedFlow(SUBSECTION_SPEC, count));
-  clause(PUPPET, "0:rule", text, () => silencedFlow(PUPPET_SPEC, count));
+  mpClause(TVAC, "0:rule", count, text, () => silencedFlow(TVAC_SPEC, count));
+  mpClause(VOIDAL, "0:rule", count, text, () => silencedFlow(VOIDAL_SPEC, count));
+  mpClause(SUBSECTION, "0:rule", count, text, () => silencedFlow(SUBSECTION_SPEC, count));
+  mpClause(PUPPET, "0:rule", count, text, () => silencedFlow(PUPPET_SPEC, count));
 }
 

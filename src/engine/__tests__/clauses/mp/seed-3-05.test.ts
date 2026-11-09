@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { tactic } from "../../support/fixtures.js";
-import { clause } from "../_clause.js";
+import { mpClause } from "../_clause.js";
 import { printing } from "../_clause.js";
 import { answer, expectChoice, pending, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
@@ -36,7 +36,7 @@ function manteauTable(count: number): Table {
 const ok = (t: Table, seat: PlayerId, key: string): boolean => t.engine.checkAction({ type: "playCard", playerId: seat, cardId: t.id(`${key}-${seat}`) }).ok;
 
 for (const count of [3, 4] as const) {
-  clause(MANTEAU, "0:rule", `${count} seats: when it enters play only the controller names a subtype; no opponent is asked anything`, () => {
+  mpClause(MANTEAU, "0:rule", count, `${count} seats: when it enters play only the controller names a subtype; no opponent is asked anything`, () => {
     const t = manteauTable(count);
     t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("pm") });
     settle(t);
@@ -46,7 +46,7 @@ for (const count of [3, 4] as const) {
     assert.equal(pending(t), undefined, "nobody else is asked");
   });
 
-  clause(MANTEAU, "1:rule", `${count} seats: with Dragon named, the controller and every opponent pay 2 more to deploy a Dragon card; other cards cost the normal price for everyone`, () => {
+  mpClause(MANTEAU, "1:rule", count, `${count} seats: with Dragon named, the controller and every opponent pay 2 more to deploy a Dragon card; other cards cost the normal price for everyone`, () => {
     const t = manteauTable(count);
     t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("pm") });
     settle(t);

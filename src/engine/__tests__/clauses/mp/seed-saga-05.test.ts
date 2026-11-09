@@ -2,7 +2,7 @@
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
 import type { CardInstanceId, PlayerId, SpoilsEngine } from "../../../../engine.js";
-import { clause, refused, declineAll, drain } from "../_clause.js";
+import { mpClause, refused, declineAll, drain } from "../_clause.js";
 import { endTurn } from "../_turn.js";
 import { declareAttackBy, declareAttackOpenWindow, finishBattle } from "../_battle.js";
 import { activate, askedPlayers, answer, choosePlayer, deck, hand, many, pending, play, printing, ready, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
@@ -36,7 +36,7 @@ for (const count of [3, 4] as const) {
       { key: "under-me2", def: character({ name: "Under me 2", cost: 8 }), owner: P1, zone: "deck" }
     ]);
 
-  clause(SMO, "0:extraCost", `${count} seats: the picked character's controller and I remove the top card of our decks; the other opponents' decks are untouched`, () => {
+  mpClause(SMO, "0:extraCost", count, `${count} seats: the picked character's controller and I remove the top card of our decks; the other opponents' decks are untouched`, () => {
     for (const chosen of foes(count)) {
       const t = smo();
       assert.equal(askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("smo") }), undefined, "the pick settles the opponent: no player is asked");
@@ -52,7 +52,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(SMO, "1:rule", `${count} seats: X is read from the picked character's controller's removed card; only that character loses X life and I draw a card`, () => {
+  mpClause(SMO, "1:rule", count, `${count} seats: X is read from the picked character's controller's removed card; only that character loses X life and I draw a card`, () => {
     for (const [index, chosen] of foes(count).entries()) {
       const t = smo();
       const handBefore = hand(t.engine, P1).length;
@@ -98,7 +98,7 @@ for (const count of [3, 4] as const) {
   };
   const cast = (t: Table, pick: string) => play(t.engine, P1, t.id("sur"), { selected: { k: [t.id(pick)] } });
 
-  clause(SURPRISE, "0:extraCost", `${count} seats: I can pick the character of any opponent attacking my faction or my location; not one attacking someone else, nor my own`, () => {
+  mpClause(SURPRISE, "0:extraCost", count, `${count} seats: I can pick the character of any opponent attacking my faction or my location; not one attacking someone else, nor my own`, () => {
     for (const attacker of foes(count)) {
       for (const kind of ["faction", "location"] as const) {
         const t = surprise(attacker, kind);
@@ -111,7 +111,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(SURPRISE, "0:extraCost", `${count} seats: an attacker that attacks another opponent's faction is not a legal pick (I am not defending)`, () => {
+  mpClause(SURPRISE, "0:extraCost", count, `${count} seats: an attacker that attacks another opponent's faction is not a legal pick (I am not defending)`, () => {
     const attacker = P2;
     const victim = foes(count).find((p) => p !== attacker)!;
     const t = table(
@@ -130,7 +130,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(t.engine, t.id("d0")), "deck");
   });
 
-  clause(SURPRISE, "1:rule", `${count} seats: X is the picked attacker's cost; my deck is revealed, the character enters under my control and no opponent's deck changes`, () => {
+  mpClause(SURPRISE, "1:rule", count, `${count} seats: X is the picked attacker's cost; my deck is revealed, the character enters under my control and no opponent's deck changes`, () => {
     for (const attacker of foes(count)) {
       const t = surprise(attacker, "faction");
       const oppDecks = Object.fromEntries(foes(count).map((p) => [p, [...deck(t.engine, p)]]));
@@ -163,7 +163,7 @@ for (const count of [3, 4] as const) {
     if (chosen !== undefined) choosePlayer(t.engine, chosen);
   };
 
-  clause(GAMER, "0:ability:outsmart", `${count} seats: the use needs some opponent with more characters than I have; "those players" is one opponent chosen among those who control more, never one with fewer or as many`, () => {
+  mpClause(GAMER, "0:ability:outsmart", count, `${count} seats: the use needs some opponent with more characters than I have; "those players" is one opponent chosen among those who control more, never one with fewer or as many`, () => {
     // two opponents control more than my 2 characters (P2 and P3), any further opponent controls fewer
     const counts = Object.fromEntries(foes(count).map((p, i) => [p, i < 2 ? 3 : 1]));
     const t = gamer(2, counts);
@@ -186,7 +186,7 @@ for (const count of [3, 4] as const) {
     assert.equal(ready(none.engine, P1), 3, "nothing is paid");
   });
 
-  clause(GAMER, "0:ability:outsmart", `${count} seats: this turn the Gamer cannot be blocked by the chosen opponent's characters, but the other opponents' characters can still block it`, () => {
+  mpClause(GAMER, "0:ability:outsmart", count, `${count} seats: this turn the Gamer cannot be blocked by the chosen opponent's characters, but the other opponents' characters can still block it`, () => {
     const counts = Object.fromEntries(foes(count).map((p) => [p, 3]));
     for (const chosen of foes(count)) {
       for (const defender of foes(count)) {
@@ -228,7 +228,7 @@ for (const count of [3, 4] as const) {
     drain(t.engine, (pc) => (pc.kind === "choosePlayer" ? { kind: "choosePlayer", playerId: opponent } : declineAll(pc)));
   };
 
-  clause(MAST, "0:ability:you-know-you-want-to", `${count} seats: at the end of the turn a token goes on it and only the chosen opponent takes control of it`, () => {
+  mpClause(MAST, "0:ability:you-know-you-want-to", count, `${count} seats: at the end of the turn a token goes on it and only the chosen opponent takes control of it`, () => {
     for (const chosen of foes(count)) {
       const t = mast();
       use(t, chosen);
@@ -243,7 +243,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(MAST, "0:ability:you-know-you-want-to", `${count} seats: the opponent is chosen as the end-of-turn effect resolves, not with the use`, () => {
+  mpClause(MAST, "0:ability:you-know-you-want-to", count, `${count} seats: the opponent is chosen as the end-of-turn effect resolves, not with the use`, () => {
     const t = mast();
     assert.equal(askedPlayers(t.engine, { type: "activateAbility", playerId: P1, cardId: t.id("loc"), abilityId: "you-know-you-want-to" }), undefined, "nothing is asked at the use");
     activate(t.engine, P1, t.id("loc"), "you-know-you-want-to");
@@ -277,7 +277,7 @@ for (const count of [3, 4] as const) {
   const open = (t: Table) => (pending(t.engine) as unknown as { declaration?: { id: string } } | undefined)?.declaration?.id;
   const act = { type: "playCard", playerId: P1 } as const;
 
-  clause(WLP, "0:extraCost", `${count} seats: the extra cost picks one opponent, offered among the opponents only`, () => {
+  mpClause(WLP, "0:extraCost", count, `${count} seats: the extra cost picks one opponent, offered among the opponents only`, () => {
     const t = wlp();
     assert.deepEqual(askedPlayers(t.engine, { ...act, cardId: t.id("t") }), [{ id: "picked", candidates: foes(count) }]);
     refused(() => play(t.engine, P1, t.id("t")), "no opponent picked");
@@ -286,7 +286,7 @@ for (const count of [3, 4] as const) {
     assert.equal(ready(t.engine, P1), 4, "nothing paid");
   });
 
-  clause(WLP, "1:rule", `${count} seats: I search the picked opponent's deck; the found card enters under its owner's control as a face-down resource; other opponents' decks are untouched`, () => {
+  mpClause(WLP, "1:rule", count, `${count} seats: I search the picked opponent's deck; the found card enters under its owner's control as a face-down resource; other opponents' decks are untouched`, () => {
     for (const picked of foes(count)) {
       const t = wlp();
       const others = foes(count).filter((p) => p !== picked);
@@ -310,7 +310,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(WLP, "2:rule", `${count} seats: I search my own deck for a character; it enters under my control as a face-down resource; no other opponent's deck changes`, () => {
+  mpClause(WLP, "2:rule", count, `${count} seats: I search my own deck for a character; it enters under my control as a face-down resource; no other opponent's deck changes`, () => {
     for (const picked of foes(count)) {
       const t = wlp();
       const foeDecks = Object.fromEntries(foes(count).map((p) => [p, deck(t.engine, p).length]));
@@ -359,7 +359,7 @@ for (const count of [3, 4] as const) {
     );
   };
 
-  clause(CR, "0:extraCost", `${count} seats: the location may be any player's: an opponent's, another opponent's and my own all work`, () => {
+  mpClause(CR, "0:extraCost", count, `${count} seats: the location may be any player's: an opponent's, another opponent's and my own all work`, () => {
     for (const loc of ["loc", "ploc", "mloc"]) {
       const t = chain();
       cast(t, P2, loc, undefined);
@@ -368,7 +368,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(CR, "1:rule", `${count} seats: when the character is destroyed I draw a card and 1 damage goes to the chosen opponent's faction only`, () => {
+  mpClause(CR, "1:rule", count, `${count} seats: when the character is destroyed I draw a card and 1 damage goes to the chosen opponent's faction only`, () => {
     for (const chosen of foes(count)) {
       const t = chain();
       const before = Object.fromEntries(seats(count).map((p) => [p, influenceOf(t, p)]));
@@ -382,7 +382,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(CR, "1:rule", `${count} seats: no opponent is chosen when the location or the character survives (the opponent is only needed when it resolves that far)`, () => {
+  mpClause(CR, "1:rule", count, `${count} seats: no opponent is chosen when the location or the character survives (the opponent is only needed when it resolves that far)`, () => {
     const t = chain(5);
     assert.equal(askedPlayers(t.engine, crAction(t, "loc")), undefined, "nothing is asked when the play is announced");
     play(t.engine, P1, t.id("cr"), { selected: { l: [t.id("loc")] } });
@@ -417,7 +417,7 @@ const damageOf = (t: Table, key: string): number => t.engine.state.cards[t.id(ke
 const distribute = (shares: Record<string, number>) => (pc: { kind: string; [key: string]: unknown }) => (pc.kind === "distributeAmong" ? { kind: "distributeAmong", shares } : declineAll(pc));
 
 for (const count of [3, 4] as const) {
-  clause(DS, "1:rule", `${count} seats: when blocked by two characters of the defending opponent I divide X among the blocking party; other opponents' characters take none`, () => {
+  mpClause(DS, "1:rule", count, `${count} seats: when blocked by two characters of the defending opponent I divide X among the blocking party; other opponents' characters take none`, () => {
     for (const defender of foes(count)) {
       const t = table(count, [
         { key: "ds", def: printing(DS), owner: P1, zone: "play" },
@@ -440,7 +440,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(DS, "2:rule", `${count} seats: when destroyed I divide X among the characters of all my opponents, no opponent is chosen, my own characters are not eligible`, () => {
+  mpClause(DS, "2:rule", count, `${count} seats: when destroyed I divide X among the characters of all my opponents, no opponent is chosen, my own characters are not eligible`, () => {
     const t = table(
       count,
       [
@@ -507,7 +507,7 @@ for (const count of [3, 4] as const) {
     return seen;
   };
 
-  clause(DG, "1:rule@rrr", `${count} seats: at the start of my turn I may inflict 1 damage to one opponent's faction; only the chosen opponent loses influence`, () => {
+  mpClause(DG, "1:rule@rrr", count, `${count} seats: at the start of my turn I may inflict 1 damage to one opponent's faction; only the chosen opponent loses influence`, () => {
     for (const chosen of foes(count)) {
       const t = garrison(3);
       const before = Object.fromEntries(seats(count).map((p) => [p, influenceOf(t, p)]));
@@ -523,7 +523,7 @@ for (const count of [3, 4] as const) {
     assert.deepEqual(foes(count).map((p) => influenceOf(declined, p)), before, "declined: nobody is damaged");
   });
 
-  clause(DG, "2:rule@rrrrr", `${count} seats: with [R] x5 I may deplete any player's character; no opponent is chosen for it`, () => {
+  mpClause(DG, "2:rule@rrrrr", count, `${count} seats: with [R] x5 I may deplete any player's character; no opponent is chosen for it`, () => {
     for (const target of [`c-${P3}-0`, `c-${P2}-1`]) {
       const t = garrison(5);
       const before = foes(count).map((p) => influenceOf(t, p));
@@ -538,7 +538,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(DG, "3:rule@rrrrrrr", `${count} seats: with [R] x7 I may pick any player's character and it takes 2 damage; no opponent is chosen for it`, () => {
+  mpClause(DG, "3:rule@rrrrrrr", count, `${count} seats: with [R] x7 I may pick any player's character and it takes 2 damage; no opponent is chosen for it`, () => {
     for (const target of [`c-${P2}-0`, `c-${P3}-1`]) {
       const t = garrison(7);
       startTurn(t, { inflict: false, pick: target });
@@ -589,7 +589,7 @@ for (const count of [3, 4] as const) {
     return { kind: "chooserSelectsTarget", selected: charKeys(t, pc.playerId as PlayerId).slice(0, 2) };
   };
 
-  clause(ES, "0:extraCost", `${count} seats: the extra cost destroys X characters I control; only my own characters can be chosen`, () => {
+  mpClause(ES, "0:extraCost", count, `${count} seats: the extra cost destroys X characters I control; only my own characters can be chosen`, () => {
     const t = smack();
     const opts = cast(t, true);
     refused(() => play(t.engine, P1, t.id("es"), { ...opts, selected: { sacX: [t.id("b0"), t.id("b1")] } }), "an opponent's character cannot be sacrificed");
@@ -602,7 +602,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(t.engine, t.id("a2")), "play", "my third character is untouched");
   });
 
-  clause(ES, "1:rule", `${count} seats: each opponent with at least X characters destroys X of theirs, the others lose all of theirs, in turn order; I draw exactly one card`, () => {
+  mpClause(ES, "1:rule", count, `${count} seats: each opponent with at least X characters destroys X of theirs, the others lose all of theirs, in turn order; I draw exactly one card`, () => {
     const t = smack();
     const handBefore = hand(t.engine, P1).length;
     const prompted: PlayerId[] = [];
@@ -617,7 +617,7 @@ for (const count of [3, 4] as const) {
   });
 
   if (count === 4) {
-    clause(ES, "1:rule", "4 seats: the opponents are handled in turn order starting with the active player, skipping the controller (P4 active: P4, P2, P3)", () => {
+    mpClause(ES, "1:rule", 4, "4 seats: the opponents are handled in turn order starting with the active player, skipping the controller (P4 active: P4, P2, P3)", () => {
       const t = table(
         4,
         [
@@ -655,7 +655,7 @@ for (const count of [3, 4] as const) {
       ...foes(count).map((p) => ({ key: `c-${p}`, def: character({ name: `${p} char` }), owner: p, zone: "play" as const }))
     ]);
 
-  clause(GC, "0:ability:charge", `${count} seats: one opponent is chosen with the use; only that opponent's faction takes 3 damage`, () => {
+  mpClause(GC, "0:ability:charge", count, `${count} seats: one opponent is chosen with the use; only that opponent's faction takes 3 damage`, () => {
     for (const chosen of foes(count)) {
       const t = commander();
       assert.deepEqual(askedPlayers(t.engine, { type: "activateAbility", playerId: P1, cardId: t.id("gc"), abilityId: "charge" }), [{ id: "opp", candidates: foes(count) }]);
@@ -679,7 +679,7 @@ for (const count of [3, 4] as const) {
 const GD = "7d2c17ee-25ba-4523-813c-145587e15cae"; // character: attacking, battle damage to it is reduced to 0; an opponent's faction losing influence loses 1 more
 
 for (const count of [3, 4] as const) {
-  clause(GD, "1:rule", `${count} seats: while Gideon attacks any opponent, battle damage to him is reduced to 0; while he blocks he takes the full damage`, () => {
+  mpClause(GD, "1:rule", count, `${count} seats: while Gideon attacks any opponent, battle damage to him is reduced to 0; while he blocks he takes the full damage`, () => {
     for (const defender of foes(count)) {
       const t = table(count, [
         { key: "gd", def: printing(GD), owner: P1, zone: "play" },
@@ -707,7 +707,7 @@ for (const count of [3, 4] as const) {
     assert.equal(damageOf(b, "gd"), 2, "blocking: the full battle damage");
   });
 
-  clause(GD, "2:rule", `${count} seats: every opponent's faction loses 1 more influence; my own faction does not`, () => {
+  mpClause(GD, "2:rule", count, `${count} seats: every opponent's faction loses 1 more influence; my own faction does not`, () => {
     // P2 and P3 activate Gallant Commanders (3 damage) against each seat in turn, Gideon being P1's
     for (const [user, victim] of [[P2, P3], [P3, P2], [P2, P1], [P3, P1]] as const) {
       const t = table(
@@ -753,7 +753,7 @@ const stealer = (name: string) =>
   } as never);
 
 for (const count of [3, 4] as const) {
-  clause(GT, "2:rule", `${count} seats: no opponent can take control of it; the same effect takes an ordinary character`, () => {
+  mpClause(GT, "2:rule", count, `${count} seats: no opponent can take control of it; the same effect takes an ordinary character`, () => {
     for (const thief of foes(count)) {
       const t = table(
         count,
@@ -773,7 +773,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(GT, "2:rule", `${count} seats: it cannot be blocked by a 1-strength character of whichever opponent it attacks; a 2-strength one can block`, () => {
+  mpClause(GT, "2:rule", count, `${count} seats: it cannot be blocked by a 1-strength character of whichever opponent it attacks; a 2-strength one can block`, () => {
     for (const defender of foes(count)) {
       const small = table(count, [
         { key: "gt", def: printing(GT), owner: P1, zone: "play" },
@@ -826,7 +826,7 @@ for (const count of [3, 4] as const) {
   };
   const dmgs = (t: Table, who: PlayerId, n: number) => Array.from({ length: n }, (_, i) => damageOf(t, `${prefix[who]}${i}`));
 
-  clause(MC, "0:extraCost", `${count} seats: I pick any one player and then X characters that player controls; another player's characters are refused`, () => {
+  mpClause(MC, "0:extraCost", count, `${count} seats: I pick any one player and then X characters that player controls; another player's characters are refused`, () => {
     for (const who of seats(count)) {
       const t = confusion();
       for (const wrong of seats(count).filter((p) => p !== who)) {
@@ -839,7 +839,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(MC, "1:rule", `${count} seats: Y is the picked player's character count minus mine, whichever player was picked; the other players' counts are ignored`, () => {
+  mpClause(MC, "1:rule", count, `${count} seats: Y is the picked player's character count minus mine, whichever player was picked; the other players' counts are ignored`, () => {
     const p3 = confusion();
     assert.equal(run(p3, P3, 2, [2, 1]), 3, "P3 controls 4, I control 1: Y = 3");
     assert.deepEqual(dmgs(p3, P3, 4), [2, 1, 0, 0]);
@@ -881,7 +881,7 @@ const stripSelf = (name: string) =>
   } as never);
 
 for (const count of [3, 4] as const) {
-  clause(PH, "1:rule", `${count} seats: a discard caused by an effect any opponent controls lets me put the cards back; my own effect does not`, () => {
+  mpClause(PH, "1:rule", count, `${count} seats: a discard caused by an effect any opponent controls lets me put the cards back; my own effect does not`, () => {
     for (const striker of foes(count)) {
       const t = table(
         count,
@@ -913,7 +913,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(own.engine, own.id("h0")), "discard");
   });
 
-  clause(PH, "2:ability", `${count} seats: only its controller activates EQUIP; X is 3 for a non-adriel character, whoever controls it`, () => {
+  mpClause(PH, "2:ability", count, `${count} seats: only its controller activates EQUIP; X is 3 for a non-adriel character, whoever controls it`, () => {
     for (const host of foes(count)) {
       const t = table(count, [
         { key: "ph", def: printing(PH), owner: P1, zone: "play" },
@@ -929,7 +929,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(PH, "3:rule", `${count} seats: the attached character gains 2 strength whichever player controls it`, () => {
+  mpClause(PH, "3:rule", count, `${count} seats: the attached character gains 2 strength whichever player controls it`, () => {
     for (const host of seats(count)) {
       const t = table(count, [
         { key: "ph", def: printing(PH), owner: P1, zone: "play", attachedToKey: "host" },
@@ -941,7 +941,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(PH, "4:rule", `${count} seats: at the start of each opponent's turn I may restore the attached character; no offer at the start of my own turn`, () => {
+  mpClause(PH, "4:rule", count, `${count} seats: at the start of each opponent's turn I may restore the attached character; no offer at the start of my own turn`, () => {
     const t = table(count, [
       { key: "ph", def: printing(PH), owner: P1, zone: "play", attachedToKey: "host" },
       { key: "host", def: character({ name: "Host" }), owner: P1, zone: "play", depleted: true },
@@ -985,7 +985,7 @@ for (const count of [3, 4] as const) {
       ])
     ]);
 
-  clause(PS, "1:ability:fly-away", `${count} seats: the cost removes an item from any opponent's discard pile (no opponent is chosen); my own pile and non-items are not eligible`, () => {
+  mpClause(PS, "1:ability:fly-away", count, `${count} seats: the cost removes an item from any opponent's discard pile (no opponent is chosen); my own pile and non-items are not eligible`, () => {
     const probe = shriever();
     assert.equal(askedPlayers(probe.engine, { type: "activateAbility", playerId: P1, cardId: probe.id("ps"), abilityId: "fly-away", selected: { gone: [probe.id(`i-${P3}`)] } }), undefined, "no player is asked for");
     refused(() => activate(probe.engine, P1, probe.id("ps"), "fly-away", { selected: { gone: [probe.id("mine")] } }), "my own discard pile");
@@ -1036,7 +1036,7 @@ for (const count of [3, 4] as const) {
     return seen;
   };
 
-  clause(RB, "0:rule@rrr", `${count} seats: at the start of my turn I may inflict 1 damage to one opponent's faction; only the chosen opponent loses influence`, () => {
+  mpClause(RB, "0:rule@rrr", count, `${count} seats: at the start of my turn I may inflict 1 damage to one opponent's faction; only the chosen opponent loses influence`, () => {
     for (const chosen of foes(count)) {
       const t = badass();
       const before = Object.fromEntries(seats(count).map((p) => [p, influenceOf(t, p)]));
@@ -1068,7 +1068,7 @@ for (const count of [3, 4] as const) {
       ...foes(count).flatMap((p) => many(`c-${p}-`, p === P2 ? 2 : 1, p, "play", (i) => character({ name: `${p} char ${i}`, life: 3 })))
     ]);
 
-  clause(SS, "0:rule", `${count} seats: one opponent is chosen when the trigger resolves; all of that opponent's characters take 1 damage and nobody else's`, () => {
+  mpClause(SS, "0:rule", count, `${count} seats: one opponent is chosen when the trigger resolves; all of that opponent's characters take 1 damage and nobody else's`, () => {
     for (const chosen of foes(count)) {
       const t = sarume();
       let chosenCount = 0;
@@ -1109,7 +1109,7 @@ for (const count of [3, 4] as const) {
     ]);
   const sel = (t: Table, chosen: PlayerId, mark = `mark-${chosen}`) => ({ sac: [t.id("sac")], mark: [t.id(mark)] });
 
-  clause(STORM, "0:extraCost", `${count} seats: one opponent is chosen with the play; I destroy a character I own and pick a character only the chosen opponent owns`, () => {
+  mpClause(STORM, "0:extraCost", count, `${count} seats: one opponent is chosen with the play; I destroy a character I own and pick a character only the chosen opponent owns`, () => {
     for (const chosen of foes(count)) {
       const t = storm();
       assert.deepEqual(askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("t"), selected: sel(t, chosen) }), [{ id: "opponent", candidates: foes(count) }]);
@@ -1126,7 +1126,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(STORM, "1:rule", `${count} seats: 5 damage goes to the picked character of the chosen opponent; if it is destroyed I draw a card; the other opponents' characters are untouched`, () => {
+  mpClause(STORM, "1:rule", count, `${count} seats: 5 damage goes to the picked character of the chosen opponent; if it is destroyed I draw a card; the other opponents' characters are untouched`, () => {
     for (const chosen of foes(count)) {
       const t = storm();
       play(t.engine, P1, t.id("t"), { selected: sel(t, chosen), players: { opponent: chosen } });
@@ -1174,7 +1174,7 @@ for (const count of [3, 4] as const) {
     drain(t.engine, payAnswer(pay));
   };
 
-  clause(HEAD, "0:rule", `${count} seats: a character of any opponent being destroyed lets me pay 1 for a token; my own character being destroyed does not`, () => {
+  mpClause(HEAD, "0:rule", count, `${count} seats: a character of any opponent being destroyed lets me pay 1 for a token; my own character being destroyed does not`, () => {
     for (const p of foes(count)) {
       const t = head();
       kill(t, 0, `c-${p}`);
@@ -1192,7 +1192,7 @@ for (const count of [3, 4] as const) {
     assert.equal(tokensOn(declined, "h"), 0, "declined: no token");
   });
 
-  clause(HEAD, "1:rule", `${count} seats: my characters gain 1 strength per token; no opponent's character gains anything`, () => {
+  mpClause(HEAD, "1:rule", count, `${count} seats: my characters gain 1 strength per token; no opponent's character gains anything`, () => {
     const t = head();
     for (const [n, p] of foes(count).entries()) kill(t, n, `c-${p}`);
     assert.equal(tokensOn(t, "h"), count - 1);
@@ -1218,7 +1218,7 @@ for (const count of [3, 4] as const) {
 const TOWER = "59b277a8-0b23-4bc6-8325-eca973a06a2e"; // location: when a character enters play under an opponent's control, inflict 1 damage to it
 
 for (const count of [3, 4] as const) {
-  clause(TOWER, "1:rule", `${count} seats: a character entering play under any opponent's control takes 1 damage; one entering under mine takes none`, () => {
+  mpClause(TOWER, "1:rule", count, `${count} seats: a character entering play under any opponent's control takes 1 damage; one entering under mine takes none`, () => {
     for (const who of seats(count)) {
       const t = table(
         count,

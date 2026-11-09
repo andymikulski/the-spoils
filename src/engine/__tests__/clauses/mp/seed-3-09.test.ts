@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { autoResolveBattle } from "../../support/fixtures.js";
 import { answer, expectChoice, othersOf, P1, P2, P3, pending, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { PlayerId, Table } from "./_seed-3.js";
@@ -36,14 +36,14 @@ const brawl = (t: Table, defender: PlayerId): void => {
 };
 
 for (const count of [3, 4] as const) {
-  clause(CHEST, "1:rule", `${count} seats: battle damage to the controller's own characters is reduced by 2, whichever opponent they fight`, () => {
+  mpClause(CHEST, "1:rule", count, `${count} seats: battle damage to the controller's own characters is reduced by 2, whichever opponent they fight`, () => {
     const t = wardTable(count);
     enterAndChoose(t, P2);
     brawl(t, count === 3 ? P3 : P2);
     assert.equal(damage(t, "attacker"), 2, "4 battle damage reduced by 2");
   });
 
-  clause(CHEST, "2:rule", `${count} seats: battle damage to the chosen opponent's characters is increased by 2; the other opponents' characters take it unchanged`, () => {
+  mpClause(CHEST, "2:rule", count, `${count} seats: battle damage to the chosen opponent's characters is increased by 2; the other opponents' characters take it unchanged`, () => {
     const chosenFight = wardTable(count);
     enterAndChoose(chosenFight, P2);
     brawl(chosenFight, P2);
@@ -58,7 +58,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(CHEST, "2:rule", "3 seats: when the chosen opponent is eliminated the controller chooses again (only P3 is left, so nobody is asked) and P3's characters take 2 more", () => {
+mpClause(CHEST, "2:rule", 3, "3 seats: when the chosen opponent is eliminated the controller chooses again (only P3 is left, so nobody is asked) and P3's characters take 2 more", () => {
   const t = wardTable(3);
   enterAndChoose(t, P2);
   t.engine.state.players[P2]!.eliminated = { turn: 1 };

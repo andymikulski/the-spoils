@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { autoResolveBattle, bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -88,7 +88,7 @@ function needlessRun(count: Count, pick: PlayerId, influences: Record<PlayerId, 
 }
 
 for (const count of [3, 4] as const) {
-  clause(NEEDLESS, "0:ability", `${count} seats: all four tests read the one chosen opponent's faction, and only their characters take the extra damage`, () => {
+  mpClause(NEEDLESS, "0:ability", count, `${count} seats: all four tests read the one chosen opponent's faction, and only their characters take the extra damage`, () => {
     const seats = others(count);
     const [first, second] = seats as [PlayerId, PlayerId];
     // the chosen opponent has 12 (15 or less, not 10 or less); another has 4
@@ -121,7 +121,7 @@ for (const count of [3, 4] as const) {
 const SKIN_SUIT = "421c7d4c-d711-4a05-9955-d3834655f5fa";
 
 for (const count of [3, 4] as const) {
-  clause(SKIN_SUIT, "0:ability", `${count} seats: only the chosen opponent's characters can be picked; only that character and P1's are affected`, () => {
+  mpClause(SKIN_SUIT, "0:ability", count, `${count} seats: only the chosen opponent's characters can be picked; only that character and P1's are affected`, () => {
     for (const pick of others(count)) {
       const t = table(count, [
         { key: "ss", def: printing(SKIN_SUIT), owner: P1, zone: "hand" },
@@ -152,7 +152,7 @@ for (const count of [3, 4] as const) {
 const TROPHY = "33e392bd-4d5d-475c-9cfe-a5dac86bfd2f";
 
 for (const count of [3, 4] as const) {
-  clause(TROPHY, "0:ability", `${count} seats: the restriction is judged for the chosen opponent's faction only`, () => {
+  mpClause(TROPHY, "0:ability", count, `${count} seats: the restriction is judged for the chosen opponent's faction only`, () => {
     const seats = others(count);
     const [first, second] = seats as [PlayerId, PlayerId];
     const build = (influences: Record<PlayerId, number>): Table => {
@@ -187,7 +187,7 @@ for (const count of [3, 4] as const) {
 const DIVA = "b7c7b011-86ef-46db-8b26-c659ad1f24c1";
 const revealedHands = (t: Table): PlayerId[] => [...t.engine.getFlowView().revealed.hands].sort() as PlayerId[];
 
-clause(DIVA, "0:rule", "3 seats: only the opponent selected as the effect starts applying has a revealed hand, until it is eliminated (then the remaining opponent) or the Diva leaves play", () => {
+mpClause(DIVA, "0:rule", 3, "3 seats: only the opponent selected as the effect starts applying has a revealed hand, until it is eliminated (then the remaining opponent) or the Diva leaves play", () => {
   const t = table(3, [
     { key: "diva", def: printing(DIVA), owner: P1, zone: "hand" },
     { key: "kill", def: killTactic(), owner: P1, zone: "hand" },
@@ -207,7 +207,7 @@ clause(DIVA, "0:rule", "3 seats: only the opponent selected as the effect starts
   pass(t, P3);
   // P2 is eliminated: the controller chooses again, and with one opponent left nothing is asked
   playCard(t, P1, "fin");
-  assert.ok(t.engine.state.players[P2]!.eliminated);
+  assert.ok(t.engine.state.players[P2]!.eliminated, "t.engine.state.players[P2]!.eliminated");
   assert.equal(open(t), undefined, "one opponent left: no choice is offered");
   assert.deepEqual(revealedHands(t), [P3], "P3's hand is revealed now");
   // the Diva leaves play: nobody's hand is revealed
@@ -216,7 +216,7 @@ clause(DIVA, "0:rule", "3 seats: only the opponent selected as the effect starts
   assert.deepEqual(revealedHands(t), [], "no hand is revealed once the Diva has left play");
 });
 
-clause(DIVA, "1:ability:disapprove", "3 seats: DISAPPROVE chooses its own opponent: only that opponent puts the named card on the bottom of their deck and draws", () => {
+mpClause(DIVA, "1:ability:disapprove", 3, "3 seats: DISAPPROVE chooses its own opponent: only that opponent puts the named card on the bottom of their deck and draws", () => {
   for (const named of [true, false]) {
     const t = table(3, [
       { key: "diva", def: printing(DIVA), owner: P1, zone: "hand" },
@@ -285,7 +285,7 @@ function openWindowForP1(t: Table, active: PlayerId): void {
 }
 
 for (const count of [3, 4] as const) {
-  clause(COUNTER_ATTACK, "0:ability", `${count} seats: P1 attacks the player whose turn it is (the only opponent that satisfies "during your opponent's turn"), and the others are left alone`, () => {
+  mpClause(COUNTER_ATTACK, "0:ability", count, `${count} seats: P1 attacks the player whose turn it is (the only opponent that satisfies "during your opponent's turn"), and the others are left alone`, () => {
     for (const turnOf of others(count)) {
       const t = counterTable(count, turnOf);
       openWindowForP1(t, turnOf);
@@ -308,7 +308,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(COUNTER_ATTACK, "0:ability", `${count} seats: it cannot be played on P1's own turn, nor during a battle`, () => {
+  mpClause(COUNTER_ATTACK, "0:ability", count, `${count} seats: it cannot be played on P1's own turn, nor during a battle`, () => {
     const own = counterTable(count, P1);
     assert.equal(own.engine.checkAction({ type: "playCard", playerId: P1, cardId: own.id("ca"), selected: { atk: [own.id("a1")] } } as never).ok, false, "not on my own turn");
     const t = counterTable(count, P2);

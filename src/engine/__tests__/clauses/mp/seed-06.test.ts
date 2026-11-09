@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { autoResolveBattle, bank } from "../../per-card/_harness.js";
 import { tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   answerFor,
@@ -60,7 +60,7 @@ function altarTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ALTAR, "0:rule", `${count} seats: it fires at the start of every player's turn (once each) and P1, the controller and not the active player, picks any character, which loses 1 strength this turn`, () => {
+  mpClause(ALTAR, "0:rule", count, `${count} seats: it fires at the start of every player's turn (once each) and P1, the controller and not the active player, picks any character, which loses 1 strength this turn`, () => {
     const t = altarTable(count);
     const targets = seatsOf(count);
     let turn = 0;
@@ -78,7 +78,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(ALTAR, "0:rule", "4 seats: an eliminated player's turn never happens, so it does not fire for it", () => {
+mpClause(ALTAR, "0:rule", 4, "4 seats: an eliminated player's turn never happens, so it does not fire for it", () => {
   const t = table(4, [
     { key: "ma", def: printing(ALTAR), owner: P1, zone: "play" },
     { key: "killer", def: KILLER, owner: P1, zone: "hand" },
@@ -86,7 +86,7 @@ clause(ALTAR, "0:rule", "4 seats: an eliminated player's turn never happens, so 
     ...fillSeats(4, 1, 3)
   ]);
   playCard(t, P1, "killer", { players: { opponent: P3 } });
-  assert.ok(t.engine.state.players[P3]!.eliminated);
+  assert.ok(t.engine.state.players[P3]!.eliminated, "t.engine.state.players[P3]!.eliminated");
   const turns: PlayerId[] = [];
   for (let seat = passTurn(t); ; seat = passTurn(t)) {
     turns.push(seat);
@@ -116,7 +116,7 @@ function eachTurnStart(t: Table, fn: (seat: PlayerId) => void): void {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ASSISTANT, "0:rule", `${count} seats: at the start of each opponent's turn (once per turn, none at P1's own) P1 may pick any character and restore it`, () => {
+  mpClause(ASSISTANT, "0:rule", count, `${count} seats: at the start of each opponent's turn (once per turn, none at P1's own) P1 may pick any character and restore it`, () => {
     const t = tableWith(count, [{ key: "am", def: printing(ASSISTANT), owner: P1, zone: "play" }, ...tiredFighters(count), ...fillSeats(count, 1, 3)], {}, P1, true);
     let restored = 0;
     eachTurnStart(t, (seat) => {
@@ -135,7 +135,7 @@ for (const count of [3, 4] as const) {
     assert.equal(restored, count - 1);
   });
 
-  clause(MASTER, "0:rule", `${count} seats: at the start of each opponent's turn (once per turn, none at P1's own) P1 may restore all the characters P1 controls, and no one else's`, () => {
+  mpClause(MASTER, "0:rule", count, `${count} seats: at the start of each opponent's turn (once per turn, none at P1's own) P1 may restore all the characters P1 controls, and no one else's`, () => {
     const t = tableWith(count, [{ key: "mm", def: printing(MASTER), owner: P1, zone: "play" }, ...tiredFighters(count), ...fillSeats(count, 1, 3)], {}, P1, true);
     eachTurnStart(t, (seat) => {
       if (seat === P1) {
@@ -152,7 +152,7 @@ for (const count of [3, 4] as const) {
     });
   });
 
-  clause(PEPPER, "2:rule", `${count} seats: at the start of each opponent's turn the attached character is restored (once per turn, none at P1's own)`, () => {
+  mpClause(PEPPER, "2:rule", count, `${count} seats: at the start of each opponent's turn the attached character is restored (once per turn, none at P1's own)`, () => {
     const t = tableWith(count, [...tiredFighters(count), { key: "pp", def: printing(PEPPER), owner: P1, zone: "play", attachedToKey: "c-p1" }, ...fillSeats(count, 1, 3)], {}, P1, true);
     eachTurnStart(t, (seat) => {
       if (seat === P1) {
@@ -165,7 +165,7 @@ for (const count of [3, 4] as const) {
     });
   });
 
-  clause(PHALLUDRIX, "4:rule", `${count} seats: at the start of each opponent's turn P1 may restore the attached character (once per turn, none at P1's own)`, () => {
+  mpClause(PHALLUDRIX, "4:rule", count, `${count} seats: at the start of each opponent's turn P1 may restore the attached character (once per turn, none at P1's own)`, () => {
     for (const accept of [true, false]) {
       const t = tableWith(count, [...tiredFighters(count), { key: "ph", def: printing(PHALLUDRIX), owner: P1, zone: "play", attachedToKey: "c-p1" }, ...fillSeats(count, 1, 3)], {}, P1, true);
       eachTurnStart(t, (seat) => {
@@ -184,7 +184,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(PEPPER, "1:rule", "3 seats: the attached character gains 3 strength and 3 life, and no other character does", () => {
+mpClause(PEPPER, "1:rule", 3, "3 seats: the attached character gains 3 strength and 3 life, and no other character does", () => {
   const t = table(3, [
     ...seatsOf(3).map((seat) => ({ key: `c-${seat}`, def: character({ name: `Fighter ${seat}`, strength: 2, life: 3 }), owner: seat, zone: "play" as const })),
     { key: "pp", def: printing(PEPPER), owner: P1, zone: "play", attachedToKey: "c-p1" },
@@ -198,7 +198,7 @@ clause(PEPPER, "1:rule", "3 seats: the attached character gains 3 strength and 3
   assert.equal(t.engine.getStat(t.id("c-p1"), "strength"), 5, "whoever's turn it is");
 });
 
-clause(PHALLUDRIX, "3:rule", "3 seats: the attached character gains 2 strength whoever controls it", () => {
+mpClause(PHALLUDRIX, "3:rule", 3, "3 seats: the attached character gains 2 strength whoever controls it", () => {
   for (const host of seatsOf(3)) {
     const t = table(3, [
       ...seatsOf(3).map((seat) => ({ key: `c-${seat}`, def: character({ name: `Fighter ${seat}`, strength: 2 }), owner: seat, zone: "play" as const })),
@@ -209,7 +209,7 @@ clause(PHALLUDRIX, "3:rule", "3 seats: the attached character gains 2 strength w
   }
 });
 
-clause(PHALLUDRIX, "2:ability", "3 seats: EQUIP picks any player's character (X is 0 for an adriel card, otherwise 3), pays X and attaches; no opponent is asked", () => {
+mpClause(PHALLUDRIX, "2:ability", 3, "3 seats: EQUIP picks any player's character (X is 0 for an adriel card, otherwise 3), pays X and attaches; no opponent is asked", () => {
   for (const [host, cost] of [
     [P1, 3],
     [P2, 3],
@@ -253,7 +253,7 @@ const selfDiscarder = tactic({
 });
 
 for (const count of [3, 4] as const) {
-  clause(PHALLUDRIX, "1:rule", `${count} seats: when an effect controlled by any opponent makes P1 discard, P1 may put the cards back (the opponent is that effect's controller, nobody is asked); another player's discard is not covered`, () => {
+  mpClause(PHALLUDRIX, "1:rule", count, `${count} seats: when an effect controlled by any opponent makes P1 discard, P1 may put the cards back (the opponent is that effect's controller, nobody is asked); another player's discard is not covered`, () => {
     for (const actor of seatsOf(count).slice(1)) {
       const t = table(
         count,
@@ -288,7 +288,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(PHALLUDRIX, "1:rule", "3 seats: P1 discarding to P1's own effect is not covered", () => {
+mpClause(PHALLUDRIX, "1:rule", 3, "3 seats: P1 discarding to P1's own effect is not covered", () => {
   const t = table(3, [{ key: "ph", def: printing(PHALLUDRIX), owner: P1, zone: "play" }, { key: "self", def: selfDiscarder, owner: P1, zone: "hand" }, ...mixedHands(3)]);
   playRaw(t, P1, "self");
   const asked = runPrompts(t, (pc) => {
@@ -317,7 +317,7 @@ function taxTable(count: Count, cards: CardPlacement[] = []): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(TAX, "1:rule", `${count} seats: the attached character's controller (P2) pays 3 to attack with it; P1 (who controls the Tax) and the other players pay nothing`, () => {
+  mpClause(TAX, "1:rule", count, `${count} seats: the attached character's controller (P2) pays 3 to attack with it; P1 (who controls the Tax) and the other players pay nothing`, () => {
     const t = taxTable(count);
     const taxes: Record<string, number> = {};
     for (let seat = P1 as PlayerId; ; seat = passTurn(t)) {
@@ -337,7 +337,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(TAX, "1:rule", "3 seats: if P1 takes control of the attached character, P1 pays on P1's attacks and P2 no longer pays", () => {
+mpClause(TAX, "1:rule", 3, "3 seats: if P1 takes control of the attached character, P1 pays on P1's attacks and P2 no longer pays", () => {
   const thief = tactic({ name: "Thief", behavior: { abilities: [{ id: "body", type: "activated", targets: [{ id: "t", selector: { type: "character" }, count: 1 }], effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }] }] } });
   const t = taxTable(3, [{ key: "thief", def: thief, owner: P1, zone: "hand" }]);
   playCard(t, P1, "thief", { selected: { t: [t.id("c-p2")] } });
@@ -357,7 +357,7 @@ clause(TAX, "1:rule", "3 seats: if P1 takes control of the attached character, P
 const CHARM = "209f6903-153c-455b-b211-b7fa87571220";
 
 for (const count of [3, 4] as const) {
-  clause(CHARM, "0:rule", `${count} seats: when it enters play under P1, P1 draws a card and no other player draws`, () => {
+  mpClause(CHARM, "0:rule", count, `${count} seats: when it enters play under P1, P1 draws a card and no other player draws`, () => {
     const t = table(count, [{ key: "lc", def: printing(CHARM), owner: P1, zone: "hand" }, ...mixedHands(count), ...bank("deception", 3, P1)]);
     const before = Object.fromEntries(t.seats.map((seat) => [seat, countIn(t, seat, "deck")]));
     playCard(t, P1, "lc");
@@ -372,7 +372,7 @@ const poke = tactic({
 });
 
 for (const count of [3, 4] as const) {
-  clause(CHARM, "1:rule", `${count} seats: only the opponent P1 chose (when the Charm entered play) pays 1 to pick a character P1 controls; picking anyone else's character, or any other opponent picking P1's, is free`, () => {
+  mpClause(CHARM, "1:rule", count, `${count} seats: only the opponent P1 chose (when the Charm entered play) pays 1 to pick a character P1 controls; picking anyone else's character, or any other opponent picking P1's, is free`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const actor of seatsOf(count).slice(1)) {
         for (const victim of [P1, seatsOf(count).filter((s) => s !== actor && s !== P1)[0]!]) {
@@ -431,7 +431,7 @@ function attackOnceThenRefused(t: Table, seat: PlayerId): void {
 }
 
 for (const count of [3, 4] as const) {
-  clause(PASSAGE, "0:rule", `${count} seats: every player, P1 included, may attack once on their own turn; a second attack declaration is refused`, () => {
+  mpClause(PASSAGE, "0:rule", count, `${count} seats: every player, P1 included, may attack once on their own turn; a second attack declaration is refused`, () => {
     const t = passageTable(count);
     attackOnceThenRefused(t, P1);
     for (let seat = passTurn(t); seat !== P1; seat = passTurn(t)) attackOnceThenRefused(t, seat);
@@ -471,7 +471,7 @@ function covertAttackThenBlock(withCard: boolean, attacker: PlayerId, defender: 
   assert.deepEqual(t.engine.state.battle?.blockingParty, [t.id(`plain-${defender}`)], `${defender}'s non-COVERT character blocks ${attacker}'s COVERT party`);
 }
 
-clause(SECURITY, "0:rule", "3 seats: whoever controls the attacking COVERT party, the defender's characters without COVERT may block it (P1 attacks P2, P2 attacks P3, P3 attacks P1); no opponent is asked", () => {
+mpClause(SECURITY, "0:rule", 3, "3 seats: whoever controls the attacking COVERT party, the defender's characters without COVERT may block it (P1 attacks P2, P2 attacks P3, P3 attacks P1); no opponent is asked", () => {
   covertAttackThenBlock(true, P1, P2);
   covertAttackThenBlock(true, P2, P3);
   covertAttackThenBlock(true, P3, P1);
@@ -496,7 +496,7 @@ clause(SECURITY, "0:rule", "3 seats: whoever controls the attacking COVERT party
 const WATCHTOWER = "b92743d8-0593-4d1a-87c2-9dc5b4520945";
 
 for (const count of [3, 4] as const) {
-  clause(WATCHTOWER, "1:rule", `${count} seats: a character entering play under any opponent's control takes 1 damage, one entering under P1's does not, and no opponent is chosen`, () => {
+  mpClause(WATCHTOWER, "1:rule", count, `${count} seats: a character entering play under any opponent's control takes 1 damage, one entering under P1's does not, and no opponent is chosen`, () => {
     const t = table(count, [
       { key: "wt", def: printing(WATCHTOWER), owner: P1, zone: "play" },
       ...seatsOf(count).map((seat) => ({ key: `new-${seat}`, def: character({ name: `Newcomer ${seat}`, cost: 0, life: 3 }), owner: seat, zone: "hand" as const })),

@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { bank, character, item, resolvePendingResponses, tactic } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, activate, answerChoice, choosePlayer, chooseIndex, handOf, pending, play, playRaw, playerAsk, ready, seated, table, type Table } from "./_ungodly-mess.js";
 import type { PlayerId } from "../../../../engine.js";
 
@@ -39,7 +39,7 @@ function whipTable(seats: number, o: { split?: boolean } = {}) {
 }
 const steal = (t: Table, ch: string, it: string) => activate(t, P1, "wm", "grand-theft", { selected: { ch: [t.id(ch)], it: [t.id(it)] } });
 
-clause(WHIP, "1:ability:grand-theft", "3 seats: the character and the item both come from one opponent; the other opponent's cards are untouched", () => {
+mpClause(WHIP, "1:ability:grand-theft", 3, "3 seats: the character and the item both come from one opponent; the other opponent's cards are untouched", () => {
   const t = whipTable(3);
   refused(() => steal(t, "ch-p2", "it-p3"), "a character of P2 with an item of P3");
   assert.equal(zoneOf(t.engine, t.id("wm")), "play", "nothing was paid");
@@ -61,7 +61,7 @@ clause(WHIP, "1:ability:grand-theft", "3 seats: the character and the item both 
   assert.equal(controllerOf(second, "it-p2"), P2);
 });
 
-clause(WHIP, "1:ability:grand-theft", "3 seats: when P2 controls only a character and P3 only an item, no single opponent has one of each and no pair is accepted", () => {
+mpClause(WHIP, "1:ability:grand-theft", 3, "3 seats: when P2 controls only a character and P3 only an item, no single opponent has one of each and no pair is accepted", () => {
   const t = whipTable(3, { split: true });
   refused(() => steal(t, "ch-p2", "it-p3"), "a character of P2 with an item of P3");
   assert.equal(zoneOf(t.engine, t.id("wm")), "play");
@@ -69,7 +69,7 @@ clause(WHIP, "1:ability:grand-theft", "3 seats: when P2 controls only a characte
   assert.equal(controllerOf(t, "it-p3"), P3);
 });
 
-clause(WHIP, "1:ability:grand-theft", "4 seats: the pair may come from P4 and nobody else's cards change hands", () => {
+mpClause(WHIP, "1:ability:grand-theft", 4, "4 seats: the pair may come from P4 and nobody else's cards change hands", () => {
   const t = whipTable(4);
   refused(() => steal(t, "ch-p4", "it-p2"), "a character of P4 with an item of P2");
   steal(t, "ch-p4", "it-p4");
@@ -84,7 +84,7 @@ clause(WHIP, "1:ability:grand-theft", "4 seats: the pair may come from P4 and no
 // under your control.
 // ===================================================================================================================
 
-clause(PUPPETEER, "0:ability:betray", "3 seats: non-tactic cards in any opponent's discard pile are legal picks; tactics and P1's own pile are not", () => {
+mpClause(PUPPETEER, "0:ability:betray", 3, "3 seats: non-tactic cards in any opponent's discard pile are legal picks; tactics and P1's own pile are not", () => {
   const board = () =>
     table(3, [
       { key: "pp", def: printing(PUPPETEER), owner: P1 },
@@ -144,7 +144,7 @@ const momentAction = (t: Table, pile: PlayerId | undefined, removed: string[]) =
   ...(pile ? { players: { pile } } : {})
 });
 
-clause(MOMENT, "0:extraCost", "3 seats: one opponent's pile is chosen (P2 or P3), all removed cards come from it and the cost drops by their number", () => {
+mpClause(MOMENT, "0:extraCost", 3, "3 seats: one opponent's pile is chosen (P2 or P3), all removed cards come from it and the cost drops by their number", () => {
   const t = momentTable(3);
   assert.deepEqual(playerAsk(t, momentAction(t, undefined, [])), { id: "pile", candidates: [P2, P3] });
   refused(() => t.engine.perform(momentAction(t, P1, []) as never), "yourself is not an opponent");
@@ -174,7 +174,7 @@ clause(MOMENT, "0:extraCost", "3 seats: one opponent's pile is chosen (P2 or P3)
   assert.equal(playerAsk(two, momentAction(two, undefined, [])), undefined, "one opponent left: nobody is asked which pile");
 });
 
-clause(MOMENT, "0:extraCost", "4 seats: the choice offers P2, P3 and P4", () => {
+mpClause(MOMENT, "0:extraCost", 4, "4 seats: the choice offers P2, P3 and P4", () => {
   const t = momentTable(4);
   assert.deepEqual(playerAsk(t, momentAction(t, undefined, [])), { id: "pile", candidates: [P2, P3, P4] });
   act(t, momentAction(t, P4, ["i1-p4", "i2-p4"]));
@@ -191,7 +191,7 @@ clause(MOMENT, "0:extraCost", "4 seats: the choice offers P2, P3 and P4", () => 
 
 const filler = (owner: PlayerId, n: number) => Array.from({ length: n }, (_, i) => ({ key: `f-${owner}-${i}`, def: character({ name: `Filler ${owner} ${i}` }), owner, zone: "discard" as const }));
 
-clause(OMAHKAPI, "2:ability:flex", "3 seats: cards in P2's and P3's discard piles are legal picks, P1's own pile is not; the picked card leaves the game and only this card gains strength", () => {
+mpClause(OMAHKAPI, "2:ability:flex", 3, "3 seats: cards in P2's and P3's discard piles are legal picks, P1's own pile is not; the picked card leaves the game and only this card gains strength", () => {
   const board = () =>
     table(3, [
       { key: "om", def: printing(OMAHKAPI), owner: P1 },
@@ -238,7 +238,7 @@ function omahkapiTable(pile2: number, pile3: number, pile1 = 0) {
   ]);
 }
 
-clause(OMAHKAPI, "1:rule", "3 seats: with 10 cards in P2's discard pile and 9 in P3's, P2 cannot pick it and P3 can; nobody is asked to choose an opponent", () => {
+mpClause(OMAHKAPI, "1:rule", 3, "3 seats: with 10 cards in P2's discard pile and 9 in P3's, P2 cannot pick it and P3 can; nobody is asked to choose an opponent", () => {
   const t = omahkapiTable(10, 9);
   assert.equal(pending(t), undefined, "'an opponent' is never chosen by the controller");
   assert.equal(picksOmahkapi(t, P2), false, "P2 has 10 cards in its pile");
@@ -248,7 +248,7 @@ clause(OMAHKAPI, "1:rule", "3 seats: with 10 cards in P2's discard pile and 9 in
   assert.equal(picksOmahkapi(swapped, P3), false);
 });
 
-clause(OMAHKAPI, "1:rule", "3 seats: the piles are not added together (6 and 6 block neither), and P1's own pile has no effect", () => {
+mpClause(OMAHKAPI, "1:rule", 3, "3 seats: the piles are not added together (6 and 6 block neither), and P1's own pile has no effect", () => {
   const t = omahkapiTable(6, 6, 20);
   assert.equal(picksOmahkapi(t, P2), true);
   assert.equal(picksOmahkapi(t, P3), true);
@@ -279,7 +279,7 @@ function purloinTable(seats: number) {
 const deckOf = (t: Table, who: PlayerId): string[] => [...t.engine.state.players[who]!.deck];
 const performance = (t: Table, picked?: PlayerId) => ({ type: "playCard", playerId: P1, cardId: t.id("pp"), selected: {}, variables: {}, ...(picked ? { players: { picked } } : {}) });
 
-clause(PURLOIN, "0:extraCost", "3 seats: the opponent pick offers P2 and P3; only the picked opponent's top 4 cards are looked at, and nothing else is asked", () => {
+mpClause(PURLOIN, "0:extraCost", 3, "3 seats: the opponent pick offers P2 and P3; only the picked opponent's top 4 cards are looked at, and nothing else is asked", () => {
   const t = purloinTable(3);
   assert.deepEqual(playerAsk(t, performance(t)), { id: "picked", candidates: [P2, P3] });
   refused(() => t.engine.perform(performance(t, P1) as never), "yourself is not an opponent");
@@ -306,7 +306,7 @@ clause(PURLOIN, "0:extraCost", "3 seats: the opponent pick offers P2 and P3; onl
   assert.equal(playerAsk(two, performance(two)), undefined, "one opponent left: nobody is asked which");
 });
 
-clause(PURLOIN, "0:extraCost", "3 seats: with an attacking party of 2 the cards are put into the PICKED opponent's discard pile, not the defender's", () => {
+mpClause(PURLOIN, "0:extraCost", 3, "3 seats: with an attacking party of 2 the cards are put into the PICKED opponent's discard pile, not the defender's", () => {
   const t = purloinTable(3);
   t.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [t.id("a1"), t.id("a2")], target: { type: "faction", playerId: P2 } } as never);
   const p2Deck = deckOf(t, P2);

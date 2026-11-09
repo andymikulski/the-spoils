@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard, tactic } from "../../support/fixtures.js";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { 
   answer, choosePlayer, filler, go, hand, needs, offered, pay, pcOf, pickCandidates, pickCards, play, settleOrder, table, unit, use, zone, P1, P2, P3, P4, type Board, type Pid, type Placement
  } from "./_shade.js";
@@ -29,7 +29,7 @@ const onFaction = (owner: Pid, n: number): Placement[] =>
 
 // --- Tedious TriAdic Truculence ----------------------------------------------------------------
 
-clause(TEDIOUS, "0:ability", "3 seats: no opponent is chosen; the payment of 3 is offered to P2 then P3 (clockwise from P1's left, never P1); the first to pay settles it, the rest are not asked; if all decline each picked character with strength 3 or less is destroyed", () => {
+mpClause(TEDIOUS, "0:ability", 3, "3 seats: no opponent is chosen; the payment of 3 is offered to P2 then P3 (clockwise from P1's left, never P1); the first to pay settles it, the rest are not asked; if all decline each picked character with strength 3 or less is destroyed", () => {
   const board = () =>
     table(3, [
       { key: "ttt", def: printing(TEDIOUS), owner: P1, zone: "hand" },
@@ -69,7 +69,7 @@ clause(TEDIOUS, "0:ability", "3 seats: no opponent is chosen; the payment of 3 i
 
 // --- The Lugubrian Council of Quotidian Affairs -----------------------------------------------
 
-clause(LUGUBRIAN_COUNCIL, "3:ability:council-pass", "3 seats: the picked character may belong to either opponent (not the controller); its controller, not the other opponent, may detach up to X resources", () => {
+mpClause(LUGUBRIAN_COUNCIL, "3:ability:council-pass", 3, "3 seats: the picked character may belong to either opponent (not the controller); its controller, not the other opponent, may detach up to X resources", () => {
   for (const [victim, other] of [[P3, P2], [P2, P3]] as const) {
     const b = table(3, [
       { key: "council", def: printing(LUGUBRIAN_COUNCIL), owner: P1, zone: "play" },
@@ -97,7 +97,7 @@ clause(LUGUBRIAN_COUNCIL, "3:ability:council-pass", "3 seats: the picked charact
     assert.equal(pcOf(b.engine), undefined);
   }
 });
-clause(LUGUBRIAN_COUNCIL, "3:ability:council-pass", "3 seats: a character P3 controls but P2 owns goes to P2's hand while P3, its controller, detaches", () => {
+mpClause(LUGUBRIAN_COUNCIL, "3:ability:council-pass", 3, "3 seats: a character P3 controls but P2 owns goes to P2's hand while P3, its controller, detaches", () => {
   const b = table(3, [
     { key: "council", def: printing(LUGUBRIAN_COUNCIL), owner: P1, zone: "play" },
     { key: "tac", def: tactic({ name: "Cost two", cost: 2 }), owner: P1, zone: "hand" },
@@ -132,7 +132,7 @@ function gargantuan(seats: 3 | 4, active: Pid = P1): Board {
   );
 }
 
-clause(GARGANTUAN, "1:rule", "3 seats: each opponent in turn (P2 then P3, never P1) may detach up to 3 of their own resources; their choices are independent", () => {
+mpClause(GARGANTUAN, "1:rule", 3, "3 seats: each opponent in turn (P2 then P3, never P1) may detach up to 3 of their own resources; their choices are independent", () => {
   const b = gargantuan(3);
   go(b, play(b, P1, "garg"));
   const order: Pid[] = [];
@@ -151,7 +151,7 @@ clause(GARGANTUAN, "1:rule", "3 seats: each opponent in turn (P2 then P3, never 
   assert.notEqual(attachedTo(b, "att-p3-3"), undefined);
   for (const i of [0, 1, 2]) assert.notEqual(attachedTo(b, `att-p1-${i}`), undefined, "the controller's resources are unchanged");
 });
-clause(GARGANTUAN, "1:rule", "4 seats: P2, P3 and P4 each may detach up to 3 of their own, active player first and then clockwise; P1 is skipped", () => {
+mpClause(GARGANTUAN, "1:rule", 4, "4 seats: P2, P3 and P4 each may detach up to 3 of their own, active player first and then clockwise; P1 is skipped", () => {
   const b = gargantuan(4);
   go(b, play(b, P1, "garg"));
   const order: Pid[] = [];
@@ -166,7 +166,7 @@ clause(GARGANTUAN, "1:rule", "4 seats: P2, P3 and P4 each may detach up to 3 of 
   for (const owner of [P2, P3, P4]) assert.equal(attachedTo(b, `att-${owner}-0`), undefined);
   for (const i of [0, 1, 2]) assert.notEqual(attachedTo(b, `att-p1-${i}`), undefined);
 });
-clause(GARGANTUAN, "1:rule", "4 seats: entering play during P3's turn, the opponents are asked P3, P4, P2 (the active player first, then clockwise)", () => {
+mpClause(GARGANTUAN, "1:rule", 4, "4 seats: entering play during P3's turn, the opponents are asked P3, P4, P2 (the active player first, then clockwise)", () => {
   const b = table(
     4,
     [
@@ -232,7 +232,7 @@ function hassan(seats: 3 | 4, counts: Partial<Record<Pid, number>>): Board {
     ...([P2, P3, P4] as Pid[]).slice(0, seats - 1).flatMap((owner) => Array.from({ length: counts[owner] ?? 0 }, (_, i) => unit(owner, `${owner}-c${i}`, { name: `${owner} char ${i}` })))
   ]);
 }
-clause(HASSAN_I, "0:rule", "3 seats: each opponent in turn (P2 then P3, never P1) destroys a character they control, picked from their own characters; an opponent with none destroys nothing", () => {
+mpClause(HASSAN_I, "0:rule", 3, "3 seats: each opponent in turn (P2 then P3, never P1) destroys a character they control, picked from their own characters; an opponent with none destroys nothing", () => {
   const b = hassan(3, { [P2]: 2, [P3]: 2 });
   go(b, play(b, P1, "slay", { selected: { t: [b.id("hassan")] } }));
   assert.equal(pcOf(b.engine)?.playerId, P2);
@@ -249,7 +249,7 @@ clause(HASSAN_I, "0:rule", "3 seats: each opponent in turn (P2 then P3, never P1
   assert.equal(pcOf(empty.engine), undefined, "P3 has no character: nothing is asked of them");
   assert.equal(zone(empty, "mine"), "play");
 });
-clause(HASSAN_I, "0:rule", "4 seats: P2, P3 and P4 each destroy one of their own characters in turn; P1's characters are untouched", () => {
+mpClause(HASSAN_I, "0:rule", 4, "4 seats: P2, P3 and P4 each destroy one of their own characters in turn; P1's characters are untouched", () => {
   const b = hassan(4, { [P2]: 1, [P3]: 1, [P4]: 2 });
   go(b, play(b, P1, "slay", { selected: { t: [b.id("hassan")] } }));
   const order: Pid[] = [];
@@ -276,7 +276,7 @@ function swindle(seats: 3 | 4, spare: Partial<Record<Pid, number>>): Board {
     ...([P1, P2, P3, P4] as Pid[]).slice(0, seats).flatMap((owner) => spareResources(owner, spare[owner] ?? 0))
   ]);
 }
-clause(SWINDLE, "0:ability", "3 seats: nobody may respond; each opponent in turn attaches one of their own unattached resources to their own faction; P1 then draws and discards once", () => {
+mpClause(SWINDLE, "0:ability", 3, "3 seats: nobody may respond; each opponent in turn attaches one of their own unattached resources to their own faction; P1 then draws and discards once", () => {
   const b = swindle(3, { [P1]: 2, [P2]: 2, [P3]: 2 });
   b.engine.perform(play(b, P1, "sw"));
   assert.equal(b.engine.state.responseWindow, undefined, "no opponent may respond to it");
@@ -299,7 +299,7 @@ clause(SWINDLE, "0:ability", "3 seats: nobody may respond; each opponent in turn
   pickCards(none, P2, ["spare-p2-0"]);
   assert.equal(pcOf(none.engine)?.playerId, P1, "P3 has no unattached resource and attaches nothing: straight to the controller's discard");
 });
-clause(SWINDLE, "0:ability", "4 seats: none of the three opponents may respond; each attaches one of their own in turn; P1 draws and discards once", () => {
+mpClause(SWINDLE, "0:ability", 4, "4 seats: none of the three opponents may respond; each attaches one of their own in turn; P1 draws and discards once", () => {
   const b = swindle(4, { [P2]: 1, [P3]: 1, [P4]: 1 });
   b.engine.perform(play(b, P1, "sw"));
   assert.equal(b.engine.state.responseWindow, undefined);
@@ -333,7 +333,7 @@ function attackAndGetPriority(b: Board): void {
   for (let guard = 0; guard < 4 && b.engine.state.responseWindow?.priorityPlayerId !== P1; guard++) b.engine.perform({ type: "passPriority", playerId: b.engine.state.responseWindow!.priorityPlayerId });
   assert.equal(b.engine.state.responseWindow?.priorityPlayerId, P1, "P1 may respond to the attack");
 }
-clause(ROCKET_LAWNCHAIR, "1:ability:rocket-lawnchair-no-eject", "3 seats: P1 picks the opponent first (P2 or P3) and the second pick is limited to that opponent's characters; a member of P2's attacking party takes the whole party with it", () => {
+mpClause(ROCKET_LAWNCHAIR, "1:ability:rocket-lawnchair-no-eject", 3, "3 seats: P1 picks the opponent first (P2 or P3) and the second pick is limited to that opponent's characters; a member of P2's attacking party takes the whole party with it", () => {
   const b = lawnchair();
   attackAndGetPriority(b);
   const base = use(b, P1, "chair", "rocket-lawnchair-no-eject");
@@ -346,7 +346,7 @@ clause(ROCKET_LAWNCHAIR, "1:ability:rocket-lawnchair-no-eject", "3 seats: P1 pic
   resolvePendingResponses(b.engine);
   assert.deepEqual(["chair", "mine", "a1", "a2", "c3"].map((key) => zone(b, key)), ["discard", "discard", "discard", "discard", "play"], "both picked and the whole attacking party are destroyed; P3's character is not");
 });
-clause(ROCKET_LAWNCHAIR, "1:ability:rocket-lawnchair-no-eject", "3 seats: with P3 chosen and a P3 character picked, the picked pair dies but P2's attacking party survives", () => {
+mpClause(ROCKET_LAWNCHAIR, "1:ability:rocket-lawnchair-no-eject", 3, "3 seats: with P3 chosen and a P3 character picked, the picked pair dies but P2's attacking party survives", () => {
   const b = lawnchair();
   attackAndGetPriority(b);
   b.engine.perform(use(b, P1, "chair", "rocket-lawnchair-no-eject", { players: { opponent: P3 }, selected: { mine: [b.id("mine")], theirs: [b.id("c3")] } }));
@@ -373,7 +373,7 @@ function startP1Turn(b: Board): void {
   resolvePendingResponses(b.engine);
   settleOrder(b);
 }
-clause(RUNIC_JUNKER, "0:rule", "3 seats: at the start of P1's turn, after paying 4 with 2 face-down resources controlled, P1 picks an opponent; only that opponent picks the face-down resource", () => {
+mpClause(RUNIC_JUNKER, "0:rule", 3, "3 seats: at the start of P1's turn, after paying 4 with 2 face-down resources controlled, P1 picks an opponent; only that opponent picks the face-down resource", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = junker(2);
     startP1Turn(b);
@@ -391,7 +391,7 @@ clause(RUNIC_JUNKER, "0:rule", "3 seats: at the start of P1's turn, after paying
     pickCards(b, picked, ["dn-0"]);
   }
 });
-clause(RUNIC_JUNKER, "0:rule", "3 seats: no opponent is picked when P1 does not pay 4, or controls fewer than 2 face-down resources", () => {
+mpClause(RUNIC_JUNKER, "0:rule", 3, "3 seats: no opponent is picked when P1 does not pay 4, or controls fewer than 2 face-down resources", () => {
   const declined = junker(2);
   startP1Turn(declined);
   pay(declined, P1, false);

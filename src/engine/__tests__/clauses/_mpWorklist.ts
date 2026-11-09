@@ -21,7 +21,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import type { CardDefinition } from "../../../engine.js";
 import { CATALOG } from "./_manifest.js";
-import { PLAYER_FIELDS, type MpGroup } from "./_mpInventory.js";
+import { PLAIN_WORDS, PLAYER_FIELDS, type MpGroup } from "./_mpInventory.js";
 
 const DATA = fileURLToPath(new URL("../../../../data/", import.meta.url));
 export const WORKLIST_FILE = DATA + "card-tests/mp-worklist.json";
@@ -471,9 +471,6 @@ export function evaluate(sites: Site[], catalog: CardDefinition[] = CATALOG): Fi
 }
 
 // --- Spec vs data -------------------------------------------------------------------------------
-
-/** Words the spec does not have to list: the controller / owner of the block, or of a specific card. */
-const PLAIN_WORDS: ReadonlySet<string> = new Set(["self", "controller", "owner", "ownerOf", "controllerOf"]);
 
 /**
  * Every relevant site in the inventory (a behavior word other than plain self / controller / owner / card-relative

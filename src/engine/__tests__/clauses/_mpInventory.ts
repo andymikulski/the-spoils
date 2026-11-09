@@ -228,7 +228,10 @@ export const PLAYER_FIELDS: ReadonlySet<string> = new Set([
 /** The player words a string value can take in a player-valued field. */
 export const PLAYER_WORDS: ReadonlySet<string> = new Set(["opponent", "self", "any", "controller", "owner", "activePlayer", "anyPlayer", "all"]);
 
-/** PlayerRef objects: `{ type: "ownerOf" | "controllerOf" | "player", ... }`. */
+/** Words that never depend on the table size: the controller / owner of the block, or of a specific card. */
+export const PLAIN_WORDS: ReadonlySet<string> = new Set(["self", "controller", "owner", "ownerOf", "controllerOf"]);
+
+/** PlayerRef objects:`{ type: "ownerOf" | "controllerOf" | "player", ... }`. */
 export const PLAYER_REF_TYPES: ReadonlySet<string> = new Set(["ownerOf", "controllerOf", "player"]);
 
 /** Effects / costs whose very shape iterates or alternates over players, with no player-valued field of their own. */
@@ -423,6 +426,28 @@ function inventoryGroup(group: RulesGroup, card: CardDefinition): MpGroup {
 /** The reminder spans of `clause.text`, located inside its block's built text (the clause text is that block's text). */
 function remindersWithin(clause: Clause, built: Built | undefined): Array<[number, number]> {
   return built && built.text === clause.text ? built.reminders : [];
+}
+
+/**
+ * The clause-manifest flag (`Clause.mp`) of an inventory clause: `"quantified"` for a printed each / all-players /
+ * each-opponent phrase, `true` when the clause names players in a way that depends on the table size (a printed player
+ * phrase, or a behavior word other than plain self / controller / owner), otherwise unset. A clause whose only player
+ * words are plain controller / owner references (1516 of the 2244 clauses the inventory marks `mp`) reads the same
+ * at every table size and has no multiplayer clause test.
+ */
+export function mpFlag(clause: MpClause): true | "quantified" | undefined {
+  if (clause.mp === "quantified") return "quantified";
+  return clause.phrases.length > 0 || clause.behavior.some((word) => !PLAIN_WORDS.has(word.value)) ? true : undefined;
+}
+
+/** The flag of every clause of `group` (keyed by clause key); clauses without one are absent. Read from the group's representative printing `card`. */
+export function mpFlags(group: RulesGroup, card: CardDefinition): Map<string, true | "quantified"> {
+  const flags = new Map<string, true | "quantified">();
+  for (const clause of inventoryGroup(group, card).clauses) {
+    const flag = mpFlag(clause);
+    if (flag) flags.set(clause.key, flag);
+  }
+  return flags;
 }
 
 /** The whole inventory, one entry per rules group in `clauses.json` order. Deterministic for a given catalog. */

@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard, tactic } from "../../support/fixtures.js";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { 
   alive, choosePlayer, controllerOf, doom, filler, go, hand, infl, needs, offered, pcOf, pickCandidates, pickCards, pickOption, play, settleOrder, stat, table, tokens, unit, use, zone, P1, P2, P3, P4, type Board, type Pid, type Placement
  } from "./_shade.js";
@@ -33,7 +33,7 @@ const slayStutter = (owner: Pid): Placement => ({
   def: tactic({ name: "Slay it", behavior: { abilities: [{ id: "slay", type: "activated", targets: [{ id: "t", selector: { type: "character", name: "Stuttershy" }, count: 1 }], effects: [{ type: "destroy", target: { type: "selected", id: "t" } }] }] } })
 });
 
-clause(STUTTERSHY, "0:rule", "3 seats: destroyed by P2's effect it is flipped face down under its owner's control instead; nobody is asked which opponent", () => {
+mpClause(STUTTERSHY, "0:rule", 3, "3 seats: destroyed by P2's effect it is flipped face down under its owner's control instead; nobody is asked which opponent", () => {
   const b = table(3, [{ key: "stutter", def: printing(STUTTERSHY), owner: P1, zone: "play" }, slayStutter(P2)], { active: P2, turn: 2 });
   go(b, play(b, P2, "slay", { selected: { t: [b.id("stutter")] } }));
   assert.equal(zone(b, "stutter"), "play", "not destroyed");
@@ -42,7 +42,7 @@ clause(STUTTERSHY, "0:rule", "3 seats: destroyed by P2's effect it is flipped fa
   assert.notEqual(pcOf(b.engine)?.kind, "choosePlayer");
   assert.equal(pcOf(b.engine)?.playerId, P1, "only the controller is asked (about the tokens)");
 });
-clause(STUTTERSHY, "1:rule", "3 seats: flipped down, P2's and P3's factions each gain 1 influence (not P1's); P1 may then put one Micromajig token per influence gained (2) under P1's control", () => {
+mpClause(STUTTERSHY, "1:rule", 3, "3 seats: flipped down, P2's and P3's factions each gain 1 influence (not P1's); P1 may then put one Micromajig token per influence gained (2) under P1's control", () => {
   const b = table(3, [{ key: "stutter", def: printing(STUTTERSHY), owner: P1, zone: "play" }, slayStutter(P2)], { active: P2, turn: 2 });
   const before = [P1, P2, P3].map((p) => infl(b.engine, p));
   go(b, play(b, P2, "slay", { selected: { t: [b.id("stutter")] } }));
@@ -56,7 +56,7 @@ clause(STUTTERSHY, "1:rule", "3 seats: flipped down, P2's and P3's factions each
   pickOption(declined, P1, 0);
   assert.equal(majigs(declined, P1), 0, "declining puts none");
 });
-clause(STUTTERSHY, "1:rule", "4 seats: all three opponents' factions gain 1 and P1 may put 3 tokens; if P4 is eliminated first only 2 factions gain and 2 tokens come", () => {
+mpClause(STUTTERSHY, "1:rule", 4, "4 seats: all three opponents' factions gain 1 and P1 may put 3 tokens; if P4 is eliminated first only 2 factions gain and 2 tokens come", () => {
   const board = () =>
     table(4, [{ key: "stutter", def: printing(STUTTERSHY), owner: P1, zone: "play" }, slayStutter(P1), doom(P4)]);
   const b = board();
@@ -75,7 +75,7 @@ clause(STUTTERSHY, "1:rule", "4 seats: all three opponents' factions gain 1 and 
 
 // --- Clockman City Shuffle ---------------------------------------------------------------------
 
-clause(CLOCKMAN_CITY_SHUFFLE, "0:rule", "3 seats: P1's characters gain 1/1 and every character of P2 and of P3 loses 1/1 this turn, then it wears off", () => {
+mpClause(CLOCKMAN_CITY_SHUFFLE, "0:rule", 3, "3 seats: P1's characters gain 1/1 and every character of P2 and of P3 loses 1/1 this turn, then it wears off", () => {
   const b = table(3, [
     { key: "ccs", def: printing(CLOCKMAN_CITY_SHUFFLE), owner: P1, zone: "hand" },
     ...bank("deception", 5, P1),
@@ -93,7 +93,7 @@ clause(CLOCKMAN_CITY_SHUFFLE, "0:rule", "3 seats: P1's characters gain 1/1 and e
   assert.deepEqual(read("c1"), [3, 3], "the effect ended with the turn");
   assert.deepEqual(read("c3"), [3, 3]);
 });
-clause(CLOCKMAN_CITY_SHUFFLE, "0:rule", "4 seats: the characters of P2, P3 and P4 all lose 1/1; only P1's gain", () => {
+mpClause(CLOCKMAN_CITY_SHUFFLE, "0:rule", 4, "4 seats: the characters of P2, P3 and P4 all lose 1/1; only P1's gain", () => {
   const b = table(4, [
     { key: "ccs", def: printing(CLOCKMAN_CITY_SHUFFLE), owner: P1, zone: "hand" },
     ...bank("deception", 5, P1),
@@ -109,7 +109,7 @@ clause(CLOCKMAN_CITY_SHUFFLE, "0:rule", "4 seats: the characters of P2, P3 and P
 
 // --- Martial Arts Wannabe ----------------------------------------------------------------------
 
-clause(MARTIAL_ARTS_WANNABE, "0:rule", "3 seats: one opponent is chosen and the character counts are compared with that opponent alone (never the total of both opponents)", () => {
+mpClause(MARTIAL_ARTS_WANNABE, "0:rule", 3, "3 seats: one opponent is chosen and the character counts are compared with that opponent alone (never the total of both opponents)", () => {
   const poke = (): Placement => ({
     key: "poke",
     owner: P1,
@@ -141,7 +141,7 @@ clause(MARTIAL_ARTS_WANNABE, "0:rule", "3 seats: one opponent is chosen and the 
 
 // --- Opportunistic Pirate ----------------------------------------------------------------------
 
-clause(OPPORTUNISTIC_PIRATE, "1:ability", "3 seats: the controller names one opponent; the up-to-4 removed cards come from that opponent's discard pile only, and each cuts the cost by 1", () => {
+mpClause(OPPORTUNISTIC_PIRATE, "1:ability", 3, "3 seats: the controller names one opponent; the up-to-4 removed cards come from that opponent's discard pile only, and each cuts the cost by 1", () => {
   for (const [named, other] of [[P3, P2], [P2, P3]] as const) {
     const b = table(3, [
       { key: "pirate", def: printing(OPPORTUNISTIC_PIRATE), owner: P1, zone: "hand" },
@@ -185,7 +185,7 @@ const topCard = (kind: "big" | "small" | "resource"): Placement => ({
   def: kind === "resource" ? resourceCard({ name: "Top resource" }) : character({ name: `Top ${kind}`, cost: kind === "big" ? 5 : 2 })
 });
 const unfold = (b: Board) => go(b, use(b, P1, "sharpey", "sharpey-unfold"));
-clause(SHARPEY, "2:ability:sharpey-unfold", "3 seats: a revealed cost of 5 or more gives every character of P2 and of P3 -1 life, not P1's; a cost of 0-4 destroys the attached character only; a resource also destroys all opponents' characters", () => {
+mpClause(SHARPEY, "2:ability:sharpey-unfold", 3, "3 seats: a revealed cost of 5 or more gives every character of P2 and of P3 -1 life, not P1's; a cost of 0-4 destroys the attached character only; a resource also destroys all opponents' characters", () => {
   const big = sharpey(3, topCard("big"));
   unfold(big);
   assert.deepEqual(["c2", "c3", "own", "host"].map((key) => stat(big, key, "life")), [3, 3, 4, 4]);
@@ -198,7 +198,7 @@ clause(SHARPEY, "2:ability:sharpey-unfold", "3 seats: a revealed cost of 5 or mo
   unfold(res);
   assert.deepEqual(["host", "own", "c2", "c3"].map((key) => zone(res, key)), ["discard", "play", "discard", "discard"]);
 });
-clause(SHARPEY, "2:ability:sharpey-unfold", "4 seats: the cost-5 result gives all three opponents' characters -1 life; the resource result destroys all of them", () => {
+mpClause(SHARPEY, "2:ability:sharpey-unfold", 4, "4 seats: the cost-5 result gives all three opponents' characters -1 life; the resource result destroys all of them", () => {
   const big = sharpey(4, topCard("big"));
   unfold(big);
   assert.deepEqual(["c2", "c3", "c4", "own"].map((key) => stat(big, key, "life")), [3, 3, 3, 4]);
@@ -209,7 +209,7 @@ clause(SHARPEY, "2:ability:sharpey-unfold", "4 seats: the cost-5 result gives al
 
 // --- Confrontational Conflagration -------------------------------------------------------------
 
-clause(CONFLAGRATION, "0:ability", "3 seats: the second pick may be a character of either opponent (not the controller's); only the picked one is damaged", () => {
+mpClause(CONFLAGRATION, "0:ability", 3, "3 seats: the second pick may be a character of either opponent (not the controller's); only the picked one is damaged", () => {
   for (const [picked, other] of [[P3, P2], [P2, P3]] as const) {
     const b = table(3, [
       { key: "cc", def: printing(CONFLAGRATION), owner: P1, zone: "hand" },
@@ -246,7 +246,7 @@ function juice(): Board {
     unit(P3, "p3-1", { strength: 1 })
   ]);
 }
-clause(JUICE_SALE, "0:ability", "3 seats: the controller picks one opponent and the pick is that opponent's highest-strength character; never the other opponent's, never the controller's", () => {
+mpClause(JUICE_SALE, "0:ability", 3, "3 seats: the controller picks one opponent and the pick is that opponent's highest-strength character; never the other opponent's, never the controller's", () => {
   const b = juice();
   assert.deepEqual(needs(b, play(b, P1, "js"))[0], { kind: "players", choices: [{ id: "picked", candidates: [P2, P3] }] });
   assert.deepEqual(pickCandidates(b, play(b, P1, "js", { players: { picked: P2 } })), [b.id("p2-3")], "P2's strength-3 character");
@@ -254,7 +254,7 @@ clause(JUICE_SALE, "0:ability", "3 seats: the controller picks one opponent and 
   refused(() => b.engine.perform(play(b, P1, "js", { players: { picked: P2 }, selected: { ch: [b.id("p3-5")] } })), "the other opponent's highest character");
   refused(() => b.engine.perform(play(b, P1, "js", { players: { picked: P3 }, selected: { ch: [b.id("p3-1")] } })), "a lower-strength character of the picked opponent");
 });
-clause(JUICE_SALE, "0:ability", "3 seats: each opponent's strength is compared only within their own characters (equal strengths of different opponents are no tie); a tie within one opponent is the controller's to decide; the picked character cannot block", () => {
+mpClause(JUICE_SALE, "0:ability", 3, "3 seats: each opponent's strength is compared only within their own characters (equal strengths of different opponents are no tie); a tie within one opponent is the controller's to decide; the picked character cannot block", () => {
   const b = table(3, [
     { key: "js", def: printing(JUICE_SALE), owner: P1, zone: "hand" },
     ...bank("rage", 2, P1),
@@ -275,7 +275,7 @@ clause(JUICE_SALE, "0:ability", "3 seats: each opponent's strength is compared o
 
 // --- Words of Glory ----------------------------------------------------------------------------
 
-clause(WORDS_OF_GLORY, "0:ability", "3 seats: X is the total strength of all characters P2 and P3 control (not P1's); X-3 damage to every character, P1's included", () => {
+mpClause(WORDS_OF_GLORY, "0:ability", 3, "3 seats: X is the total strength of all characters P2 and P3 control (not P1's); X-3 damage to every character, P1's included", () => {
   const b = table(3, [
     { key: "wog", def: printing(WORDS_OF_GLORY), owner: P1, zone: "hand" },
     ...bank("rage", 7, P1),
@@ -287,7 +287,7 @@ clause(WORDS_OF_GLORY, "0:ability", "3 seats: X is the total strength of all cha
   go(b, play(b, P1, "wog"));
   assert.deepEqual(["c1", "c2a", "c2b", "c3"].map((key) => damageOf(b, key)), [9, 9, 9, 9], "X = 12, 9 damage to all");
 });
-clause(WORDS_OF_GLORY, "0:ability", "4 seats: X totals all three opponents' characters (16); 13 damage to all characters; the controller's own never count toward X", () => {
+mpClause(WORDS_OF_GLORY, "0:ability", 4, "4 seats: X totals all three opponents' characters (16); 13 damage to all characters; the controller's own never count toward X", () => {
   const b = table(4, [
     { key: "wog", def: printing(WORDS_OF_GLORY), owner: P1, zone: "hand" },
     ...bank("rage", 7, P1),
@@ -312,13 +312,13 @@ const endTurnOf = (b: Board, who: Pid): void => {
   settleOrder(b);
 };
 
-clause(FLAMING_CUBE, "0:rule", "3 seats: it enters play with 3 tokens, whatever the number of opponents", () => {
+mpClause(FLAMING_CUBE, "0:rule", 3, "3 seats: it enters play with 3 tokens, whatever the number of opponents", () => {
   const b = table(3, [{ key: "cube", def: printing(FLAMING_CUBE), owner: P1, zone: "hand" }, ...bank("rage", 6, P1)]);
   go(b, play(b, P1, "cube"));
   assert.equal(zone(b, "cube"), "play");
   assert.equal(tokens(b, "cube"), 3);
 });
-clause(FLAMING_CUBE, "1:rule", "3 seats: a token is put on it at the start of P1's turn only, not at the start of P2's or P3's", () => {
+mpClause(FLAMING_CUBE, "1:rule", 3, "3 seats: a token is put on it at the start of P1's turn only, not at the start of P2's or P3's", () => {
   const b = cube(3, 3);
   endTurnOf(b, P1);
   assert.equal(tokens(b, "cube"), 3, "P2's turn starts: nothing");
@@ -327,7 +327,7 @@ clause(FLAMING_CUBE, "1:rule", "3 seats: a token is put on it at the start of P1
   endTurnOf(b, P3);
   assert.equal(tokens(b, "cube"), 4, "P1's turn starts: a token");
 });
-clause(FLAMING_CUBE, "2:rule", "3 seats: at 6 tokens it is destroyed and the factions of P2 and P3 each lose 6 influence, not P1's; P3 at 6 is eliminated, P2 survives", () => {
+mpClause(FLAMING_CUBE, "2:rule", 3, "3 seats: at 6 tokens it is destroyed and the factions of P2 and P3 each lose 6 influence, not P1's; P3 at 6 is eliminated, P2 survives", () => {
   const b = cube(3, 5, [], { active: P3, turn: 3, influence: { [P2]: 20, [P3]: 6 } });
   endTurnOf(b, P3);
   assert.equal(zone(b, "cube"), "discard");
@@ -336,13 +336,13 @@ clause(FLAMING_CUBE, "2:rule", "3 seats: at 6 tokens it is destroyed and the fac
   assert.equal(alive(b.engine, P2), true);
   assert.equal(b.engine.state.winner, undefined, "P1 and P2 play on");
 });
-clause(FLAMING_CUBE, "2:rule", "3 seats: both opponents at 6 or less reach 0 in the same unit and P1 wins as the only survivor", () => {
+mpClause(FLAMING_CUBE, "2:rule", 3, "3 seats: both opponents at 6 or less reach 0 in the same unit and P1 wins as the only survivor", () => {
   const b = cube(3, 5, [], { active: P3, turn: 3, influence: { [P2]: 6, [P3]: 4 } });
   endTurnOf(b, P3);
   assert.deepEqual([infl(b.engine, P2) <= 0, infl(b.engine, P3) <= 0, infl(b.engine, P1)], [true, true, 25], "both reached 0 in the same unit, P1's faction is untouched");
   assert.equal(b.engine.state.winner, P1);
 });
-clause(FLAMING_CUBE, "2:rule", "4 seats: all three opponents' factions lose 6; P2 at 20 survives, P3 and P4 at 6 are eliminated together, P1 and P2 play on", () => {
+mpClause(FLAMING_CUBE, "2:rule", 4, "4 seats: all three opponents' factions lose 6; P2 at 20 survives, P3 and P4 at 6 are eliminated together, P1 and P2 play on", () => {
   const b = cube(4, 5, [], { active: P4, turn: 4, influence: { [P2]: 20, [P3]: 6, [P4]: 6 } });
   endTurnOf(b, P4);
   assert.equal(zone(b, "cube"), "discard");
@@ -351,14 +351,14 @@ clause(FLAMING_CUBE, "2:rule", "4 seats: all three opponents' factions lose 6; P
   assert.equal(infl(b.engine, P1), 25);
   assert.equal(b.engine.state.winner, undefined);
 });
-clause(FLAMING_CUBE, "3:rule", "3 seats: with no tokens left it is destroyed and no faction loses influence", () => {
+mpClause(FLAMING_CUBE, "3:rule", 3, "3 seats: with no tokens left it is destroyed and no faction loses influence", () => {
   const b = cube(3, 1, [unit(P2, "x2")], { active: P2, turn: 2 });
   go(b, use(b, P2, "cube", "fc-control", { selected: { x: [b.id("x2")] } }));
   pickOption(b, P2, 1);
   assert.equal(zone(b, "cube"), "discard");
   assert.deepEqual([P1, P2, P3].map((p) => infl(b.engine, p)), [25, 25, 25]);
 });
-clause(FLAMING_CUBE, "4:ability:fc-control", "3 seats: P1, P2 and P3 can each use CONTROL THE FLAME!, each destroying only a character or item of their own as the cost", () => {
+mpClause(FLAMING_CUBE, "4:ability:fc-control", 3, "3 seats: P1, P2 and P3 can each use CONTROL THE FLAME!, each destroying only a character or item of their own as the cost", () => {
   for (const user of [P1, P2, P3]) {
     const b = cube(3, 3, [unit(P1, "x1"), unit(P2, "x2"), unit(P3, "x3")], { active: user, turn: [P1, P2, P3].indexOf(user) + 1 });
     const action = use(b, user, "cube", "fc-control");
@@ -389,7 +389,7 @@ function machine(entering: Pid): Board {
   );
 }
 for (const entering of [P1, P2, P3]) {
-  clause(CONTIGUOUS_MACHINE, "1:rule", `3 seats: a character entering play under ${entering}'s control: ${entering} alone chooses one of the three options`, () => {
+  mpClause(CONTIGUOUS_MACHINE, "1:rule", 3, `3 seats: a character entering play under ${entering}'s control: ${entering} alone chooses one of the three options`, () => {
     const b = machine(entering);
     go(b, play(b, entering, "newbie"));
     assert.equal(pcOf(b.engine)?.kind, "chooserSelectsOption");
@@ -397,7 +397,7 @@ for (const entering of [P1, P2, P3]) {
     assert.equal((pcOf(b.engine) as unknown as { optionCount: number }).optionCount, 3);
   });
 }
-clause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", "3 seats: P2's character enters and P2 picks OPTION 1: P2 picks one resource P2 controls, which goes to its owner's hand (a loaned resource goes to P3's hand)", () => {
+mpClause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", 3, "3 seats: P2's character enters and P2 picks OPTION 1: P2 picks one resource P2 controls, which goes to its owner's hand (a loaned resource goes to P3's hand)", () => {
   const b = machine(P2);
   go(b, play(b, P2, "newbie"));
   pickOption(b, P2, 0);
@@ -408,7 +408,7 @@ clause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", "3 seats: P2's character enters 
   assert.equal(zone(b, "res-p1-0"), "play");
   assert.equal(zone(b, "res-p3-0"), "play");
 });
-clause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", "3 seats: with P3's character entering, P3 picks among resources P3 controls; with P1's character entering, P1 picks among P1's", () => {
+mpClause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", 3, "3 seats: with P3's character entering, P3 picks among resources P3 controls; with P1's character entering, P1 picks among P1's", () => {
   for (const entering of [P3, P1]) {
     const b = machine(entering);
     go(b, play(b, entering, "newbie"));
@@ -418,7 +418,7 @@ clause(CONTIGUOUS_MACHINE, "2:option:OPTION 1", "3 seats: with P3's character en
     assert.deepEqual(new Set(offered(b)), new Set(own), "only the entering character's controller's resources");
   }
 });
-clause(CONTIGUOUS_MACHINE, "3:option:OPTION 2", "3 seats: a P3-controlled character enters and P3 picks OPTION 2: that character is destroyed; P1's and P2's cards stay", () => {
+mpClause(CONTIGUOUS_MACHINE, "3:option:OPTION 2", 3, "3 seats: a P3-controlled character enters and P3 picks OPTION 2: that character is destroyed; P1's and P2's cards stay", () => {
   const b = machine(P3);
   go(b, play(b, P3, "newbie"));
   pickOption(b, P3, 1);
@@ -426,7 +426,7 @@ clause(CONTIGUOUS_MACHINE, "3:option:OPTION 2", "3 seats: a P3-controlled charac
   assert.equal(zone(b, "machine"), "play");
   assert.equal(zone(b, "res-p1-0"), "play");
 });
-clause(CONTIGUOUS_MACHINE, "4:option:OPTION 3", "3 seats: a P2-controlled character enters and P2 picks OPTION 3: P2's faction loses 3 influence; P1's and P3's do not", () => {
+mpClause(CONTIGUOUS_MACHINE, "4:option:OPTION 3", 3, "3 seats: a P2-controlled character enters and P2 picks OPTION 3: P2's faction loses 3 influence; P1's and P3's do not", () => {
   const b = machine(P2);
   go(b, play(b, P2, "newbie"));
   pickOption(b, P2, 2);

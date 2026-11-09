@@ -2,7 +2,7 @@
 // data/card-tests/mp-spec/holy-heist.json, status "changes"). Real printings, real 3- and 4-seat games, `perform` only.
 
 import assert from "node:assert/strict";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import type { CardDefinition, PlayerId } from "../../../../engine.js";
 import { item, location as locationCard, tactic } from "../../support/fixtures.js";
 import {
@@ -51,8 +51,8 @@ function checkOut(count: Seats): void {
   assert.equal(handOf(t, P1).length, 3, "the controller's hand is untouched");
 }
 
-clause(BIB, "4:ability:bib-checkout", "3 seats: P1 checks out; P2 and P3 each choose and discard 2 cards from their own hand, in that order; P1's hand is unchanged", () => checkOut(3));
-clause(BIB, "4:ability:bib-checkout", "4 seats: P2, P3 and P4 each discard 2 cards of their own choice, in that order; P1 does not", () => checkOut(4));
+mpClause(BIB, "4:ability:bib-checkout", 3, "3 seats: P1 checks out; P2 and P3 each choose and discard 2 cards from their own hand, in that order; P1's hand is unchanged", () => checkOut(3));
+mpClause(BIB, "4:ability:bib-checkout", 4, "4 seats: P2, P3 and P4 each discard 2 cards of their own choice, in that order; P1 does not", () => checkOut(4));
 
 // --- 0v3rw0rk3d 31f ------------------------------------------------------------------------------------------------
 // [E][E][E][E][E][E]: Locations opponents control lose 1 structure.
@@ -76,8 +76,8 @@ function elfCheck(count: Seats): void {
   for (const seat of seatsOf(count)) assert.equal(without.engine.getStat(without.id(`loc-${seat}`), "structure"), 5, "without the threshold nobody loses structure");
 }
 
-clause(ELF, "1:rule@eeeeee", "3 seats: with [E] x6 the locations P2 controls and the locations P3 controls each lose 1 structure; P1's lose none; without the threshold nobody's do", () => elfCheck(3));
-clause(ELF, "1:rule@eeeeee", "4 seats: P2's, P3's and P4's locations each lose 1 structure; P1's do not", () => elfCheck(4));
+mpClause(ELF, "1:rule@eeeeee", 3, "3 seats: with [E] x6 the locations P2 controls and the locations P3 controls each lose 1 structure; P1's lose none; without the threshold nobody's do", () => elfCheck(3));
+mpClause(ELF, "1:rule@eeeeee", 4, "4 seats: P2's, P3's and P4's locations each lose 1 structure; P1's do not", () => elfCheck(4));
 
 // --- Underdog ------------------------------------------------------------------------------------------------------
 // This card gains X strength, where X is the number of characters in play that your opponents own.
@@ -107,15 +107,15 @@ function underdogCheck(count: Seats): void {
   assert.equal(bonus(), count === 4 ? 4 : 2);
 }
 
-clause(UNDERDOG, "0:rule", "3 seats: P2 owns 2 and P3 owns 1 character in play: +3 strength by owner; P1's own characters never count; a P3-owned character leaving drops it to +2", () => underdogCheck(3));
-clause(UNDERDOG, "0:rule", "4 seats: with P4 owning 2 characters Underdog gains 5 strength", () => underdogCheck(4));
+mpClause(UNDERDOG, "0:rule", 3, "3 seats: P2 owns 2 and P3 owns 1 character in play: +3 strength by owner; P1's own characters never count; a P3-owned character leaving drops it to +2", () => underdogCheck(3));
+mpClause(UNDERDOG, "0:rule", 4, "4 seats: with P4 owning 2 characters Underdog gains 5 strength", () => underdogCheck(4));
 
 // --- Thabbashite Urchin --------------------------------------------------------------------------------------------
 // [V][V][V]: While an opponent controls an item, this card cannot be blocked.
 
 const URCHIN = "e4730213-75fc-4614-9466-1b3c1e42e630";
 
-clause(URCHIN, "0:rule@vvv", "3 seats: [V][V][V] and an item controlled by P3 (not P2) makes it unblockable; an item only P1 controls does not; when P3's item leaves it can be blocked again", () => {
+mpClause(URCHIN, "0:rule@vvv", 3, "3 seats: [V][V][V] and an item controlled by P3 (not P2) makes it unblockable; an item only P1 controls does not; when P3's item leaves it can be blocked again", () => {
   const t = table(3, [
     { key: "urchin", def: printing(URCHIN), owner: P1, zone: "play" },
     ...volition(3, P1),
@@ -161,7 +161,7 @@ function smTable(): Table {
 const microTokens = (t: Table, who: string): number =>
   Object.values(t.engine.state.cards).filter((c) => c.zone === "play" && c.controllerId === who && c.isToken && t.engine.getDefinition(c.id).name === "Micromajig").length;
 
-clause(SM, "0:extraCost", "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no other opponent step appears", () => {
+mpClause(SM, "0:extraCost", 3, "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no other opponent step appears", () => {
   const t = smTable();
   attackOpen(t, P2, ["a2"], { type: "faction", playerId: P1 });
   assert.deepEqual(sorted(pickCandidates(t, P1, "sm", "p")), sorted([factionOf(t, P2), factionOf(t, P3)]));
@@ -171,7 +171,7 @@ clause(SM, "0:extraCost", "3 seats: the opponent pick offers P2's and P3's facti
   assert.equal(microTokens(t, P1), 0, "the token was destroyed as the cost");
 });
 
-clause(SM, "1:rule", "3 seats: P2 attacks P1's faction and P1 picks P2: P2's attacker is destroyed and P2 (not P3) puts a Micromajig token into play", () => {
+mpClause(SM, "1:rule", 3, "3 seats: P2 attacks P1's faction and P1 picks P2: P2's attacker is destroyed and P2 (not P3) puts a Micromajig token into play", () => {
   const t = smTable();
   attackOpen(t, P2, ["a2"], { type: "faction", playerId: P1 });
   play(t, P1, "sm", { selected: { p: [factionOf(t, P2)], tok: [t.id("tok")] } });
@@ -187,7 +187,7 @@ clause(SM, "1:rule", "3 seats: P2 attacks P1's faction and P1 picks P2: P2's att
   assert.equal(microTokens(t, P1), 0);
 });
 
-clause(SM, "1:rule", "3 seats: P2's character is the only attacker and P1 picks P3: P2's character survives and P3 still puts a Micromajig token into play", () => {
+mpClause(SM, "1:rule", 3, "3 seats: P2's character is the only attacker and P1 picks P3: P2's character survives and P3 still puts a Micromajig token into play", () => {
   const t = smTable();
   attackOpen(t, P2, ["a2"], { type: "faction", playerId: P1 });
   play(t, P1, "sm", { selected: { p: [factionOf(t, P3)], tok: [t.id("tok")] } });
@@ -207,7 +207,7 @@ clause(SM, "1:rule", "3 seats: P2's character is the only attacker and P1 picks 
 
 const CASINO = "c1fdf3be-4790-4560-a4a0-920a951833a4";
 
-clause(CASINO, "1:ability:thieving-casino-cashout", "3 seats: the pick offers the characters in P2's and P3's discard piles but not P1's own; P1 takes P3's cost-2 character for X+4 = 6 and P2's pile is unchanged", () => {
+mpClause(CASINO, "1:ability:thieving-casino-cashout", 3, "3 seats: the pick offers the characters in P2's and P3's discard piles but not P1's own; P1 takes P3's cost-2 character for X+4 = 6 and P2's pile is unchanged", () => {
   const t = table(3, [
     { key: "tc", def: printing(CASINO), owner: P1, zone: "play" },
     { key: "mine", def: character({ name: "Mine", cost: 1 }), owner: P1, zone: "discard" },
@@ -252,7 +252,7 @@ function gatheringTable(active: PlayerId): Table {
   );
 }
 
-clause(GATHERING, "0:extraCost", "3 seats: on P1's own turn outside a battle the opponent pick offers P2's and P3's factions; refused during P2's turn and during any battle", () => {
+mpClause(GATHERING, "0:extraCost", 3, "3 seats: on P1's own turn outside a battle the opponent pick offers P2's and P3's factions; refused during P2's turn and during any battle", () => {
   const t = gatheringTable(P1);
   assert.deepEqual(sorted(pickCandidates(t, P1, "guh", "p")), sorted([factionOf(t, P2), factionOf(t, P3)]));
   assert.deepEqual(playRequirements(t, P1, "guh").filter((r) => r.kind === "players"), []);
@@ -294,7 +294,7 @@ function blowTable(active: PlayerId): Table {
   );
 }
 
-clause(BLOW, "0:extraCost", "3 seats: P2 attacks P1's faction: P2's attackers are legal picks; P3 attacking P2, P2 attacking P1's location, and P1's own characters are not", () => {
+mpClause(BLOW, "0:extraCost", 3, "3 seats: P2 attacks P1's faction: P2's attackers are legal picks; P3 attacking P2, P2 attacking P1's location, and P1's own characters are not", () => {
   const t = blowTable(P2);
   attackOpen(t, P2, ["a2"], { type: "faction", playerId: P1 });
   assert.deepEqual(pickCandidates(t, P1, "blow", "c"), [t.id("a2")], "only the attacking character of the attack on P1's faction");
@@ -313,7 +313,7 @@ clause(BLOW, "0:extraCost", "3 seats: P2 attacks P1's faction: P2's attackers ar
   assert.deepEqual(pickCandidates(third, P1, "blow", "c"), [third.id("a3")], "whichever opponent attacks P1's faction");
 });
 
-clause(BLOW, "1:rule", "3 seats: the picked attacker takes 1 damage and leaves the battle, and P1 (not P2, not P3) draws a card; the same when P3 is the attacker", () => {
+mpClause(BLOW, "1:rule", 3, "3 seats: the picked attacker takes 1 damage and leaves the battle, and P1 (not P2, not P3) draws a card; the same when P3 is the attacker", () => {
   for (const attacker of [P2, P3] as const) {
     const key = attacker === P2 ? "a2" : "a3";
     const t = blowTable(attacker);
@@ -351,7 +351,7 @@ function tollTable(rage = 8): Table {
   ]);
 }
 
-clause(TOLL, "2:rule@rrrrrr", "3 seats: a character P2 owns (under P3's control) is destroyed: P1 may pay 1 and pick any faction; a P3-owned one triggers it too; a P1-owned one under P2's control does not", () => {
+mpClause(TOLL, "2:rule@rrrrrr", 3, "3 seats: a character P2 owns (under P3's control) is destroyed: P1 may pay 1 and pick any faction; a P3-owned one triggers it too; a P1-owned one under P2's control does not", () => {
   for (const [victim, factionPlayer] of [["c2", P3], ["c3", P2], ["c2", P1]] as const) {
     const t = tollTable();
     play(t, P1, "kill", { selected: { t: [t.id(victim)] } });
@@ -385,7 +385,7 @@ function ferocityTable(): Table {
   ]);
 }
 
-clause(FEROCITY, "2:ability:flip-it", "3 seats: X counts only the picked player's resources: picking P2 (10 vs P1's 6) deals 4 to P2's faction only, picking P3 (8) deals 2 to P3's, picking P1 deals none", () => {
+mpClause(FEROCITY, "2:ability:flip-it", 3, "3 seats: X counts only the picked player's resources: picking P2 (10 vs P1's 6) deals 4 to P2's faction only, picking P3 (8) deals 2 to P3's, picking P1 deals none", () => {
   for (const [picked, damage] of [[P2, 4], [P3, 2], [P1, 0]] as const) {
     const t = ferocityTable();
     const before = Object.fromEntries(t.seats.map((seat) => [seat, influenceOf(t, seat)]));
@@ -420,8 +420,8 @@ function nesterCheck(count: Seats): void {
   assert.equal(bonus("strength"), expected - 1, "a character card leaving P3's pile drops the bonus by one");
 }
 
-clause(NESTER, "1:rule", "3 seats: P2's pile holds 2 character cards and a tactic, P3's 1, P1's own 3: +3 / +3; a character card leaving P3's pile makes it +2 / +2", () => nesterCheck(3));
-clause(NESTER, "1:rule", "4 seats: with P4's pile holding 2 character cards the bonus is +5 / +5", () => nesterCheck(4));
+mpClause(NESTER, "1:rule", 3, "3 seats: P2's pile holds 2 character cards and a tactic, P3's 1, P1's own 3: +3 / +3; a character card leaving P3's pile makes it +2 / +2", () => nesterCheck(3));
+mpClause(NESTER, "1:rule", 4, "4 seats: with P4's pile holding 2 character cards the bonus is +5 / +5", () => nesterCheck(4));
 
 // --- Cheats, the Dirty Rotten --------------------------------------------------------------------------------------
 // EXTRA COST: Pick an opponent.
@@ -439,7 +439,7 @@ function cheatsTable(): Table {
   ]);
 }
 
-clause(CHEATS, "1:extraCost", "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no further opponent step appears", () => {
+mpClause(CHEATS, "1:extraCost", 3, "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no further opponent step appears", () => {
   const t = cheatsTable();
   assert.deepEqual(sorted(pickCandidates(t, P1, "cheats", "opp")), sorted([factionOf(t, P2), factionOf(t, P3)]));
   assert.deepEqual(playRequirements(t, P1, "cheats").filter((r) => r.kind === "players"), []);
@@ -448,7 +448,7 @@ clause(CHEATS, "1:extraCost", "3 seats: the opponent pick offers P2's and P3's f
   assert.equal(zoneOf(t, "cheats"), "play");
 });
 
-clause(CHEATS, "2:rule", "3 seats: with P3 picked P1 searches P3's deck (not P2's) for 4 different non-resource cards, they go to the void and 2 at random to P3's discard pile; P2's deck is untouched", () => {
+mpClause(CHEATS, "2:rule", 3, "3 seats: with P3 picked P1 searches P3's deck (not P2's) for 4 different non-resource cards, they go to the void and 2 at random to P3's discard pile; P2's deck is untouched", () => {
   for (const [picked, other] of [[P3, "two"], [P2, "three"]] as const) {
     const t = cheatsTable();
     const pickedKey = picked === P3 ? "three" : "two";
@@ -472,7 +472,7 @@ clause(CHEATS, "2:rule", "3 seats: with P3 picked P1 searches P3's deck (not P2'
 
 const PROFANE = "7f75ce4c-b81e-45a9-973a-1bbe50fb43e4";
 
-clause(PROFANE, "0:extraCost", "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no further opponent step appears", () => {
+mpClause(PROFANE, "0:extraCost", 3, "3 seats: the opponent pick offers P2's and P3's factions and not P1's; P1 picks P3 and no further opponent step appears", () => {
   const t = table(3, [
     { key: "pp", def: printing(PROFANE), owner: P1, zone: "hand" },
     ...bank("obsession", 6, P1),
@@ -503,7 +503,7 @@ function blitzTable(mine: number, p2: number, p3: number): Table {
 const faceDownOf = (t: Table, who: PlayerId): string[] =>
   Object.values(t.engine.state.cards).filter((c) => c.zone === "play" && c.controllerId === who && c.faceDown).map((c) => c.id);
 
-clause(BLITZ, "0:extraCost", "3 seats: P1 controls 3 resources, P2 5, P3 2: only P2 qualifies; with P3 at 4 both do; with nobody above P1 the card cannot be played; P1 cannot pick itself", () => {
+mpClause(BLITZ, "0:extraCost", 3, "3 seats: P1 controls 3 resources, P2 5, P3 2: only P2 qualifies; with P3 at 4 both do; with nobody above P1 the card cannot be played; P1 cannot pick itself", () => {
   const t = blitzTable(3, 5, 2);
   assert.deepEqual(playRequirements(t, P1, "blitz"), [{ kind: "players", choices: [{ id: "p", candidates: [P2, P3] }] }], "the player is named with the play (a player choice, not a card pick)");
   refusal(() => play(t, P1, "blitz", { players: { p: P3 } }));
@@ -523,7 +523,7 @@ clause(BLITZ, "0:extraCost", "3 seats: P1 controls 3 resources, P2 5, P3 2: only
   assert.equal(zoneOf(none, "blitz"), "hand");
 });
 
-clause(BLITZ, "1:rule", "3 seats: the picked player (P2, not P3) chooses and destroys a face-down resource they control; picking P3 (4 resources) has only P3 choose", () => {
+mpClause(BLITZ, "1:rule", 3, "3 seats: the picked player (P2, not P3) chooses and destroys a face-down resource they control; picking P3 (4 resources) has only P3 choose", () => {
   for (const [picked, bystander, p2, p3] of [[P2, P3, 5, 2], [P3, P2, 2, 4]] as const) {
     const t = blitzTable(3, p2, p3);
     const pickedBefore = faceDownOf(t, picked);

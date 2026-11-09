@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   accepts,
   act,
@@ -52,7 +52,7 @@ function strikerTable(count: Count): Table {
   ]);
 }
 
-clause(DEADLY_STRIKER, "0:rule", "3 seats: when it is destroyed P1 picks which opponent's faction loses 4; the other opponent and P1 are unaffected", () => {
+mpClause(DEADLY_STRIKER, "0:rule", 3, "3 seats: when it is destroyed P1 picks which opponent's faction loses 4; the other opponent and P1 are unaffected", () => {
   for (const chosen of [P2, P3]) {
     const t = strikerTable(3);
     const before = snapshot(t);
@@ -65,7 +65,7 @@ clause(DEADLY_STRIKER, "0:rule", "3 seats: when it is destroyed P1 picks which o
   }
 });
 
-clause(DEADLY_STRIKER, "0:rule", "4 seats: every opponent can be picked; only the picked one loses 4", () => {
+mpClause(DEADLY_STRIKER, "0:rule", 4, "4 seats: every opponent can be picked; only the picked one loses 4", () => {
   for (const chosen of [P2, P3, P4]) {
     const t = strikerTable(4);
     const before = snapshot(t);
@@ -76,7 +76,7 @@ clause(DEADLY_STRIKER, "0:rule", "4 seats: every opponent can be picked; only th
   }
 });
 
-clause(DEADLY_STRIKER, "0:rule", "3 seats: with one opponent already out nobody is asked and the last opponent loses 4", () => {
+mpClause(DEADLY_STRIKER, "0:rule", 3, "3 seats: with one opponent already out nobody is asked and the last opponent loses 4", () => {
   const t = strikerTable(3);
   t.engine.state.players[P3]!.eliminated = { turn: 1 };
   const before = snapshot(t);
@@ -98,7 +98,7 @@ function enlightenedTable(count: Count): Table {
   ]);
 }
 
-clause(ENLIGHTENED, "0:rule", "3 seats: when a character is destroyed P1 gains 1 and both opponents lose 1, with no opponent prompt", () => {
+mpClause(ENLIGHTENED, "0:rule", 3, "3 seats: when a character is destroyed P1 gains 1 and both opponents lose 1, with no opponent prompt", () => {
   for (const victim of [P1, P2, P3]) {
     const t = enlightenedTable(3);
     const before = snapshot(t);
@@ -111,7 +111,7 @@ clause(ENLIGHTENED, "0:rule", "3 seats: when a character is destroyed P1 gains 1
   }
 });
 
-clause(ENLIGHTENED, "0:rule", "4 seats: P1 gains 1 and P2, P3 and P4 each lose 1; an eliminated seat is skipped", () => {
+mpClause(ENLIGHTENED, "0:rule", 4, "4 seats: P1 gains 1 and P2, P3 and P4 each lose 1; an eliminated seat is skipped", () => {
   const t = enlightenedTable(4);
   const before = snapshot(t);
   playCard(t, P1, "kill", { selected: { t: [t.id("c-p2")] } });
@@ -132,7 +132,7 @@ function brainwormTable(count: Count): Table {
   return table(count, [{ key: "me", def: printing(BRAINWORM), owner: P1, zone: "hand" }, ...res({ obsession: 8 })]);
 }
 
-clause(BRAINWORM, "0:rule", "3 seats: when it enters play both opponents lose 3 and P1 does not, with no opponent prompt", () => {
+mpClause(BRAINWORM, "0:rule", 3, "3 seats: when it enters play both opponents lose 3 and P1 does not, with no opponent prompt", () => {
   const t = brainwormTable(3);
   const before = snapshot(t);
   playCard(t, P1, "me");
@@ -141,7 +141,7 @@ clause(BRAINWORM, "0:rule", "3 seats: when it enters play both opponents lose 3 
   assert.deepEqual(t.seats.map((seat) => lost(t, before, seat)), [0, 3, 3]);
 });
 
-clause(BRAINWORM, "0:rule", "4 seats: P2, P3 and P4 each lose 3; with P3 out only P2 and P4 do", () => {
+mpClause(BRAINWORM, "0:rule", 4, "4 seats: P2, P3 and P4 each lose 3; with P3 out only P2 and P4 do", () => {
   const t = brainwormTable(4);
   const before = snapshot(t);
   playCard(t, P1, "me");
@@ -169,7 +169,7 @@ function brainbathTable(count: Count, handSizes: Partial<Record<PlayerId, number
   ]);
 }
 
-clause(BRAINBATH, "1:ability:recur", "3 seats: RECUR makes P2 then P3 each choose and discard their own card; P1 discards nothing and draws once", () => {
+mpClause(BRAINBATH, "1:ability:recur", 3, "3 seats: RECUR makes P2 then P3 each choose and discard their own card; P1 discards nothing and draws once", () => {
   const t = brainbathTable(3);
   activate(t, P1, "me", "recur");
   expectPending(t, "chooserSelectsTarget", P2);
@@ -188,7 +188,7 @@ clause(BRAINBATH, "1:ability:recur", "3 seats: RECUR makes P2 then P3 each choos
   assert.equal(zoneOf(t, "me"), "void", "the cost voided Brainbath");
 });
 
-clause(BRAINBATH, "1:ability:recur", "3 seats: with P3 eliminated only P2 discards and nobody asks P3", () => {
+mpClause(BRAINBATH, "1:ability:recur", 3, "3 seats: with P3 eliminated only P2 discards and nobody asks P3", () => {
   const t = brainbathTable(3);
   t.engine.state.players[P3]!.eliminated = { turn: 1 };
   activate(t, P1, "me", "recur");
@@ -199,7 +199,7 @@ clause(BRAINBATH, "1:ability:recur", "3 seats: with P3 eliminated only P2 discar
   assert.equal(zoneOf(t, "p3h1"), "hand");
 });
 
-clause(BRAINBATH, "1:ability:recur", "4 seats: P2, P3 and P4 discard in that order, an empty hand is skipped, then P1 draws once", () => {
+mpClause(BRAINBATH, "1:ability:recur", 4, "4 seats: P2, P3 and P4 discard in that order, an empty hand is skipped, then P1 draws once", () => {
   const t = brainbathTable(4, { p3: 0 });
   activate(t, P1, "me", "recur");
   expectPending(t, "chooserSelectsTarget", P2);
@@ -228,7 +228,7 @@ function behemothTable(count: Count, spare: Partial<Record<PlayerId, number>> = 
   ]);
 }
 
-clause(BEHEMOTH, "0:rule", "3 seats: when deployed P2 then P3 each choose and destroy 4 of their own non-staple cards; P1's cards and staples are untouched", () => {
+mpClause(BEHEMOTH, "0:rule", 3, "3 seats: when deployed P2 then P3 each choose and destroy 4 of their own non-staple cards; P1's cards and staples are untouched", () => {
   const t = behemothTable(3);
   playCard(t, P1, "me");
   expectPending(t, "chooserSelectsTarget", P2);
@@ -246,7 +246,7 @@ clause(BEHEMOTH, "0:rule", "3 seats: when deployed P2 then P3 each choose and de
   assert.ok(staples.every((card) => card.zone === "play"), "staple cards are never destroyed");
 });
 
-clause(BEHEMOTH, "0:rule", "3 seats: an opponent with fewer than 4 non-staple cards destroys all they have", () => {
+mpClause(BEHEMOTH, "0:rule", 3, "3 seats: an opponent with fewer than 4 non-staple cards destroys all they have", () => {
   const t = behemothTable(3, { p3: 2 });
   playCard(t, P1, "me");
   select(t, P2, ["p2c0", "p2c1", "p2c2", "p2c3"]);
@@ -256,7 +256,7 @@ clause(BEHEMOTH, "0:rule", "3 seats: an opponent with fewer than 4 non-staple ca
   assert.equal(zoneOf(t, "p3c1"), "discard");
 });
 
-clause(BEHEMOTH, "0:rule", "4 seats: P2, then P3, then P4 each destroy 4 non-staple cards they control; P1 destroys nothing", () => {
+mpClause(BEHEMOTH, "0:rule", 4, "4 seats: P2, then P3, then P4 each destroy 4 non-staple cards they control; P1 destroys nothing", () => {
   const t = behemothTable(4);
   playCard(t, P1, "me");
   for (const seat of [P2, P3, P4]) {
@@ -297,7 +297,7 @@ function substituteThenKill(t: Table, killer: PlayerId, targetKey: string): void
   act(t, { type: "playCard", playerId: killer, cardId: t.id(`kill-${killer}`), selected: { t: [t.id(targetKey)] } } as never);
 }
 
-clause(ESCORT_ALLY, "0:ability:escort-ally-substitute", "3 seats: after SUBSTITUTE neither P2's nor P3's cards can destroy a P1 character, P1's own and others' still can", () => {
+mpClause(ESCORT_ALLY, "0:ability:escort-ally-substitute", 3, "3 seats: after SUBSTITUTE neither P2's nor P3's cards can destroy a P1 character, P1's own and others' still can", () => {
   for (const killer of [P2, P3]) {
     const t = allyTable(3);
     substituteThenKill(t, killer, "mine");
@@ -313,7 +313,7 @@ clause(ESCORT_ALLY, "0:ability:escort-ally-substitute", "3 seats: after SUBSTITU
   assert.equal(zoneOf(other, "c-p3"), "discard", "a P2 card still destroys a P3 character");
 });
 
-clause(ESCORT_ALLY, "0:ability:escort-ally-substitute", "4 seats: the protection holds against P2, P3 and P4 alike; a P2 card still destroys a P4 character", () => {
+mpClause(ESCORT_ALLY, "0:ability:escort-ally-substitute", 4, "4 seats: the protection holds against P2, P3 and P4 alike; a P2 card still destroys a P4 character", () => {
   for (const killer of [P2, P3, P4]) {
     const t = allyTable(4);
     substituteThenKill(t, killer, "mine");
@@ -347,7 +347,7 @@ function templeTable(count: Count, extra: Parameters<typeof table>[1] = [], opti
   );
 }
 
-clause(TEMPLE, "1:rule", "3 seats: P2's and P3's characters lose 1 strength, 1 life and 1 speed, P1's do not, a later P3 arrival is hit, and it ends with the Temple", () => {
+mpClause(TEMPLE, "1:rule", 3, "3 seats: P2's and P3's characters lose 1 strength, 1 life and 1 speed, P1's do not, a later P3 arrival is hit, and it ends with the Temple", () => {
   const t = templeTable(3);
   assert.deepEqual(stats(t, "c-p1"), [3, 4, 3]);
   assert.deepEqual(stats(t, "c-p2"), [2, 3, 2]);
@@ -363,7 +363,7 @@ clause(TEMPLE, "1:rule", "3 seats: P2's and P3's characters lose 1 strength, 1 l
   for (const seat of [P1, P2, P3]) assert.deepEqual(stats(gone, `c-${seat}`), [3, 4, 3], `${seat}'s stats returned`);
 });
 
-clause(TEMPLE, "1:rule", "4 seats: characters of P2, P3 and P4 each lose 1/1/1 and P1's do not", () => {
+mpClause(TEMPLE, "1:rule", 4, "4 seats: characters of P2, P3 and P4 each lose 1/1/1 and P1's do not", () => {
   const t = templeTable(4);
   assert.deepEqual(stats(t, "c-p1"), [3, 4, 3]);
   for (const seat of [P2, P3, P4]) assert.deepEqual(stats(t, `c-${seat}`), [2, 3, 2], seat);
@@ -390,7 +390,7 @@ const readyOf = (t: Table, player: PlayerId): number => t.engine.getAvailableRes
 const attack = (t: Table, player: PlayerId, target: PlayerId): void =>
   act(t, { type: "declareAttack", playerId: player, attackerIds: [t.id(`c-${player}`)], target: { type: "faction", playerId: target } });
 
-clause(MINISTRY, "0:rule", "3 seats: forming an attacking party costs P2 2 and costs P3 2; P1's own party costs nothing", () => {
+mpClause(MINISTRY, "0:rule", 3, "3 seats: forming an attacking party costs P2 2 and costs P3 2; P1's own party costs nothing", () => {
   for (const attacker of [P2, P3]) {
     const poor = ministryTable(3, attacker, 1);
     refused(() => attack(poor, attacker, P1), `${attacker} cannot pay 2 with 1 resource`);
@@ -406,17 +406,17 @@ clause(MINISTRY, "0:rule", "3 seats: forming an attacking party costs P2 2 and c
     ...res({ greed: 3 }, P1)
   ]);
   attack(own, P1, P2);
-  assert.ok(own.engine.state.battle);
+  assert.ok(own.engine.state.battle, "own.engine.state.battle");
   assert.equal(readyOf(own, P1), 3, "the controller pays nothing");
 });
 
-clause(MINISTRY, "0:rule", "4 seats: P2, P3 and P4 each pay 2 to form an attacking party; P1 pays nothing", () => {
+mpClause(MINISTRY, "0:rule", 4, "4 seats: P2, P3 and P4 each pay 2 to form an attacking party; P1 pays nothing", () => {
   for (const attacker of [P2, P3, P4]) {
     const poor = ministryTable(4, attacker, 1);
     refused(() => attack(poor, attacker, P1), `${attacker} cannot pay 2 with 1 resource`);
     const rich = ministryTable(4, attacker, 3);
     attack(rich, attacker, P1);
-    assert.ok(rich.engine.state.battle);
+    assert.ok(rich.engine.state.battle, "rich.engine.state.battle");
     assert.equal(readyOf(rich, attacker), 1, `${attacker} paid exactly 2`);
   }
 });

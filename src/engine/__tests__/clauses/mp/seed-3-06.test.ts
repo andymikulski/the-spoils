@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { tactic } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { answer, expectChoice, othersOf, P1, pending, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
 
@@ -50,7 +50,7 @@ const playAlarm = (t: Table): void => {
 };
 
 for (const count of [3, 4] as const) {
-  clause(ALARM, "0:rule", `${count} seats: every other unresolved card (each opponent's) is terminated when it resolves`, () => {
+  mpClause(ALARM, "0:rule", count, `${count} seats: every other unresolved card (each opponent's) is terminated when it resolves`, () => {
     const t = table(count, [
       { key: "alarm", def: printing(ALARM), owner: P1, zone: "hand" },
       ...staples("elitism", 2),
@@ -76,7 +76,7 @@ for (const count of [3, 4] as const) {
     for (const seat of othersOf(count)) assert.equal(t.engine.state.cards[t.id(`foo-${seat}`)]!.zone, "discard", `${seat}'s card was terminated, not resolved`);
   });
 
-  clause(ALARM, "1:rule", `${count} seats: if any one opponent deployed 2 same-name cards this turn, only the controller puts up to 2 tokens into play; no opponent is asked`, () => {
+  mpClause(ALARM, "1:rule", count, `${count} seats: if any one opponent deployed 2 same-name cards this turn, only the controller puts up to 2 tokens into play; no opponent is asked`, () => {
     for (const seat of othersOf(count)) {
       const t = alarmTable(count, { [seat]: ["foo", "foo"] });
       playAlarm(t);
@@ -89,7 +89,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ALARM, "1:rule", `${count} seats: when no single opponent deployed 2 same-name cards (even if the same name was deployed twice in total), each opponent is asked separately, in turn order, whether to put 3 tokens into play under their own control`, () => {
+  mpClause(ALARM, "1:rule", count, `${count} seats: when no single opponent deployed 2 same-name cards (even if the same name was deployed twice in total), each opponent is asked separately, in turn order, whether to put 3 tokens into play under their own control`, () => {
     const deploys: Partial<Record<PlayerId, Array<"foo" | "bar">>> = { p2: ["foo", "bar"], p3: ["foo"] };
     const t = alarmTable(count, deploys);
     playAlarm(t);

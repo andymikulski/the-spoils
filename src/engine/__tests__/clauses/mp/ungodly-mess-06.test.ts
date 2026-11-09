@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import type { PlayerId } from "../../../../engine.js";
 import { autoResolveBattle, bank, character, resolvePendingResponses, tactic } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, activate, answerChoice, choose, chooseIndex, handOf, influence, mayPay, offered, pass, pending, play, playRaw, playerAsk, requirements, seated, spent, table, type Table } from "./_ungodly-mess.js";
 
 const BLESSING = "c71f0071-5ef8-4b3b-9356-149cad14c9bd"; // God's Blessing of Readiness
@@ -73,11 +73,11 @@ function blessingRound(seats: number, holder: PlayerId): Record<PlayerId, boolea
   return fired as Record<PlayerId, boolean>;
 }
 
-clause(BLESSING, "3.1:grant-rule", "3 seats: for P1's character it triggers at the start of P2's turn and of P3's turn, not at P1's own; attached to P2's character it triggers at P1's and P3's turns for P2, not at P2's own", () => {
+mpClause(BLESSING, "3.1:grant-rule", 3, "3 seats: for P1's character it triggers at the start of P2's turn and of P3's turn, not at P1's own; attached to P2's character it triggers at P1's and P3's turns for P2, not at P2's own", () => {
   assert.deepEqual(blessingRound(3, P1), { [P2]: true, [P3]: true, [P1]: false });
   assert.deepEqual(blessingRound(3, P2), { [P2]: false, [P3]: true, [P1]: true });
 });
-clause(BLESSING, "3.1:grant-rule", "4 seats: for P1's character it triggers at the starts of P2's, P3's and P4's turns, and not at P1's own", () => {
+mpClause(BLESSING, "3.1:grant-rule", 4, "4 seats: for P1's character it triggers at the starts of P2's, P3's and P4's turns, and not at P1's own", () => {
   assert.deepEqual(blessingRound(4, P1), { [P2]: true, [P3]: true, [P4]: true, [P1]: false });
 });
 
@@ -124,9 +124,9 @@ const intrusionClause = (seats: number) => () => {
   assert.equal(ordinary.engine.state.responseWindow?.phase, "acceptingResponses", "and gives the opponents a response window");
   assert.notEqual(ordinary.engine.state.responseWindow?.priorityPlayerId, P1);
 };
-clause(INTRUSION, "0:extraCost", "3 seats: neither P2 nor P3 gets a response window for it; an ordinary tactic in the same spot gives them one", intrusionClause(3));
-clause(INTRUSION, "0:extraCost", "4 seats: P2, P3 and P4 get no response window for it", intrusionClause(4));
-clause(INTRUSION, "0:extraCost", "3 seats: it is refused in response to something that is not a character's ability", () => {
+mpClause(INTRUSION, "0:extraCost", 3, "3 seats: neither P2 nor P3 gets a response window for it; an ordinary tactic in the same spot gives them one", intrusionClause(3));
+mpClause(INTRUSION, "0:extraCost", 4, "4 seats: P2, P3 and P4 get no response window for it", intrusionClause(4));
+mpClause(INTRUSION, "0:extraCost", 3, "3 seats: it is refused in response to something that is not a character's ability", () => {
   const t = intrusionTable(3);
   playRaw(t, P2, "spell");
   pass(t, P3);
@@ -152,11 +152,11 @@ function urchinPickers(seats: number, depleted: boolean): Record<string, boolean
   };
   return { ...Object.fromEntries(pickers.map(who => [who, canPick(who, `poke-${who}`)])), [P1]: canPick(P1, "mine") };
 }
-clause(URCHIN, "0:rule", "3 seats: while depleted neither P2 nor P3 can pick it but P1 can; while ready both can", () => {
+mpClause(URCHIN, "0:rule", 3, "3 seats: while depleted neither P2 nor P3 can pick it but P1 can; while ready both can", () => {
   assert.deepEqual(urchinPickers(3, true), { [P2]: false, [P3]: false, [P1]: true });
   assert.deepEqual(urchinPickers(3, false), { [P2]: true, [P3]: true, [P1]: true });
 });
-clause(URCHIN, "0:rule", "4 seats: P2, P3 and P4 cannot pick the depleted Urchin; P1 can", () => {
+mpClause(URCHIN, "0:rule", 4, "4 seats: P2, P3 and P4 cannot pick the depleted Urchin; P1 can", () => {
   assert.deepEqual(urchinPickers(4, true), { [P2]: false, [P3]: false, [P4]: false, [P1]: true });
 });
 
@@ -178,7 +178,7 @@ function funhouseTable() {
 const funhouse = (t: Table, opponent: PlayerId | undefined, a: string) => ({ type: "playCard", playerId: P1, cardId: t.id("fh"), selected: { a: [t.id(a)], b: [t.id("mine")] }, variables: {}, ...(opponent ? { players: { opponent } } : {}) });
 const stats = (t: Table, key: string): number[] => ["strength", "life", "speed"].map(stat => t.engine.getStat(t.id(key), stat as never));
 
-clause(FUNHOUSE, ["0:rule", "1:rule"], "3 seats: the opponent is chosen when it is played (P2 or P3); only that opponent's character can be the first pick; the stats are switched while it is in play", () => {
+mpClause(FUNHOUSE, ["0:rule", "1:rule"], 3, "3 seats: the opponent is chosen when it is played (P2 or P3); only that opponent's character can be the first pick; the stats are switched while it is in play", () => {
   const t = funhouseTable();
   assert.deepEqual(playerAsk(t, funhouse(t, undefined, "c2")), { id: "opponent", candidates: [P2, P3] });
   refused(() => t.engine.perform(funhouse(t, P2, "c3") as never), "P3's character when P2 is the chosen opponent");
@@ -212,7 +212,7 @@ function cicibeoTable(topIsCharacter: boolean) {
     { key: "top3", def: topIsCharacter ? character({ name: "P3 top" }) : tactic({ name: "P3 top tactic" }), owner: P3, zone: "deck" }
   ]);
 }
-clause(CICIBEO, "1:ability:imply", "3 seats: the picked character's controller (P3, not P2) chooses; revealing a character gives P1 control of it this turn; P2 is never asked", () => {
+mpClause(CICIBEO, "1:ability:imply", 3, "3 seats: the picked character's controller (P3, not P2) chooses; revealing a character gives P1 control of it this turn; P2 is never asked", () => {
   const t = cicibeoTable(true);
   activate(t, P1, "ci", "imply", { selected: { c: [t.id("c3")] } });
   assert.equal(pending(t)!.kind, "chooserSelectsOption");
@@ -256,7 +256,7 @@ function lostTable(active: PlayerId) {
   );
 }
 for (const payer of [P2, P3] as const)
-  clause(LOST, "0:extraCost", `3 seats: after P1 declares the end of the turn and ${payer} responds, P1 may play it in response, whichever opponent responded; no opponent is chosen`, () => {
+  mpClause(LOST, "0:extraCost", 3, `3 seats: after P1 declares the end of the turn and ${payer} responds, P1 may play it in response, whichever opponent responded; no opponent is chosen`, () => {
     const t = lostTable(P1);
     assert.equal(playerAsk(t, { type: "playCard", playerId: P1, cardId: t.id("lf") }), undefined, "no chooseOpponent step");
     refused(() => playRaw(t, P1, "lf"), "before P1 has declared the end of the turn");
@@ -271,7 +271,7 @@ for (const payer of [P2, P3] as const)
     assert.equal(t.engine.state.activePlayerId, P1, "the end of turn declaration was terminated: it is still P1's turn");
     assert.equal(zoneOf(t.engine, t.id("lf")), "discard");
   });
-clause(LOST, "0:extraCost", "3 seats: it is refused during another player's turn", () => {
+mpClause(LOST, "0:extraCost", 3, "3 seats: it is refused during another player's turn", () => {
   for (const active of [P2, P3] as const) {
     const t = lostTable(active);
     t.engine.perform({ type: "endTurn", playerId: active } as never);
@@ -308,7 +308,7 @@ const attackUnblocked = (t: Table, who: PlayerId, target: PlayerId) => {
   t.engine.perform({ type: "declareBlockers", playerId: target, blockerIds: [] } as never);
   autoResolveBattle(t.engine);
 };
-clause(GLOBE, "0:rule", "3 seats: damage P1 inflicts to P3's faction may be replaced by milling P3's deck (P2's deck untouched); damage P2 inflicts, and damage to P1's faction, is not replaced", () => {
+mpClause(GLOBE, "0:rule", 3, "3 seats: damage P1 inflicts to P3's faction may be replaced by milling P3's deck (P2's deck untouched); damage P2 inflicts, and damage to P1's faction, is not replaced", () => {
   const t = globeTable(P1);
   const p3Deck = t.engine.state.players[P3]!.deck.length;
   const p2Deck = t.engine.state.players[P2]!.deck.length;
@@ -334,7 +334,7 @@ clause(GLOBE, "0:rule", "3 seats: damage P1 inflicts to P3's faction may be repl
   assert.equal(pending(toP1), undefined, "damage to P1's own faction is not replaced");
   assert.equal(influence(toP1.engine, P1), own - 3);
 });
-clause(GLOBE, "1:rule", "3 seats: only the player whose deck is empty (P2) loses and is eliminated; P1 and P3 play on; the Globe's controller is not special", () => {
+mpClause(GLOBE, "1:rule", 3, "3 seats: only the player whose deck is empty (P2) loses and is eliminated; P1 and P3 play on; the Globe's controller is not special", () => {
   const build = (empty: PlayerId): Table => {
     const t = table(3, [
       { key: "gl", def: printing(GLOBE), owner: P1 },
@@ -377,7 +377,7 @@ function breathTable(seats: number, active: PlayerId = P1) {
 const survivors = (t: Table, who: PlayerId): number => Object.values(t.engine.state.cards).filter(card => card.zone === "play" && card.ownerId === who && t.engine.getDefinition(card.id).type === "character").length;
 
 for (const seats of [3, 4] as const)
-  clause(BREATH, "1:rule", `${seats} seats: in order P1, P2, ${seats === 3 ? "P3" : "P3, P4"} each player chooses 2 characters they own and destroys them, or loses all of them when owning fewer than 2`, () => {
+  mpClause(BREATH, "1:rule", seats, `${seats} seats: in order P1, P2, ${seats === 3 ? "P3" : "P3, P4"} each player chooses 2 characters they own and destroys them, or loses all of them when owning fewer than 2`, () => {
     const t = breathTable(seats);
     play(t, P1, "bb");
     assert.equal(pending(t)!.playerId, P1, "the active player first");
@@ -385,18 +385,18 @@ for (const seats of [3, 4] as const)
     choose(t, [t.id("p1-0"), t.id("p1-1")]);
     assert.equal(pending(t)!.playerId, P2, "then P2");
     assert.ok(offered(t).includes(t.id("p2-stolen")), "a character P2 owns but P3 controls counts as P2's");
-    assert.ok(offered(t).every(id => t.engine.state.cards[id]!.ownerId === P2));
+    assert.ok(offered(t).every(id => t.engine.state.cards[id]!.ownerId === P2), "offered(t).every(id => t.engine.state.cards[id]!.ownerId === P2)");
     choose(t, [t.id("p2-0"), t.id("p2-stolen")]);
     if (seats === 4) {
       assert.equal(pending(t)!.playerId, P4);
-      assert.ok(offered(t).every(id => t.engine.state.cards[id]!.ownerId === P4));
+      assert.ok(offered(t).every(id => t.engine.state.cards[id]!.ownerId === P4), "offered(t).every(id => t.engine.state.cards[id]!.ownerId === P4)");
       choose(t, [t.id("p4-0"), t.id("p4-1")]);
     }
     assert.equal(pending(t), undefined, "P3 owns only 1 character: it is destroyed without a choice");
     assert.deepEqual([P1, P2, P3].map(who => survivors(t, who)), [1, 1, 0]);
     if (seats === 4) assert.equal(survivors(t, P4), 1);
   });
-clause(BREATH, "0:extraCost", "3 seats: it is refused during P2's or P3's turn (P1 could only deploy it in response there) and allowed during P1's own", () => {
+mpClause(BREATH, "0:extraCost", 3, "3 seats: it is refused during P2's or P3's turn (P1 could only deploy it in response there) and allowed during P1's own", () => {
   for (const active of [P2, P3] as const) {
     const t = breathTable(3, active);
     playRaw(t, active, "idle");
@@ -415,7 +415,7 @@ clause(BREATH, "0:extraCost", "3 seats: it is refused during P2's or P3's turn (
 // may pay 1. If you do, put a token on it.
 // ===================================================================================================================
 
-clause(SILENCER, "0:rule", "3 seats: a character with a token cannot block it (whichever player's), one without can", () => {
+mpClause(SILENCER, "0:rule", 3, "3 seats: a character with a token cannot block it (whichever player's), one without can", () => {
   for (const target of [P3, P2] as const) {
     const t = table(3, [
       { key: "sil", def: printing(SILENCER), owner: P1 },
@@ -441,7 +441,7 @@ function silencerEntry(entering: PlayerId) {
   );
   return t;
 }
-clause(SILENCER, "1:rule", "3 seats: a character entering play under ANY opponent's control (P2's or P3's) lets P1 pay 1 to put a token on it, and no opponent is chosen; P1's own does nothing", () => {
+mpClause(SILENCER, "1:rule", 3, "3 seats: a character entering play under ANY opponent's control (P2's or P3's) lets P1 pay 1 to put a token on it, and no opponent is chosen; P1's own does nothing", () => {
   for (const entering of [P2, P3] as const) {
     const t = silencerEntry(entering);
     play(t, entering, "new");
@@ -465,7 +465,7 @@ clause(SILENCER, "1:rule", "3 seats: a character entering play under ANY opponen
 // ===================================================================================================================
 
 const BIG = "9f159c52-0b48-4661-b3cd-9269e4bad55d"; // Big McLargehuge
-clause(BIG, "1:extraCost", "3 seats: the extra cost destroys 2 resources P1 controls; P2's and P3's resources are untouched", () => {
+mpClause(BIG, "1:extraCost", 3, "3 seats: the extra cost destroys 2 resources P1 controls; P2's and P3's resources are untouched", () => {
   const t = table(3, [{ key: "big", def: printing(BIG), owner: P1, zone: "hand" }, ...bank("rage", 8, P1), ...bank("rage", 3, P2), ...bank("rage", 3, P3)]);
   const resources = (who: PlayerId): number =>
     Object.values(t.engine.state.cards).filter(card => card.zone === "play" && card.controllerId === who && t.engine.getDefinition(card.id).type === "resource").length;

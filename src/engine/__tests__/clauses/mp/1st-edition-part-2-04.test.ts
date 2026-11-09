@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -82,7 +82,7 @@ function passUntil(t: Table, who: PlayerId): void {
 const OFFICER = "7b05e4a8-cff1-441c-91bc-de6f671f8b12";
 
 for (const count of [3, 4] as const) {
-  clause(OFFICER, "0:rule", `${count} seats: P1 selects an opponent at its own turn start and must pick one of that opponent's characters; it is covert until P1's next turn`, () => {
+  mpClause(OFFICER, "0:rule", count, `${count} seats: P1 selects an opponent at its own turn start and must pick one of that opponent's characters; it is covert until P1's next turn`, () => {
     const seats = others(count);
     const last = seatsOf(count)[count - 1]!;
     const t = table(
@@ -118,7 +118,7 @@ for (const count of [3, 4] as const) {
     assert.equal(t.engine.state.activePlayerId, P1);
     choosePlayer(t, P1, seats, seats[1]!);
     pickFrom(t, P1, [`c-${seats[1]}-a`, `c-${seats[1]}-b`], [`c-${seats[1]}-b`]);
-    assert.ok(covert(`c-${seats[1]}-b`));
+    assert.ok(covert(`c-${seats[1]}-b`), "covert(`c-${seats[1]}-b`)");
     assert.equal(covert(`c-${seats[0]}-a`), false, "the first pick is no longer covert");
   });
 }
@@ -131,7 +131,7 @@ for (const count of [3, 4] as const) {
 const GNAT = "d65c3554-ba90-45e8-ab26-4f8d42d498b7";
 
 for (const count of [3, 4] as const) {
-  clause(GNAT, "0:rule", `${count} seats: when it leaves play only the opponent P1 selects discards a card of their choice`, () => {
+  mpClause(GNAT, "0:rule", count, `${count} seats: when it leaves play only the opponent P1 selects discards a card of their choice`, () => {
     for (const pick of others(count)) {
       const t = table(count, [
         { key: "gnat", def: printing(GNAT), owner: P1, zone: "play" },
@@ -175,7 +175,7 @@ function answerArmchair(t: Table, pick: PlayerId, option: number): string[] {
 }
 
 for (const count of [3, 4] as const) {
-  clause(ARMCHAIR, "0:rule", `${count} seats: "either deck" is P1's own deck or the deck of one opponent P1 selects; no other deck is looked at`, () => {
+  mpClause(ARMCHAIR, "0:rule", count, `${count} seats: "either deck" is P1's own deck or the deck of one opponent P1 selects; no other deck is looked at`, () => {
     for (const pick of others(count)) {
       const build = (): Table =>
         table(count, [{ key: "arm", def: printing(ARMCHAIR), owner: P1, zone: "play" }, { key: "kill", def: killTactic(), owner: P1, zone: "hand" }, ...perSeat(count, { hand: 1, deck: 5 })]);
@@ -217,7 +217,7 @@ for (const count of [3, 4] as const) {
 const ANOMALY = "973827cb-fb59-4ce8-9681-1263a14d2e62";
 
 for (const count of [3, 4] as const) {
-  clause(ANOMALY, "0:rule", `${count} seats: when it enters play P1 selects an opponent, picks a card from that opponent's hand only, and that opponent discards it`, () => {
+  mpClause(ANOMALY, "0:rule", count, `${count} seats: when it enters play P1 selects an opponent, picks a card from that opponent's hand only, and that opponent discards it`, () => {
     for (const pick of others(count)) {
       const t = table(count, [{ key: "an", def: printing(ANOMALY), owner: P1, zone: "hand" }, ...fund(P1), ...perSeat(count, { hand: 3, deck: 2 })]);
       const before = snapshot(t);
@@ -230,7 +230,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ANOMALY, "1:rule", `${count} seats: when it leaves play no opponent is selected; P1 may pick any non-resource card in play, which goes to its owner's hand, and draws`, () => {
+  mpClause(ANOMALY, "1:rule", count, `${count} seats: when it leaves play no opponent is selected; P1 may pick any non-resource card in play, which goes to its owner's hand, and draws`, () => {
     const t = table(count, [
       { key: "an", def: printing(ANOMALY), owner: P1, zone: "play" },
       { key: "kill", def: killTactic(), owner: P1, zone: "hand" },
@@ -264,7 +264,7 @@ for (const count of [3, 4] as const) {
 const BOOKKEEPER = "56c1a7f7-7146-43d5-8bd4-2bad9e9522e7";
 
 for (const count of [3, 4] as const) {
-  clause(BOOKKEEPER, "0:rule", `${count} seats: only the opponent P1 selects draws a card`, () => {
+  mpClause(BOOKKEEPER, "0:rule", count, `${count} seats: only the opponent P1 selects draws a card`, () => {
     for (const pick of others(count)) {
       const t = table(count, [{ key: "bk", def: printing(BOOKKEEPER), owner: P1, zone: "hand" }, ...fund(P1), ...perSeat(count, { hand: 1, deck: 3 })]);
       const before = snapshot(t);
@@ -302,7 +302,7 @@ function goonsStart(t: Table, pay: boolean, pick: PlayerId, expected: PlayerId[]
 }
 
 for (const count of [3, 4] as const) {
-  clause(GOONS, "1:rule", `${count} seats: if the controller does not pay, only the opponent it selects takes control, and the new controller faces its own opponents`, () => {
+  mpClause(GOONS, "1:rule", count, `${count} seats: if the controller does not pay, only the opponent it selects takes control, and the new controller faces its own opponents`, () => {
     const seats = others(count);
     const last = seatsOf(count)[count - 1]!;
     const t = table(
@@ -329,7 +329,7 @@ for (const count of [3, 4] as const) {
     // P3's turn start: P3 controls it, does not pay, and selects one of ITS opponents (never itself)
     passUntil(t, P3);
     const again = goonsStart(t, false, P1, seatsOf(count).filter((s) => s !== P3));
-    assert.ok(again.includes("choosePlayer"));
+    assert.ok(again.includes("choosePlayer"), "again.includes('choosePlayer')");
     assert.equal(controllerOf(t, "goons"), P1, "the opponent P3 selected takes control");
   });
 }
@@ -344,7 +344,7 @@ for (const count of [3, 4] as const) {
 const MOOSE = "9fb327c0-257b-4685-98ca-de282c1dc6d7";
 
 for (const count of [3, 4] as const) {
-  clause(MOOSE, "0:rule", `${count} seats: it enters play under the control of the opponent P1 selects, and no one else`, () => {
+  mpClause(MOOSE, "0:rule", count, `${count} seats: it enters play under the control of the opponent P1 selects, and no one else`, () => {
     for (const pick of others(count)) {
       const t = table(count, [{ key: "moose", def: printing(MOOSE), owner: P1, zone: "hand" }, ...fund(P1), ...perSeat(count, { hand: 1, deck: 2 })]);
       playCard(t, P1, "moose");
@@ -355,7 +355,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(MOOSE, "1:rule", `${count} seats: "your faction" is its current controller's: only that controller's faction loses 1 at the start of their turn`, () => {
+  mpClause(MOOSE, "1:rule", count, `${count} seats: "your faction" is its current controller's: only that controller's faction loses 1 at the start of their turn`, () => {
     const last = seatsOf(count)[count - 1]!;
     // P1 owns the Moose, P2 controls it
     const t = table(
@@ -385,7 +385,7 @@ for (const count of [3, 4] as const) {
     void last;
   });
 
-  clause(MOOSE, "2:ability:infiltrate", `${count} seats: the controller selects one of ITS OWN opponents, who takes control; nobody else does`, () => {
+  mpClause(MOOSE, "2:ability:infiltrate", count, `${count} seats: the controller selects one of ITS OWN opponents, who takes control; nobody else does`, () => {
     for (const pick of seatsOf(count).filter((s) => s !== P3)) {
       const t = table(
         count,
@@ -413,7 +413,7 @@ for (const count of [3, 4] as const) {
 const THIEF = "bfe0fbb0-079e-4f9a-ada8-b0d18e2be880";
 
 for (const count of [3, 4] as const) {
-  clause(THIEF, "0:rule", `${count} seats: only the selected opponent's discard pile is offered (no tactics), and the card enters play under P1's control`, () => {
+  mpClause(THIEF, "0:rule", count, `${count} seats: only the selected opponent's discard pile is offered (no tactics), and the card enters play under P1's control`, () => {
     for (const pick of others(count)) {
       const t = table(count, [
         { key: "thief", def: printing(THIEF), owner: P1, zone: "play" },
@@ -447,7 +447,7 @@ const RIFLEMAN = "ad4fc0ee-cc07-4927-93ab-c1daeb97798c";
 const STRIKER = "46d213bf-f9f2-4e68-93c5-07e004b72e50";
 
 for (const count of [3, 4] as const) {
-  clause(RIFLEMAN, "0:rule", `${count} seats: 1 damage to the faction of the opponent P1 selects, and no other`, () => {
+  mpClause(RIFLEMAN, "0:rule", count, `${count} seats: 1 damage to the faction of the opponent P1 selects, and no other`, () => {
     for (const pick of others(count)) {
       const t = table(count, [{ key: "rf", def: printing(RIFLEMAN), owner: P1, zone: "hand" }, ...fund(P1)]);
       const before = Object.fromEntries(t.seats.map((s) => [s, infl(t, s)]));
@@ -458,7 +458,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(STRIKER, "0:rule", `${count} seats: when it is destroyed only the selected opponent's faction loses 4 influence`, () => {
+  mpClause(STRIKER, "0:rule", count, `${count} seats: when it is destroyed only the selected opponent's faction loses 4 influence`, () => {
     for (const pick of others(count)) {
       const t = table(count, [{ key: "st", def: printing(STRIKER), owner: P1, zone: "play" }, { key: "kill", def: killTactic(), owner: P1, zone: "hand" }]);
       const before = Object.fromEntries(t.seats.map((s) => [s, infl(t, s)]));
@@ -478,7 +478,7 @@ for (const count of [3, 4] as const) {
 const COLONEL = "9bb9052b-c497-4c4c-a22e-e0c2f0edf534";
 
 for (const count of [3, 4] as const) {
-  clause(COLONEL, "0:rule", `${count} seats: any opponent playing a tactic takes 2 damage to its own faction, nobody is asked, and non-tactics and P1's own tactics do nothing`, () => {
+  mpClause(COLONEL, "0:rule", count, `${count} seats: any opponent playing a tactic takes 2 damage to its own faction, nobody is asked, and non-tactics and P1's own tactics do nothing`, () => {
     const t = table(count, [
       { key: "col", def: printing(COLONEL), owner: P1, zone: "play" },
       ...seatsOf(count).flatMap((seat): CardPlacement[] => [

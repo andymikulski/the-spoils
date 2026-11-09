@@ -3,7 +3,7 @@
 // opponent prompt appears. Real printings, real games, `perform` only.
 
 import assert from "node:assert/strict";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import type { CardDefinition, PlayerId } from "../../../../engine.js";
 import { buildGame, noDevelopFaction, tactic } from "../../support/fixtures.js";
 import { developFaction, resourceCard } from "../../per-card/_harness.js";
@@ -54,7 +54,7 @@ function coinTable(): Table {
 
 const faceUp = (t: Table, key: string): boolean => t.engine.state.cards[t.id(key)]!.faceDown !== true;
 
-clause(COIN, "1:rule", "3 seats: a [V] card entering play under P2 asks P2 (not P1, not P3) to pay 2; if P2 pays nothing else happens and P3 is never asked; the same for P3", () => {
+mpClause(COIN, "1:rule", 3, "3 seats: a [V] card entering play under P2 asks P2 (not P1, not P3) to pay 2; if P2 pays nothing else happens and P3 is never asked; the same for P3", () => {
   for (const [who, other, key] of [[P2, P3, "v2"], [P3, P2, "v3"]] as const) {
     const t = coinTable();
     developResource(t.engine, who, t.id(key), false);
@@ -74,7 +74,7 @@ clause(COIN, "1:rule", "3 seats: a [V] card entering play under P2 asks P2 (not 
   }
 });
 
-clause(COIN, "1:rule", "3 seats: if the opponent does not pay, P1 (alone) may lose 1 influence to draw a card; the other opponent is not asked; declining flips the Coin face-down", () => {
+mpClause(COIN, "1:rule", 3, "3 seats: if the opponent does not pay, P1 (alone) may lose 1 influence to draw a card; the other opponent is not asked; declining flips the Coin face-down", () => {
   for (const [who, other, key] of [[P2, P3, "v2"], [P3, P2, "v3"]] as const) {
     const draws = coinTable();
     developResource(draws.engine, who, draws.id(key), false);
@@ -104,7 +104,7 @@ clause(COIN, "1:rule", "3 seats: if the opponent does not pay, P1 (alone) may lo
   }
 });
 
-clause(COIN, "1:rule", "3 seats: P1's own [V] card does not trigger it, and neither does an opponent's card that provides no [V]", () => {
+mpClause(COIN, "1:rule", 3, "3 seats: P1's own [V] card does not trigger it, and neither does an opponent's card that provides no [V]", () => {
   const own = coinTable();
   developResource(own.engine, P1, own.id("v1"), false);
   resolvePendingResponses(own.engine);
@@ -139,7 +139,7 @@ function notesTable(): Table {
   ]);
 }
 
-clause(NOTES, "1:rule", "3 seats: a [V] card entering play under P2 asks P1 (alone) to pay 1; paying has P1 play a hand card face-down attached to P1's faction; the same for a card under P3; P2 and P3 are never asked", () => {
+mpClause(NOTES, "1:rule", 3, "3 seats: a [V] card entering play under P2 asks P1 (alone) to pay 1; paying has P1 play a hand card face-down attached to P1's faction; the same for a card under P3; P2 and P3 are never asked", () => {
   for (const [who, other, key] of [[P2, P3, "v2"], [P3, P2, "v3"]] as const) {
     const t = notesTable();
     developResource(t.engine, who, t.id(key), false);
@@ -164,7 +164,7 @@ clause(NOTES, "1:rule", "3 seats: a [V] card entering play under P2 asks P1 (alo
   }
 });
 
-clause(NOTES, "1:rule", "3 seats: if P1 does not pay, Notes flips face-down and nothing is played; P1's own [V] card does not trigger it", () => {
+mpClause(NOTES, "1:rule", 3, "3 seats: if P1 does not pay, Notes flips face-down and nothing is played; P1's own [V] card does not trigger it", () => {
   for (const [who, key] of [[P2, "v2"], [P3, "v3"]] as const) {
     const t = notesTable();
     developResource(t.engine, who, t.id(key), false);
@@ -211,7 +211,7 @@ function tollTable(active: PlayerId): Table {
   );
 }
 
-clause(TOLL, "1:rule", "3 seats: a non-token character P2 deploys asks P2 (not P1, not P3) to pay 1; paying keeps it, declining sends it to P2's discard pile; the same for P3's characters", () => {
+mpClause(TOLL, "1:rule", 3, "3 seats: a non-token character P2 deploys asks P2 (not P1, not P3) to pay 1; paying keeps it, declining sends it to P2's discard pile; the same for P3's characters", () => {
   for (const [who, other, key] of [[P2, P3, "c2"], [P3, P2, "c3"]] as const) {
     const paid = tollTable(who);
     const ready = Object.fromEntries(paid.seats.map((seat) => [seat, READY(paid, seat)]));
@@ -236,7 +236,7 @@ clause(TOLL, "1:rule", "3 seats: a non-token character P2 deploys asks P2 (not P
   }
 });
 
-clause(TOLL, "1:rule", "3 seats: P1's own characters and token characters under P2 or P3 are not affected", () => {
+mpClause(TOLL, "1:rule", 3, "3 seats: P1's own characters and token characters under P2 or P3 are not affected", () => {
   const own = tollTable(P1);
   play(own, P1, "c1");
   assert.equal(pending(own), undefined, "no toll question for P1's own character");
@@ -290,8 +290,8 @@ function lunkCheck(count: Seats): void {
   assert.equal(pending(t), undefined);
 }
 
-clause(LUNK, "0:rule", "3 seats: P1's depleted Lunk Nut is restored by its trigger at the start of P2's turn and again at the start of P3's; the trigger is not queued at the start of P1's own turn", () => lunkCheck(3));
-clause(LUNK, "0:rule", "4 seats: its trigger restores it at the start of P2's, P3's and P4's turns and is not queued at P1's", () => lunkCheck(4));
+mpClause(LUNK, "0:rule", 3, "3 seats: P1's depleted Lunk Nut is restored by its trigger at the start of P2's turn and again at the start of P3's; the trigger is not queued at the start of P1's own turn", () => lunkCheck(3));
+mpClause(LUNK, "0:rule", 4, "4 seats: its trigger restores it at the start of P2's, P3's and P4's turns and is not queued at P1's", () => lunkCheck(4));
 
 // --- Final Countdown -----------------------------------------------------------------------------------------------
 // EXTRA COST: Deploy this card only during your turn.
@@ -362,7 +362,7 @@ function fcCheck(chosen: PlayerId, skipped: PlayerId): void {
   }
 }
 
-clause(FC, "1:rule", "3 seats: with two opponents the block's opponent is a required step at play (a players step comes first and the play is refused without it), and a stated opponent is accepted", () => {
+mpClause(FC, "1:rule", 3, "3 seats: with two opponents the block's opponent is a required step at play (a players step comes first and the play is refused without it), and a stated opponent is accepted", () => {
   const t = fcTable();
   assert.equal(playRequirements(t, P1, "fc").map((r) => r.kind)[0], "players", "the block's opponent is asked first");
   refusal(() => play(t, P1, "fc"));
@@ -371,8 +371,8 @@ clause(FC, "1:rule", "3 seats: with two opponents the block's opponent is a requ
   assert.equal(zoneOf(t, "fc"), "discard");
 });
 
-clause(FC, "1:rule", "3 seats: P1 plays it choosing P3 through the action's players field, draws 4 at once, and the rest fires only at the start of P3's next turn, once; P2's turn start does nothing", () => fcCheck(P3, P2));
-clause(FC, "1:rule", "3 seats: choosing P2 instead, the effect fires at the start of P2's turn only, once, and not at P3's", () => fcCheck(P2, P3));
+mpClause(FC, "1:rule", 3, "3 seats: P1 plays it choosing P3 through the action's players field, draws 4 at once, and the rest fires only at the start of P3's next turn, once; P2's turn start does nothing", () => fcCheck(P3, P2));
+mpClause(FC, "1:rule", 3, "3 seats: choosing P2 instead, the effect fires at the start of P2's turn only, once, and not at P3's", () => fcCheck(P2, P3));
 
 // --- Leaping Sarume ------------------------------------------------------------------------------------------------
 // TACTICAL -- EXTRA COST: Deploy this only not during a battle. -- When this card enters play, inflict 1 damage to all characters.
@@ -397,7 +397,7 @@ function saruTable(active: PlayerId, rage = 6): Table {
   );
 }
 
-clause(SARU, "1:extraCost", "3 seats: refused during a battle between P2 and P3 that P1 is not in (even though it is TACTICAL), allowed outside a battle", () => {
+mpClause(SARU, "1:extraCost", 3, "3 seats: refused during a battle between P2 and P3 that P1 is not in (even though it is TACTICAL), allowed outside a battle", () => {
   const t = saruTable(P2);
   attackOpen(t, P2, ["m2"], { type: "faction", playerId: P3 });
   assert.ok(t.engine.state.battle, "a battle between P2 and P3 is under way");
@@ -413,7 +413,7 @@ clause(SARU, "1:extraCost", "3 seats: refused during a battle between P2 and P3 
   assert.equal(zoneOf(idle, "sa"), "play");
 });
 
-clause(SARU, "2:rule", "3 seats: entering play inflicts 1 damage to all characters: P1's, P2's and P3's each take 1 (below six [R], no opponent is chosen)", () => {
+mpClause(SARU, "2:rule", 3, "3 seats: entering play inflicts 1 damage to all characters: P1's, P2's and P3's each take 1 (below six [R], no opponent is chosen)", () => {
   const t = saruTable(P1, 4);
   assert.deepEqual(playRequirements(t, P1, "sa").filter((r) => r.kind === "players"), []);
   play(t, P1, "sa");
@@ -421,7 +421,7 @@ clause(SARU, "2:rule", "3 seats: entering play inflicts 1 damage to all characte
   for (const key of ["m1", "m2", "m2b", "m3", "sa"]) assert.equal(damageOf(t, key), 1, `${key} took 1`);
 });
 
-clause(SARU, "3:rule@rrrrrr", "3 seats: with six [R] P1 is offered P2 and P3 when the trigger resolves and picks P2: P2's characters take a second damage (2 total), P3's and P1's only the first; a second run picking P3 does the reverse", () => {
+mpClause(SARU, "3:rule@rrrrrr", 3, "3 seats: with six [R] P1 is offered P2 and P3 when the trigger resolves and picks P2: P2's characters take a second damage (2 total), P3's and P1's only the first; a second run picking P3 does the reverse", () => {
   for (const [picked, bystander, pickedKeys, bystanderKeys] of [[P2, P3, ["m2", "m2b"], ["m3"]], [P3, P2, ["m3"], ["m2", "m2b"]]] as const) {
     const t = saruTable(P1);
     assert.deepEqual(playRequirements(t, P1, "sa").filter((r) => r.kind === "players"), [], "no opponent is selected at play");

@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, developFaction, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   answer,
@@ -72,7 +72,7 @@ function almanacBoard(count: number) {
 const factionOf = (t: SeatTable, who: string) => t.engine.state.players[who]!.factionId!;
 
 for (const count of TABLES) {
-  clause(ALMANAC, "0:ability:almanac-foresight", `${count} seats: the opponent is chosen before targets and only the caster's and the chosen opponent's decks are offered`, () => {
+  mpClause(ALMANAC, "0:ability:almanac-foresight", count, `${count} seats: the opponent is chosen before targets and only the caster's and the chosen opponent's decks are offered`, () => {
     for (const chosen of choices(count)) {
       const t = almanacBoard(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("al"), abilityId: "almanac-foresight" };
@@ -84,7 +84,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(ALMANAC, "0:ability:almanac-foresight", `${count} seats: the chosen opponent's deck can be looked at and reordered; no other deck changes zone or order`, () => {
+  mpClause(ALMANAC, "0:ability:almanac-foresight", count, `${count} seats: the chosen opponent's deck can be looked at and reordered; no other deck changes zone or order`, () => {
     for (const chosen of choices(count)) {
       const t = almanacBoard(count);
       const decks = Object.fromEntries(t.seats.map((who) => [who, [...deckOf(t.engine, who)]]));
@@ -102,7 +102,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(ALMANAC, "0:ability:almanac-foresight", `${count} seats: the caster's own deck can be picked from the same two`, () => {
+  mpClause(ALMANAC, "0:ability:almanac-foresight", count, `${count} seats: the caster's own deck can be picked from the same two`, () => {
     const chosen = opponentsAt(count)[opponentsAt(count).length - 1]!;
     const t = almanacBoard(count);
     const decks = Object.fromEntries(t.seats.map((who) => [who, [...deckOf(t.engine, who)]]));
@@ -113,7 +113,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(ALMANAC, "0:ability:almanac-foresight", "3 seats: with one opponent left no opponent choice is offered and the decks offered are the caster's and that opponent's", () => {
+mpClause(ALMANAC, "0:ability:almanac-foresight", 3, "3 seats: with one opponent left no opponent choice is offered and the decks offered are the caster's and that opponent's", () => {
   const t = almanacBoard(3);
   eliminate(t.engine, P3);
   const action = { type: "activateAbility", playerId: P1, cardId: t.id("al"), abilityId: "almanac-foresight" };
@@ -139,7 +139,7 @@ function ashesBoard(count: number, active = P1) {
 }
 
 for (const count of TABLES) {
-  clause(ASHES, "2:ability:nullify", `${count} seats: the controller and the chosen opponent (and only they) each put a character they control into its owner's hand, the controller first`, () => {
+  mpClause(ASHES, "2:ability:nullify", count, `${count} seats: the controller and the chosen opponent (and only they) each put a character they control into its owner's hand, the controller first`, () => {
     for (const chosen of choices(count)) {
       const t = ashesBoard(count);
       expectOpponentAsked(t, { type: "activateAbility", playerId: P1, cardId: t.id("az"), abilityId: "nullify" });
@@ -162,7 +162,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(ASHES, "2:ability:nullify", "3 seats: with one opponent left no choice is offered and that opponent is the other player", () => {
+mpClause(ASHES, "2:ability:nullify", 3, "3 seats: with one opponent left no choice is offered and that opponent is the other player", () => {
   const u = ashesBoard(3);
   eliminate(u.engine, P3);
   expectNotAsked(u, { type: "activateAbility", playerId: P1, cardId: u.id("az"), abilityId: "nullify" });
@@ -186,7 +186,7 @@ function tentaclesBoard(count: number) {
 const resourcesOf = (t: SeatTable, who: string) => t.engine.state.players[who]!.play.filter((id) => t.engine.getDefinition(id).type === "resource");
 
 for (const count of TABLES) {
-  clause(TENTACLES, "0:rule", `${count} seats: the opponent is chosen when the trigger resolves; only the controller and that opponent each put a resource into hand`, () => {
+  mpClause(TENTACLES, "0:rule", count, `${count} seats: the opponent is chosen when the trigger resolves; only the controller and that opponent each put a resource into hand`, () => {
     for (const chosen of choices(count)) {
       const t = tentaclesBoard(count);
       const before = Object.fromEntries(t.seats.map((who) => [who, resourcesOf(t, who).length]));
@@ -216,7 +216,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(TENTACLES, "0:rule", "3 seats: with one opponent left no choice is offered and that opponent is the other player", () => {
+mpClause(TENTACLES, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that opponent is the other player", () => {
   const t = tentaclesBoard(3);
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("st"));
@@ -293,7 +293,7 @@ const resourcesIn = (t: SeatTable, who: string) => t.engine.state.players[who]!.
 const candidatesFor = (count: number, actor: string) => seatsFor(count).filter((who) => who !== actor).sort();
 
 for (const count of TABLES) {
-  clause(FTA, "0:rule", `${count} seats: the trigger fires at the start of every player's turn, the controller's too, and the active player is always the one who selects and picks`, () => {
+  mpClause(FTA, "0:rule", count, `${count} seats: the trigger fires at the start of every player's turn, the controller's too, and the active player is always the one who selects and picks`, () => {
     const t = ftaBoard(count, P2);
     const seats = seatsFor(count);
     for (let i = 1; i <= count; i++) {
@@ -307,7 +307,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(FTA, "0:rule", "4 seats: when P3 is eliminated the trigger no longer fires for a P3 turn and the other three turns still do", () => {
+mpClause(FTA, "0:rule", 4, "4 seats: when P3 is eliminated the trigger no longer fires for a P3 turn and the other three turns still do", () => {
   const t = ftaBoard(4, P2, [P3]);
   assert.equal(t.engine.state.players[P3]!.eliminated !== undefined, true);
   for (const actor of [P2, P4, P1]) {
@@ -318,7 +318,7 @@ clause(FTA, "0:rule", "4 seats: when P3 is eliminated the trigger no longer fire
 });
 
 for (const count of TABLES) {
-  clause(FTA, "1:option:OPTION 1", `${count} seats: that player draws and only the opponent that player selected may play a resource`, () => {
+  mpClause(FTA, "1:option:OPTION 1", count, `${count} seats: that player draws and only the opponent that player selected may play a resource`, () => {
     const actor = P2;
     for (const chosen of [candidatesFor(count, actor)[0]!, candidatesFor(count, actor).slice(-1)[0]!]) {
       const t = ftaBoard(count, actor);
@@ -340,7 +340,7 @@ for (const count of TABLES) {
 // With a single opponent left for the active player, "their opponent" is that one player and nobody is asked.
 for (const count of TABLES) {
   for (const [index, label, key] of [[0, "OPTION 1", "1:option:OPTION 1"], [1, "OPTION 2", "2:option:OPTION 2"]] as const) {
-    clause(FTA, key, `${count} seats: ${label} names "their opponent" once: the active player is asked to select exactly one opponent for the block`, () => {
+    mpClause(FTA, key, count, `${count} seats: ${label} names "their opponent" once: the active player is asked to select exactly one opponent for the block`, () => {
       const t = ftaBoard(count, P2);
       const run = ftaTurn(t, P2, index, P1);
       assert.equal(run.candidates.length, 1, `one selection prompt, not ${run.candidates.length}`);
@@ -349,7 +349,7 @@ for (const count of TABLES) {
 }
 
 for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
-  clause(FTA, "1:option:OPTION 1", `${seats} seats: with one opponent left the active player's opponent is bound without asking and is the other player, not the active player`, () => {
+  mpClause(FTA, "1:option:OPTION 1", seats, `${seats} seats: with one opponent left the active player's opponent is bound without asking and is the other player, not the active player`, () => {
     const t = ftaBoard(seats, P2, [...eliminated]);
     const before = { hand2: handSize(t, P2), res1: resourcesIn(t, P1), res2: resourcesIn(t, P2) };
     const run = ftaTurn(t, P2, 0, undefined);
@@ -359,7 +359,7 @@ for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
     assert.equal(resourcesIn(t, P1), before.res1 + 1, "P1, the only opponent of P2 left, played the resource");
   });
 
-  clause(FTA, "2:option:OPTION 2", `${seats} seats: with one opponent left the active player's opponent is bound without asking and is the other player, not the active player`, () => {
+  mpClause(FTA, "2:option:OPTION 2", seats, `${seats} seats: with one opponent left the active player's opponent is bound without asking and is the other player, not the active player`, () => {
     const t = ftaBoard(seats, P2, [...eliminated]);
     const before = { hand1: handSize(t, P1), hand2: handSize(t, P2), res2: resourcesIn(t, P2) };
     const run = ftaTurn(t, P2, 1, undefined);
@@ -371,7 +371,7 @@ for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
 }
 
 for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
-  clause(FTA, "3:option:OPTION 3", `${seats} seats: with one opponent left both players are the active player and that opponent, each drawing up to 2`, () => {
+  mpClause(FTA, "3:option:OPTION 3", seats, `${seats} seats: with one opponent left both players are the active player and that opponent, each drawing up to 2`, () => {
     const t = ftaBoard(seats, P2, [...eliminated]);
     const before = { p1: handSize(t, P1), p2: handSize(t, P2) };
     const run = ftaTurn(t, P2, 2, undefined);
@@ -381,7 +381,7 @@ for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
     assert.equal(handSize(t, P1), before.p1 + 2);
   });
 
-  clause(FTA, "4:option:OPTION 4", `${seats} seats: with one opponent left both players are the active player and that opponent, each playing up to 2 resources`, () => {
+  mpClause(FTA, "4:option:OPTION 4", seats, `${seats} seats: with one opponent left both players are the active player and that opponent, each playing up to 2 resources`, () => {
     const t = ftaBoard(seats, P2, [...eliminated]);
     const before = { p1: resourcesIn(t, P1), p2: resourcesIn(t, P2) };
     const run = ftaTurn(t, P2, 3, undefined);
@@ -393,7 +393,7 @@ for (const [seats, eliminated] of [[3, [P3]], [2, []]] as const) {
 }
 
 for (const count of TABLES) {
-  clause(FTA, "2:option:OPTION 2", `${count} seats: that player plays a resource and only the opponent that player selected may draw`, () => {
+  mpClause(FTA, "2:option:OPTION 2", count, `${count} seats: that player plays a resource and only the opponent that player selected may draw`, () => {
     const actor = P3;
     for (const chosen of [candidatesFor(count, actor)[0]!, candidatesFor(count, actor).slice(-1)[0]!]) {
       const t = ftaBoard(count, actor);
@@ -411,7 +411,7 @@ for (const count of TABLES) {
 }
 
 for (const count of TABLES) {
-  clause(FTA, "3:option:OPTION 3", `${count} seats: both players, the active player and the selected opponent only, may draw up to 2 cards, the active player first`, () => {
+  mpClause(FTA, "3:option:OPTION 3", count, `${count} seats: both players, the active player and the selected opponent only, may draw up to 2 cards, the active player first`, () => {
     const actor = P2;
     for (const chosen of [candidatesFor(count, actor)[0]!, candidatesFor(count, actor).slice(-1)[0]!]) {
       const t = ftaBoard(count, actor);
@@ -427,7 +427,7 @@ for (const count of TABLES) {
 }
 
 for (const count of TABLES) {
-  clause(FTA, "4:option:OPTION 4", `${count} seats: both players, the active player and the selected opponent only, may play up to 2 resources, the active player first`, () => {
+  mpClause(FTA, "4:option:OPTION 4", count, `${count} seats: both players, the active player and the selected opponent only, may play up to 2 resources, the active player first`, () => {
     const actor = P3;
     for (const chosen of [candidatesFor(count, actor)[0]!, candidatesFor(count, actor).slice(-1)[0]!]) {
       const t = ftaBoard(count, actor);
@@ -487,7 +487,7 @@ function swapWith(t: SeatTable, chosen: string): void {
 
 for (const count of TABLES) {
   for (const chosen of opponentsAt(count)) {
-    clause(OBFUSCATION, "1:rule", `${count} seats: choosing ${chosen}, P1 and ${chosen} exchange sides (cards in play and factions); every other player keeps theirs`, () => {
+    mpClause(OBFUSCATION, "1:rule", count, `${count} seats: choosing ${chosen}, P1 and ${chosen} exchange sides (cards in play and factions); every other player keeps theirs`, () => {
       const t = obfuscationBoard(count);
       swapWith(t, chosen);
       for (const seat of t.seats) {
@@ -498,7 +498,7 @@ for (const count of TABLES) {
       }
     });
 
-    clause(OBFUSCATION, "1:rule", `${count} seats: the two exchange places in the seat order, nobody else moves, and the turn order follows the new seats`, () => {
+    mpClause(OBFUSCATION, "1:rule", count, `${count} seats: the two exchange places in the seat order, nobody else moves, and the turn order follows the new seats`, () => {
       const t = obfuscationBoard(count);
       swapWith(t, chosen);
       const expected = t.seats.map((seat) => (seat === P1 ? chosen : seat === chosen ? P1 : seat));
@@ -508,7 +508,7 @@ for (const count of TABLES) {
       assert.equal(t.engine.state.activePlayerId, expected[(expected.indexOf(P1) + 1) % count], "the turn goes to the seat after P1's new place");
     });
 
-    clause(OBFUSCATION, "1:rule", `${count} seats: when the card leaves play the two switch back, seats and control`, () => {
+    mpClause(OBFUSCATION, "1:rule", count, `${count} seats: when the card leaves play the two switch back, seats and control`, () => {
       const t = obfuscationBoard(count);
       swapWith(t, chosen);
       playCard(t.engine, P1, t.id("smash"), { selected: { t: [t.id("eo")] } });
@@ -523,7 +523,7 @@ for (const count of TABLES) {
     });
   }
 
-  clause(OBFUSCATION, "1:rule", `${count} seats: if the game ends the owner of the faction that reached 0 loses, not the player controlling that side; the controller then selects a new opponent`, () => {
+  mpClause(OBFUSCATION, "1:rule", count, `${count} seats: if the game ends the owner of the faction that reached 0 loses, not the player controlling that side; the controller then selects a new opponent`, () => {
     const t = obfuscationBoard(count);
     swapWith(t, P2);
     // P1 now controls P2's faction: taking it to 0 costs its owner, P2, the game
@@ -547,7 +547,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(OBFUSCATION, "1:rule", "3 seats: with one opponent left before it enters play no choice is offered and the swap is P1 and that opponent", () => {
+mpClause(OBFUSCATION, "1:rule", 3, "3 seats: with one opponent left before it enters play no choice is offered and the swap is P1 and that opponent", () => {
   const t = obfuscationBoard(3);
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("eo"));
@@ -571,7 +571,7 @@ function staveBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(STAVE, "1:ability:disrupt", `${count} seats: only the chosen opponent chooses and discards a card, the others are untouched and never asked`, () => {
+  mpClause(STAVE, "1:ability:disrupt", count, `${count} seats: only the chosen opponent chooses and discards a card, the others are untouched and never asked`, () => {
     for (const chosen of choices(count)) {
       const t = staveBoard(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("ks"), abilityId: "disrupt" };
@@ -591,7 +591,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(STAVE, "1:ability:disrupt", "3 seats: with one opponent left no choice is offered and that opponent discards", () => {
+mpClause(STAVE, "1:ability:disrupt", 3, "3 seats: with one opponent left no choice is offered and that opponent discards", () => {
   const t = staveBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "activateAbility", playerId: P1, cardId: t.id("ks"), abilityId: "disrupt" });
@@ -633,7 +633,7 @@ const gnatDrive = (t: SeatTable, chosen: string | undefined) =>
   });
 
 for (const count of TABLES) {
-  clause(GNATS, "0:rule", `${count} seats: entering play, the opponent is chosen and only they discard; leaving play, a fresh choice is made (it is not remembered)`, () => {
+  mpClause(GNATS, "0:rule", count, `${count} seats: entering play, the opponent is chosen and only they discard; leaving play, a fresh choice is made (it is not remembered)`, () => {
     const opps = opponentsAt(count);
     const first = opps[0]!;
     const last = opps[opps.length - 1]!;
@@ -652,7 +652,7 @@ for (const count of TABLES) {
     for (const who of others(count, last).filter((w) => w !== first)) assert.equal(handOf(t.engine, who).length, 4);
   });
 
-  clause(GNATS, "0:rule", `${count} seats: choosing the same player both times is allowed and the two choices are independent`, () => {
+  mpClause(GNATS, "0:rule", count, `${count} seats: choosing the same player both times is allowed and the two choices are independent`, () => {
     const chosen = opponentsAt(count)[0]!;
     const t = gnatsBoard(count);
     playCard(t.engine, P1, t.id("sg"));
@@ -664,7 +664,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(GNATS, "0:rule", "3 seats: with one opponent left nobody is asked and that opponent discards entering and leaving", () => {
+mpClause(GNATS, "0:rule", 3, "3 seats: with one opponent left nobody is asked and that opponent discards entering and leaving", () => {
   const t = gnatsBoard(3);
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("sg"));
@@ -690,7 +690,7 @@ function cheeseBoard(count: number, random?: () => number) {
 }
 
 for (const count of TABLES) {
-  clause(CHEESE, "0:rule", `${count} seats: only the chosen opponent picks the option, no other opponent is offered a pick`, () => {
+  mpClause(CHEESE, "0:rule", count, `${count} seats: only the chosen opponent picks the option, no other opponent is offered a pick`, () => {
     for (const chosen of choices(count)) {
       const t = cheeseBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("rc") });
@@ -700,7 +700,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(CHEESE, "1:option:OPTION 1", `${count} seats: picking OPTION 1 the chosen opponent chooses and discards 2 cards; the others' hands are unchanged`, () => {
+  mpClause(CHEESE, "1:option:OPTION 1", count, `${count} seats: picking OPTION 1 the chosen opponent chooses and discards 2 cards; the others' hands are unchanged`, () => {
     for (const chosen of choices(count)) {
       const t = cheeseBoard(count);
       playCard(t.engine, P1, t.id("rc"), { players: { opponent: chosen } });
@@ -717,7 +717,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(CHEESE, "2:option:OPTION 2", `${count} seats: picking OPTION 2 one card at random is discarded from the chosen opponent's hand only`, () => {
+  mpClause(CHEESE, "2:option:OPTION 2", count, `${count} seats: picking OPTION 2 one card at random is discarded from the chosen opponent's hand only`, () => {
     for (const chosen of choices(count)) {
       const t = cheeseBoard(count, () => 0.5);
       playCard(t.engine, P1, t.id("rc"), { players: { opponent: chosen } });
@@ -732,7 +732,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(CHEESE, "0:rule", "3 seats: with one opponent left no choice is offered and that opponent picks", () => {
+mpClause(CHEESE, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that opponent picks", () => {
   const t = cheeseBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("rc") });
@@ -755,7 +755,7 @@ function downsizingBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(DOWNSIZING, "0:rule", `${count} seats: every character of every player is destroyed, and only the chosen opponent's faction gains X`, () => {
+  mpClause(DOWNSIZING, "0:rule", count, `${count} seats: every character of every player is destroyed, and only the chosen opponent's faction gains X`, () => {
     for (const chosen of choices(count)) {
       const t = downsizingBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("dn") });
@@ -769,7 +769,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(DOWNSIZING, "0:rule", "3 seats: with one opponent left no choice is offered and that faction gains X", () => {
+mpClause(DOWNSIZING, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that faction gains X", () => {
   const t = downsizingBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("dn") });
@@ -823,7 +823,7 @@ function castPoisoning(t: SeatTable, chosen: string): void {
 }
 
 for (const count of TABLES) {
-  clause(POISONING, "0:rule", `${count} seats: tokens may be removed only from cards P1 controls: no opponent's card is offered, whichever opponent was chosen at play`, () => {
+  mpClause(POISONING, "0:rule", count, `${count} seats: tokens may be removed only from cards P1 controls: no opponent's card is offered, whichever opponent was chosen at play`, () => {
     for (const chosen of choices(count)) {
       const t = poisoningBoard(count);
       castPoisoning(t, chosen);
@@ -839,7 +839,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(POISONING, "1:rule", `${count} seats: 1 token inflicts 1 damage to any picked character, the not-chosen opponent's included`, () => {
+  mpClause(POISONING, "1:rule", count, `${count} seats: 1 token inflicts 1 damage to any picked character, the not-chosen opponent's included`, () => {
     const opps = opponentsAt(count);
     const chosen = opps[0]!;
     const victim = opps[opps.length - 1]!;
@@ -857,7 +857,7 @@ for (const count of TABLES) {
     stop(t);
   });
 
-  clause(POISONING, "2:rule", `${count} seats: 2 tokens draw P1 a card; no opponent's hand or deck changes`, () => {
+  mpClause(POISONING, "2:rule", count, `${count} seats: 2 tokens draw P1 a card; no opponent's hand or deck changes`, () => {
     const chosen = opponentsAt(count)[0]!;
     const t = poisoningBoard(count);
     const before = Object.fromEntries(opponentsAt(count).map((who) => [who, { hand: [...handOf(t.engine, who)], deck: [...deckOf(t.engine, who)] }]));
@@ -873,7 +873,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(POISONING, "3:rule", `${count} seats: the opponent chosen at play discards each time the 2-token effect is used, the same one every time, and nobody else does`, () => {
+  mpClause(POISONING, "3:rule", count, `${count} seats: the opponent chosen at play discards each time the 2-token effect is used, the same one every time, and nobody else does`, () => {
     for (const chosen of choices(count)) {
       const t = poisoningBoard(count);
       castPoisoning(t, chosen);
@@ -893,7 +893,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(POISONING, "3:rule", `${count} seats: the opponent is chosen at play even if the 2-token effect is never used`, () => {
+  mpClause(POISONING, "3:rule", count, `${count} seats: the opponent is chosen at play even if the 2-token effect is never used`, () => {
     const t = poisoningBoard(count);
     castPoisoning(t, opponentsAt(count)[0]!);
     spend(t, DRAW_OPTION, [t.id("mine"), t.id("mine")]);
@@ -903,7 +903,7 @@ for (const count of TABLES) {
     refused(() => playCard(u.engine, P1, u.id("vp")), "naming no opponent is refused", /opponent/i);
   });
 
-  clause(POISONING, "4:rule", `${count} seats: 3 tokens search P1's own deck; no opponent's deck is touched or shuffled`, () => {
+  mpClause(POISONING, "4:rule", count, `${count} seats: 3 tokens search P1's own deck; no opponent's deck is touched or shuffled`, () => {
     const chosen = opponentsAt(count)[0]!;
     const t = poisoningBoard(count);
     const before = Object.fromEntries(opponentsAt(count).map((who) => [who, [...deckOf(t.engine, who)]]));
@@ -923,7 +923,7 @@ function pickCharacter(t: SeatTable, owner: string): void {
   answer(t.engine, "chooserSelectsTarget", { selected: [t.id(`f${owner}`)] });
 }
 
-clause(POISONING, "3:rule", "3 seats: with one opponent left no choice is offered and that opponent discards", () => {
+mpClause(POISONING, "3:rule", 3, "3 seats: with one opponent left no choice is offered and that opponent discards", () => {
   const t = poisoningBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("vp") });
@@ -964,7 +964,7 @@ function misfireBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(MISFIRE, "0:rule", `${count} seats: every player's draws, and any card returned to a hand, go to that player's own discard pile this turn; nothing enters any hand`, () => {
+  mpClause(MISFIRE, "0:rule", count, `${count} seats: every player's draws, and any card returned to a hand, go to that player's own discard pile this turn; nothing enters any hand`, () => {
     const t = misfireBoard(count);
     expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("qm") });
     playCard(t.engine, P1, t.id("qm"));
@@ -982,11 +982,11 @@ for (const count of TABLES) {
     drive(t.engine, () => undefined);
     assert.equal(zoneOf(t.engine, t.id(`c${target}`)), "discard", "the returned character goes to its owner's discard pile");
     assert.ok(discardOf(t.engine, target).includes(t.id(`c${target}`)), `into ${target}'s own pile`);
-    for (const who of t.seats.filter((seat) => seat !== target && seat !== P1)) assert.ok(!discardOf(t.engine, who).includes(t.id(`c${target}`)));
+    for (const who of t.seats.filter((seat) => seat !== target && seat !== P1)) assert.ok(!discardOf(t.engine, who).includes(t.id(`c${target}`)), "!discardOf(t.engine, who).includes(t.id(`c${target}`))");
     for (const who of t.seats.filter((seat) => seat !== P1)) assert.equal(handOf(t.engine, who).length, hands[who]);
   });
 
-  clause(MISFIRE, "0:rule", `${count} seats: it lasts this turn only: on the next turn cards enter hands again`, () => {
+  mpClause(MISFIRE, "0:rule", count, `${count} seats: it lasts this turn only: on the next turn cards enter hands again`, () => {
     const t = misfireBoard(count);
     playCard(t.engine, P1, t.id("qm"));
     drive(t.engine, () => undefined);
@@ -1015,7 +1015,7 @@ function octopodBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(OCTOPOD, "1:rule", `${count} seats: when it inflicts damage to a faction the defending player (the other side of the battle) discards 2 cards, with no opponent choice; no other opponent does`, () => {
+  mpClause(OCTOPOD, "1:rule", count, `${count} seats: when it inflicts damage to a faction the defending player (the other side of the battle) discards 2 cards, with no opponent choice; no other opponent does`, () => {
     for (const defender of choices(count)) {
       const t = octopodBoard(count);
       t.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [t.id("oc")], target: { type: "faction", playerId: defender } } as never);
@@ -1082,7 +1082,7 @@ const withOpponent = (t: SeatTable, chosen: string): Record<string, unknown> => 
 };
 
 for (const count of TABLES) {
-  clause(VACATION, "0:rule", `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
+  mpClause(VACATION, "0:rule", count, `${count} seats: the chosen opponent is never offered a response, every other opponent is`, () => {
     for (const chosen of choices(count)) {
       const t = vacationBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("tv") });
@@ -1094,13 +1094,13 @@ for (const count of TABLES) {
   });
 }
 
-clause(VACATION, "0:rule", "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
+mpClause(VACATION, "0:rule", 3, "3 seats: the chosen opponent cannot play a tactic in response while the other can", () => {
   const t = vacationBoard(3);
   playCard(t.engine, P1, t.id("tv"), { players: { opponent: P2 } });
   refused(() => playCard(t.engine, P2, t.id("probe" + P2)), "the chosen opponent cannot respond", /priority/);
 });
 
-clause(VACATION, "0:rule", "3 seats: with one opponent left no choice is offered and nobody can respond", () => {
+mpClause(VACATION, "0:rule", 3, "3 seats: with one opponent left no choice is offered and nobody can respond", () => {
   const t = vacationBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("tv") });
@@ -1110,7 +1110,7 @@ clause(VACATION, "0:rule", "3 seats: with one opponent left no choice is offered
 });
 
 for (const count of TABLES) {
-  clause(VACATION, "1:rule", `${count} seats: played in response to a tactic, that tactic has no effect, whoever played it`, () => {
+  mpClause(VACATION, "1:rule", count, `${count} seats: played in response to a tactic, that tactic has no effect, whoever played it`, () => {
     const opps = opponentsAt(count);
     const owner = opps[0]!;
     const t = vacationBoard(count, owner);
@@ -1127,7 +1127,7 @@ for (const count of TABLES) {
     assert.equal(deckOf(t.engine, owner).length, 4);
   });
 
-  clause(VACATION, "1:rule", `${count} seats: played outside a response there is no tactic to terminate and it resolves normally`, () => {
+  mpClause(VACATION, "1:rule", count, `${count} seats: played outside a response there is no tactic to terminate and it resolves normally`, () => {
     const t = vacationBoard(count);
     const hands = Object.fromEntries(t.seats.map((who) => [who, handOf(t.engine, who).length]));
     playCard(t.engine, P1, t.id("tv"), withOpponent(t, P2));
@@ -1136,7 +1136,7 @@ for (const count of TABLES) {
     for (const who of t.seats.filter((seat) => seat !== P1)) assert.equal(handOf(t.engine, who).length, hands[who], `${who} lost nothing`);
   });
 
-  clause(VACATION, "2:rule", `${count} seats: after it resolves nobody can play a tactic for the rest of the turn, and everybody can again on the next turn`, () => {
+  mpClause(VACATION, "2:rule", count, `${count} seats: after it resolves nobody can play a tactic for the rest of the turn, and everybody can again on the next turn`, () => {
     const t = vacationBoard(count);
     playCard(t.engine, P1, t.id("tv"), withOpponent(t, P2));
     drive(t.engine, () => undefined);

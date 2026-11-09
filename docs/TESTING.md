@@ -215,6 +215,51 @@ enclosing `forEachPlayer` carries the right `players`. Record the move with
 `movedTo` (and a `now: null` entry for each new wrapper or step) in the same change,
 then rerun `mp-inventory` and `mp-worklist`.
 
+### Multiplayer clause gate
+
+`clauses/mp-coverage.test.ts` proves that every clause whose meaning depends on the
+table size has a test at a table of 3 or more seats.
+
+- **The `mp` flag.** `npm run card-tests -- build` writes `mp` on each clause of
+  `data/card-tests/clauses.json` (the field is documented on `Clause` in
+  `clauses/_manifest.ts`; `_coverage.test.ts` fails until the file is rebuilt, since
+  it compares the manifest clause by clause). It comes from the multiplayer
+  inventory (`mpFlag` in `clauses/_mpInventory.ts`):
+  - `"quantified"`: the printed text says each opponent / opponents / each player /
+    all players (the inventory's `mp: "quantified"`).
+  - `true`: the clause has a printed player phrase, or a behavior player word other
+    than the plain `self` / `controller` / `owner` / `ownerOf` / `controllerOf`
+    (`PLAIN_WORDS`, the same set the spec-gap check ignores). A clause whose only
+    player words are plain ones reads the same at every table size, so it gets no
+    flag; the inventory itself still lists such a clause as `mp` (1516 of its 2244).
+  - Absent otherwise.
+  - 677 clauses carry it (75 quantified), in the 1773 rules groups.
+- **The tests.** Multiplayer clause tests live in `clauses/mp/<batch>.test.ts` and use
+  helpers from `_clause.ts`, never `clause()`:
+  - `mpClause(printingId, key | keys, seats, title, fn)`: a real `seats`-seat game.
+    The title is free text; the spec's `test3` / `test4` line in
+    `data/card-tests/mp-spec/<set>.json` says what to assert (the chosen or affected
+    opponent is affected and the other is not; for quantified text, all are).
+  - `mpClauseMismatch(printingId, key | keys, seats, findingId, title, fn)`: as
+    `clauseMismatch`, for a known-broken clause; the finding must be written up in
+    `data/card-tests/findings/`.
+  - `mpExempt(printingId, key | keys, reason)`: an `mp` clause that names no player
+    itself (the inventory flags it for data shared with a sibling clause). It counts
+    at every seat count and needs a written reason.
+- **How the gate finds them.** Not by scanning source: it imports every
+  `clauses/mp/*.test.ts` inside `collectMpClauses` (`_clause.ts`), during which the
+  helpers record their arguments and register no test. A loop over seat counts
+  therefore counts at the seat counts it really runs, and nothing runs twice.
+- **What it asserts.** The mp files use only the `mp*` helpers and every `assert.ok(x)`
+  has a message; every reference names a real printing and one of its group's clauses;
+  every mismatch is written up; every `mp` clause has a 3-seat test and every
+  `"quantified"` clause a 4-seat one. A rules group counts once, whichever of its
+  printings a test names. Seat counts 2 to 6 are accepted by the helpers (2 is for a
+  table played down to one opponent); only 3 and 4 count toward the gate.
+- **Adding a card or changing its text.** Rerun `npm run card-tests -- build` (and
+  `mp-inventory`): a new `mp` clause fails the gate, naming the batch, card, clause
+  and missing seat count, until its test is written.
+
 ### Rules for writing clause tests
 
 1. **Expected behavior comes from the printed text** (the manifest's markup /

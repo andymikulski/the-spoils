@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { answer, cardsOf, deckOf, expectChoice, handOf, kill, offered, othersOf, P1, P2, P3, pending, pickTargets, seatsOf, settle, staples, table, tokensOn, zoneOf } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
 
@@ -26,7 +26,7 @@ function exhumeTable(count: number): Table {
 const exhume = { type: "activateAbility", playerId: P1, abilityId: "ipsighast-exhume" } as const;
 
 for (const count of [3, 4] as const) {
-  clause(IPSIGHAST, "1:ability:ipsighast-exhume", `${count} seats: the pick may be a character in any opponent's discard pile (not the controller's own); the picked card's owner settles which opponent's deck is milled; no opponent is chosen`, () => {
+  mpClause(IPSIGHAST, "1:ability:ipsighast-exhume", count, `${count} seats: the pick may be a character in any opponent's discard pile (not the controller's own); the picked card's owner settles which opponent's deck is milled; no opponent is chosen`, () => {
     for (const victim of othersOf(count)) {
       const t = exhumeTable(count);
       const needs = t.engine.getPlayRequirements({ ...exhume, cardId: t.id("ips") });
@@ -70,7 +70,7 @@ function unscrupulsTable(count: number): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(UNSCRUPULS, "0:rule", `${count} seats: the controller chooses one opponent before targets (exactly one selection); only that opponent discards, and only that opponent's deck is searched and shuffled`, () => {
+  mpClause(UNSCRUPULS, "0:rule", count, `${count} seats: the controller chooses one opponent before targets (exactly one selection); only that opponent discards, and only that opponent's deck is searched and shuffled`, () => {
     for (const chosen of othersOf(count)) {
       const t = unscrupulsTable(count);
       const needs = t.engine.getPlayRequirements({ type: "playCard", playerId: P1, cardId: t.id("u") });
@@ -103,7 +103,7 @@ for (const count of [3, 4] as const) {
 
 const GIADA = "0b67c755-4053-4bfb-9aef-e3a990501e0d"; // This card loses 1 strength and 1 life for each token on it. -- If this card would be destroyed by an opposing card or effect, you may put a token on it instead. If you do, deplete it and remove it from battle. Reduce the amount of damage already inflicted to this character to 0.
 
-clause(GIADA, "1:rule", "3 seats: Giada loses 1 strength and 1 life per token on her, whatever the other players' cards do", () => {
+mpClause(GIADA, "1:rule", 3, "3 seats: Giada loses 1 strength and 1 life per token on her, whatever the other players' cards do", () => {
   const t = table(3, [
     { key: "giada", def: printing(GIADA), owner: P1, counters: { token: 2 } },
     { key: "c-p2", def: character({ name: "Char p2", strength: 5, life: 5 }), owner: P2, counters: { token: 3 } },
@@ -119,7 +119,7 @@ clause(GIADA, "1:rule", "3 seats: Giada loses 1 strength and 1 life per token on
 });
 
 for (const count of [3, 4] as const) {
-  clause(GIADA, "2:rule", `${count} seats: a tactic of any opponent that would destroy Giada may be replaced by a token, deplete and removal from battle; her controller's own effect gets no such option`, () => {
+  mpClause(GIADA, "2:rule", count, `${count} seats: a tactic of any opponent that would destroy Giada may be replaced by a token, deplete and removal from battle; her controller's own effect gets no such option`, () => {
     for (const seat of othersOf(count)) {
       const t = table(
         count,
@@ -152,7 +152,7 @@ for (const count of [3, 4] as const) {
 const OCTO = "60ce2f1b-bb70-4195-a6db-e0caa629ce2a"; // When a character an opponent controls is destroyed, put a token on this card.
 
 for (const count of [3, 4] as const) {
-  clause(OCTO, "1:rule", `${count} seats: a character of any opponent being destroyed puts a token on Octo-Ba-Ba, with no opponent chosen; the controller's own character does not`, () => {
+  mpClause(OCTO, "1:rule", count, `${count} seats: a character of any opponent being destroyed puts a token on Octo-Ba-Ba, with no opponent chosen; the controller's own character does not`, () => {
     const t = table(count, [
       { key: "octo", def: printing(OCTO), owner: P1 },
       ...seatsOf(count).map((seat) => ({ key: `kill-${seat}`, def: kill(`Kill ${seat}`), owner: P1, zone: "hand" as const })),
@@ -172,7 +172,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(OCTO, "1:rule", "3 seats: eliminating one opponent changes nothing about the other's characters", () => {
+mpClause(OCTO, "1:rule", 3, "3 seats: eliminating one opponent changes nothing about the other's characters", () => {
   const t = table(3, [
     { key: "octo", def: printing(OCTO), owner: P1 },
     { key: "kill", def: kill(), owner: P1, zone: "hand" },
@@ -191,7 +191,7 @@ clause(OCTO, "1:rule", "3 seats: eliminating one opponent changes nothing about 
 const WALL = "8866ccbf-a8dc-4c2f-8dbc-4d879b5b10cf"; // When a player deploys a tactic, terminate it and inflict 1 damage to this card.
 
 for (const count of [3, 4] as const) {
-  clause(WALL, "0:rule", `${count} seats: a tactic deployed by any player (the controller or any opponent) is terminated and damages the Wall by 1; other cards are unaffected`, () => {
+  mpClause(WALL, "0:rule", count, `${count} seats: a tactic deployed by any player (the controller or any opponent) is terminated and damages the Wall by 1; other cards are unaffected`, () => {
     for (const seat of seatsOf(count)) {
       const t = table(
         count,

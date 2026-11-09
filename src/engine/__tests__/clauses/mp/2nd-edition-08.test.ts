@@ -7,7 +7,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, item, tactic } from "../../per-card/_harness.js";
-import { clause, printing, settleState } from "../_clause.js";
+import { mpClause, printing, settleState } from "../_clause.js";
 import { COUNTS, answerFor, drive, ids, killTactic, others, pickable, plain, refused, startOfTurn } from "./_seats2ndEdition.js";
 import { choosePlayer, deckOf, handOf, open, P1, P2, P3, playCard, playersNeeded, playRaw, resolvePendingResponses, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -50,7 +50,7 @@ function molestTable(count: Count): Table {
 }
 
 for (const count of COUNTS) {
-  clause(MOLEST, "1:rule", `${count} seats: only the chosen opponent discards, once per repetition until their hand is empty; the free play is limited by each discarded cost; other hands are never touched or counted`, () => {
+  mpClause(MOLEST, "1:rule", count, `${count} seats: only the chosen opponent discards, once per repetition until their hand is empty; the free play is limited by each discarded cost; other hands are never touched or counted`, () => {
     {
       const t = molestTable(count);
       playRaw(t, P1, "card", { players: { opponent: P2 } });
@@ -121,7 +121,7 @@ const divaTable = (count: Count, zone: "hand" | "play" = "hand"): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(DIVA, "0:rule", `${count} seats: P1 selects the opponent when it enters play; only that opponent's hand is revealed at all times; re-selected if that player is eliminated; nothing stays revealed when it leaves play`, () => {
+  mpClause(DIVA, "0:rule", count, `${count} seats: P1 selects the opponent when it enters play; only that opponent's hand is revealed at all times; re-selected if that player is eliminated; nothing stays revealed when it leaves play`, () => {
     for (const opponent of others(count)) {
       const t = divaTable(count);
       playCard(t, P1, "card");
@@ -153,7 +153,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(DIVA, "1:ability:disapprove", `${count} seats: P1 names a card; only the opponent chosen for the activation puts such a card on the bottom of their deck and draws; independent of the static clause's choice`, () => {
+  mpClause(DIVA, "1:ability:disapprove", count, `${count} seats: P1 names a card; only the opponent chosen for the activation puts such a card on the bottom of their deck and draws; independent of the static clause's choice`, () => {
     for (const opponent of others(count)) {
       const staticChoice = opponent === P2 ? P3 : P2;
       const t = divaTable(count);
@@ -209,7 +209,7 @@ const drawEveryone = (name: string) => tactic({ name, behavior: { abilities: [{ 
 const bounce = () => tactic({ name: "Bounce", behavior: { abilities: [{ id: "go", type: "activated", targets: [{ id: "t", selector: { type: "character" }, count: 1 }], effects: [{ type: "moveCard", target: { type: "selected", id: "t" }, to: "hand" }] }] } as never });
 
 for (const count of COUNTS) {
-  clause(MISFIRE, "0:rule", `${count} seats: this turn a card put into any player's hand goes to that player's discard pile instead; no opponent is chosen; next turn hands work normally`, () => {
+  mpClause(MISFIRE, "0:rule", count, `${count} seats: this turn a card put into any player's hand goes to that player's discard pile instead; no opponent is chosen; next turn hands work normally`, () => {
     const t = table(count, [
       { key: "card", def: printing(MISFIRE), owner: P1, zone: "hand" },
       ...bank("obsession", 2, P1),
@@ -255,7 +255,7 @@ function playVacation(t: Table, count: Count): void {
 }
 
 for (const count of COUNTS) {
-  clause(TVAC, "1:rule", `${count} seats: played in response to a tactic it terminates that tactic; for the rest of the turn nobody (P1, P2, P3 ...) can play a tactic; next turn tactics work again`, () => {
+  mpClause(TVAC, "1:rule", count, `${count} seats: played in response to a tactic it terminates that tactic; for the rest of the turn nobody (P1, P2, P3 ...) can play a tactic; next turn tactics work again`, () => {
     const cards = (): CardPlacement[] => [
       { key: "card", def: printing(TVAC), owner: P1, zone: "hand" },
       ...bank("rage", 4, P1),
@@ -316,7 +316,7 @@ function ministryTable(count: Count): Table {
 const attackFactionOfP1 = (t: Table, who: PlayerId) => t.engine.perform({ type: "declareAttack", playerId: who, attackerIds: ids(t, `atk-${who}`), target: { type: "faction", playerId: P1 } } as never);
 
 for (const count of COUNTS) {
-  clause(MINISTRY, "0:rule", `${count} seats: P1 selects the opponent when it enters play; only that opponent must pay 2 to attack, the others attack for free; re-selected if that player is eliminated; nobody pays once it leaves play`, () => {
+  mpClause(MINISTRY, "0:rule", count, `${count} seats: P1 selects the opponent when it enters play; only that opponent must pay 2 to attack, the others attack for free; re-selected if that player is eliminated; nobody pays once it leaves play`, () => {
     for (const taxed of [P2, P3]) {
       const t = ministryTable(count);
       playCard(t, P1, "card");
@@ -391,7 +391,7 @@ function unblockableFlow(spec: Unblockable, count: Count): void {
   {
     const t = build({ [p2]: 0, [p3]: spec.needed });
     enter(t, p3);
-    assert.ok(cannotBeBlocked(t));
+    assert.ok(cannotBeBlocked(t), "cannotBeBlocked(t)");
   }
   // One short of the condition is not enough.
   {
@@ -417,9 +417,9 @@ const FACE = "10b2d3fb-c61b-4c10-99ed-7d81de0c6b7e";
 const items = (seat: PlayerId, n: number): CardPlacement[] => Array.from({ length: n }, (_, i) => ({ key: `item-${seat}-${i}`, def: item({ name: `Item ${seat} ${i}` }), owner: seat, zone: "play" as const }));
 
 for (const count of COUNTS) {
-  clause(PICKPOCKET, "0:rule", `${count} seats: cannot be blocked while the opponent chosen when it entered play controls an item (not any opponent)`, () => unblockableFlow({ id: PICKPOCKET, provides: items, needed: 1, bank: ["deception", 1] }, count));
-  clause(CUTPURSE, "0:rule", `${count} seats: cannot be blocked while the opponent chosen when it entered play controls an item (not any opponent)`, () => unblockableFlow({ id: CUTPURSE, provides: items, needed: 1, bank: ["deception", 4] }, count));
-  clause(FACE, "0:rule", `${count} seats: cannot be blocked while the opponent chosen when it entered play controls at least 4 characters (not any opponent)`, () =>
+  mpClause(PICKPOCKET, "0:rule", count, `${count} seats: cannot be blocked while the opponent chosen when it entered play controls an item (not any opponent)`, () => unblockableFlow({ id: PICKPOCKET, provides: items, needed: 1, bank: ["deception", 1] }, count));
+  mpClause(CUTPURSE, "0:rule", count, `${count} seats: cannot be blocked while the opponent chosen when it entered play controls an item (not any opponent)`, () => unblockableFlow({ id: CUTPURSE, provides: items, needed: 1, bank: ["deception", 4] }, count));
+  mpClause(FACE, "0:rule", count, `${count} seats: cannot be blocked while the opponent chosen when it entered play controls at least 4 characters (not any opponent)`, () =>
     unblockableFlow({ id: FACE, provides: (seat, n) => plain(`char-${seat}-`, n, seat, "play"), needed: 4, bank: ["deception", 6] }, count)
   );
 }
@@ -450,7 +450,7 @@ function billionaireTable(count: Count): Table {
 const useGadget = (t: Table, seat: PlayerId) => t.engine.perform({ type: "activateAbility", playerId: P1, cardId: t.id(`gadget-${seat}`), abilityId: "go" } as never);
 
 for (const count of COUNTS) {
-  clause(BILLIONAIRE, "1:rule", `${count} seats: P1 selects the opponent when it enters play; only that opponent's cards' abilities may be used, paid with P1's resources, with the effect happening as if that opponent used it`, () => {
+  mpClause(BILLIONAIRE, "1:rule", count, `${count} seats: P1 selects the opponent when it enters play; only that opponent's cards' abilities may be used, paid with P1's resources, with the effect happening as if that opponent used it`, () => {
     for (const opponent of others(count)) {
       const t = billionaireTable(count);
       playCard(t, P1, "card");

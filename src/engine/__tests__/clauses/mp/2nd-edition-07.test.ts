@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, item, location } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, battle, drive, ids, killTactic, others, pickable, plain } from "./_seats2ndEdition.js";
 import { deckOf, handOf, open, P1, P2, P3, playCard, playersNeeded, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -27,7 +27,7 @@ const muddlerTable = (count: Count): Table =>
   table(count, [{ key: "card", def: printing(MUDDLER), owner: P1, zone: "play" }, ...hands(count), ...seatsOf(count).slice(1).map((seat) => ({ key: `place-${seat}`, def: location({ name: `Place ${seat}`, structure: 9 }), owner: seat, zone: "play" as const }))]);
 
 for (const count of COUNTS) {
-  clause(MUDDLER, "1:rule", `${count} seats: when it damages a faction the defending player (not chosen by anyone) puts a card of their own hand on top of their deck; nobody else is affected`, () => {
+  mpClause(MUDDLER, "1:rule", count, `${count} seats: when it damages a faction the defending player (not chosen by anyone) puts a card of their own hand on top of their deck; nobody else is affected`, () => {
     for (const defender of others(count)) {
       const t = muddlerTable(count);
       const top = handKeys(defender)[1]!;
@@ -60,7 +60,7 @@ for (const count of COUNTS) {
 const OCTOPOD = "f54b6b5c-7d76-441f-a521-7d2e65b31d0b";
 
 for (const count of COUNTS) {
-  clause(OCTOPOD, "1:rule", `${count} seats: when it damages a faction the defending player (not chosen by anyone) discards 2 cards of their choice; nobody else is affected`, () => {
+  mpClause(OCTOPOD, "1:rule", count, `${count} seats: when it damages a faction the defending player (not chosen by anyone) discards 2 cards of their choice; nobody else is affected`, () => {
     for (const defender of others(count)) {
       const t = table(count, [{ key: "card", def: printing(OCTOPOD), owner: P1, zone: "play" }, ...hands(count)]);
       const asked = battle(t, P1, ["card"], defender, [], (pc) => (pc.declaration?.id === "h" ? { kind: "chooserSelectsTarget", selected: ids(t, ...handKeys(defender).slice(0, 2)) } : undefined));
@@ -84,7 +84,7 @@ for (const count of COUNTS) {
 const SACSPIDER = "25467632-34e7-4eca-b5f0-9b5c50a05d1f";
 
 for (const count of COUNTS) {
-  clause(SACSPIDER, "0:rule", `${count} seats: destroyed by battle damage, the other side of that battle (the defender when it attacks, the attacker when it blocks) discards their hand; nobody else does`, () => {
+  mpClause(SACSPIDER, "0:rule", count, `${count} seats: destroyed by battle damage, the other side of that battle (the defender when it attacks, the attacker when it blocks) discards their hand; nobody else does`, () => {
     // Run A: P1's Sacspider attacks a faction and is destroyed by the defender's blocker.
     for (const defender of others(count)) {
       const t = table(count, [
@@ -142,14 +142,14 @@ const betrayalTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(BETRAYAL, "0:ability", `${count} seats: while P1 attacks, the picks are limited to the defending player's discard pile; no opponent choice is offered`, () => {
+  mpClause(BETRAYAL, "0:ability", count, `${count} seats: while P1 attacks, the picks are limited to the defending player's discard pile; no opponent choice is offered`, () => {
     for (const defender of others(count)) {
       const t = betrayalTable(count);
       t.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: ids(t, "raider"), target: { type: "faction", playerId: defender } } as never);
       assert.equal(playersNeeded(t, { type: "playCard", playerId: P1, cardId: t.id("card") } as never), undefined, "no opponent choice: the defending player is the other side of the battle");
       const needs = t.engine.getPlayRequirements({ type: "playCard", playerId: P1, cardId: t.id("card") } as never);
       const pick = needs.find((need) => need.kind === "pick");
-      assert.ok(pick && pick.kind === "pick");
+      assert.ok(pick && pick.kind === "pick", "pick && pick.kind === 'pick'");
       assert.deepEqual([...pick.candidates].sort(), ids(t, `fallen-${defender}`), "only the defending player's discard pile is pickable");
       t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("card"), selected: { c: ids(t, `fallen-${defender}`) } } as never);
       drive(t);
@@ -183,7 +183,7 @@ const wyrmfangTable = (count: Count, active: PlayerId = P1): Table =>
   );
 
 for (const count of COUNTS) {
-  clause(WYRMFANG, "1:rule", `${count} seats: the defending player (not chosen by anyone) picks among their own characters; those must block and only they can; the other players take no part`, () => {
+  mpClause(WYRMFANG, "1:rule", count, `${count} seats: the defending player (not chosen by anyone) picks among their own characters; those must block and only they can; the other players take no part`, () => {
     for (const defender of others(count)) {
       const t = wyrmfangTable(count);
       const asked = battle(t, P1, ["card"], defender, [`char-${defender}-0`], (pc) => {
@@ -228,7 +228,7 @@ const pickpocketTable = (count: Count, items: Record<string, number> = { p2: 1, 
   ]);
 
 for (const count of COUNTS) {
-  clause(PICKPOCKET, "1:rule", `${count} seats: when it damages a faction the defending player (not chosen by anyone) picks an item they control, P1 takes it and destroys the Pickpocket; other players' items are safe`, () => {
+  mpClause(PICKPOCKET, "1:rule", count, `${count} seats: when it damages a faction the defending player (not chosen by anyone) picks an item they control, P1 takes it and destroys the Pickpocket; other players' items are safe`, () => {
     for (const defender of others(count)) {
       const t = pickpocketTable(count);
       const asked = battle(t, P1, ["card"], defender, [], (pc) => {
@@ -260,7 +260,7 @@ for (const count of COUNTS) {
 const CUTPURSE = "db118e14-f80e-4895-96b6-ec2eab18e0cc";
 
 for (const count of COUNTS) {
-  clause(CUTPURSE, "1:rule", `${count} seats: when it damages a faction P1 picks an item the defending player (not chosen by anyone) controls and destroys it; other players' items are not pickable`, () => {
+  mpClause(CUTPURSE, "1:rule", count, `${count} seats: when it damages a faction P1 picks an item the defending player (not chosen by anyone) controls and destroys it; other players' items are not pickable`, () => {
     for (const defender of others(count)) {
       const t = table(count, [
         { key: "card", def: printing(CUTPURSE), owner: P1, zone: "play" },

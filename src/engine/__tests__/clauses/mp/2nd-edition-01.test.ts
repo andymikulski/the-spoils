@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, tactic } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, answerFor, candidatesOf, ids, others, pickable, pickFor, pinger, plain, refused, respondToAbility } from "./_seats2ndEdition.js";
 import { choosePlayer, deckOf, handOf, open, P1, P2, P3, playCard, playersNeeded, resolvePendingResponses, seatsOf, table, zoneOf, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -34,7 +34,7 @@ const decksOffered = (t: Table, opponent?: PlayerId): string[] => {
 };
 
 for (const count of COUNTS) {
-  clause(ALMANAC, "0:ability:almanac-foresight", `${count} seats: either deck is the controller's or the chosen opponent's; no other deck is offered or reordered`, () => {
+  mpClause(ALMANAC, "0:ability:almanac-foresight", count, `${count} seats: either deck is the controller's or the chosen opponent's; no other deck is offered or reordered`, () => {
     for (const opponent of others(count)) {
       {
         const t = almanacTable(count);
@@ -92,7 +92,7 @@ const serpentTable = (count: Count): Table =>
   table(count, [{ key: "serpent", def: printing(SERPENT), owner: P1, zone: "hand" }, ...bank("obsession", 3, P1), ...seatsOf(count).flatMap((seat) => plain(`d${seat}-`, 6, seat, "deck"))]);
 
 for (const count of COUNTS) {
-  clause(SERPENT, "1:rule", `${count} seats: the opponent is chosen when the trigger resolves; either deck is P1's or that opponent's, and no other deck is offered or reordered`, () => {
+  mpClause(SERPENT, "1:rule", count, `${count} seats: the opponent is chosen when the trigger resolves; either deck is P1's or that opponent's, and no other deck is offered or reordered`, () => {
     for (const opponent of others(count)) {
       for (const whose of [opponent, P1]) {
         const t = serpentTable(count);
@@ -149,7 +149,7 @@ function ashesTable(count: Count): Table {
 const nullify = (t: Table, extra: Record<string, unknown> = {}) => ({ type: "activateAbility", playerId: P1, cardId: t.id("ashes"), abilityId: "nullify", ...extra }) as never;
 
 for (const count of COUNTS) {
-  clause(ASHES, "2:ability:nullify", `${count} seats: both players are P1 and the opponent P1 chooses; only those two put a character into its owner's hand`, () => {
+  mpClause(ASHES, "2:ability:nullify", count, `${count} seats: both players are P1 and the opponent P1 chooses; only those two put a character into its owner's hand`, () => {
     for (const opponent of others(count)) {
       const t = ashesTable(count);
       assert.deepEqual(playersNeeded(t, nullify(t)), [{ id: "opponent", candidates: seatsOf(count).slice(1) }], "the opponent is chosen with the activation");
@@ -219,7 +219,7 @@ const freeAnswer = (t: Table, who: PlayerId, key?: string): void => {
 };
 
 for (const count of COUNTS) {
-  clause(EPIPHANY, "0:rule", `${count} seats: if P1 plays a card for free, only the opponent P1 chooses may do the same; if P1 does not, nobody else is offered anything`, () => {
+  mpClause(EPIPHANY, "0:rule", count, `${count} seats: if P1 plays a card for free, only the opponent P1 chooses may do the same; if P1 does not, nobody else is offered anything`, () => {
     for (const opponent of others(count)) {
       const t = epiphanyTable(count);
       playCard(t, P1, "e");

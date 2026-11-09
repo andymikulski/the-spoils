@@ -3,7 +3,7 @@
 // clause (data/card-tests/mp-spec/seed-2.json); engine data only drives the engine.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   answerTargets, askedPlayers, character, deckOf, handSize, hands, idsOf, influenceOf, others, P1, P2, P3, P4, pending, perSeat, requirements, resources, seatsFor, settle,
   statOf, table, zoneOf
@@ -40,7 +40,7 @@ const keys = (prefix: string, n: number, seat: string): string[] => Array.from({
 const victims = (count: number): string[] => (count === 3 ? [...keys("c", 2, P1), ...keys("c", 2, P2), ...keys("c", 2, P3)] : [...keys("c", 2, P1), ...keys("c", 2, P2), "c0-p3", "c0-p4"]);
 
 for (const count of COUNTS) {
-  clause(HEXAPEDE, "0:ability:hellish-hex", `${count} seats: every faction takes 6 but only you and the chosen opponent remove cards from hand, discard pile and deck`, () => {
+  mpClause(HEXAPEDE, "0:ability:hellish-hex", count, `${count} seats: every faction takes 6 but only you and the chosen opponent remove cards from hand, discard pile and deck`, () => {
     for (const chosen of others(count, P1)) {
       const t = hexapedeBoard(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("hex"), abilityId: "hellish-hex", selected: { victims: victims(count).map((key) => t.id(key)) } } as const;
@@ -74,7 +74,7 @@ for (const count of COUNTS) {
   });
 }
 
-clause(HEXAPEDE, "0:ability:hellish-hex", "4 seats: the factions of players outside the pair that reach 0 together lose together and the game goes on with the pair", () => {
+mpClause(HEXAPEDE, "0:ability:hellish-hex", 4, "4 seats: the factions of players outside the pair that reach 0 together lose together and the game goes on with the pair", () => {
   const t = hexapedeBoard(4);
   t.engine.state.players[P3]!.influence = 6;
   t.engine.state.players[P4]!.influence = 6;
@@ -110,7 +110,7 @@ function fighterBoard(count: number, extra: Array<[string, string, string]>) {
 }
 
 for (const count of COUNTS) {
-  clause(RESISTANCE_FIGHTER, "1:rule", `${count} seats: "a character you don't own" is a character owned by any other player: +2 strength, +2 life, +1 speed`, () => {
+  mpClause(RESISTANCE_FIGHTER, "1:rule", count, `${count} seats: "a character you don't own" is a character owned by any other player: +2 strength, +2 life, +1 speed`, () => {
     const base = fighterBoard(count, [["mine", P1, P1]]);
     const [s, l, v] = [statOf(base, "fighter", "strength"), statOf(base, "fighter", "life"), statOf(base, "fighter", "speed")];
     // No other player's character under my control: no bonus, whatever the others control.

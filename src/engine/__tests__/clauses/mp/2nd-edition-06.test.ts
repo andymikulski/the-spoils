@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, item, volition } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, answerFor, drive, eliminateAllBut, ids, opponentChoice, others, plain, refused } from "./_seats2ndEdition.js";
 import { P1, P2, deckOf, handOf, influenceOf, playCard, playersNeeded, playRaw, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 
@@ -32,7 +32,7 @@ const downsizingTable = (count: Count): Table =>
   table(count, [{ key: "card", def: printing(DOWNSIZING), owner: P1, zone: "hand" }, ...bank("greed", 10, P1), ...seatsOf(count).flatMap((seat) => plain(`char-${seat}-`, SIZES[seat]!, seat, "play"))]);
 
 for (const count of COUNTS) {
-  clause(DOWNSIZING, "0:rule", `${count} seats: every seat's characters are destroyed and only the chosen opponent's faction gains X influence`, () => {
+  mpClause(DOWNSIZING, "0:rule", count, `${count} seats: every seat's characters are destroyed and only the chosen opponent's faction gains X influence`, () => {
     const total = seatsOf(count).reduce((sum, seat) => sum + SIZES[seat]!, 0);
     for (const opponent of others(count)) {
       const t = downsizingTable(count);
@@ -66,7 +66,7 @@ const bribeTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(BRIBE, "0:ability", `${count} seats: the picked character (anyone's) is destroyed and only the chosen opponent's faction gains X influence`, () => {
+  mpClause(BRIBE, "0:ability", count, `${count} seats: the picked character (anyone's) is destroyed and only the chosen opponent's faction gains X influence`, () => {
     for (const opponent of others(count)) {
       for (const victim of seatsOf(count)) {
         const t = bribeTable(count);
@@ -103,7 +103,7 @@ const mutinyTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(MUTINY, "0:ability", `${count} seats: only the chosen opponent's characters can be picked; P1 loses influence equal to the picked cost and takes control of it this turn`, () => {
+  mpClause(MUTINY, "0:ability", count, `${count} seats: only the chosen opponent's characters can be picked; P1 loses influence equal to the picked cost and takes control of it this turn`, () => {
     for (const opponent of others(count)) {
       const t = mutinyTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -140,7 +140,7 @@ const judgmentTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(JUDGMENT, "0:ability", `${count} seats: only the chosen opponent's characters can be picked; only that opponent may destroy it, otherwise P1 draws X cards`, () => {
+  mpClause(JUDGMENT, "0:ability", count, `${count} seats: only the chosen opponent's characters can be picked; only that opponent may destroy it, otherwise P1 draws X cards`, () => {
     for (const opponent of others(count)) {
       for (const destroys of [true, false]) {
         const t = judgmentTable(count);
@@ -182,7 +182,7 @@ const knobTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(KNOB, "0:ability", `${count} seats: only the chosen opponent's face-down resources are counted against X`, () => {
+  mpClause(KNOB, "0:ability", count, `${count} seats: only the chosen opponent's face-down resources are counted against X`, () => {
     for (const [opponent, destroyed] of [[seatsOf(count)[2]!, true], [P2, false]] as const) {
       const t = knobTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count), "the opponent is chosen before the character is picked");
@@ -217,7 +217,7 @@ const scragTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(SCRAG, "0:ability", `${count} seats: only the chosen opponent's discard pile is counted against X`, () => {
+  mpClause(SCRAG, "0:ability", count, `${count} seats: only the chosen opponent's discard pile is counted against X`, () => {
     for (const [opponent, destroyed] of [[seatsOf(count)[2]!, true], [P2, false]] as const) {
       const t = scragTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -251,7 +251,7 @@ const skinTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(SKIN, "0:ability", `${count} seats: the second pick is limited to the chosen opponent's characters; damage and removal affect only P1's and that opponent's characters`, () => {
+  mpClause(SKIN, "0:ability", count, `${count} seats: the second pick is limited to the chosen opponent's characters; damage and removal affect only P1's and that opponent's characters`, () => {
     for (const opponent of others(count)) {
       const t = skinTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -285,7 +285,7 @@ const goldTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(GOLD, "0:ability:trade", `${count} seats: only the chosen opponent's items can be picked; P1 pays that item's cost, destroys Fool's Gold and takes control of the item`, () => {
+  mpClause(GOLD, "0:ability:trade", count, `${count} seats: only the chosen opponent's items can be picked; P1 pays that item's cost, destroys Fool's Gold and takes control of the item`, () => {
     for (const opponent of others(count)) {
       const t = goldTable(count);
       assert.deepEqual(playersNeeded(t, abilityAction(t, "card", "trade")), opponentChoice(count));
@@ -336,7 +336,7 @@ const useOption = (t: Table, index: number, cost: number, extra: Record<string, 
 };
 
 for (const count of COUNTS) {
-  clause(POISON, "0:rule", `${count} seats: the opponent is chosen once for the whole card; tokens come only from cards P1 controls and can be spent on several options in one resolution`, () => {
+  mpClause(POISON, "0:rule", count, `${count} seats: the opponent is chosen once for the whole card; tokens come only from cards P1 controls and can be spent on several options in one resolution`, () => {
     const t = poisonTable(count);
     assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count), "chosen once, with the play");
     playCard(t, P1, "card", { players: { opponent: P2 } });
@@ -353,7 +353,7 @@ for (const count of COUNTS) {
     assert.equal(t.engine.state.cards[t.id("mine")]!.counters?.token ?? 0, 0);
   });
 
-  clause(POISON, "1:rule", `${count} seats: 1 TOKEN picks any character in play (any player's) and inflicts 1 damage to it`, () => {
+  mpClause(POISON, "1:rule", count, `${count} seats: 1 TOKEN picks any character in play (any player's) and inflicts 1 damage to it`, () => {
     const t = poisonTable(count);
     playCard(t, P1, "card", { players: { opponent: P2 } });
     useOption(t, 0, 1);
@@ -364,7 +364,7 @@ for (const count of COUNTS) {
     assert.equal(t.engine.state.cards[t.id("char-p2")]!.damage, 0);
   });
 
-  clause(POISON, "2:rule", `${count} seats: 2 TOKENS draws a card per use, and involves no other player`, () => {
+  mpClause(POISON, "2:rule", count, `${count} seats: 2 TOKENS draws a card per use, and involves no other player`, () => {
     const t = poisonTable(count);
     const before = Object.fromEntries(t.seats.map((seat) => [seat, [deckOf(t, seat).length, handOf(t, seat).length]]));
     playCard(t, P1, "card", { players: { opponent: P2 } });
@@ -375,7 +375,7 @@ for (const count of COUNTS) {
     for (const seat of others(count)) assert.deepEqual([deckOf(t, seat).length, handOf(t, seat).length], before[seat], `${seat} is not involved`);
   });
 
-  clause(POISON, "3:rule", `${count} seats: 2 TOKENS makes only the chosen opponent discard, once per use, for the whole card`, () => {
+  mpClause(POISON, "3:rule", count, `${count} seats: 2 TOKENS makes only the chosen opponent discard, once per use, for the whole card`, () => {
     const t0 = poisonTable(count);
     assert.deepEqual(playersNeeded(t0, playAction(t0, "card")), opponentChoice(count));
     for (const opponent of others(count)) {
@@ -399,7 +399,7 @@ for (const count of COUNTS) {
     assert.equal(t.engine.state.pendingChoice?.playerId, P2, "P2 is bound automatically");
   });
 
-  clause(POISON, "4:rule", `${count} seats: 3 TOKENS searches P1's own deck for a card and puts it into P1's hand; no other deck is touched`, () => {
+  mpClause(POISON, "4:rule", count, `${count} seats: 3 TOKENS searches P1's own deck for a card and puts it into P1's hand; no other deck is touched`, () => {
     const t = poisonTable(count);
     const decks = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));
     playCard(t, P1, "card", { players: { opponent: P2 } });

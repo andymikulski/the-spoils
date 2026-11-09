@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character } from "../../support/fixtures.js";
-import { clause, isDevelopRuleOffer, printing, refused } from "../_clause.js";
+import { mpClause, isDevelopRuleOffer, printing, refused } from "../_clause.js";
 import { answer, controllerOf, settle, staples, table } from "./_seed-3.js";
 import type { PlayerId, SpoilsEngine } from "./_seed-3.js";
 import { factionGame, handSize, IMPERIAL, resourcesOf, TOURNAMENT } from "./_seed-3-factions.js";
@@ -23,20 +23,20 @@ const SEATED = [TOURNAMENT, IMPERIAL, TOURNAMENT];
 
 for (const count of [3, 4] as const) {
   const x = count - 1;
-  clause(EVIL, "0:rule", `${count} seats: X is ${x}, so the Evil Alliance's controller starts with ${15 + 10 * x} influence; the other seats start with their own factions' influence`, () => {
+  mpClause(EVIL, "0:rule", count, `${count} seats: X is ${x}, so the Evil Alliance's controller starts with ${15 + 10 * x} influence; the other seats start with their own factions' influence`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     assert.equal(engine.state.players[P1]!.influence, 15 + 10 * x);
     assert.equal(engine.state.players[P2]!.influence, TOURNAMENT.faction!.startingInfluence);
   });
 
-  clause(EVIL, "1:rule:STARTING RESOURCES", `${count} seats: the Evil Alliance's controller starts with 1+${x} = ${1 + x} staple resources; the other seats start with their own factions' counts`, () => {
+  mpClause(EVIL, "1:rule:STARTING RESOURCES", count, `${count} seats: the Evil Alliance's controller starts with 1+${x} = ${1 + x} staple resources; the other seats start with their own factions' counts`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     assert.equal(resourcesOf(engine, P1).length, 1 + x);
     assert.equal(resourcesOf(engine, P2).length, 2, "the Tournament Faction's own count");
     if (count === 4) assert.equal(resourcesOf(engine, P3).length, 2, "Imperial Army's own 2 Rage");
   });
 
-  clause(EVIL, "4:rule:DEVELOP RULE", `${count} seats: the Evil Alliance's Develop Rule happens ${x} times at the start of its controller's turn (once, then repeated ${x - 1} times); the other seats develop once`, () => {
+  mpClause(EVIL, "4:rule:DEVELOP RULE", count, `${count} seats: the Evil Alliance's Develop Rule happens ${x} times at the start of its controller's turn (once, then repeated ${x - 1} times); the other seats develop once`, () => {
     const engine = factionGame([printing(EVIL), ...SEATED.slice(0, x)], { firstPlayerId: P1 });
     // Keep every hand, then count the Develop Rule offers raised at the first turn start (P1's).
     for (let guard = 0; engine.state.setup.phase === "mulligan" && guard < 10; guard++) {
@@ -64,7 +64,7 @@ for (const count of [3, 4] as const) {
 // =====================================================================================
 
 for (const count of [3, 4] as const) {
-  clause(UNION, "2:rule", `${count} seats: the Union's controller selects one opponent before the game begins; only that opponent starts with enough extra staples to match the controller's starting resources, the others start normally`, () => {
+  mpClause(UNION, "2:rule", count, `${count} seats: the Union's controller selects one opponent before the game begins; only that opponent starts with enough extra staples to match the controller's starting resources, the others start normally`, () => {
     const others = [TOURNAMENT, IMPERIAL, TOURNAMENT].slice(0, count - 1);
     const opponents = [P2, P3, P4].slice(0, count - 1);
     for (const chosen of opponents) {
@@ -89,7 +89,7 @@ for (const count of [3, 4] as const) {
 // The Open R&D Faction
 // =====================================================================================
 
-clause(OPEN_RD, "7:rule:RESEARCH & DEVELOPMENT", "3 seats: the created ability can be used by the controller and the one chosen opponent only; the other opponent is refused", () => {
+mpClause(OPEN_RD, "7:rule:RESEARCH & DEVELOPMENT", 3, "3 seats: the created ability can be used by the controller and the one chosen opponent only; the other opponent is refused", () => {
   const spec = { costs: [{ kind: "pay" as const, amount: 1 }], effect: { kind: "draw" as const, amount: 1 } };
   const make = (active: PlayerId) => {
     const t = table(3, [...staples("rage", 1, P1), ...staples("rage", 1, P2), ...staples("rage", 1, P3), ...[P1, P2, P3].flatMap((seat) => [0, 1].map((i) => ({ key: `d-${seat}-${i}`, def: character({ name: `Deck ${seat} ${i}` }), owner: seat, zone: "deck" as const })))], {
@@ -112,7 +112,7 @@ clause(OPEN_RD, "7:rule:RESEARCH & DEVELOPMENT", "3 seats: the created ability c
 // Slightly Less Evil Alliance
 // =====================================================================================
 
-clause(SLEA, "3:ability", "3 seats: TEAMWORK pays 2, picks a card the controller controls and chooses another player (P2 or P3, never the controller); only that player takes control of the card", () => {
+mpClause(SLEA, "3:ability", 3, "3 seats: TEAMWORK pays 2, picks a card the controller controls and chooses another player (P2 or P3, never the controller); only that player takes control of the card", () => {
   for (const chosen of [P2, P3] as const) {
     const t = table(3, [{ key: "gift", def: character({ name: "Gift" }), owner: P1 }, ...staples("rage", 2)], { factions: { [P1]: printing(SLEA) } });
     const faction = t.engine.state.players[P1]!.factionId!;

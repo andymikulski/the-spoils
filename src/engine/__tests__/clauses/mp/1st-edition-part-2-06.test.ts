@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -95,7 +95,7 @@ function auctionTable(count: Count, resources: Record<PlayerId, number>, previou
   );
 }
 
-clause(AUCTION, "0:rule", "3 seats: the active player reveals from their own deck, bidding goes clockwise from them, a bid above a player's detached resources is refused, and the winner pays and controls the character", () => {
+mpClause(AUCTION, "0:rule", 3, "3 seats: the active player reveals from their own deck, bidding goes clockwise from them, a bid above a player's detached resources is refused, and the winner pays and controls the character", () => {
   // P2's turn: P2 reveals; order P2, P3, P1
   let t = auctionTable(3, { [P1]: 3, [P2]: 2, [P3]: 1 }, P1, P2);
   pass(t, P1);
@@ -161,7 +161,7 @@ clause(AUCTION, "0:rule", "3 seats: the active player reveals from their own dec
   assert.equal(open(t), undefined, "no character was revealed: nobody bids");
 });
 
-clause(AUCTION, "0:rule", "4 seats: bidding order is clockwise from the active player, a player with no detached resources passes at once, and a player who has passed is skipped", () => {
+mpClause(AUCTION, "0:rule", 4, "4 seats: bidding order is clockwise from the active player, a player with no detached resources passes at once, and a player who has passed is skipped", () => {
   // P3's turn: order P3, P4, P1, P2
   const t = auctionTable(4, { [P1]: 3, [P2]: 3, [P3]: 3, [P4]: 0 }, P2, P3);
   pass(t, P2);
@@ -200,7 +200,7 @@ clause(AUCTION, "0:rule", "4 seats: bidding order is clockwise from the active p
 const CREED = "837d5a93-213d-4e5d-af65-0a6c14c55c7c";
 
 for (const count of [3, 4] as const) {
-  clause(CREED, "1:ability:bribe", `${count} seats: the controller and every opponent may use BRIBE, each paying from their own resources, and nobody is asked for an opponent`, () => {
+  mpClause(CREED, "1:ability:bribe", count, `${count} seats: the controller and every opponent may use BRIBE, each paying from their own resources, and nobody is asked for an opponent`, () => {
     const hostOwner = P3;
     for (const user of seatsOf(count)) {
       const t = table(
@@ -274,7 +274,7 @@ function morphTable(count: Count, inPlay: boolean, counters = 0, active: PlayerI
 }
 
 for (const count of [3, 4] as const) {
-  clause(MORPH, "0:rule", `${count} seats: it attacks on the turn it enters play, and no other player gates that`, () => {
+  mpClause(MORPH, "0:rule", count, `${count} seats: it attacks on the turn it enters play, and no other player gates that`, () => {
     for (const target of others(count)) {
       const t = morphTable(count, false);
       playCard(t, P1, "morph");
@@ -285,7 +285,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(MORPH, "1:rule", `${count} seats: only P1's own plays add tokens: a resource does not, and neither do other players' plays`, () => {
+  mpClause(MORPH, "1:rule", count, `${count} seats: only P1's own plays add tokens: a resource does not, and neither do other players' plays`, () => {
     const t = morphTable(count, true);
     assert.equal(tokens(t), 0);
     playCard(t, P1, "tac-p1");
@@ -308,7 +308,7 @@ for (const count of [3, 4] as const) {
     assert.equal(tokens(empty), 0, "no token is added by another player's play, and none goes below 0");
   });
 
-  clause(MORPH, "2:rule", `${count} seats: any opponent playing a card removes a token (never below 0), P1's own play does not remove one, and nobody is asked`, () => {
+  mpClause(MORPH, "2:rule", count, `${count} seats: any opponent playing a card removes a token (never below 0), P1's own play does not remove one, and nobody is asked`, () => {
     const t = morphTable(count, true, 2);
     let expected = 2;
     const order = others(count);
@@ -328,7 +328,7 @@ for (const count of [3, 4] as const) {
     assert.equal(tokens(t), 1, "P1's own card added a token and removed none");
   });
 
-  clause(MORPH, "3:rule", `${count} seats: it gains 1 strength and 1 life per token, and tokens move only with plays`, () => {
+  mpClause(MORPH, "3:rule", count, `${count} seats: it gains 1 strength and 1 life per token, and tokens move only with plays`, () => {
     const t = morphTable(count, true, 2);
     const base = morphTable(count, true, 0);
     const stat = (tab: Table, name: "strength" | "life"): number => tab.engine.getStat(tab.id("morph"), name);
@@ -367,25 +367,25 @@ function dethTable(count: Count, extra: CardPlacement[] = []): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(DETH, "2:rule", `${count} seats: only the attached character gains 2 strength and 2 life`, () => {
+  mpClause(DETH, "2:rule", count, `${count} seats: only the attached character gains 2 strength and 2 life`, () => {
     const t = dethTable(count);
     assert.equal(t.engine.getStat(t.id("host"), "strength") - t.engine.getStat(t.id("twin"), "strength"), 2);
     assert.equal(t.engine.getStat(t.id("host"), "life") - t.engine.getStat(t.id("twin"), "life"), 2);
     for (const seat of others(count)) assert.equal(t.engine.getStat(t.id(`c-${seat}`), "life"), 9, `${seat}'s characters gain nothing`);
   });
 
-  clause(DETH, "3:rule", `${count} seats: when the attached character is blocked the defending player's faction loses 2, and nobody is asked who the opponent is`, () => {
+  mpClause(DETH, "3:rule", count, `${count} seats: when the attached character is blocked the defending player's faction loses 2, and nobody is asked who the opponent is`, () => {
     for (const defender of others(count)) {
       const t = dethTable(count);
       const before = Object.fromEntries(t.seats.map((s) => [s, infl(t, s)]));
       const shown = fightOut(t, P1, ["host"], { faction: defender }, [`blk-${defender}`]);
-      assert.ok(!shown.some((entry) => entry.startsWith("choosePlayer")));
+      assert.ok(!shown.some((entry) => entry.startsWith("choosePlayer")), "!shown.some((entry) => entry.startsWith('choosePlayer'))");
       assert.equal(infl(t, defender), before[defender]! - 2, "the defending player's faction lost 2");
       for (const seat of t.seats.filter((s) => s !== defender)) assert.equal(infl(t, seat), before[seat], `${seat}'s faction is unaffected`);
     }
   });
 
-  clause(DETH, "4:rule", `${count} seats: after damaging a faction P1 may pick any player's character (no opponent is asked) and 2 damage is inflicted to it`, () => {
+  mpClause(DETH, "4:rule", count, `${count} seats: after damaging a faction P1 may pick any player's character (no opponent is asked) and 2 damage is inflicted to it`, () => {
     const t = dethTable(count);
     const defender = others(count)[0]!;
     const victim = others(count)[others(count).length - 1]!;
@@ -406,7 +406,7 @@ for (const count of [3, 4] as const) {
     for (const seat of others(count).filter((s) => s !== victim)) assert.equal(dmg(t, `c-${seat}`), 0);
   });
 
-  clause(DETH, "5:rule", `${count} seats: it goes to its owner's hand instead of the discard pile, with no other player involved`, () => {
+  mpClause(DETH, "5:rule", count, `${count} seats: it goes to its owner's hand instead of the discard pile, with no other player involved`, () => {
     const smash = tactic({
       name: "Smash Item",
       cost: 0,
@@ -415,7 +415,7 @@ for (const count of [3, 4] as const) {
     const t = dethTable(count, [{ key: "smash", def: smash, owner: P1, zone: "hand" }]);
     playCard(t, P1, "smash", { selected: { t: [t.id("deth")] } });
     assert.equal(zoneOf(t, "deth"), "hand", "put into its owner's hand instead");
-    assert.ok(handOf(t, P1).includes(t.id("deth")));
+    assert.ok(handOf(t, P1).includes(t.id("deth")), "handOf(t, P1).includes(t.id('deth'))");
     assert.equal(open(t), undefined);
   });
 }
@@ -429,7 +429,7 @@ for (const count of [3, 4] as const) {
 const WYRMFANG = "b5fbadf6-df3d-42bd-b55a-daaa1321b076";
 
 for (const count of [3, 4] as const) {
-  clause(WYRMFANG, "1:rule", `${count} seats: the defending player picks any number of their own characters; only those may block, and no one else is involved`, () => {
+  mpClause(WYRMFANG, "1:rule", count, `${count} seats: the defending player picks any number of their own characters; only those may block, and no one else is involved`, () => {
     for (const defender of others(count)) {
       const t = table(count, [
         { key: "wyrm", def: printing(WYRMFANG), owner: P1, zone: "play" },

@@ -1,7 +1,7 @@
 // Multiplayer clause tests, seed-saga part 2: 3- and 4-seat tables, real catalog printings, public actions only.
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
-import { clause, refused } from "../_clause.js";
+import { mpClause, refused } from "../_clause.js";
 import { activate, answer, askedPlayers, choosePlayer, deck, hand, many, pending, play, printing, requirements, res, ready, seatsOf, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
 import type { PendingChoiceLike, Table } from "./_mp.js";
 import { endTurn } from "../_turn.js";
@@ -84,7 +84,7 @@ const athenaeum = (count: number, obs: number) =>
   );
 
 for (const count of [3, 4] as const) {
-  clause(CA, "1:rule@ooo", `${count} seats: drawing makes P1 choose one opponent; only that opponent is offered the optional draw`, () => {
+  mpClause(CA, "1:rule@ooo", count, `${count} seats: drawing makes P1 choose one opponent; only that opponent is offered the optional draw`, () => {
     for (const chosen of others(count)) {
       for (const accept of [true, false]) {
         const t = athenaeum(count, 3);
@@ -109,7 +109,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(CA, "1:rule@ooo", `${count} seats: if P1 declines the draw no opponent is offered one`, () => {
+  mpClause(CA, "1:rule@ooo", count, `${count} seats: if P1 declines the draw no opponent is offered one`, () => {
     const t = athenaeum(count, 3);
     endTurn(t.engine, last(count));
     const seen = run(t);
@@ -117,7 +117,7 @@ for (const count of [3, 4] as const) {
     for (const p of seats(count)) assert.equal(hand(t.engine, p).length, 3, `${p} drew nothing`);
   });
 
-  clause(CA, "2:rule@ooooo", `${count} seats: one opponent chosen by P1; only that opponent discards a card of their choice`, () => {
+  mpClause(CA, "2:rule@ooooo", count, `${count} seats: one opponent chosen by P1; only that opponent discards a card of their choice`, () => {
     for (const chosen of others(count)) {
       const t = athenaeum(count, 5);
       endTurn(t.engine, last(count));
@@ -137,7 +137,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(CA, "3:rule@ooooooo", `${count} seats: bouncing any player's character goes to its owner's hand; no opponent is asked`, () => {
+  mpClause(CA, "3:rule@ooooooo", count, `${count} seats: bouncing any player's character goes to its owner's hand; no opponent is asked`, () => {
     for (const [who, key] of [[P3, "c3"], [P2, "c2"]] as const) {
       const t = athenaeum(count, 7);
       endTurn(t.engine, last(count));
@@ -171,7 +171,7 @@ const deathFit = (count: number) =>
 
 for (const count of [3, 4] as const) {
   const victims = count === 3 ? ["A", "B"] : ["A", "B", "D"];
-  clause(DF, "0:extraCost", `${count} seats: a non-UNIQUE character in ANY opponent's discard pile can be picked, my own cannot; no opponent is chosen`, () => {
+  mpClause(DF, "0:extraCost", count, `${count} seats: a non-UNIQUE character in ANY opponent's discard pile can be picked, my own cannot; no opponent is chosen`, () => {
     const probe = deathFit(count);
     assert.equal(askedPlayers(probe.engine, { type: "playCard", playerId: P1, cardId: probe.id("df"), selected: {}, variables: {} }), undefined, "no opponent step");
     for (const key of victims) {
@@ -189,7 +189,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(t.engine, t.id("df")), "hand");
   });
 
-  clause(DF, "1:rule", `${count} seats: the picked character goes into the void; the other opponents' discard piles and the void are otherwise unchanged`, () => {
+  mpClause(DF, "1:rule", count, `${count} seats: the picked character goes into the void; the other opponents' discard piles and the void are otherwise unchanged`, () => {
     const t = deathFit(count);
     play(t.engine, P1, t.id("df"), { selected: { victim: [t.id("B")] } });
     assert.equal(zoneOf(t.engine, t.id("B")), "void");
@@ -214,7 +214,7 @@ const ritual = (count: number) =>
   ]);
 
 for (const count of [3, 4] as const) {
-  clause(ARM, "1:ability:recur", `${count} seats: RECUR with any one faction picked; that faction's player (and only that player) chooses and discards 2 of their own cards`, () => {
+  mpClause(ARM, "1:ability:recur", count, `${count} seats: RECUR with any one faction picked; that faction's player (and only that player) chooses and discards 2 of their own cards`, () => {
     for (const who of seats(count)) {
       const t = ritual(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("arm"), abilityId: "recur", selected: {}, variables: {} };
@@ -258,7 +258,7 @@ const tentacle = (count: number) =>
   table(count, [{ key: "dt", def: printing(DT), owner: P1, zone: "hand" }, ...res("obsession", 1, P1), ...oppHands(count)]);
 
 for (const count of [3, 4] as const) {
-  clause(DT, "0:rule", `${count} seats: P1 names one opponent; only that hand is looked at and the card enters play under THAT opponent's control face-down as a resource`, () => {
+  mpClause(DT, "0:rule", count, `${count} seats: P1 names one opponent; only that hand is looked at and the card enters play under THAT opponent's control face-down as a resource`, () => {
     for (const chosen of others(count)) {
       const t = tentacle(count);
       const action = { type: "playCard", playerId: P1, cardId: t.id("dt"), selected: {}, variables: {} };
@@ -306,7 +306,7 @@ const demonKnights = (count: number) =>
 
 for (const count of [3, 4] as const) {
   for (const pay of [true, false]) {
-    clause(DDK, "0:extraCost", `${count} seats: ${pay ? "paying 2 makes the picked character's controller (not another opponent) pick another of THEIR characters" : "not paying puts only the picked character on the bottom of its owner's deck"}`, () => {
+    mpClause(DDK, "0:extraCost", count, `${count} seats: ${pay ? "paying 2 makes the picked character's controller (not another opponent) pick another of THEIR characters" : "not paying puts only the picked character on the bottom of its owner's deck"}`, () => {
       for (const owner of others(count)) {
         const t = demonKnights(count);
         play(t.engine, P1, t.id("ddk"), { selected: { mark: [t.id(`a-${owner}`)] } });
@@ -341,7 +341,7 @@ for (const count of [3, 4] as const) {
     });
   }
 
-  clause(DDK, "1:rule", `${count} seats: the picked and the second character each go on the bottom of their own owner's deck and P1 draws`, () => {
+  mpClause(DDK, "1:rule", count, `${count} seats: the picked and the second character each go on the bottom of their own owner's deck and P1 draws`, () => {
     for (const owner of others(count)) {
       const t = demonKnights(count);
       play(t.engine, P1, t.id("ddk"), { selected: { mark: [t.id(`b-${owner}`)] } });
@@ -364,7 +364,7 @@ const defiler = (count: number) =>
   table(count, [{ key: "di", def: printing(DI), owner: P1, zone: "play" }, ...res("obsession", 4, P1), ...oppHands(count)]);
 
 for (const count of [3, 4] as const) {
-  clause(DI, "1:ability:defile", `${count} seats: P1 names one opponent; only that hand is looked at and only a character in it can be discarded`, () => {
+  mpClause(DI, "1:ability:defile", count, `${count} seats: P1 names one opponent; only that hand is looked at and only a character in it can be discarded`, () => {
     for (const chosen of others(count)) {
       const t = defiler(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("di"), abilityId: "defile", selected: {}, variables: {} };
@@ -397,7 +397,7 @@ const encumber = (count: number) =>
   table(count, [{ key: "en", def: printing(EN), owner: P1, zone: "discard" }, ...res("obsession", 2, P1), ...oppHands(count)]);
 
 for (const count of [3, 4] as const) {
-  clause(EN, "2:ability:recur", `${count} seats: RECUR names one opponent; only that hand is looked at and a non-resource card in it is discarded`, () => {
+  mpClause(EN, "2:ability:recur", count, `${count} seats: RECUR names one opponent; only that hand is looked at and a non-resource card in it is discarded`, () => {
     for (const chosen of others(count)) {
       const t = encumber(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("en"), abilityId: "recur", selected: {}, variables: {} };
@@ -439,7 +439,7 @@ const enterKnights = (count: number, extra: CardPlacement[] = []) =>
 
 for (const count of [3, 4] as const) {
   const revealed = (t: Table) => [t.id("c1"), t.id("c2"), t.id("c3")];
-  clause(ETDK, "0:extraCost", `${count} seats: the play picks one opponent (offered every opponent, never P1); only that opponent is involved afterwards`, () => {
+  mpClause(ETDK, "0:extraCost", count, `${count} seats: the play picks one opponent (offered every opponent, never P1); only that opponent is involved afterwards`, () => {
     const probe = enterKnights(count);
     assert.deepEqual(askedPlayers(probe.engine, { type: "playCard", playerId: P1, cardId: probe.id("et"), selected: { revealed: revealed(probe) }, variables: {} }), [{ id: "picked", candidates: others(count) }]);
     refused(() => play(probe.engine, P1, probe.id("et"), { selected: { revealed: revealed(probe) } }), "no opponent picked");
@@ -453,7 +453,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(ETDK, "0:extraCost", `${count} seats: not during a battle (P1's attack on another seat blocks it)`, () => {
+  mpClause(ETDK, "0:extraCost", count, `${count} seats: not during a battle (P1's attack on another seat blocks it)`, () => {
     const t = enterKnights(count, [{ key: "atk", def: character({ name: "Attacker" }), owner: P1, zone: "play" }]);
     declareAttackBy(t.engine, P1, [t.id("atk")], { type: "faction", playerId: P3 });
     assert.ok(t.engine.state.battle, "a battle is underway");
@@ -461,7 +461,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(t.engine, t.id("et")), "hand");
   });
 
-  clause(ETDK, "1:rule", `${count} seats: only the picked opponent chooses one revealed character; it (and the revealed demon knight / GLOAMSPIKE) enter under P1's control`, () => {
+  mpClause(ETDK, "1:rule", count, `${count} seats: only the picked opponent chooses one revealed character; it (and the revealed demon knight / GLOAMSPIKE) enter under P1's control`, () => {
     for (const picked of others(count)) {
       const t = enterKnights(count);
       play(t.engine, P1, t.id("et"), { selected: { revealed: revealed(t) }, players: { picked } });
@@ -498,14 +498,14 @@ const essence = (count: number) =>
 for (const count of [3, 4] as const) {
   const asks = (t: Table, mode: number) => askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("eoo"), selected: {}, variables: {}, mode });
 
-  clause(EOO, "0:rule", `${count} seats: P1 alone chooses the option; no opponent is asked who plays it`, () => {
+  mpClause(EOO, "0:rule", count, `${count} seats: P1 alone chooses the option; no opponent is asked who plays it`, () => {
     const t = essence(count);
     play(t.engine, P1, t.id("eoo"), { mode: 1, selected: { c: [t.id("c-p1")] } });
     assert.equal(pending(t.engine), undefined);
     assert.equal(zoneOf(t.engine, t.id("eoo")), "discard");
   });
 
-  clause(EOO, "1:option:OPTION 1", `${count} seats: OPTION 1 names one opponent with the play; only that opponent chooses a card of their own hand and discards it`, () => {
+  mpClause(EOO, "1:option:OPTION 1", count, `${count} seats: OPTION 1 names one opponent with the play; only that opponent chooses a card of their own hand and discards it`, () => {
     for (const chosen of others(count)) {
       const t = essence(count);
       assert.deepEqual(asks(t, 0), [{ id: "opp", candidates: others(count) }]);
@@ -524,7 +524,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(EOO, "2:option:OPTION 2", `${count} seats: OPTION 2 picks any player's character (P3's too) for COVERT; no opponent is asked`, () => {
+  mpClause(EOO, "2:option:OPTION 2", count, `${count} seats: OPTION 2 picks any player's character (P3's too) for COVERT; no opponent is asked`, () => {
     for (const key of ["c-p3", "c-p2", "c-p1"]) {
       const t = essence(count);
       assert.equal(asks(t, 1), undefined, "no opponent step");
@@ -537,7 +537,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(EOO, "3:option:OPTION 3", `${count} seats: OPTION 3 picks any player's character (P2's too) for -2 strength; no opponent is asked`, () => {
+  mpClause(EOO, "3:option:OPTION 3", count, `${count} seats: OPTION 3 picks any player's character (P2's too) for -2 strength; no opponent is asked`, () => {
     for (const key of ["c-p2", "c-p3", "c-p1"]) {
       const t = essence(count);
       assert.equal(asks(t, 2), undefined, "no opponent step");
@@ -564,7 +564,7 @@ const denunciator = (count: number) =>
   ]);
 
 for (const count of [3, 4] as const) {
-  clause(FD, "1:ability:denounce", `${count} seats: DENOUNCE bounces the picked character to its owner, and names one opponent whose hand only P1 looks at for a character to discard`, () => {
+  mpClause(FD, "1:ability:denounce", count, `${count} seats: DENOUNCE bounces the picked character to its owner, and names one opponent whose hand only P1 looks at for a character to discard`, () => {
     for (const chosen of others(count)) {
       const t = denunciator(count);
       const stranger = others(count).find((p) => p !== chosen)!;
@@ -574,7 +574,7 @@ for (const count of [3, 4] as const) {
       activate(t.engine, P1, t.id("fd"), "denounce", { selected: { c: [t.id(`pc-${stranger}`)] }, players: { opp: chosen } });
       assert.equal(zoneOf(t.engine, t.id("fd")), "discard", "COST: destroyed");
       assert.equal(zoneOf(t.engine, t.id(`pc-${stranger}`)), "hand", "the picked character went to its owner's hand");
-      assert.ok(hand(t.engine, stranger).includes(t.id(`pc-${stranger}`)));
+      assert.ok(hand(t.engine, stranger).includes(t.id(`pc-${stranger}`)), "hand(t.engine, stranger).includes(t.id(`pc-${stranger}`))");
       const pc = pending(t.engine)!;
       assert.equal(pc.kind, "chooserSelectsTarget");
       assert.equal(pc.playerId, P1, "P1 chooses");
@@ -611,7 +611,7 @@ const shownTo = (t: Table, viewer: PlayerId) =>
     .filter((event): event is NonNullable<typeof event> => event?.type === "cardsRevealed" && event.viewerId === viewer);
 
 for (const count of [3, 4] as const) {
-  clause(FK, "0:rule", `${count} seats: P1 names one opponent; P1 is shown that opponent's hand, top card and face-down resources only; P1 draws either way`, () => {
+  mpClause(FK, "0:rule", count, `${count} seats: P1 names one opponent; P1 is shown that opponent's hand, top card and face-down resources only; P1 draws either way`, () => {
     for (const chosen of others(count)) {
       const t = forbidden(count);
       const action = { type: "playCard", playerId: P1, cardId: t.id("fk"), selected: {}, variables: {} };
@@ -631,7 +631,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(FK, "0:rule", `${count} seats: the look also covers the named opponent's face-down resources (and no other opponent's)`, () => {
+  mpClause(FK, "0:rule", count, `${count} seats: the look also covers the named opponent's face-down resources (and no other opponent's)`, () => {
     for (const chosen of others(count)) {
       const t = forbidden(count);
       play(t.engine, P1, t.id("fk"), { players: { opp: chosen } });
@@ -675,7 +675,7 @@ function hexapede(count: number, influence: number) {
 }
 
 for (const count of [3, 4] as const) {
-  clause(HEX, "0:ability:hellish-hex", `${count} seats: ALL players (P1 included) remove 6 from hand, 6 from discard and the top 6 of the deck, in turn order; every faction takes 6 damage`, () => {
+  mpClause(HEX, "0:ability:hellish-hex", count, `${count} seats: ALL players (P1 included) remove 6 from hand, 6 from discard and the top 6 of the deck, in turn order; every faction takes 6 damage`, () => {
     const t = hexapede(count, 25);
     const victims = [P1, P2, P3].flatMap((p) => [t.id(`v-${p}-0`), t.id(`v-${p}-1`)]);
     activate(t.engine, P1, t.id("hex"), "hellish-hex", { selected: { victims } });
@@ -693,7 +693,7 @@ for (const count of [3, 4] as const) {
     assert.notEqual(zoneOf(t.engine, t.id("hex")), "play", "destroyed as a cost");
   });
 
-  clause(HEX, "0:ability:hellish-hex", `${count} seats: factions that reach 0 together lose together (a draw)`, () => {
+  mpClause(HEX, "0:ability:hellish-hex", count, `${count} seats: factions that reach 0 together lose together (a draw)`, () => {
     const t = hexapede(count, 6);
     const victims = [P1, P2, P3].flatMap((p) => [t.id(`v-${p}-0`), t.id(`v-${p}-1`)]);
     activate(t.engine, P1, t.id("hex"), "hellish-hex", { selected: { victims } });
@@ -713,7 +713,7 @@ const thaumaturge = (count: number) =>
   table(count, [{ key: "it", def: printing(IT), owner: P1, zone: "play" }, ...res("obsession", 1, P1), ...pad("h", others(count), 3, "hand")]);
 
 for (const count of [3, 4] as const) {
-  clause(IT, "0:ability:tickle", `${count} seats: TICKLE names one opponent; only that opponent chooses a card of their hand and discards it`, () => {
+  mpClause(IT, "0:ability:tickle", count, `${count} seats: TICKLE names one opponent; only that opponent chooses a card of their hand and discards it`, () => {
     for (const chosen of others(count)) {
       const t = thaumaturge(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("it"), abilityId: "tickle", selected: {}, variables: {} };
@@ -754,7 +754,7 @@ const livingGod = (count: number) =>
   ]);
 
 for (const count of [3, 4] as const) {
-  clause(LG, "0:rule", `${count} seats: when P1's character leaves play, P1 chooses one opponent and only that opponent discards a card of their choice`, () => {
+  mpClause(LG, "0:rule", count, `${count} seats: when P1's character leaves play, P1 chooses one opponent and only that opponent discards a card of their choice`, () => {
     for (const chosen of others(count)) {
       const t = livingGod(count);
       activate(t.engine, P1, t.id("lg"), "higher-calling", { selected: { c: [t.id("mine")] } });
@@ -774,7 +774,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(LG, "0:rule", `${count} seats: a character controlled by an opponent leaving play does not trigger it`, () => {
+  mpClause(LG, "0:rule", count, `${count} seats: a character controlled by an opponent leaving play does not trigger it`, () => {
     for (const owner of others(count)) {
       const t = livingGod(count);
       play(t.engine, P1, t.id("enc"), { selected: { t: [t.id(`oc-${owner}`)] } });
@@ -814,7 +814,7 @@ for (const count of [3, 4] as const) {
   };
   const plain = (t: Table) => t.engine.getStat(t.id("nh"), "strength") === 2 && t.engine.getStat(t.id("nh"), "life") === 2 && keywordsOf(t, "nh").includes("covert");
 
-  clause(NH, "1:rule", `${count} seats: holds while any single opponent controls more characters than P1 (counts never pooled); the controller makes no choice`, () => {
+  mpClause(NH, "1:rule", count, `${count} seats: holds while any single opponent controls more characters than P1 (counts never pooled); the controller makes no choice`, () => {
     // P1 controls 3: P2 has 2 and P3 has 4 -> holds (P3)
     const a = horror(count, 3, pad4([2, 4]));
     assert.ok(grows(a), "P3 controls 4 > 3: +2 strength, +2 life, no COVERT");
@@ -862,7 +862,7 @@ const from = (count: number, starter: PlayerId): PlayerId[] => {
 const firstSeen = (seen: PendingChoiceLike[]): PlayerId[] => [...new Set(seen.map((pc) => pc.playerId as PlayerId))];
 
 for (const count of [3, 4] as const) {
-  clause(OC, "0:rule", `${count} seats: at the start of EACH player's turn only that player (not P1, not the others) is offered the four options`, () => {
+  mpClause(OC, "0:rule", count, `${count} seats: at the start of EACH player's turn only that player (not P1, not the others) is offered the four options`, () => {
     for (const starter of seats(count)) {
       const t = communion(count, starter);
       endTurn(t.engine, t.engine.state.activePlayerId);
@@ -876,7 +876,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(OC, "1:option:OPTION 1", `${count} seats: OPTION 1, every player draws a card and then puts a card from their own hand on the bottom of their own deck, starting with P2`, () => {
+  mpClause(OC, "1:option:OPTION 1", count, `${count} seats: OPTION 1, every player draws a card and then puts a card from their own hand on the bottom of their own deck, starting with P2`, () => {
     const t = communion(count, P2);
     endTurn(t.engine, t.engine.state.activePlayerId);
     const bottomed: Record<string, string> = {};
@@ -898,7 +898,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(OC, "2:option:OPTION 2", `${count} seats: OPTION 2, every player puts a resource they control into its owner's hand (P3's resource under P1 goes to P3's hand) and may play a resource`, () => {
+  mpClause(OC, "2:option:OPTION 2", count, `${count} seats: OPTION 2, every player puts a resource they control into its owner's hand (P3's resource under P1 goes to P3's hand) and may play a resource`, () => {
     const t = communion(count, P2);
     endTurn(t.engine, t.engine.state.activePlayerId);
     const seen = run(t, (pc) => {
@@ -915,14 +915,14 @@ for (const count of [3, 4] as const) {
     assert.equal(seen.filter((p) => p.kind === "chooserSelectsTarget" && (p.declaration as { optional?: boolean }).optional).length, count, "each player may play a resource");
     assert.equal(zoneOf(t.engine, t.id("stolen")), "hand");
     assert.ok(hand(t.engine, P3).includes(t.id("stolen")), "into its OWNER's hand");
-    assert.ok(!hand(t.engine, P1).includes(t.id("stolen")));
+    assert.ok(!hand(t.engine, P1).includes(t.id("stolen")), "!hand(t.engine, P1).includes(t.id('stolen'))");
     for (const p of seats(count)) {
       const inPlay = Object.values(t.engine.state.cards).filter((c) => c.ownerId === p && c.zone === "play" && t.engine.getDefinition(c.id).type === "resource" && c.id !== t.id("stolen"));
       assert.equal(inPlay.length, p === P1 ? 2 : 1, `${p}`);
     }
   });
 
-  clause(OC, "3:option:OPTION 3", `${count} seats: OPTION 3, every player discards a card of their choice, starting with P2`, () => {
+  mpClause(OC, "3:option:OPTION 3", count, `${count} seats: OPTION 3, every player discards a card of their choice, starting with P2`, () => {
     const t = communion(count, P2);
     endTurn(t.engine, t.engine.state.activePlayerId);
     const seen = run(t, (pc) => (pc.kind === "chooserSelectsOption" ? { kind: pc.kind, index: 2 } : undefined));
@@ -933,7 +933,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(OC, "4:option:OPTION 4", `${count} seats: OPTION 4, every player puts a card from their own hand on top of their own deck, starting with P2`, () => {
+  mpClause(OC, "4:option:OPTION 4", count, `${count} seats: OPTION 4, every player puts a card from their own hand on top of their own deck, starting with P2`, () => {
     const t = communion(count, P2);
     endTurn(t.engine, t.engine.state.activePlayerId);
     const topped: Record<string, string> = {};
@@ -971,7 +971,7 @@ const perturb = (count: number) =>
   ]);
 
 for (const count of [3, 4] as const) {
-  clause(PB, "0:rule", `${count} seats: Perturb names one opponent; only that hand is looked at, a non-resource card in it is discarded, then P1 may return a same-type card to its owner's hand`, () => {
+  mpClause(PB, "0:rule", count, `${count} seats: Perturb names one opponent; only that hand is looked at, a non-resource card in it is discarded, then P1 may return a same-type card to its owner's hand`, () => {
     for (const chosen of others(count)) {
       const t = perturb(count);
       const stranger = others(count).find((p) => p !== chosen)!;
@@ -1010,7 +1010,7 @@ const warlock = (count: number) =>
   table(count, [{ key: "pw", def: printing(PW), owner: P1, zone: "hand" }, ...res("obsession", 2, P1), ...pad("h", others(count), 3, "hand"), ...pad("d", others(count), 3, "deck")]);
 
 for (const count of [3, 4] as const) {
-  clause(PW, "0:rule", `${count} seats: when the Warlock enters play P1 chooses one opponent; only that opponent puts a card of their hand on top of their deck`, () => {
+  mpClause(PW, "0:rule", count, `${count} seats: when the Warlock enters play P1 chooses one opponent; only that opponent puts a card of their hand on top of their deck`, () => {
     for (const chosen of others(count)) {
       const t = warlock(count);
       play(t.engine, P1, t.id("pw"));
@@ -1059,7 +1059,7 @@ const flipUp = (t: Table, key: string) => {
 };
 
 for (const count of [3, 4] as const) {
-  clause(RD, "0:extraCost", `${count} seats: a P3, a P2 or a P1 character are each a legal pick`, () => {
+  mpClause(RD, "0:extraCost", count, `${count} seats: a P3, a P2 or a P1 character are each a legal pick`, () => {
     for (const p of seats(count)) {
       const t = redonk(count, {}, false);
       play(t.engine, P1, t.id("rd"), { selected: { char: [t.id(`t-${p}`)] } });
@@ -1067,7 +1067,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(RD, "1:rule", `${count} seats: FLIP UP makes the picked character's own controller (not another opponent) discard 2, then judges THEIR hand: 3 or fewer removes the character, 4 or more keeps it`, () => {
+  mpClause(RD, "1:rule", count, `${count} seats: FLIP UP makes the picked character's own controller (not another opponent) discard 2, then judges THEIR hand: 3 or fewer removes the character, 4 or more keeps it`, () => {
     for (const p of others(count)) {
       for (const [size, removed] of [[5, true], [6, false]] as const) {
         const t = redonk(count, { [p]: size }, true);
@@ -1089,7 +1089,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(RD, "1:rule", `${count} seats: FLIP UP picking P1's own character makes P1 discard 2`, () => {
+  mpClause(RD, "1:rule", count, `${count} seats: FLIP UP picking P1's own character makes P1 discard 2`, () => {
     const t = redonk(count, { [P1]: 5 }, true);
     flipUp(t, "t-p1");
     const pc = pending(t.engine)!;

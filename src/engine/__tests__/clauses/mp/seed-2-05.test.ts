@@ -3,7 +3,7 @@
 // printed text of each clause (data/card-tests/mp-spec/seed-2.json); engine data only drives the engine.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activateAs, answerPlayer, answerTargets, askedPlayers, character, choosePlayer, controllerOf, deckOf, endTurn, handSize, hands, idsOf, influenceOf, item, others, P1, P2, P3, pending,
   perSeat, pickable, playAs, resourceCard, resources, seatsFor, setDeck, settle, statOf, table, tactic, tokensOn, zoneOf
@@ -49,7 +49,7 @@ function padamoseBoard(count: number, extra: Parameters<typeof table>[1] = []) {
 const stats = (t: Table, key: string): [number, number] => [statOf(t, key, "strength"), statOf(t, key, "life")];
 
 for (const count of COUNTS) {
-  clause(PADAMOSE, "1:rule", `${count} seats: "All your 'sword of great justice' characters gain 1 strength and 1 life": only mine`, () => {
+  mpClause(PADAMOSE, "1:rule", count, `${count} seats: "All your 'sword of great justice' characters gain 1 strength and 1 life": only mine`, () => {
     for (const chosen of others(count, P1)) {
       const t = padamoseBoard(count);
       t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("pada") } as never);
@@ -61,7 +61,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(PADAMOSE, "2:rule", `${count} seats: "All your opponent's 'mau' characters and Arcanist characters lose 1 strength and 1 life": the opponent chosen when the text starts applying, nobody else`, () => {
+  mpClause(PADAMOSE, "2:rule", count, `${count} seats: "All your opponent's 'mau' characters and Arcanist characters lose 1 strength and 1 life": the opponent chosen when the text starts applying, nobody else`, () => {
     for (const chosen of others(count, P1)) {
       const t = padamoseBoard(count);
       t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("pada") } as never);
@@ -78,7 +78,7 @@ for (const count of COUNTS) {
   });
 }
 
-clause(PADAMOSE, "2:rule", "3 seats: with one opponent left nobody is asked", () => {
+mpClause(PADAMOSE, "2:rule", 3, "3 seats: with one opponent left nobody is asked", () => {
   const t = padamoseBoard(3);
   t.engine.state.players[P2]!.eliminated = { turn: 1 };
   t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("pada") } as never);
@@ -89,7 +89,7 @@ clause(PADAMOSE, "2:rule", "3 seats: with one opponent left nobody is asked", ()
 });
 
 for (const count of COUNTS) {
-  clause(PADAMOSE, "2:rule", `${count} seats: if the chosen opponent is eliminated the controller chooses again`, () => {
+  mpClause(PADAMOSE, "2:rule", count, `${count} seats: if the chosen opponent is eliminated the controller chooses again`, () => {
     const t = padamoseBoard(count, [
       { key: "drain", def: tactic({ name: "Drain", behavior: { abilities: [{ id: "drain", type: "activated", effects: [{ type: "modifyInfluence", player: "opponent", amount: -5 }] }] } }), owner: P1, zone: "hand" }
     ]);
@@ -134,7 +134,7 @@ function bladderBoard(count: number, tokens: number, active: PlayerId = P1) {
 }
 
 for (const count of COUNTS) {
-  clause(TUMESCENT, "0:rule", `${count} seats: "At the end of your turn": a token, my faction loses X influence and I may play a resource at the end of my turn only`, () => {
+  mpClause(TUMESCENT, "0:rule", count, `${count} seats: "At the end of your turn": a token, my faction loses X influence and I may play a resource at the end of my turn only`, () => {
     const t = bladderBoard(count, 0);
     const influence = Object.fromEntries(seatsFor(count).map((seat) => [seat, influenceOf(t, seat)]));
     t.engine.perform({ type: "endTurn", playerId: P1 });
@@ -159,7 +159,7 @@ for (const count of COUNTS) {
 }
 
 for (const count of COUNTS) {
-  clause(TUMESCENT, "1:rule", `${count} seats: "At the start of each turn ... your opponent takes control of it": the controller chooses which opponent when the trigger resolves, and the new controller chooses among their own opponents`, () => {
+  mpClause(TUMESCENT, "1:rule", count, `${count} seats: "At the start of each turn ... your opponent takes control of it": the controller chooses which opponent when the trigger resolves, and the new controller chooses among their own opponents`, () => {
     for (const chosen of others(count, P1)) {
       const t = bladderBoard(count, 2);
       t.engine.perform({ type: "endTurn", playerId: P1 });
@@ -231,7 +231,7 @@ function endTurnWithAss(t: Table, count: number, pickOpponent: PlayerId, takeOpp
 }
 
 for (const count of COUNTS) {
-  clause(ASS, "0:rule", `${count} seats: "your opponent picks a character they control and own ... take control of that character": the chosen opponent picks and nobody else is asked`, () => {
+  mpClause(ASS, "0:rule", count, `${count} seats: "your opponent picks a character they control and own ... take control of that character": the chosen opponent picks and nobody else is asked`, () => {
     for (const chosen of others(count, P1)) {
       const t = assBoard(count);
       endTurnWithAss(t, count, chosen, chosen);
@@ -242,7 +242,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(ASS, "1:rule", `${count} seats: "your opponent takes control of this card": a separate block, the opponent is chosen independently of the first clause's`, () => {
+  mpClause(ASS, "1:rule", count, `${count} seats: "your opponent takes control of this card": a separate block, the opponent is chosen independently of the first clause's`, () => {
     for (const chosen of others(count, P1)) {
       const first = others(count, P1, chosen)[0]!;
       const t = assBoard(count);
@@ -267,7 +267,7 @@ function mastaBoard(count: number) {
 }
 
 for (const count of COUNTS) {
-  clause(MASTABATORIUM, "0:ability:you-know-you-want-to", `${count} seats: "At the end of the turn ... your opponent takes control of it": the opponent chosen when the ability was activated, nobody else`, () => {
+  mpClause(MASTABATORIUM, "0:ability:you-know-you-want-to", count, `${count} seats: "At the end of the turn ... your opponent takes control of it": the opponent chosen when the ability was activated, nobody else`, () => {
     for (const chosen of others(count, P1)) {
       const t = mastaBoard(count);
       const action = { type: "activateAbility", playerId: P1, cardId: t.id("mast"), abilityId: "you-know-you-want-to" } as const;
@@ -283,7 +283,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(MASTABATORIUM, "0:ability:you-know-you-want-to", `${count} seats: two activations in one turn choosing different opponents each hand it over to their own chosen opponent`, () => {
+  mpClause(MASTABATORIUM, "0:ability:you-know-you-want-to", count, `${count} seats: two activations in one turn choosing different opponents each hand it over to their own chosen opponent`, () => {
     const t = mastaBoard(count);
     const [first, second] = others(count, P1);
     activateAs(t, "mast", "you-know-you-want-to", { players: { opponent: first } });
@@ -300,7 +300,7 @@ for (const count of COUNTS) {
 // =====================================================================================
 
 for (const count of COUNTS) {
-  clause(ROSY, "1:rule", `${count} seats: "reveal the top 5 cards of your opponent's deck": the opponent is chosen when the trigger resolves, only their deck is revealed, the rest goes to the bottom of their deck`, () => {
+  mpClause(ROSY, "1:rule", count, `${count} seats: "reveal the top 5 cards of your opponent's deck": the opponent is chosen when the trigger resolves, only their deck is revealed, the rest goes to the bottom of their deck`, () => {
     for (const chosen of others(count, P1)) {
       const t = table(count, [
         { key: "rosy", def: printing(ROSY), owner: P1, zone: "play" },
@@ -383,7 +383,7 @@ function elderBoard(count: number, active: PlayerId) {
 }
 
 for (const count of COUNTS) {
-  clause(SWINISH_ELDER, "0:rule", `${count} seats: when any opponent plays a resource I may pay 1 to attach it to that opponent's faction, with no opponent choice`, () => {
+  mpClause(SWINISH_ELDER, "0:rule", count, `${count} seats: when any opponent plays a resource I may pay 1 to attach it to that opponent's faction, with no opponent choice`, () => {
     for (const player of others(count, P1)) {
       for (const pay of [true, false]) {
         const t = elderBoard(count, player);
@@ -405,7 +405,7 @@ for (const count of COUNTS) {
   });
 }
 
-clause(SWINISH_ELDER, "0:rule", "3 seats: my own resource play does not set it off", () => {
+mpClause(SWINISH_ELDER, "0:rule", 3, "3 seats: my own resource play does not set it off", () => {
   const t = elderBoard(3, P1);
   activateAs(t, "mk-p1", "mk", {}, P1);
   answerTargets(t, P1, [t.id("res-p1")]);

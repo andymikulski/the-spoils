@@ -4,7 +4,7 @@ import assert from "node:assert/strict";
 import { autoResolveBattle, bank, character, item, tactic } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
 import { declareAttackBy } from "../_battle.js";
-import { clause, drain, printing, refused } from "../_clause.js";
+import { mpClause, drain, printing, refused } from "../_clause.js";
 import { P1, P2, P3, P4, act, choose, choosePlayer, handOf, hasKey, mayPay, offered, pending, play, playerAsk, ready, seated, table, type Table } from "./_ungodly-mess.js";
 import type { PlayerId } from "../../../../engine.js";
 
@@ -65,7 +65,7 @@ function marionetteHits(t: Table, target: PlayerId): void {
   autoResolveBattle(t.engine);
 }
 
-clause(MARIONETTE, "0:rule", "3 seats: the damaged faction's controller (not the other opponent) puts one of their own characters into hand; no opponent is chosen", () => {
+mpClause(MARIONETTE, "0:rule", 3, "3 seats: the damaged faction's controller (not the other opponent) puts one of their own characters into hand; no opponent is chosen", () => {
   const t = marionetteTable(3);
   marionetteHits(t, P3);
   assert.equal(pending(t)!.kind, "mayPay");
@@ -87,7 +87,7 @@ clause(MARIONETTE, "0:rule", "3 seats: the damaged faction's controller (not the
   marionetteHits(second, P2);
   mayPay(second, true);
   assert.equal(pending(second)!.playerId, P2, "attacking P2's faction: P2 is the one asked");
-  assert.ok(offered(second).every(id => [second.id("P2 a"), second.id("P2 b")].includes(id)));
+  assert.ok(offered(second).every(id => [second.id("P2 a"), second.id("P2 b")].includes(id)), "offered(second).every(id => [second.id('P2 a'), second.id('P2 b')].includes(id))");
   choose(second, [second.id("P2 a")]);
   assert.equal(zoneOf(second.engine, second.id("P2 a")), "hand");
   assert.equal(zoneOf(second.engine, second.id("P3 a")), "play");
@@ -100,7 +100,7 @@ clause(MARIONETTE, "0:rule", "3 seats: the damaged faction's controller (not the
   assert.equal(zoneOf(declined.engine, declined.id("P3 a")), "play");
 });
 
-clause(MARIONETTE, "0:rule", "4 seats: attacking P4's faction asks only P4, from P4's characters", () => {
+mpClause(MARIONETTE, "0:rule", 4, "4 seats: attacking P4's faction asks only P4, from P4's characters", () => {
   const t = marionetteTable(4);
   marionetteHits(t, P4);
   mayPay(t, true);
@@ -127,7 +127,7 @@ function baskTable(seats: number) {
   ]);
 }
 
-clause(BASK, "0:rule", "3 seats: the controller is offered P2 and P3, sees only the chosen opponent's hand, and that player discards the chosen card", () => {
+mpClause(BASK, "0:rule", 3, "3 seats: the controller is offered P2 and P3, sees only the chosen opponent's hand, and that player discards the chosen card", () => {
   const t = baskTable(3);
   play(t, P1, "smash", { selected: { t: [t.id("bask")] } });
   assert.equal(zoneOf(t.engine, t.id("bask")), "discard");
@@ -160,7 +160,7 @@ clause(BASK, "0:rule", "3 seats: the controller is offered P2 and P3, sees only 
   assert.deepEqual([...offered(two)].sort(), [two.id("h-p2-0"), two.id("h-p2-1")].sort());
 });
 
-clause(BASK, "0:rule", "4 seats: the choice offers P2, P3 and P4 and only the chosen opponent's hand is offered", () => {
+mpClause(BASK, "0:rule", 4, "4 seats: the choice offers P2, P3 and P4 and only the chosen opponent's hand is offered", () => {
   const t = baskTable(4);
   play(t, P1, "smash", { selected: { t: [t.id("bask")] } });
   assert.deepEqual(pending(t)!.candidates, [P2, P3, P4]);
@@ -195,7 +195,7 @@ function wastedTable(seats: number) {
 }
 const wastedAction = (t: Table, mode: number, picked?: PlayerId) => ({ type: "playCard", playerId: P1, cardId: t.id("ww"), selected: {}, variables: {}, mode, ...(picked ? { players: { picked } } : {}) });
 
-clause(WASTED, ["0:extraCost", "1:rule"], "3 seats: Pick a player offers every player: an opponent (P2 or P3, asked once) or yourself; X, the payment and the returned cards are the picked player's", () => {
+mpClause(WASTED, ["0:extraCost", "1:rule"], 3, "3 seats: Pick a player offers every player: an opponent (P2 or P3, asked once) or yourself; X, the payment and the returned cards are the picked player's", () => {
   const t = wastedTable(3);
   assert.deepEqual(playerAsk(t, wastedAction(t, 0)), { id: "picked", candidates: [P2, P3] }, "picking an opponent offers both opponents, never P1");
   assert.equal(playerAsk(t, wastedAction(t, 1)), undefined, "picking yourself asks for no opponent");
@@ -236,7 +236,7 @@ clause(WASTED, ["0:extraCost", "1:rule"], "3 seats: Pick a player offers every p
   assert.equal(playerAsk(two, wastedAction(two, 0)), undefined, "one opponent left: nobody is asked which");
 });
 
-clause(WASTED, ["0:extraCost", "1:rule"], "4 seats: picking an opponent offers P2, P3 and P4 and affects only the picked one", () => {
+mpClause(WASTED, ["0:extraCost", "1:rule"], 4, "4 seats: picking an opponent offers P2, P3 and P4 and affects only the picked one", () => {
   const t = wastedTable(4);
   assert.deepEqual(playerAsk(t, wastedAction(t, 0)), { id: "picked", candidates: [P2, P3, P4] });
 });
@@ -258,7 +258,7 @@ function zenobianTable(seats: number) {
 }
 const zenobianAction = (t: Table, key: string) => ({ type: "playCard", playerId: P1, cardId: t.id("zme"), selected: { c: [t.id(key)] }, variables: {} });
 
-clause(ZENOBIAN, "0:extraCost", "3 seats: the character of either opponent is a legal pick, your own is not, and no opponent is chosen", () => {
+mpClause(ZENOBIAN, "0:extraCost", 3, "3 seats: the character of either opponent is a legal pick, your own is not, and no opponent is chosen", () => {
   const t = zenobianTable(3);
   assert.equal(playerAsk(t, zenobianAction(t, "c2")), undefined, "no opponent is asked for");
   refused(() => t.engine.perform(zenobianAction(t, "mine") as never), "my own character");
@@ -272,7 +272,7 @@ clause(ZENOBIAN, "0:extraCost", "3 seats: the character of either opponent is a 
   assert.equal(zoneOf(second.engine, second.id("c2")), "play");
 });
 
-clause(ZENOBIAN, "0:extraCost", "4 seats: P4's character is a legal pick as well", () => {
+mpClause(ZENOBIAN, "0:extraCost", 4, "4 seats: P4's character is a legal pick as well", () => {
   const t = zenobianTable(4);
   act(t, zenobianAction(t, "c4"));
   assert.equal(zoneOf(t.engine, t.id("c4")), "hand");
@@ -355,9 +355,9 @@ function lockFor(seats: number, id: string) {
   flip(flipAgain, P3);
   assert.equal(zoneOf(flipAgain.engine, flipAgain.id("ft-p3")), "discard");
 }
-clause(LOCKBOX, "0:rule", "3 seats: both opponents cannot FLIP UP and no card can be put into either opponent's hand; P1 is unaffected; it ends when the Lockbox leaves", () => lockFor(3, LOCKBOX));
-clause(LOCKBOX2, "0:rule", "3 seats (2nd printing): both opponents cannot FLIP UP and no card can be put into either opponent's hand; P1 is unaffected", () => lockFor(3, LOCKBOX2));
-clause(LOCKBOX, "0:rule", "4 seats: P2, P3 and P4 are all locked out; P1 is unaffected", () => lockFor(4, LOCKBOX));
+mpClause(LOCKBOX, "0:rule", 3, "3 seats: both opponents cannot FLIP UP and no card can be put into either opponent's hand; P1 is unaffected; it ends when the Lockbox leaves", () => lockFor(3, LOCKBOX));
+mpClause(LOCKBOX2, "0:rule", 3, "3 seats (2nd printing): both opponents cannot FLIP UP and no card can be put into either opponent's hand; P1 is unaffected", () => lockFor(3, LOCKBOX2));
+mpClause(LOCKBOX, "0:rule", 4, "4 seats: P2, P3 and P4 are all locked out; P1 is unaffected", () => lockFor(4, LOCKBOX));
 
 // ===================================================================================================================
 // Foreclosure Overseer
@@ -382,7 +382,7 @@ function foreclosureTurn(t: Table, active: PlayerId, depleted: boolean): void {
 }
 
 for (const [seats, who] of [[3, P2], [3, P3], [4, P4]] as const)
-  clause(FORECLOSURE, "0:rule", `${seats} seats: while depleted, ${who} pays 1 more to deploy a cost 1 card (2 in all), as does every other opponent; P1 pays nothing extra; nobody is asked which opponent`, () => {
+  mpClause(FORECLOSURE, "0:rule", seats, `${seats} seats: while depleted, ${who} pays 1 more to deploy a cost 1 card (2 in all), as does every other opponent; P1 pays nothing extra; nobody is asked which opponent`, () => {
     const taxed = foreclosureTable(seats);
     assert.equal(pending(taxed), undefined, "\"your opponents\" is every opponent: no opponent is chosen");
     foreclosureTurn(taxed, who, true);
@@ -423,9 +423,9 @@ function yenassaCounts(id: string) {
   assert.deepEqual(bonus(yenassaTable(3, id, { p1: 0, p2: 0, p3: 2, p4: 0 })), [4, 4], "one opponent's items count on their own");
   assert.deepEqual(bonus(yenassaTable(2, id, { p1: 0, p2: 2, p3: 0, p4: 0 })), [4, 4], "two seats: the one opponent's items");
 }
-clause(YENASSA, "1:rule", "3 seats: counts the items of every opponent together (+2/+2 each), not P1's own", () => yenassaCounts(YENASSA));
-clause(YENASSA2, "1:rule", "3 seats (2nd printing): counts the items of every opponent together (+2/+2 each), not P1's own", () => yenassaCounts(YENASSA2));
-clause(YENASSA, "1:rule", "4 seats: the items of P2, P3 and P4 are all counted", () => {
+mpClause(YENASSA, "1:rule", 3, "3 seats: counts the items of every opponent together (+2/+2 each), not P1's own", () => yenassaCounts(YENASSA));
+mpClause(YENASSA2, "1:rule", 3, "3 seats (2nd printing): counts the items of every opponent together (+2/+2 each), not P1's own", () => yenassaCounts(YENASSA2));
+mpClause(YENASSA, "1:rule", 4, "4 seats: the items of P2, P3 and P4 are all counted", () => {
   const base = printing(YENASSA);
   const t = yenassaTable(4, YENASSA, { p1: 2, p2: 1, p3: 2, p4: 3 });
   assert.deepEqual(yenassaStats(t), [base.strength! + 12, base.life! + 12], "6 items of P2, P3 and P4: +12 / +12");
@@ -460,7 +460,7 @@ const attacks = (t: Table, who: PlayerId, target: PlayerId) =>
   t.engine.perform({ type: "declareAttack", playerId: who, attackerIds: [t.id(`atk-${who}`)], target: { type: "faction", playerId: target } } as never);
 const payAndFlip = (t: Table) => drain(t.engine, (pc: { kind: string }) => (pc.kind === "mayPay" ? { kind: "mayPay", pay: true } : { kind: pc.kind }));
 
-clause(SKULL, "0:rule", "3 seats: any opponent forming an attacking party fires it, wherever it is aimed; P1's own attack does not", () => {
+mpClause(SKULL, "0:rule", 3, "3 seats: any opponent forming an attacking party fires it, wherever it is aimed; P1's own attack does not", () => {
   // P2 attacks P3's faction: P1 is not the defender.
   const a = skullTable(3, P2);
   attacks(a, P2, P3);
@@ -502,7 +502,7 @@ clause(SKULL, "0:rule", "3 seats: any opponent forming an attacking party fires 
   assert.equal(speedOf(declined, "ally"), 2);
 });
 
-clause(SKULL, "0:rule", "4 seats: an attack by P4 (aimed at P3) fires it as well", () => {
+mpClause(SKULL, "0:rule", 4, "4 seats: an attack by P4 (aimed at P3) fires it as well", () => {
   const t = skullTable(4, P4);
   attacks(t, P4, P3);
   assert.equal(pending(t)?.kind, "mayPay");

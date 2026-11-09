@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank, location as locationDef } from "../../per-card/_harness.js";
 import { resourceCard, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, mpExempt, printing, refused } from "../_clause.js";
 import {
   activate,
   answerFor,
@@ -80,12 +80,17 @@ function raise(t: Table, pick: PlayerId): void {
   assert.equal(open(t), undefined);
 }
 
+// The inventory flags these two clauses only because the card's preventsAttackOnFaction data is shared across its clauses; their
+// own wording names no player (mp-spec/seed.json: "nothing for this clause beyond clause 1:rule at any table size").
+mpExempt(HIGH_COURT, "0:rule", "\"When this card enters play, draw a card.\" names no player: its controller draws, at any table size; the only multiplayer behavior on the card is clause 1:rule, tested below");
+mpExempt(SENATE, "2:rule", "\"If a character inflicts damage to this card, inflict the same amount of damage to the character.\" names no player; the only multiplayer behavior on the card is clause 1:rule, tested below");
+
 for (const [name, id, key] of [
   ["High Court of Demands", HIGH_COURT, "1:rule"],
   ["Theocratic Senate of Marduun", SENATE, "1:rule"]
 ] as const) {
   for (const count of [3, 4] as const) {
-    clause(id, key, `${count} seats: ${name} bars only the opponent P1 chooses from attacking P1's faction, whoever that is; other opponents and other targets stay open`, () => {
+    mpClause(id, key, count, `${count} seats: ${name} bars only the opponent P1 chooses from attacking P1's faction, whoever that is; other opponents and other targets stay open`, () => {
       for (const pick of seatsOf(count).slice(1)) {
         const t = barredTable(count, id, "greed");
         raise(t, pick);
@@ -100,7 +105,7 @@ for (const [name, id, key] of [
     });
   }
 
-  clause(id, key, `3 seats: the barred opponent's attack on P1's faction is refused by declareAttack, an attack on P1's location or on the other faction is accepted`, () => {
+  mpClause(id, key, 3, `3 seats: the barred opponent's attack on P1's faction is refused by declareAttack, an attack on P1's location or on the other faction is accepted`, () => {
     const t = barredTable(3, id, "greed");
     raise(t, P2);
     assert.equal(passTurn(t), P2);
@@ -122,7 +127,7 @@ for (const [name, id, key] of [
   });
 }
 
-clause(HIGH_COURT, "1:rule", "3 seats: when the chosen opponent is eliminated P1 chooses again (nobody is asked with one opponent left) and the new choice is barred", () => {
+mpClause(HIGH_COURT, "1:rule", 3, "3 seats: when the chosen opponent is eliminated P1 chooses again (nobody is asked with one opponent left) and the new choice is barred", () => {
   const t = barredTable(3, HIGH_COURT, "greed");
   raise(t, P2);
   playCard(t, P1, "killer", { players: { opponent: P2 } });
@@ -132,7 +137,7 @@ clause(HIGH_COURT, "1:rule", "3 seats: when the chosen opponent is eliminated P1
   assert.equal(factionTargets(t, P3).includes(P1), false, "P3 is the new chosen opponent and cannot attack P1's faction");
 });
 
-clause(HIGH_COURT, "1:rule", "4 seats: when the chosen opponent is eliminated P1 chooses again among the two left, and only the new choice is barred", () => {
+mpClause(HIGH_COURT, "1:rule", 4, "4 seats: when the chosen opponent is eliminated P1 chooses again among the two left, and only the new choice is barred", () => {
   const t = barredTable(4, HIGH_COURT, "greed");
   raise(t, P2);
   playCard(t, P1, "killer", { players: { opponent: P2 } });
@@ -199,7 +204,7 @@ function searchCost(t: Table, seat: PlayerId): number {
   });
 }
 
-clause(REJECTIONS, "0:rule", "3 seats: the first paragraph's chosen opponent pays 2 more to search their own deck; the other opponent and P1 search for free", () => {
+mpClause(REJECTIONS, "0:rule", 3, "3 seats: the first paragraph's chosen opponent pays 2 more to search their own deck; the other opponent and P1 search for free", () => {
   for (const [search, ability] of [
     [P2, P3],
     [P3, P2]
@@ -213,7 +218,7 @@ clause(REJECTIONS, "0:rule", "3 seats: the first paragraph's chosen opponent pay
   }
 });
 
-clause(REJECTIONS, "0:rule", "4 seats: only the one opponent chosen for the search paragraph pays 2 to search; the two other opponents search for free", () => {
+mpClause(REJECTIONS, "0:rule", 4, "4 seats: only the one opponent chosen for the search paragraph pays 2 to search; the two other opponents search for free", () => {
   for (const search of [P2, P4]) {
     const t = rejectionsTable(4);
     raiseRejections(t, search, P3);
@@ -223,7 +228,7 @@ clause(REJECTIONS, "0:rule", "4 seats: only the one opponent chosen for the sear
   }
 });
 
-clause(REJECTIONS, "1:rule", "3 seats: the second paragraph chooses its own opponent: P3 pays 2 more for a character's ability (in play and from the discard pile) while P2 and P1 do not; P2 pays 2 to search and P3 does not", () => {
+mpClause(REJECTIONS, "1:rule", 3, "3 seats: the second paragraph chooses its own opponent: P3 pays 2 more for a character's ability (in play and from the discard pile) while P2 and P1 do not; P2 pays 2 to search and P3 does not", () => {
   const t = rejectionsTable(3);
   raiseRejections(t, P2, P3);
   const work = (seat: PlayerId) => spent(t, seat, () => activate(t, seat, `w-${seat}`, "work"));
@@ -241,7 +246,7 @@ clause(REJECTIONS, "1:rule", "3 seats: the second paragraph chooses its own oppo
   assert.deepEqual(search, { [P1]: 0, [P2]: 2, [P3]: 0 }, "the first paragraph's opponent (P2) pays to search, P3 does not");
 });
 
-clause(REJECTIONS, "1:rule", "4 seats: the second paragraph taxes only its chosen opponent's characters, whichever of the three that is", () => {
+mpClause(REJECTIONS, "1:rule", 4, "4 seats: the second paragraph taxes only its chosen opponent's characters, whichever of the three that is", () => {
   for (const pick of [P2, P3, P4]) {
     const t = rejectionsTable(4);
     raiseRejections(t, P2, pick);
@@ -277,7 +282,7 @@ function denTable(count: Count, topCost: number): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(DEN, "0:rule", `${count} seats: with a revealed cost of 3 or less P1 and only the chosen opponent may each draw (accept and decline), the other opponents may not`, () => {
+  mpClause(DEN, "0:rule", count, `${count} seats: with a revealed cost of 3 or less P1 and only the chosen opponent may each draw (accept and decline), the other opponents may not`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const [mine, theirs] of [
         [true, true],
@@ -300,7 +305,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(DEN, "0:rule", `${count} seats: with a revealed cost above 3 P1 and only the chosen opponent may each play a resource, the other opponents may not`, () => {
+  mpClause(DEN, "0:rule", count, `${count} seats: with a revealed cost above 3 P1 and only the chosen opponent may each play a resource, the other opponents may not`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const [mine, theirs] of [
         [true, true],
@@ -328,7 +333,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(DEN, "0:rule", "3 seats: it fires only at the start of P1's own turn, not at P2's or P3's", () => {
+mpClause(DEN, "0:rule", 3, "3 seats: it fires only at the start of P1's own turn, not at P2's or P3's", () => {
   const t = denTable(3, 3);
   assert.equal(passTurn(t), P1);
   choosePlayer(t, P1, [P2, P3], P2);
@@ -377,7 +382,7 @@ function passUntil(t: Table, who: PlayerId): void {
   assert.fail(`${who} never got priority`);
 }
 
-clause(RESTITUTION, "0:ability", "3 seats: playable while any opponent is attacking (the attacker is the opponent, no choice when P1 is a party, only the attacker legal otherwise), refused when no opponent attacks", () => {
+mpClause(RESTITUTION, "0:ability", 3, "3 seats: playable while any opponent is attacking (the attacker is the opponent, no choice when P1 is a party, only the attacker legal otherwise), refused when no opponent attacks", () => {
   // P2 attacks P1's faction: P1 plays it as the defender, nobody is asked
   const a = restitutionTable(3, P2);
   a.engine.perform({ type: "declareAttack", playerId: P2, attackerIds: [a.id("c-p2")], target: { type: "faction", playerId: P1 } } as never);
@@ -426,7 +431,7 @@ const thief = (seat: PlayerId) =>
     behavior: { abilities: [{ id: "body", type: "activated", targets: [{ id: "t", selector: { type: "character", name: "Mountainous Golem" }, count: 1 }], effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }] }] }
   });
 
-clause(GOLEM, "0:rule", "3 seats: the opponent P1 chooses when the Golem enters play cannot take control of it, the other opponent can", () => {
+mpClause(GOLEM, "0:rule", 3, "3 seats: the opponent P1 chooses when the Golem enters play cannot take control of it, the other opponent can", () => {
   for (const [pick, free] of [
     [P2, P3],
     [P3, P2]
@@ -475,7 +480,7 @@ function accumulatorTable(attacker: PlayerId): Table {
   );
 }
 
-clause(ACCUMULATOR, "0:rule", "3 seats: any opponent's attack lets P1 put a token (whoever is attacked, once per attack, declining adds none, no opponent is asked); P1's own attack does not", () => {
+mpClause(ACCUMULATOR, "0:rule", 3, "3 seats: any opponent's attack lets P1 put a token (whoever is attacked, once per attack, declining adds none, no opponent is asked); P1's own attack does not", () => {
   for (const [attacker, defender, fires] of [
     [P2, P1, true],
     [P2, P3, true],

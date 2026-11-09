@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   answer,
@@ -84,7 +84,7 @@ function toPriorityOf(t: Table, who: string): void {
 const PIRATE = "ca14cfec-3ab4-4da6-af9b-2966b31b6716";
 
 for (const count of TABLES) {
-  clause(PIRATE, "0:rule", `${count} seats: the opponent is chosen when the trigger resolves; only that opponent's top 2 cards are put into their discard pile`, () => {
+  mpClause(PIRATE, "0:rule", count, `${count} seats: the opponent is chosen when the trigger resolves; only that opponent's top 2 cards are put into their discard pile`, () => {
     for (const chosen of choices(count)) {
       const t = seatTable(count, [
         { key: "pp", def: printing(PIRATE), owner: P1, zone: "hand" },
@@ -105,7 +105,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(PIRATE, "0:rule", "3 seats: with one opponent left no choice is offered and that opponent is milled", () => {
+mpClause(PIRATE, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that opponent is milled", () => {
   const t = seatTable(3, [{ key: "pp", def: printing(PIRATE), owner: P1, zone: "hand" }, ...bank("deception", 6, P1), ...fill("d2", 4, P2, "deck"), ...fill("d3", 4, P3, "deck")]);
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("pp"));
@@ -122,7 +122,7 @@ const WIN = () => 0; // the engine flips with `random() < 0.5`
 const LOSE = () => 0.99;
 
 for (const count of TABLES) {
-  clause(COUNTER, "0:rule", `${count} seats: the coin decides X; only the chosen opponent's top X cards go to their discard pile`, () => {
+  mpClause(COUNTER, "0:rule", count, `${count} seats: the coin decides X; only the chosen opponent's top X cards go to their discard pile`, () => {
     for (const chosen of choices(count)) {
       for (const [random, x] of [[WIN, 3], [LOSE, 2]] as const) {
         const t = seatTable(
@@ -143,7 +143,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(COUNTER, "0:rule", "3 seats: with one opponent left no choice is offered", () => {
+mpClause(COUNTER, "0:rule", 3, "3 seats: with one opponent left no choice is offered", () => {
   const t = seatTable(3, [{ key: "cc", def: printing(COUNTER), owner: P1, zone: "hand" }, ...bank("deception", 4, P1), ...fill("d2", 5, P2, "deck"), ...fill("d3", 5, P3, "deck")], { random: WIN });
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("cc"));
@@ -157,7 +157,7 @@ clause(COUNTER, "0:rule", "3 seats: with one opponent left no choice is offered"
 const SARUME = "06dceb26-b7b7-49c4-b66c-9fd1b93ef09a";
 
 for (const count of TABLES) {
-  clause(SARUME, "0:rule", `${count} seats: each character the chosen opponent controls takes 1 damage; no other player's characters do`, () => {
+  mpClause(SARUME, "0:rule", count, `${count} seats: each character the chosen opponent controls takes 1 damage; no other player's characters do`, () => {
     for (const chosen of choices(count)) {
       const t = seatTable(count, [
         { key: "rs", def: printing(SARUME), owner: P1, zone: "hand" },
@@ -174,7 +174,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(SARUME, "0:rule", "3 seats: with one opponent left no choice is offered", () => {
+mpClause(SARUME, "0:rule", 3, "3 seats: with one opponent left no choice is offered", () => {
   const t = seatTable(3, [
     { key: "rs", def: printing(SARUME), owner: P1, zone: "hand" },
     ...bank("rage", 8, P1),
@@ -193,7 +193,7 @@ clause(SARUME, "0:rule", "3 seats: with one opponent left no choice is offered",
 const PLANNER = "5f93b923-bd32-4591-9a90-67c68a1e7c88";
 
 for (const count of TABLES) {
-  clause(PLANNER, "0:rule", `${count} seats: only the chosen opponent's deck is searched; the cards go to their discard pile`, () => {
+  mpClause(PLANNER, "0:rule", count, `${count} seats: only the chosen opponent's deck is searched; the cards go to their discard pile`, () => {
     for (const chosen of choices(count)) {
       const t = seatTable(count, [
         { key: "hp", def: printing(PLANNER), owner: P1, zone: "hand" },
@@ -218,7 +218,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(PLANNER, "0:rule", `${count} seats: the search takes cards with different names only`, () => {
+  mpClause(PLANNER, "0:rule", count, `${count} seats: the search takes cards with different names only`, () => {
     const chosen = opponentsAt(count)[0]!;
     const t = seatTable(count, [
       { key: "hp", def: printing(PLANNER), owner: P1, zone: "hand" },
@@ -236,7 +236,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(PLANNER, "0:rule", "3 seats: with one opponent left no choice is offered and that deck is searched", () => {
+mpClause(PLANNER, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that deck is searched", () => {
   const t = seatTable(3, [{ key: "hp", def: printing(PLANNER), owner: P1, zone: "hand" }, ...bank("deception", 6, P1), ...fill("d2", 3, P2, "deck"), ...fill("d3", 3, P3, "deck")]);
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("hp"));
@@ -259,7 +259,7 @@ function swashBoard(count: number, discards: Record<string, number>) {
 }
 
 for (const count of TABLES) {
-  clause(SWASH, "0:rule", `${count} seats: 4 cards of only the chosen opponent's discard pile are removed from the game and the Swashbuckler stays`, () => {
+  mpClause(SWASH, "0:rule", count, `${count} seats: 4 cards of only the chosen opponent's discard pile are removed from the game and the Swashbuckler stays`, () => {
     for (const chosen of choices(count)) {
       const discards = Object.fromEntries(opponentsAt(count).map((who) => [who, who === chosen ? 4 : 6]));
       const t = swashBoard(count, discards);
@@ -281,7 +281,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(SWASH, "0:rule", "3 seats: declining destroys the Swashbuckler; fewer than 4 cards in the chosen opponent's discard destroys it even when the other opponent has 6", () => {
+mpClause(SWASH, "0:rule", 3, "3 seats: declining destroys the Swashbuckler; fewer than 4 cards in the chosen opponent's discard destroys it even when the other opponent has 6", () => {
   const declined = swashBoard(3, { [P2]: 4, [P3]: 6 });
   playAndSelect(declined, "sw", P2, (pc) => (pc.kind === "chooserSelectsOption" ? { index: 1 } : undefined));
   assert.equal(zoneOf(declined.engine, declined.id("sw")), "discard", "declined: destroyed");
@@ -292,7 +292,7 @@ clause(SWASH, "0:rule", "3 seats: declining destroys the Swashbuckler; fewer tha
   assert.equal(discardOf(short.engine, P3).length, 6);
 });
 
-clause(SWASH, "0:rule", "3 seats: with one opponent left no choice is offered and that discard pile is used", () => {
+mpClause(SWASH, "0:rule", 3, "3 seats: with one opponent left no choice is offered and that discard pile is used", () => {
   const t = swashBoard(3, { [P2]: 4, [P3]: 6 });
   eliminate(t.engine, P3);
   playCard(t.engine, P1, t.id("sw"));
@@ -300,7 +300,7 @@ clause(SWASH, "0:rule", "3 seats: with one opponent left no choice is offered an
     if (pc.kind === "chooserSelectsOption") return { index: 0 };
     return pc.kind === "chooserSelectsTarget" ? { selected: offeredCards(t.engine) } : undefined;
   });
-  assert.ok(!asked.some((a) => a.kind === "choosePlayer"));
+  assert.ok(!asked.some((a) => a.kind === "choosePlayer"), "!asked.some((a) => a.kind === 'choosePlayer')");
   assert.equal(zoneOf(t.engine, t.id("sw")), "play");
   assert.equal(discardOf(t.engine, P2).length, 0);
 });
@@ -330,7 +330,7 @@ function tankTurnStart(t: Table, chosen: string, pick: (offered: string[]) => st
 }
 
 for (const count of TABLES) {
-  clause(TANK, "0:rule", `${count} seats: at the start of the controller's turn the chosen opponent's character may be destroyed, and only theirs is offered`, () => {
+  mpClause(TANK, "0:rule", count, `${count} seats: at the start of the controller's turn the chosen opponent's character may be destroyed, and only theirs is offered`, () => {
     for (const chosen of choices(count)) {
       const t = tankBoard(count, Object.fromEntries(opponentsAt(count).map((who) => [who, 2])));
       let offered: string[] = [];
@@ -346,7 +346,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(TANK, "0:rule", `${count} seats: declining destroys the Dragon Tank; a chosen opponent with no characters destroys it even when another opponent has one`, () => {
+  mpClause(TANK, "0:rule", count, `${count} seats: declining destroys the Dragon Tank; a chosen opponent with no characters destroys it even when another opponent has one`, () => {
     const chosen = opponentsAt(count)[0]!;
     const declined = tankBoard(count, Object.fromEntries(opponentsAt(count).map((who) => [who, 1])));
     tankTurnStart(declined, chosen, () => []);
@@ -358,7 +358,7 @@ for (const count of TABLES) {
     for (const who of others(count, chosen)) assert.equal(zoneOf(none.engine, none.id(`c${who}0`)), "play");
   });
 
-  clause(TANK, "0:rule", `${count} seats: the trigger fires at the start of the controller's turn only`, () => {
+  mpClause(TANK, "0:rule", count, `${count} seats: the trigger fires at the start of the controller's turn only`, () => {
     const t = tankBoard(count, Object.fromEntries(opponentsAt(count).map((who) => [who, 1])));
     const asked = advanceTo(t, P1, (pc) => (pc.kind === "choosePlayer" ? { playerId: P2 } : pc.kind === "chooserSelectsTarget" ? { selected: [] } : undefined));
     assert.equal(asked.filter((a) => a.kind === "choosePlayer").length, 1);
@@ -367,16 +367,16 @@ for (const count of TABLES) {
     t.engine.perform({ type: "endTurn", playerId: P1 } as never);
     const next = drive(t.engine, (pc) => (pc.kind === "orderTriggers" ? { next: (pc as unknown as { triggers: unknown[] }).triggers[0] } : undefined));
     assert.ok(!next.some((a) => a.kind === "choosePlayer"), "no prompt at an opponent's turn start");
-    assert.ok(Object.entries(before).every(([who, zone]) => zoneOf(t.engine, t.id(`c${who}0`)) === zone));
+    assert.ok(Object.entries(before).every(([who, zone]) => zoneOf(t.engine, t.id(`c${who}0`)) === zone), "Object.entries(before).every(([who, zone]) => zoneOf(t.engine, t.id(`c${who}0`)) === zone)");
   });
 }
 
-clause(TANK, "0:rule", "3 seats: with one opponent left no choice is offered", () => {
+mpClause(TANK, "0:rule", 3, "3 seats: with one opponent left no choice is offered", () => {
   const t = tankBoard(3, { [P2]: 1, [P3]: 1 });
   eliminate(t.engine, P3);
   t.engine.state.activePlayerId = P2;
   const asked = advanceTo(t, P1, (pc) => (pc.kind === "chooserSelectsTarget" ? { selected: offeredCards(t.engine) } : undefined));
-  assert.ok(!asked.some((a) => a.kind === "choosePlayer"));
+  assert.ok(!asked.some((a) => a.kind === "choosePlayer"), "!asked.some((a) => a.kind === 'choosePlayer')");
   assert.equal(zoneOf(t.engine, t.id(`c${P2}0`)), "discard");
 });
 
@@ -386,7 +386,7 @@ clause(TANK, "0:rule", "3 seats: with one opponent left no choice is offered", (
 const BRIBE = "8e36b4a0-419d-413d-9512-b539e37681aa";
 
 for (const count of TABLES) {
-  clause(BRIBE, "0:ability", `${count} seats: the picked character may be anyone's; only the chosen opponent's faction gains X`, () => {
+  mpClause(BRIBE, "0:ability", count, `${count} seats: the picked character may be anyone's; only the chosen opponent's faction gains X`, () => {
     for (const chosen of choices(count)) {
       const opps = opponentsAt(count);
       const victimOwner = others(count, chosen)[0]!;
@@ -406,7 +406,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(BRIBE, "0:ability", "3 seats: the chosen opponent's own character may be the pick; with one opponent left no choice is offered", () => {
+mpClause(BRIBE, "0:ability", 3, "3 seats: the chosen opponent's own character may be the pick; with one opponent left no choice is offered", () => {
   const t = seatTable(3, [{ key: "ib", def: printing(BRIBE), owner: P1, zone: "hand" }, ...bank("greed", 6, P1), { key: "v2", def: character({ name: "V2", strength: 2 }), owner: P2, zone: "play" }, { key: "v3", def: character({ name: "V3", strength: 4 }), owner: P3, zone: "play" }]);
   const before = influenceOf(t.engine, P2);
   playCard(t.engine, P1, t.id("ib"), { players: { opponent: P2 }, selected: { c: [t.id("v2")] } });
@@ -427,7 +427,7 @@ clause(BRIBE, "0:ability", "3 seats: the chosen opponent's own character may be 
 const JUDGMENT = "191e0731-b609-4ab3-a62b-8d6c21ed9e2b";
 
 for (const count of TABLES) {
-  clause(JUDGMENT, "0:ability", `${count} seats: only the chosen opponent's characters may be picked, and that opponent (nobody else) decides`, () => {
+  mpClause(JUDGMENT, "0:ability", count, `${count} seats: only the chosen opponent's characters may be picked, and that opponent (nobody else) decides`, () => {
     for (const chosen of choices(count)) {
       for (const destroy of [true, false]) {
         const opps = opponentsAt(count);
@@ -453,7 +453,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(JUDGMENT, "0:ability", "3 seats: with one opponent left no choice is offered and that opponent decides", () => {
+mpClause(JUDGMENT, "0:ability", 3, "3 seats: with one opponent left no choice is offered and that opponent decides", () => {
   const t = seatTable(3, [{ key: "sj", def: printing(JUDGMENT), owner: P1, zone: "hand" }, ...bank("greed", 8, P1), { key: "v2", def: character({ name: "V2", strength: 3 }), owner: P2, zone: "play" }, { key: "v3", def: character({ name: "V3", strength: 3 }), owner: P3, zone: "play" }]);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("sj") });
@@ -478,7 +478,7 @@ function scragBoard(count: number, discards: Record<string, number>) {
 }
 
 for (const count of TABLES) {
-  clause(SCRAG, "0:ability", `${count} seats: only the chosen opponent's discard count decides whether the character is destroyed`, () => {
+  mpClause(SCRAG, "0:ability", count, `${count} seats: only the chosen opponent's discard count decides whether the character is destroyed`, () => {
     for (const chosen of choices(count)) {
       const others_ = others(count, chosen);
       const enough = scragBoard(count, { [chosen]: 5, ...Object.fromEntries(others_.map((who) => [who, 2])) });
@@ -494,7 +494,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(SCRAG, "0:ability", "3 seats: with one opponent left no choice is offered and that discard pile counts", () => {
+mpClause(SCRAG, "0:ability", 3, "3 seats: with one opponent left no choice is offered and that discard pile counts", () => {
   const t = scragBoard(3, { [P2]: 5, [P3]: 0 });
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("sc") });
@@ -521,7 +521,7 @@ function theftBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(THEFT, "0:rule", `${count} seats: up to 4 cards of only the chosen opponent's discard pile (no tactic) enter play under the caster's control`, () => {
+  mpClause(THEFT, "0:rule", count, `${count} seats: up to 4 cards of only the chosen opponent's discard pile (no tactic) enter play under the caster's control`, () => {
     for (const chosen of choices(count)) {
       const t = theftBoard(count);
       expectOpponentAsked(t, { type: "playCard", playerId: P1, cardId: t.id("gt") });
@@ -542,7 +542,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(THEFT, "0:rule", `${count} seats: a card of another opponent's discard pile, or a mix, is refused`, () => {
+  mpClause(THEFT, "0:rule", count, `${count} seats: a card of another opponent's discard pile, or a mix, is refused`, () => {
     const opps = opponentsAt(count);
     const chosen = opps[0]!;
     const other = opps[1]!;
@@ -557,7 +557,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(THEFT, "0:rule", "3 seats: with one opponent left no choice is offered", () => {
+mpClause(THEFT, "0:rule", 3, "3 seats: with one opponent left no choice is offered", () => {
   const t = theftBoard(3);
   eliminate(t.engine, P3);
   expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("gt") });
@@ -580,7 +580,7 @@ function scavengerBoard(count: number, discards: Record<string, number>) {
 const reclaim = (t: Table) => ({ type: "activateAbility", playerId: P1, cardId: t.id("ms"), abilityId: "reclaim" });
 
 for (const count of TABLES) {
-  clause(SCAVENGER, "0:ability:reclaim", `${count} seats: the 3 cards removed from the game come from the chosen opponent's discard pile only`, () => {
+  mpClause(SCAVENGER, "0:ability:reclaim", count, `${count} seats: the 3 cards removed from the game come from the chosen opponent's discard pile only`, () => {
     for (const chosen of choices(count)) {
       const t = scavengerBoard(count, Object.fromEntries(opponentsAt(count).map((who) => [who, who === chosen ? 3 : 5])));
       expectOpponentAsked(t, reclaim(t));
@@ -596,7 +596,7 @@ for (const count of TABLES) {
     }
   });
 
-  clause(SCAVENGER, "0:ability:reclaim", `${count} seats: with only 2 cards in the chosen opponent's discard pile the cost cannot be paid, however many another opponent has`, () => {
+  mpClause(SCAVENGER, "0:ability:reclaim", count, `${count} seats: with only 2 cards in the chosen opponent's discard pile the cost cannot be paid, however many another opponent has`, () => {
     const opps = opponentsAt(count);
     const chosen = opps[0]!;
     const t = scavengerBoard(count, Object.fromEntries(opps.map((who) => [who, who === chosen ? 2 : 5])));
@@ -605,7 +605,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(SCAVENGER, "0:ability:reclaim", "3 seats: with one opponent left no choice is offered and that discard pile pays", () => {
+mpClause(SCAVENGER, "0:ability:reclaim", 3, "3 seats: with one opponent left no choice is offered and that discard pile pays", () => {
   const t = scavengerBoard(3, { [P2]: 3, [P3]: 5 });
   eliminate(t.engine, P3);
   expectNotAsked(t, reclaim(t));
@@ -631,7 +631,7 @@ function betrayalBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(BETRAYAL, "0:ability", `${count} seats: no opponent is asked; the defending player's discard pile is the only one offered, and the character joins the attack`, () => {
+  mpClause(BETRAYAL, "0:ability", count, `${count} seats: no opponent is asked; the defending player's discard pile is the only one offered, and the character joins the attack`, () => {
     for (const defender of choices(count)) {
       const t = betrayalBoard(count);
       t.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [t.id("raider")], target: { type: "faction", playerId: defender } } as never);
@@ -654,7 +654,7 @@ for (const count of TABLES) {
   });
 }
 
-clause(BETRAYAL, "0:ability", "3 seats: it is refused when the controller is not attacking", () => {
+mpClause(BETRAYAL, "0:ability", 3, "3 seats: it is refused when the controller is not attacking", () => {
   const t = betrayalBoard(3);
   refused(() => playCard(t.engine, P1, t.id("cb"), { selected: { c: [t.id(`dc${P2}`)] } }), "not attacking");
   assert.equal(zoneOf(t.engine, t.id(`dc${P2}`)), "discard");
@@ -674,7 +674,7 @@ function marauderBoard(count: number, discards: Record<string, number>) {
 }
 
 for (const count of TABLES) {
-  clause(MARAUDER, "0:rule", `${count} seats: the controller selects the opponent when it enters play; only that opponent's discard pile counts`, () => {
+  mpClause(MARAUDER, "0:rule", count, `${count} seats: the controller selects the opponent when it enters play; only that opponent's discard pile counts`, () => {
     const opps = opponentsAt(count);
     const first = opps[0]!;
     const last = opps[opps.length - 1]!;
@@ -694,7 +694,7 @@ for (const count of TABLES) {
     assert.equal(other.engine.getStat(other.id("am"), "strength"), base.strength!, `${last} has 9`);
   });
 
-  clause(MARAUDER, "0:rule", `${count} seats: when the selected opponent is eliminated the controller selects again and only the new opponent's discard pile counts`, () => {
+  mpClause(MARAUDER, "0:rule", count, `${count} seats: when the selected opponent is eliminated the controller selects again and only the new opponent's discard pile counts`, () => {
     const opps = opponentsAt(count);
     const base = printing(MARAUDER);
     const t = marauderBoard(count, Object.fromEntries(opps.map((who) => [who, who === P2 ? 10 : who === P3 ? 3 : 11])));
@@ -724,7 +724,7 @@ function guardBoard(count: number, chars: Record<string, number>) {
 }
 
 for (const count of TABLES) {
-  clause(GUARD, "0:rule", `${count} seats: only the selected opponent's characters count`, () => {
+  mpClause(GUARD, "0:rule", count, `${count} seats: only the selected opponent's characters count`, () => {
     const opps = opponentsAt(count);
     const first = opps[0]!;
     const last = opps[opps.length - 1]!;
@@ -740,7 +740,7 @@ for (const count of TABLES) {
     assert.equal(none.engine.getStat(none.id("sg"), "strength"), base.strength!, "no bonus: the selected opponent controls none");
   });
 
-  clause(GUARD, "0:rule", `${count} seats: when the selected opponent is eliminated the controller selects again and only the new opponent's characters count`, () => {
+  mpClause(GUARD, "0:rule", count, `${count} seats: when the selected opponent is eliminated the controller selects again and only the new opponent's characters count`, () => {
     const opps = opponentsAt(count);
     const base = printing(GUARD);
     const t = guardBoard(count, Object.fromEntries(opps.map((who) => [who, who === P2 ? 1 : who === P3 ? 0 : 1])));
@@ -772,7 +772,7 @@ function photoBoard(count: number) {
 }
 
 for (const count of TABLES) {
-  clause(PHOTO, "0:rule", `${count} seats: only the controller names the card; no opponent is asked`, () => {
+  mpClause(PHOTO, "0:rule", count, `${count} seats: only the controller names the card; no opponent is asked`, () => {
     const t = photoBoard(count);
     playCard(t.engine, P1, t.id("ph"));
     const asked = drive(t.engine, (pc) => {
@@ -783,7 +783,7 @@ for (const count of TABLES) {
     expectNotAsked(t, { type: "playCard", playerId: P1, cardId: t.id("ph") });
   });
 
-  clause(PHOTO, "1:rule", `${count} seats: the named card cannot be played by any player; removing the Photograph lifts it for everyone`, () => {
+  mpClause(PHOTO, "1:rule", count, `${count} seats: the named card cannot be played by any player; removing the Photograph lifts it for everyone`, () => {
     const t = photoBoard(count);
     playCard(t.engine, P1, t.id("ph"));
     drive(t.engine, (pc) => (pc.kind === "nameValue" ? { value: "Banned One" } : undefined));

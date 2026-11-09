@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, resourceCard } from "../../per-card/_harness.js";
-import { clause, declineAll, drain, printing } from "../_clause.js";
+import { mpClause, declineAll, drain, printing } from "../_clause.js";
 import { COUNTS, answerFor, others, passive, pickable, startOfTurn } from "./_seats2ndEdition.js";
 import { choosePlayer, deckOf, endTurn, handOf, open, P1, P2, P3, P4, resolvePendingResponses, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -62,7 +62,7 @@ const accepting = (t: Table) => (pc: { kind: string; [key: string]: unknown }): 
 const handSize = (t: Table, who: PlayerId): number => handOf(t, who).length;
 
 for (const count of COUNTS) {
-  clause(FTA, "0:rule", `${count} seats: at the start of each player's turn that player (not the controller) chooses one of the four options, and nobody else is offered the choice`, () => {
+  mpClause(FTA, "0:rule", count, `${count} seats: at the start of each player's turn that player (not the controller) chooses one of the four options, and nobody else is offered the choice`, () => {
     // P2, P3 (and P4), then P1 again: the controller P1 is the actor only on its own turn.
     for (const actor of [...seatsOf(count).slice(1), P1]) {
       const t = ftaTable(count);
@@ -84,7 +84,7 @@ for (const count of COUNTS) {
   });
 }
 
-clause(FTA, "0:rule", "4 seats: P4 chooses at the start of P4's turn; with P3 eliminated P3's turn never happens and P3 is never offered a choice, while the trigger still fires at P1's, P2's and P4's starts", () => {
+mpClause(FTA, "0:rule", 4, "4 seats: P4 chooses at the start of P4's turn; with P3 eliminated P3's turn never happens and P3 is never offered a choice, while the trigger still fires at P1's, P2's and P4's starts", () => {
   const t = ftaTable(4);
   startOfTurn(t, P4);
   assert.equal(t.engine.state.activePlayerId, P4);
@@ -107,7 +107,7 @@ clause(FTA, "0:rule", "4 seats: P4 chooses at the start of P4's turn; with P3 el
 // OPTION 3 / OPTION 4: "Both players" is the player whose turn is starting plus the one opponent that player selects.
 
 for (const count of COUNTS) {
-  clause(FTA, "3:option:OPTION 3", `${count} seats: both players may draw up to 2 cards: the active player and the opponent the active player selected, in turn order; nobody else`, () => {
+  mpClause(FTA, "3:option:OPTION 3", count, `${count} seats: both players may draw up to 2 cards: the active player and the opponent the active player selected, in turn order; nobody else`, () => {
     for (const opponent of [P3, P1]) {
       const t = ftaTable(count);
       startOfTurn(t, P2);
@@ -127,7 +127,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(FTA, "4:option:OPTION 4", `${count} seats: both players may play up to 2 resources: the active player and the opponent the active player selected, in turn order; nobody else`, () => {
+  mpClause(FTA, "4:option:OPTION 4", count, `${count} seats: both players may play up to 2 resources: the active player and the opponent the active player selected, in turn order; nobody else`, () => {
     for (const opponent of [P1, P2]) {
       const t = ftaTable(count);
       startOfTurn(t, P3);
@@ -145,7 +145,7 @@ for (const count of COUNTS) {
 // every player but the active one, so at three or more seats every other player is offered it.
 
 for (const count of COUNTS) {
-  clause(FTA, "1:option:OPTION 1", `${count} seats: the active player may draw a card and only the opponent they selected may play a resource`, () => {
+  mpClause(FTA, "1:option:OPTION 1", count, `${count} seats: the active player may draw a card and only the opponent they selected may play a resource`, () => {
     for (const opponent of [P3, P1]) {
       const t = ftaTable(count);
       startOfTurn(t, P2);
@@ -158,7 +158,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(FTA, "2:option:OPTION 2", `${count} seats: the active player may play a resource and only the opponent they selected may draw a card`, () => {
+  mpClause(FTA, "2:option:OPTION 2", count, `${count} seats: the active player may play a resource and only the opponent they selected may draw a card`, () => {
     for (const opponent of [P1, P2]) {
       const t = ftaTable(count);
       startOfTurn(t, P3);

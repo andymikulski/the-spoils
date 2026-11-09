@@ -19,6 +19,8 @@
 import cardsJson from "../../../data/cards.js";
 import { cardTextToPlain, parseCardText, type CardTextBlock } from "../../../cardText.js";
 import type { CardDefinition, ResourceIcon } from "../../../engine.js";
+// A cycle: _mpInventory.ts imports this file too. Both only call each other's exports inside functions, never at load.
+import { mpFlags } from "./_mpInventory.js";
 
 export const RELEASE_ORDER = [
   "Open Beta",
@@ -42,6 +44,17 @@ export interface Clause {
   kind: string;
   /** The clause's printed wording (plain text). */
   text: string;
+  /**
+   * Multiplayer flag, from the multiplayer inventory (`_mpInventory.ts`, `mpFlag`); absent when the clause reads the
+   * same at every table size.
+   *   `true`:         the clause names players in a way that depends on the table size (a printed player phrase, or a
+   *                   behavior player word other than plain self / controller / owner). It needs a 3-seat test in
+   *                   `clauses/mp/` (`mpClause`).
+   *   `"quantified"`: the printed text says each opponent / opponents / each player / all players. It needs a 3-seat
+   *                   and a 4-seat test.
+   * `mp-coverage.test.ts` enforces both.
+   */
+  mp?: true | "quantified";
 }
 
 export interface RulesGroup {
@@ -164,6 +177,8 @@ export function buildRulesGroups(catalog: CardDefinition[] = CATALOG): RulesGrou
       clauses: clausesFor(rep),
       batch: ""
     };
+    const flags = mpFlags(group, rep);
+    group.clauses = group.clauses.map((clause) => (flags.has(clause.key) ? { ...clause, mp: flags.get(clause.key)! } : clause));
     groups.push(group);
     const list = bySet.get(rep.set) ?? [];
     list.push(group);

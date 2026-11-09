@@ -3,7 +3,7 @@
 // printed text of each clause (data/card-tests/mp-spec/seed-2.json); engine data only drives the engine.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   answerPick, deckOf, endTurn, item, handSize, hands, idsOf, influenceOf, others, P1, pending, perSeat, pickable, resourceCard, resources, seatsFor, settle, table, tactic, zoneOf
 } from "./_seed-2.js";
@@ -42,7 +42,7 @@ function providesBoard(count: number, aideId: string, icon: string, active: stri
 }
 
 for (const count of COUNTS) {
-  clause(BRAGGADOCIAN, "0:provides", `${count} seats: PROVIDES: [E] works for its controller and for nobody else`, () => {
+  mpClause(BRAGGADOCIAN, "0:provides", count, `${count} seats: PROVIDES: [E] works for its controller and for nobody else`, () => {
     const mine = providesBoard(count, BRAGGADOCIAN, "e", P1);
     mine.engine.perform({ type: "playCard", playerId: P1, cardId: mine.id("gate-p1") } as never);
     settle(mine);
@@ -54,7 +54,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(RESISTANCE_FIGHTER, "0:provides", `${count} seats: PROVIDES: [D] works for its controller and for nobody else`, () => {
+  mpClause(RESISTANCE_FIGHTER, "0:provides", count, `${count} seats: PROVIDES: [D] works for its controller and for nobody else`, () => {
     const mine = providesBoard(count, RESISTANCE_FIGHTER, "d", P1);
     mine.engine.perform({ type: "playCard", playerId: P1, cardId: mine.id("gate-p1") } as never);
     settle(mine);
@@ -82,7 +82,7 @@ function aideBoard(count: number) {
 }
 
 for (const count of COUNTS) {
-  clause(BRAGGADOCIAN, "1:rule", `${count} seats: "At the start of your opponent's turn": at the start of every opponent's turn I may detach a resource from my faction, never at the start of my own turn`, () => {
+  mpClause(BRAGGADOCIAN, "1:rule", count, `${count} seats: "At the start of your opponent's turn": at the start of every opponent's turn I may detach a resource from my faction, never at the start of my own turn`, () => {
     const t = aideBoard(count);
     const mineAttached = ["a1", "a2", "a3"];
     let detached = 0;
@@ -121,7 +121,7 @@ function propheticBoard(count: number) {
 }
 
 for (const count of COUNTS) {
-  clause(PROPHETIC, "0:rule", `${count} seats: "At the end of your turn" I may reveal the top card of my deck (shown to every player); a staple resource goes to my hand; not at the end of an opponent's turn`, () => {
+  mpClause(PROPHETIC, "0:rule", count, `${count} seats: "At the end of your turn" I may reveal the top card of my deck (shown to every player); a staple resource goes to my hand; not at the end of an opponent's turn`, () => {
     const t = propheticBoard(count);
     for (const seat of seatsFor(count)) t.engine.state.players[seat]!.deck = [t.id(`top-${seat}`), ...t.engine.state.players[seat]!.deck.filter((id) => id !== t.id(`top-${seat}`))];
     const decks = Object.fromEntries(others(count, P1).map((seat) => [seat, [...t.engine.state.players[seat]!.deck]]));
@@ -180,7 +180,7 @@ function startOfMyTurn(t: Table, count: number, answers: { draw: boolean }): str
 
 for (const count of COUNTS) {
   const last = seatsFor(count)[count - 1]!;
-  clause(POSHERNACLE, "1:rule", `${count} seats: "At the start of your turn, you may use an ability": offered to me alone, at the start of my turn only`, () => {
+  mpClause(POSHERNACLE, "1:rule", count, `${count} seats: "At the start of your turn, you may use an ability": offered to me alone, at the start of my turn only`, () => {
     const t = poshBoard(count, last);
     const asked = startOfMyTurn(t, count, { draw: false });
     assert.ok(asked.includes("useAnyAbility:p1"), "I am offered the ability use");
@@ -192,7 +192,7 @@ for (const count of COUNTS) {
     assert.equal(pending(next), undefined, "nothing fires at the start of an opponent's turn");
   });
 
-  clause(POSHERNACLE, "2:rule", `${count} seats: "At the start of your turn, you may draw a card": I draw, the opponents do not, and nothing fires at their turn starts`, () => {
+  mpClause(POSHERNACLE, "2:rule", count, `${count} seats: "At the start of your turn, you may draw a card": I draw, the opponents do not, and nothing fires at their turn starts`, () => {
     const t = poshBoard(count, last);
     const before = Object.fromEntries(seatsFor(count).map((seat) => [seat, handSize(t, seat)]));
     const asked = startOfMyTurn(t, count, { draw: true });
@@ -207,7 +207,7 @@ for (const count of COUNTS) {
     assert.equal(handSize(next, P1), hand);
   });
 
-  clause(POSHERNACLE, "3:rule", `${count} seats: "At the start of your turn, your faction gains 1 influence": mine only, at my turn start only`, () => {
+  mpClause(POSHERNACLE, "3:rule", count, `${count} seats: "At the start of your turn, your faction gains 1 influence": mine only, at my turn start only`, () => {
     const t = poshBoard(count, last);
     const before = Object.fromEntries(seatsFor(count).map((seat) => [seat, influenceOf(t, seat)]));
     startOfMyTurn(t, count, { draw: false });

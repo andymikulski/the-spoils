@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard } from "../../support/fixtures.js";
 import { developFaction } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { endTurn } from "../_turn.js";
 import { answer, cardsOf, controllerOf, expectChoice, handOf, offered, pickTargets, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
@@ -19,7 +19,7 @@ const coalition = () => printing(KNITTING);
 const FOES = [TOURNAMENT, ALLIANCE_OF_TWO, IMPERIAL];
 
 for (const count of [3, 4] as const) {
-  clause(KNITTING, "0:rule", `${count} seats: the Coalition can be played in a ${count}-seat game and the other seats keep their own factions`, () => {
+  mpClause(KNITTING, "0:rule", count, `${count} seats: the Coalition can be played in a ${count}-seat game and the other seats keep their own factions`, () => {
     const engine = factionGame([coalition(), ...FOES.slice(0, count - 1)], { firstPlayerId: P1 });
     assert.equal(engine.getDefinition(engine.state.players[P1]!.factionId!).name, "The Knitting Coalition");
     assert.equal(engine.state.players[P1]!.influence, 28);
@@ -31,7 +31,7 @@ for (const count of [3, 4] as const) {
     });
   });
 
-  clause(KNITTING, "1:rule:STARTING RESOURCES", `${count} seats: the Coalition's controller starts with 2 Greed resources; the other seats start with their own factions' resources`, () => {
+  mpClause(KNITTING, "1:rule:STARTING RESOURCES", count, `${count} seats: the Coalition's controller starts with 2 Greed resources; the other seats start with their own factions' resources`, () => {
     const engine = factionGame([coalition(), ...FOES.slice(0, count - 1)], { firstPlayerId: P1 });
     assert.deepEqual(resourcesOf(engine, P1), ["Greed", "Greed"]);
     assert.equal(resourcesOf(engine, P2).length, 2, "the Tournament Faction's own 2 staples");
@@ -40,7 +40,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(KNITTING, "2:rule:STARTING DRAW", "3 seats: in the first seat the Coalition draws 3 (going first); in the second or third seat it draws 4 (every seat after the first uses going second)", () => {
+mpClause(KNITTING, "2:rule:STARTING DRAW", 3, "3 seats: in the first seat the Coalition draws 3 (going first); in the second or third seat it draws 4 (every seat after the first uses going second)", () => {
   assert.equal(handSize(factionGame([coalition(), TOURNAMENT, ALLIANCE_OF_TWO], { firstPlayerId: P1 }), P1), 3);
   assert.equal(handSize(factionGame([TOURNAMENT, coalition(), ALLIANCE_OF_TWO], { firstPlayerId: P1 }), P2), 4);
   assert.equal(handSize(factionGame([TOURNAMENT, ALLIANCE_OF_TWO, coalition()], { firstPlayerId: P1 }), P3), 4);
@@ -49,7 +49,7 @@ clause(KNITTING, "2:rule:STARTING DRAW", "3 seats: in the first seat the Coaliti
 });
 
 for (const count of [3, 4] as const) {
-  clause(KNITTING, "3:rule:HIDDEN INFLUENCE", `${count} seats: every opponent ignores their own faction's STARTING DRAW and uses the Coalition's: 3 going first, 4 going second (seat order after the first seat is going second)`, () => {
+  mpClause(KNITTING, "3:rule:HIDDEN INFLUENCE", count, `${count} seats: every opponent ignores their own faction's STARTING DRAW and uses the Coalition's: 3 going first, 4 going second (seat order after the first seat is going second)`, () => {
     const factions = [coalition(), ...FOES.slice(0, count - 1)];
     const engine = factionGame(factions, { firstPlayerId: P1 });
     assert.equal(handSize(engine, P1), 3);
@@ -70,7 +70,7 @@ const withCoalition = (count: number, cards: CardPlacement[], active: PlayerId =
   });
 
 for (const count of [3, 4] as const) {
-  clause(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", `${count} seats: no opponent has a Develop Rule (none is offered at the start of any opponent's turn), nor does the Coalition's controller`, () => {
+  mpClause(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", count, `${count} seats: no opponent has a Develop Rule (none is offered at the start of any opponent's turn), nor does the Coalition's controller`, () => {
     const t = withCoalition(count, seatsOf(count).flatMap((seat) => cardsOf(`d-${seat}-`, 3, seat, "deck", (i) => character({ name: `Deck ${seat} ${i}` }))));
     for (const seat of seatsOf(count)) assert.deepEqual(t.engine.getDevelopChoices(seat), [], `${seat} has no Develop Rule`);
     const decks = Object.fromEntries(t.seats.map((seat) => [seat, handOf(t, seat).length]));
@@ -82,7 +82,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(KNITTING, "5:rule:RESTORE RULE", "3 seats: at the start of the controller's turn the controller restores their depleted cards and detaches their resources; the opponents' cards are not restored then", () => {
+mpClause(KNITTING, "5:rule:RESTORE RULE", 3, "3 seats: at the start of the controller's turn the controller restores their depleted cards and detaches their resources; the opponents' cards are not restored then", () => {
   const spent = (seat: PlayerId): CardPlacement[] => [
     { key: `c-${seat}`, def: character({ name: `Char ${seat}` }), owner: seat, depleted: true },
     { key: `r-${seat}`, def: resourceCard({ name: `Res ${seat}` }), owner: seat, attachedToKey: seat === P1 ? "__factionA" : seat === P2 ? "__factionB" : "__faction_p3" }
@@ -113,7 +113,7 @@ function forcesTable(count: number, user: PlayerId, resources = 2): Table {
 const factionOf = (t: Table): string => t.engine.state.players[P1]!.factionId!;
 
 for (const [count, users] of [[3, [P1, P2, P3]], [4, [P1, P2, P3, P4]]] as const) {
-  clause(KNITTING, "6:ability", `${count} seats: the controller and every opponent can use INFLATIONARY FORCES - DRAW: the user pays 2 of their own resources and draws for themselves; nobody else draws`, () => {
+  mpClause(KNITTING, "6:ability", count, `${count} seats: the controller and every opponent can use INFLATIONARY FORCES - DRAW: the user pays 2 of their own resources and draws for themselves; nobody else draws`, () => {
     for (const user of users) {
       const t = forcesTable(count, user);
       const hands = Object.fromEntries(t.seats.map((seat) => [seat, handOf(t, seat).length]));
@@ -126,7 +126,7 @@ for (const [count, users] of [[3, [P1, P2, P3]], [4, [P1, P2, P3, P4]]] as const
     }
   });
 
-  clause(KNITTING, "7:ability", `${count} seats: the controller and every opponent can use INFLATIONARY FORCES - RESOURCE: the user pays 2 of their own resources and plays a resource from their own hand under their own control`, () => {
+  mpClause(KNITTING, "7:ability", count, `${count} seats: the controller and every opponent can use INFLATIONARY FORCES - RESOURCE: the user pays 2 of their own resources and plays a resource from their own hand under their own control`, () => {
     for (const user of users) {
       const t = forcesTable(count, user);
       t.engine.perform({ type: "activateAbility", playerId: user, cardId: factionOf(t), abilityId: "knitting-resource" });
@@ -144,7 +144,7 @@ for (const [count, users] of [[3, [P1, P2, P3]], [4, [P1, P2, P3, P4]]] as const
   });
 }
 
-clause(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", "3 seats, the Coalition in the second seat: both of its opponents (the seats on either side) lose their Develop Rule, not just one", () => {
+mpClause(KNITTING, "4:rule:DEVELOP RULE - PULLING STRINGS", 3, "3 seats, the Coalition in the second seat: both of its opponents (the seats on either side) lose their Develop Rule, not just one", () => {
   const t = table(3, [], { factions: { [P2]: coalition(), [P1]: developFaction(), [P3]: developFaction() } });
   assert.deepEqual(t.engine.getDevelopChoices(P1), [], "P1 ignores its Develop Rule");
   assert.deepEqual(t.engine.getDevelopChoices(P3), [], "P3 ignores its Develop Rule");

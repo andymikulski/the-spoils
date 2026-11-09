@@ -3,7 +3,7 @@
 // data/card-tests/mp-spec/1st-edition-part-2.json.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -109,7 +109,7 @@ function noResponseScenario(count: Count, key: string, check: (t: Table, pick: P
 const SUB5 = "8fbf09c1-9f8e-4c2e-8695-fd6f95a4fa8a";
 
 for (const count of [3, 4] as const) {
-  clause(SUB5, "0:rule", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the card resolves only after they pass`, () => {
+  mpClause(SUB5, "0:rule", count, `${count} seats: the chosen opponent cannot respond, every other opponent can, and the card resolves only after they pass`, () => {
     noResponseScenario(count, "sub", (t) => {
       assert.equal(handOf(t, P2).length, 2, "the terminated ability drew nothing for its controller");
       assert.equal(handOf(t, P1).length, 3, "P1 drew a card from the card itself");
@@ -128,7 +128,7 @@ for (const count of [3, 4] as const) {
 const PUPPET = "ab111049-6ba1-430e-8d27-f647bcd5ac35";
 
 for (const count of [3, 4] as const) {
-  clause(PUPPET, "0:rule", `${count} seats: the chosen opponent cannot respond, every other opponent can, and the character is destroyed`, () => {
+  mpClause(PUPPET, "0:rule", count, `${count} seats: the chosen opponent cannot respond, every other opponent can, and the character is destroyed`, () => {
     noResponseScenario(count, "pup", (t) => {
       assert.equal(zoneOf(t, "foe"), "discard", "the character whose ability it was is destroyed");
       assert.equal(zoneOf(t, "foe2"), "play", "no other character is destroyed");
@@ -190,10 +190,10 @@ function elusiveRun(count: Count, printingId: string, pick: PlayerId): void {
 }
 
 for (const count of [3, 4] as const) {
-  clause(MARTIAL_ARTIST, "0:rule", `${count} seats: only the opponent selected as the effect starts applying cannot pick it; the selection is made again when that player is eliminated`, () => {
+  mpClause(MARTIAL_ARTIST, "0:rule", count, `${count} seats: only the opponent selected as the effect starts applying cannot pick it; the selection is made again when that player is eliminated`, () => {
     for (const pick of seatsOf(count).slice(1)) elusiveRun(count, MARTIAL_ARTIST, pick);
   });
-  clause(TRAINEE, "0:rule", `${count} seats: only the opponent selected as the effect starts applying cannot pick it; the selection is made again when that player is eliminated`, () => {
+  mpClause(TRAINEE, "0:rule", count, `${count} seats: only the opponent selected as the effect starts applying cannot pick it; the selection is made again when that player is eliminated`, () => {
     for (const pick of seatsOf(count).slice(1)) elusiveRun(count, TRAINEE, pick);
   });
 }
@@ -268,7 +268,7 @@ function embiggenerTable(count: Count, active: PlayerId, hands: Record<PlayerId,
   );
 }
 
-clause(EMBIGGENER, "0:rule", "3 seats: both players are the player whose turn it is and the opponent that player selects, whoever controls the card", () => {
+mpClause(EMBIGGENER, "0:rule", 3, "3 seats: both players are the player whose turn it is and the opponent that player selects, whoever controls the card", () => {
   const sizes = { [P1]: 3, [P2]: 1, [P3]: 3 };
   // the start of P3's turn: P3 selects P2 and picks X = 2; P2 holds only 1 card, so puts that one and draws 1; P1, the controller, is untouched
   embiggenerTurn(embiggenerTable(3, P2, { [P2]: 1 }), P2, P3, P2, 2, sizes);
@@ -279,7 +279,7 @@ clause(EMBIGGENER, "0:rule", "3 seats: both players are the player whose turn it
   embiggenerTurn(t, P1, P2, P1, 2, { [P1]: 3, [P2]: 3, [P3]: 3 });
 });
 
-clause(EMBIGGENER, "0:rule", "4 seats: the pair acts active-player-first then clockwise, and the two other seats are untouched", () => {
+mpClause(EMBIGGENER, "0:rule", 4, "4 seats: the pair acts active-player-first then clockwise, and the two other seats are untouched", () => {
   const sizes = { [P1]: 3, [P2]: 3, [P3]: 3, [P4]: 3 };
   // the start of P4's turn: P4 selects P2 (offered P1, P2, P3) and picks X = 1; the pair acts P4 then P2; P1 and P3 are untouched
   embiggenerTurn(embiggenerTable(4, P3), P3, P4, P2, 1, sizes);

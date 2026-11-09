@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard } from "../../support/fixtures.js";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { 
   answer, filler, go, hand, deck, infl, needs, offered, pay, pcOf, pickCandidates, pickCards, pickOption, play, table, unit, zone, P1, P2, P3, P4, type Board, type Pid, type Placement
  } from "./_shade.js";
@@ -48,7 +48,7 @@ const expedition = (): Board =>
     ...onFaction(P3, 3)
   ]);
 
-clause(EXPEDITION, "1:option:OPTION 1", "3 seats: the controller picks the opponent before the cost; only that opponent may detach up to 3 of their own resources; then P1 may search for an Arcanist", () => {
+mpClause(EXPEDITION, "1:option:OPTION 1", 3, "3 seats: the controller picks the opponent before the cost; only that opponent may detach up to 3 of their own resources; then P1 may search for an Arcanist", () => {
   for (const [picked, other] of [[P3, P2], [P2, P3]] as const) {
     const b = expedition();
     assert.deepEqual(needs(b, play(b, P1, "ee", { mode: 0 }))[0], { kind: "players", choices: [{ id: "opponent", candidates: [P2, P3] }] });
@@ -66,7 +66,7 @@ clause(EXPEDITION, "1:option:OPTION 1", "3 seats: the controller picks the oppon
   pickCards(none, P3, []);
   for (const i of [0, 1, 2]) assert.notEqual(attachedTo(none, `att-${P3}-${i}`), undefined, "P3 may detach none");
 });
-clause(EXPEDITION, ["0:rule", "2:option:OPTION 2"], "3 seats: OPTION 2 asks for no opponent; P1 chooses X, depletes X characters and detaches X+3 of P1's own resources; P2 and P3 are not asked or affected", () => {
+mpClause(EXPEDITION, ["0:rule", "2:option:OPTION 2"], 3, "3 seats: OPTION 2 asks for no opponent; P1 chooses X, depletes X characters and detaches X+3 of P1's own resources; P2 and P3 are not asked or affected", () => {
   const b = expedition();
   const action = play(b, P1, "ee", { mode: 1, variables: { x: 1 } });
   assert.equal(needs(b, action).some((r) => r.kind === "players"), false, "no opponent is chosen");
@@ -80,7 +80,7 @@ clause(EXPEDITION, ["0:rule", "2:option:OPTION 2"], "3 seats: OPTION 2 asks for 
   assert.equal(b.engine.state.cards[b.id("c2")]!.depleted, false);
   for (const owner of [P2, P3]) for (const i of [0, 1, 2]) assert.notEqual(attachedTo(b, `att-${owner}-${i}`), undefined);
 });
-clause(EXPEDITION, ["0:rule", "3:option:OPTION 3"], "3 seats: OPTION 3 asks for no opponent; P1 picks any character (P1's, P2's or P3's) and it gains COVERT this turn", () => {
+mpClause(EXPEDITION, ["0:rule", "3:option:OPTION 3"], 3, "3 seats: OPTION 3 asks for no opponent; P1 picks any character (P1's, P2's or P3's) and it gains COVERT this turn", () => {
   for (const key of ["c1", "c2", "c3"]) {
     const b = expedition();
     const action = play(b, P1, "ee", { mode: 2 });
@@ -117,7 +117,7 @@ function eachPicks(b: Board, expected: Pid[]): void {
   }
   assert.deepEqual(order, expected);
 }
-clause(TRANSPOSITION, "0:rule", "3 seats: P1, P2 and P3 each in turn pick a character they own and return it to their hand; a player with no character skips", () => {
+mpClause(TRANSPOSITION, "0:rule", 3, "3 seats: P1, P2 and P3 each in turn pick a character they own and return it to their hand; a player with no character skips", () => {
   const b = transposition(3, { [P1]: 2, [P2]: 2, [P3]: 2 });
   go(b, play(b, P1, "qt"));
   eachPicks(b, [P1, P2, P3]);
@@ -128,7 +128,7 @@ clause(TRANSPOSITION, "0:rule", "3 seats: P1, P2 and P3 each in turn pick a char
   eachPicks(skip, [P1, P2]);
   assert.equal(pcOf(skip.engine), undefined, "P3 owns no character: nothing is asked");
 });
-clause(TRANSPOSITION, "0:rule", "4 seats: played during P3's turn, the picks go P3, P4, P1, P2 (active player first, then clockwise); each returns one of their own", () => {
+mpClause(TRANSPOSITION, "0:rule", 4, "4 seats: played during P3's turn, the picks go P3, P4, P1, P2 (active player first, then clockwise); each returns one of their own", () => {
   const b = transposition(4, { [P1]: 1, [P2]: 1, [P3]: 1, [P4]: 1 }, P3);
   b.engine.perform(play(b, P3, "bait"));
   reachPriority(b, P1);
@@ -159,7 +159,7 @@ function study(active: Pid = P1): Board {
 }
 const looks = (b: Board) => b.engine.getLog().filter((entry) => entry.event?.type === "cardsRevealed").map((entry) => entry.event as unknown as { ownerId: Pid; viewerId: Pid; cardIds: string[] });
 
-clause(STUDY_DISTURBANCE, "0:ability", "3 seats: P1 may pick any player (P1, P2 or P3); only the picked player is asked to pay 2", () => {
+mpClause(STUDY_DISTURBANCE, "0:ability", 3, "3 seats: P1 may pick any player (P1, P2 or P3); only the picked player is asked to pay 2", () => {
   const b = study();
   assert.deepEqual(new Set(pickCandidates(b, play(b, P1, "sd"))), new Set([faction(b, P1), faction(b, P2), faction(b, P3)]), "every player's faction is a legal pick");
   for (const picked of [P2, P3]) {
@@ -169,7 +169,7 @@ clause(STUDY_DISTURBANCE, "0:ability", "3 seats: P1 may pick any player (P1, P2 
     assert.equal(pcOf(c.engine)?.playerId, picked, "only the picked player is asked");
   }
 });
-clause(STUDY_DISTURBANCE, "0:ability", "3 seats: if the picked P3 pays 2, P1 looks at the top card of P1's own deck; otherwise P3 cannot play characters this turn (not P1 or P2) and P1 draws a card", () => {
+mpClause(STUDY_DISTURBANCE, "0:ability", 3, "3 seats: if the picked P3 pays 2, P1 looks at the top card of P1's own deck; otherwise P3 cannot play characters this turn (not P1 or P2) and P1 draws a card", () => {
   const paid = study();
   go(paid, play(paid, P1, "sd", { selected: { p: [faction(paid, P3)] } }));
   pay(paid, P3, true);
@@ -193,7 +193,7 @@ clause(STUDY_DISTURBANCE, "0:ability", "3 seats: if the picked P3 pays 2, P1 loo
   pay(restricted, P3, false);
   assert.equal(looks(restricted).length, 0);
 });
-clause(STUDY_DISTURBANCE, "0:ability", "3 seats: P1 may pick P1 itself; then P1 decides, and declining stops P1 from playing characters this turn", () => {
+mpClause(STUDY_DISTURBANCE, "0:ability", 3, "3 seats: P1 may pick P1 itself; then P1 decides, and declining stops P1 from playing characters this turn", () => {
   const b = study();
   go(b, play(b, P1, "sd", { selected: { p: [faction(b, P1)] } }));
   assert.equal(pcOf(b.engine)?.playerId, P1);
@@ -203,7 +203,7 @@ clause(STUDY_DISTURBANCE, "0:ability", "3 seats: P1 may pick P1 itself; then P1 
 
 // --- Underwhelming Performance -----------------------------------------------------------------
 
-clause(UNDERWHELMING, "0:ability", "3 seats: the picked character's controller (P3, not P2 or P1) may detach up to 2 of their own resources; the character loses 6 strength and P1 draws", () => {
+mpClause(UNDERWHELMING, "0:ability", 3, "3 seats: the picked character's controller (P3, not P2 or P1) may detach up to 2 of their own resources; the character loses 6 strength and P1 draws", () => {
   for (const victim of [P3, P2, P1]) {
     const b = table(3, [
       { key: "up", def: printing(UNDERWHELMING), owner: P1, zone: "hand" },
@@ -231,7 +231,7 @@ clause(UNDERWHELMING, "0:ability", "3 seats: the picked character's controller (
 
 // --- Audacious Appraisal -----------------------------------------------------------------------
 
-clause(AUDACIOUS, "0:ability", "3 seats: the picked character's controller chooses X; P1 chooses: that controller's faction loses X, or the character is destroyed and P1's faction loses 2X; the other opponent's faction is untouched", () => {
+mpClause(AUDACIOUS, "0:ability", 3, "3 seats: the picked character's controller chooses X; P1 chooses: that controller's faction loses X, or the character is destroyed and P1's faction loses 2X; the other opponent's faction is untouched", () => {
   for (const victim of [P3, P2]) {
     const other = victim === P3 ? P2 : P3;
     const board = () =>
@@ -262,7 +262,7 @@ clause(AUDACIOUS, "0:ability", "3 seats: the picked character's controller choos
 
 // --- Contractual Execution ---------------------------------------------------------------------
 
-clause(CONTRACTUAL, "0:ability", "3 seats: the picked character's controller picks a resource they control, which goes to its owner's hand (a loaned one to its owner P3); then the character is flipped face down", () => {
+mpClause(CONTRACTUAL, "0:ability", 3, "3 seats: the picked character's controller picks a resource they control, which goes to its owner's hand (a loaned one to its owner P3); then the character is flipped face down", () => {
   const board = () =>
     table(3, [
       { key: "ce", def: printing(CONTRACTUAL), owner: P1, zone: "hand" },

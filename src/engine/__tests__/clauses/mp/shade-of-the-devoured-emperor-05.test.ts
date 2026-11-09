@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { character, item, tactic } from "../../support/fixtures.js";
 import { bank } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { 
   answer, controllerOf, deck, filler, fight, go, hand, infl, offered, pay, pcOf, pickCandidates, pickOption, play, table, unit, use, zone, P1, P2, P3, P4, type Board, type Pid, type Placement
  } from "./_shade.js";
@@ -66,7 +66,7 @@ function searchWithCharm(b: Board, searcher: Pid, yes: boolean): Pid[] {
   }
   return offeredTo;
 }
-clause(GOLDEN_CHARM, "1:rule", "3 seats: P3 would search P3's deck: only P1 (the Charm's controller) is offered the 1-payment; paying draws P1 a card, then P3 searches", () => {
+mpClause(GOLDEN_CHARM, "1:rule", 3, "3 seats: P3 would search P3's deck: only P1 (the Charm's controller) is offered the 1-payment; paying draws P1 a card, then P3 searches", () => {
   const b = charm(P3);
   const before = readyOf(b, P1);
   const offeredTo = searchWithCharm(b, P3, true);
@@ -76,7 +76,7 @@ clause(GOLDEN_CHARM, "1:rule", "3 seats: P3 would search P3's deck: only P1 (the
   assert.equal(hand(b.engine, P3).includes(b.id("p3-g")), true, "P3 still searched P3's deck");
   assert.equal(deck(b.engine, P2).length, 3);
 });
-clause(GOLDEN_CHARM, "1:rule", "3 seats: declining costs nothing and P3's search happens; P1 searching its own deck gets the same offer; P2 searching offers it to P1 only", () => {
+mpClause(GOLDEN_CHARM, "1:rule", 3, "3 seats: declining costs nothing and P3's search happens; P1 searching its own deck gets the same offer; P2 searching offers it to P1 only", () => {
   const declined = charm(P3);
   const before = readyOf(declined, P1);
   assert.deepEqual(searchWithCharm(declined, P3, false), [P1]);
@@ -110,7 +110,7 @@ function recycling(active: Pid): Board {
     { active, turn: turnNo(active) }
   );
 }
-clause(RECYCLING, "0:rule", "3 seats: when it enters play only P1 may draw a card; P2 and P3 are not offered anything", () => {
+mpClause(RECYCLING, "0:rule", 3, "3 seats: when it enters play only P1 may draw a card; P2 and P3 are not offered anything", () => {
   const b = table(3, [{ key: "rsf", def: printing(RECYCLING), owner: P1, zone: "hand" }, ...bank("greed", 4, P1), ...filler(P1, "deck", 2), ...filler(P2, "deck", 2), ...filler(P3, "deck", 2)]);
   go(b, play(b, P1, "rsf"));
   assert.equal(pcOf(b.engine)?.kind, "chooserSelectsOption");
@@ -119,7 +119,7 @@ clause(RECYCLING, "0:rule", "3 seats: when it enters play only P1 may draw a car
   assert.equal(pcOf(b.engine), undefined);
   assert.deepEqual([P1, P2, P3].map((p) => hand(b.engine, p).length), [1, 0, 0]);
 });
-clause(RECYCLING, "1:rule", "3 seats: a character goes to P3's discard pile while P2 is active: the 4-payment is offered P2, P3, P1 (active first, then clockwise, P1 included); P3 pays and the card goes on top of P3's deck; P1 is not asked", () => {
+mpClause(RECYCLING, "1:rule", 3, "3 seats: a character goes to P3's discard pile while P2 is active: the 4-payment is offered P2, P3, P1 (active first, then clockwise, P1 included); P3 pays and the card goes on top of P3's deck; P1 is not asked", () => {
   const b = recycling(P2);
   go(b, play(b, P2, "kill", { selected: { t: [b.id("victim")] } }));
   assert.deepEqual([pcOf(b.engine)?.kind, pcOf(b.engine)?.playerId], ["anyPlayerMayPay", P2]);
@@ -131,7 +131,7 @@ clause(RECYCLING, "1:rule", "3 seats: a character goes to P3's discard pile whil
   assert.equal(readyOf(b, P3), 0, "P3 paid 4 from P3's resources");
   assert.equal(readyOf(b, P1), 4);
 });
-clause(RECYCLING, "1:rule", "3 seats: another player may pay for P3's card, which still goes on top of P3's deck; if everyone declines nothing happens; with P1 active the order is P1, P2, P3", () => {
+mpClause(RECYCLING, "1:rule", 3, "3 seats: another player may pay for P3's card, which still goes on top of P3's deck; if everyone declines nothing happens; with P1 active the order is P1, P2, P3", () => {
   const paidBy2 = recycling(P2);
   go(paidBy2, play(paidBy2, P2, "kill", { selected: { t: [paidBy2.id("victim")] } }));
   pay(paidBy2, P2, true, "anyPlayerMayPay");
@@ -166,7 +166,7 @@ const grabber = (owner: Pid): Placement => ({
     behavior: { abilities: [{ id: "grab", type: "activated", targets: [{ id: "t", selector: { type: "character", name: "Gigantitect's Giant Giant" }, count: 1 }], effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }] }] }
   })
 });
-clause(GIANT_GIANT, "1:rule", "3 seats: neither P2 nor P3 can take control of it; it stays under P1's control", () => {
+mpClause(GIANT_GIANT, "1:rule", 3, "3 seats: neither P2 nor P3 can take control of it; it stays under P1's control", () => {
   for (const taker of [P2, P3]) {
     const b = table(3, [{ key: "giant", def: printing(GIANT_GIANT), owner: P1, zone: "play" }, grabber(taker)], { active: taker, turn: turnNo(taker) });
     go(b, use(b, taker, `grab-${taker}`, "grab", { selected: { t: [b.id("giant")] } }));
@@ -179,7 +179,7 @@ clause(GIANT_GIANT, "1:rule", "3 seats: neither P2 nor P3 can take control of it
   go(toOpponent, use(toOpponent, P1, "grab-p1", "grab", { selected: { t: [toOpponent.id("giant")] } }));
   assert.equal(controllerOf(toOpponent, "giant"), P2, "P1 is an opponent of the Giant Giant's controller P2, so P1 cannot take it either");
 });
-clause(GIANT_GIANT, "1:rule", "4 seats: P2, P3 and P4 each fail to take control of it", () => {
+mpClause(GIANT_GIANT, "1:rule", 4, "4 seats: P2, P3 and P4 each fail to take control of it", () => {
   for (const taker of [P2, P3, P4]) {
     const b = table(4, [{ key: "giant", def: printing(GIANT_GIANT), owner: P1, zone: "play" }, grabber(taker)], { active: taker, turn: turnNo(taker) });
     go(b, use(b, taker, `grab-${taker}`, "grab", { selected: { t: [b.id("giant")] } }));
@@ -189,7 +189,7 @@ clause(GIANT_GIANT, "1:rule", "4 seats: P2, P3 and P4 each fail to take control 
 
 // --- Sockem Bot --------------------------------------------------------------------------------
 
-clause(SOCKEM_BOT, "0:ability:sb-payoff", "3 seats: P1, P2 and P3 can each use PAY OFF, each paying 1 of their own resources; only the user loses a resource", () => {
+mpClause(SOCKEM_BOT, "0:ability:sb-payoff", 3, "3 seats: P1, P2 and P3 can each use PAY OFF, each paying 1 of their own resources; only the user loses a resource", () => {
   for (const user of [P1, P2, P3]) {
     const b = table(
       3,
@@ -201,7 +201,7 @@ clause(SOCKEM_BOT, "0:ability:sb-payoff", "3 seats: P1, P2 and P3 can each use P
     for (const p of [P1, P2, P3]) assert.equal(before[p]! - readyOf(b, p), p === user ? 1 : 0, `${p}`);
   }
 });
-clause(SOCKEM_BOT, "0:ability:sb-payoff", "3 seats: each use reduces the damage the Bot inflicts this turn by 1 and the uses stack", () => {
+mpClause(SOCKEM_BOT, "0:ability:sb-payoff", 3, "3 seats: each use reduces the damage the Bot inflicts this turn by 1 and the uses stack", () => {
   const swing = table(3, [{ key: "real", def: printing(SOCKEM_BOT), owner: P1, zone: "play" }, ...bank("rage", 3, P1), ...bank("rage", 3, P2), ...bank("rage", 3, P3)]);
   const strength = swing.engine.getStat(swing.id("real"), "strength");
   swing.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [swing.id("real")], target: { type: "faction", playerId: P3 } });
@@ -225,7 +225,7 @@ clause(SOCKEM_BOT, "0:ability:sb-payoff", "3 seats: each use reduces the damage 
 
 // --- Banana Peel -------------------------------------------------------------------------------
 
-clause(BANANA_PEEL, "1:ability", "3 seats: played during P2's or P3's turn, only P1 may pay 1 (else it is terminated); during P1's own turn nothing is asked", () => {
+mpClause(BANANA_PEEL, "1:ability", 3, "3 seats: played during P2's or P3's turn, only P1 may pay 1 (else it is terminated); during P1's own turn nothing is asked", () => {
   const board = (active: Pid) =>
     table(
       3,
@@ -261,7 +261,7 @@ clause(BANANA_PEEL, "1:ability", "3 seats: played during P2's or P3's turn, only
 
 // --- Surreptitious Larceny ---------------------------------------------------------------------
 
-clause(LARCENY, "1:option:OPTION 1", "3 seats: P1 may pick any player (P1, P2 or P3); that player cannot play cards using FLIP UP this turn; P1 looks at the top card of any deck", () => {
+mpClause(LARCENY, "1:option:OPTION 1", 3, "3 seats: P1 may pick any player (P1, P2 or P3); that player cannot play cards using FLIP UP this turn; P1 looks at the top card of any deck", () => {
   const board = (active: Pid) =>
     table(
       3,
@@ -307,7 +307,7 @@ clause(LARCENY, "1:option:OPTION 1", "3 seats: P1 may pick any player (P1, P2 or
 
 // --- Totally Random Kid ------------------------------------------------------------------------
 
-clause(RANDOM_KID, "0:rule", "3 seats: battle damage to P3's faction mills the top cards of P3's deck (not P2's); P1 may pick any player's item with cost 3 or less and destroy it", () => {
+mpClause(RANDOM_KID, "0:rule", 3, "3 seats: battle damage to P3's faction mills the top cards of P3's deck (not P2's); P1 may pick any player's item with cost 3 or less and destroy it", () => {
   for (const [victim, other] of [[P3, P2], [P2, P3]] as const) {
     const b = table(3, [
       { key: "kid", def: printing(RANDOM_KID), owner: P1, zone: "play" },
@@ -333,7 +333,7 @@ clause(RANDOM_KID, "0:rule", "3 seats: battle damage to P3's faction mills the t
 
 // --- Barracks of Precipitancy ------------------------------------------------------------------
 
-clause(BARRACKS, "0:ability:bop-gotime", "3 seats: GO TIME! shuffles and reveals the top card of P1's deck to every player; a character enters under P1's control with AGGRO; P2's and P3's decks are untouched", () => {
+mpClause(BARRACKS, "0:ability:bop-gotime", 3, "3 seats: GO TIME! shuffles and reveals the top card of P1's deck to every player; a character enters under P1's control with AGGRO; P2's and P3's decks are untouched", () => {
   const b = table(3, [
     { key: "bop", def: printing(BARRACKS), owner: P1, zone: "play" },
     { key: "top", def: character({ name: "Top character" }), owner: P1, zone: "deck" },
@@ -372,7 +372,7 @@ function endTurn(b: Board, who: Pid): void {
   b.engine.perform({ type: "endTurn", playerId: who });
   resolvePendingResponses(b.engine);
 }
-clause(SHADE, "1:rule", "3 seats: at the end of P2's turn and at the end of P3's turn it may be removed; P1 then chooses any player and finds a UNIQUE character in that player's deck; it never fires at the end of P1's own turn", () => {
+mpClause(SHADE, "1:rule", 3, "3 seats: at the end of P2's turn and at the end of P3's turn it may be removed; P1 then chooses any player and finds a UNIQUE character in that player's deck; it never fires at the end of P1's own turn", () => {
   for (const ender of [P2, P3]) {
     const b = shade(ender);
     endTurn(b, ender);

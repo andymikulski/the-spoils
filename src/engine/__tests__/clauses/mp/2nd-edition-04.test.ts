@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, resourceCard } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, LOSE, WIN, drive, eliminateAllBut, ids, killTactic, others, pickable, plain, refused, startOfTurn, tableWithRandom } from "./_seats2ndEdition.js";
 import { choosePlayer, deckOf, handOf, open, P1, P2, playCard, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -26,7 +26,7 @@ const gnatTable = (count: Count, handSize = 3): Table =>
   table(count, [{ key: "gnat", def: printing(GNAT), owner: P1, zone: "play" }, { key: "kill", def: killTactic("Gnat"), owner: P1, zone: "hand" }, ...hands(count, handSize)]);
 
 for (const count of COUNTS) {
-  clause(GNAT, "0:rule", `${count} seats: when it leaves play P1 selects the opponent when the trigger resolves; only that opponent discards a card of their choice`, () => {
+  mpClause(GNAT, "0:rule", count, `${count} seats: when it leaves play P1 selects the opponent when the trigger resolves; only that opponent discards a card of their choice`, () => {
     for (const opponent of others(count)) {
       const t = gnatTable(count);
       playCard(t, P1, "kill", { selected: { t: ids(t, "gnat") } });
@@ -63,7 +63,7 @@ for (const count of COUNTS) {
 const SWARM = "88855760-2a12-4d04-8e88-213f36effba4";
 
 for (const count of COUNTS) {
-  clause(SWARM, "0:rule", `${count} seats: entering and leaving play each select the opponent anew; only the selected opponent discards`, () => {
+  mpClause(SWARM, "0:rule", count, `${count} seats: entering and leaving play each select the opponent anew; only the selected opponent discards`, () => {
     const t = table(count, [
       { key: "swarm", def: printing(SWARM), owner: P1, zone: "hand" },
       { key: "kill", def: killTactic("Swarm of Gnats"), owner: P1, zone: "hand" },
@@ -100,7 +100,7 @@ for (const count of COUNTS) {
 const ANOMALY = "4d2d797d-30ea-4b54-9826-b0140b03b9ff";
 
 for (const count of COUNTS) {
-  clause(ANOMALY, "0:rule", `${count} seats: on entering play P1 selects the opponent, looks at that opponent's hand only and chooses the card they discard`, () => {
+  mpClause(ANOMALY, "0:rule", count, `${count} seats: on entering play P1 selects the opponent, looks at that opponent's hand only and chooses the card they discard`, () => {
     for (const opponent of others(count)) {
       const t = table(count, [{ key: "anomaly", def: printing(ANOMALY), owner: P1, zone: "hand" }, ...bank("obsession", 6, P1), ...hands(count)]);
       playCard(t, P1, "anomaly");
@@ -123,7 +123,7 @@ for (const count of COUNTS) {
     assert.deepEqual(pickable(t), ids(t, "hand-p2-0", "hand-p2-1", "hand-p2-2").sort());
   });
 
-  clause(ANOMALY, "1:rule", `${count} seats: when it leaves play P1 may pick a non-resource card anywhere in play (any player's), puts it into its owner's hand, then draws; no opponent is chosen`, () => {
+  mpClause(ANOMALY, "1:rule", count, `${count} seats: when it leaves play P1 may pick a non-resource card anywhere in play (any player's), puts it into its owner's hand, then draws; no opponent is chosen`, () => {
     const build = (): Table =>
       table(count, [
         { key: "anomaly", def: printing(ANOMALY), owner: P1, zone: "play" },
@@ -176,7 +176,7 @@ function P3seat(count: Count): PlayerId {
 const COUNTER = "93fe1f56-4619-4b79-a41e-7c8067fca386";
 
 for (const count of COUNTS) {
-  clause(COUNTER, "0:rule", `${count} seats: P1 selects the opponent when the trigger resolves; a win mills 3, a loss mills 2, from that opponent's deck only`, () => {
+  mpClause(COUNTER, "0:rule", count, `${count} seats: P1 selects the opponent when the trigger resolves; a win mills 3, a loss mills 2, from that opponent's deck only`, () => {
     for (const opponent of others(count)) {
       for (const [random, milled] of [[WIN, 3], [LOSE, 2]] as const) {
         const t = tableWithRandom(count, [{ key: "counter", def: printing(COUNTER), owner: P1, zone: "hand" }, ...bank("deception", 3, P1), ...seatsOf(count).flatMap((seat) => plain(`deck-${seat}-`, 6, seat, "deck"))], random);
@@ -216,7 +216,7 @@ const thiefTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(THIEF, "0:rule", `${count} seats: when destroyed P1 selects the opponent and may pick a non-tactic card from that opponent's discard pile only; it enters play under P1's control`, () => {
+  mpClause(THIEF, "0:rule", count, `${count} seats: when destroyed P1 selects the opponent and may pick a non-tactic card from that opponent's discard pile only; it enters play under P1's control`, () => {
     for (const opponent of others(count)) {
       const t = thiefTable(count);
       playCard(t, P1, "kill", { selected: { t: ids(t, "thief") } });
@@ -262,7 +262,7 @@ const tankTable = (count: Count, characters: Record<string, number>): Table =>
   table(count, [{ key: "tank", def: printing(TANK), owner: P1, zone: "play" }, ...seatsOf(count).slice(1).flatMap((seat) => plain(`char-${seat}-`, characters[seat] ?? 0, seat, "play"))]);
 
 for (const count of COUNTS) {
-  clause(TANK, "0:rule", `${count} seats: at the start of P1's turn P1 selects the opponent and may pick one of that opponent's characters (never another opponent's) to destroy, otherwise Dragon Tank is destroyed`, () => {
+  mpClause(TANK, "0:rule", count, `${count} seats: at the start of P1's turn P1 selects the opponent and may pick one of that opponent's characters (never another opponent's) to destroy, otherwise Dragon Tank is destroyed`, () => {
     for (const opponent of others(count)) {
       const t = tankTable(count, { p2: 2, p3: 3, p4: 1 });
       startOfTurn(t, P1);
@@ -324,7 +324,7 @@ const officerTable = (count: Count): Table =>
   table(count, [{ key: "officer", def: printing(OFFICER), owner: P1, zone: "play" }, ...seatsOf(count).flatMap((seat) => plain(`char-${seat}-`, 2, seat, "play"))]);
 
 for (const count of COUNTS) {
-  clause(OFFICER, "0:rule", `${count} seats: at the start of P1's turn P1 selects the opponent and picks one of that opponent's characters, which gains COVERT until P1's next turn`, () => {
+  mpClause(OFFICER, "0:rule", count, `${count} seats: at the start of P1's turn P1 selects the opponent and picks one of that opponent's characters, which gains COVERT until P1's next turn`, () => {
     for (const opponent of others(count)) {
       const t = officerTable(count);
       startOfTurn(t, P1);
@@ -339,7 +339,7 @@ for (const count of COUNTS) {
       assert.deepEqual(asked.map((a) => [a.who, a.decl]), [[P1, "c"]]);
       assert.ok(t.engine.getKeywords(t.id(`char-${opponent}-0`)).includes("covert"), "the picked character gained COVERT");
       for (const seat of t.seats.filter((s) => s !== opponent)) for (const i of [0, 1]) assert.ok(!t.engine.getKeywords(t.id(`char-${seat}-${i}`)).includes("covert"), `${seat}'s characters did not`);
-      assert.ok(!t.engine.getKeywords(t.id(`char-${opponent}-1`)).includes("covert"));
+      assert.ok(!t.engine.getKeywords(t.id(`char-${opponent}-1`)).includes("covert"), "!t.engine.getKeywords(t.id(`char-${opponent}-1`)).includes('covert')");
     }
     // No trigger at the start of another player's turn.
     {
@@ -376,7 +376,7 @@ const plannerTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(PLANNER, "0:rule", `${count} seats: P1 selects the opponent and may search only that opponent's deck for up to 3 cards with different names, which go to that opponent's discard pile`, () => {
+  mpClause(PLANNER, "0:rule", count, `${count} seats: P1 selects the opponent and may search only that opponent's deck for up to 3 cards with different names, which go to that opponent's discard pile`, () => {
     for (const opponent of others(count)) {
       const t = plannerTable(count);
       const before = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));
@@ -409,6 +409,6 @@ for (const count of COUNTS) {
     eliminateAllBut(t);
     playCard(t, P1, "planner");
     assert.equal(open(t)?.kind, "chooserSelectsTarget", "no opponent choice with one opponent left");
-    assert.ok(pickable(t).every((id) => t.engine.state.cards[id]!.ownerId === P2));
+    assert.ok(pickable(t).every((id) => t.engine.state.cards[id]!.ownerId === P2), "pickable(t).every((id) => t.engine.state.cards[id]!.ownerId === P2)");
   });
 }

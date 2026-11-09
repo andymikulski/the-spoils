@@ -1,7 +1,7 @@
 // Multiplayer clause tests, seed-saga part 1: 3- and 4-seat tables, real catalog printings, public actions only.
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
-import { refused } from "../_clause.js";
+import { refused, mpClause } from "../_clause.js";
 import { clause } from "../_clause.js";
 import { activate, askedPlayers, answer, hand, many, pending, play, printing, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
 import { character } from "../../support/fixtures.js";
@@ -20,7 +20,7 @@ for (const count of [3, 4] as const) {
         .flatMap((p) => many(`h-${p}-`, 3, p, "hand", (i) => character({ name: `${p} card ${i}` })))
     ]);
 
-  clause(STUPID, "0:rule", `${count} seats: the opponent is chosen with the play; only that opponent discards 2 of their cards`, () => {
+  mpClause(STUPID, "0:rule", count, `${count} seats: the opponent is chosen with the play; only that opponent discards 2 of their cards`, () => {
     for (const chosen of seats(count).slice(1)) {
       const t = stupid();
       assert.deepEqual(askedPlayers(t.engine, { type: "playCard", playerId: P1, cardId: t.id("c") }), [{ id: "opp", candidates: seats(count).slice(1) }]);
@@ -39,7 +39,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(STUPID, "1:ability:recur", `${count} seats: RECUR asks for one opponent with the use; only that opponent discards 1 card`, () => {
+  mpClause(STUPID, "1:ability:recur", count, `${count} seats: RECUR asks for one opponent with the use; only that opponent discards 1 card`, () => {
     for (const chosen of seats(count).slice(1)) {
       const t = stupid("discard");
       assert.deepEqual(askedPlayers(t.engine, { type: "activateAbility", playerId: P1, cardId: t.id("c"), abilityId: "recur" }), [{ id: "opp", candidates: seats(count).slice(1) }]);

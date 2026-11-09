@@ -2,7 +2,7 @@
 // Identity, Lucky Bastard and Spry Archer. Expectations come from the printed text of each clause.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   answerPlayer, answerTargets, askedPlayers, character, choosePlayer, deckOf, handSize, hands, idsOf, others, P1, P2, P3, P4, pending, perSeat, pickable, resourceCard, resources,
   seatsFor, settle, table, tactic, zoneOf
@@ -52,7 +52,7 @@ function playFoo(t: ReturnType<typeof milkshakeBoard>, who: PlayerId): void {
 }
 
 for (const count of COUNTS) {
-  clause(MILKSHAKE, "0:rule", `${count} seats: "search your opponent's deck": the opponent is chosen first, only that deck is searched and shuffled, the card is removed face-down`, () => {
+  mpClause(MILKSHAKE, "0:rule", count, `${count} seats: "search your opponent's deck": the opponent is chosen first, only that deck is searched and shuffled, the card is removed face-down`, () => {
     for (const chosen of others(count, P1)) {
       const t = milkshakeBoard(count);
       const action = { type: "playCard", playerId: P1, cardId: t.id("shake") } as const;
@@ -68,7 +68,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(MILKSHAKE, "0:rule", `${count} seats: when the searched opponent plays a card with the same name, no opponent is chosen, I may play the removed card free and terminate their card`, () => {
+  mpClause(MILKSHAKE, "0:rule", count, `${count} seats: when the searched opponent plays a card with the same name, no opponent is chosen, I may play the removed card free and terminate their card`, () => {
     const t = milkshakeBoard(count);
     search(t, P2);
     playFoo(t, P2);
@@ -86,7 +86,7 @@ for (const count of COUNTS) {
 
   // The removed card belongs to P2 (its deck was searched), but P3 (or P4) playing a "Foo" sets the trigger off too: the card to reveal is the one
   // this card removed, whoever owns it.
-  clause(MILKSHAKE, "0:rule", `${count} seats: another opponent playing a card with the same name sets it off with no opponent choice, and the card removed from the searched opponent's deck can be revealed`, () => {
+  mpClause(MILKSHAKE, "0:rule", count, `${count} seats: another opponent playing a card with the same name sets it off with no opponent choice, and the card removed from the searched opponent's deck can be revealed`, () => {
     const t = milkshakeBoard(count);
     search(t, P2);
     const player = others(count, P1, P2)[0]!;
@@ -108,7 +108,7 @@ for (const count of COUNTS) {
 
 // "Both players look at the top 3 cards of their deck ... Both players choose one of their opponent's piles": the controller and the one chosen opponent.
 // The data names no opponent (partitionAndPick has no player field), so the engine asks for none and cannot run the showdown beyond two seats.
-clause(MUSTACHE, "0:ability:mustache-showdown", "3 seats: the opponent is chosen before the showdown, only you and that opponent split and pick piles, the other deck is untouched", () => {
+mpClause(MUSTACHE, "0:ability:mustache-showdown", 3, "3 seats: the opponent is chosen before the showdown, only you and that opponent split and pick piles, the other deck is untouched", () => {
   for (const chosen of others(3, P1)) {
     const t = table(3, [
       { key: "stache", def: printing(MUSTACHE), owner: P1, zone: "play" },
@@ -151,7 +151,7 @@ clause(MUSTACHE, "0:ability:mustache-showdown", "3 seats: the opponent is chosen
 const hex = () => tactic({ name: "Hex", behavior: { abilities: [{ id: "hex", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "destroy", target: { type: "selected", id: "t" } }] }] } });
 
 for (const count of COUNTS) {
-  clause(MISTAKEN_IDENTITY, "0:ability", `${count} seats: "your opponent had picked the other character": the player of the card answered, whoever it is, nobody is asked to choose`, () => {
+  mpClause(MISTAKEN_IDENTITY, "0:ability", count, `${count} seats: "your opponent had picked the other character": the player of the card answered, whoever it is, nobody is asked to choose`, () => {
     for (const caster of others(count, P1)) {
       const t = table(
         count,
@@ -182,7 +182,7 @@ for (const count of COUNTS) {
 // Lucky Bastard
 // =====================================================================================
 
-clause(LUCKY_BASTARD, "0:rule", "3 seats: when it enters play I draw a card; the opponents draw nothing", () => {
+mpClause(LUCKY_BASTARD, "0:rule", 3, "3 seats: when it enters play I draw a card; the opponents draw nothing", () => {
   const t = table(3, [
     { key: "lucky", def: printing(LUCKY_BASTARD), owner: P1, zone: "hand" },
     ...resources("deception", 7),
@@ -200,7 +200,7 @@ clause(LUCKY_BASTARD, "0:rule", "3 seats: when it enters play I draw a card; the
 const smite = () => tactic({ name: "Smite", behavior: { abilities: [{ id: "smite", type: "activated", targets: [{ id: "t", selector: { zone: "play", type: "character" }, count: 1 }], effects: [{ type: "destroy", target: { type: "selected", id: "t" } }] }] } });
 
 for (const count of COUNTS) {
-  clause(LUCKY_BASTARD, "1:rule", `${count} seats: "both players remove the top card of their deck": the opponent is chosen when the replacement applies, only you and that opponent remove a card, the choice is offered again at the next destruction`, () => {
+  mpClause(LUCKY_BASTARD, "1:rule", count, `${count} seats: "both players remove the top card of their deck": the opponent is chosen when the replacement applies, only you and that opponent remove a card, the choice is offered again at the next destruction`, () => {
     for (const chosen of others(count, P1)) {
       const rich = chosen === P2; // alternate which branch is tested: my card costs 5, theirs 2 (or the reverse)
       const t = table(count, [
@@ -258,7 +258,7 @@ function archerBoard(count: number, extra: CardPlacement[] = []) {
 }
 
 for (const count of COUNTS) {
-  clause(SPRY_ARCHER, "0:rule", `${count} seats: "inflict 1 damage to your opponent's faction": the defending player's faction, no opponent is chosen`, () => {
+  mpClause(SPRY_ARCHER, "0:rule", count, `${count} seats: "inflict 1 damage to your opponent's faction": the defending player's faction, no opponent is chosen`, () => {
     for (const defender of others(count, P1)) {
       const t = archerBoard(count);
       const before = Object.fromEntries(seatsFor(count).map((seat) => [seat, t.engine.state.players[seat]!.influence]));
@@ -271,7 +271,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(SPRY_ARCHER, "1:rule@rrrr", `${count} seats: with [R][R][R][R] I may pick any character (any player's) to take 1 damage, with no opponent choice`, () => {
+  mpClause(SPRY_ARCHER, "1:rule@rrrr", count, `${count} seats: with [R][R][R][R] I may pick any character (any player's) to take 1 damage, with no opponent choice`, () => {
     const t = archerBoard(count, resources("rage", 4));
     t.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [t.id("archer")], target: { type: "faction", playerId: P2 } });
     settle(t);

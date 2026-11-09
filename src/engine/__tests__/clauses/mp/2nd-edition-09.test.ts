@@ -7,7 +7,7 @@ import assert from "node:assert/strict";
 import { bank, character, developFaction, resourceCard, tactic } from "../../per-card/_harness.js";
 import { buildGame } from "../../support/fixtures.js";
 import { developPlay } from "../../support/develop.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, drive, ids, others, plain, refused } from "./_seats2ndEdition.js";
 import { P1, P2, P3, P4, deckOf, endTurn, handOf, open, playCard, resolvePendingResponses, seatsOf, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -58,7 +58,7 @@ const guardTable = (count: Count, opts: { tokens?: number; zone?: "hand" | "play
   );
 
 for (const count of COUNTS) {
-  clause(GUARDFORCE, "0:rule", `${count} seats: it can attack the turn it enters play, the faction of any opponent`, () => {
+  mpClause(GUARDFORCE, "0:rule", count, `${count} seats: it can attack the turn it enters play, the faction of any opponent`, () => {
     for (const defender of others(count)) {
       const t = guardTable(count, { zone: "hand" });
       playCard(t, P1, "card");
@@ -69,7 +69,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(GUARDFORCE, "1:rule", `${count} seats: a card P1 plays adds a token; a resource P1 plays does not; a card an opponent plays never adds one`, () => {
+  mpClause(GUARDFORCE, "1:rule", count, `${count} seats: a card P1 plays adds a token; a resource P1 plays does not; a card an opponent plays never adds one`, () => {
     const t = guardTable(count);
     playCard(t, P1, "p1-char");
     assert.equal(tokensOn(t, "card"), 1, "P1 played a card: +1 token");
@@ -83,7 +83,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(GUARDFORCE, "2:rule", `${count} seats: a non-resource card played by any opponent removes a token (nobody is asked to choose); a resource, or P1's own card, does not; at 0 nothing is removed`, () => {
+  mpClause(GUARDFORCE, "2:rule", count, `${count} seats: a non-resource card played by any opponent removes a token (nobody is asked to choose); a resource, or P1's own card, does not; at 0 nothing is removed`, () => {
     for (const seat of others(count)) {
       const t = guardTable(count, { tokens: 3, active: seat });
       playCard(t, seat, `${seat}-char`);
@@ -126,7 +126,7 @@ for (const count of COUNTS) {
     }
   });
 
-  clause(GUARDFORCE, "3:rule", `${count} seats: it gains 1 strength and 1 life per token, following tokens added by P1's plays and removed by opponents' plays, at any table size`, () => {
+  mpClause(GUARDFORCE, "3:rule", count, `${count} seats: it gains 1 strength and 1 life per token, following tokens added by P1's plays and removed by opponents' plays, at any table size`, () => {
     const t = guardTable(count, { tokens: 3 });
     const base = { strength: t.engine.getStat(t.id("card"), "strength"), life: t.engine.getStat(t.id("card"), "life") };
     assert.equal(base.strength, 3 + 3);
@@ -191,7 +191,7 @@ function startTurnAfter(t: Table, active: PlayerId): void {
   }
 }
 
-clause(AUCTION, "0:rule", "3 seats: the active player reveals from their own deck; bidding goes active player, then clockwise; caps are each player's detached resources; the winner pays and gets the character; the rest are shuffled into the revealer's deck", () => {
+mpClause(AUCTION, "0:rule", 3, "3 seats: the active player reveals from their own deck; bidding goes active player, then clockwise; caps are each player's detached resources; the winner pays and gets the character; the rest are shuffled into the revealer's deck", () => {
   {
     const t = auctionTable(3, P3);
     const decks = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));
@@ -235,7 +235,7 @@ clause(AUCTION, "0:rule", "3 seats: the active player reveals from their own dec
   }
 });
 
-clause(AUCTION, "0:rule", "4 seats: bidding order is the active player then clockwise; a player who passes may not return; with a seat eliminated no prompt goes to it; the winner pays and gets the character", () => {
+mpClause(AUCTION, "0:rule", 4, "4 seats: bidding order is the active player then clockwise; a player who passes may not return; with a seat eliminated no prompt goes to it; the winner pays and gets the character", () => {
   {
     const t = auctionTable(4, P2);
     const decks = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));
@@ -292,7 +292,7 @@ const cheatsTable = (count: Count, top: "character" | "resource"): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(CHEATS, "3:ability:cheat", `${count} seats: the top card of P1's deck is revealed to every player; P1 may play it unless it is a resource; no other deck is touched`, () => {
+  mpClause(CHEATS, "3:ability:cheat", count, `${count} seats: the top card of P1's deck is revealed to every player; P1 may play it unless it is a resource; no other deck is touched`, () => {
     for (const top of ["character", "resource"] as const) {
       const t = cheatsTable(count, top);
       const decks = Object.fromEntries(t.seats.map((seat) => [seat, [...deckOf(t, seat)]]));

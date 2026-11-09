@@ -6,7 +6,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, item, resourceCard, tactic } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, drive, eliminateAllBut, ids, opponentChoice, others, pickable, plain, refused } from "./_seats2ndEdition.js";
 import { deckOf, handOf, P1, P2, playCard, playersNeeded, playRaw, seatsOf, table, zoneOf, type CardPlacement, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -35,7 +35,7 @@ const derangerTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(DERANGER, "0:ability:lobotomize", `${count} seats: P1 chooses up to 2 non-resource cards of the chosen opponent's hand only; that opponent (not another) takes control of the card`, () => {
+  mpClause(DERANGER, "0:ability:lobotomize", count, `${count} seats: P1 chooses up to 2 non-resource cards of the chosen opponent's hand only; that opponent (not another) takes control of the card`, () => {
     for (const opponent of others(count)) {
       const t = derangerTable(count);
       assert.deepEqual(playersNeeded(t, abilityAction(t, "card", "lobotomize")), opponentChoice(count));
@@ -88,7 +88,7 @@ const virtuosoTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(VIRTUOSO, "0:ability:disrupt", `${count} seats: P1 looks at and chooses a card of the chosen opponent's hand only, and that opponent discards it`, () => {
+  mpClause(VIRTUOSO, "0:ability:disrupt", count, `${count} seats: P1 looks at and chooses a card of the chosen opponent's hand only, and that opponent discards it`, () => {
     for (const opponent of others(count)) {
       const t = virtuosoTable(count);
       assert.deepEqual(playersNeeded(t, abilityAction(t, "card", "disrupt")), opponentChoice(count));
@@ -135,7 +135,7 @@ const urnTable = (count: Count, emptyHandOf?: PlayerId): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(URN, "0:rule", `${count} seats: only the chosen opponent discards (their choice), then P1 may search P1's own deck for a card of the same type`, () => {
+  mpClause(URN, "0:rule", count, `${count} seats: only the chosen opponent discards (their choice), then P1 may search P1's own deck for a card of the same type`, () => {
     for (const opponent of others(count)) {
       const t = urnTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -180,7 +180,7 @@ const TEETH = "a4e9bfdd-dc54-40ec-ac20-374ca334f6e6";
 const teethTable = (count: Count): Table => table(count, [{ key: "card", def: printing(TEETH), owner: P1, zone: "hand" }, ...bank("obsession", 4, P1), ...hands(count, 4)]);
 
 for (const count of COUNTS) {
-  clause(TEETH, "0:ability", `${count} seats: with X = 2 P1 pays 4 and chooses 2 or fewer cards of the chosen opponent's hand only; that opponent discards exactly those`, () => {
+  mpClause(TEETH, "0:ability", count, `${count} seats: with X = 2 P1 pays 4 and chooses 2 or fewer cards of the chosen opponent's hand only; that opponent discards exactly those`, () => {
     for (const opponent of others(count)) {
       for (const take of [2, 1]) {
         const t = teethTable(count);
@@ -230,7 +230,7 @@ const inspirationTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(INSPIRATION, "0:rule", `${count} seats: P1 chooses a non-resource card of the chosen opponent's hand only; then P1 may play a card of cost X or less (half the discarded cost, rounded up) for free`, () => {
+  mpClause(INSPIRATION, "0:rule", count, `${count} seats: P1 chooses a non-resource card of the chosen opponent's hand only; then P1 may play a card of cost X or less (half the discarded cost, rounded up) for free`, () => {
     for (const opponent of others(count)) {
       const t = inspirationTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -285,7 +285,7 @@ const discommodeTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(DISCOMMODIOUSNESS, "0:rule", `${count} seats: only the chosen opponent reveals their hand, shuffles its tactics into their deck and draws that many; P1 draws a card`, () => {
+  mpClause(DISCOMMODIOUSNESS, "0:rule", count, `${count} seats: only the chosen opponent reveals their hand, shuffles its tactics into their deck and draws that many; P1 draws a card`, () => {
     for (const opponent of others(count)) {
       const t = discommodeTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -328,16 +328,16 @@ const orgyTable = (count: Count, emptyHandOf?: PlayerId): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(ORGY, "0:rule", `${count} seats: the chosen opponent discards a card at random and the top 2 cards of their deck go to their discard pile; no other player is touched`, () => {
+  mpClause(ORGY, "0:rule", count, `${count} seats: the chosen opponent discards a card at random and the top 2 cards of their deck go to their discard pile; no other player is touched`, () => {
     for (const opponent of others(count)) {
       const t = orgyTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
       const deck = [...deckOf(t, opponent)];
       playCard(t, P1, "card", { players: { opponent } });
       assert.equal(handOf(t, opponent).length, 2, "one card of the chosen opponent's hand was discarded at random");
-      assert.ok(handKeys(opponent).filter((key) => zoneOf(t, key) === "discard").length === 1);
+      assert.ok(handKeys(opponent).filter((key) => zoneOf(t, key) === "discard").length === 1, "handKeys(opponent).filter((key) => zoneOf(t, key) === 'discard').length === 1");
       assert.deepEqual(deckOf(t, opponent), deck.slice(2), "the top 2 cards of their deck were milled");
-      assert.ok(deck.slice(0, 2).every((id) => discardOf(t, opponent).includes(id)));
+      assert.ok(deck.slice(0, 2).every((id) => discardOf(t, opponent).includes(id)), "deck.slice(0, 2).every((id) => discardOf(t, opponent).includes(id))");
       for (const seat of others(count, opponent)) {
         assert.equal(handOf(t, seat).length, 3, `${seat}'s hand is untouched`);
         assert.equal(deckOf(t, seat).length, 5, `${seat}'s deck is untouched`);
@@ -369,7 +369,7 @@ const BALL = "601204ef-80f0-4bc6-85f3-9282aa9a4c5a";
 const ballTable = (count: Count): Table => table(count, [{ key: "card", def: printing(BALL), owner: P1, zone: "play" }, ...plain("deck", 4, P1, "deck")]);
 
 for (const count of COUNTS) {
-  clause(BALL, "0:ability:insight", `${count} seats: P1 searches P1's own deck; the chosen opponent (not another) takes control of the card`, () => {
+  mpClause(BALL, "0:ability:insight", count, `${count} seats: P1 searches P1's own deck; the chosen opponent (not another) takes control of the card`, () => {
     for (const opponent of others(count)) {
       const t = ballTable(count);
       assert.deepEqual(playersNeeded(t, abilityAction(t, "card", "insight")), opponentChoice(count));
@@ -415,7 +415,7 @@ const jackmoveTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(JACKMOVE, "0:ability", `${count} seats: with X = 3 the top 3 of the chosen opponent's deck are revealed; its characters and items enter play under P1's control, the rest go to that opponent's discard pile`, () => {
+  mpClause(JACKMOVE, "0:ability", count, `${count} seats: with X = 3 the top 3 of the chosen opponent's deck are revealed; its characters and items enter play under P1's control, the rest go to that opponent's discard pile`, () => {
     for (const opponent of others(count)) {
       const t = jackmoveTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card", { variables: { x: 3 } })), opponentChoice(count));
@@ -458,7 +458,7 @@ const theftTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(THEFT, "0:rule", `${count} seats: P1 puts up to 4 non-tactic cards from the chosen opponent's discard pile (only) into play under P1's control`, () => {
+  mpClause(THEFT, "0:rule", count, `${count} seats: P1 puts up to 4 non-tactic cards from the chosen opponent's discard pile (only) into play under P1's control`, () => {
     for (const opponent of others(count)) {
       const t = theftTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));

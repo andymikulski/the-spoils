@@ -4,7 +4,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { answer, bounce, cardsOf, controllerOf, expectChoice, handOf, kill, offered, othersOf, P1, P2, P3, P4, pending, pickTargets, settle, staples, table, tokensOn, zoneOf } from "./_seed-3.js";
 import type { PlayerId, Table } from "./_seed-3.js";
 
@@ -22,7 +22,7 @@ const disrupt = (t: Table, who?: PlayerId) =>
   t.engine.perform({ type: "activateAbility", playerId: P1, cardId: t.id("th"), abilityId: "thunderhoof-disrupt", ...(who ? { players: { who } } : {}) });
 
 for (const count of [3, 4] as const) {
-  clause(THUNDER, "3:ability:thunderhoof-disrupt", `${count} seats: the cost picks one opponent (exactly one selection), and only that opponent discards a card of their own hand`, () => {
+  mpClause(THUNDER, "3:ability:thunderhoof-disrupt", count, `${count} seats: the cost picks one opponent (exactly one selection), and only that opponent discards a card of their own hand`, () => {
     for (const picked of othersOf(count)) {
       const t = thunderTable(count);
       const needs = t.engine.getPlayRequirements({ type: "activateAbility", playerId: P1, cardId: t.id("th"), abilityId: "thunderhoof-disrupt" });
@@ -49,7 +49,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(THUNDER, "3:ability:thunderhoof-disrupt", "3 seats: a card of the other opponent's hand cannot be discarded, and the controller (not an opponent) cannot be picked", () => {
+mpClause(THUNDER, "3:ability:thunderhoof-disrupt", 3, "3 seats: a card of the other opponent's hand cannot be discarded, and the controller (not an opponent) cannot be picked", () => {
   const t = thunderTable(3);
   refused(() => disrupt(t, P1), "yourself as the picked opponent");
   disrupt(t, P2);

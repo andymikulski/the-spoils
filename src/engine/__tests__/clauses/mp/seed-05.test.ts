@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
 import { location as locationDef, tactic } from "../../support/fixtures.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   abilityAction,
   activate,
@@ -66,7 +66,7 @@ function garrisonTable(count: Count, rage: number): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(GARRISON, "1:rule@rrr", `${count} seats: at the start of P1's turn P1 may damage only the chosen opponent's faction (1); nothing fires on the other turns`, () => {
+  mpClause(GARRISON, "1:rule@rrr", count, `${count} seats: at the start of P1's turn P1 may damage only the chosen opponent's faction (1); nothing fires on the other turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const accept of [true, false]) {
         const t = garrisonTable(count, 3);
@@ -83,7 +83,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(GARRISON, "2:rule@rrrrr", "3 seats: at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and deplete it; nothing fires on the other turns", () => {
+mpClause(GARRISON, "2:rule@rrrrr", 3, "3 seats: at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and deplete it; nothing fires on the other turns", () => {
   for (const target of seatsOf(3)) {
     const t = garrisonTable(3, 5);
     assert.equal(passTurn(t), P1);
@@ -97,7 +97,7 @@ clause(GARRISON, "2:rule@rrrrr", "3 seats: at the start of P1's turn P1 may pick
   }
 });
 
-clause(GARRISON, "3:rule@rrrrrrr", "3 seats: at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; nothing fires on the other turns", () => {
+mpClause(GARRISON, "3:rule@rrrrrrr", 3, "3 seats: at the start of P1's turn P1 may pick any character (P1's, P2's or P3's) and inflict 2 damage to it; nothing fires on the other turns", () => {
   for (const target of seatsOf(3)) {
     const t = garrisonTable(3, 7);
     assert.equal(passTurn(t), P1);
@@ -106,7 +106,7 @@ clause(GARRISON, "3:rule@rrrrrrr", "3 seats: at the start of P1's turn P1 may pi
       if (pc.kind === "chooserSelectsOption") return { index: 0 };
       return { selected: (pc.declaration as { id: string }).id === "c" ? [t.id(`c-${target}`)] : [] };
     });
-    for (const seat of t.seats) assert.ok([0, 2].includes(t.engine.state.cards[t.id(`c-${seat}`)]!.damage));
+    for (const seat of t.seats) assert.ok([0, 2].includes(t.engine.state.cards[t.id(`c-${seat}`)]!.damage), "[0, 2].includes(t.engine.state.cards[t.id(`c-${seat}`)]!.damage)");
     assert.equal(t.engine.state.cards[t.id(`c-${target}`)]!.damage, 2);
   }
 });
@@ -119,7 +119,7 @@ clause(GARRISON, "3:rule@rrrrrrr", "3 seats: at the start of P1's turn P1 may pi
 const BADASS = "1855fff6-56b5-45df-8792-3436ebb5c3ba";
 
 for (const count of [3, 4] as const) {
-  clause(BADASS, "0:rule@rrr", `${count} seats: at the start of P1's turn P1 may damage only the chosen opponent's faction (1); nothing fires on the other turns`, () => {
+  mpClause(BADASS, "0:rule@rrr", count, `${count} seats: at the start of P1's turn P1 may damage only the chosen opponent's faction (1); nothing fires on the other turns`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       for (const accept of [true, false]) {
         const t = table(count, [{ key: "rb", def: printing(BADASS), owner: P1, zone: "play" }, ...mixedHands(count), ...bank("rage", 3, P1)], seatsOf(count).slice(-1)[0]!);
@@ -143,7 +143,7 @@ for (const count of [3, 4] as const) {
 const COMMANDER = "53178e50-33bf-47f7-ace0-20f9e7e88c52";
 
 for (const count of [3, 4] as const) {
-  clause(COMMANDER, "0:ability:charge", `${count} seats: CHARGE! names the opponent first; only that opponent's faction takes 3 damage`, () => {
+  mpClause(COMMANDER, "0:ability:charge", count, `${count} seats: CHARGE! names the opponent first; only that opponent's faction takes 3 damage`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [{ key: "gc", def: printing(COMMANDER), owner: P1, zone: "play" }, ...mixedHands(count), ...bank("rage", 3, P1)]);
       assertOpponentAsked(t, abilityAction(t, P1, "gc", "charge"));
@@ -177,7 +177,7 @@ function chainTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(CHAIN, "0:ability", `${count} seats: the location and the character may belong to anyone; only the chosen opponent's faction takes 1 damage, and P1 draws`, () => {
+  mpClause(CHAIN, "0:ability", count, `${count} seats: the location and the character may belong to anyone; only the chosen opponent's faction takes 1 damage, and P1 draws`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = chainTable(count);
       assertOpponentAsked(t, playAction(t, P1, "cr"));
@@ -213,11 +213,11 @@ function gladhanderTable(count: Count): Table {
   ]);
 }
 
-clause(GLADHANDER, "0:ability", "3 seats: P1 may pick any character (P1's, P2's, P3's) or none as part of the cost; no opponent is asked for the pick", () => {
+mpClause(GLADHANDER, "0:ability", 3, "3 seats: P1 may pick any character (P1's, P2's, P3's) or none as part of the cost; no opponent is asked for the pick", () => {
   const t = gladhanderTable(3);
   const requirements = t.engine.getPlayRequirements(playAction(t, P1, "cg") as never);
   const pick = requirements.find((requirement) => requirement.kind === "pick");
-  assert.ok(pick && pick.kind === "pick");
+  assert.ok(pick && pick.kind === "pick", "pick && pick.kind === 'pick'");
   assert.equal(pick.declinable || pick.min === 0, true, "the pick is optional");
   assert.deepEqual([...pick.candidates].sort(), [...[P1, P2, P3].map((seat) => t.id(`s-${seat}`)), ...[P1, P2, P3].map((seat) => t.id(`c-${seat}`))].sort(), "every player's characters may be picked");
   assert.equal(requirements.some((requirement) => requirement.kind === "players"), false, "the pick is independent of the opponent clause");
@@ -230,7 +230,7 @@ clause(GLADHANDER, "0:ability", "3 seats: P1 may pick any character (P1's, P2's,
 });
 
 for (const count of [3, 4] as const) {
-  clause(GLADHANDER, "1:rule", `${count} seats: the picked character is destroyed and only the opponent P1 chooses (not the picked character's owner) gains influence equal to its strength`, () => {
+  mpClause(GLADHANDER, "1:rule", count, `${count} seats: the picked character is destroyed and only the opponent P1 chooses (not the picked character's owner) gains influence equal to its strength`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const owner = seatsOf(count).filter((s) => s !== pick).slice(-1)[0]!;
       const t = gladhanderTable(count);
@@ -267,7 +267,7 @@ const horrorState = (t: Table) => ({
   covert: t.engine.getKeywords(t.id("nh")).includes("covert")
 });
 
-clause(HORROR, "1:rule", "3 seats: only the opponent P1 chooses is compared with P1 (the other opponent's character count is ignored)", () => {
+mpClause(HORROR, "1:rule", 3, "3 seats: only the opponent P1 chooses is compared with P1 (the other opponent's character count is ignored)", () => {
   // P1 will control 2 characters (the Horror and one more), P2 3, P3 1.
   for (const [pick, bonus] of [
     [P2, true],
@@ -287,19 +287,19 @@ clause(HORROR, "1:rule", "3 seats: only the opponent P1 chooses is compared with
   assert.deepEqual(horrorState(t), { strength: printed.strength!, life: printed.life!, covert: true }, "P3 has more characters but P2 was chosen");
 });
 
-clause(HORROR, "1:rule", "3 seats: when the chosen opponent is eliminated P1 chooses again (nobody is asked with one opponent left) and the new opponent is the one compared", () => {
+mpClause(HORROR, "1:rule", 3, "3 seats: when the chosen opponent is eliminated P1 chooses again (nobody is asked with one opponent left) and the new opponent is the one compared", () => {
   const t = horrorTable(3, { [P1]: 1, [P2]: 0, [P3]: 5 });
   playCard(t, P1, "nh");
   choosePlayer(t, P1, [P2, P3], P2);
   const printed = printing(HORROR);
   assert.equal(horrorState(t).strength, printed.strength!, "P2 (chosen) has fewer characters");
   playCard(t, P1, "killer", { players: { opponent: P2 } });
-  assert.ok(t.engine.state.players[P2]!.eliminated);
+  assert.ok(t.engine.state.players[P2]!.eliminated, "t.engine.state.players[P2]!.eliminated");
   assert.equal(open(t), undefined, "only P3 is left: nothing is asked");
   assert.equal(horrorState(t).strength, printed.strength! + 2, "P3 controls more characters than P1, so the bonus applies");
 });
 
-clause(HORROR, "1:rule", "4 seats: when the chosen opponent is eliminated P1 chooses again among the two left", () => {
+mpClause(HORROR, "1:rule", 4, "4 seats: when the chosen opponent is eliminated P1 chooses again among the two left", () => {
   const t = horrorTable(4, { [P1]: 1, [P2]: 0, [P3]: 5, [P4]: 0 });
   playCard(t, P1, "nh");
   choosePlayer(t, P1, [P2, P3, P4], P2);
@@ -326,7 +326,7 @@ const tokensOf = (t: Table): number =>
   t.engine.state.players[P1]!.play.filter((id) => t.engine.state.cards[id]!.isToken && t.engine.state.cards[id]!.controllerId === P1).length;
 
 for (const count of [3, 4] as const) {
-  clause(DRIVEY, "0:rule", `${count} seats: when it leaves play P1 chooses the opponent when the trigger resolves; X counts only that opponent's characters minus P1's`, () => {
+  mpClause(DRIVEY, "0:rule", count, `${count} seats: when it leaves play P1 chooses the opponent when the trigger resolves; X counts only that opponent's characters minus P1's`, () => {
     // P1 keeps 2 characters (besides the Car); P2 controls 4, P3 3, P4 5.
     const crowds: Record<PlayerId, number> = { [P1]: 2, [P2]: 4, [P3]: 3, [P4]: 5 };
     for (const pick of seatsOf(count).slice(1)) {
@@ -354,7 +354,7 @@ for (const count of [3, 4] as const) {
 const CONFUSION = "48c4d2f0-8d0f-4203-a6ae-b81d9ebce2eb";
 
 for (const count of [3, 4] as const) {
-  clause(CONFUSION, "0:ability", `${count} seats: Y counts only the chosen opponent's characters minus P1's; P1 divides Y among the picked characters`, () => {
+  mpClause(CONFUSION, "0:ability", count, `${count} seats: Y counts only the chosen opponent's characters minus P1's; P1 divides Y among the picked characters`, () => {
     const crowds: Record<PlayerId, number> = { [P1]: 2, [P2]: 4, [P3]: 3, [P4]: 5 };
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [
@@ -396,7 +396,7 @@ function gamerTable(count: Count, crowds: Record<PlayerId, number>): Table {
 const unblockable = (t: Table) => t.engine.getKeywords(t.id("ug")).includes("cannotBeBlocked");
 
 for (const count of [3, 4] as const) {
-  clause(GAMER, "0:ability:outsmart", `${count} seats: the condition is checked against the opponent P1 names: allowed when that opponent controls more characters than P1, refused when it does not`, () => {
+  mpClause(GAMER, "0:ability:outsmart", count, `${count} seats: the condition is checked against the opponent P1 names: allowed when that opponent controls more characters than P1, refused when it does not`, () => {
     // P1 controls 2 (the Gamer and one more), P2 3, P3 1, P4 2
     const crowds: Record<PlayerId, number> = { [P1]: 1, [P2]: 3, [P3]: 1, [P4]: 2 };
     for (const pick of seatsOf(count).slice(1)) {
@@ -413,7 +413,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(GAMER, "0:ability:outsmart", `${count} seats: with no opponent controlling more characters than P1 the ability is refused whichever opponent is named`, () => {
+  mpClause(GAMER, "0:ability:outsmart", count, `${count} seats: with no opponent controlling more characters than P1 the ability is refused whichever opponent is named`, () => {
     const t = gamerTable(count, { [P1]: 3, [P2]: 2, [P3]: 1, [P4]: 3 });
     for (const pick of seatsOf(count).slice(1)) refused(() => activate(t, P1, "ug", "outsmart", { players: { opponent: pick } }), `${pick} does not control more characters`);
     assert.equal(unblockable(t), false);
@@ -429,7 +429,7 @@ for (const count of [3, 4] as const) {
 const DEMOTIVATION = "e99994ea-71f1-4143-98dd-c2782fc38ff7";
 
 for (const count of [3, 4] as const) {
-  clause(DEMOTIVATION, "0:rule", `${count} seats: only the chosen opponent's characters are considered: its cheapest is destroyed, cheaper characters of P1 and of the other opponents are not`, () => {
+  mpClause(DEMOTIVATION, "0:rule", count, `${count} seats: only the chosen opponent's characters are considered: its cheapest is destroyed, cheaper characters of P1 and of the other opponents are not`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [
         { key: "sd", def: printing(DEMOTIVATION), owner: P1, zone: "hand" },
@@ -450,7 +450,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(DEMOTIVATION, "0:rule", `${count} seats: on a tie among the chosen opponent's characters P1 decides which is destroyed, from the tied ones only`, () => {
+  mpClause(DEMOTIVATION, "0:rule", count, `${count} seats: on a tie among the chosen opponent's characters P1 decides which is destroyed, from the tied ones only`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [
         { key: "sd", def: printing(DEMOTIVATION), owner: P1, zone: "hand" },
@@ -481,7 +481,7 @@ for (const count of [3, 4] as const) {
 const SACRIFICE = "f013f5ae-5301-4cd1-9504-b2e50f1e4a48";
 
 for (const count of [3, 4] as const) {
-  clause(SACRIFICE, "0:ability", `${count} seats: the second pick is limited to characters the chosen opponent owns (by ownership, not control); both picks are destroyed and P1 draws`, () => {
+  mpClause(SACRIFICE, "0:ability", count, `${count} seats: the second pick is limited to characters the chosen opponent owns (by ownership, not control); both picks are destroyed and P1 draws`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const other = seatsOf(count).filter((s) => s !== P1 && s !== pick)[0]!;
       const t = table(count, [
@@ -516,7 +516,7 @@ for (const count of [3, 4] as const) {
 const SARUME = "47d63dba-085e-4cbc-ab0c-ecdbe65fded0";
 
 for (const count of [3, 4] as const) {
-  clause(SARUME, "0:rule", `${count} seats: P1 chooses the opponent when the trigger resolves; every character of only that opponent takes 1 damage`, () => {
+  mpClause(SARUME, "0:rule", count, `${count} seats: P1 chooses the opponent when the trigger resolves; every character of only that opponent takes 1 damage`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = table(count, [
         { key: "sa", def: printing(SARUME), owner: P1, zone: "hand" },

@@ -5,7 +5,7 @@
 
 import assert from "node:assert/strict";
 import { bank, character, tactic } from "../../per-card/_harness.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { COUNTS, drive, eliminateAllBut, ids, opponentChoice, others, pickable, plain, refused } from "./_seats2ndEdition.js";
 import { deckOf, handOf, P1, P2, playCard, playersNeeded, playRaw, seatsOf, table, zoneOf, type Count, type Table } from "./_seatsSeed2ndFirstP2.js";
 import type { PlayerId } from "../../../../engine.js";
@@ -33,7 +33,7 @@ const arcanaTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(ARCANA, "0:ability", `${count} seats: P1 searches P1's own deck for 5 cards and only the opponent P1 chose picks X of them`, () => {
+  mpClause(ARCANA, "0:ability", count, `${count} seats: P1 searches P1's own deck for 5 cards and only the opponent P1 chose picks X of them`, () => {
     for (const opponent of others(count)) {
       const t = arcanaTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count), "the opponent is chosen with the play, before the targets");
@@ -89,7 +89,7 @@ const revealedBy = (t: Table, owner: PlayerId): number =>
   t.engine.getLog().filter((entry) => entry.event?.type === "cardsRevealed" && (entry.event as { ownerId?: string }).ownerId === owner).length;
 
 for (const count of COUNTS) {
-  clause(INQUISITION, "0:rule", `${count} seats: the top 7 of the chosen opponent's deck are revealed to everyone, its tactics are removed, the rest go to the bottom in P1's order; no other deck is touched`, () => {
+  mpClause(INQUISITION, "0:rule", count, `${count} seats: the top 7 of the chosen opponent's deck are revealed to everyone, its tactics are removed, the rest go to the bottom in P1's order; no other deck is touched`, () => {
     for (const opponent of others(count)) {
       const t = inquisitionTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));
@@ -161,7 +161,7 @@ function ectoTable(count: Count): Table {
 }
 
 for (const count of COUNTS) {
-  clause(ECTO, "0:ability", `${count} seats: P1 searches P1's own deck; only the opponent P1 chose may search P1's deck for the remaining copies`, () => {
+  mpClause(ECTO, "0:ability", count, `${count} seats: P1 searches P1's own deck; only the opponent P1 chose may search P1's deck for the remaining copies`, () => {
     for (const opponent of others(count)) {
       for (const oppTakes of [true, false]) {
         const t = ectoTable(count);
@@ -205,7 +205,7 @@ const eldridgeTable = (count: Count, tokens = 3): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(ELDRIDGE, "3:ability:disrupt", `${count} seats: P1 looks at and chooses a card of the chosen opponent's hand only, and that opponent discards it`, () => {
+  mpClause(ELDRIDGE, "3:ability:disrupt", count, `${count} seats: P1 looks at and chooses a card of the chosen opponent's hand only, and that opponent discards it`, () => {
     for (const opponent of others(count)) {
       const t = eldridgeTable(count);
       assert.deepEqual(playersNeeded(t, abilityAction(t, "card", "disrupt")), opponentChoice(count));
@@ -255,7 +255,7 @@ const forgetTable = (count: Count): Table =>
   ]);
 
 for (const count of COUNTS) {
-  clause(FORGET, "0:ability", `${count} seats: the picked card returns to its owner's hand, then P1 chooses a card in the chosen opponent's hand only and that opponent discards it`, () => {
+  mpClause(FORGET, "0:ability", count, `${count} seats: the picked card returns to its owner's hand, then P1 chooses a card in the chosen opponent's hand only and that opponent discards it`, () => {
     for (const opponent of others(count)) {
       const t = forgetTable(count);
       assert.deepEqual(playersNeeded(t, playAction(t, "card")), opponentChoice(count));

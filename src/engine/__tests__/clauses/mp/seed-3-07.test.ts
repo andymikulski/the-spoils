@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { endTurn } from "../_turn.js";
 import { answer, cardsOf, deckOf, expectChoice, handOf, othersOf, P1, P2, P3, P4, pending, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
@@ -29,7 +29,7 @@ const chestTable = (count: number, active: PlayerId): Table =>
   table(count, [{ key: "chest", def: printing(CHEST), owner: P1 }, ...decks(count)], { active });
 
 for (const count of [3, 4] as const) {
-  clause(CHEST, "1:rule", `${count} seats: at the start of an opponent's turn the controller chooses one opponent, and only the controller and that opponent may draw or play a resource, in turn order from the active player`, () => {
+  mpClause(CHEST, "1:rule", count, `${count} seats: at the start of an opponent's turn the controller chooses one opponent, and only the controller and that opponent may draw or play a resource, in turn order from the active player`, () => {
     const t = chestTable(count, P1);
     const chosen = count === 3 ? P3 : P4;
     endTurn(t.engine, P1); // P2's turn starts
@@ -45,7 +45,7 @@ for (const count of [3, 4] as const) {
     for (const other of t.seats.filter((seat) => seat !== chosen && seat !== P1)) assert.equal(handOf(t, other).length, before[other], `${other} gets nothing`);
   });
 
-  clause(CHEST, "1:rule", `${count} seats: at the start of each turn, including the controller's own and each other opponent's, the controller chooses an opponent again (one selection per resolution)`, () => {
+  mpClause(CHEST, "1:rule", count, `${count} seats: at the start of each turn, including the controller's own and each other opponent's, the controller chooses an opponent again (one selection per resolution)`, () => {
     // P3 (or P4) ends a turn, the controller's own turn starts.
     const last = seatsOf(count)[count - 1]!;
     const t = chestTable(count, last);
@@ -61,7 +61,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(CHEST, "1:rule", "3 seats: a declined or taken option only affects that player; the unchosen opponent never draws", () => {
+mpClause(CHEST, "1:rule", 3, "3 seats: a declined or taken option only affects that player; the unchosen opponent never draws", () => {
   const t = chestTable(3, P1);
   endTurn(t.engine, P1);
   answer(t, P1, { kind: "choosePlayer", playerId: P3 });
@@ -70,7 +70,7 @@ clause(CHEST, "1:rule", "3 seats: a declined or taken option only affects that p
   assert.deepEqual([handOf(t, P1).length, handOf(t, P2).length, handOf(t, P3).length], [before[0]! + 1, before[1], before[2]], "P3 declined, P1 drew, P2 (active but not chosen) did nothing");
 });
 
-clause(CHEST, "2:rule", "3 seats: with the mulligan reveal made, only the controller draws an extra card at the start of the controller's own turn", () => {
+mpClause(CHEST, "2:rule", 3, "3 seats: with the mulligan reveal made, only the controller draws an extra card at the start of the controller's own turn", () => {
   const seats = seatsOf(3);
   const t = table(3, [
     { key: "chest", def: printing(CHEST), owner: P1, zone: "deck", counters: { revealed: 1 } },

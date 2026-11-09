@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { character, resourceCard, tactic } from "../../support/fixtures.js";
 import { bank, volition } from "../../per-card/_harness.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { 
   alive, choosePlayer, controllerOf, deck, doom, filler, fight, go, hand, needs, offered, pay, pcOf, pickCandidates, pickCards, pickOption, play, stat, table, use, zone, P1, P2, P3, P4, type Pid, type Placement
  } from "./_shade.js";
@@ -22,7 +22,7 @@ const faceDown = (owner: Pid, key: string): Placement => ({ ...volition(1, owner
 
 // --- Forgotten Tentacle ------------------------------------------------------------------------
 
-clause(FORGOTTEN_TENTACLE, "0:ability", "3 seats: the controller picks which opponent; only that opponent's face-down resources are offered and only that opponent draws and plays", () => {
+mpClause(FORGOTTEN_TENTACLE, "0:ability", 3, "3 seats: the controller picks which opponent; only that opponent's face-down resources are offered and only that opponent draws and plays", () => {
   for (const [chosen, other] of [[P3, P2], [P2, P3]] as const) {
     const b = table(3, [
       { key: "ft", def: printing(FORGOTTEN_TENTACLE), owner: P1, zone: "hand" },
@@ -69,7 +69,7 @@ const sharkBoard = (seats: 3 | 4, faceDowns: Partial<Record<Pid, number>>, extra
     ...extra
   ]);
 
-clause(MAN_SHARK, "0:rule", "3 seats: +1 strength and +1 life for each face-down resource all opponents control together; the controller's own do not count", () => {
+mpClause(MAN_SHARK, "0:rule", 3, "3 seats: +1 strength and +1 life for each face-down resource all opponents control together; the controller's own do not count", () => {
   const base = printing(MAN_SHARK);
   const b = sharkBoard(3, { [P1]: 4, [P2]: 2, [P3]: 3 });
   assert.deepEqual([stat(b, "shark", "strength"), stat(b, "shark", "life")], [base.strength! + 5, base.life! + 5]);
@@ -78,7 +78,7 @@ clause(MAN_SHARK, "0:rule", "3 seats: +1 strength and +1 life for each face-down
   const none = sharkBoard(3, { [P1]: 4 });
   assert.deepEqual([stat(none, "shark", "strength"), stat(none, "shark", "life")], [base.strength!, base.life!]);
 });
-clause(MAN_SHARK, "0:rule", "4 seats: the face-down resources of all three opponents count; an eliminated opponent's stop counting", () => {
+mpClause(MAN_SHARK, "0:rule", 4, "4 seats: the face-down resources of all three opponents count; an eliminated opponent's stop counting", () => {
   const base = printing(MAN_SHARK);
   const b = sharkBoard(4, { [P1]: 5, [P2]: 2, [P3]: 3, [P4]: 1 }, [doom(P4)]);
   assert.deepEqual([stat(b, "shark", "strength"), stat(b, "shark", "life")], [base.strength! + 6, base.life! + 6]);
@@ -86,7 +86,7 @@ clause(MAN_SHARK, "0:rule", "4 seats: the face-down resources of all three oppon
   assert.equal(alive(b.engine, P4), false);
   assert.deepEqual([stat(b, "shark", "strength"), stat(b, "shark", "life")], [base.strength! + 5, base.life! + 5]);
 });
-clause(MAN_SHARK, "1:ability:ms-follow", "3 seats: the controller picks the opponent; only that opponent picks a card from their hand and puts it face-down under their control", () => {
+mpClause(MAN_SHARK, "1:ability:ms-follow", 3, "3 seats: the controller picks the opponent; only that opponent picks a card from their hand and puts it face-down under their control", () => {
   for (const [chosen, other] of [[P3, P2], [P2, P3]] as const) {
     const b = sharkBoard(3, {}, [...bank("rage", 3, P1), ...filler(P2, "hand", 2), ...filler(P3, "hand", 2)]);
     const action = use(b, P1, "shark", "ms-follow");
@@ -116,7 +116,7 @@ const neuralyzerBoard = (extra: Placement[] = [], threshold = false) =>
     ...extra
   ]);
 
-clause(NEURALYZER, "0:rule", "3 seats: when the Agent attacks the controller picks an opponent (need not be the attacked player); only that opponent discards a card of their choice", () => {
+mpClause(NEURALYZER, "0:rule", 3, "3 seats: when the Agent attacks the controller picks an opponent (need not be the attacked player); only that opponent discards a card of their choice", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = neuralyzerBoard();
     b.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [b.id("agent")], target: { type: "faction", playerId: P3 } });
@@ -134,7 +134,7 @@ clause(NEURALYZER, "0:rule", "3 seats: when the Agent attacks the controller pic
     assert.equal(hand(b.engine, P1).length, 2, "the controller discards nothing");
   }
 });
-clause(NEURALYZER, "1:rule@oooooo", "3 seats: battle damage to an opponent's faction makes that faction's owner discard; nobody is asked to choose an opponent", () => {
+mpClause(NEURALYZER, "1:rule@oooooo", 3, "3 seats: battle damage to an opponent's faction makes that faction's owner discard; nobody is asked to choose an opponent", () => {
   for (const [victim, bystander] of [[P3, P2], [P2, P3]] as const) {
     const b = neuralyzerBoard([], true);
     b.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [b.id("agent")], target: { type: "faction", playerId: victim } });
@@ -158,7 +158,7 @@ clause(NEURALYZER, "1:rule@oooooo", "3 seats: battle damage to an opponent's fac
 
 // --- Violating Ritual --------------------------------------------------------------------------
 
-clause(VIOLATING_RITUAL, "0:ability", "3 seats: the controller picks an opponent as part of the cost; only that opponent discards 2 cards of their choice, then the controller draws a card", () => {
+mpClause(VIOLATING_RITUAL, "0:ability", 3, "3 seats: the controller picks an opponent as part of the cost; only that opponent discards 2 cards of their choice, then the controller draws a card", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = table(3, [
       { key: "vr", def: printing(VIOLATING_RITUAL), owner: P1, zone: "hand" },
@@ -183,7 +183,7 @@ clause(VIOLATING_RITUAL, "0:ability", "3 seats: the controller picks an opponent
 
 // --- Voidal Trinket ----------------------------------------------------------------------------
 
-clause(VOIDAL_TRINKET, "0:ability:voidal-trinket-augur", "3 seats: the controller picks the opponent; only that opponent may detach up to X of their own resources from their faction", () => {
+mpClause(VOIDAL_TRINKET, "0:ability:voidal-trinket-augur", 3, "3 seats: the controller picks the opponent; only that opponent may detach up to X of their own resources from their faction", () => {
   for (const [picked, other] of [[P3, P2], [P2, P3]] as const) {
     const attached = (owner: Pid, faction: string): Placement[] =>
       [0, 1, 2].map((i) => ({ key: `res-${owner}-${i}`, def: resourceCard({ name: `Res ${owner} ${i}` }), owner, attachedToKey: faction }));
@@ -220,7 +220,7 @@ clause(VOIDAL_TRINKET, "0:ability:voidal-trinket-augur", "3 seats: the controlle
 const majigsOf = (b: ReturnType<typeof table>, who: Pid): number =>
   Object.values(b.engine.state.cards).filter((card) => card.zone === "play" && card.controllerId === who && b.engine.getDefinition(card.id).name === "Micromajig").length;
 
-clause(MICROMAJIG_MAKER, "0:ability:mmm-release", "3 seats: the controller picks the opponent; only that opponent may put a Micromajig token under their control, then the controller puts one under theirs", () => {
+mpClause(MICROMAJIG_MAKER, "0:ability:mmm-release", 3, "3 seats: the controller picks the opponent; only that opponent may put a Micromajig token under their control, then the controller puts one under theirs", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = table(3, [{ key: "mmm", def: printing(MICROMAJIG_MAKER), owner: P1, zone: "play" }]);
     assert.deepEqual(needs(b, use(b, P1, "mmm", "mmm-release"))[0], { kind: "players", choices: [{ id: "picked", candidates: [P2, P3] }] });
@@ -263,7 +263,7 @@ function negotiation(seats: 3 | 4, picked: Pid, payments: boolean[]): ReturnType
   return b;
 }
 
-clause(NEGOTIATION, "0:ability", "3 seats: the payment alternates between the controller and the picked opponent only; each of the two draws what they paid, the third player neither pays nor draws", () => {
+mpClause(NEGOTIATION, "0:ability", 3, "3 seats: the payment alternates between the controller and the picked opponent only; each of the two draws what they paid, the third player neither pays nor draws", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = negotiation(3, picked, [true, true, true, true, true, false]);
     assert.equal(hand(b.engine, P1).length, 3, "the controller paid 3 and draws 3");
@@ -274,7 +274,7 @@ clause(NEGOTIATION, "0:ability", "3 seats: the payment alternates between the co
   const none = negotiation(3, P2, [false]);
   assert.deepEqual([hand(none.engine, P1).length, hand(none.engine, P2).length, hand(none.engine, P3).length], [0, 0, 0], "nothing paid, nobody draws");
 });
-clause(NEGOTIATION, "0:ability", "4 seats: the controller picks P3; P2 and P4 never pay or draw", () => {
+mpClause(NEGOTIATION, "0:ability", 4, "4 seats: the controller picks P3; P2 and P4 never pay or draw", () => {
   const b = negotiation(4, P3, [true, true, true, false]);
   assert.deepEqual([hand(b.engine, P1).length, hand(b.engine, P2).length, hand(b.engine, P3).length, hand(b.engine, P4).length], [2, 0, 1, 0]);
   const b2 = table(4, [{ key: "nc", def: printing(NEGOTIATION), owner: P1, zone: "hand" }, ...bank("greed", 2, P1)]);
@@ -297,7 +297,7 @@ function bottlebeard(seats: 3 | 4, tops: Partial<Record<Pid, "character" | "tact
 const revealedTops = (b: ReturnType<typeof table>): Pid[] =>
   b.engine.getFlowView().revealed.deckTop.map((entry: { playerId: Pid }) => entry.playerId).sort();
 
-clause(BOTTLEBEARD, "1:rule", "3 seats: the top card of every opponent's deck is revealed (not the controller's); +3 speed if any of those cards is a character, once", () => {
+mpClause(BOTTLEBEARD, "1:rule", 3, "3 seats: the top card of every opponent's deck is revealed (not the controller's); +3 speed if any of those cards is a character, once", () => {
   const speed = printing(BOTTLEBEARD).speed!;
   const cases: Array<[Partial<Record<Pid, "character" | "tactic">>, number]> = [
     [{ [P2]: "character", [P3]: "tactic" }, 3],
@@ -312,7 +312,7 @@ clause(BOTTLEBEARD, "1:rule", "3 seats: the top card of every opponent's deck is
     assert.equal(stat(b, "bb", "speed"), speed + bonus, JSON.stringify(tops));
   }
 });
-clause(BOTTLEBEARD, "1:rule", "4 seats: the tops of all three opponents' decks are revealed; one character among them gives +3 speed; the controller's deck top never counts", () => {
+mpClause(BOTTLEBEARD, "1:rule", 4, "4 seats: the tops of all three opponents' decks are revealed; one character among them gives +3 speed; the controller's deck top never counts", () => {
   const speed = printing(BOTTLEBEARD).speed!;
   const only4 = bottlebeard(4, { [P2]: "tactic", [P3]: "tactic", [P4]: "character" });
   assert.deepEqual(revealedTops(only4), [P2, P3, P4]);
@@ -320,7 +320,7 @@ clause(BOTTLEBEARD, "1:rule", "4 seats: the tops of all three opponents' decks a
   const none = bottlebeard(4, { [P1]: "character", [P2]: "tactic", [P3]: "tactic", [P4]: "tactic" });
   assert.equal(stat(none, "bb", "speed"), speed);
 });
-clause(BOTTLEBEARD, "2:ability:bottlebeard-chug", "3 seats: the controller picks the opponent; only that opponent's top card goes to the bottom of their deck", () => {
+mpClause(BOTTLEBEARD, "2:ability:bottlebeard-chug", 3, "3 seats: the controller picks the opponent; only that opponent's top card goes to the bottom of their deck", () => {
   for (const [picked, other] of [[P2, P3], [P3, P2]] as const) {
     const b = bottlebeard(3, {}, [...bank("deception", 2, P1)]);
     const pickedBefore = deck(b.engine, picked).slice();

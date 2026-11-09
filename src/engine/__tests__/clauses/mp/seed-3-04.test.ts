@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character, tactic } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import { answer, expectChoice, othersOf, P1, P2, P3, P4, pending, seatsOf, settle, staples, table } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
 
@@ -48,7 +48,7 @@ function enterWith(t: Table, chosen: PlayerId): void {
 const canPlayTrick = (t: Table, seat: PlayerId): boolean => t.engine.checkAction({ type: "playCard", playerId: seat, cardId: t.id(`trick-${seat}`) }).ok;
 
 for (const count of [3, 4] as const) {
-  clause(VILGHAME, "1:rule", `${count} seats: the controller chooses one opponent when Vilghame enters play; only that opponent pays 1 more to deploy a tactic`, () => {
+  mpClause(VILGHAME, "1:rule", count, `${count} seats: the controller chooses one opponent when Vilghame enters play; only that opponent pays 1 more to deploy a tactic`, () => {
     const t = taxTable(count);
     t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("v") });
     settle(t);
@@ -68,7 +68,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(VILGHAME, "1:rule", "3 seats: when the chosen opponent is eliminated the controller chooses again (only P3 is left, so nobody is asked) and P3 now pays 1 more", () => {
+mpClause(VILGHAME, "1:rule", 3, "3 seats: when the chosen opponent is eliminated the controller chooses again (only P3 is left, so nobody is asked) and P3 now pays 1 more", () => {
   const t = taxTable(3);
   enterWith(t, P2);
   t.engine.state.players[P2]!.eliminated = { turn: 1 };
@@ -125,7 +125,7 @@ const sproutFor = (t: Table, seat: PlayerId, n: 1 | 2): void => {
 };
 
 for (const count of [3, 4] as const) {
-  clause(VILGHAME, "2:rule", `${count} seats: the first resource each opponent plays in a turn enters attached to that opponent's own faction, counted per opponent; the controller's resource and an opponent's second one enter normally`, () => {
+  mpClause(VILGHAME, "2:rule", count, `${count} seats: the first resource each opponent plays in a turn enters attached to that opponent's own faction, counted per opponent; the controller's resource and an opponent's second one enter normally`, () => {
     const t = tithesTable(count);
     // P1 plays the controller's own resource first, then a bait that every opponent answers with a resource.
     t.engine.perform({ type: "playCard", playerId: P1, cardId: t.id("sprout1-p1"), selected: { r: [t.id("res1-p1")] } });

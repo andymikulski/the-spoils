@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { bank } from "../../per-card/_harness.js";
 import { resourceCard } from "../../support/fixtures.js";
-import { clause, printing } from "../_clause.js";
+import { mpClause, printing } from "../_clause.js";
 import {
   answerFor,
   assertOpponentAsked,
@@ -46,7 +46,7 @@ function wizardTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(TWIZARD, "0:rule", `${count} seats: both players are P1 and the opponent P1 chooses; only those two may draw, the others draw nothing`, () => {
+  mpClause(TWIZARD, "0:rule", count, `${count} seats: both players are P1 and the opponent P1 chooses; only those two may draw, the others draw nothing`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = wizardTable(count);
       const before = sizes(t);
@@ -63,7 +63,7 @@ for (const count of [3, 4] as const) {
   });
 }
 
-clause(TWIZARD, "0:rule", "3 seats: each of the two may draw 0, 1 or 2 (accepting and declining); the third seat is never asked", () => {
+mpClause(TWIZARD, "0:rule", 3, "3 seats: each of the two may draw 0, 1 or 2 (accepting and declining); the third seat is never asked", () => {
   for (const [mine, theirs] of [
     [0, 0],
     [1, 2],
@@ -102,7 +102,7 @@ function fkTable(count: Count): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(FK, "0:rule", `${count} seats: the opponent is chosen first; P1 sees only the chosen opponent's hand and top deck card, then draws`, () => {
+  mpClause(FK, "0:rule", count, `${count} seats: the opponent is chosen first; P1 sees only the chosen opponent's hand and top deck card, then draws`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = fkTable(count);
       assertOpponentAsked(t, playAction(t, P1, "fk"));
@@ -125,7 +125,7 @@ for (const count of [3, 4] as const) {
 
 // "...and their face-down resources": a `reveal` of the chosen opponent's `faceDownResources`.
 for (const count of [3, 4] as const) {
-  clause(FK, "0:rule", `${count} seats: P1 also sees the chosen opponent's face-down resources, and no other seat's`, () => {
+  mpClause(FK, "0:rule", count, `${count} seats: P1 also sees the chosen opponent's face-down resources, and no other seat's`, () => {
     for (const pick of seatsOf(count).slice(1)) {
       const t = fkTable(count);
       playCard(t, P1, "fk", { players: { opponent: pick } });
@@ -182,7 +182,7 @@ function takeFirst(t: Table, key: (who: PlayerId, declarationId: string) => stri
 const turnsOf = (count: Count): Array<[PlayerId, PlayerId[]]> =>
   seatsOf(count).map((seat) => [seat, seatsOf(count).filter((s) => s !== seat)]);
 
-clause(COMMUNION, "0:rule", "3 seats: the trigger fires at the start of every player's turn and the active player (never P1 on another's turn) chooses the option", () => {
+mpClause(COMMUNION, "0:rule", 3, "3 seats: the trigger fires at the start of every player's turn and the active player (never P1 on another's turn) chooses the option", () => {
   for (const [turnSeat, others] of turnsOf(3)) {
     const t = table(3, communionCards(3), seatBefore({ seats: seatsOf(3) } as Table, turnSeat));
     passTurn(t);
@@ -198,7 +198,7 @@ clause(COMMUNION, "0:rule", "3 seats: the trigger fires at the start of every pl
   }
 });
 
-clause(COMMUNION, "0:rule", "4 seats: it fires at the start of all four turns, each active player (P4 on P4's turn too) choosing the option", () => {
+mpClause(COMMUNION, "0:rule", 4, "4 seats: it fires at the start of all four turns, each active player (P4 on P4's turn too) choosing the option", () => {
   for (const [turnSeat, others] of turnsOf(4)) {
     const t = table(4, communionCards(4), seatBefore({ seats: seatsOf(4) } as Table, turnSeat));
     passTurn(t);
@@ -234,7 +234,7 @@ const communionRuns = (count: Count): Array<[PlayerId, PlayerId]> =>
       ];
 
 for (const count of [3, 4] as const) {
-  clause(COMMUNION, "1:option:OPTION 1", `${count} seats: both players are the active player and the one opponent they pick: only those two draw a card and put a card from hand on the bottom of their deck`, () => {
+  mpClause(COMMUNION, "1:option:OPTION 1", count, `${count} seats: both players are the active player and the one opponent they pick: only those two draw a card and put a card from hand on the bottom of their deck`, () => {
     for (const [turnSeat, pick] of communionRuns(count)) {
       const t = communionStart(count, turnSeat, pick, 0);
       const { before, tops } = t;
@@ -254,7 +254,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(COMMUNION, "2:option:OPTION 2", `${count} seats: only the active player and the opponent they pick put a resource they control into its owner's hand and may play a resource`, () => {
+  mpClause(COMMUNION, "2:option:OPTION 2", count, `${count} seats: only the active player and the opponent they pick put a resource they control into its owner's hand and may play a resource`, () => {
     for (const [turnSeat, pick] of communionRuns(count)) {
       // P1 owns a resource that the picked opponent controls
       const stolen = { key: "stolen", def: resourceCard({ name: "Stolen resource" }), owner: P1, controller: pick === P1 ? undefined : pick, zone: "play" as const };
@@ -279,7 +279,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(COMMUNION, "3:option:OPTION 3", `${count} seats: only the active player and the opponent they pick discard a card of their own choice`, () => {
+  mpClause(COMMUNION, "3:option:OPTION 3", count, `${count} seats: only the active player and the opponent they pick discard a card of their own choice`, () => {
     for (const [turnSeat, pick] of communionRuns(count)) {
       const t = communionStart(count, turnSeat, pick, 2);
       const { before } = t;
@@ -295,7 +295,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(COMMUNION, "4:option:OPTION 4", `${count} seats: only the active player and the opponent they pick put a card from their hand on top of their own deck`, () => {
+  mpClause(COMMUNION, "4:option:OPTION 4", count, `${count} seats: only the active player and the opponent they pick put a card from their hand on top of their own deck`, () => {
     for (const [turnSeat, pick] of communionRuns(count)) {
       const t = communionStart(count, turnSeat, pick, 3);
       const { before } = t;

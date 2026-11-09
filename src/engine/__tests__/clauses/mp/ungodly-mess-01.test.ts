@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import type { PlayerId } from "../../../../engine.js";
 import { bank, character } from "../../per-card/_harness.js";
 import { zoneOf } from "../_board.js";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import { attachedCount } from "../_turn.js";
 import { P1, P2, P3, P4, act, choose, handOf, keys, pending, play, playerAsk, ready, spent, table, type Table } from "./_ungodly-mess.js";
 
@@ -34,7 +34,7 @@ function bonnetTable(count: number, picked: { p2: number; p3: number; p4?: numbe
 }
 const bonnetAction = (t: Table, picked?: PlayerId) => ({ type: "playCard", playerId: P1, cardId: t.id("bon"), selected: { attachTo: [t.id("host")] }, variables: {}, ...(picked ? { players: { picked } } : {}) });
 
-clause(BONNET, "1:extraCost", "3 seats: Pick an opponent is asked once and offers P2 and P3 (never P1); only the picked opponent detaches, from their own faction", () => {
+mpClause(BONNET, "1:extraCost", 3, "3 seats: Pick an opponent is asked once and offers P2 and P3 (never P1); only the picked opponent detaches, from their own faction", () => {
   const first = bonnetTable(3, { p2: 3, p3: 3 });
   assert.deepEqual(playerAsk(first.t, bonnetAction(first.t)), { id: "picked", candidates: [P2, P3] });
   refused(() => first.t.engine.perform(bonnetAction(first.t, P1) as never), "yourself is not an opponent");
@@ -62,7 +62,7 @@ clause(BONNET, "1:extraCost", "3 seats: Pick an opponent is asked once and offer
   assert.equal(pending(two.t)!.playerId, P2);
 });
 
-clause(BONNET, "1:extraCost", "4 seats: the pick offers P2, P3 and P4; only the picked opponent is asked and affected", () => {
+mpClause(BONNET, "1:extraCost", 4, "4 seats: the pick offers P2, P3 and P4; only the picked opponent is asked and affected", () => {
   const b = bonnetTable(4, { p2: 3, p3: 3, p4: 3 });
   assert.deepEqual(playerAsk(b.t, bonnetAction(b.t)), { id: "picked", candidates: [P2, P3, P4] });
   act(b.t, bonnetAction(b.t, P4));
@@ -94,7 +94,7 @@ function fleshTable(count: number) {
 }
 const fleshAction = (t: Table, picked: PlayerId | undefined, target: string) => ({ type: "playCard", playerId: P1, cardId: t.id("fd"), selected: { c: [t.id(target)] }, variables: {}, ...(picked ? { players: { picked } } : {}) });
 
-clause(FLESH, "0:extraCost", "3 seats: the opponent pick offers P2 and P3; X counts only the picked opponent's detached resources; the character pick is not limited to that opponent", () => {
+mpClause(FLESH, "0:extraCost", 3, "3 seats: the opponent pick offers P2 and P3; X counts only the picked opponent's detached resources; the character pick is not limited to that opponent", () => {
   const t = fleshTable(3);
   assert.deepEqual(playerAsk(t, fleshAction(t, undefined, "big2")), { id: "picked", candidates: [P2, P3] });
   refused(() => t.engine.perform(fleshAction(t, P1, "big2") as never), "yourself is not an opponent");
@@ -122,7 +122,7 @@ clause(FLESH, "0:extraCost", "3 seats: the opponent pick offers P2 and P3; X cou
   assert.equal(zoneOf(two.engine, two.id("big2")), "play", "X = 1 (P2's detached resources): strength 3 survives");
 });
 
-clause(FLESH, "0:extraCost", "4 seats: the pick offers P2, P3 and P4; only the picked opponent's detached resources count", () => {
+mpClause(FLESH, "0:extraCost", 4, "4 seats: the pick offers P2, P3 and P4; only the picked opponent's detached resources count", () => {
   const t = fleshTable(4);
   assert.deepEqual(playerAsk(t, fleshAction(t, undefined, "mid3")), { id: "picked", candidates: [P2, P3, P4] });
   play(t, P1, "fd", fleshAction(t, P4, "mid3"));
@@ -151,7 +151,7 @@ function seanceTable(count: number, tokens = 2) {
 }
 const seanceAction = (t: Table, picked?: PlayerId) => ({ type: "activateAbility", playerId: P1, cardId: t.id("sr"), abilityId: "violate", selected: {}, variables: {}, ...(picked ? { players: { picked } } : {}) });
 
-clause(SEANCE, "0:ability:violate", "3 seats: the pick offers P2 and P3; only the picked opponent chooses and discards X cards, and a token is put on this card", () => {
+mpClause(SEANCE, "0:ability:violate", 3, "3 seats: the pick offers P2 and P3; only the picked opponent chooses and discards X cards, and a token is put on this card", () => {
   const t = seanceTable(3);
   assert.deepEqual(playerAsk(t, seanceAction(t)), { id: "picked", candidates: [P2, P3] });
   refused(() => t.engine.perform(seanceAction(t, P1) as never), "yourself is not an opponent");
@@ -182,7 +182,7 @@ clause(SEANCE, "0:ability:violate", "3 seats: the pick offers P2 and P3; only th
   assert.equal(pending(two)!.playerId, P2);
 });
 
-clause(SEANCE, "0:ability:violate", "4 seats: the pick offers P2, P3 and P4; only the picked opponent discards", () => {
+mpClause(SEANCE, "0:ability:violate", 4, "4 seats: the pick offers P2, P3 and P4; only the picked opponent discards", () => {
   const t = seanceTable(4);
   assert.deepEqual(playerAsk(t, seanceAction(t)), { id: "picked", candidates: [P2, P3, P4] });
   act(t, seanceAction(t, P4));
@@ -210,7 +210,7 @@ function penumbraTable(count: number) {
 }
 const penumbraAction = (t: Table, picked?: PlayerId) => ({ type: "activateAbility", playerId: P1, cardId: t.id("pen"), abilityId: "veil", selected: {}, variables: {}, ...(picked ? { players: { picked } } : {}) });
 
-clause(PENUMBRA, "0:ability:veil", "3 seats: the pick offers P2 and P3; X counts only the picked opponent's different staple types (6 - X is paid)", () => {
+mpClause(PENUMBRA, "0:ability:veil", 3, "3 seats: the pick offers P2 and P3; X counts only the picked opponent's different staple types (6 - X is paid)", () => {
   const t = penumbraTable(3);
   assert.deepEqual(playerAsk(t, penumbraAction(t)), { id: "picked", candidates: [P2, P3] });
   refused(() => t.engine.perform(penumbraAction(t, P1) as never), "yourself is not an opponent");
@@ -218,7 +218,7 @@ clause(PENUMBRA, "0:ability:veil", "3 seats: the pick offers P2 and P3; X counts
   act(t, penumbraAction(t, P2));
   assert.equal(ready(t.engine, P1), 6 - 4, "P2 controls 2 different staple types: X = 2, so 6 - 2 = 4 is paid");
   assert.equal(t.engine.getStat(t.id("pen"), "life"), life + 1);
-  assert.ok(t.engine.getKeywords(t.id("pen")).includes("covert"));
+  assert.ok(t.engine.getKeywords(t.id("pen")).includes("covert"), "t.engine.getKeywords(t.id('pen')).includes('covert')");
 
   const second = penumbraTable(3);
   act(second, penumbraAction(second, P3));
@@ -231,7 +231,7 @@ clause(PENUMBRA, "0:ability:veil", "3 seats: the pick offers P2 and P3; X counts
   assert.equal(ready(two.engine, P1), 6 - 4);
 });
 
-clause(PENUMBRA, "0:ability:veil", "4 seats: the pick offers P2, P3 and P4; X counts the picked opponent only", () => {
+mpClause(PENUMBRA, "0:ability:veil", 4, "4 seats: the pick offers P2, P3 and P4; X counts the picked opponent only", () => {
   const t = penumbraTable(4);
   assert.deepEqual(playerAsk(t, penumbraAction(t)), { id: "picked", candidates: [P2, P3, P4] });
   act(t, penumbraAction(t, P4));

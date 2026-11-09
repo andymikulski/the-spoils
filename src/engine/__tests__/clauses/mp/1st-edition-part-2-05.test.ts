@@ -4,7 +4,7 @@
 // data/card-tests/mp-spec/1st-edition-part-2.json.
 
 import assert from "node:assert/strict";
-import { clause, printing, refused } from "../_clause.js";
+import { mpClause, printing, refused } from "../_clause.js";
 import {
   activate,
   activateAction,
@@ -91,7 +91,7 @@ function muddlerTable(count: Count, hand = 3): Table {
 }
 
 for (const count of [3, 4] as const) {
-  clause(MUDDLER, "1:rule", `${count} seats: the faction it damages is the opponent: only that player puts a card from their hand on top of their deck, and nobody is asked who the opponent is`, () => {
+  mpClause(MUDDLER, "1:rule", count, `${count} seats: the faction it damages is the opponent: only that player puts a card from their hand on top of their deck, and nobody is asked who the opponent is`, () => {
     for (const pick of others(count)) {
       const t = muddlerTable(count);
       const before = snapshot(t);
@@ -108,7 +108,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(MUDDLER, "1:rule", `${count} seats: an empty hand means nothing happens, and damage to a location does not trigger it`, () => {
+  mpClause(MUDDLER, "1:rule", count, `${count} seats: an empty hand means nothing happens, and damage to a location does not trigger it`, () => {
     const pick = others(count)[0]!;
     // an empty hand
     const empty = muddlerTable(count, 0);
@@ -129,7 +129,7 @@ for (const count of [3, 4] as const) {
 const SACSPIDER = "b374445f-2ac5-40b2-bfc5-5ee47771db6c";
 
 for (const count of [3, 4] as const) {
-  clause(SACSPIDER, "0:rule", `${count} seats: the other side of the battle discards their hand, whoever that is; no other player does, and nobody is asked`, () => {
+  mpClause(SACSPIDER, "0:rule", count, `${count} seats: the other side of the battle discards their hand, whoever that is; no other player does, and nobody is asked`, () => {
     for (const attacker of others(count)) {
       // defending: the attacker discards its hand
       const t = table(
@@ -220,7 +220,7 @@ function unblockable(count: Count, id: string): void {
     // the selected opponent is eliminated: the controller selects again (only the others are left)
     t = thiefTable(count, id, first, [second], [{ key: "fin", def: finisher(first), owner: P1, zone: "hand" }]);
     playCard(t, P1, "fin");
-    assert.ok(t.engine.state.players[first]!.eliminated);
+    assert.ok(t.engine.state.players[first]!.eliminated, "t.engine.state.players[first]!.eliminated");
     const left = seats.filter((s) => s !== first);
     if (left.length > 1) {
       assert.equal(open(t)?.kind, "choosePlayer");
@@ -231,12 +231,12 @@ function unblockable(count: Count, id: string): void {
 }
 
 for (const count of [3, 4] as const) {
-  clause(PICKPOCKET, "0:rule", `${count} seats: Clockman Pickpocket cannot be blocked only while the opponent P1 selected controls an item`, () => unblockable(count, PICKPOCKET));
-  clause(CUTPURSE, "0:rule", `${count} seats: Cute Cutpurse cannot be blocked only while the opponent P1 selected controls an item`, () => unblockable(count, CUTPURSE));
+  mpClause(PICKPOCKET, "0:rule", count, `${count} seats: Clockman Pickpocket cannot be blocked only while the opponent P1 selected controls an item`, () => unblockable(count, PICKPOCKET));
+  mpClause(CUTPURSE, "0:rule", count, `${count} seats: Cute Cutpurse cannot be blocked only while the opponent P1 selected controls an item`, () => unblockable(count, CUTPURSE));
 }
 
 for (const count of [3, 4] as const) {
-  clause(PICKPOCKET, "1:rule", `${count} seats: the defending player picks one of their own items, P1 takes it and the Pickpocket is destroyed; no other player is involved`, () => {
+  mpClause(PICKPOCKET, "1:rule", count, `${count} seats: the defending player picks one of their own items, P1 takes it and the Pickpocket is destroyed; no other player is involved`, () => {
     for (const pick of others(count)) {
       const other = others(count).find((s) => s !== pick)!;
       const t = thiefTable(count, PICKPOCKET, other, [pick, other]);
@@ -251,7 +251,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(PICKPOCKET, "1:rule", `${count} seats: a damaged player with no item loses nothing and the Pickpocket stays`, () => {
+  mpClause(PICKPOCKET, "1:rule", count, `${count} seats: a damaged player with no item loses nothing and the Pickpocket stays`, () => {
     const pick = others(count)[0]!;
     const t = thiefTable(count, PICKPOCKET, pick, [others(count)[1]!]);
     round(t);
@@ -259,7 +259,7 @@ for (const count of [3, 4] as const) {
     assert.equal(zoneOf(t, "thief"), "play");
   });
 
-  clause(CUTPURSE, "1:rule", `${count} seats: P1 picks an item of the defending player only and destroys it`, () => {
+  mpClause(CUTPURSE, "1:rule", count, `${count} seats: P1 picks an item of the defending player only and destroys it`, () => {
     for (const pick of others(count)) {
       const other = others(count).find((s) => s !== pick)!;
       const t = thiefTable(count, CUTPURSE, other, [pick, other]);
@@ -273,7 +273,7 @@ for (const count of [3, 4] as const) {
     }
   });
 
-  clause(CUTPURSE, "1:rule", `${count} seats: nothing is destroyed when the defending player controls no item`, () => {
+  mpClause(CUTPURSE, "1:rule", count, `${count} seats: nothing is destroyed when the defending player controls no item`, () => {
     const pick = others(count)[0]!;
     const t = thiefTable(count, CUTPURSE, pick, [others(count)[1]!]);
     round(t);
@@ -291,7 +291,7 @@ for (const count of [3, 4] as const) {
 const BRIGAND = "fd6ca900-19ab-4786-b4db-7e3c7dbac204";
 
 for (const count of [3, 4] as const) {
-  clause(BRIGAND, "0:rule", `${count} seats: your opponent is the defender: P1 may pick a character of the defending player's that is not in the battle, and nobody is asked who the opponent is`, () => {
+  mpClause(BRIGAND, "0:rule", count, `${count} seats: your opponent is the defender: P1 may pick a character of the defending player's that is not in the battle, and nobody is asked who the opponent is`, () => {
     for (const defender of others(count)) {
       const t = table(count, [
         { key: "brig", def: printing(BRIGAND), owner: P1, zone: "play" },
