@@ -1,0 +1,1019 @@
+{
+  "categories": {
+    "elimination": {
+      "atoms": [
+        "MPX-win",
+        "MPX-elim",
+        "MPX-simul"
+      ],
+      "reason": "A faction at 0 influence eliminates only its owner; while another opponent is left the game goes on, so the two-player assertion that the game ends (a winner, a draw, no further actions) or that nothing else changes does not hold."
+    },
+    "turn-cycle": {
+      "atoms": [
+        "MPX-turn",
+        "MPX-offturn"
+      ],
+      "reason": "The turn order runs through the bystanders' seats: state.turn counts every seat's turn, and text that fires at the start or end of each turn or of an opponent's turn (and a delayed effect or a skipped Restore Rule counted in turns) also fires on a bystander's turn."
+    },
+    "bystander-responses": {
+      "atoms": [
+        "MPX-respond",
+        "MPX-priority",
+        "MPX-endturn"
+      ],
+      "reason": "Every player in the game other than the controller may respond to an action, so a response window lists, offers, logs or ends with the bystander too (an endTurn is answered by every other player; the priority holder once all have passed is the last seat)."
+    },
+    "silenced-opponent": {
+      "atoms": [
+        "MP 2",
+        "MPX-respond"
+      ],
+      "reason": "\"Your opponent cannot respond\" silences the one opponent selected for that text; the other players in the game may still respond, so a window opens for them."
+    },
+    "player-count": {
+      "atoms": [
+        "MPX-seat",
+        "MPX-select",
+        "MPX-vocab-players"
+      ],
+      "reason": "The answer depends on how many players there are: the seat list, the players of a save, the candidates of a pick of \"an opponent\" or of a player's faction (no longer forced), the factions that can be attacked."
+    },
+    "seat-swap": {
+      "atoms": [
+        "MPX-swap"
+      ],
+      "reason": "Emergency Obfuscation's seat swap applies for a card a fixture put straight into play once the harness has selected its opponent (at two seats it never starts applying), and it changes who controls the card and whose turn it ends."
+    }
+  },
+  "tests": [
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] a Keep in your hand does not protect you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] a Keep the OPPONENT controls protects the opponent, not you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] a face-down Keep is only a resource and does not protect you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] control: without a Keep a faction that reaches 0 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] it protects only YOUR faction: the opponent at 0 influence loses even though you control a Keep",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Armored Keep (1st Edition) [2:rule] when the Keep leaves play while you are at 0 influence you lose at once",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Brummagem Jewelry (1st Edition) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Degenerate Molestation (1st Edition) [0:rule] the opponent gets no response window: the tactic resolves entirely on its own",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/1st-edition-01.test.ts",
+      "title": "Ectypal Stave (1st Edition) [0:ability:counterfeit] only a tactic played THIS turn counts: a tactic from an earlier turn does not enable it",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/1st-edition-02.test.ts",
+      "title": "Mafia Lawyer (1st Edition) [0:rule] losing influence is not capped by the faction: with 2 influence left the Lawyer takes it to 0 and its controller loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-04.test.ts",
+      "title": "Dragon's Strategy (1st Edition) [0:rule] an opponent on exactly 2 influence is reduced to 0 and loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-04.test.ts",
+      "title": "Siege Machine (1st Edition) [0:ability:ram] an opponent on 1 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-03.test.ts",
+      "title": "Exploding Sock Puppet! (1st Edition Part 2) [0:rule] the opponent gets no response window: it resolves on its own, and they can respond with neither a tactic nor an ability",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-03.test.ts",
+      "title": "Prudent Thug (1st Edition Part 2) [0:rule] the loss happens even when it would take the faction to 0 influence, and the faction can't go negative (CR 410.4); the owner then loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-03.test.ts",
+      "title": "Prudent Thug (1st Edition Part 2) [0:rule] with exactly 3 influence the loss takes the faction to 0 and the owner loses; with 4 they survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-03.test.ts",
+      "title": "Smear Campaign (1st Edition Part 2) [1:rule] the damage to the faction can be lethal: a faction with 3 influence reduced to 0 loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-03.test.ts",
+      "title": "Subsection 5, Paragraph 12 (1st Edition Part 2) [0:rule] the opponent gets no response window: the Paragraph resolves on its own, and they can respond with neither a tactic nor an ability",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-05.test.ts",
+      "title": "Counter Attack (1st Edition Part 2) [0:ability] played in response to the end of their turn, the turn still ends once the battle is resolved (the announcement is not lost)",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-05.test.ts",
+      "title": "Hollow Moose (1st Edition Part 2) [1:rule] a faction at 1 influence loses the game when the Moose drains it to 0",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Blow Up (1st Edition Part 2) [0:ability] an opponent at 3 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Deadly Striker (1st Edition Part 2) [0:rule] an opponent at 4 influence loses the game when it is destroyed; at 5 they survive with 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Dethmürderblüdgeon, the Craghammer (1st Edition Part 2) [3:rule] an opponent at 2 influence loses the game when the attached character is blocked",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Murderous Commander (1st Edition Part 2) [0:ability:plan] an opponent at 2 influence loses the game; at 3 they survive with 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Sadistic Colonel (1st Edition Part 2) [0:rule] an opponent at 2 influence loses the game by playing a tactic; at 3 they survive with 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/1st-edition-part-2-06.test.ts",
+      "title": "Splattergun (1st Edition Part 2) [0:ability:unload] the faction damage is damage (a damage-reducing effect applies) and can end the game (opponent at 3 influence)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-01.test.ts",
+      "title": "Degenerate Molestation (2nd Edition) [0:rule] the opponent gets no response window: the tactic resolves entirely on its own",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/2nd-edition-01.test.ts",
+      "title": "Ectypal Stave (2nd Edition) [0:ability:counterfeit] only a tactic played THIS turn counts: a tactic from an earlier turn does not enable it",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] a Keep in your hand does not protect you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] a Keep the OPPONENT controls protects the opponent, not you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] a face-down Keep is only a resource and does not protect you",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] both factions at 0 influence but only you have a Keep: the opponent loses and you win (not a draw)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] control: without a Keep a faction that reaches 0 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] it protects only YOUR faction: the opponent at 0 influence loses even though you control a Keep",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Armored Keep (2nd Edition) [2:rule] when the Keep leaves play while you are at 0 influence you lose at once",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-02.test.ts",
+      "title": "Brummagem Jewelry (2nd Edition) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/2nd-edition-03.test.ts",
+      "title": "Mafia Lawyer (2nd Edition) [0:rule] with exactly 2 influence you hit 0 and lose; with 3 you survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-03.test.ts",
+      "title": "Mutiny Grant (2nd Edition) [0:ability] with exactly X influence the cost can be paid (and my faction then has 0 influence, so I lose the game)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-03.test.ts",
+      "title": "Smear Campaign (2nd Edition) [1:rule] the damage to the faction can be lethal: a faction with 3 influence reduced to 0 loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-03.test.ts",
+      "title": "Subsection 5, Paragraph 12 (2nd Edition) [0:rule] the opponent gets no response window: the Paragraph resolves on its own, and they can respond with neither a tactic nor an ability",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/2nd-edition-03.test.ts",
+      "title": "Tax Attorney (2nd Edition) [0:rule] it can save a faction: at 3 influence a 3-influence loss leaves 1 and the game continues, while without the Attorney the same loss is lethal",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/2nd-edition-04.test.ts",
+      "title": "Exploding Sock Puppet! (2nd Edition) [0:rule] the opponent gets no response window: it resolves on its own, and they can respond with neither a tactic nor an ability",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/2nd-edition-06.p3.test.ts",
+      "title": "Tactician Vacation (2nd Edition) [0:rule] played in response to the opponent's action, they still cannot respond to the Vacation",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/decade-of-deckadence-02.test.ts",
+      "title": "Corpse Churner (Decade of Deckadence) [0:rule] a Churner that is not in play gets nothing, and one the opponent controls ticks at each turn start too",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/decade-of-deckadence-02.test.ts",
+      "title": "Corpse Churner (Decade of Deckadence) [0:rule] at the start of EACH turn (mine and my opponent's) it gets a token",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/open-beta-01.test.ts",
+      "title": "Degenerate Molestation (Open Beta) [0:rule] the opponent gets no response window: the tactic resolves entirely on its own",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] a Keep controlled by the opponent protects them, not its owner: the owner at 0 influence loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] both factions at 0 influence but only you have a Keep: the opponent loses and you win (not a draw)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] control: without the Keep you lose at 0 influence",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] damage that takes your faction to 0 influence does not lose you the game while you control the Keep (and does lose it without)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] the Keep protects ITS CONTROLLER only: the opponent's faction at 0 influence still loses, even while you control a Keep",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Armored Keep (Open Beta) [2:rule] the protection ends when the Keep leaves play: at 0 influence, destroying the Keep loses you the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Blanching Butcher (Open Beta) [0:rule] a faction left at 0 influence loses the game: with 3 influence the Butcher costs you the game, with 4 it does not",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-02.test.ts",
+      "title": "Blanching Butcher (Open Beta) [0:rule] with fewer than 3 influence the faction goes to 0 (or below) and loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Brummagem Jewelry (Open Beta) [2:rule] it stays depleted turn after turn while the Jewelry is attached",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Concealed Goon (Open Beta) [1:rule] with exactly 5 influence you hit 0 and lose; with 6 you survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Erotic Assassin (Open Beta) [0:rule] it stays depleted for any number of turns",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Mafia Lawyer (Open Beta) [0:rule] with exactly 2 influence you hit 0 and lose; with 3 you survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Mau Tough (Open Beta) [0:rule] with exactly 4 influence you hit 0 and lose; with 5 you survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-03.test.ts",
+      "title": "Mau “Consultant” (Open Beta) [0:rule] with exactly 2 influence you hit 0 and lose; with 3 you survive on 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-04.test.ts",
+      "title": "Tax Attorney (Open Beta) [0:rule] it can save a faction: at 3 influence a 3-influence loss leaves 1 and the game continues, while without the Attorney the same loss is lethal",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-06.test.ts",
+      "title": "Emergency Obfuscation (Open Beta) [1:rule] if the game ends, the owner of the winning deck wins: an attack on the faction I hold from my own deck's side costs ME the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-07.test.ts",
+      "title": "Bask Bile (Open Beta) [0:ability] 5 damage to a faction at 5 influence reduces it to 0 and its owner loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-07.test.ts",
+      "title": "Dragon's Strategy (Open Beta) [0:rule] an opponent at 1 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-07.test.ts",
+      "title": "Dragon's Strategy (Open Beta) [0:rule] an opponent at 2 influence is reduced to 0 and loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-08.test.ts",
+      "title": "Humiliating Torture Apparatus (Open Beta) [0:rule] the influence loss can end the game: a faction at 1 influence whose card is depleted loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-08.test.ts",
+      "title": "Siege Machine (Open Beta) [0:ability:ram] the opponent's faction at 1 influence is reduced to 0 and I win",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/open-beta-08.test.ts",
+      "title": "Tactician Vacation (Open Beta) [0:rule] played in RESPONSE to the opponent's action, they still cannot respond to the Vacation",
+      "category": "silenced-opponent"
+    },
+    {
+      "file": "clauses/seed-02.test.ts",
+      "title": "Neurosis (Seed) [1:rule] at 1 influence the loss takes my faction to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "Crushing Usury (Seed) [0:ability] a faction cannot lose more influence than it has: from 2 it goes to 0 (not below) and loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "Crushing Usury (Seed) [0:ability] from exactly 3 influence the loss brings it to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "D3ck W4rd3n (Seed) [0:rule] with exactly 2 influence left, the loss brings it to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "D3ck W4rd3n (Seed) [0:rule] with only 1 influence left the loss stops at 0 (not -1) and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "Exploitation (Seed) [1:rule] with exactly 1 influence left the loss brings it to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "Frisky Fortunehunter (Seed) [0:rule] with exactly 2 influence left the loss brings it to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-03.test.ts",
+      "title": "Frisky Fortunehunter (Seed) [0:rule] with only 1 influence left the loss stops at 0 (not -1) and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-04.test.ts",
+      "title": "Hungry-Hungry Idol (Seed) [0:ability:feed] with 2 influence it leaves 1 influence and the game goes on; with 1 influence the faction reaches 0 and its owner loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-05.test.ts",
+      "title": "Arrogance (Seed) [1:rule] with 1 influence left it drops to 0 and its controller loses the game (CR 102)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-08.test.ts",
+      "title": "Treachery (Seed) [1:rule] a faction at 1 influence that plays Treachery goes to 0 and loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Chain Reaction (Seed) [0:ability] the opponent's faction at 1 influence: the chain's 1 faction damage brings it to 0 and I win",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Colossal Flattener (Seed) [0:rule] sent past the blocker at a faction with only 6 influence left, it ends the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Drill Garrison (Seed) [1:rule@rrr] the opponent's faction at 1 influence: the damage brings it to 0 and I win",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Essence of Rage (Seed) [1:option:OPTION 1] 1 damage to a faction with 1 influence left ends the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Gallant Commander (Seed) [0:ability:charge] the damage is exact: from 4 influence the opponent is left on 1, from 3 on 0 (and I win)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Gideon, the Ultimate Warrior (Seed) [2:rule] an influence floor: at 2 influence the 2 + 1 cannot take the faction below 0, and I win",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-09.test.ts",
+      "title": "Gideon, the Ultimate Warrior (Seed) [2:rule] the opponent's faction at 3 influence: Gideon's 2 damage + 1 brings it to 0 and I win",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-10.test.ts",
+      "title": "Robustical Badass (Seed) [0:rule@rrr] the damage can win the game: the opponent at 1 influence is reduced to 0 and loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-10.test.ts",
+      "title": "Violence (Seed) [1:rule] losing influence is not damage, and can lose the game: at 1 influence, playing Violence puts my faction at 0 and I lose",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-01.test.ts",
+      "title": "Manifest (Seed 2) [2:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "clauses/seed-2-01.test.ts",
+      "title": "Ritual of the Double Monkey (Seed 2) [1:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "clauses/seed-2-01.test.ts",
+      "title": "Tumescent Guilt Bladder (Seed 2) [0:rule] influence stops at 0 (CR 410.4): losing 3 with only 1 influence left leaves 0, not -2",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-01.test.ts",
+      "title": "Tumescent Guilt Bladder (Seed 2) [0:rule] the influence loss can take me to 0 and I lose the game: with 1 influence left, 1 token loses me the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-01.test.ts",
+      "title": "Verrucose Brains (Seed 2) [0:rule] 'each turn': it also happens at the end of my OPPONENT's turn",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-2-02.test.ts",
+      "title": "Derelict Seafarer (Seed 2) [0:rule] with exactly 3 influence the loss takes my faction to 0 and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-02.test.ts",
+      "title": "Derelict Seafarer (Seed 2) [0:rule] with only 2 influence the loss still ends the game: I lose",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-04.test.ts",
+      "title": "Burly Assailment (Seed 2) [2:flipUp] a flipped-up tactic is played as though from the hand (CR 507.4a), so the opponent gets the chance to respond before it resolves",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "clauses/seed-2-05.test.ts",
+      "title": "Vast Mastabatorium (Seed 2) [0:ability:you-know-you-want-to] the damage is inflicted even when it takes my last influence: at 1 influence I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-06.test.ts",
+      "title": "Plunging Shriever (Seed 2) [0:rule] my faction cannot lose more influence than it has: from 1 influence the loss of 2 leaves 0 (CR 410.4) and I lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-2-06.test.ts",
+      "title": "Plunging Shriever (Seed 2) [0:rule] with exactly 2 influence the loss leaves me at 0 and my opponent wins",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-3-02.p1.test.ts",
+      "title": "Delicious Strawberry Flavored Death (Seed 3) [1:flipUp] 'your faction loses 5 influence' down to exactly 0: the faction's owner loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-3-02.p1.test.ts",
+      "title": "Delicious Strawberry Flavored Death (Seed 3) [1:flipUp] 'your faction loses 5 influence' with only 3 influence: influence stops at 0 (never negative)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/seed-saga-04.p2.test.ts",
+      "title": "Executive Order #6370u7 (Seed Saga) [0:rule] 'an opponent's turn' is relative to the controller: an Executive Order owned by P1 but controlled by P2 is offered to P2 at the start of P1's turn, and paid from P2's resources",
+      "category": "turn-cycle",
+      "seats": [
+        1
+      ]
+    },
+    {
+      "file": "clauses/seed-saga-04.p2.test.ts",
+      "title": "Executive Order #6370u7 (Seed Saga) [0:rule] 'you may pay 2 and pick a character': the controller (not the opponent) picks the character",
+      "category": "turn-cycle",
+      "seats": [
+        1
+      ]
+    },
+    {
+      "file": "clauses/seed-saga-04.p2.test.ts",
+      "title": "Executive Order #6370u7 (Seed Saga) [0:rule] a character that is NOT the opponent's can be picked too (my own): it is depleted, and only 'this turn' is its Restore Rule blocked: my own Restore Rule on my next turn restores it",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-04.p2.test.ts",
+      "title": "Executive Order #6370u7 (Seed Saga) [0:rule] not offered at the start of its controller's own turn (only an opponent's turn)",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-04.p2.test.ts",
+      "title": "Executive Order #6370u7 (Seed Saga) [0:rule] the picked opponent's character that was depleted stays depleted through its controller's Restore Rule this turn, and is restored normally on their next turn",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-05.p2.test.ts",
+      "title": "The Brotherhood of the Mau (Seed Saga) [2:rule] the restriction ends when the last token is removed (by its own start-of-turn ability)",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-05.p2.test.ts",
+      "title": "The Brotherhood of the Mau (Seed Saga) [3:rule] 'pick another character' is not limited to your own: an opponent's character can be picked and gains the life",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-05.p2.test.ts",
+      "title": "The Brotherhood of the Mau (Seed Saga) [3:rule] at the start of your own turn: pay X (X resources spent), remove X tokens, another character gains X life this turn",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/seed-saga-05.p2.test.ts",
+      "title": "The Brotherhood of the Mau (Seed Saga) [3:rule] the life gain lasts only this turn",
+      "category": "turn-cycle",
+      "seats": [
+        2
+      ]
+    },
+    {
+      "file": "clauses/seed-saga-05.p2.test.ts",
+      "title": "The Brotherhood of the Mau (Seed Saga) [3:rule] the picked character must be 'another' character: the Mau itself is not pickable",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-02.p2.test.ts",
+      "title": "Audacious Appraisal (Shade of the Devoured Emperor) [0:ability] a lethal X ends the game: their faction at 0 influence loses",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-05.p1.test.ts",
+      "title": "Thabbashite Armorer (Shade of the Devoured Emperor) [1:ability:ta-tameshigiri] 'lose 2 influence' with exactly 2 influence can be paid, to 0, and a faction at 0 influence loses the game (RULES.md §11); with 3 influence it just goes to 1",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-06.p3.test.ts",
+      "title": "Clockman Skydocks (Shade of the Devoured Emperor) [1:ability:cs-bday] EFFECT: the printed text has no 'this turn', so the reduction waits for the next card even across turns",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-06.p3.test.ts",
+      "title": "Clockman Skydocks (Shade of the Devoured Emperor) [2:ability:cs-overtime] EFFECT: the printed text has no 'this turn', so the reduction waits for the next card even across turns",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-08.p1.test.ts",
+      "title": "Shade of the Devoured Emperor (Shade of the Devoured Emperor) [1:rule] 'you' is its controller: a Shade I own but the opponent controls asks THEM at the end of MY turn, and the find enters under THEIR control",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/shade-of-the-devoured-emperor-08.p1.test.ts",
+      "title": "Shade of the Devoured Emperor (Shade of the Devoured Emperor) [1:rule] declining the 'may': Shade stays in play, no search, nothing revealed, decks untouched",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/ungodly-mess-01.p1.test.ts",
+      "title": "Ecto-Conduit (Ungodly Mess) [0:rule] it fires every one of my turns, not only the first",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/ungodly-mess-01.p1.test.ts",
+      "title": "Wily Circumvention (Ungodly Mess) [1:rule] the character restores normally at the restore after that (only the next one is skipped)",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/ungodly-mess-01.p1.test.ts",
+      "title": "Wily Circumvention (Ungodly Mess) [1:rule] your own depleted character skips your next RESTORE RULE, not the opponent's turn start, and restores after",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "clauses/ungodly-mess-02.p3.test.ts",
+      "title": "Bank Rolled (Ungodly Mess) [0:extraCost] exactly 2 influence can pay X=2 (leaves 0)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/ungodly-mess-02.p3.test.ts",
+      "title": "Demolition Investment (Ungodly Mess) [0:extraCost] exactly 3 influence can pay the extra cost (3 - 3 + 2 = 2)",
+      "category": "elimination"
+    },
+    {
+      "file": "clauses/ungodly-mess-03.p3.test.ts",
+      "title": "Great Mau General (Ungodly Mess) [0:rule] the gain is exactly 2, not the damage dealt (4 strength)",
+      "category": "elimination"
+    },
+    {
+      "file": "first-ed-part2-smoke.test.ts",
+      "title": "1st Edition Part 2 smoke: authored behavior drives the engine > Ambiguity Embiggener — symmetric per-turn hand/deck wheel",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "game-log.test.ts",
+      "title": "game log — a running, toggleable record of everything that happens > a pass made while a response sits on the stack names that item, not the battle window it's nested in",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "game-log.test.ts",
+      "title": "game log — a running, toggleable record of everything that happens > every battle-flow player action is logged — each pass names its window, blocks and damage assignments show",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "game-log.test.ts",
+      "title": "game log — a running, toggleable record of everything that happens > the game ending is logged — a faction at 0 influence is the whole point of the game",
+      "category": "elimination"
+    },
+    {
+      "file": "open-beta-caps.test.ts",
+      "title": "capability: preventsDefeat > a faction at 0 influence does not lose while Armored Keep is in play",
+      "category": "elimination"
+    },
+    {
+      "file": "open-beta-smoke.test.ts",
+      "title": "Open Beta smoke: authored behavior drives the engine > Free Trade Agreement — start-of-turn modal, option 3 lets each player draw",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "other-reveals.test.ts",
+      "title": "reveals the engine emits for data flags and rules > Auction House > shows the whole deck when no character turns up",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "per-card/open-beta.test.ts",
+      "title": "Open Beta — Emergency Obfuscation > at the end of your turn, if it has 2+ tokens, it is destroyed",
+      "category": "seat-swap"
+    },
+    {
+      "file": "persistence.test.ts",
+      "title": "getSaveSummary > small, indexable metadata alongside a save, without deserializing it",
+      "category": "player-count"
+    },
+    {
+      "file": "play-blocked-and-delayed-effects.test.ts",
+      "title": "getPendingDelayedEffects: Gilded Yurt > nothing is pending, then CHILLAX schedules the return: listed, logged, and gone once it fires",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "play-blocked-and-delayed-effects.test.ts",
+      "title": "getPendingDelayedEffects: Imperial Palace and Drill Instructor > Palace: paying at the end of my turn schedules the return for my next turn",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "play-blocked-and-delayed-effects.test.ts",
+      "title": "getPendingDelayedEffects: skipped Restore Rule and timed take-control > Monstrous Lassitude: my next Restore Rule is skipped, and the entry is consumed at that turn",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "play-blocked-and-delayed-effects.test.ts",
+      "title": "getPendingDelayedEffects: skipped Restore Rule and timed take-control > per-card restore flags and borrowed cards are listed with the card they touch",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "play-requirements-agreement.test.ts",
+      "title": "getPlayRequirements agrees with perform on real cards > Profane Proposal: a forced pick (their faction) (max)",
+      "category": "player-count"
+    },
+    {
+      "file": "play-requirements-agreement.test.ts",
+      "title": "getPlayRequirements agrees with perform on real cards > Profane Proposal: a forced pick (their faction) (min)",
+      "category": "player-count"
+    },
+    {
+      "file": "precon-systems-edge-cases.test.ts",
+      "title": "systems: turn-start triggers recur every one of their controller's turns, and only theirs > a self-sacrifice-for-tokens trigger and a location's optional-token trigger each fire only on their own controller's turns, across several turns",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "priority-and-responses.test.ts",
+      "title": "RULES.md §7 (CR §607) — responding to actions > CR §607.1 — an `endTurn` announcement is answered only by the opponent, and one pass ends it",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "priority-and-responses.test.ts",
+      "title": "RULES.md §7 (CR §607) — responding to actions > CR §608.1c / §609.1a — battle response windows are two-sided (attacker, then defender) > the attacker acts first, then the defender; each single pass advances",
+      "category": "bystander-responses"
+    },
+    {
+      "file": "regressions/mass-confusion-owner-of.test.ts",
+      "title": "Mass Confusion: queries while the player is not picked yet > X = 0: getPlayRequirements does not throw and asks for the player first",
+      "category": "player-count"
+    },
+    {
+      "file": "regressions/mass-confusion-owner-of.test.ts",
+      "title": "Mass Confusion: queries while the player is not picked yet > X = 1: getPlayRequirements does not throw and asks for the player first",
+      "category": "player-count"
+    },
+    {
+      "file": "regressions/mass-confusion-owner-of.test.ts",
+      "title": "Mass Confusion: queries while the player is not picked yet > X = 2: getPlayRequirements does not throw and asks for the player first",
+      "category": "player-count"
+    },
+    {
+      "file": "rules/mp-ffa.p1.test.ts",
+      "title": "MPX-seat — seat order and clockwise > [MPX-seat] with exactly two players, clockwise from either player is the other player",
+      "category": "player-count"
+    },
+    {
+      "file": "rules/r04-damage-control.p1.test.ts",
+      "title": "CR 408.3 — damage to a faction > [CR 408.3a] damage beyond the faction's influence still leaves 0 and a loss",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r04-damage-control.p1.test.ts",
+      "title": "CR 408.3 — damage to a faction > [CR 408.3a] damaging your own faction to 0 loses you the game",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r04-damage-control.p1.test.ts",
+      "title": "CR 408.3 — damage to a faction > [CR 408.3a] losing the last influence to battle damage loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r04-damage-control.p1.test.ts",
+      "title": "CR 408.3 — damage to a faction > [CR 408.3a] once the faction has 0 influence its owner loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r04-damage-control.p1.test.ts",
+      "title": "CR 408.3 — damage to a faction > [CR 408.3a] one influence short of 0 is not a loss; the next point is",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r07-zones-actions.p2.test.ts",
+      "title": "CR 306 — draw > [CR 306.4] a game in which both factions reach 0 influence at the same time is a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r07-zones-actions.p2.test.ts",
+      "title": "CR 306 — draw > [CR 306.4] only one faction reaching 0 is a win for the other player, not a draw (control)",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r08-turn-deploy.p2.test.ts",
+      "title": "CR 603.1 — the active player > [CR 603.1] the active player is the player taking the current turn, and it passes to the opponent when the turn ends",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "rules/r09-resources-thresholds.p1.test.ts",
+      "title": "[CR 202.3] influence lost by an effect (not damage) also counts toward running out",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r09-resources-thresholds.p1.test.ts",
+      "title": "[CR 202.3] more damage than the influence left also runs it out",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r09-resources-thresholds.p1.test.ts",
+      "title": "[CR 202.3] once the influence runs out you lose: damage down to exactly 0 ends the game",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r09-resources-thresholds.p1.test.ts",
+      "title": "[CR 202.3] the loser is whoever's influence ran out, including the active player's own faction",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 101 — the most important rule > [CR 101.1] a card's text overrides CR 102.1: a faction at 0 influence does not lose while a card says it does not (control: it loses without the card)",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.1] a faction whose influence is reduced to 0 loses at once, mid-turn: the opponent wins",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.1] boundary: a faction at 1 influence has not lost; dropping from 2 to 1 does not end the game, the next point does",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.1] influence lost as a COST also ends the game when it reaches 0",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.1] reducing the opponent's faction to 0 in battle wins the game; no further actions are accepted",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.1] the loser is the owner of the 0-influence faction, whoever caused it: a player who reduces their own faction to 0 loses",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.2] 'each player's faction loses N influence' written as forEachPlayer + modifyInfluence is one simultaneous loss: a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.2] a draw needs both to lose: when only one of the two reaches 0 the other wins (control)",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.2] a faction already at 0 that is shielded does not stop the other from losing: only the unshielded player loses (not a draw)",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p1.test.ts",
+      "title": "CR 102 — object of the game > [CR 102.2] if every player in the game loses at the same time, the game is a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p2.test.ts",
+      "title": "CR 414 — action loops > [CR 414.1a] the rules do not generate effects: turns, Restore and Develop recurring over and over never make a draw",
+      "category": "turn-cycle"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.1 — a faction at 0 that is raised again before its unit ends > [CR 102.1 CR 102.2] a faction taken to 0 by one effect and raised above 0 by a later effect of the same ability loses (102.1 'at any time')",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.1 — a faction at 0 that is raised again before its unit ends > [CR 102.1 CR 102.2] a faction taken to 0 by one effect and raised above 0 by a triggered ability that the ability sets off loses (102.1 'at any time')",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — a resolution parked on a player choice > [CR 102.2] a faction found at 0 before the pause is remembered across a save and restore: the restored game decides exactly as the unsaved one does",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — a resolution parked on a player choice > [CR 102.2] a triggered ability parked on its own choice after the tactic took P2 to 0: save and restore, answer, and P1 still wins (P1's loss in the trigger does not count)",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — a resolution parked on a player choice > [CR 102.2] saving and restoring while the ability waits on its choice does not change the outcome: both factions at 0 is still a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — a resolution parked on a player choice > [CR 102.2] saving and restoring while the ability waits on its choice does not change the outcome: only the opponent at 0 is still a win",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — battle damage > [CR 102.2] control: an ordinary unblocked attack that takes the defender's faction to 0 wins for the attacker",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — battle damage > [CR 102.2] control: the same battle with the attacker's faction left above 0 is a win for the attacker",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — battle damage > [CR 102.2] one batch of battle damage that takes both factions to 0 (part of the hit redirected to the attacker's own faction) is a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] a trigger that runs between two effects of one ability does not split it: effect 1 takes P2 to 0, the trigger runs, effect 2 takes P1 to 0, a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] a trigger whose unit is the first in which anyone reached 0 decides the game: it takes P1 to 0 and P2 wins",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] a triggered ability set off by the unit is its own later unit: the tactic takes P2 to 0 and the trigger takes P1 to 0, so P1 wins",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] a triggered ability that resolves after the game has ended is its own instant: the result already reached stands",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] control: an ability that takes only the controller's own faction to 0 loses the game for the controller",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] control: an ability that takes only the opponent's faction to 0 (the controller's loss leaves them above 0) is a win for the controller",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] forEachPlayer + modifyInfluence is one instruction: a draw whichever player is processed first",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] the order of the two effects does not matter: the opponent's faction first, then the controller's, is still a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "rules/r11-general-loops-bidding.p3.test.ts",
+      "title": "CR 102.2 — the unit of 'at the same time' > [CR 102.2] two consecutive influence effects of one ability that take both factions to 0 end the game in a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "seat-swap.test.ts",
+      "title": "seat swap — combat and the win condition > an attack hits the faction the opponent holds (the attacker's own), and its owner loses",
+      "category": "elimination"
+    },
+    {
+      "file": "seat-swap.test.ts",
+      "title": "seat swap — combat and the win condition > with the seats in their own places the usual owner-loses result holds",
+      "category": "elimination"
+    },
+    {
+      "file": "second-edition-smoke.test.ts",
+      "title": "2nd Edition smoke: reprinted behaviour drives the engine > Armored Keep — your faction at 0 influence does not lose the game",
+      "category": "elimination"
+    },
+    {
+      "file": "turn-queries.test.ts",
+      "title": "getAttackOptions agrees with perform({type: 'declareAttack'}) > targets leave out a faction that cannot be attacked (High Court of Demands) but keep locations",
+      "category": "player-count"
+    },
+    {
+      "file": "victory.test.ts",
+      "title": "RULES.md §1 — victory > a player at 0 influence loses the game",
+      "category": "elimination"
+    },
+    {
+      "file": "victory.test.ts",
+      "title": "RULES.md §1 — victory > both factions hitting 0 influence at once is a draw",
+      "category": "elimination"
+    },
+    {
+      "file": "victory.test.ts",
+      "title": "RULES.md §1 — victory > dropping a faction below 0 (not just to exactly 0) still ends the game",
+      "category": "elimination"
+    }
+  ]
+}

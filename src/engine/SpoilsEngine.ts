@@ -20447,7 +20447,12 @@ export class SpoilsEngine {
           choice.variables ?? {},
           false,
           false,
-          revealDef.revealFromHand.cost
+          revealDef.revealFromHand.cost,
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          choice.players
         );
         // The card is revealed from the hand (CR 605.1c: "while this card is in your hand"), then deployed.
         this.state.pendingChoice = undefined;
@@ -21833,7 +21838,8 @@ export class SpoilsEngine {
     by: PlayerScope | undefined,
     bySource: CardSelector | undefined,
     sourceId: CardInstanceId,
-    sourceControllerId: PlayerId
+    sourceControllerId: PlayerId,
+    opponentId?: PlayerId
   ): boolean {
     if (bySource) {
       const causeCard = this.currentCauseSourceId ? this.state.cards[this.currentCauseSourceId] : undefined;
@@ -21842,6 +21848,7 @@ export class SpoilsEngine {
         !this.matchesSelector(causeCard, bySource, {
           sourceId,
           controllerId: sourceControllerId,
+          ...(opponentId !== undefined ? { opponentId } : {}),
           selected: { __candidate: [causeCard.id] }
         })
       ) {
@@ -21978,7 +21985,7 @@ export class SpoilsEngine {
         const rel = rr.replaces.controlledBy ?? "any";
         const sameController = affected.controllerId === rr.controllerId;
         if ((rel === "self" && !sameController) || ((rel === "opponent" || rel === "opponents") && sameController)) continue;
-        if (!this.causeFitsReplacement(rr.replaces.by, rr.replaces.bySource, rr.sourceId, rr.controllerId)) continue;
+        if (!this.causeFitsReplacement(rr.replaces.by, rr.replaces.bySource, rr.sourceId, rr.controllerId, rr.opponentId)) continue;
       }
 
       const context = this.runtimeReplacementContext(rr, cardId);
@@ -22056,7 +22063,8 @@ export class SpoilsEngine {
             "by" in r ? r.by : undefined,
             r.event === "destroy" ? r.bySource : undefined,
             source.id,
-            source.controllerId
+            source.controllerId,
+            this.lastingOpponent(source, ability.id).opponentId
           )
         ) {
           continue;

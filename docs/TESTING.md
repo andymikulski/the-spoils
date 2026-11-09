@@ -599,7 +599,9 @@ set; `buildGame` and `clauses/_turn.ts`' `setupGame` seat the bystanders and reg
 two real players and inert bystanders would do, and nothing else:
 
 - every priority or response a bystander gets is passed; a window only bystanders were offered resolves at once (it did not
-  exist at two seats: "your opponent cannot respond");
+  exist at two seats: "your opponent cannot respond"); a bystander also does what a player with nothing in hand does when
+  asked: it passes an auction bid it cannot raise (CR 413.1b: no resources), declines a payment it is offered
+  (`mayPay`, `anyPlayerMayPay`) and takes the first option of an option prompt;
 - a bystander's own turn is played through (trigger order, Develop option if offered, end of turn) while the original
   players pass every window; a bystander keeps its opening hand;
 - "your opponent" is named for the test: the `players` requirement of a play, of the play a prompt starts (`deployForFree`,
@@ -609,42 +611,57 @@ two real players and inert bystanders would do, and nothing else:
 - continuous text that says "your opponent" and the opponent a card remembered (`rememberPlayer`) are bound to the original
   opponent for cards a fixture put straight into play (they never "started applying"), as an action would have done;
 - the engine's direct entry points `resolveEffect` / `evaluateCondition` / `queryCards` get `opponentId` set on a
-  hand-made context that names none.
+  hand-made context that names none;
+- the client queries about a play (`getPlayRequirements`, `getPlaySelectionInput`, `checkPlaySelection`) name the same
+  players the play itself would get, so a query agrees with `perform`;
+- once both original players are out and only bystanders remain, the table stops waiting (a faction at 0 does not end
+  the game while another opponent is left).
 
 Tests that build their own games straight from the engine (`createGame`, `createFactionGame`, `new SpoilsEngine` over
 hand-made state; ~20 files, mostly the `*-exercise` sets and the catalog-wide drivers) never go through a fixture and run
 at their own seat count. `SPOILS_SEATS_TRACE=1` prints what the harness does.
 
-**Result.** The runner prints, per run, the tests that pass, the failures on a card with a `"quantified"` clause in
-`data/card-tests/mp-inventory.json` (each opponent / each player / ...: expected to differ, generated from the inventory,
-matched by card name; a card counts as a whole, so the options of "at the start of each player's turn" are included), and
-every other failure by file. `todo` tests (open rules questions, unimplemented clauses) are not failures. The exit code is
-0 only when nothing outside the expected differences fails; it is not part of `npm test`.
+**Result.** The runner prints, per run, the tests that pass and the failures that are expected, of two kinds, and every
+other failure by file:
 
-**Known rules-driven differences** (the failures left outside the quantified list; each is a two-player test whose two-player
-assumption the multiplayer rules legitimately change, not an engine bug):
+- *quantified*: a failure on a card with a `"quantified"` clause in `data/card-tests/mp-inventory.json` (each opponent /
+  each player / ...: expected to differ, generated from the inventory, matched by card name; a card counts as a whole,
+  so the options of "at the start of each player's turn" are included);
+- *recorded*: a failure listed in `data/card-tests/seat-differences.json`, the checked list of rules-driven differences.
 
-- *A faction at 0 influence ends the game only when no other opponent is left* (CR 102.2, MPX-elim, RQ-mp-3): the tests that
-  lose or win by influence (`victory.test.ts`, Armored Keep, Dragon's Strategy, Siege Machine, the "faction hits 0" and "both
-  factions at 0 is a draw" cases, ~130 at +1). At +2 a game with both original players out never ends, so the harness stops
-  with "the table did not settle".
-- *The turn cycle includes the bystanders' turns*: `state.turn` counts every seat's turn (P1's second turn is turn 4, or 5),
-  "each turn" / "at the start of an opponent's turn" text also fires on a bystander's turn (MPQ-P2: any opponent's action
-  or turn satisfies it; Corpse Churner, Verrucose Brains, Executive Order, Brotherhood of the Mau, Shade of the Devoured
-  Emperor, Emergency Obfuscation), a skipped or delayed Restore Rule, "until your next turn" timing and the delayed-effect
-  queries (Brummagem Jewelry, Erotic Assassin, Wily Circumvention, Ecto-Conduit, Clockman Skydocks, Monstrous Lassitude,
-  `getPendingDelayedEffects`), and an `endTurn` announcement is answered by every other player (CR 607.1,
-  `priority-and-responses.test.ts`), the active player acts first, then the others (CR 402.2).
-- *Bidding and auctions have more bidders* (CR 413: Auction House, `auctionForCard`, the bidding rules tests): the bystander
-  is asked to bid too.
-- *Questions whose answer depends on the number of players*: "pick a player's faction" is no longer forced
-  (`regressions/mass-confusion-owner-of.test.ts`, `play-requirements-agreement.test.ts`, Profane Proposal), the save summary
-  lists three players, `MPX-seat` "with exactly two players", the game log has the bystanders' passes.
+`todo` tests (open rules questions, unimplemented clauses) are not failures. The exit code is 0 only when nothing else
+fails **and** no recorded entry is stale (an entry whose test passes now, or whose file is gone, must be removed). It is
+not part of `npm test`. At +1 and +2 seats the last run had 172 quantified and 191 / 190 recorded failures, 0 unexpected.
 
-Not yet resolved (candidates for a harness change, none shown to be an engine bug): the FLIP UP window helpers of
-`clauses/_clause.ts` (`flipUpNow` passes for the opponent and the window moves on to the bystander: Manifest, Ritual of the
-Double Monkey, Burly Assailment, 5 tests), and a "your opponents cannot respond" tactic that terminates the item it answers
-(Tactician Vacation, 2 tests: at two seats the window stays open after the play, here `advanceFlow` closes it).
+**Recorded differences** (`data/card-tests/seat-differences.json`). The file has `categories` (an id -> the rule `atoms`
+that make the two-player assertion differ, and a one-sentence `reason`) and `tests`: one entry per test with the `file`
+(relative to `src/engine/__tests__`), the full `title` (describe titles and test title joined with ` > `), its
+`category`, and `seats` (`[1]` or `[2]`) when the test differs only at one table size. A test that is not an
+engine bug and whose two-player assertion the multiplayer rules legitimately change goes in here; an engine bug is
+fixed instead. The categories (+1 / +2 seats):
+
+- `elimination` (130 / 130; MPX-win, MPX-elim, MPX-simul): a faction at 0 influence eliminates only its owner. While another
+  opponent is left the game does not end, so tests that lose or win by influence (`victory.test.ts`, Armored Keep,
+  Dragon's Strategy, the "faction hits 0" and "both factions at 0 is a draw" cases) do not see a winner or a draw.
+- `turn-cycle` (36 / 35; MPX-turn, MPX-offturn): turns pass through the bystanders' seats. `state.turn` counts every
+  seat's turn, text that fires at the start or end of each turn or of an opponent's turn also fires on a bystander's
+  turn (Corpse Churner, Verrucose Brains, Executive Order, The Brotherhood of the Mau, Shade of the Devoured Emperor,
+  Free Trade Agreement), and a delayed effect or skipped Restore Rule counted in turns lands later.
+- `bystander-responses` (7 / 7; MPX-respond, MPX-priority, MPX-endturn): every player in the game other than the
+  controller may respond, so an `endTurn` is answered by every other player, a log lists the bystander's passes, and
+  after everyone has passed the priority holder is the last seat (the FLIP UP windows of Manifest, Ritual of the Double
+  Monkey, Burly Assailment).
+- `silenced-opponent` (9 / 9; MP 2, MPX-respond): "your opponent cannot respond" silences the one opponent selected for
+  that text (`noResponse: "opponent"`), so a window opens for the other players.
+- `player-count` (8 / 8; MPX-seat, MPX-select, MPX-vocab-players): the answer depends on how many players there are:
+  the seat list, the players of a save summary, the candidates of a "pick an opponent" or "a player's faction" (Profane
+  Proposal, Mass Confusion: no longer forced), the factions that can be attacked (High Court of Demands).
+- `seat-swap` (1 / 1; MPX-swap): Emergency Obfuscation's swap applies for a card a test put straight into play once its
+  opponent is selected (at two seats it never starts applying), and changes whose turn it ends.
+
+Bugs the replay found (fixed, with tests in `rules/mp-ffa.p19.test.ts`, which run at 3 and 4 seats): the rehearsal of a
+reveal-from-hand deploy dropped the opponent the answer names, and a destroy replacement scoped to an opponent's cards
+(`bySource: { controller: "opponent" }`) judged the cause without the opponent it had selected.
 
 ## Fuzz: random games at two to six seats
 

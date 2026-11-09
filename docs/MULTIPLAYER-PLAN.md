@@ -470,8 +470,11 @@ detects every player-word mutation of an `mp` clause.
 ## Phase 6 — Running the existing tests at 3 and 4 seats
 
 Status: the bystander replay (`npm run test:seats`) and the fuzz at 2–6 seats
-(`fuzz-seats.test.ts`, with its fixed CI seeds) are built and pass. The list of
-expected bystander differences is in progress.
+(`fuzz-seats.test.ts`, with its fixed CI seeds) are built and pass. Every
+bystander difference beyond the generated quantified list is recorded with its
+rule in `data/card-tests/seat-differences.json` (elimination, turn cycle,
+bystander responses, the silenced opponent, player count, seat swap); the run
+fails on any other difference and on a stale entry.
 
 1. **Bystander replay.**
    - Run the whole existing per-card, clause and engine suite with
@@ -480,8 +483,11 @@ expected bystander differences is in progress.
      bystander gets, and picks the original opponent whenever a
      `chooseOpponent` step comes up.
    - Under those rules, the result must equal the two-player result for every
-     test except those touching `"quantified"` clauses. That list of expected
-     differences is generated from the inventory, not picked by hand.
+     test except those touching `"quantified"` clauses (that list is generated
+     from the inventory) and the tests recorded in
+     `data/card-tests/seat-differences.json`: one entry per test, each with the
+     rule atoms that make the two-player assertion differ. The runner fails on
+     anything else and on a recorded entry that now passes.
    - Any other failure is an engine bug and gets fixed at its root.
    - This turns all ~4,700 existing two-player tests into 3- and 4-seat
      regression tests without editing them.

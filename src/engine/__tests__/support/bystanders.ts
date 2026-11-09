@@ -11,13 +11,15 @@
 //
 // The harness (installed on `SpoilsEngine.prototype.perform` for every engine registered here) does what a table of
 // two real players and inert bystanders would do, and nothing else:
-//  * every priority or response a bystander gets is passed;
+//  * every priority or response a bystander gets is passed; a bid it cannot raise is passed (CR 413.1b), a payment it
+//    is offered is declined and an option prompt takes its first option;
 //  * a bystander's own turn is played through (restore / develop prompts, nothing deployed, end of turn), and while it
 //    runs the original players pass every response window they are offered;
 //  * whenever a player has to name "your opponent" (a `players` requirement of a play, a `choosePlayer` prompt, the
 //    target of an attack) and, among the candidates, only one is not a bystander, that player is named: it is the
 //    question a two-player game never asked (one opponent left = nothing to choose). A choice that still has two or
-//    more original-pair candidates is the test's own to answer, as at two seats.
+//    more original-pair candidates is the test's own to answer, as at two seats. The client queries about a play
+//    (`getPlayRequirements`, `getPlaySelectionInput`, `checkPlaySelection`) name the same players the play would get.
 
 import { SpoilsEngine as EngineClass } from "../../SpoilsEngine.js";
 import type { CardDefinition, PlayerId, SpoilsEngine } from "../../../engine.js";
@@ -101,7 +103,12 @@ const trace = (what: string, detail: unknown): void => {
   if (process.env.SPOILS_SEATS_TRACE) console.error(`[bystanders] ${what} ${JSON.stringify(detail)}`);
 };
 
+/** The players an elimination was traced for, and the engines whose end of game was. */
+const seenEliminated = new WeakSet<object>();
+
 let installed: Perform | undefined;
+/** The engine's `getPlayRequirements` as it was before the harness wrapped it. */
+let requirementsOf: (this: SpoilsEngine, action: never) => unknown;
 /** The engine's `perform` as it was before the harness wrapped it. */
 const inner = (): Perform => installed!;
 function installHarness(): void {
@@ -129,6 +136,25 @@ function installHarness(): void {
     const table = tableOf(this);
     return check.call(this, table ? namePlayers(this, table, action as Loose) : action);
   };
+  // What the client is asked for a play names the same players the play itself would get.
+  const requirements = (proto as unknown as { getPlayRequirements: typeof requirementsOf }).getPlayRequirements;
+  requirementsOf = requirements;
+  (proto as unknown as { getPlayRequirements: typeof requirementsOf }).getPlayRequirements = function (this: SpoilsEngine, action: never): unknown {
+    const table = tableOf(this);
+    return requirements.call(this, table ? (namePlayers(this, table, action as Loose) as never) : action);
+  };
+  // The picks of a play name the same opponent the play itself would get (the input carries the play they belong to).
+  const selectionInput = (proto as unknown as { getPlaySelectionInput: (this: SpoilsEngine, ...args: unknown[]) => { play?: Loose } }).getPlaySelectionInput;
+  (proto as unknown as { getPlaySelectionInput: typeof selectionInput }).getPlaySelectionInput = function (this: SpoilsEngine, ...args: unknown[]) {
+    const input = selectionInput.apply(this, args);
+    const table = tableOf(this);
+    return table && input.play ? { ...input, play: namePlayers(this, table, input.play) } : input;
+  };
+  const checkSelection = (proto as unknown as { checkPlaySelection: (this: SpoilsEngine, action: unknown, ...rest: unknown[]) => unknown }).checkPlaySelection;
+  (proto as unknown as { checkPlaySelection: typeof checkSelection }).checkPlaySelection = function (this: SpoilsEngine, action: unknown, ...rest: unknown[]) {
+    const table = tableOf(this);
+    return checkSelection.call(this, table ? namePlayers(this, table, action as Loose) : action, ...rest);
+  };
   proto.perform = function (this: SpoilsEngine, action: unknown): void {
     const table = tableOf(this);
     if (!table) {
@@ -141,6 +167,16 @@ function installHarness(): void {
     trace("perform", { type: named.type, playerId: named.playerId, kind: (named.choice as Loose | undefined)?.kind });
     original.call(this, named);
     settle(this, table, original);
+    if (this.state.winner !== undefined && !seenEliminated.has(this)) {
+      seenEliminated.add(this);
+      trace("game over", { winner: this.state.winner });
+    }
+    for (const player of Object.values(this.state.players)) {
+      if (player.eliminated && !seenEliminated.has(player)) {
+        seenEliminated.add(player);
+        trace("eliminated", { player: player.id, over: this.state.winner !== undefined });
+      }
+    }
     trace("settled", {
       active: this.state.activePlayerId,
       pending: this.state.pendingChoice ? { kind: this.state.pendingChoice.kind, playerId: (this.state.pendingChoice as unknown as Loose).playerId } : null,
@@ -195,7 +231,7 @@ function fillPlayers(engine: SpoilsEngine, table: Table, action: Loose): Loose {
   for (let round = 0; round < 6; round++) {
     let requirements: Array<{ kind: string; choices?: Array<{ id: string; candidates: PlayerId[] }> }>;
     try {
-      requirements = engine.getPlayRequirements(named as never) as never;
+      requirements = requirementsOf.call(engine, named as never) as never;
     } catch {
       return named;
     }
@@ -290,6 +326,12 @@ function answerFor(engine: SpoilsEngine, table: Table, pending: Loose, bystander
     const declarations = pending.declarations as Array<{ id: string }>;
     return declarations.every(declaration => picks[declaration.id] !== undefined) ? { kind, selected: picks } : undefined;
   }
+  // An inert bystander has no resources: it passes a bid it cannot raise (CR 413.1b) and declines a payment it is offered.
+  if (table.bystanders.has(owner)) {
+    if (kind === "auctionBid") return { kind, bid: 0 };
+    if (kind === "mayPay" || kind === "anyPlayerMayPay") return { kind, pay: false };
+    if (kind === "chooserSelectsOption" && !bystanderTurn) return { kind, index: 0 };
+  }
   if (!bystanderTurn) return undefined;
   if (kind === "orderTriggers") {
     const triggers = pending.triggers as Array<{ abilityId?: string }>;
@@ -310,6 +352,8 @@ function settle(engine: SpoilsEngine, table: Table, inner: Perform): void {
   for (let guard = 0; guard < 500; guard++) {
     const state = engine.state;
     if (state.winner) return;
+    // Both original players are out (MPX-elim) and only inert bystanders remain: nothing is left for the table to wait for.
+    if (Object.values(state.players).every(player => player.eliminated || table.bystanders.has(player.id))) return;
     const setup = state.setup as { phase: string; order?: PlayerId[]; currentIndex?: number };
     if (setup.phase !== "complete") {
       // A bystander keeps the opening hand (no mulligan); the other setup steps are the test's, as at two seats.
@@ -322,6 +366,7 @@ function settle(engine: SpoilsEngine, table: Table, inner: Perform): void {
       return;
     }
     const bystanderTurn = table.bystanders.has(state.activePlayerId);
+    if (bystanderTurn) trace("bystander turn", state.activePlayerId);
     const pending = state.pendingChoice as unknown as Loose | undefined;
     if (pending) {
       const choice = answerFor(engine, table, pending, bystanderTurn);
@@ -353,6 +398,7 @@ function settle(engine: SpoilsEngine, table: Table, inner: Perform): void {
       continue;
     }
     if (bystanderTurn && !state.battle) {
+      trace("plays the turn of", state.activePlayerId);
       inner.call(engine, { type: "endTurn", playerId: state.activePlayerId });
       continue;
     }
