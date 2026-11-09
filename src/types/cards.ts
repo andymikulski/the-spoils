@@ -188,7 +188,7 @@ export interface FactionDefinition {
    * controller could use an ability (RULES.md §3.6 / FAQ). E.g. The Open
    * R&D Faction's "DRAW — COST: Pay 3. EFFECT: Draw a card." Merged with
    * any `CardDefinition.behavior.abilities` for ability lookup. An ability
-   * with `usableBy: "anyPlayer"` is offered to the opponent too (The
+   * with `usableBy: "anyPlayer"` is offered to every opponent too (RQ-mp-6; The
    * Knitting Coalition's "Both players may use this ability").
    */
   abilities?: ActivatedAbility[];

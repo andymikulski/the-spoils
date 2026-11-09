@@ -148,10 +148,16 @@ export type GameAction =
       type: "declareAttack";
       playerId: PlayerId;
       attackerIds: CardInstanceId[];
-      /** Omitted: the attack defaults to the opponent's faction (CR 608.1a). */
+      /**
+       * Omitted: the attack defaults to "your opponent's faction" (CR 608.1a): the one opponent, or with two or more
+       * opponents the faction of the opponent selected in `players.opponent` (MPX-attack-default (2)). With two or more
+       * opponents and neither a target nor a selection the announcement is refused (MPX-attack-default (3)).
+       */
       target?:
         | { type: "faction"; playerId: PlayerId }
         | { type: "card"; cardId: CardInstanceId };
+      /** `opponent`: the attacker's selected opponent for this attack (MP 2), whose faction an untargeted attack defaults to. */
+      players?: PlayerAnswers;
     }
   | {
       type: "declareBlockers";

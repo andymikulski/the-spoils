@@ -13,7 +13,8 @@ collectible card game.
   state back. It has no UI, no DOM, and no I/O.
 - **Checked against the printed cards and the official rules**: 2,255 of
   2,257 printings play exactly as printed. The other two are the Showdown
-  factions, whose multiplayer-only text isn't supported. Roughly 43,000 tests
+  factions, whose Showdown-only text (Hero deck, Temptation Pile) isn't
+  supported. Roughly 46,000 tests
   cover every printed clause of every card and every rule in the
   Comprehensive Rules v2.5 and the Rules FAQ v2.0.
 
@@ -98,6 +99,85 @@ import seed2 from "the-spoils/sets/seed-2";
 const catalog = [...seed, ...seed2];
 console.log(CARD_SETS.map((set) => set.id)); // ["1st-edition", …, "decade-of-deckadence"]
 ```
+
+## More than two players
+
+The engine runs free-for-all games of two or more players: everyone plays
+against everyone else, a player whose faction reaches 0 influence is eliminated,
+and the last player left wins. `createFactionGame` takes the players in seat
+order (the order is the clockwise turn order); `createTwoPlayerFactionGame` is
+the same call with two seats, and a two-player game plays exactly as it always
+has.
+
+```ts
+import { createFactionGame, type CardDefinitionId } from "the-spoils";
+import { CARD_CATALOG } from "the-spoils/data";
+
+const deckA: CardDefinitionId[] = [/* … */];
+const deckB: CardDefinitionId[] = [/* … */];
+const deckC: CardDefinitionId[] = [/* … */];
+
+const game = createFactionGame(CARD_CATALOG, {
+  players: [
+    { id: "p1", name: "Player 1", deckDefinitionIds: deckA },
+    { id: "p2", name: "Player 2", deckDefinitionIds: deckB },
+    { id: "p3", name: "Player 3", deckDefinitionIds: deckC }
+  ],
+  seed: 7
+});
+
+console.log(game.getSeats()); // ["p1", "p2", "p3"]
+console.log(game.getOpponents("p1")); // ["p2", "p3"], clockwise from p1's left
+
+// A faction whose setup names "your opponent" (the Union of Unextraordinary
+// Miners) asks its player first, as a `choosePlayer` pending choice.
+if (game.state.pendingChoice?.kind === "choosePlayer") {
+  const { playerId, candidates } = game.state.pendingChoice;
+  game.perform({
+    type: "resolvePendingChoice",
+    playerId,
+    choice: { kind: "choosePlayer", playerId: candidates[0]! }
+  });
+}
+// ...then mulligans, in seat order from the first player, as in the quick start.
+```
+
+- **Choosing "your opponent".** A card that says "your opponent" means one
+  opponent, selected by its controller for that block of rules text (the
+  Multi-Player Guidelines, MP 2). A played card or an activated ability takes it
+  as part of the action: `players: { opponent: "p3" }` on `playCard`,
+  `activateAbility` or `flipUp` (`PlayerAnswers`). Other players a card names
+  ("a player that controls more resources than you") go in the same record,
+  keyed by the id of the card's player choice. `getPlayRequirements` lists what
+  is still missing, as a `{ kind: "players", choices }` requirement ahead of
+  any pick; with one opponent left it is never listed and nothing is needed.
+  Triggers, replacements and lasting text ask through a `choosePlayer` pending
+  choice (`PendingChoosePlayerChoice`: `playerId` is who answers, `candidates`
+  is who they may name); the answer is `resolvePendingChoice` with `{ kind:
+  "choosePlayer", playerId }`.
+- **Seats and turns.** `getSeats()` is the clockwise order, eliminated players
+  included; `getPlayersInSeatOrder(from?)` and `getOpponents(playerId)` list the
+  players still in the game; `isEliminated(playerId)` and
+  `state.players[id].eliminated` say who is out. The turn passes to the next
+  seat still in the game. Every other player may respond to an action, one at a
+  time clockwise, and an action resolves after all of them have passed
+  (`getFlowView().responseWindow.priorityPlayerId` is whose turn it is to
+  decide). An attack must name its `target` once there are two or more
+  opponents.
+- **Elimination and the end of the game.** When a faction reaches 0 its owner
+  is eliminated at the end of that effect or batch of damage: their cards leave
+  the game, cards they controlled go back to their owners, and they take no more
+  actions. The game goes on until one player is left, who is
+  `getFlowView().winner` (`state.winner`), or until every player left loses at
+  the same time, which is the string `"draw"`. A `playerEliminated` event is
+  emitted for each player who drops out.
+- **Hidden information.** `redactStateFor`, `redactFlowViewFor` and
+  `redactLogFor` work at any table size: a viewer sees only their own hand and
+  face-down cards, and a player who has been eliminated sees what a spectator
+  sees. Saves round-trip mid-game at any seat count.
+
+RULES.md §15 has the multiplayer rules with citations; Showdown (Villain / Hero)
+and the epic deck rules are not supported.
 
 ## Driving a game
 

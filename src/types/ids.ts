@@ -85,7 +85,7 @@ export type Restriction =
   /**
    * "Your opponents cannot pick this card." — like `cannotBePicked`, but only
    * for a picker who isn't the card's controller; its own controller can
-   * still pick it. Martial Artist, Martial Arts Trainee, Camouflaged Urchin.
+   * still pick it. Camouflaged Urchin (Ungodly Mess).
    */
   | "cannotBePickedByOpponents"
   /**

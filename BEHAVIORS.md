@@ -150,8 +150,9 @@ per-category sections below and in `src/types/*`.
   negative) to the numeric cost paid, floored at 0, evaluated in the play
   context (so it can read EXTRA-COST `selectionCount`s). Opportunistic
   Pirate.
-- **`behavior.noResponse: true`** — the tactic resolves with no opponent
-  response window. Swindle.
+- **`behavior.noResponse: true | "opponent"`** — the tactic resolves with no
+  response window (`true`, Swindle), or only the block's opponent may not
+  respond (`"opponent"`; see "Player vocabulary" below).
 - **`revealFromHand` gains `threshold?` + `effects?`** — an icon gate + rider
   effects for a FINE PRINT reveal deploy (Unexpected Codicil).
 
@@ -1194,17 +1195,19 @@ rehearses them on a cloned state) — no partial payment; the numeric
   the loop and it resumes after the answer; each pass has its own pick scope
   (`selected` entries made inside a pass are gone for the next). `maxPasses`
   (default 1000) is a loop guard that throws instead of hanging.
-- **`forEachPlayer`** — `{ effects }` — runs `effects` once per player
-  (turn order, active first) with `controller`/`owner` rebound; nested
-  choosers pause per player.
+- **`forEachPlayer`** — `{ players?, except?, effects }` — runs `effects`
+  once per player (turn order, active first, then clockwise, players still in
+  the game) with `controller`/`owner` rebound; nested choosers pause per
+  player. `players` picks who (default every player); see "Player
+  vocabulary" below.
 - **`nameValue`** — `{ chooser, valueKind: "subtype" | "cardName", storeAs }`
   — pauses for `chooser` to name a string, stored on the source card's
   `namedValues[storeAs]` and read by `CardSelector.subtypeVar`.
-- **`mayPay`** — `{ player, costs, effects, elseEffects? }` — "you may pay
+- **`mayPay`** — `{ player | offerTo, costs, effects, elseEffects? }` — "you may pay
   <costs>. If you do, <effects>; otherwise <elseEffects>." Auto-declines if
   `costs` are unaffordable. Use `costs: []` for a bare "you may" yes/no.
   `player` need not be the ability's controller — "that player may pay 2"
-  (`player: { "type": "controllerOf", ... }`), "any opponent may pay 3"
+  (`player: { "type": "controllerOf", ... }`), "your opponent may pay 3"
   (`player: "opponent"`) — and the payment comes from *their* resources,
   while `effects` / `elseEffects` still resolve under the ability's
   controller. "EXTRA COST: that player may pay N ... then terminate this
@@ -1424,9 +1427,13 @@ to touch when just authoring card data.)
 ## PlayerRef (`src/types/expressions.ts`)
 
 ```ts
-PlayerRef = "controller" | "owner" | "activePlayer" | "opponent"
+PlayerRef = "controller" | "owner" | "activePlayer"
+          | "opponent" | "opponents" | "acting"
           | { type: "player"; id: PlayerId }
+          | { type: "chosenPlayer"; id: string }
+          | { type: "rememberedPlayer"; key: string }
           | { type: "ownerOf"; target: TargetRef }
+          | { type: "controllerOf"; target: TargetRef }
 ```
 
 `"controller"`/`"owner"` resolve relative to `ResolutionContext.
@@ -1435,7 +1442,143 @@ taken-control card). `{ type: "ownerOf", target }` resolves to whoever owns
 a *targeted* card — e.g. "look at the top 5 cards of any one deck" is a
 character/faction-style target declaration for which deck, then
 `lookAndReorder`'s `player` is `{ "type": "ownerOf", "target": { "type":
-"selected", "id": "<declarationId>" } }`.
+"selected", "id": "<declarationId>" } }`; `controllerOf` is the card's
+current controller. The multiplayer words are below.
+
+## Player vocabulary (`src/types/expressions.ts`, `cards.ts`, `effects.ts`)
+
+A game has two or more players. A block of rules text is one activated
+ability, one triggered ability, one paragraph of continuous text or one
+card's effect text; the **block's opponent** is the one other player its
+"your opponent" / "both players" mean (RULES.md §15.5). With exactly one
+opponent left every form below reads that player and nothing is asked or
+stored, so two-player data needs no change. How each printed phrase maps to
+these forms is in [docs/CARD-DATA.md](docs/CARD-DATA.md).
+
+**Player words**
+
+| Form | Reads as |
+|---|---|
+| `"opponent"` (`PlayerRef`, `PlayerScope`) | The block's opponent. Also the word "opponent" inside `anyOpponent`, `opponentCondition` and inside `forEachPlayer` `"pair"`, where it is bound to the player being judged or the other of the pair. |
+| `"opponents"` | Every opponent still in the game. As an effect's `player` the effect happens once to each opponent (active player first, then clockwise); in a selector `controller` / `owner`, a scope or a condition it reads as "any opponent". Not valid as a `chooser` or a target's `player` (the engine refuses both). |
+| `"acting"` | The acting player of an `opponentFrom: "acting"` block: the player of the triggering event, else the active player. Also a valid selector `controller` / `owner` (`SelectorPlayer`). |
+| `{ type: "chosenPlayer", id }` | The player a `playerChoices` entry or a `choosePlayer` effect named `id`. A player choice is not a pick (CR 405): no cards are targeted and nothing triggers on "picked". |
+| `{ type: "rememberedPlayer", key }` | The player a `rememberPlayer` effect stored on the source card under `key`, in this or an earlier resolution. With exactly one opponent left a card that stored nothing reads that opponent. |
+| `"self"` / `"opponent"` / `"opponents"` / `"any"` | `PlayerScope`, the player word of selectors, `searchTax.player`, `preventsAttackOnFaction.player` and similar. `SelectorPlayer` also takes `"acting"` and the references `controllerOf`, `ownerOf`, `chosenPlayer`, `player` (a reference that names nobody yet matches nothing). |
+
+**Iterating and choosing players (effects)**
+
+- `forEachPlayer` — `{ players?, except?, effects }`. `players`: `"all"`
+  (default, every player), `"opponents"` ("each opponent"), `"others"` ("each
+  other player"), `"pair"` (the controller and the block's opponent, "both
+  players"; inside it `"opponent"` is the other of the two) or
+  `"selfAndOpponents"` (the controller and every opponent: The Knitting
+  Coalition). `except: PlayerRef` leaves one player out ("each other player's
+  faction gains X" after a pick: `players: "all"`, `except` the picked
+  player's owner; Gideon's Legacy). The order is the active player first,
+  then clockwise, players still in the game. Inside it `controller` /
+  `owner` are the player of that iteration.
+- `choosePlayer` — `{ id, from: "opponents" | "players", chooser?, condition? }`.
+  Pauses (a `choosePlayer` pending choice, `bind: { type: "chosenPlayer", id }`)
+  for `chooser` (default the controller) to name one player; later effects read
+  it as `{ type: "chosenPlayer", id }`. `from` is relative to the chooser, so a
+  block written from another player's point of view names `chooser`. With one
+  candidate nothing is asked.
+- `condition` on a player choice keeps only the candidates for whom it holds,
+  judged once per candidate with that candidate bound as `{ type:
+  "chosenPlayer", id: "__candidate" }`. A sole qualifier is taken without
+  asking. When none qualifies a `choosePlayer` names nobody (and every effect
+  that reads its id does nothing; `ResolutionContext.unchosenPlayers`) and a
+  `playerChoices` entry makes the card unplayable. Playability and cost
+  reductions judge every way the players could be named and take the best
+  case.
+- `rememberPlayer` — `{ key, player }`: stores the player on the source card
+  for the rest of the game; setting the key again replaces it.
+- `mayPay` — `{ player | offerTo, ... }`. `offerTo: "opponents"` (with no
+  `player`) is "any opponent may pay": the offer goes to each opponent in turn,
+  clockwise from the controller's left, skipping one who cannot pay; the first
+  to pay settles it and nobody after them is asked; otherwise `elseEffects`.
+  The paid-for effects are the controller's whoever paid. It selects no
+  opponent for the block. `anyPlayerMayPay` — `{ costs, effects, elseEffects? }`
+  is "any player may pay": the active player first, then clockwise; the first
+  to pay resolves `effects` under themselves, and `elseEffects` resolve under
+  the controller when everyone declines.
+- `partitionAndPick.opponent` — omitted it is the block's opponent ("Both
+  players"); `{ type: "chosenPlayer", id }` for "You and an opponent".
+- `scheduleEffect` `when: "startOfOpponentNextTurn"` — fires on that block
+  opponent's own next turn, no other opponent's.
+
+**Declaring players with an action**
+
+- `playerChoices?: { id, from: "opponents" | "players", condition? }[]` on an
+  activated ability, `behavior.onPlay` and each `modes[]` entry: players named
+  with the action, before any pick, through the action's `players` answers
+  (`PlayerAnswers`, `{ [id]: PlayerId }`). The block's own opponent is the
+  implicit answer `players.opponent`.
+- `getPlayRequirements` lists `{ kind: "players", choices }` first, and only
+  when a player is still to be named: `opponent` while the controller has two
+  or more opponents and the block names one, and every `playerChoices` entry
+  with two or more candidates.
+
+**How a block's opponent is bound: `opponentFrom`**
+
+`AbilityBase.opponentFrom?: "choose" | "event" | "battle" | "respondedTo" |
+"acting"` (on every ability type). Written, the field wins; absent, the
+engine derives it from the data (a trigger condition that names the opponent
+through the event's player is `"event"`, a block only a battle can set off is
+`"battle"`).
+
+| Value | The block's opponent is |
+|---|---|
+| `"choose"` (default) | Selected by the controller. A played card or activated ability takes it from `players.opponent`, before targets. A trigger asks through a `choosePlayer` pending choice (`bind: { type: "triggerOpponent" }`) as it is about to be followed; a replacement as it applies. Continuous text asks when it starts applying, keeps it on the card (`CardInstance.boundOpponents`), and asks again when that player is eliminated or control of the card changes. |
+| `"event"` | The opponent whose event met the trigger's condition (`eventPlayerIs "opponent"`, `eventCardControlledBy`): any opponent's action triggers it and nobody is asked. |
+| `"battle"` | The other side of the battle the controller is in: the defender if the controller attacks, the attacker if the controller defends. |
+| `"respondedTo"` | The controller of the card or ability being responded to (Mistaken Identity). |
+| `"acting"` | Text from another player's point of view (Free Trade Agreement, Obscene Communion, Meat of the Mountain): the acting player selects one of *their own* opponents. In such a block `"opponent"` is that selection, `"acting"` is the acting player and `forEachPlayer` `"pair"` is the acting player plus the selection. |
+
+The binding lives on `ResolutionContext` (`opponentId`, `actingPlayerId`,
+`chosenPlayers`) and is copied onto every lasting record the block creates
+(delayed effects, modifiers, area modifiers, player effects, restrictions,
+replacements), so it keeps reading the same player after the block finishes;
+a record is re-selected when its player is eliminated. These fields are stored
+only at tables of three or more.
+
+**Conditions and lasting text that read opponents**
+
+- `{ type: "anyOpponent", condition }` — "an opponent ...": true when
+  `condition` holds for at least one opponent, each judged on their own with
+  `"opponent"` meaning that opponent (Nefarious Horror). It never makes the
+  block select an opponent.
+- `defendingPlayerIs { player }` — true in a battle whose defender is that
+  player ("cannot be blocked by that player's characters").
+- `RestrictionGrantDefinition.opponentCondition` — with
+  `cannotBePickedByOpponents`: the restriction binds exactly the opponents
+  for whom the condition holds, each judged on their own (Omahkapi'si
+  Pi'kssii).
+- Restrictions: `cannotBePickedByOpponents` / `cannotBeTakenControl` cover
+  every opponent; the singular `cannotBePickedByOpponent` /
+  `cannotBeTakenControlByOpponent` read the block's opponent.
+  `preventsAttackOnFaction.attacker: "opponent"` stops only that opponent
+  (omitted, every attacker but the defender).
+- `costModifiers[].affects` and `pickTax[].affects` take a `PlayerRef`;
+  `"opponents"` makes each opponent pay. `abilityCostModifiers` scope
+  `"opponentCharacters"` is every opponent, `"chosenOpponentCharacters"` the
+  block's opponent.
+- `noResponse: "opponent"` — only the block's opponent may not respond to the
+  tactic; every other player may. It is selected with the action like any
+  "your opponent". `true` blocks everyone.
+
+**Faction fields**
+
+- `faction.perExtraOpponent?: { influence?, startingResources?, developUses? }`
+  — what is added for each opponent beyond the first ("X is the number of
+  opponents you have at the start of the game", The Evil Alliance: 25 + 10 per
+  extra opponent, 2 + 1 staples, one Develop Rule use + 1). X is counted by
+  the seats when the game starts and is never lowered by an elimination.
+- `overridesOpponent` (The Knitting Coalition) and `usableBy: "anyPlayer"`
+  apply to **every** opponent, not a selected one.
+- `setup.startingResources.matchOpponentCount` selects the opponent at setup
+  (see "Faction cards").
 
 ## TargetRef / CardSelector / TargetDeclaration
 
@@ -2377,3 +2520,4 @@ Six more read-only queries. None changes what `perform` accepts or says: the pic
 - **`previewBlockOptions(attackerPlayerId, attackerIds, target) -> BlockOptions | undefined`** (Q5): `getBlockOptions()` for an attack that has not been declared. It declares the attack on a probe with `declareAttack` itself (all its checks, the attack tax, anything the declaration triggers), lets both sides pass on the response windows, and reads `getBlockOptions` at the blocking step. `undefined` when `declareAttack` would refuse the declaration, or when the probe does not reach the blocking step (the battle ends first, or a prompt has to be answered). It is the board as it stands: it is not asking "if it were their turn", so a non-active player gets `undefined`. The live game, its `rngState` and its log are untouched.
 - **`DeckConstructionIssue.count` / `.max`** (Q6): a `copyLimit` issue carries how many copies the decklist holds and the `getMaxCopies` limit (always a number there). Other kinds carry neither.
 - **Refactors behind them** (behavior-preserving; every existing suite is the proof): `validateTargetDeclarations` is `assertPicksDifferent` + `resolveImpliedPicks` + `validateDeclarationPick` per declaration; the `discard` and `moveSelected` cases of `payCost` share `assertCostPickSelection` (same messages); `getPickCandidates` and `checkSelection` share `rehearseCostsBefore`; `collectPlayRequirements` takes its block from `playBlockOf`; `getSelectionRequirements` and `checkSelection` share `selectionBasis`; `playResourceCard` and `getResourcePlayFaces` share `resourceFaceProblem`; `mulligan` and `getMulliganLimit` share `hasReplaceAnyMulligan`.
+- **Seats and elimination:** `getSeats()` (the clockwise seat order, eliminated players included), `getPlayersInSeatOrder(from?)` and `getOpponents(playerId)` (players still in the game, clockwise), `isEliminated(playerId)`. `PlayerState.eliminated` (`{ turn }`) is set on a player who has lost; `GameState.winner` is the last player left or `"draw"`. See RULES.md §15.

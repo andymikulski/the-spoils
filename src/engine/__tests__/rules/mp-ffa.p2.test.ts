@@ -184,4 +184,30 @@ describe("MPX-attack-default — no default target with two or more opponents", 
     one.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [one.id("atk")] });
     assert.equal(one.engine.state.battle?.defenderPlayerId, P3, "control: the only opponent left is the default");
   });
+
+  for (const seats of [3, 4] as const) {
+    rule(["MPX-attack-default", "CR 608.1a", "MP 2"], `${seats} seats: an attack naming no target defaults to the faction of the opponent the attacker selects`, () => {
+      const build = () =>
+        buildGame({ ...plainSeats(seats), cards: [{ key: "atk", def: character({ name: "Attacker", strength: 1, life: 2, speed: 1 }), owner: P1, zone: "play" }] });
+      for (const chosen of [P2, P3, P4].slice(0, seats - 1)) {
+        const game = build();
+        game.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [game.id("atk")], players: { opponent: chosen } });
+        const battle = game.engine.state.battle;
+        assert.equal(battle?.defenderPlayerId, chosen, `the selected opponent ${chosen} defends`);
+        assert.deepEqual(battle?.target, { type: "faction", playerId: chosen }, `the target is ${chosen}'s faction`);
+      }
+      const self = build();
+      refused(
+        () => self.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [self.id("atk")], players: { opponent: P1 } }),
+        "the attacker cannot select themself",
+        /selected opponent/
+      );
+      const mismatch = build();
+      refused(
+        () => mismatch.engine.perform({ type: "declareAttack", playerId: P1, attackerIds: [mismatch.id("atk")], target: { type: "faction", playerId: P2 }, players: { opponent: P3 } }),
+        "a selection that is not the attacked player is refused",
+        /selected opponent/
+      );
+    });
+  }
 });

@@ -439,6 +439,11 @@ id counters, from effect lists that now pause in printed order).
 
 ## Phase 5 — Multiplayer clause tests (parallel, one set per agent)
 
+Status: done. Every `mp` clause of every distinct card has its 3-seat test
+(`clauses/mp/`, 84 files), quantified clauses also a 4-seat one, the coverage
+gate in `clauses/_coverage.test.ts` enforces it, and `card-tests mutate`
+detects every player-word mutation of an `mp` clause.
+
 - **Manifest.** Each clause in `clauses.json` gets an `mp` flag, taken from
   the inventory:
   - set if the clause has a printed player phrase, or player words in its
@@ -463,6 +468,10 @@ id counters, from effect lists that now pause in printed order).
   opponent"). Every mutation of an `mp` clause must be detected.
 
 ## Phase 6 — Running the existing tests at 3 and 4 seats
+
+Status: the bystander replay (`npm run test:seats`) and the fuzz at 2–6 seats
+(`fuzz-seats.test.ts`, with its fixed CI seeds) are built and pass. The list of
+expected bystander differences is in progress.
 
 1. **Bystander replay.**
    - Run the whole existing per-card, clause and engine suite with
@@ -493,13 +502,19 @@ id counters, from effect lists that now pause in printed order).
 
 ## Phase 7 — Docs
 
-- `RULES.md`: §Multiplayer, citing MP/MPX atoms and rulings.
-- `BEHAVIORS.md`: the player vocabulary and block binding.
+Status: written, except `docs/TESTING.md`, which another change is editing.
+
+- `RULES.md`: §15 "Multiplayer (free-for-all)", citing MP/MPX atoms and
+  rulings. Done.
+- `BEHAVIORS.md`: "Player vocabulary" and block binding (`opponentFrom`). Done.
 - `docs/TESTING.md`: the freeze gate, replay digests, the `mp` clause gate,
-  the bystander replay and the fuzz.
-- `docs/CARD-DATA.md`: the phrase categories.
-- `README.md`: `createFactionGame`, `chooseOpponent`, the `opponentId` action
-  field, seats and elimination.
+  the bystander replay and the fuzz. In progress.
+- `docs/CARD-DATA.md`: "Player words (multiplayer)", the phrase categories and
+  the data form each maps to. Done.
+- `README.md`: "More than two players": `createFactionGame`, the `players`
+  answers (the plan's `opponentId` action field and `chooseOpponent` choice
+  became `players.opponent` and the `choosePlayer` pending choice), seats and
+  elimination. Done.
 
 ## Done when
 

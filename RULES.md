@@ -75,6 +75,10 @@ other player then wins.
   **(FAQ:** *Quotidian Assassination* cannot pick a faction; *Bask Bile*
   can**)**.
 
+**(MP 1, MPX-win)** With three or more players "your opponent" is every other player, a loss removes only the
+player who lost, and the last player left wins; see §15 for seats, elimination and every other rule that changes
+with the table size. Everything else in this document is written for two players and holds unchanged at any size.
+
 **(engine-derived)** Surfaced as `GameState.winner` / `GameFlowView.winner`
 (`PlayerId | "draw"`), set by the same continuous check as everything else
 in §11; `GameFlowView.mode` becomes `"gameOver"`. Once set, `perform()`
@@ -403,10 +407,10 @@ registered with the engine for the flip to take effect (loading the full
 catalog, as every real consumer does, guarantees this).
 
 Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
-Alliance, Imperial Army, ...) additionally reference Showdown multiplayer
-format mechanics that are **out of scope for a two-player engine** and are
-left unmodelled: the X = number-of-opponents scaling, the Temptation Pile,
-the Hero deck.
+Alliance, Imperial Army, ...) additionally reference Showdown format
+mechanics that are **out of scope** (§15.13) and are left unmodelled: the
+Temptation Pile and the Hero deck. The X = number-of-opponents scaling is
+modelled (`faction.perExtraOpponent`, §15.9).
 
 ### 3.7 Changing card types (CR §208)
 
@@ -792,7 +796,9 @@ they:
 - finish paying for an ability (before its effects run), or
 - announce they are ending their turn.
 
-You can never respond to your own action **(CR §607.1)**.
+You can never respond to your own action **(CR §607.1)**. (With more than two
+players, "your opponent" here is every other player and they respond in seat
+order: §15.4.)
 
 **(CR §607.2)** A response is a **tactic** or an **ability** (and any card
 with the **Tactical** keyword, CR §507.6 — see §9). When you have a chance
@@ -2025,126 +2031,317 @@ increasing number or passing; a player who passes is out; the last player
 in wins the bid. Bidding starts with the active player and goes clockwise;
 every player in the game takes part, and a player who has passed is skipped.
 
-## 15. Multiplayer: "your opponent" (MP 2–4, MPX-select, MPX-lasting)
+## 15. Multiplayer (free-for-all)
 
-**(MP 2, MP 4)** A block of rules text that says "your opponent" (one activated ability, one triggered
-ability, one paragraph of continuous text, or the effect text of one card) selects one other player in the
-game as its opponent, once per block and anew each time the block is followed. **(MP 3)** "Both players" is
-the controller and that same opponent. **(MPX-select (3))** With exactly one opponent left nobody is asked and
-nothing extra is stored: every binding reads that player, so a two-player game plays as it always has.
+**(MP 1)** The game may be played with three or more players. In the engine's free-for-all every player plays
+against every other player, the last player left wins, and every rule and printed card behaves as written at every
+table size. **A two-player game is exactly the game of the earlier sections**: with one opponent left no choice, no
+action field and no priority step is added, and every "select your opponent" step binds itself.
+
+Sources: the printed Multi-Player Guidelines (`docs/rules/multiplayer-guidelines.md`, atoms MP 1-5), one **MPX**
+atom per Comprehensive Rules wording that assumes two players, and the user's rulings RQ-mp-1 to RQ-mp-14 and
+MPQ-P1 to MPQ-P11. The atoms are in `data/rule-tests/source/multiplayer.txt`, the rulings in
+`data/rule-tests/rulings.md`. "In the game" below means "has not lost" (MPX-elim); every phrase that ranges over
+players ranges over players in the game only. How card data spells each phrase is in
+[docs/CARD-DATA.md](docs/CARD-DATA.md) and [BEHAVIORS.md](BEHAVIORS.md).
+
+### 15.1 Seats, turn order and setup
+
+- **Seats (MPX-seat, MP 1).** Players sit in the order they were given at setup (`GameState.seats`,
+  `SpoilsEngine.getSeats()`). "Clockwise" (CR 402.2, 413.1a, 601.1g) is increasing seat order, wrapping around.
+  A player who has lost keeps their entry but is skipped by every "clockwise", "the next player" and "the seat
+  after X". The order changes only through a seat swap (§15.9). `getPlayersInSeatOrder(from?)` and
+  `getOpponents(playerId)` list the players still in the game clockwise.
+- **Turns (MPX-turn).** The player chosen under CR 601.1c takes the first turn; each next turn belongs to the next
+  seat still in the game. Only the active player takes main-turn actions; everybody else acts by responding
+  (§15.4) or through text that lets them deploy or use something on another player's turn. "Your opponent's turn"
+  and "your opponent's actions" (CR 204.1, 205.1, 206.1, 207.1, 502.3) mean any other player's (MPX-offturn).
+- **Setup (MPX-setup, MPX-draw, RQ-mp-4).** Every faction starts in play and every player puts their starting
+  resources in face-down, then flips them. With the `chooseFirstPlayer` option one player is picked at random from
+  all the players and names who goes first, any player included (CR 601.1c). The first player draws the "going
+  first" opening hand; **every other player, whatever their seat, draws the "going second" one**. A player whose
+  Starting Draw rule is replaced (The Knitting Coalition, §15.9) draws that card's numbers by the same two cases.
+  Mulligans go clockwise from the first player.
+- **Ordering (MPX-order).** Simultaneous triggers or replacements from one player's cards are ordered by that
+  player; from two or more players' cards, by the active player, even one who controls none (CR 503.4, 506.4,
+  FAQ 6). At the start of a turn the active player orders every player's "at start of turn" triggers (CR 602.2).
+- **Unique (MPX-unique).** The unique restriction looks at one player's cards only; every player may control
+  their own copy at once.
+- **Bidding (MPX-bid, CR 413).** Every player in the game takes part, the active player first, clockwise, skipping
+  players who have passed. The points RQ-r11-3 leaves open stay open at every table size.
+
+### 15.2 Losing, elimination and winning
+
+- **Losing and winning (MPX-win).** A faction at 0 influence makes its owner lose (CR 102.1), whoever controls
+  it. A loss removes only that player and the game goes on while two or more players are in the game. Any other
+  player's faction may be reduced (no opponent is selected for CR 102.1; MP 2 applies to a card's text). The game
+  ends as soon as at most one player is in the game: that player wins (`GameState.winner` is their id). If every
+  player still in the game loses at the same time, the game is a draw (`winner: "draw"`, CR 102.2, 306.4).
+  Running out of cards loses nobody (CR 102.1a).
+- **Units (MPX-simul, RQ-mp-7, RQ-mp-13, RQ-r11-2, RQ-r11-4).** A unit is one resolving card or ability's own
+  effects, one triggered ability's own effects, or one batch of simultaneous battle damage; a trigger set off during
+  a unit is a later unit. Every player whose faction reached 0 during the same unit loses together when it ends (a
+  later raise in the unit does not save them); a cost that takes a faction to 0 loses at once. Players reaching 0
+  in different units are eliminated one unit at a time, in the order their factions first reached 0; a nested unit
+  that ends first has its players eliminated once the outer unit's losses are processed (`GameState.pendingLoss`).
+  When some but not all of the players left lose together, those players are out and the rest play on.
+- **Timing (MPX-elim-timing, RQ-mp-timing).** A player who reached 0 is eliminated as soon as the unit that took
+  them there ends, before any response window and before any trigger still waiting. From then on they take no
+  actions or responses and are offered none. Nobody can respond to a faction reaching 0 and save it. A trigger the
+  unit sets off while it runs is followed inside the unit, even one a player already at 0 controls.
+- **What elimination does (MPX-elim, RQ-mp-3, RQ-mp-9, RQ-mp-12, RQ-mp-14).** All at once:
+  1. Every card the player owns leaves the game, from every area, including cards another player controls: they go
+     to the out-of-game area, face-up (CR 403.6a); attached cards leave with their host (CR 301.4).
+  2. Every card they control but do not own returns to its owner's control and stays where it is. A battle follows
+     CR 407.4, 407.5 and 609.2 as written.
+  3. Their items on the response stack, their pending choices and their waiting triggers are removed without
+     resolving (even a trigger the eliminating unit set off, though CR 503.1 follows a trigger whose source left
+     play).
+  4. Their lasting effects, delayed effects, modifiers and restrictions end.
+  5. If it was their turn it ends at once, with no end-of-turn responses, triggers or delayed effects, and
+     everything else in progress is dropped: the battle ends, every response-stack item is removed (a card being
+     deployed goes to its owner's discard pile) and waiting triggers are not followed. The next turn belongs to the
+     next seat.
+  6. They are not counted, picked, chosen or affected as a player by anything; another player's lasting text that
+     selected them selects again (§15.5); their seat is skipped.
+  7. None of this sets off a trigger. The engine emits `playerEliminated` (informational).
+- **Open reading (RQ-mp-3, MPX-select (4)).** A stack item whose selected opponent is eliminated before it
+  resolves keeps naming that player. Their cards are gone, so nothing of theirs is affected.
+
+### 15.3 Attacks and battle windows
+
+- **Attacks (MPX-attack).** The attacker names any faction or location in play they do not control; the defending
+  player is the target's controller, and only the defending player forms the blocking party (CR 608.1d;
+  characters of other players cannot block or be added to the party, CR 407.6). Each attack is its own battle;
+  one turn's attacks may target different players.
+- **Default target (MPX-attack-default, CR 608.1a).** With exactly one opponent left an attack that names no target
+  attacks that player's faction. With two or more, `declareAttack` without a target is refused ("Choose a target
+  for the attack"): the action carries no opponent selection.
+- **Battle windows (MPX-battle-window, RQ-mp-2, RQ-mp-8).** In each step of CR 608.1c, 609.1a and 609.1e the
+  attacking player acts first, then the defending player, then every other player in the game clockwise from the
+  defender's seat, skipping the attacker. Each player has one window per step; each action in it can be responded
+  to (§15.4). The blocking step is not a window.
+- **Ending the turn (MPX-endturn, RQ-mp-2).** Announcing the end of the turn is an action of the active player;
+  every other player may respond, clockwise from the seat after theirs, and the turn ends only after all of them
+  have passed in a row with nothing unresolved. End-of-turn triggers happen then (CR 610.1a).
+
+### 15.4 Response windows
+
+- **Who may respond (MPX-respond).** Everyone in the game except the controller of the action; nobody responds to
+  their own actions or their own responses (CR 607.1, 607.2a), but a player may respond to another player's
+  response to their own action. Nobody can respond to a trigger (CR 503.2). A card that closes the opportunity to
+  play tactics closes it for everyone (FAQ 2). A card being deployed stays in the being-deployed area until
+  every player who may respond has finished (CR 403.3a).
+- **Order (MPX-priority, RQ-mp-1).** The top item is offered to the other players one at a time, clockwise from the
+  seat after its controller (`ResponseWindowState.priorityPlayerId`, `passed`). It resolves once every other
+  player in the game has passed on it in a row; a response or a resolution above it starts the count over. After
+  an item resolves, the item under it is offered again, first to the player who made the one that resolved
+  (CR 607.2), then to the rest clockwise. The controller of an item is never offered it; passing is not permanent.
+  With one opponent this is the two-player flow.
+- **Loops (MPX-loop, RQ-mp-11, CR 414).** A mandatory loop is a draw between every player in the game (§14). Any
+  other player may interrupt a voluntary loop. Every involved player chooses a repeat count, the active player
+  first and then clockwise from their seat, and the loop repeats the smallest count (0 means none); the first
+  involved player may choose the stopping point in the last repetition. When the active player is not involved
+  they choose nothing and the order starts at the first involved player clockwise from their seat.
+
+### 15.5 "Your opponent": how a block's opponent is bound
+
+**(MP 2, MP 4)** A block of rules text that says "your opponent", "that opponent", "their opponent" or "both
+players" selects one other player in the game as its opponent. A block is one activated ability, one triggered
+ability (with its option lines), one paragraph of continuous text, or the effect text of one card such as a tactic;
+a card's separate abilities and paragraphs are separate blocks (MPX-select). The same opponent is meant by every
+such phrase in the block, a new selection is made each time the block is followed (one ability used twice makes two
+independent selections), and a block without these phrases selects nothing. The selected opponent is never the
+controller or a player who has lost, and the selecting player is the card's current controller (CR 407.2).
+**(MPX-select (3))** With exactly one opponent left nobody is asked and nothing extra is stored: every binding
+reads that player, so nothing new appears in a two-player state. **(MP 3, MPX-both)** "Both players" is exactly the
+controller and that opponent.
+
+**When it is selected.**
+
+- **A played card or an activated ability** (MPX-select (2)): when the action is announced, before any target is
+  chosen, because the legal picks can depend on it. The action carries it as `players.opponent` (`PlayerAnswers`):
+  required at two or more opponents, refused if it is yourself, a player who has lost or a non-player, and listed
+  first by `getPlayRequirements` (`kind: "players"`). The deploy-for-free, reveal-and-play and use-target-ability
+  answers carry `players` too, because they start plays. A `playerChoices` entry names any other player the same
+  way and `{ type: "chosenPlayer", id }` reads it; a `choosePlayer` effect asks at resolution. A player choice is
+  not a pick (CR 405).
+- **A triggered ability:** when the trigger is about to be followed, before its targets, through a `choosePlayer`
+  pending choice. **A replacement:** at the moment it applies (MPQ-P3).
+- **Continuous text** (RQ-mp-5, RQ-mp-10, MPQ-P2, MPX-lasting), including conditionals ("while your opponent
+  controls ...", CR 504.1) and effects a block creates that keep applying ("this turn ...", "the next time ..."):
+  when the text starts applying (the card enters play, or the effect is created). Until then it does not apply. The
+  selection is kept on the card (`CardInstance.boundOpponents`) and holds as long as the text does. If the selected
+  player is eliminated the controller selects again (the only opponent left is taken without asking); if control of
+  the card changes the new controller selects again, even when the old selection is a valid opponent for them.
+  Lasting records a block creates (area modifiers, conditional keyword grants, replacements, hand redirects,
+  delayed effects, player effects, restrictions) keep reading the opponent the block selected and are re-selected
+  when that player is out. Text that says "your opponents" or "each opponent" selects nobody.
+
+**Where nothing is chosen (MPX-select (8)).** A trigger condition naming "your opponent", a battle the controller
+is in, a response to another player's card and text from another player's point of view fix the opponent. In card
+data this is `opponentFrom`; written, the field wins, absent, the engine derives it.
+
+- `"event"` (MPQ-P5, MPX-trigger-condition): "if your opponent plays / attacks / ...", "if a character enters play
+  under your opponent's control". Any opponent's event meets the condition and that opponent is the block's
+  opponent, with no choice offered. State and history conditions ("if your opponent lost influence this turn")
+  have no event and select as usual.
+- `"battle"` (MPQ-P8, MPX-battle-opponent): text only a battle the controller is in can set off ("if you attack",
+  "when this card is blocked", damage to a faction by this card, "being attacked"). "Your opponent" is the other
+  side of that battle: the defender if the controller attacks, the attacker if the controller defends. Opponent
+  words on the same card that are not about the battle follow their own rule (Counter Attack, "Attack your
+  opponent", chooses whom it attacks); Dragon Tank's start-of-turn trigger is not a battle block.
+- `"respondedTo"` (MPQ-P4): Mistaken Identity's "your opponent" is the controller of the card or ability answered
+  (CR 607.1).
+- `"acting"` (MPQ-P10, MPX-other-pov): see §15.8.
 
 **(engine-derived)** In card data the player word `"opponent"` is the block's opponent; `"opponents"` is every
-opponent ("each opponent"), selects nobody, and in a condition holds for any opponent. A block names its
-opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
+opponent ("each opponent"), selects nobody, makes an effect happen once per opponent when it is the effect's
+`player`, and in a selector, scope or condition reads as "any opponent". A block names its opponent when its data
+holds `"opponent"` or a `forEachPlayer` over `"pair"`. `noResponse: "opponent"` says only the block's opponent may
+not respond (selected with the action like any "your opponent"); with nobody else able to, it resolves at once like
+`true`.
 
-- **Played cards and abilities (MPX-select (2)):** the opponent is part of the action (`players.opponent`),
-  required at two or more opponents, refused if it is yourself, a player who has lost or a non-player, and
-  listed first by `getPlayRequirements` (`kind: "players"`), because the legal picks depend on it. A
-  `playerChoices` entry names any other player the same way and `{ type: "chosenPlayer", id }` reads it; a
-  `choosePlayer` effect asks at resolution. A player choice is not a pick (CR 405).
-- **Triggers and replacements:** asked through a `choosePlayer` prompt when the trigger is about to be followed
-  (before its targets) and at the moment a replacement applies (MPQ-P3).
-- **`opponentFrom`:** a trigger whose condition names the opponent through the event's player is met by any
-  opponent's event and that opponent is the block's opponent (`"event"`, MPQ-P5); text only a battle the
-  controller is in can set off (a `battleRole` gate, "when this card attacks / is blocked", damage to a faction
-  by this card) takes the other side of the battle (`"battle"`, MPQ-P8); `"respondedTo"` is the controller of
-  the card or ability answered (MPQ-P4); `"acting"` is text written from another player's point of view: the
-  acting player (the event's player, else the active player) selects one of their own opponents and "both
-  players" is that player plus the selection (MPQ-P10). Written, the field wins; absent, the engine derives it.
-- **Continuous text (RQ-mp-5, RQ-mp-10, MPQ-P2):** selected by the controller as the text starts applying and
-  kept on the card (`boundOpponents`); until then the text does not apply. When the selected player is
-  eliminated the controller selects again (the only opponent left is taken without asking); when control of the
-  card changes the new controller selects again, even if the old selection is a valid opponent for them.
-  Lasting records a block creates (area modifiers, conditional keyword grants, replacements, hand redirects,
-  delayed effects) keep reading the opponent the block selected and are re-selected when that player is out.
-- **Iteration (CR 402.2):** `forEachPlayer` runs for the active player first, then clockwise, players still in the
-  game only; `players` picks `all` (default), `opponents`, `others`, `pair` or `selfAndOpponents`, and `except`
-  leaves one player out (MPQ-P11).
-- **Offers (MPX-offer, MPQ-P7):** "any opponent may pay" is `mayPay` with `offerTo: "opponents"` (and no `player`):
-  one `mayPay` prompt per opponent, clockwise from the controller's left, skipping an opponent who cannot pay; the
-  first to pay settles it (the prompt carries `remaining`, the opponents still to be asked), otherwise `elseEffects`.
-  The paid-for effects are the controller's, whoever paid (Additional Tribute's controller draws). With one opponent
-  it is that player's one `mayPay` prompt, identical to `player: "opponent"`. "Any player may pay" is
-  `anyPlayerMayPay`: the active player first, then clockwise, and the effects resolve under the first to pay.
-- **Player choices that filter (MPX-vocab-an):** a `playerChoices` entry and a `choosePlayer` effect take a
-  `condition`, judged once per candidate with the candidate bound as `{ type: "chosenPlayer", id: "__candidate" }`; only
-  qualifying candidates are offered and a sole one is taken without asking. When none qualifies the choice cannot be
-  made: a `playerChoices` entry refuses the play (the card reads as not playable) and a `choosePlayer` names nobody,
-  so effects that read its id do nothing. Playability and a cost reduction that reads a chosen player judge every way
-  the players could be named and take the best case. A named player is kept by lasting records whose data reads it
-  (`chosenPlayers` on area modifiers, keyword grants, replacements and delayed effects).
-- **Every opponent (MPX-vocab-each):** `costModifiers[].affects` and `pickTax[].affects` accept `"opponents"`: each
-  opponent pays. A selector's `controller` / `owner` is a `SelectorPlayer`: a `PlayerScope`, `"acting"`, or a player
-  reference (`controllerOf`, `ownerOf`, `chosenPlayer`, `player`).
-- **Text from another player's point of view (MPQ-P10):** in an `opponentFrom: "acting"` block `"opponent"` is the acting
-  player's selection, even at two seats, where it can be the block's controller (the engine then stores
-  `actingPlayerId` and `opponentId` in the block's context; an acting player who is the controller stores nothing).
-  The trigger's own condition (`eventPlayerIs "opponent"`) is still judged from the controller's side.
-- **Showdown (MPX-both, MPX-vocab-an):** `partitionAndPick` is the controller and the block's opponent ("Both players"),
-  or the player its `opponent` field names ("You and an opponent": a `chosenPlayer`).
-- **Blocking (MPX-attack):** "cannot be blocked by that player's characters" is `grantKeyword cannotBeBlocked` with a
-  `defendingPlayerIs` condition: it only counts in a battle against that player.
-- **Looking (MPX-hidden):** `reveal` with `zone: "faceDownResources"` shows the face-down resources a player controls
-  to the viewer alone (the log names them to that viewer only).
-- **`noResponse: "opponent"`:** only the block's opponent may not respond, and that opponent is selected with the
-  action like any "your opponent"; with nobody else able to, it resolves at once like `true`.
-- **Delayed "your opponent's next turn" (MPX-lasting, MPX-turn):** `scheduleEffect` `startOfOpponentNextTurn`
-  names the block's opponent: it waits for that player's own next turn (the first turn after it was scheduled whose
-  active player is that opponent, following the seat order) and no other opponent's turn fires it. It is
-  re-selected like any lasting record when that player is eliminated. "Your next turn" durations and skipped
-  Restore Rules count turns through the seat order too, and are stamped again whenever the order changes (a seat
-  swap, an elimination).
-- **Singular forms of lasting text:** `cannotBePickedByOpponent` (only the selected opponent cannot pick the card),
-  `cannotBeTakenControlByOpponent` (only the selected opponent cannot take control of it),
-  `abilityCostModifiers` scope `chosenOpponentCharacters` and `preventsAttackOnFaction.attacker: "opponent"` read
-  the selected opponent; their plural counterparts (`cannotBePickedByOpponents`, `opponentCharacters`, no
-  `attacker`) cover every opponent.
-- **Setup (MPX-setup, MPX-select):** a faction whose starting resources name "your opponent" (The Union of
-  Unextraordinary Miners) asks its player for the opponent when the starting resources step begins, before any
-  starting resource is placed; with one opponent nobody is asked.
-- **Seat swap (MPX-swap):** `swapsSides` is lasting "both players" text: the controller selects the opponent when
-  the card enters play and only those two players switch seats, sides and factions. Each pair named by an odd
-  number of sources is switched (`GameState.seatSwap.swaps`); when a player of the pair is eliminated the swap
-  ends first and the controller selects again.
-- **Open reading (RQ-mp-3 and MPX-select (4)):** a stack item whose selected opponent is eliminated before it
-  resolves keeps naming that player (their cards are gone, so nothing of theirs is affected).
-- **Views, saves and the log (MPX-hidden, MPX-elim, `engine-derived`):** every viewer sees only their own hand,
-  their own face-down cards (CR 411.2) and what a card or a reveal shows them; a deck is hidden from everyone,
-  its owner included. A prompt is shown whole only to the player who answers it. A player who has lost sees what a
-  spectator sees: the cards they owned are set aside face-up (CR 403.6a), so every viewer sees them, and `getFlowView().revealed` no longer lists them. A save holds everything at three or
-  more seats needs (`seats`, `eliminated`, `boundOpponents`, `chosenPlayers` and `opponentId` on contexts and
-  lasting records, `responseWindow.passed`, a `choosePlayer` prompt); a loaded game plays on exactly as the
-  original. `getSaveSummary().players[].eliminated` is set for a player who is out. The log says who selected
-  whom (`playerSelected` marker, "Alice selects Carol as their opponent" / "Alice chooses Carol"), once per
-  selection actually made (never with one opponent left), the same words for every viewer.
-- **An iteration finishes before its list goes on (CR 402.2, `engine-derived`):** when a choice inside `forEachPlayer`,
-  a sequential `forEach`, a `repeatWhile` pass or an `if` branch pauses, the players or cards still to go and the
-  rest of that step run before the effects that follow it (Swindle: every opponent attaches before the controller
-  draws). This holds with no exception: a list whose last effect is the iteration closes its stack item only after the
-  iteration is done, and an `if` branch that paused keeps its remaining effects ahead of the list's next effect. The
-  other lists a step runs inside itself pause the same way: the else-effects of a `mayPay` that cannot be paid, the
-  `onMatch` / `onEmpty` of `revealFromTopUntil` (the other revealed cards wait under the deck and are dealt with, per
-  `rest`, once the branch has finished) and the effects of a replacement (the replaced event is settled when the
-  replacement is applied; the effects that remain run after the answer).
-- **"An opponent ..." per opponent (MPX-vocab-an, MPX-an-superlative):** the condition `anyOpponent` holds when its
-  inner condition holds for at least one opponent, each judged on their own with `"opponent"` meaning that
-  opponent (Nefarious Horror: "an opponent controls more ... than you"). A restriction grant of
-  `cannotBePickedByOpponents` with an `opponentCondition` binds exactly the opponents meeting it
-  (Omahkapi'si Pi'kssii: "at least 10 cards in an opponent's discard pile, that player cannot pick this card").
-- **"X is the number of opponents at the start of the game" (MPX-vocab-each):** `faction.perExtraOpponent`
-  (`influence`, `startingResources`, `developUses`) adds that much for every opponent beyond the first, counted by
-  the seats when the game starts and never lowered by an elimination; with one opponent the faction's own figures
-  stand (The Evil Alliance: 25 + 10 per extra opponent, 2 + 1 staples, one Develop Rule use + 1).
-- **The ability the players wrote (MPX-both, MPX-lasting):** at three or more seats it is usable by the faction's
-  controller and one opponent, who wrote it with them (`FactionGameSetupOptions.createdAbilityOpponent`, else the
-  controller selects when the game begins); if that player is eliminated the controller selects again.
-- **"Any opponent may pay" in a replacement (MPX-offer):** `chooser: "opponents"` offers the replacement to each
-  opponent who can pay, clockwise from the affected card's controller; the first to pay settles it (`controller` in
-  its effects is that player); if all decline the replaced event happens (Unloyal Necromorph).
-- **Remembered players and counted gains:** `rememberPlayer` stores a player on the source card for the rest of the
-  game (`{ type: "rememberedPlayer", key }`, Seed Saga's I Drink Your Milkshake!; with exactly one opponent left a
-  card that stored nothing reads that opponent, MPX-select (3)); `modifyInfluence.tallyAs` adds the
-  influence actually gained to a variable ("for each influence gained this way", Stuttershy).
-- **Replacements and coin flips:** the effects of a replacement run with no state-based check until they finish (a
+### 15.6 Player vocabulary
+
+What each printed phrase means at a table of three or more (MPX-vocab-your, -an, -each, -players, MPX-both). The
+categories and their data forms are in [docs/CARD-DATA.md](docs/CARD-DATA.md).
+
+| Printed | Meaning |
+|---|---|
+| "your opponent", "that opponent", "their opponent" | The block's opponent (§15.5). "That opponent" is whoever the block just named. "Their opponent" is the opponent of the player "their" names; with two players named it is the other of the two. "Their opponents" is every player except the one "their" names. |
+| "both players" | The controller and the block's opponent. |
+| "an opponent", "any opponent", "another player" | One opponent, decided by the pick or choice the sentence makes; MP 2 does not apply. A selector ("a character an opponent controls") matches the cards of any opponent, and the controller of the card picked is the opponent. When nothing in the sentence settles it, the controller chooses (a player choice, not a pick). Each is independent unless a later phrase refers back to it. |
+| "an opponent" with a superlative, total or "all" (MPQ-P9, MPX-an-superlative) | One opponent is chosen first and the comparison is made in that opponent's cards only. A multi-card pick from "an opponent's discard pile" comes from one pile; Carnival Whipmaster's two cards come from one opponent. |
+| "each opponent", "your opponents", "opponents" | Every opponent, active player first and then clockwise (CR 402.2). A count over them adds up across all of them. |
+| "each player", "all players", bare "players" | Every player in the game, controller included, active player first then clockwise. |
+| "each other player" | Every player but the controller. After a pick (Gideon's Legacy, MPQ-P11): every player except the picked one. |
+| "each of you" | The controller and the opponent just named ("you and ...", "both players"). |
+| "a player", "any player" | One player, controller allowed, decided by the pick or choice the sentence makes. |
+| "that player", "the picked player" | The player already named or picked in the block. |
+| "either deck" (MPQ-P6, MPX-either-deck) | The controller's deck or the deck of one opponent the controller chooses (the block's opponent). "Any deck" (Rigged Tables) is every player's deck. |
+
+### 15.7 Offers: "any opponent may pay", "any player may pay"
+
+**(MPX-offer, MPQ-P7)** The offer goes to each eligible player in turn; the first to pay settles it ("they" is that
+player) and nobody after them is asked; if every eligible player declines, "Otherwise" happens. Only players in the
+game are eligible, and no opponent is selected for the block. "Any opponent" goes clockwise from the controller's
+left, skipping an opponent who cannot pay; "any player" goes active player first, then clockwise.
+**(engine-derived)** The paid-for effects are the controller's whoever paid (Additional Tribute's controller
+draws); an "any player" payer resolves them under themselves. One `mayPay` prompt is asked per opponent (its
+`remaining` lists the opponents still to be asked); with one opponent that is the one prompt a "your opponent" offer
+would make. In a replacement, `chooser: "opponents"` offers it the same way, clockwise from the affected card's
+controller, and `controller` in its effects is the first to pay; if all decline the replaced event happens (Unloyal
+Necromorph).
+
+### 15.8 Text from another player's point of view
+
+**(MPX-other-pov, MPQ-P10)** Free Trade Agreement ("that player ... their opponent"), Obscene Communion ("both
+players" on another player's turn) and Meat of the Mountain ("that player's opponent") speak from the acting
+player's side. The acting player (the event's player, else the active player) selects one of their own opponents;
+"their opponent" is that selection and "both players" is the acting player plus it. With one opponent of the
+acting player left, that player is the opponent automatically. A printing that says "Each player" (Obscene
+Communion, Seed Saga) is "each player", not a pair. **(engine-derived)** In an `opponentFrom: "acting"` block
+`"opponent"` is the acting player's selection even at two seats, where it can be the block's controller (the
+engine then stores `actingPlayerId` and `opponentId` in the block's context; an acting player who is the
+controller stores nothing). The trigger's own condition (`eventPlayerIs "opponent"`) is still judged from the
+controller's side.
+
+### 15.9 Cards with their own multiplayer rulings
+
+- **Emergency Obfuscation (MPX-swap, MPQ-P1).** The printed text ("both players switch seats. Both players are in
+  control of their opponent's side. If the game ends, the owner of the winning deck wins the game") governs, not
+  the archival "moves 1 seat to the left". `swapsSides` is lasting "both players" text: the controller selects
+  the opponent when the card enters play, and only those two players switch seats, sides and factions; nobody
+  else moves and the seats do not rotate. They exchange places in the seat order, so clockwise and turn order run
+  as though each sat where the other was. Each pair named by an odd number of sources is switched
+  (`GameState.seatSwap.swaps`); the sources that cancel are the ones naming the same pair. When the card leaves
+  play the two switch back. When a player of the pair is eliminated the swap ends first and the controller selects
+  again; if control of the card changes the new controller selects. The winner is the owner of the winning deck.
+- **The Knitting Coalition (RQ-mp-6, MPX-knitting, MPQ-P10).** "Both players may use this ability" (INFLATIONARY
+  FORCES) means the controller and every opponent (`usableBy: "anyPlayer"`); HIDDEN INFLUENCE and PULLING STRINGS
+  ("Your opponent ignores ...") apply to every opponent (`overridesOpponent`): each ignores their own STARTING DRAW
+  rule (using this card's numbers, by the seat rule of §15.1) and their own Develop Rule. No opponent is selected.
+  With several such factions the first clockwise from the player governs the starting draw. The ruling is about
+  this card; Mercenary's Creed's "Both players may use this ability" is ruled the same way.
+- **The Evil Alliance (MPX-vocab-each).** "X is the number of opponents at the start of the game":
+  `faction.perExtraOpponent` (`influence`, `startingResources`, `developUses`) adds that much for every opponent
+  beyond the first, counted by the seats when the game starts and never lowered by an elimination. With one
+  opponent the faction's own figures stand (25 + 10 per extra opponent, 2 + 1 staples, one Develop Rule use + 1).
+- **The Open R&D Faction (MPX-both, MPX-lasting).** The ability the players wrote is, at three or more seats, usable
+  by the faction's controller and one opponent who wrote it with them
+  (`FactionGameSetupOptions.createdAbilityOpponent`, else the controller selects when the game begins). If that
+  player is eliminated the controller selects again.
+- **The Union of Unextraordinary Miners (MPX-setup, MPX-select).** The faction whose starting resources name "your
+  opponent" asks its player for the opponent as the starting resources step begins, before any starting resource
+  is placed (setup phase `chooseMatchOpponent`, a `choosePlayer` prompt); with one opponent nobody is asked.
+- **"Your opponent's next turn" (MPX-lasting, MPX-turn).** `scheduleEffect` `startOfOpponentNextTurn` names the
+  block's opponent: it waits for that player's own next turn (the first turn after it was scheduled whose active
+  player is that opponent, following the seat order), and no other opponent's turn fires it. It is re-selected like
+  any lasting record when that player is eliminated. "Your next turn" durations and skipped Restore Rules count
+  turns through the seat order and are stamped again whenever the order changes (a seat swap, an elimination).
+- **Singular and plural lasting text.** `cannotBePickedByOpponent` (only the selected opponent cannot pick the
+  card), `cannotBeTakenControlByOpponent`, `abilityCostModifiers` scope `chosenOpponentCharacters` and
+  `preventsAttackOnFaction.attacker: "opponent"` read the selected opponent; their plural counterparts
+  (`cannotBePickedByOpponents`, `opponentCharacters`, no `attacker`) cover every opponent.
+  `costModifiers[].affects` and `pickTax[].affects` accept `"opponents"`: each opponent pays. "An opponent ..."
+  conditions (`anyOpponent`) and `opponentCondition` judge each opponent on their own (MPX-vocab-an): Omahkapi'si
+  Pi'kssii cannot be picked by exactly the opponents with at least 10 cards in their discard pile.
+- **Mustache Aficionado (MPX-both, MPX-vocab-an).** `partitionAndPick` is the controller and the block's opponent
+  ("Both players"), or the player its `opponent` field names ("You and an opponent": a `chosenPlayer`).
+- **Blocking (MPX-attack).** "Cannot be blocked by that player's characters" is `grantKeyword cannotBeBlocked` with
+  a `defendingPlayerIs` condition: it counts only in a battle against that player.
+- **Looking (MPX-hidden (2)).** A cost "as though you were your opponent" (CR 401.2a) uses the block's opponent and
+  only what you currently know; `reveal` with `zone: "faceDownResources"` shows the face-down resources a player
+  controls to the viewer alone (the log names them to that viewer only).
+- **Remembered players.** `rememberPlayer` stores a player on the source card for the rest of the game
+  (`{ type: "rememberedPlayer", key }`, I Drink Your Milkshake!, Seed Saga); with exactly one opponent left a card
+  that stored nothing reads that opponent. `modifyInfluence.tallyAs` adds the influence actually gained to a
+  variable ("for each influence gained this way", Stuttershy).
+
+### 15.10 Player choices that filter
+
+**(MPX-vocab-an, engine-derived)** A `playerChoices` entry and a `choosePlayer` effect take a `condition`, judged
+once per candidate with the candidate bound as `{ type: "chosenPlayer", id: "__candidate" }`; only qualifying
+candidates are offered and a sole one is taken without asking. When none qualifies the choice cannot be made: a
+`playerChoices` entry refuses the play (the card reads as not playable) and a `choosePlayer` names nobody, so effects
+that read its id do nothing. Playability and a cost reduction that reads a chosen player judge every way the players
+could be named and take the best case. A named player is kept by lasting records whose data reads it
+(`chosenPlayers` on area modifiers, keyword grants, replacements and delayed effects).
+
+### 15.11 Hidden information, views, saves and the log
+
+- **Hidden information (MPX-hidden, MPX-elim, engine-derived).** A hand is hidden from every other player
+  (CR 403.2a), not from one opponent only; no player looks through or shuffles another's deck unless instructed
+  (CR 403.1a). Every viewer sees only their own hand, their own face-down cards (CR 411.2) and what a card or a
+  reveal shows them; a deck is hidden from everyone, its owner included. A prompt is shown whole only to the player
+  who answers it. A player who has lost sees what a spectator sees: the cards they owned are set aside face-up
+  (CR 403.6a), so every viewer sees them, and `getFlowView().revealed` no longer lists them.
+- **Saves.** A save holds everything three or more seats need (`seats`, `eliminated`, `boundOpponents`,
+  `chosenPlayers` and `opponentId` on contexts and lasting records, `responseWindow.passed`, a `choosePlayer`
+  prompt); a loaded game plays on exactly as the original. `getSaveSummary().players[].eliminated` is set for a
+  player who is out.
+- **The log.** It says who selected whom (`playerSelected` marker: "Alice selects Carol as their opponent" /
+  "Alice chooses Carol"), once per selection actually made (never with one opponent left), in the same words for
+  every viewer.
+
+### 15.12 Resolution details that matter at N players (engine-derived)
+
+- **An iteration finishes before its list goes on (CR 402.2).** When a choice inside `forEachPlayer`, a sequential
+  `forEach`, a `repeatWhile` pass or an `if` branch pauses, the players or cards still to go and the rest of that
+  step run before the effects that follow it (Swindle: every opponent attaches before the controller draws). A
+  list whose last effect is the iteration closes its stack item only after the iteration is done, and an `if`
+  branch that paused keeps its remaining effects ahead of the list's next effect. The other lists a step runs
+  inside itself pause the same way: the else-effects of a `mayPay` that cannot be paid, the `onMatch` / `onEmpty`
+  of `revealFromTopUntil` (the other revealed cards wait under the deck and are dealt with, per `rest`, once the
+  branch has finished) and the effects of a replacement (the replaced event is settled when the replacement is
+  applied; the effects that remain run after the answer).
+- **Replacements and coin flips.** The effects of a replacement run with no state-based check until they finish (a
   `forEachPlayer` inside one no longer lets lethal damage destroy the card first, Lucky Bastard); a flipped coin's
   won and lost effects are an effect list that can pause.
+
+### 15.13 Out of scope
+
+Showdown (Villain / Hero, Allegiance, the Hero deck, the Temptation Pile) and the epic deck rules are not
+modelled; both are in `docs/rules/`. MP 5 (house rules for combinations too strong in multiplayer) is non-normative
+and the engine exposes no hook for it (see `docs/house-rules-mods-design.md`).

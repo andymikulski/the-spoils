@@ -1139,7 +1139,7 @@ export class SpoilsEngine {
         return;
 
       case "declareAttack":
-        this.declareAttack(action.playerId, action.attackerIds, action.target);
+        this.declareAttack(action.playerId, action.attackerIds, action.target, action.players?.opponent);
         return;
 
       case "declareBlockers":
@@ -23546,7 +23546,8 @@ export class SpoilsEngine {
   private declareAttack(
     playerId: PlayerId,
     attackerIds: CardInstanceId[],
-    declaredTarget: BattleState["target"] | undefined
+    declaredTarget: BattleState["target"] | undefined,
+    selectedOpponent?: PlayerId
   ): void {
     const timingProblem = this.attackTimingProblem(playerId);
     if (timingProblem) throw new Error(timingProblem);
@@ -23556,18 +23557,25 @@ export class SpoilsEngine {
       "An attacker was selected more than once."
     );
 
-    // An announcement that names no target, or a faction but no player, attacks the opponent's faction (CR 608.1a).
-    // With more than one opponent left there is no single default (MPX-attack-default): the attacker must choose.
+    // An announcement that names no target, or a faction but no player, attacks "your opponent's faction" (CR 608.1a):
+    // the one opponent, or with two or more the opponent the attacker selects for this attack (MPX-attack-default).
+    const opponents = this.getOpponents(playerId);
+    if (selectedOpponent !== undefined) {
+      assert(opponents.includes(selectedOpponent), "The selected opponent must be another player still in the game.");
+    }
     let target = declaredTarget;
     if (!target || (target.type === "faction" && target.playerId === undefined)) {
-      const opponents = this.getOpponents(playerId);
-      assert(opponents.length === 1, "Choose a target for the attack.");
-      target = { type: "faction", playerId: opponents[0]! };
+      const defaultOpponent = selectedOpponent ?? (opponents.length === 1 ? opponents[0] : undefined);
+      assert(defaultOpponent !== undefined, "Choose a target for the attack.");
+      target = { type: "faction", playerId: defaultOpponent };
     }
 
     const resolvedTarget = this.resolveAttackTarget(playerId, target);
     if ("problem" in resolvedTarget) throw new Error(resolvedTarget.problem);
     const defenderId = resolvedTarget.defenderId;
+    if (selectedOpponent !== undefined && selectedOpponent !== defenderId) {
+      throw new Error("The selected opponent must be the player whose card or faction is attacked.");
+    }
 
     const battleId = this.nextId("battle");
 

@@ -145,6 +145,87 @@ Caveats specific to this set:
 - No rarity or collector number is printed on these cards.
 - Dual-trade resources print two trades; `trade` holds the first.
 
+## Player words (multiplayer)
+
+A card's `behavior` has to say what each printed player phrase means at a
+table of three or more players, and say it the same way at two. A phrase's
+meaning comes from the printed `markup` (never the archival `text`), the
+Multi-Player Guidelines and the rulings (RULES.md §15; atoms in
+`data/rule-tests/source/multiplayer.txt`, rulings in
+`data/rule-tests/rulings.md`). The forms below are the whole vocabulary; the
+types are in `src/types/expressions.ts`, `cards.ts` and `effects.ts`, and
+BEHAVIORS.md ("Player vocabulary") says what each one does.
+
+A **block** is one activated ability, one triggered ability, one paragraph of
+continuous text or one card's effect text. "Your opponent" is one player,
+selected per block (MP 2), and every "your opponent", "that opponent" and
+"both players" in the block is the same player.
+
+| Printed phrase | Meaning | Data form | Example |
+|---|---|---|---|
+| "your opponent", "that opponent", "their opponent" | The block's opponent, selected by the controller (MP 2, MP 4) | `"opponent"`; the spelling is unchanged from two-player data, only the engine's binding differs | Dragon Tank: `{ "controller": "opponent", "type": "character" }` |
+| "both players" | The controller and the block's opponent (MP 3) | `forEachPlayer { players: "pair" }` | Spastic Tentacles |
+| "an opponent", "any opponent" | One opponent, settled by the pick or choice the sentence makes | `controllerOf` / `ownerOf` of that pick; or `"opponents"` in a selector, scope or condition (any opponent); or a player choice (below) when nothing in the sentence settles it | Omahkapi'si Pi'kssii: `{ "zone": "discard", "owner": "opponents" }` |
+| "an opponent" with a superlative, total or "all" | One opponent is chosen, and the comparison is made in that opponent's cards (MPQ-P9) | `anyOpponent { condition }`, with `"opponent"` inside it meaning each opponent in turn | Nefarious Horror: "While an opponent controls more characters than you" |
+| "each opponent", "your opponents", "opponents" | Every opponent | `forEachPlayer { players: "opponents" }`; or `"opponents"` as an effect's `player`, a selector's `controller` / `owner` or a cost modifier's `affects` | Swindle: `forEachPlayer { players: "opponents", ... }`; Temple of Rantzigore: `"controller": "opponents"`; Lucky Charm: `pickTax[].affects: "opponents"` |
+| "each player", "all players" | Every player, active player first | `forEachPlayer` (default `players: "all"`) | Obscene Communion |
+| "each other player" | Every player but the controller; after a pick, every player but the picked one (MPQ-P11) | `forEachPlayer { players: "others" }`, with `except` after a pick | Gideon's Legacy: `{ "players": "all", "except": { "type": "ownerOf", ... } }` |
+| "you and an opponent", "an opponent" with nothing to settle it | A player the controller names | `playerChoices: [{ id, from: "opponents" }]` on the ability or `onPlay` (named with the action), or a `choosePlayer { id, from }` effect (named while resolving); read back as `{ "type": "chosenPlayer", "id" }` | Day of the Tentacle: `playerChoices: [{ "id": "opp", "from": "opponents" }]`; Chain Reaction: `choosePlayer` then `factionOf { chosenPlayer }` |
+| "that player", "the picked player" | A player already named in the block | The same `chosenPlayer` reference, or `controllerOf` / `ownerOf` of the earlier pick | Day of the Tentacle: "under that opponent's control" is `controller: { "type": "chosenPlayer", "id": "opp" }` |
+| "its controller", "that character's owner" | A specific card's controller or owner, the same at every table size | `controllerOf` / `ownerOf` of that card | |
+| "any opponent may pay N. If they do ... Otherwise ..." | Offered to each opponent clockwise; the first to pay settles it (MPQ-P7) | `mayPay { offerTo: "opponents", costs, effects, elseEffects }`, with no `player` | Additional Tribute, Offering of False Friendship |
+| "any player may pay N" | Offered to each player, active player first | `anyPlayerMayPay { costs, effects, elseEffects? }` | Recycling Scheme Facility |
+| "any opponent may pay" in a replacement | Offered to each opponent who can pay | the replacement's `chooser: "opponents"` | Unloyal Necromorph |
+| "your opponent cannot respond" | Only the block's opponent may not | `behavior.noResponse: "opponent"` (`true` for "your opponents cannot respond", nobody may) | Subsection 5, Paragraph 12; Swindle (`true`) |
+| "your opponent cannot pick / take control of this card" | Only the selected opponent | restriction `cannotBePickedByOpponent` / `cannotBeTakenControlByOpponent`; the plural `...Opponents` / `cannotBeTakenControl` cover every opponent | Martial Artist, Mountainous Golem |
+| "... cannot pick this card while an opponent has ..." | The restriction binds each opponent who meets the condition | `cannotBePickedByOpponents` with `opponentCondition` | Omahkapi'si Pi'kssii |
+| "your opponent must pay N to use a character's ability" | The selected opponent | `abilityCostModifiers` scope `chosenOpponentCharacters` (`opponentCharacters` for every opponent) | Department of Rejections |
+| "at the start of your opponent's next turn" | That opponent's own next turn | `scheduleEffect { when: "startOfOpponentNextTurn" }` | Final Countdown |
+| "X is the number of opponents you have at the start of the game" | Counted from the seats when the game starts | `faction.perExtraOpponent` | The Evil Alliance |
+| "that opponent" in a later ability, for the rest of the game | A stored player | `rememberPlayer { key, player }` and `{ "type": "rememberedPlayer", "key" }` | I Drink Your Milkshake! |
+| "cannot be blocked by that player's characters" | Only in a battle against that player | `grantKeyword cannotBeBlocked` under a `defendingPlayerIs` condition | Underhanded Gamer |
+| "both players switch seats" | The controller and the selected opponent switch | `swapsSides` on a continuous ability | Emergency Obfuscation |
+
+**Where the opponent comes from.** `"opponent"` is selected by the controller
+unless the ability says otherwise with `opponentFrom` (default `"choose"`):
+`"event"` when a trigger's condition names the opponent through the event's
+player ("if your opponent plays a character", any opponent's action triggers
+it, Slingerang), `"battle"` when only a battle the controller is in can set the
+block off ("if you attack, your opponent ...", the other side of the battle;
+Architectural Restitution), `"respondedTo"` for text answering another player's
+card or ability (Mistaken Identity), and `"acting"` for text written from
+another player's point of view (Free Trade Agreement: "that player ... their
+opponent"; there `"acting"` is "that player", `"opponent"` is "their opponent"
+and `forEachPlayer { players: "pair" }` is "both players"). The engine derives
+`"event"` and `"battle"` when the field is absent; write the field whenever the
+data would otherwise read the wrong player. Continuous text selects when it
+starts applying and again if that player is eliminated (RQ-mp-5).
+
+**Cards that mean something different on their own.** The Knitting Coalition
+says "both players" and "your opponent" and means every opponent
+(`usableBy: "anyPlayer"`, `overridesOpponent`; RQ-mp-6). A printed phrase wins
+over the archival wording where they differ (MPQ-P1: Emergency Obfuscation).
+
+### The forms the gate accepts
+
+`data/card-tests/mp-spec/<set id>.json` records, for every clause with a
+printed player phrase, what it means (`meaning`) and which behavior sites have
+to change (`dataChanges`); `data/card-tests/mp-spec/README.md` documents the
+format and the pattern rulings. An edited site is accepted once it holds a
+form the engine reads for its meaning (`MEANING_FORMS` in
+`src/engine/__tests__/clauses/_mpWorklist.ts`):
+
+| Meaning | Accepted data |
+|---|---|
+| `chosenOpponent` ("your opponent") | `"opponent"`, or `{ type: "chosenPlayer", id }` |
+| `anyOneOpponent` ("an opponent") | `controllerOf` / `ownerOf` of the pick, `{ type: "chosenPlayer", id }`, or `"opponents"` in a selector, scope or condition; never as an effect's `player`, which would act on every opponent |
+| `eachOpponent` | the site inside `forEachPlayer { players: "opponents" }`, or `"opponents"` as an effect's `player` or in a selector / scope; not in a condition (that means "some opponent"), and not as a `chooser` or a target's `player` (the engine refuses both) |
+| `eachPlayer`, `eachOtherPlayer`, `chosenPair`, `selfAndEachOpponent` | `forEachPlayer` with `players` `"all"`, `"others"`, `"pair"`, `"selfAndOpponents"` |
+| `refersBack` ("that player") | `{ type: "chosenPlayer", id }`, `controllerOf` / `ownerOf`, or `"acting"` in an `opponentFrom: "acting"` ability; a selector's controller / owner cannot read `"acting"`, so it holds `"any"` with a `targetOwnedBy { player: "acting" }` condition |
+| `cardRelative` | `controllerOf` / `ownerOf` |
+| `other` (Gideon's Legacy) | `forEachPlayer` with `players` `"all"` or `"others"` and an `except` |
+| an `opponentFrom` site | `"acting"` |
+
 ## Editing card data
 
 - Edit card data through a patch module run by
