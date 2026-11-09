@@ -188,6 +188,9 @@ per-category sections below and in `src/types/*`.
   character this turn (`GameState.attacksThisTurn`). Static or aura.
 - **`cannotBeTakenControl`** — a `takeControl` to a different controller
   fizzles. Gigantitect's Giant Giant.
+  `cannotBeTakenControlByOpponent` is the singular "your opponent cannot take
+  control of this card": only the opponent the card's controller selected is
+  barred. Mountainous Golem (Seed).
 
 **Triggered `event`s**
 - **`counterChanged`** (`{ cardId, counter }`) — fires from an `addCounter` /
@@ -1566,7 +1569,7 @@ Keyword = "tactical" | "aggro" | "covert" | "redirectDamage"
         | "cannotBeBlocked" | "canBlockCovert" | "canBlockAnyParty"
 Restriction = "cannotAttack" | "cannotBlock" | "mustAttack" | "mustBlock"
             | "cannotBeRestored" | "cannotBeRestoredByRule" | "cannotBePicked"
-            | "attackOncePerTurn" | "cannotBeTakenControl"
+            | "attackOncePerTurn" | "cannotBeTakenControl" | "cannotBeTakenControlByOpponent"
             | "mustBePicked" | "cannotUseAbilities"
 ```
 

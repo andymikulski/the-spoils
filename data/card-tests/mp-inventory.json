@@ -44500,68 +44500,74 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[1].effects[0].of",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0]",
+            "value": "forEachPlayer",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[0].viewer",
+            "path": "behavior.abilities[1].effects[0].effects[0].of",
+            "value": "controller",
+            "unit": "ability:spatchcocking-recur",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[1].effects[0].effects[0].viewer",
             "value": "all",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[1].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[1].chooser",
+            "value": "controller",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[1].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[1].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[2].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[2].chooser",
+            "value": "controller",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[2].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[2].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[3].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[3].chooser",
+            "value": "controller",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[3].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[3].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[4].chooser",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[4].chooser",
+            "value": "controller",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[4].declaration.selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[4].declaration.selector.controller",
+            "value": "self",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[1].effects[5].selector.controller",
-            "value": "opponent",
+            "path": "behavior.abilities[1].effects[0].effects[5].selector.controller",
+            "value": "self",
             "unit": "ability:spatchcocking-recur",
             "link": "ref"
           }
@@ -72668,13 +72674,13 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].condition.left.selector.controller",
+            "path": "behavior.abilities[0].condition.condition.left.selector.controller",
             "value": "opponent",
             "unit": "ability:enrage",
             "link": "exclusive"
           },
           {
-            "path": "behavior.abilities[0].condition.right.selector.controller",
+            "path": "behavior.abilities[0].condition.condition.right.selector.controller",
             "value": "self",
             "unit": "ability:enrage",
             "link": "exclusive"
@@ -79068,20 +79074,8 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[1].condition.conditions[0].player",
-            "value": "opponent",
-            "unit": "ability:milkshake-echo",
-            "link": "exclusive"
-          },
-          {
             "path": "behavior.abilities[1].effects[0].chooser",
             "value": "controller",
-            "unit": "ability:milkshake-echo",
-            "link": "exclusive"
-          },
-          {
-            "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-            "value": "opponent",
             "unit": "ability:milkshake-echo",
             "link": "exclusive"
           },
@@ -79133,6 +79127,13 @@
             "unit": "ability:spy",
             "link": "shared",
             "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].winEffects[1].viewer",
+            "value": "controller",
+            "unit": "ability:spy",
+            "link": "shared",
+            "sharedWith": 2
           }
         ]
       },
@@ -79156,6 +79157,13 @@
           },
           {
             "path": "behavior.abilities[0].effects[0].player",
+            "value": "controller",
+            "unit": "ability:spy",
+            "link": "shared",
+            "sharedWith": 2
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].winEffects[1].viewer",
             "value": "controller",
             "unit": "ability:spy",
             "link": "shared",
@@ -80234,13 +80242,19 @@
         ],
         "behavior": [
           {
-            "path": "behavior.abilities[0].condition.left.selector.controller",
+            "path": "behavior.abilities[0].condition.condition.left.selector.controller",
             "value": "opponent",
             "unit": "ability:outsmart",
             "link": "ref"
           },
           {
-            "path": "behavior.abilities[0].condition.right.selector.controller",
+            "path": "behavior.abilities[0].condition.condition.right.selector.controller",
+            "value": "self",
+            "unit": "ability:outsmart",
+            "link": "ref"
+          },
+          {
+            "path": "behavior.abilities[0].effects[0].condition.right.selector.controller",
             "value": "self",
             "unit": "ability:outsmart",
             "link": "ref"

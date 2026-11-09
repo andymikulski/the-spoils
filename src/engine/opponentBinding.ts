@@ -26,7 +26,8 @@ export function namesOpponent(node: unknown): boolean {
     // "At the start of your opponent's next turn": the delayed effect names the block's opponent in its `when`.
     // Singular forms spelled as enum values: "your opponent cannot pick this card", "your opponent must pay ... to use a
     // character's ability".
-    if ((node as Record<string, unknown>).restriction === "cannotBePickedByOpponent") return true;
+    const restriction = (node as Record<string, unknown>).restriction;
+    if (restriction === "cannotBePickedByOpponent" || restriction === "cannotBeTakenControlByOpponent") return true;
     if ((node as Record<string, unknown>).scope === "chosenOpponentCharacters") return true;
     if ((node as Record<string, unknown>).type === "scheduleEffect" && (node as Record<string, unknown>).when === "startOfOpponentNextTurn") return true;
     for (const [key, value] of Object.entries(node)) {

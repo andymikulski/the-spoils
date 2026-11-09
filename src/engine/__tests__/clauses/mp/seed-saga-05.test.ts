@@ -2,7 +2,7 @@
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
 import type { CardInstanceId, PlayerId, SpoilsEngine } from "../../../../engine.js";
-import { clause, clauseMismatch, refused, declineAll, drain } from "../_clause.js";
+import { clause, refused, declineAll, drain } from "../_clause.js";
 import { endTurn } from "../_turn.js";
 import { declareAttackBy, declareAttackOpenWindow, finishBattle } from "../_battle.js";
 import { activate, askedPlayers, answer, choosePlayer, deck, hand, many, pending, play, printing, ready, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
@@ -158,26 +158,35 @@ for (const count of [3, 4] as const) {
       ...foes(count).flatMap((p) => many(`c-${p}-`, theirs[p] ?? 0, p, "play", (i) => character({ name: `${p} char ${i}`, life: 9 }))),
       ...res("rage", 3, P1)
     ]);
-  const outsmart = (t: Table, chosen: PlayerId) => activate(t.engine, P1, t.id("g"), "outsmart", { players: { opponent: chosen } });
+  const outsmart = (t: Table, chosen?: PlayerId) => {
+    activate(t.engine, P1, t.id("g"), "outsmart");
+    if (chosen !== undefined) choosePlayer(t.engine, chosen);
+  };
 
-  clause(GAMER, "0:ability:outsmart", `${count} seats: one opponent is named with the use and only that opponent's character count is compared with mine`, () => {
-    const counts = Object.fromEntries(foes(count).map((p, i) => [p, i === 0 ? 3 : 1]));
+  clause(GAMER, "0:ability:outsmart", `${count} seats: the use needs some opponent with more characters than I have; "those players" is one opponent chosen among those who control more, never one with fewer or as many`, () => {
+    // two opponents control more than my 2 characters (P2 and P3), any further opponent controls fewer
+    const counts = Object.fromEntries(foes(count).map((p, i) => [p, i < 2 ? 3 : 1]));
     const t = gamer(2, counts);
-    assert.deepEqual(askedPlayers(t.engine, { type: "activateAbility", playerId: P1, cardId: t.id("g"), abilityId: "outsmart" }), [{ id: "opponent", candidates: foes(count) }]);
-    refused(() => activate(t.engine, P1, t.id("g"), "outsmart"), "no opponent named");
-    for (const weak of foes(count).slice(1)) {
-      refused(() => outsmart(t, weak), `${weak} controls fewer characters (1 < 2)`);
-      assert.equal(ready(t.engine, P1), 3, "nothing is paid");
-    }
-    outsmart(t, P2);
-    assert.equal(ready(t.engine, P1), 0, "P2 controls 3 > 2: paid 3");
-    // neither opponent controls more than I do: refused whichever is chosen
+    activate(t.engine, P1, t.id("g"), "outsmart");
+    assert.equal(ready(t.engine, P1), 0, "paid 3: P2 and P3 control more than I do");
+    const ask = pending(t.engine)!;
+    assert.equal(ask.kind, "choosePlayer");
+    assert.equal(ask.playerId, P1, "the controller chooses");
+    assert.deepEqual([...(ask.candidates as PlayerId[])].sort(), [P2, P3], "only opponents controlling more characters than I do are offered");
+    choosePlayer(t.engine, P3);
+    assert.equal(pending(t.engine), undefined);
+    // exactly one opponent controls more: it is taken without asking
+    const solo = gamer(2, Object.fromEntries(foes(count).map((p, i) => [p, i === 1 ? 3 : 1])));
+    activate(solo.engine, P1, solo.id("g"), "outsmart");
+    assert.equal(ready(solo.engine, P1), 0);
+    assert.equal(pending(solo.engine), undefined, "a single qualifying opponent is not asked about");
+    // no opponent controls more than I do: the ability cannot be used
     const none = gamer(3, Object.fromEntries(foes(count).map((p) => [p, 2])));
-    for (const chosen of foes(count)) refused(() => outsmart(none, chosen), `${chosen} controls fewer characters`);
-    assert.equal(ready(none.engine, P1), 3);
+    refused(() => activate(none.engine, P1, none.id("g"), "outsmart"), "no opponent controls more characters");
+    assert.equal(ready(none.engine, P1), 3, "nothing is paid");
   });
 
-  clauseMismatch(GAMER, "0:ability:outsmart", "MP-seed-saga-401", `${count} seats: this turn the Gamer cannot be blocked by the chosen opponent's characters, but the other opponents' characters can still block it`, () => {
+  clause(GAMER, "0:ability:outsmart", `${count} seats: this turn the Gamer cannot be blocked by the chosen opponent's characters, but the other opponents' characters can still block it`, () => {
     const counts = Object.fromEntries(foes(count).map((p) => [p, 3]));
     for (const chosen of foes(count)) {
       for (const defender of foes(count)) {

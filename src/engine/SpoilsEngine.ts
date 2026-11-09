@@ -168,7 +168,8 @@ const ALL_RESTRICTIONS: readonly Restriction[] = [
   "cannotBePickedByOpponent",
   "mustBePicked",
   "attackOncePerTurn",
-  "cannotBeTakenControl"
+  "cannotBeTakenControl",
+  "cannotBeTakenControlByOpponent"
 ];
 
 /** Plain printed text of a `markup` string (parsed once), for `textMentionsIcon`. */
@@ -13410,7 +13411,7 @@ export class SpoilsEngine {
       return undefined;
     }
     if (typeof ref === "object" && ref.type === "chosenPlayer" && !context.chosenPlayers?.[ref.id]) return undefined;
-    if (typeof ref === "object" && ref.type === "rememberedPlayer" && !this.state.cards[context.sourceId]?.rememberedPlayers?.[ref.key]) return undefined;
+    if (typeof ref === "object" && ref.type === "rememberedPlayer" && !this.rememberedPlayerId(ref.key, context)) return undefined;
     return this.resolvePlayerRef(ref, context);
   }
 
@@ -13453,7 +13454,7 @@ export class SpoilsEngine {
     }
 
     if (ref.type === "rememberedPlayer") {
-      const remembered = this.state.cards[context.sourceId]?.rememberedPlayers?.[ref.key];
+      const remembered = this.rememberedPlayerId(ref.key, context);
       assert(remembered, `No player was remembered for '${ref.key}'.`);
       return this.requirePlayer(remembered);
     }
@@ -15373,7 +15374,12 @@ export class SpoilsEngine {
 
       case "rememberPlayer": {
         const source = this.state.cards[context.sourceId];
-        if (source) (source.rememberedPlayers ??= {})[effect.key] = this.resolvePlayerRef(effect.player, context).id;
+        const remembered = this.resolvePlayerRef(effect.player, context).id;
+        // With exactly one opponent nothing extra is stored (MPX-select (3)): `rememberedPlayerId` reads that opponent.
+        const onlyOpponent = this.getOpponents(context.controllerId);
+        if (source && !(onlyOpponent.length === 1 && onlyOpponent[0] === remembered)) {
+          (source.rememberedPlayers ??= {})[effect.key] = remembered;
+        }
         return;
       }
 
@@ -16235,10 +16241,7 @@ export class SpoilsEngine {
         // "Opponents cannot take control of this card." (Gigantitect's Giant
         // Giant) — the grab fizzles when the current controller and the
         // would-be controller differ.
-        if (
-          this.hasRestriction(targetId, "cannotBeTakenControl") &&
-          card.controllerId !== newController.id
-        ) {
+        if (card.controllerId !== newController.id && this.takeControlBarred(targetId, newController.id)) {
           return;
         }
 
@@ -18818,28 +18821,45 @@ export class SpoilsEngine {
   }
 
   /**
-   * "Your opponent cannot pick this card" (`cannotBePickedByOpponent`): whether the opponent the restriction's block
-   * selected is `pickerId`. A restriction from a continuous ability reads the opponent its source holds; one an
-   * effect granted reads the opponent that effect's block selected.
+   * "Your opponent cannot pick this card" / "... take control of this card" (`cannotBePickedByOpponent`,
+   * `cannotBeTakenControlByOpponent`): whether the opponent the restriction's block selected is `playerId`. A
+   * restriction from a continuous ability reads the opponent its source holds; one an effect granted reads the opponent
+   * that effect's block selected.
    */
-  private pickBarredToOpponent(cardId: CardInstanceId, pickerId: PlayerId): boolean {
-    const barsPicker = (controllerId: PlayerId | undefined, opponentId: PlayerId | undefined): boolean =>
-      controllerId !== undefined && pickerId !== controllerId && pickerId === this.opponentOf(controllerId, opponentId);
+  private restrictionBarsOpponent(
+    cardId: CardInstanceId,
+    restriction: "cannotBePickedByOpponent" | "cannotBeTakenControlByOpponent",
+    playerId: PlayerId
+  ): boolean {
+    const barsPlayer = (controllerId: PlayerId | undefined, opponentId: PlayerId | undefined): boolean =>
+      controllerId !== undefined && playerId !== controllerId && playerId === this.opponentOf(controllerId, opponentId);
     if (
       this.state.restrictions.some(
         grant =>
           grant.targetId === cardId &&
-          grant.restriction === "cannotBePickedByOpponent" &&
-          barsPicker(grant.createdBy, grant.opponentId)
+          grant.restriction === restriction &&
+          barsPlayer(grant.createdBy, grant.opponentId)
       )
     ) {
       return true;
     }
     return this.getContinuousRestrictionGrantEntries(cardId).some(entry => {
-      if (entry.restriction !== "cannotBePickedByOpponent") return false;
+      if (entry.restriction !== restriction) return false;
       const source = this.requireCard(entry.sourceId);
-      return barsPicker(source.controllerId, this.lastingOpponent(source, entry.abilityId).opponentId);
+      return barsPlayer(source.controllerId, this.lastingOpponent(source, entry.abilityId).opponentId);
     });
+  }
+
+  private pickBarredToOpponent(cardId: CardInstanceId, pickerId: PlayerId): boolean {
+    return this.restrictionBarsOpponent(cardId, "cannotBePickedByOpponent", pickerId);
+  }
+
+  /** Whether `playerId` may not take control of `cardId`: "opponents cannot ..." bars everyone, "your opponent cannot ..." the selected opponent only. */
+  private takeControlBarred(cardId: CardInstanceId, playerId: PlayerId): boolean {
+    return (
+      this.hasRestriction(cardId, "cannotBeTakenControl") ||
+      this.restrictionBarsOpponent(cardId, "cannotBeTakenControlByOpponent", playerId)
+    );
   }
 
   /** Public: a renderer needs a card's live restriction set; same check battle legality uses. */
@@ -18852,6 +18872,17 @@ export class SpoilsEngine {
       this.state.restrictions.some(
         grant => grant.targetId === cardId && grant.restriction === restriction
       )
+    ) {
+      return true;
+    }
+
+    // With exactly one opponent left, "your opponent cannot take control of this card" bars every opponent: it reads
+    // as the plural form (MPX-select (3): a two-player game plays as it always has).
+    if (
+      restriction === "cannotBeTakenControl" &&
+      this.state.cards[cardId] !== undefined &&
+      this.getOpponents(this.state.cards[cardId].controllerId).length === 1 &&
+      this.hasRestriction(cardId, "cannotBeTakenControlByOpponent")
     ) {
       return true;
     }
@@ -19046,7 +19077,7 @@ export class SpoilsEngine {
     const exchanged: SeatSwap["exchanged"] = [];
     for (const card of Object.values(this.state.cards)) {
       if (card.zone !== "play" || (card.controllerId !== a && card.controllerId !== b)) continue;
-      if (this.hasRestriction(card.id, "cannotBeTakenControl")) continue;
+      if (this.takeControlBarred(card.id, card.controllerId === a ? b : a)) continue;
       exchanged.push({ cardId: card.id, previousControllerId: card.controllerId });
     }
     for (const { cardId, previousControllerId } of exchanged) {
@@ -25849,6 +25880,17 @@ export class SpoilsEngine {
   private refNamesPlayer(ref: PlayerRef, context: ResolutionContext, playerId: PlayerId): boolean {
     if (ref === "opponents") return playerId !== context.controllerId && !this.state.players[playerId]?.eliminated;
     return this.resolvePlayerRef(ref, context).id === playerId;
+  }
+
+  /**
+   * The player the source card remembered under `key` (`rememberPlayer`). With exactly one opponent left nobody is
+   * asked and nothing needs storing (MPX-select (3)): a source that stored nothing reads that opponent.
+   */
+  private rememberedPlayerId(key: string, context: ResolutionContext): PlayerId | undefined {
+    const stored = this.state.cards[context.sourceId]?.rememberedPlayers?.[key];
+    if (stored) return stored;
+    const live = this.getOpponents(context.controllerId);
+    return live.length === 1 ? live[0] : undefined;
   }
 
   /**

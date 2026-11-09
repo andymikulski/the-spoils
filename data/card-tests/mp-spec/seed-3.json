@@ -146,13 +146,15 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[1].effects[0].of",
+            "movedTo": "behavior.abilities[1].effects[0].effects[0].of",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "A single 'opponent' reveals today; the reveal, choose and discard chain has to run once for each opponent (the iterated opponent is 'their')."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[0].viewer",
+            "movedTo": "behavior.abilities[1].effects[0].effects[0].viewer",
             "now": "all",
             "meaning": "eachPlayer",
             "edit": false,
@@ -160,66 +162,82 @@
           },
           {
             "path": "behavior.abilities[1].effects[1].chooser",
+            "movedTo": "behavior.abilities[1].effects[0].effects[1].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: the iterated opponent chooses."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[2].chooser",
+            "movedTo": "behavior.abilities[1].effects[0].effects[2].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: the iterated opponent chooses."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[3].chooser",
+            "movedTo": "behavior.abilities[1].effects[0].effects[3].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: the iterated opponent chooses."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[4].chooser",
+            "movedTo": "behavior.abilities[1].effects[0].effects[4].chooser",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: the iterated opponent chooses."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[1].declaration.selector.controller",
+            "movedTo": "behavior.abilities[1].effects[0].effects[1].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: cards in the iterated opponent's hand."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[2].declaration.selector.controller",
+            "movedTo": "behavior.abilities[1].effects[0].effects[2].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: cards in the iterated opponent's hand."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[3].declaration.selector.controller",
+            "movedTo": "behavior.abilities[1].effects[0].effects[3].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: cards in the iterated opponent's hand."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[4].declaration.selector.controller",
+            "movedTo": "behavior.abilities[1].effects[0].effects[4].declaration.selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: cards in the iterated opponent's hand."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
           },
           {
             "path": "behavior.abilities[1].effects[5].selector.controller",
+            "movedTo": "behavior.abilities[1].effects[0].effects[5].selector.controller",
             "now": "opponent",
             "meaning": "eachOpponent",
             "edit": true,
-            "why": "Inside the per-opponent iteration: the iterated opponent discards the remaining non-resource cards."
+            "why": "\"Each opponent ...\": the whole chain now runs once per opponent inside one forEachPlayer { players: \"opponents\" } (listed below); inside it \"controller\" is the opponent being iterated, so the player word is that opponent."
+          },
+          {
+            "path": "behavior.abilities[1].effects[0]",
+            "now": null,
+            "meaning": "eachOpponent",
+            "edit": true,
+            "why": "New forEachPlayer { players: \"opponents\" } around the reveal, the four picks and the discard: every opponent, in turn order from the active player, reveals their hand, keeps one card of each non-resource type and discards the rest."
           }
         ],
         "test3": "P1 uses RECUR from the discard pile (pays 4, removes it from the game); P1 is the active player. P2 then P3 each reveal their hand (visible to all players), choose one card of each non-resource type in it and discard the rest of their non-resource cards; resources in hand stay. Choices appear for P2 first, then P3. P1's hand is untouched. Repeat with P3 as the active player (ability used in response): the order is P3, then P2; P1 is still skipped.",

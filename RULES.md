@@ -1520,7 +1520,9 @@ of the Devoured Emperor additions")**
   turn (tracked in `GameState.attacksThisTurn`, reset each turn), regardless
   of whether it has since been restored.
 - **"opponents cannot take control of this card."** `cannotBeTakenControl`
-  — a `takeControl` that would change the controller is skipped.
+  — a `takeControl` that would change the controller is skipped. The singular
+  "your opponent cannot take control of this card" is
+  `cannotBeTakenControlByOpponent`: only the selected opponent is barred.
 - **Redirect (6r4wny 60dy9u4rd5).** `ContinuousAbility.redirects: [{ from,
   to }]` — while active, damage that would be dealt to `from`, and any way
   `from` would leave play, is applied to `to` instead (and `from` is
@@ -2093,6 +2095,7 @@ opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
   Restore Rules count turns through the seat order too, and are stamped again whenever the order changes (a seat
   swap, an elimination).
 - **Singular forms of lasting text:** `cannotBePickedByOpponent` (only the selected opponent cannot pick the card),
+  `cannotBeTakenControlByOpponent` (only the selected opponent cannot take control of it),
   `abilityCostModifiers` scope `chosenOpponentCharacters` and `preventsAttackOnFaction.attacker: "opponent"` read
   the selected opponent; their plural counterparts (`cannotBePickedByOpponents`, `opponentCharacters`, no
   `attacker`) cover every opponent.
@@ -2139,7 +2142,8 @@ opponent when its data holds `"opponent"` or a `forEachPlayer` over `"pair"`.
   opponent who can pay, clockwise from the affected card's controller; the first to pay settles it (`controller` in
   its effects is that player); if all decline the replaced event happens (Unloyal Necromorph).
 - **Remembered players and counted gains:** `rememberPlayer` stores a player on the source card for the rest of the
-  game (`{ type: "rememberedPlayer", key }`, Seed Saga's I Drink Your Milkshake!); `modifyInfluence.tallyAs` adds the
+  game (`{ type: "rememberedPlayer", key }`, Seed Saga's I Drink Your Milkshake!; with exactly one opponent left a
+  card that stored nothing reads that opponent, MPX-select (3)); `modifyInfluence.tallyAs` adds the
   influence actually gained to a variable ("for each influence gained this way", Stuttershy).
 - **Replacements and coin flips:** the effects of a replacement run with no state-based check until they finish (a
   `forEachPlayer` inside one no longer lets lethal damage destroy the card first, Lucky Bastard); a flipped coin's

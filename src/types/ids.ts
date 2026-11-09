@@ -115,7 +115,13 @@ export type Restriction =
    */
   | "cannotUseAbilities"
   /** "Opponents cannot take control of this card." — a `takeControl` effect that would move it to a different controller fizzles. Gigantitect's Giant Giant. */
-  | "cannotBeTakenControl";
+  | "cannotBeTakenControl"
+  /**
+   * "Your opponent cannot take control of this card." — only the block's selected opponent (MP 2) cannot take control
+   * of it; every other opponent can. Selected when the restriction starts applying (MPX-lasting) and bound like any
+   * "your opponent". Mountainous Golem (Seed).
+   */
+  | "cannotBeTakenControlByOpponent";
 
 export type CardType =
   | "character"

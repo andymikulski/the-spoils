@@ -660,142 +660,148 @@
           ],
           "effects": [
             {
-              "type": "reveal",
-              "of": "opponent",
-              "zone": "hand",
-              "viewer": "all"
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepC",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "character"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepI",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "item"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepL",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "location"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "chooserSelectsTarget",
-              "chooser": "opponent",
-              "declaration": {
-                "id": "keepT",
-                "selector": {
-                  "controller": "opponent",
-                  "zone": "hand",
-                  "type": "tactic"
-                },
-                "count": 1,
-                "optional": false
-              },
-              "effects": []
-            },
-            {
-              "type": "forEach",
-              "selector": {
-                "controller": "opponent",
-                "zone": "hand",
-                "conditions": [
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "cardTypeIs",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "cardType": "resource"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepC"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepI"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepL"
-                    }
-                  },
-                  {
-                    "type": "not",
-                    "condition": {
-                      "type": "targetInSelection",
-                      "target": {
-                        "type": "selected",
-                        "id": "__candidate"
-                      },
-                      "selection": "keepT"
-                    }
-                  }
-                ]
-              },
+              "type": "forEachPlayer",
+              "players": "opponents",
               "effects": [
                 {
-                  "type": "moveCard",
-                  "target": {
-                    "type": "selected",
-                    "id": "__candidate"
+                  "type": "reveal",
+                  "of": "controller",
+                  "zone": "hand",
+                  "viewer": "all"
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "keepC",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "hand",
+                      "type": "character"
+                    },
+                    "count": 1,
+                    "optional": false
                   },
-                  "to": "discard"
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "keepI",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "hand",
+                      "type": "item"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "keepL",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "hand",
+                      "type": "location"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "chooserSelectsTarget",
+                  "chooser": "controller",
+                  "declaration": {
+                    "id": "keepT",
+                    "selector": {
+                      "controller": "self",
+                      "zone": "hand",
+                      "type": "tactic"
+                    },
+                    "count": 1,
+                    "optional": false
+                  },
+                  "effects": []
+                },
+                {
+                  "type": "forEach",
+                  "selector": {
+                    "controller": "self",
+                    "zone": "hand",
+                    "conditions": [
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "cardTypeIs",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "cardType": "resource"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepC"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepI"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepL"
+                        }
+                      },
+                      {
+                        "type": "not",
+                        "condition": {
+                          "type": "targetInSelection",
+                          "target": {
+                            "type": "selected",
+                            "id": "__candidate"
+                          },
+                          "selection": "keepT"
+                        }
+                      }
+                    ]
+                  },
+                  "effects": [
+                    {
+                      "type": "moveCard",
+                      "target": {
+                        "type": "selected",
+                        "id": "__candidate"
+                      },
+                      "to": "discard"
+                    }
+                  ]
                 }
               ]
             }

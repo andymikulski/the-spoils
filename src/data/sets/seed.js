@@ -8621,7 +8621,7 @@ const cards = [
           "restrictions": [
             {
               "target": "source",
-              "restriction": "cannotBeTakenControl"
+              "restriction": "cannotBeTakenControlByOpponent"
             }
           ]
         },

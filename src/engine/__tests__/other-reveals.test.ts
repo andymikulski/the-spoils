@@ -735,7 +735,7 @@ describe("other-reveals.patch.cjs matches the catalog", () => {
     ["Gilda, Mother of Gideon", '"type":"revealCards","selected":"tac"', 1],
     ["Auspicious Arrival", '"type":"revealCards","selected":"pick"', 1],
     ["Discommodiousness", '"type":"reveal","of":"opponent","zone":"hand"', 2],
-    ["Spatchcocking", '"type":"reveal","of":"opponent","zone":"hand"', 1],
+    ["Spatchcocking", '"type":"reveal","of":"controller","zone":"hand"', 1],
     ["Roulette Wheel of DOOM!", '"type":"reveal","of":"controller","zone":"deckTop"', 2],
     ["Dauntless Gambler", '"type":"reveal","of":"controller","zone":"deckTop"', 2],
     ["Auction House", '"type":"auctionForCard"', 2],

@@ -353,6 +353,10 @@
     "src/engine/__tests__/per-card/1st-edition-part-2.test.ts": {
       "sha256": "c2fce88300920be733630013957b47202987775e71945dc828052cc9500d45e0",
       "reason": "Martial Artist and Martial Arts Trainee print \"Your opponent cannot pick this card\" (singular): the data now holds the singular restriction cannotBePickedByOpponent (at 3+ seats only the selected opponent is barred). Lines 2194 and 2223 assert that restriction name instead of the plural cannotBePickedByOpponents; two-player behavior is identical. Approved by the user 2026-11-08."
+    },
+    "src/engine/__tests__/other-reveals.test.ts": {
+      "sha256": "187e88e568807dc30a07d91ac2e1424b91c839dfd4f122c0e3fb63ba200825e6",
+      "reason": "Spatchcocking's RECUR (\"each opponent ...\") now runs per opponent inside forEachPlayer { players: \"opponents\" }, where the revealing player is the iterated player: the expected substring changes from \"of\":\"opponent\" to \"of\":\"controller\" (two-player behavior identical). Only that one expected substring changes. Approved by the user 2026-11-09."
     }
   }
 }

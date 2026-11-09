@@ -5,7 +5,7 @@
 Counts are per rules group (printings identical in everything the engine reads count once), attributed to the
 group's earliest-released set. "Distinct cards" counts distinct card names. Phrases include reminder text unless noted.
 
-1773 rules groups, 3548 clauses: 2244 with `mp` set (75 `"quantified"`), 552 with a printed player phrase, 2182 with a behavior player word (467 with a word other than controller, self, owner, all or a PlayerRef).
+1773 rules groups, 3548 clauses: 2244 with `mp` set (75 `"quantified"`), 552 with a printed player phrase, 2182 with a behavior player word (466 with a word other than controller, self, owner, all or a PlayerRef).
 
 ## Printed phrases by category
 
@@ -36,12 +36,12 @@ group's earliest-released set. "Distinct cards" counts distinct card names. Phra
 
 | value | occurrences | distinct cards |
 |---|---|---|
-| `controller` | 2325 | 765 |
-| `self` | 888 | 466 |
-| `opponent` | 436 | 179 |
+| `controller` | 2331 | 765 |
+| `self` | 894 | 466 |
+| `opponent` | 424 | 178 |
 | `ownerOf` | 78 | 46 |
 | `controllerOf` | 55 | 30 |
-| `forEachPlayer` | 47 | 27 |
+| `forEachPlayer` | 48 | 27 |
 | `all` | 43 | 19 |
 | `owner` | 25 | 3 |
 | `any` | 17 | 12 |
@@ -55,7 +55,7 @@ group's earliest-released set. "Distinct cards" counts distinct card names. Phra
 | `anyPlayerMayPay` | 1 | 1 |
 | `separateIntoPiles` | 1 | 1 |
 
-Mapping of behavior words to clauses: ref 841, flipUp 40, fealty 4, exclusive 1611, shared 1443.
+Mapping of behavior words to clauses: ref 843, flipUp 40, fealty 4, exclusive 1609, shared 1444.
 
 ## Per set (rules groups by earliest set)
 
@@ -67,7 +67,7 @@ Mapping of behavior words to clauses: ref 841, flipUp 40, fealty 4, exclusive 16
 | Seed | 226 | 68 | 490 | 161 | 2 |
 | Seed 2 | 110 | 45 | 345 | 93 | 0 |
 | 2nd Edition | 153 | 91 | 379 | 131 | 2 |
-| Seed 3 | 38 | 33 | 131 | 35 | 5 |
+| Seed 3 | 38 | 33 | 132 | 35 | 5 |
 | Shade of the Devoured Emperor | 130 | 60 | 288 | 100 | 13 |
 | Holy Heist | 145 | 54 | 324 | 109 | 5 |
 | Ungodly Mess | 156 | 49 | 360 | 121 | 10 |
@@ -100,16 +100,16 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 |---|---|---|---|
 | `bothPlayers-no-iteration` |  | 8 | 8 |
 | `eachOfYou-no-iteration` |  | 1 | 1 |
-| `eachOpponent-no-iteration` |  | 43 | 42 |
+| `eachOpponent-no-iteration` |  | 42 | 41 |
 | `eachPlayer-no-iteration` |  | 1 | 1 |
 | `playersBare-no-iteration` |  | 2 | 2 |
 | `xPlayers-no-iteration` |  | 1 | 1 |
 | `data-word-no-printed-phrase` |  | 15 | 14 |
 | `printed-no-data-word` |  | 62 | 48 |
-| `anOpponent-vs-opponent` | expected in two-player (count only) | 20 | 20 |
+| `anOpponent-vs-opponent` | expected in two-player (count only) | 19 | 19 |
 | `anyOpponent-vs-opponent` | expected in two-player (count only) | 1 | 1 |
-| `opponentBare-vs-opponent` | expected in two-player (count only) | 2 | 2 |
-| `thatOpponent-vs-opponent` | expected in two-player (count only) | 3 | 3 |
+| `opponentBare-vs-opponent` | expected in two-player (count only) | 1 | 1 |
+| `thatOpponent-vs-opponent` | expected in two-player (count only) | 2 | 2 |
 | `theirOpponent-vs-opponent` | expected in two-player (count only) | 2 | 1 |
 | `yourOpponent-vs-opponent` | expected in two-player (count only) | 225 | 155 |
 
@@ -128,10 +128,9 @@ Input for later work, not a gate. A clause is judged against its own behavior da
 
 - Mustache Aficionado (`f276a0be-6c30-4276-a743-30e63619dc41`) `0:ability:mustache-showdown` — printed "Each of you"; data has "partitionAndPick" and no forEachPlayer / alternating iteration
 
-### `eachOpponent-no-iteration` (43)
+### `eachOpponent-no-iteration` (42)
 
 - Voidal Replication (`b9e94612-3cbd-44ff-9aac-a553a49c0955`) `0:extraCost` — printed "Your opponents"; data has no player words and no forEachPlayer / alternating iteration
-- Spatchcocking (`d23a3fbd-0bf3-4937-9b29-570c55a418b8`) `1:ability:spatchcocking-recur` — printed "Each opponent"; data has "opponent", "all" and no forEachPlayer / alternating iteration
 - Vilghame Manewaft (`3534079d-0983-4521-a905-589de7d4b9d8`) `1:rule`, `2:rule` — printed "each opponent"; data has "opponent", "ownerOf" and no forEachPlayer / alternating iteration
 - The Evil Alliance (`9dc309f4-d43f-4515-841e-ed982ce026e7`) `0:rule`, `1:rule:STARTING RESOURCES`, `2:rule:STARTING DRAW`, `3:rule:RESTORE RULE`, `4:rule:DEVELOP RULE`, `5:ability`, `6:ability`, `7:ability`, `8:rule:DARING GAMBIT`, `9:rule:OMNIPOTENCE`, `10:rule` — printed "opponents"; data has "controller", "self" and no forEachPlayer / alternating iteration
 - Man Shark (`efc19e34-03c2-4673-a5da-9d1f19af2409`) `0:rule` — printed "each opponent"; data has no player words and no forEachPlayer / alternating iteration

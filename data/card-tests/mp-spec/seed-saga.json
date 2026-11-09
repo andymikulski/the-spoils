@@ -768,10 +768,35 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition.left.selector.controller",
+            "movedTo": "behavior.abilities[0].condition.condition.left.selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
+            "edit": false,
+            "why": "The word stays: inside the anyOpponent condition that now wraps the comparison, \"opponent\" is each opponent in turn (RULES.md section 15, MPX-vocab-an). The structural edit is the wrapper, listed below."
+          },
+          {
+            "path": "behavior.abilities[0].condition",
+            "now": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              },
+              "operator": ">",
+              "right": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "type": "character"
+                }
+              }
+            },
+            "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "Compared one opponent at a time against the controller's count."
+            "why": "The comparison is wrapped in an anyOpponent condition: it holds when it holds for at least one opponent, each judged on their own and never pooled."
           }
         ],
         "test3": "P1 controls 3 characters. P2 controls 2 and P3 controls 4: the condition holds (P3), so P1's Nefarious Horror has +2 strength, +2 life and loses COVERT. P2 controls 5 and P3 controls 1: holds (P2). P2 controls 2 and P3 controls 2 (4 together, but neither more than 3): does not hold; no bonus, COVERT kept. P2 and P3 both equal to 3: does not hold. When the condition stops holding the bonus ends."
@@ -2436,17 +2461,19 @@
           },
           {
             "path": "behavior.abilities[1].condition.conditions[0].player",
+            "movedTo": "behavior.abilities[0].effects[2]",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "The delayed trigger watches only the opponent whose deck was searched (the choice has to be carried from the first ability to the second). The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
+            "why": "The echo watches only the opponent whose deck was searched: the search stores that player with a rememberPlayer effect (movedTo, the last step of the first ability) and the trigger reads it back with { type: \"rememberedPlayer\", key: \"searched\" } in its eventPlayerIs condition (the same place as before)."
           },
           {
             "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
+            "movedTo": "behavior.abilities[0].effects[2]",
             "now": "opponent",
             "meaning": "refersBack",
             "edit": true,
-            "why": "The voided card is that opponent's card. The stored \"opponent\" must become a reference to the opponent the sentence picked (a chosenPlayer reference, like the pick site)."
+            "why": "The voided card is that opponent's card: the selector's owner reads the same remembered player (movedTo is the rememberPlayer step that stores it)."
           }
         ],
         "test3": "P1 plays it and chooses P2: P1 searches P2's deck, puts a card named 'Foo' in the void face-down and P2's deck is shuffled. Later P3 deploys a card named 'Foo': nothing happens (P3 is not the opponent searched). Later P2 deploys 'Foo': P1 may reveal the voided 'Foo' and deploy it free (ignoring threshold); if P1 does, P2's card is terminated. Repeat with P3 chosen at the start: only P3's deployments trigger; P2's do not. Playing a resource does not trigger it."
@@ -2475,7 +2502,7 @@
             "now": [],
             "meaning": "anyOneOpponent",
             "edit": true,
-            "why": "The coin flip has empty win and lose effects; the look at the top card of one chosen opponent's deck has no data and no player word."
+            "why": "The coin flip's winEffects were empty: they now choose one opponent (choosePlayer) and show the top card of that opponent's deck to the controller only (reveal, viewer \"controller\"): a look is information, nothing is reordered."
           }
         ],
         "test3": "At the end of P1's turn P1 flips a coin. On a win P1 chooses P2 or P3 and looks at the top card of that player's deck only; the other deck is not looked at. On a loss P1 looks at nothing. Only P1 flips and looks."
@@ -3059,13 +3086,15 @@
         "dataChanges": [
           {
             "path": "behavior.abilities[0].condition.left.selector.controller",
+            "movedTo": "behavior.abilities[0].condition.condition.left.selector.controller",
             "now": "opponent",
             "meaning": "anyOneOpponent",
-            "edit": true,
-            "why": "MPQ-P9: the use condition compares the controller's character count with the one chosen opponent's count."
+            "edit": false,
+            "why": "\"Use this only if an opponent controls more characters than you\" stays the precondition of the use. The word stays: inside the anyOpponent condition that now wraps the comparison, \"opponent\" is each opponent in turn (MPX-vocab-an). The structural edit is the wrapper, listed below."
           },
           {
             "path": "behavior.abilities[0].effects[0]",
+            "movedTo": "behavior.abilities[0].effects[1].condition",
             "now": {
               "type": "grantKeyword",
               "target": "source",
@@ -3076,7 +3105,31 @@
             },
             "meaning": "refersBack",
             "edit": true,
-            "why": "MPQ-P9: the keyword grant has no player. It must say the Gamer cannot be blocked by the chosen opponent's characters (other opponents' characters can still block it)."
+            "why": "\"Those players\" (MPQ-P9) is the one opponent chosen among those who control more characters than the controller: a choosePlayer step (effects[0]) with that condition picks it when the effect resolves, and the keyword grant carries a defendingPlayerIs condition on the chosen player, so only that opponent cannot block."
+          },
+          {
+            "path": "behavior.abilities[0].condition",
+            "now": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              },
+              "operator": ">",
+              "right": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "type": "character"
+                }
+              }
+            },
+            "meaning": "anyOneOpponent",
+            "edit": true,
+            "why": "The use condition is wrapped in an anyOpponent condition: the ability can be used only while some opponent controls more characters than the controller."
           }
         ],
         "test3": "P1 controls 2 characters, P2 controls 3, P3 controls 1. P1 activates OUTSMART (pays 3) and chooses an opponent (P2 or P3; one choice, made as part of the use). Choose P2: allowed (3 > 2); this turn the Gamer cannot be blocked by P2's characters, but P3's characters can still block it. Choose P3: refused (1 < 2), nothing is paid. If both opponents control more characters than P1 and P3 is chosen: P3's characters cannot block, P2's still can. If neither opponent controls more than P1 the ability is refused whichever opponent is chosen."

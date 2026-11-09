@@ -268,7 +268,13 @@ const RULES = [
   {
     name: "Spatchcocking",
     when: /each opponent reveals their hand/i,
-    apply: (card) => addAt(effectsOf(card, "spatchcocking-recur"), 0, revealHand("opponent"))
+    // "Each opponent reveals their hand ...": the whole chain runs once per opponent inside forEachPlayer, where
+    // "controller" is the opponent being iterated.
+    apply: (card) => {
+      const effects = effectsOf(card, "spatchcocking-recur");
+      const each = effects.find((effect) => effect.type === "forEachPlayer");
+      addAt(each ? each.effects : effects, 0, revealHand(each ? "controller" : "opponent"));
+    }
   },
 
   // A pick that is revealed

@@ -1,11 +1,11 @@
 // Multiplayer clause tests for the Seed set (3 and 4 seats), part 2: the remaining clauses whose data changed, and the
-// Mountainous Golem, which waits for engine vocabulary (clauseMismatch). Expectations come from each card's PRINTED text, the
+// Mountainous Golem (the singular "your opponent cannot take control"). Expectations come from each card's PRINTED text, the
 // multiplayer atoms (data/rule-tests/source/multiplayer.txt) and data/card-tests/mp-spec/seed.json.
 
 import assert from "node:assert/strict";
 import { bank, location as locationDef } from "../../per-card/_harness.js";
 import { resourceCard, tactic } from "../../support/fixtures.js";
-import { clause, clauseMismatch, printing, refused } from "../_clause.js";
+import { clause, printing, refused } from "../_clause.js";
 import {
   activate,
   answerFor,
@@ -414,7 +414,7 @@ clause(RESTITUTION, "0:ability", "3 seats: playable while any opponent is attack
 });
 
 // =================================================================================
-// Mountainous Golem  (MP-seed-2: cannotBeTakenControl has no player)
+// Mountainous Golem  (cannotBeTakenControlByOpponent)
 // Your opponent cannot take control of this card.
 // =================================================================================
 
@@ -426,7 +426,7 @@ const thief = (seat: PlayerId) =>
     behavior: { abilities: [{ id: "body", type: "activated", targets: [{ id: "t", selector: { type: "character", name: "Mountainous Golem" }, count: 1 }], effects: [{ type: "takeControl", target: { type: "selected", id: "t" }, controller: "controller" }] }] }
   });
 
-clauseMismatch(GOLEM, "0:rule", "MP-seed-2", "3 seats: the opponent P1 chooses when the Golem enters play cannot take control of it, the other opponent can", () => {
+clause(GOLEM, "0:rule", "3 seats: the opponent P1 chooses when the Golem enters play cannot take control of it, the other opponent can", () => {
   for (const [pick, free] of [
     [P2, P3],
     [P3, P2]

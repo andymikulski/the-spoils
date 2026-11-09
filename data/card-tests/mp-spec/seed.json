@@ -1369,7 +1369,7 @@
             },
             "meaning": "chosenOpponent",
             "edit": true,
-            "why": "The restriction has no player: it blocks every taker. It needs a field naming the player barred from taking control (the chosen opponent). Engine gap: cannotBeTakenControl is read without a player (takeControl fizzles for every other controller) and no restriction form yet names the one barred opponent; the site stays pending."
+            "why": "The singular form of the restriction: cannotBeTakenControlByOpponent bars only the opponent the card's controller selects when the text starts applying (bound through the lasting binding, like cannotBePickedByOpponent); every other opponent can still take control of the card. The plural printing (Seed Saga) keeps cannotBeTakenControl."
           }
         ],
         "test3": "P1 controls Mountainous Golem. The opponent is chosen when the static text starts applying (RQ-mp-5), kept while it applies, and re-chosen if that player is eliminated: P1 is offered exactly P2 and P3 (no choice when only one opponent is left). Choose P2: an effect controlled by P2 cannot take control of the Golem; an effect controlled by P3 can (literal reading of MP 2). Choose P3 (second run): an effect controlled by P3 cannot take control of the Golem; an effect controlled by P2 can (literal reading of MP 2)."

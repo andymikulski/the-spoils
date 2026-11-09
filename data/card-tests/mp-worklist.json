@@ -1,7 +1,7 @@
 {
   "total": {
-    "sites": 17,
-    "clauses": 6
+    "sites": 0,
+    "clauses": 0
   },
   "sets": {
     "1st-edition": {
@@ -30,21 +30,9 @@
       "pending": []
     },
     "seed": {
-      "sites": 1,
-      "clauses": 1,
-      "pending": [
-        {
-          "card": "Mountainous Golem",
-          "id": "c5262c5b-9ef2-40ed-9f16-29b391b39a11",
-          "clause": "0:rule",
-          "path": "behavior.abilities[0].restrictions[0]",
-          "now": {
-            "target": "source",
-            "restriction": "cannotBeTakenControl"
-          },
-          "meaning": "chosenOpponent"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "seed-2": {
       "sites": 0,
@@ -52,151 +40,14 @@
       "pending": []
     },
     "seed-3": {
-      "sites": 10,
-      "clauses": 1,
-      "pending": [
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[0].of",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[1].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[2].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[3].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[4].chooser",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[1].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[2].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[3].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[4].declaration.selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        },
-        {
-          "card": "Spatchcocking",
-          "id": "d23a3fbd-0bf3-4937-9b29-570c55a418b8",
-          "clause": "1:ability:spatchcocking-recur",
-          "path": "behavior.abilities[1].effects[5].selector.controller",
-          "now": "opponent",
-          "meaning": "eachOpponent"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "seed-saga": {
-      "sites": 6,
-      "clauses": 4,
-      "pending": [
-        {
-          "card": "Nefarious Horror",
-          "id": "6a568b43-e53e-4c0f-915d-df90aa61872e",
-          "clause": "1:rule",
-          "path": "behavior.abilities[0].condition.left.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "I Drink Your Milkshake!",
-          "id": "83807d38-2e87-4c3e-9167-5488979e4267",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].condition.conditions[0].player",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "I Drink Your Milkshake!",
-          "id": "83807d38-2e87-4c3e-9167-5488979e4267",
-          "clause": "0:rule",
-          "path": "behavior.abilities[1].effects[0].declaration.selector.owner",
-          "now": "opponent",
-          "meaning": "refersBack"
-        },
-        {
-          "card": "Lecram, Silent Advisor",
-          "id": "52575cdb-9125-474c-8dea-0506f28f8ee0",
-          "clause": "2:rule",
-          "path": "behavior.abilities[0].effects[0].winEffects",
-          "now": [],
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Underhanded Gamer",
-          "id": "8bed01de-3627-4ae9-92dc-fc065e9e5de7",
-          "clause": "0:ability:outsmart",
-          "path": "behavior.abilities[0].condition.left.selector.controller",
-          "now": "opponent",
-          "meaning": "anyOneOpponent"
-        },
-        {
-          "card": "Underhanded Gamer",
-          "id": "8bed01de-3627-4ae9-92dc-fc065e9e5de7",
-          "clause": "0:ability:outsmart",
-          "path": "behavior.abilities[0].effects[0]",
-          "now": {
-            "type": "grantKeyword",
-            "target": "source",
-            "keyword": "cannotBeBlocked",
-            "duration": {
-              "type": "untilEndOfTurn"
-            }
-          },
-          "meaning": "refersBack"
-        }
-      ]
+      "sites": 0,
+      "clauses": 0,
+      "pending": []
     },
     "shade-of-the-devoured-emperor": {
       "sites": 0,

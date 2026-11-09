@@ -1,7 +1,7 @@
 // Multiplayer clause tests, seed-saga part 4: 3- and 4-seat tables, real catalog printings, public actions only.
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, declineAll, drain, refused } from "../_clause.js";
+import { clause, declineAll, drain, refused } from "../_clause.js";
 import { declareAttackBy } from "../_battle.js";
 import { tokensOn } from "../_board.js";
 import { activate, answer, askedPlayers, choosePlayer, deck, hand, many, pending, play, printing, res, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
@@ -615,7 +615,7 @@ const LECRAM = "52575cdb-9125-474c-8dea-0506f28f8ee0";
   const coinFlips = (engine: ReturnType<typeof coinTable>["engine"]) =>
     engine.getLog().filter((e) => e.event?.type === "coinFlipped").map((e) => ({ playerId: (e.event as unknown as { playerId: string }).playerId, won: (e.event as unknown as { won: boolean }).won }));
 
-  clauseMismatch(LECRAM, "2:rule", "MP-seed-saga-301", "3 seats: at the end of P1's turn only P1 flips a coin; on a win P1 chooses P2 or P3 and looks at the top card of that player's deck only (never the other deck); on a loss P1 looks at nothing", () => {
+  clause(LECRAM, "2:rule", "3 seats: at the end of P1's turn only P1 flips a coin; on a win P1 chooses P2 or P3 and looks at the top card of that player's deck only (never the other deck); on a loss P1 looks at nothing", () => {
     for (const chosen of [P2, P3]) {
       const other = chosen === P2 ? P3 : P2;
       const t = coinTable(lecramCards(), () => 0);
@@ -628,14 +628,11 @@ const LECRAM = "52575cdb-9125-474c-8dea-0506f28f8ee0";
       assert.equal(ask.playerId, P1);
       assert.deepEqual([...(ask.candidates as PlayerId[])].sort(), [P2, P3], "P1 is never offered");
       choosePlayer(t.engine, chosen);
-      const look = pending(t.engine)!;
-      assert.ok(look, "P1 looks at the top card");
-      assert.equal(look.kind, "reorderDeck");
-      assert.equal(look.playerId, P1, "P1 is the one who sees it");
-      assert.equal(look.deckOwnerId, chosen, "the chosen opponent's deck");
-      assert.deepEqual(look.cardIds, [decks[chosen]![0]!], "only the top card of that deck");
-      answer(t.engine, "reorderDeck", { order: [decks[chosen]![0]!] });
-      assert.equal(pending(t.engine), undefined);
+      assert.equal(pending(t.engine), undefined, "the look is information only: nothing more is asked");
+      const reveals = t.engine.getLog().map((e) => e.event as unknown as { type: string; cardIds: string[]; viewerId: string }).filter((e) => e?.type === "cardsRevealed");
+      assert.equal(reveals.length, 1, "exactly one look");
+      assert.deepEqual(reveals[0]!.cardIds, [decks[chosen]![0]!], "only the top card of the chosen opponent's deck");
+      assert.equal(reveals[0]!.viewerId, P1, "only P1 sees it");
       for (const p of [P1, P2, P3]) assert.deepEqual(deck(t.engine, p), decks[p], `${p}'s deck keeps its order`);
       assert.ok(other);
     }

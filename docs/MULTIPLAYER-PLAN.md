@@ -384,9 +384,12 @@ its reason. No other field may be excluded.
 In order. Each step is green on the full existing suite, the freeze gate and
 the two-player replay digests before the next one starts.
 
-Status: steps 1 to 4 are done (`mp-ffa.p1` to `p6`). So are the battle,
-unique, trigger-order, bidding, loop and hidden-information atoms. Steps 5 to
-8 are next.
+Status: all eight steps are done (`mp-ffa.p1` to `p17`). `getOpponent` is
+gone and a static test keeps two-player helpers out of the engine. The
+vocabulary the card data needed (filtered player choices, any-opponent offers,
+every-opponent taxes, per-opponent conditions and restrictions, text from
+another player's point of view, per-opponent setup) is built and documented in
+RULES.md §15.
 
 1. **Seats.** Seat helpers (`opponentsOf`, `nextSeat`, `playersFrom`) and turn
    passing.
@@ -409,6 +412,13 @@ Every MP and MPX atom gets `rule` tests at 3 **and** 4 seats in
 `src/engine/__tests__/rules/mp-*.test.ts`. The rules gate requires them.
 
 ## Phase 4 — Card data (parallel, one set per agent)
+
+Status: done. Every spec site of all twelve sets is converted
+(`data/card-tests/mp-worklist.json` is empty; the gate also accepts moved
+sites and new nodes). Two-player replay games whose in-flight card-data copies
+changed were re-recorded after checking that every recorded action is still
+accepted and the final state is unchanged (three games differ only in fresh
+id counters, from effect lists that now pause in printed order).
 
 - **Lint gate** (`card-data-integrity`, driven by the inventory):
   - In each block, every player word in the behavior must match a printed

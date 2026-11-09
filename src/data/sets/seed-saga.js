@@ -4366,20 +4366,23 @@ const cards = [
           "id": "enrage",
           "type": "continuous",
           "condition": {
-            "type": "numberCompare",
-            "left": {
-              "type": "count",
-              "selector": {
-                "controller": "opponent",
-                "type": "character"
-              }
-            },
-            "operator": ">",
-            "right": {
-              "type": "count",
-              "selector": {
-                "controller": "self",
-                "type": "character"
+            "type": "anyOpponent",
+            "condition": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              },
+              "operator": ">",
+              "right": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "type": "character"
+                }
               }
             }
           },
@@ -22152,6 +22155,14 @@ const cards = [
                 "type": "chosenPlayer",
                 "id": "opp"
               }
+            },
+            {
+              "type": "rememberPlayer",
+              "key": "searched",
+              "player": {
+                "type": "chosenPlayer",
+                "id": "opp"
+              }
             }
           ],
           "playerChoices": [
@@ -22171,7 +22182,10 @@ const cards = [
             "conditions": [
               {
                 "type": "eventPlayerIs",
-                "player": "opponent"
+                "player": {
+                  "type": "rememberedPlayer",
+                  "key": "searched"
+                }
               },
               {
                 "type": "not",
@@ -22190,7 +22204,6 @@ const cards = [
               "declaration": {
                 "id": "voided",
                 "selector": {
-                  "owner": "opponent",
                   "zone": "void",
                   "faceDown": true,
                   "conditions": [
@@ -22202,7 +22215,11 @@ const cards = [
                       },
                       "other": "eventCard"
                     }
-                  ]
+                  ],
+                  "owner": {
+                    "type": "rememberedPlayer",
+                    "key": "searched"
+                  }
                 },
                 "count": 1,
                 "optional": true
@@ -22290,7 +22307,23 @@ const cards = [
             {
               "type": "flipCoin",
               "player": "controller",
-              "winEffects": [],
+              "winEffects": [
+                {
+                  "type": "choosePlayer",
+                  "id": "opp",
+                  "from": "opponents"
+                },
+                {
+                  "type": "reveal",
+                  "of": {
+                    "type": "chosenPlayer",
+                    "id": "opp"
+                  },
+                  "zone": "deckTop",
+                  "count": 1,
+                  "viewer": "controller"
+                }
+              ],
               "loseEffects": []
             }
           ]
@@ -25714,20 +25747,23 @@ const cards = [
           "name": "Outsmart",
           "type": "activated",
           "condition": {
-            "type": "numberCompare",
-            "left": {
-              "type": "count",
-              "selector": {
-                "controller": "opponent",
-                "type": "character"
-              }
-            },
-            "operator": ">",
-            "right": {
-              "type": "count",
-              "selector": {
-                "controller": "self",
-                "type": "character"
+            "type": "anyOpponent",
+            "condition": {
+              "type": "numberCompare",
+              "left": {
+                "type": "count",
+                "selector": {
+                  "controller": "opponent",
+                  "type": "character"
+                }
+              },
+              "operator": ">",
+              "right": {
+                "type": "count",
+                "selector": {
+                  "controller": "self",
+                  "type": "character"
+                }
               }
             }
           },
@@ -25739,11 +25775,44 @@ const cards = [
           ],
           "effects": [
             {
+              "type": "choosePlayer",
+              "id": "o",
+              "from": "opponents",
+              "condition": {
+                "type": "numberCompare",
+                "left": {
+                  "type": "count",
+                  "selector": {
+                    "controller": {
+                      "type": "chosenPlayer",
+                      "id": "__candidate"
+                    },
+                    "type": "character"
+                  }
+                },
+                "operator": ">",
+                "right": {
+                  "type": "count",
+                  "selector": {
+                    "controller": "self",
+                    "type": "character"
+                  }
+                }
+              }
+            },
+            {
               "type": "grantKeyword",
               "target": "source",
               "keyword": "cannotBeBlocked",
               "duration": {
                 "type": "untilEndOfTurn"
+              },
+              "condition": {
+                "type": "defendingPlayerIs",
+                "player": {
+                  "type": "chosenPlayer",
+                  "id": "o"
+                }
               }
             }
           ]

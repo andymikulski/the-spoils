@@ -1,7 +1,7 @@
 // Multiplayer clause tests, seed-saga part 2: 3- and 4-seat tables, real catalog printings, public actions only.
 // Spec: data/card-tests/mp-spec/seed-saga.json.
 import assert from "node:assert/strict";
-import { clause, clauseMismatch, refused } from "../_clause.js";
+import { clause, refused } from "../_clause.js";
 import { activate, answer, askedPlayers, choosePlayer, deck, hand, many, pending, play, printing, requirements, res, ready, seatsOf, table, zoneOf, P1, P2, P3, P4 } from "./_mp.js";
 import type { PendingChoiceLike, Table } from "./_mp.js";
 import { endTurn } from "../_turn.js";
@@ -814,7 +814,7 @@ for (const count of [3, 4] as const) {
   };
   const plain = (t: Table) => t.engine.getStat(t.id("nh"), "strength") === 2 && t.engine.getStat(t.id("nh"), "life") === 2 && keywordsOf(t, "nh").includes("covert");
 
-  clauseMismatch(NH, "1:rule", "MP-seed-saga-102", `${count} seats: holds while any single opponent controls more characters than P1 (counts never pooled); the controller makes no choice`, () => {
+  clause(NH, "1:rule", `${count} seats: holds while any single opponent controls more characters than P1 (counts never pooled); the controller makes no choice`, () => {
     // P1 controls 3: P2 has 2 and P3 has 4 -> holds (P3)
     const a = horror(count, 3, pad4([2, 4]));
     assert.ok(grows(a), "P3 controls 4 > 3: +2 strength, +2 life, no COVERT");

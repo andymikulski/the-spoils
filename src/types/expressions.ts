@@ -44,7 +44,7 @@ export type PlayerRef =
   | { type: "player"; id: PlayerId }
   /** The player a `playerChoices` entry or a `choosePlayer` effect named `id` (CR 405: a player choice is not a pick). */
   | { type: "chosenPlayer"; id: string }
-  /** The player the source card stored under `key` with a `rememberPlayer` effect, in this or an earlier resolution. */
+  /** The player the source card stored under `key` with a `rememberPlayer` effect, in this or an earlier resolution (with exactly one opponent left, a card that stored nothing reads that opponent). */
   | { type: "rememberedPlayer"; key: string }
   /** The owner of a targeted card (e.g. "any one deck" — the caster picks a faction card, this resolves to that player). */
   | { type: "ownerOf"; target: TargetRef }

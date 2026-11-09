@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { character, item, location, resourceCard, tactic } from "../../support/fixtures.js";
-import { clause, clauseMismatch, printing } from "../_clause.js";
+import { clause, printing } from "../_clause.js";
 import { answer, expectChoice, handOf, offered, othersOf, P1, pending, pickTargets, seatsOf, settle, staples, table, zoneOf } from "./_seed-3.js";
 import type { CardPlacement, PlayerId, Table } from "./_seed-3.js";
 
@@ -109,7 +109,7 @@ function useRecur(t: Table, active: PlayerId): void {
 }
 
 for (const [count, active] of [[3, P1], [3, "p3"], [4, P1], [4, "p4"]] as const) {
-  clauseMismatch(SPATCH, "1:ability:spatchcocking-recur", "MP-seed-3-1", `${count} seats, ${active} active: every opponent (not just one) reveals their hand, chooses a card of each non-resource type in it and discards the rest, active player first then clockwise skipping the controller; resources stay; the controller's hand is untouched`, () => {
+  clause(SPATCH, "1:ability:spatchcocking-recur", `${count} seats, ${active} active: every opponent (not just one) reveals their hand, chooses a card of each non-resource type in it and discards the rest, active player first then clockwise skipping the controller; resources stay; the controller's hand is untouched`, () => {
     const t = recurTable(count, active);
     useRecur(t, active);
     const opponents = othersOf(count);
