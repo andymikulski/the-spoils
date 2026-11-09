@@ -563,6 +563,15 @@ class Driver {
         const candidates = this.engine.queryCards(pending.declaration.selector, context).map(card => card.id);
         const count = Math.max(0, Math.floor(this.engine.evaluateNumber(pending.declaration.count, context)));
         yield answer({ kind: "chooserSelectsTarget", selected: shuffled(candidates, this.rng).slice(0, count) });
+        // The selector lists cards the engine may still refuse (a cost pick that cannot pay, an earlier cost pick): when
+        // the random picks above all failed, try every candidate on its own, then every other way of filling the count.
+        if (count === 1) {
+          for (const candidate of shuffled(candidates, this.rng)) yield answer({ kind: "chooserSelectsTarget", selected: [candidate] });
+        } else if (count > 1) {
+          for (let attempt = 0; attempt < 10; attempt++) {
+            yield answer({ kind: "chooserSelectsTarget", selected: shuffled(candidates, this.rng).slice(0, count) });
+          }
+        }
         yield answer({ kind: "chooserSelectsTarget", selected: [] });
         yield answer({ kind: "chooserSelectsTarget", selected: [], declined: true });
         return;

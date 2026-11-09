@@ -1515,13 +1515,51 @@ export class SpoilsEngine {
     }
   }
 
+  /**
+   * A marker line. `message` is a function when the line names a card by `logCardName`: like an event line
+   * (`recordLogEvent`), one that named a card hidden from somebody (a trigger of a card in a deck or a hand) is
+   * described again from each vantage, so the public line does not name it.
+   */
   private recordLogMarker(
     marker: NonNullable<GameLogEntry["marker"]>,
     kind: GameLogKind,
-    message: string,
+    message: string | (() => string),
     depth: number
   ): void {
     if (!this.logEnabled) return;
+
+    let text: string;
+    let redacted: GameLogEntry["redacted"];
+    if (typeof message === "string") {
+      text = message;
+    } else {
+      this.logNamedHidden = false;
+      this.logDescribing = true;
+      try {
+        text = message();
+      } finally {
+        this.logDescribing = false;
+      }
+      if (this.logNamedHidden) {
+        const describeFor = (viewer: PlayerId | null): string => {
+          this.logViewer = viewer;
+          try {
+            return message();
+          } finally {
+            this.logViewer = undefined;
+          }
+        };
+        const publicText = describeFor(null);
+        if (publicText !== text) {
+          const byPlayer: Partial<Record<PlayerId, string>> = {};
+          for (const playerId of Object.keys(this.state.players)) {
+            const own = describeFor(playerId);
+            if (own !== publicText) byPlayer[playerId] = own;
+          }
+          redacted = { public: publicText, ...(Object.keys(byPlayer).length > 0 ? { byPlayer } : {}) };
+        }
+      }
+    }
 
     this.state.gameLog.push({
       seq: this.state.gameLog.length + 1,
@@ -1529,7 +1567,8 @@ export class SpoilsEngine {
       activePlayerId: this.state.activePlayerId,
       depth,
       kind,
-      message,
+      message: text,
+      ...(redacted ? { redacted } : {}),
       marker
     });
   }
@@ -8327,6 +8366,11 @@ export class SpoilsEngine {
     // enters the response chain.
     this.processImmediateQueue();
 
+    // Paying the cost may have been the loss of the table's player (influence paid down to 0 at three or more
+    // seats): they are out of the game, and an eliminated player's stack items are removed (RQ-mp-3), so the
+    // ability is never put on the stack. (At two seats the loss ends the game and nobody is marked eliminated.)
+    if (this.state.players[abilityControllerId]?.eliminated) return;
+
     this.responseStack.push({
       id: this.nextId("stack"),
       sourceId: card.id,
@@ -11229,7 +11273,7 @@ export class SpoilsEngine {
       this.recordLogMarker(
         "triggerResolving",
         "trigger",
-        `${this.logCardName(trigger.sourceId)}'s ${triggerLabel} resolves`,
+        () => `${this.logCardName(trigger.sourceId)}'s ${triggerLabel} resolves`,
         this.responseStack.length
       );
 
@@ -20674,22 +20718,26 @@ export class SpoilsEngine {
             for (let n = 0; n < Math.max(1, pending.times); n++) {
               repeated.push(...ability.effects);
             }
-            this.responseStack.push({
-              id: this.nextId("stack"),
-              sourceId: pending.targetCardId,
-              controllerId: playerId,
-              kind: "ability",
-              abilityId: ability.id,
-              effects: repeated,
-              context: ctx
-            });
-            this.emit({
-              type: "abilityActivated",
-              cardId: pending.targetCardId,
-              abilityId: ability.id,
-              playerId
-            });
-            this.logActionPlayers(playerId, ctx, this.abilitySpec(ability));
+            // Paying the costs may have been this player's loss at a table of three or more: an eliminated
+            // player's stack items are removed (RQ-mp-3), so the ability is not put on the stack.
+            if (!this.state.players[playerId]?.eliminated) {
+              this.responseStack.push({
+                id: this.nextId("stack"),
+                sourceId: pending.targetCardId,
+                controllerId: playerId,
+                kind: "ability",
+                abilityId: ability.id,
+                effects: repeated,
+                context: ctx
+              });
+              this.emit({
+                type: "abilityActivated",
+                cardId: pending.targetCardId,
+                abilityId: ability.id,
+                playerId
+              });
+              this.logActionPlayers(playerId, ctx, this.abilitySpec(ability));
+            }
           }
         }
 

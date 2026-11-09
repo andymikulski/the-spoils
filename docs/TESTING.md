@@ -646,6 +646,70 @@ Not yet resolved (candidates for a harness change, none shown to be an engine bu
 Double Monkey, Burly Assailment, 5 tests), and a "your opponents cannot respond" tactic that terminates the item it answers
 (Tactician Vacation, 2 tests: at two seats the window stays open after the play, here `advanceFlow` closes it).
 
+## Fuzz: random games at two to six seats
+
+`fuzz-seats.test.ts` and `npm run fuzz` play seeded random games with real
+catalog decks (the driver above, `randomSetup(seed, { seats })`) at 2, 3, 4, 5
+and 6 seats and check the table invariants after setup's first action and after
+every action (`support/fuzz.ts`, `fuzzGame(seats, seed, options)`). The first
+violation stops the game and is reported with the seed, step and action; the
+driver's own findings (`perform` throwing, no legal action) are failures too. A
+game that reaches `maxActions` is `capped`, which is not a failure. Same seats +
+same seed + same catalog reproduces a game exactly.
+
+Invariants (`Violation.invariant`):
+
+- **zones**: every card is listed once, in the array of its own zone and of its
+  holder (owner; `heldBy` for hand and deck; controller for play), and a card
+  that is not `deploying` is in some array.
+- **eliminated** (RQ-mp-3): a player who has lost owns nothing outside the
+  removed zone, controls and holds nothing, has no stack item, prompt, response
+  window entry or lasting record (`createdBy` / `controllerId` lists).
+- **turn**: nobody who has lost is the active player, and a turn passes to the
+  next seat still in the game (not checked while a seat swap is in effect).
+- **winner**: no winner means at least two players are in; a winner is a player
+  still in the game with influence and every other player at 0 influence or out;
+  a draw means nobody has influence left; the flow is `gameOver` exactly when
+  there is a winner.
+- **priority**: the acting player is never one who has lost; priority in an
+  open response window is never with a player who has lost or the controller of
+  the top item, and agrees with `state.priorityPlayerId` and the flow view.
+- **saveLoad**: every `saveEvery` actions (11) the game is saved, pushed through
+  JSON and loaded; the loaded copy has the same `digestState` and the same whole
+  state (`canonicalJson`, so the multiplayer bookkeeping the digest leaves out is
+  compared too), and is followed for the next `followActions` (6) actions.
+- **redaction**: for every seat and the spectator, from the rules and not from
+  `isCardHiddenFrom`: a card in another player's hand, any card in a deck (but
+  an announced top card), another player's face-down card and a face-down void /
+  removed card nobody may look at shows `__hidden__` and none of
+  `namedValues`, `linkedTargets`, `rememberedPlayers`, `createdAbility`;
+  nothing public is hidden; a player who has lost sees what a spectator sees; a
+  prompt is shown whole to its player only; `rngState` is 0; every
+  `textEvery` actions (7) no hidden definition id occurs anywhere in the view;
+  and no new log line, read through the viewer's vantage, names a card that was
+  hidden from them before and after the action and that they have never been
+  shown (a line that reveals it, `cardsRevealed` to everyone or to them, is
+  allowed, as is the name of a card that was public when the line was written).
+
+Ids are minted in deck-list order before the shuffle, so ids of copies of one
+card are adjacent. Redaction keeps real ids (documented as opaque), so a viewer
+could guess that adjacent hidden ids are copies; ids are part of the replay
+digests, so this is not checked or changed here.
+
+The test runs a fixed, small set of seeds per seat count, each to 90 actions (a
+few seconds per seat count; the engine's own cost is about 25 ms an action).
+`npm run fuzz` runs bigger sweeps, in parallel worker processes:
+
+    npm run fuzz                                    # seats 2-6, seeds 1-30, 1500 actions
+    npm run fuzz -- --seats 3,4 --seeds 100 --max-actions 3000
+    npm run fuzz -- --seats 5 --first 200 --seeds 20 --jobs 8
+    npm run fuzz -- --seats 4 --seed 17             # one game, failing action printed
+
+It prints one summary line per seat count (games, finished, capped, failed) and a
+line for every failing seed, and exits 1 if any failed. A seed that fails is kept:
+fix the cause at its root, add a focused test, and put the seed in
+`REGRESSION_SEEDS` in `fuzz-seats.test.ts` with what it was.
+
 ## Engine-driving notes
 
 These apply to every suite.
