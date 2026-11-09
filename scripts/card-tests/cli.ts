@@ -18,6 +18,9 @@
 //                                            `card(name, set?)` in scope, e.g.
 //                                            `cost +1|||card("Gnat","Seed").cost += 1`. 0 new failures = SURVIVED
 //                                            (a behavior change the batch's tests can't see).
+//   npm run card-tests -- mp-mutate [--set <s>] [--jobs n] [--list] [--card name] [--out f] [--gaps-from f]
+//                                            player-word mutation testing of the mp clause tests (docs/TESTING.md): every mutation of
+//                                            an mp clause with a test must be detected by clauses/mp/, or sit on the equivalence list
 //   npm run card-tests -- mp-inventory       regenerate data/card-tests/mp-inventory.{json,md}: every printed player phrase and
 //                                            behavior player word per rules group / clause (joins with clauses.json)
 //   npm run card-tests -- mp-worklist        regenerate data/card-tests/mp-worklist.json: the pending `edit: true` sites of data/card-tests/mp-spec,
@@ -52,6 +55,7 @@ import {
   loadSpecSites,
   renderWorklist
 } from "../../src/engine/__tests__/clauses/_mpWorklist.js";
+import { mpMutate } from "./mpMutate.js";
 import { cardTextToPlain, parseCardText, serializeCardText } from "../../src/cardText.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
@@ -780,6 +784,9 @@ switch (command) {
   case "mp-inventory":
     mpInventory();
     break;
+  case "mp-mutate":
+    void mpMutate({ set: flag("--set"), jobs: Number(flag("--jobs") ?? 10), list: args.includes("--list"), out: flag("--out"), card: flag("--card"), gapsFrom: flag("--gaps-from") });
+    break;
   case "mp-worklist":
     mpWorklist();
     break;
@@ -826,5 +833,5 @@ switch (command) {
     break;
   }
   default:
-    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(0, 28).join("\n"));
+    console.log(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(0, 34).join("\n"));
 }

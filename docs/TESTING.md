@@ -260,6 +260,68 @@ table size has a test at a table of 3 or more seats.
   `mp-inventory`): a new `mp` clause fails the gate, naming the batch, card, clause
   and missing seat count, until its test is written.
 
+### Multiplayer mutation testing
+
+`npm run card-tests -- mp-mutate [--set <set>] [--jobs n] [--card <name|printing id>] [--list] [--out file] [--gaps-from file]`
+tests the multiplayer clause tests (`clauses/mp/`) the way `mutate` tests the
+clause tests, but generates the mutations itself (`scripts/card-tests/mpMutations.ts`,
+runner in `mpMutate.ts`). The default is every set (about 12 minutes with
+`--jobs 10`); `--set` takes the set's file prefix (`open-beta`, `seed-2`,
+`1st-edition-part-2`, ...); `--list` prints the mutations without running them;
+`--gaps-from` reruns only what an earlier `--out` file left as `GAP`.
+
+- **Scope.** A mutation is generated for the player words of every unit (an
+  ability, a behavior field, `flipUp`) that holds data of an mp clause that has a
+  test in `clauses/mp/` (clause references are scanned from the test sources, as
+  the coverage gate does; units come from the mp inventory).
+- **Operators.** Each result is written against the same field's own vocabulary:
+  a word is only swapped for one that field already takes somewhere in the
+  catalog (and, inside a condition, that node type takes), so a mutant is
+  always well-formed data and a crash never counts as a detection.
+  - `opponent -> opponents`, `opponents -> opponent` (one chosen opponent vs
+    every opponent);
+  - `opponent -> any`, `opponents -> any`;
+  - `opponent -> self` (`controller` in a `PlayerRef` field), `any -> self`,
+    `any -> opponent`, `anyPlayer -> opponent`, `all -> opponent`;
+  - `forEachPlayer.players` swapped for each other value the catalog uses
+    (`opponents`, `all`, `others`, `pair`, `selfAndOpponents`);
+  - `{ type: "chosenPlayer" } -> "opponent"` in a player field;
+  - `offerTo` removed, and `offerTo` replaced by `player: "opponent"`;
+  - `opponentFrom` removed (the block's opponent comes from `choose` again);
+  - `choosePlayer.from` / `playerChoices[].from` `opponents <-> players`.
+- **Not mutated** (no seat-count dependence, or a no-op by construction):
+  self-side words (`self`, `controller`, `owner`, `ownerOf`, `controllerOf`,
+  `activePlayer`: they name the acting player at every table size); the
+  `selector` of a `forEach` over a `selected` set (the engine never reads it:
+  the set was already picked); words in iterating effects with no player field
+  (`anyPlayerMayPay`, `alternatingPay`, `auctionForCard`, `partitionAndPick`,
+  `separateIntoPiles`, `useAnyAbility`: they have no player word to swap).
+- **Detected** = at least one test of the mp files that name the card fails
+  that passed unmutated; if none does, every mp file of the set is tried
+  ("detected elsewhere"). The run reports per set: generated / detected /
+  equivalent / gaps / errors, and lists every gap as
+  `<printing id>|<path>|<operator>`. A gap or an error exits non-zero.
+- **Equivalents.** A mutation no test can detect because the mutated data
+  means the same thing goes in `data/card-tests/mp-mutation-equivalents.json`
+  (`printingId`, `path`, `operator`, `reason`; the key is the mutation id the
+  run prints). The reason names the engine code that makes it a no-op. A listed
+  mutation that a test now detects is reported as a stale entry. Current entries:
+  a replacement's `replaces.by` ("opponent" and "opponents" both mean "caused by
+  another player", `causeFitsReplacement`; Giada, the Elegant, Phalludrix).
+  Cards judged equivalent so far: replacement `replaces.by`; Meat of the Mountain's
+  "Add a token" 0-TOKENS branch (unreachable); Dragon Tank, Rosy Palmer (count
+  conditions whose other branch does the same); Lucky Bastard (`players: all`
+  compares the controller with itself); Surprise! / Dizzying Blow (the controller
+  can never control an attacker of its own battle); Phantasmagoric Tollbooth,
+  Runivoltaic Accumulator (the bound opponent is never read afterwards).
+  A hung engine counts as detected ("detected (hang)", 90 s per file). A run on
+  a heavily loaded machine can report a stray gap: rerun it with `--card` before
+  chasing it.
+- **A gap is a test gap** unless equivalent: add the 3- and 4-seat test to
+  `clauses/mp/` (assert the offered candidate list, the other opponent's
+  untouched state, or the condition's outcome with a board where the wrong
+  reading differs), rerun `mp-mutate --card <name>`.
+
 ### Rules for writing clause tests
 
 1. **Expected behavior comes from the printed text** (the manifest's markup /

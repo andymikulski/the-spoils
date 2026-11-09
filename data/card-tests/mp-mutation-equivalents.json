@@ -1,0 +1,170 @@
+[
+  {
+    "printingId": "0b67c755-4053-4bfb-9aef-e3a990501e0d",
+    "path": "behavior.abilities[1].replaces.by",
+    "operator": "opponents -> opponent",
+    "reason": "A replacement's `replaces.by` is read by causeFitsReplacement (SpoilsEngine.ts), which treats \"opponent\" and \"opponents\" alike: both mean \"caused by a player other than the controller\", whatever the block's opponent is. The filter never selects an opponent."
+  },
+  {
+    "printingId": "513334b0-8ed9-4d1b-9eea-86af96f9247e",
+    "path": "behavior.abilities[3].replaces.by",
+    "operator": "opponents -> opponent",
+    "reason": "A replacement's `replaces.by` is read by causeFitsReplacement (SpoilsEngine.ts), which treats \"opponent\" and \"opponents\" alike: both mean \"caused by a player other than the controller\", whatever the block's opponent is. The filter never selects an opponent."
+  },
+  {
+    "printingId": "b0ad296c-f76a-4df7-be3a-639662c664b5",
+    "path": "behavior.abilities[3].replaces.by",
+    "operator": "opponent -> opponents",
+    "reason": "A replacement's `replaces.by` is read by causeFitsReplacement (SpoilsEngine.ts), which treats \"opponent\" and \"opponents\" alike: both mean \"caused by a player other than the controller\", whatever the block's opponent is. The filter never selects an opponent."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+    "operator": "opponent -> opponents",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].chooser",
+    "operator": "opponent -> self",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> any",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> opponents",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[0].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> self",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+    "operator": "opponent -> opponents",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].chooser",
+    "operator": "opponent -> self",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> any",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> opponents",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "60eab41e-55d8-428c-991a-de347296fa4f",
+    "path": "behavior.abilities[1].effects[0].options[1].effects[1].effects[0].declaration.selector.controller",
+    "operator": "opponent -> self",
+    "reason": "The \"Add a token\" option (`options[1]`) reaches this branch through `effects[1]`, an `if counterCompare token = 0` evaluated right after the `addCounter` +1, so the count is at least 1 and the 0-TOKENS branch can never run under that option. The reachable 0-TOKENS branch is under \"Remove a token\" (`options[2]`), whose player words the tests detect."
+  },
+  {
+    "printingId": "3e949563-8af2-40f0-8dde-212932256134",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> any",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "3e949563-8af2-40f0-8dde-212932256134",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> opponents",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "3e949563-8af2-40f0-8dde-212932256134",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> self",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "e055ac0a-49d8-4bb0-914b-b039336c5e97",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> any",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "e055ac0a-49d8-4bb0-914b-b039336c5e97",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> opponents",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "e055ac0a-49d8-4bb0-914b-b039336c5e97",
+    "path": "behavior.abilities[0].effects[0].condition.left.selector.controller",
+    "operator": "opponent -> self",
+    "reason": "The `count == 0` condition only picks a branch. In the other branch the optional `chooserSelectsTarget` on the chosen opponent's own (unmutated) selector finds no candidates and returns an empty selection (SpoilsEngine.ts, the SYS-13 case), and the following `not targetExists` effect runs `destroy source`, exactly what the `if` branch does. Either way no prompt opens and the same card is destroyed."
+  },
+  {
+    "printingId": "4d801a32-d054-413d-9eaf-d915a82139b1",
+    "path": "behavior.abilities[0].effects[1].condition.left.selector.owner",
+    "operator": "opponent -> any",
+    "reason": "In the other branch the optional pick on the chosen opponent's top 5 has no candidates; because `fromTop` is set the engine runs the nested effects with an empty selection, and `lookAndReorder` then gets count 5 + (-1 x 0) = 5, the same as `elseEffects`."
+  },
+  {
+    "printingId": "4d801a32-d054-413d-9eaf-d915a82139b1",
+    "path": "behavior.abilities[0].effects[1].condition.left.selector.owner",
+    "operator": "opponent -> opponents",
+    "reason": "In the other branch the optional pick on the chosen opponent's top 5 has no candidates; because `fromTop` is set the engine runs the nested effects with an empty selection, and `lookAndReorder` then gets count 5 + (-1 x 0) = 5, the same as `elseEffects`."
+  },
+  {
+    "printingId": "4513085a-6185-4ef5-ba9c-7af3c3af30d4",
+    "path": "behavior.abilities[1].effects[2].players",
+    "operator": "players opponents -> all",
+    "reason": "`forEachPlayer` runs each pass with `controllerId` set to the iterated player (forEachPlayerContext). With `all` the controller's own top card is compared against itself, `oppCost > mineCost` is false, and it adds 0 to `higher`: the result is the same as `opponents`."
+  },
+  {
+    "printingId": "82f7c006-8b9f-4668-b3db-9507ce0bd479",
+    "path": "behavior.abilities[0].targets[0].selector.controller",
+    "operator": "opponents -> any",
+    "reason": "The selector also requires `inBattle` attacker and the ability is gated by `battleRole` defender: the controller is the defender, so every attacker belongs to the attacking opponent. `reassignControl` removes a character from the battle party when its control changes (CR 407.4), so the controller can never control an attacker of its own battle: \"any\" admits nothing more than \"opponents\"."
+  },
+  {
+    "printingId": "82f7c006-8b9f-4668-b3db-9507ce0bd479",
+    "path": "behavior.abilities[0].targets[0].selector.controller",
+    "operator": "opponents -> opponent",
+    "reason": "The ability is gated by `battleRole`, so `opponentFrom` resolves to \"battle\": \"opponent\" binds to `battleOpponentOf(controller)`, the attacker, the same player \"opponents\" admits here."
+  },
+  {
+    "printingId": "b6b6b202-7629-49e6-a451-7b2e3feb6c11",
+    "path": "behavior.abilities[0].targets[0].selector.controller",
+    "operator": "opponents -> any",
+    "reason": "The selector also requires `inBattle` attacker and the ability is gated by `battleRole` defender: the controller is the defender, so every attacker belongs to the attacking opponent. `reassignControl` removes a character from the battle party when its control changes (CR 407.4), so the controller can never control an attacker of its own battle: \"any\" admits nothing more than \"opponents\"."
+  },
+  {
+    "printingId": "d70efc6c-9a6e-41ab-92a2-cb97662f172f",
+    "path": "behavior.abilities[1].condition.conditions[3].player",
+    "operator": "opponents -> opponent",
+    "reason": "In a triggered condition \"opponent\" binds through `bindTriggerOpponent` (\"choose\"): it keeps only the opponents for whom the condition holds, i.e. the one owner of the dead character, bound silently with no prompt. Nothing else in the ability reads the opponent, so the trigger fires in exactly the same cases as with \"opponents\"."
+  },
+  {
+    "printingId": "6f9876af-52c0-46e5-a06f-22e488ba54a8",
+    "path": "behavior.abilities[0].condition.player",
+    "operator": "opponent -> opponents",
+    "reason": "\"Some opponent is the active player\" is the same test as \"the active player is not the controller\"; the effect never reads the opponent, so the two readings fire in the same cases (the 3-seat test already covers an opponent attacking and the controller attacking)."
+  },
+  {
+    "printingId": "6f9876af-52c0-46e5-a06f-22e488ba54a8",
+    "path": "behavior.abilities[0].opponentFrom",
+    "operator": "opponentFrom removed",
+    "reason": "\"battle\" binds the attacker only when the controller is in the battle; otherwise the engine takes the same satisfying-opponents path as the default \"choose\", which yields the single active player. Nothing reads the bound opponent afterwards."
+  }
+]
