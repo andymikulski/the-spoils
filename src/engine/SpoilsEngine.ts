@@ -15497,6 +15497,37 @@ export class SpoilsEngine {
           },
           deployedViaFlipUp: stackItem?.context.deployedViaFlipUp
         };
+        // The copy has all the original's rules text (CR 307.1), so a block that says "your opponent" selects its
+        // opponent anew, by the duplicator, like its other play-time picks (MP 2, MPX-select (2)): the original's
+        // selection is not the copy's.
+        const dupOpponents = this.getOpponents(context.controllerId);
+        const namesOpponentBlock =
+          this.playSpec(definition, undefined, false).from !== undefined ||
+          (definition.behavior?.modes ?? []).some(mode => blockOpponentFrom(mode as unknown as Record<string, unknown>) !== undefined);
+        if (namesOpponentBlock && dupOpponents.length >= 2) {
+          const from = blockOpponentFrom(this.getPlayVariableSource(definition) as Record<string, unknown> | undefined);
+          const fixed =
+            from === "battle"
+              ? this.battleOpponentOf(context.controllerId)
+              : from === "respondedTo"
+                ? this.respondedToController(context.controllerId)
+                : undefined;
+          if (fixed !== undefined && dupOpponents.includes(fixed)) {
+            dupContext.opponentId = fixed;
+          } else {
+            this.state.pendingChoice = {
+              kind: "choosePlayer",
+              id: this.nextId("choice"),
+              playerId: context.controllerId,
+              candidates: dupOpponents,
+              sourceId: targetId,
+              bind: { type: "blockOpponent" },
+              effects: dupEffects,
+              context: dupContext
+            };
+            return;
+          }
+        }
         this.runNestedEffects(dupEffects, dupContext);
         return;
       }

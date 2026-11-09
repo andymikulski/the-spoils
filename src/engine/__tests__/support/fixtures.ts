@@ -8,6 +8,7 @@ import {
   createGame,
   SpoilsEngine
 } from "../../../engine.js";
+import { bystanderIds, bystanderName, EXTRA_SEATS, registerBystanders } from "./bystanders.js";
 import type {
   BattleDamageAssignment,
   CardDefinition,
@@ -188,7 +189,11 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   const playerB: PlayerSetup = { id: P2, name: "Bob", ...options.playerB };
 
   const extraIds = [P3, P4, P5, P6];
-  const extraPlayers: PlayerSetup[] = (options.extraPlayers ?? []).map((setup, i) => {
+  // SPOILS_TEST_EXTRA_SEATS (support/bystanders.ts): a game that names no extra seats gets inert bystanders.
+  const bystanders = options.extraPlayers === undefined ? bystanderIds(EXTRA_SEATS) : [];
+  const seated: Partial<PlayerSetup>[] =
+    options.extraPlayers ?? bystanders.map(id => ({ id, name: bystanderName(id), faction: noDevelopFaction({ name: `${id}-faction` }) }));
+  const extraPlayers: PlayerSetup[] = seated.map((setup, i) => {
     const id = setup.id ?? extraIds[i] ?? `p${i + 3}`;
     return { id, name: id, ...setup };
   });
@@ -275,6 +280,7 @@ export function buildGame(options: BuildGameOptions = {}): BuiltGame {
   state.responseWindow = options.responseWindow;
 
   const engine = new SpoilsEngine(definitions, state, options.random);
+  if (bystanders.length > 0) registerBystanders(engine, bystanders);
 
   // createGame forces attackEligibleTurn = 1 for anything already
   // in player A's play zone (see setup.ts) — override that explicitly for

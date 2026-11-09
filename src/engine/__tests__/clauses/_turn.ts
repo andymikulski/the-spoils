@@ -3,12 +3,13 @@
 // your turn ..."), DEVELOP / RESTORE rules, and faction setup clauses
 // (STARTING RESOURCES / STARTING DRAW), which only the real setup path runs.
 
-import { createTwoPlayerFactionGame } from "../../../engine.js";
+import { createFactionGame } from "../../../engine.js";
 import type { CardDefinition, CardInstanceId, PlayerId, SpoilsEngine } from "../../../engine.js";
 import { bank, developFaction, isDevelopPrompt, P1, P2, resolvePendingResponses, settleStartFirst } from "../per-card/_harness.js";
 import type { CardPlacement } from "../support/fixtures.js";
 import { developDraw as drawViaRule, developPlay as playViaRule, isDevelopChoice, openDevelop, settleTurnStart } from "../support/develop.js";
 import { holdResourceFace, withoutDevelopChoices } from "./_hold.js";
+import { bystanderName, bystanderSeats, registerBystanders } from "../support/bystanders.js";
 
 export interface Seat {
   /** The player's faction card. */
@@ -35,19 +36,22 @@ export interface SetupOptions {
  * anything else that happens during setup.
  */
 export function setupGame(p1: Seat, p2: Seat, options: SetupOptions = {}): SpoilsEngine {
+  const bystanders = bystanderSeats();
   const defs = new Map<string, CardDefinition>();
-  for (const def of [p1.faction, p2.faction, ...p1.deck, ...p2.deck]) defs.set(def.id, def);
-  return createTwoPlayerFactionGame(
-    [...defs.values()],
-    { id: P1, name: "Alice", deckDefinitionIds: [p1.faction.id, ...p1.deck.map((def) => def.id)] },
-    { id: P2, name: "Bob", deckDefinitionIds: [p2.faction.id, ...p2.deck.map((def) => def.id)] },
-    {
-      firstPlayerId: options.first ?? P1,
-      seed: options.seed ?? 7,
-      startingResourceX: options.x,
-      chooseStartingResources: options.choose
-    }
-  );
+  for (const def of [p1.faction, p2.faction, ...p1.deck, ...p2.deck, ...bystanders.flatMap((seat) => [seat.faction, ...seat.deck])]) defs.set(def.id, def);
+  const engine = createFactionGame([...defs.values()], {
+    players: [
+      { id: P1, name: "Alice", deckDefinitionIds: [p1.faction.id, ...p1.deck.map((def) => def.id)] },
+      { id: P2, name: "Bob", deckDefinitionIds: [p2.faction.id, ...p2.deck.map((def) => def.id)] },
+      ...bystanders.map((seat) => ({ id: seat.id, name: bystanderName(seat.id), deckDefinitionIds: [seat.faction.id, ...seat.deck.map((def) => def.id)] }))
+    ],
+    firstPlayerId: options.first ?? P1,
+    seed: options.seed ?? 7,
+    startingResourceX: options.x,
+    chooseStartingResources: options.choose
+  });
+  if (bystanders.length > 0) registerBystanders(engine, bystanders.map((seat) => seat.id));
+  return engine;
 }
 
 /**

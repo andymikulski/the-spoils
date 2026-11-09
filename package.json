@@ -86,6 +86,7 @@
     "build": "node -e \"require('fs').rmSync('build',{recursive:true,force:true})\" && tsc -p tsconfig.json",
     "prepare": "npm run build",
     "test": "node scripts/run-tests.cjs",
+    "test:seats": "node scripts/seat-tests.cjs",
     "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.test.json",
     "sync-cards": "node scripts/sync-cards.cjs",
     "card-markup": "node --import tsx scripts/card-markup/cli.ts",

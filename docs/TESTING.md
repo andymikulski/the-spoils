@@ -512,6 +512,78 @@ compares a digest of the rules state after every action.
   engine-instance memory) when the corpus was recorded, except the parked frames'
   contexts, which it puts back inline as recorded.
 
+## Bystander replay (`npm run test:seats`)
+
+Every two-player test is also a 3- and 4-seat test. With `SPOILS_TEST_EXTRA_SEATS=1` or `2` the shared fixtures seat
+inert bystanders, and the whole suite runs unedited:
+
+```
+npm run test:seats            # +1 and +2 bystander seats, one after the other
+npm run test:seats -- 1       # only +1  (2 for +2)
+npm run test:seats -- 2 --list --only clauses/seed-2   # list failures; run only matching files
+```
+
+Unset, the fixtures are byte-identical to the two-player ones (`npm test` never sets it).
+
+**Seating.** P1, P2, then the bystanders P3 (P4): the original pair stays adjacent in turn order and P1 is still first.
+Any seating puts the bystanders' turns somewhere in the cycle; here they sit between P2 and P1, so what the pair does to
+each other (the first response to P1's item is offered to P2, an attack of P1 is answered by P2) is as at two seats.
+Bystanders have a faction with no Develop choices, no starting resources and no opening hand (`noDevelopFaction`), and
+(real setup path only) five plain characters in the deck. Their player name is `bystander <id>`, which is how an engine
+built from a copy of the state (a save, a clone) finds its bystanders again.
+
+**Harness** (`support/bystanders.ts`, installed on `SpoilsEngine.prototype.perform` / `checkAction` while the variable is
+set; `buildGame` and `clauses/_turn.ts`' `setupGame` seat the bystanders and register the game). It does what a table of
+two real players and inert bystanders would do, and nothing else:
+
+- every priority or response a bystander gets is passed; a window only bystanders were offered resolves at once (it did not
+  exist at two seats: "your opponent cannot respond");
+- a bystander's own turn is played through (trigger order, Develop option if offered, end of turn) while the original
+  players pass every window; a bystander keeps its opening hand;
+- "your opponent" is named for the test: the `players` requirement of a play, of the play a prompt starts (`deployForFree`,
+  `resourceReveal`, `useTargetAbility`), the target of an attack, a `choosePlayer` prompt, and a pick that only had one
+  candidate without the bystanders' cards (a forced `selectTargets` / play pick). The rule is one: when exactly one
+  candidate is not a bystander, that is the answer; two or more are the test's own to answer, as at two seats;
+- continuous text that says "your opponent" and the opponent a card remembered (`rememberPlayer`) are bound to the original
+  opponent for cards a fixture put straight into play (they never "started applying"), as an action would have done;
+- the engine's direct entry points `resolveEffect` / `evaluateCondition` / `queryCards` get `opponentId` set on a
+  hand-made context that names none.
+
+Tests that build their own games straight from the engine (`createGame`, `createFactionGame`, `new SpoilsEngine` over
+hand-made state; ~20 files, mostly the `*-exercise` sets and the catalog-wide drivers) never go through a fixture and run
+at their own seat count. `SPOILS_SEATS_TRACE=1` prints what the harness does.
+
+**Result.** The runner prints, per run, the tests that pass, the failures on a card with a `"quantified"` clause in
+`data/card-tests/mp-inventory.json` (each opponent / each player / ...: expected to differ, generated from the inventory,
+matched by card name; a card counts as a whole, so the options of "at the start of each player's turn" are included), and
+every other failure by file. `todo` tests (open rules questions, unimplemented clauses) are not failures. The exit code is
+0 only when nothing outside the expected differences fails; it is not part of `npm test`.
+
+**Known rules-driven differences** (the failures left outside the quantified list; each is a two-player test whose two-player
+assumption the multiplayer rules legitimately change, not an engine bug):
+
+- *A faction at 0 influence ends the game only when no other opponent is left* (CR 102.2, MPX-elim, RQ-mp-3): the tests that
+  lose or win by influence (`victory.test.ts`, Armored Keep, Dragon's Strategy, Siege Machine, the "faction hits 0" and "both
+  factions at 0 is a draw" cases, ~130 at +1). At +2 a game with both original players out never ends, so the harness stops
+  with "the table did not settle".
+- *The turn cycle includes the bystanders' turns*: `state.turn` counts every seat's turn (P1's second turn is turn 4, or 5),
+  "each turn" / "at the start of an opponent's turn" text also fires on a bystander's turn (MPQ-P2: any opponent's action
+  or turn satisfies it; Corpse Churner, Verrucose Brains, Executive Order, Brotherhood of the Mau, Shade of the Devoured
+  Emperor, Emergency Obfuscation), a skipped or delayed Restore Rule, "until your next turn" timing and the delayed-effect
+  queries (Brummagem Jewelry, Erotic Assassin, Wily Circumvention, Ecto-Conduit, Clockman Skydocks, Monstrous Lassitude,
+  `getPendingDelayedEffects`), and an `endTurn` announcement is answered by every other player (CR 607.1,
+  `priority-and-responses.test.ts`), the active player acts first, then the others (CR 402.2).
+- *Bidding and auctions have more bidders* (CR 413: Auction House, `auctionForCard`, the bidding rules tests): the bystander
+  is asked to bid too.
+- *Questions whose answer depends on the number of players*: "pick a player's faction" is no longer forced
+  (`regressions/mass-confusion-owner-of.test.ts`, `play-requirements-agreement.test.ts`, Profane Proposal), the save summary
+  lists three players, `MPX-seat` "with exactly two players", the game log has the bystanders' passes.
+
+Not yet resolved (candidates for a harness change, none shown to be an engine bug): the FLIP UP window helpers of
+`clauses/_clause.ts` (`flipUpNow` passes for the opponent and the window moves on to the bystander: Manifest, Ritual of the
+Double Monkey, Burly Assailment, 5 tests), and a "your opponents cannot respond" tactic that terminates the item it answers
+(Tactician Vacation, 2 tests: at two seats the window stays open after the play, here `advanceFlow` closes it).
+
 ## Engine-driving notes
 
 These apply to every suite.
