@@ -781,6 +781,18 @@ export function answerMatchOpponent(engine: SpoilsEngine, playerId: PlayerId, ch
     promptMatchOpponent(engine, setup.order[setup.currentIndex]!);
     return;
   }
+  continueAfterMatchOpponents(engine, setup);
+}
+
+/** Every selection of the `chooseMatchOpponent` step is in: place the starting resources, or go on with setup if they already are. */
+function continueAfterMatchOpponents(
+  engine: SpoilsEngine,
+  setup: Extract<SpoilsEngine["state"]["setup"], { phase: "chooseMatchOpponent" }>
+): void {
+  if (setup.resume) {
+    finishFactionSetup(engine, setup.resume.askStartingDrawSearch, setup.matchOpponents);
+    return;
+  }
   placeStartingResources(
     engine,
     {
@@ -808,7 +820,7 @@ function placeStartingResources(
   const clockwise = engine.getPlayersInSeatOrder(state.activePlayerId);
 
   const choosers: Array<{ playerId: PlayerId; count: number }> = [];
-  for (const playerId of state.seats) {
+  for (const playerId of engine.getPlayersInSeatOrder()) {
     const printed = engine.getFactionDefinition(playerId)!;
     const rule = {
       ...printed.setup.startingResources,
@@ -953,13 +965,33 @@ export function finishFactionSetup(
   const state = engine.state;
   // Seat order, so the RNG stream is consumed exactly as in a game with no
   // starting-resource choice.
-  const playerIds = [...state.seats];
+  const playerIds = engine.getPlayersInSeatOrder();
 
   const startingResourceCounts: Record<PlayerId, number> = {};
   for (const playerId of playerIds) {
     startingResourceCounts[playerId] = state.players[playerId].play.filter(
       cardId => engine.getDefinition(cardId).type === "resource"
     ).length;
+  }
+
+  // A player selected as someone's match opponent has conceded since (RQ-mp-5): the text selects again, so its
+  // controller is asked once more (with one opponent left nobody is asked: it is that player).
+  const reselecting = playerIds.filter(
+    playerId =>
+      needsMatchOpponent(engine, playerId) &&
+      (matchOpponents[playerId] === undefined || engine.isEliminated(matchOpponents[playerId]!))
+  );
+  if (reselecting.length > 0) {
+    const kept = Object.fromEntries(Object.entries(matchOpponents).filter(([, chosen]) => !engine.isEliminated(chosen)));
+    state.setup = {
+      phase: "chooseMatchOpponent",
+      order: reselecting,
+      currentIndex: 0,
+      matchOpponents: kept,
+      resume: { askStartingDrawSearch: askSearch }
+    };
+    promptMatchOpponent(engine, reselecting[0]!);
+    return;
   }
 
   // "...enough staple resources so that both players have the same number of
@@ -970,7 +1002,9 @@ export function finishFactionSetup(
     if (!engine.getFactionDefinition(playerId)?.setup.startingResources.matchOpponentCount) {
       continue;
     }
-    const opponentId = matchOpponents[playerId] ?? engine.getOpponents(playerId)[0]!;
+    // The player selected, or the only opponent there is (also when the one selected has conceded: nothing is left to select).
+    const chosen = matchOpponents[playerId];
+    const opponentId = chosen !== undefined && !engine.isEliminated(chosen) ? chosen : engine.getOpponents(playerId)[0]!;
     const deficit = startingResourceCounts[playerId] - startingResourceCounts[opponentId];
     // The extra staples are an ordinary "N staple resources" pick: when the
     // setup phase is interactive and the opponent's deck runs several kinds,
@@ -1032,7 +1066,7 @@ export function finishFactionSetup(
  */
 export function continueSetupAfterFirstPlayer(engine: SpoilsEngine, askSearch: boolean): void {
   const state = engine.state;
-  const playerIds = [...state.seats];
+  const playerIds = engine.getPlayersInSeatOrder();
   const firstPlayerId = state.activePlayerId;
 
   // "You may search your deck for [a resource] that is not any of your
@@ -1139,8 +1173,11 @@ export function openingDrawFor(engine: SpoilsEngine, playerId: PlayerId, goingFi
 /** Everything after the STARTING DRAW search: shuffles, opening hands, then the mulligan step or turn 1. */
 function finishFactionSetupAfterSearch(engine: SpoilsEngine): void {
   const state = engine.state;
-  const playerIds = [...state.seats];
-  const firstPlayerId = state.activePlayerId;
+  const playerIds = engine.getPlayersInSeatOrder();
+  // The seat that was to go first conceded during setup: the next seat standing goes first.
+  const firstPlayerId = playerIds.includes(state.activePlayerId) ? state.activePlayerId : playerIds[0]!;
+  state.activePlayerId = firstPlayerId;
+  state.priorityPlayerId = firstPlayerId;
 
   const random = () => drawRandom(state);
   for (const playerId of playerIds) {
@@ -1162,5 +1199,100 @@ function finishFactionSetupAfterSearch(engine: SpoilsEngine): void {
   } else {
     state.setup = { phase: "complete" };
     engine.startGameAfterSetup();
+  }
+}
+
+/** `order` without the seats `keep` refuses; `currentIndex` follows the seat that is up, or the next one if that seat is gone. */
+function trimmedOrder(
+  order: readonly PlayerId[],
+  currentIndex: number,
+  keep: (playerId: PlayerId) => boolean
+): { order: PlayerId[]; currentIndex: number; currentGone: boolean } {
+  const goneBefore = order.filter((id, i) => i < currentIndex && !keep(id)).length;
+  return {
+    order: order.filter(keep),
+    currentIndex: currentIndex - goneBefore,
+    currentGone: currentIndex < order.length && !keep(order[currentIndex]!)
+  };
+}
+
+/**
+ * A player has been eliminated while setup is still running (a concession, MPX-concede): the step goes on for the
+ * players left. Their seat is dropped from the current step's order, the decision that was theirs passes to the next
+ * seat, and the step finishes if they were the last one it waited on. Nothing is asked of them again, and nobody
+ * is asked about the table as it was (a chosen opponent who conceded is chosen again, a first-player decider who
+ * conceded is drawn again among the players left).
+ */
+export function settleSetupAfterElimination(engine: SpoilsEngine): void {
+  const state = engine.state;
+  const setup = state.setup;
+  const standing = (playerId: PlayerId): boolean => !engine.isEliminated(playerId);
+
+  switch (setup.phase) {
+    case "complete":
+      return;
+
+    case "chooseMatchOpponent": {
+      // Selections that named the player who conceded are made again, then the seats not yet asked.
+      for (const [asker, chosen] of Object.entries(setup.matchOpponents)) {
+        if (!standing(asker) || !standing(chosen)) delete setup.matchOpponents[asker];
+      }
+      const needs = (playerId: PlayerId): boolean => standing(playerId) && needsMatchOpponent(engine, playerId);
+      const asked = setup.order.slice(0, setup.currentIndex).filter(id => needs(id) && setup.matchOpponents[id] === undefined);
+      setup.order = [...asked, ...setup.order.slice(setup.currentIndex).filter(needs)];
+      setup.currentIndex = 0;
+      state.pendingChoice = undefined;
+      if (setup.order.length > 0) {
+        promptMatchOpponent(engine, setup.order[0]!);
+        return;
+      }
+      continueAfterMatchOpponents(engine, setup);
+      return;
+    }
+
+    case "chooseStartingResources": {
+      const trimmed = trimmedOrder(setup.order, setup.currentIndex, standing);
+      setup.order = trimmed.order;
+      setup.currentIndex = trimmed.currentIndex;
+      for (const playerId of Object.keys(setup.counts)) {
+        if (!standing(playerId)) delete setup.counts[playerId];
+      }
+      if (trimmed.currentGone && setup.currentIndex >= setup.order.length) {
+        finishFactionSetup(engine, setup.askStartingDrawSearch === true, setup.matchOpponents);
+      }
+      return;
+    }
+
+    case "chooseFirstPlayer": {
+      if (standing(setup.order[setup.currentIndex]!)) return;
+      const left = engine.getPlayersInSeatOrder();
+      const deciderId = left[Math.floor(drawRandom(state) * left.length)]!;
+      setup.order = [deciderId];
+      setup.currentIndex = 0;
+      engine.emit({ type: "firstPlayerDecider", playerId: deciderId });
+      return;
+    }
+
+    case "startingDrawSearch": {
+      const trimmed = trimmedOrder(setup.order, setup.currentIndex, standing);
+      setup.order = trimmed.order;
+      setup.currentIndex = trimmed.currentIndex;
+      if (!trimmed.currentGone) return;
+      if (setup.currentIndex < setup.order.length) promptStartingDrawSearch(engine, setup.order[setup.currentIndex]!);
+      else finishFactionSetupAfterSearch(engine);
+      return;
+    }
+
+    case "mulligan": {
+      const trimmed = trimmedOrder(setup.order, setup.currentIndex, standing);
+      setup.order = trimmed.order;
+      setup.currentIndex = trimmed.currentIndex;
+      if (setup.pendingDraw && !standing(setup.pendingDraw.playerId)) delete setup.pendingDraw;
+      if (trimmed.currentGone && setup.currentIndex >= setup.order.length) {
+        state.setup = { phase: "complete" };
+        engine.startGameAfterSetup();
+      }
+      return;
+    }
   }
 }

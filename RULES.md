@@ -2078,6 +2078,14 @@ players ranges over players in the game only. How card data spells each phrase i
   ends as soon as at most one player is in the game: that player wins (`GameState.winner` is their id). If every
   player still in the game loses at the same time, the game is a draw (`winner: "draw"`, CR 102.2, 306.4).
   Running out of cards loses nobody (CR 102.1a).
+- **Conceding (MPX-concede, engine-derived).** The Comprehensive Rules and the Multi-Player Guidelines are silent on
+  conceding; the engine takes it to be a loss. A `concede` action makes its player lose at once, by the same
+  procedure as any other loss: at two seats the other player wins, at three or more the player is eliminated as
+  MPX-elim says and the game ends when one player is left. Any player still in the game may concede at any moment
+  the game is not over, including while another player holds priority or a pending choice, in a battle, and during
+  setup (the setup step goes on for the players left, and a seat that was to go first passes the first turn to the
+  next seat standing). It is never offered by any query of what a player may do; it is only accepted through
+  `perform` / `checkAction`. The log records "<player> concedes" for every reader.
 - **Units (MPX-simul, RQ-mp-7, RQ-mp-13, RQ-r11-2, RQ-r11-4).** A unit is one resolving card or ability's own
   effects, one triggered ability's own effects, or one batch of simultaneous battle damage; a trigger set off during
   a unit is a later unit. Every player whose faction reached 0 during the same unit loses together when it ends (a

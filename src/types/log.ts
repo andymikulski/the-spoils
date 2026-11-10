@@ -92,6 +92,7 @@ export interface GameLogEntry {
    * - `battleDamageAssigned` — a battle character assigned its damage to a target.
    * - `playerSelected` — at a table of three or more, a player selected another as the opponent of a block of rules
    *   text ("your opponent", MP 2) or chose a player for a card's text; the message names both.
+   * - `playerConceded` — a player conceded (`GameAction` `concede`); public.
    */
   marker?:
     | "responseWindowOpened"
@@ -100,7 +101,8 @@ export interface GameLogEntry {
     | "triggerResolving"
     | "blockersDeclared"
     | "battleDamageAssigned"
-    | "playerSelected";
+    | "playerSelected"
+    | "playerConceded";
 }
 
 /**

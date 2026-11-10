@@ -972,6 +972,12 @@ export type GameSetupState =
       /** Setup options the placement that follows needs (`FactionGameSetupOptions`). */
       chooseStartingResources?: boolean;
       startingResourceX?: Record<PlayerId, number>;
+      /**
+       * Set when the selection is being made again because a player who was selected has been eliminated during
+       * setup (a concession, RQ-mp-5): the starting resources are already in play, and once the last answer is in
+       * the rest of setup goes on (`askStartingDrawSearch` as for `chooseStartingResources`).
+       */
+      resume?: { askStartingDrawSearch: boolean };
     }
   | {
       /**

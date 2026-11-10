@@ -140,6 +140,7 @@ import {
   finishFactionSetup,
   openingDrawFor,
   requiredStartingCards,
+  settleSetupAfterElimination,
   startingSlotPlan
 } from "./factionSetup.js";
 
@@ -1026,6 +1027,10 @@ export class SpoilsEngine {
    * `getFlipUpPlayability`) report it, so they cannot disagree.
    */
   private actionGateProblem(actionType: GameAction["type"]): string | undefined {
+    // A player may concede at any moment the game is not over: no open choice, setup step or window holds it back,
+    // and a finished game that is only draining its last window takes no more (MPX-concede).
+    if (actionType === "concede") return this.state.winner ? "The game has already ended." : undefined;
+
     // Once the game has ended, only let already-in-flight resolution (a
     // battle finishing, a response window closing) drain to a clean stop —
     // block anything that would start something new.
@@ -1067,7 +1072,7 @@ export class SpoilsEngine {
   private performAction(action: GameAction): void {
     // A pending-choice answer continues the action that raised the choice,
     // so "entered play during this action" must survive it.
-    if (action.type !== "resolvePendingChoice") {
+    if (action.type !== "resolvePendingChoice" && action.type !== "concede") {
       this.recentlyEntered.clear();
       this.silentDepartures.clear();
     }
@@ -1136,6 +1141,10 @@ export class SpoilsEngine {
 
       case "endTurn":
         this.endTurn(action.playerId);
+        return;
+
+      case "concede":
+        this.concede(action.playerId);
         return;
 
       case "declareAttack":
@@ -3137,6 +3146,8 @@ export class SpoilsEngine {
     assert(this.state.setup.phase === "complete", "Opening setup is not complete.");
     assert(!this.state.started, "The game has already started.");
 
+    // The seat that was to go first conceded during setup: the next seat standing goes first.
+    this.state.activePlayerId = this.nextSeatStanding(this.state.activePlayerId);
     this.state.started = true;
     this.state.priorityPlayerId = this.state.activePlayerId;
     this.state.turnEventTally = {};
@@ -3354,7 +3365,7 @@ export class SpoilsEngine {
   getFirstPlayerChoice(): FirstPlayerChoice | null {
     const setup = this.state.setup;
     if (setup.phase !== "chooseFirstPlayer") return null;
-    const playerIds = Object.keys(this.state.players) as PlayerId[];
+    const playerIds = this.getPlayersInSeatOrder();
     const openingDraw: FirstPlayerChoice["openingDraw"] = {};
     for (const firstPlayerId of playerIds) {
       openingDraw[firstPlayerId] = Object.fromEntries(
@@ -3368,7 +3379,7 @@ export class SpoilsEngine {
     const setup = this.state.setup;
     assert(setup.phase === "chooseFirstPlayer", "Who goes first has already been decided.");
     assert(setup.order[setup.currentIndex] === playerId, "This player does not decide who goes first.");
-    this.requirePlayer(firstPlayerId);
+    assert(!this.requirePlayer(firstPlayerId).eliminated, "That player is out of the game.");
 
     this.state.activePlayerId = firstPlayerId;
     this.state.priorityPlayerId = firstPlayerId;
@@ -9750,6 +9761,59 @@ export class SpoilsEngine {
   }
 
   /**
+   * `playerId` concedes (MPX-concede): they lose at once, by the one loss procedure (`eliminatePlayers`): at two seats
+   * the other player wins; at three or more the player is eliminated with everything MPX-elim lists. What the
+   * elimination leaves waiting on them is settled here: a setup step they were to take, and a battle whose defender
+   * they were. Their turn, if it is theirs, is abandoned once the action settles (`abandonEliminatedTurn`).
+   */
+  private concede(playerId: PlayerId): void {
+    assert(!this.state.winner, "The game has already ended.");
+    this.recordLogMarker("playerConceded", "info", `${this.logPlayerName(playerId)} concedes`, this.responseStack.length);
+    // A resolution that was waiting on this player's answer (a replacement's selection, a trigger's target) goes on
+    // without it once the choice is gone: what is left of it belongs to players still in the game.
+    const heldChoice = this.state.setup.phase === "complete" && this.state.pendingChoice?.playerId === playerId;
+    this.removeFromPendingLoss(playerId);
+    this.eliminatePlayers([playerId]);
+    if (this.state.winner) return;
+    settleSetupAfterElimination(this);
+    this.settleBattleAfterElimination();
+    if (heldChoice && !this.state.pendingChoice) this.resumeEffectFrames();
+  }
+
+  /** A player who has lost already is not counted again by a loss still waiting on a parked unit. */
+  private removeFromPendingLoss(playerId: PlayerId): void {
+    const loss = this.state.pendingLoss;
+    if (!loss) return;
+    const others = (players: readonly PlayerId[]) => players.filter(id => id !== playerId);
+    const later = (loss.later ?? []).map(entry => ({ ...entry, players: others(entry.players) })).filter(entry => entry.players.length > 0);
+    const players = others(loss.players);
+    if (players.length > 0) {
+      this.state.pendingLoss = later.length > 0 ? { ...loss, players, later } : { unitId: loss.unitId, players };
+      return;
+    }
+    const [next, ...rest] = later;
+    if (next) this.state.pendingLoss = rest.length > 0 ? { ...next, later: rest } : { ...next };
+    else delete this.state.pendingLoss;
+  }
+
+  /**
+   * A battle waiting on a defender who has just been eliminated goes on without them (MPX-elim (6)): they form no
+   * blocking party and assign no damage. (An attacker's elimination abandons the whole turn instead.)
+   */
+  private settleBattleAfterElimination(): void {
+    const battle = this.state.battle;
+    const players = this.state.players;
+    if (!battle || players[this.state.activePlayerId]?.eliminated || !players[battle.defenderPlayerId]?.eliminated) return;
+    if (battle.phase === "blocking") {
+      this.declareBlockers(battle.defenderPlayerId, []);
+    } else if (battle.phase === "defenderDamageAssignment") {
+      battle.assignedDamageBy.push(...this.getBattleDamageSources(false, battle));
+      battle.defenderAssignments = [];
+      this.openPostAssignmentResponse(battle);
+    }
+  }
+
+  /**
    * The active player has been eliminated: their turn ends at once (MPX-elim (5), RQ-mp-14). The battle ends, every
    * item on the response stack is removed without resolving, waiting triggers and parked resolutions are dropped,
    * no end-of-turn step happens, and the next seat's turn starts. Run when the action that eliminated them settles.
@@ -9758,6 +9822,8 @@ export class SpoilsEngine {
     const state = this.state;
     const active = state.activePlayerId;
     if (state.winner || !state.players[active]?.eliminated) return;
+    // Before the game starts there is no turn to end: the first turn goes to the next seat standing (`startGameAfterSetup`).
+    if (state.setup.phase !== "complete") return;
 
     for (const item of this.responseStack) this.dropUnresolvedItem(item);
     this.responseStack.splice(0);
@@ -25904,6 +25970,11 @@ export class SpoilsEngine {
   /** `playerId`'s opponents still in the game, clockwise from the seat on their left. */
   getOpponents(playerId: PlayerId): PlayerId[] {
     return this.getPlayersInSeatOrder(playerId).filter(id => id !== playerId);
+  }
+
+  /** `playerId` if they are still in the game, otherwise the next seat clockwise whose player is. */
+  private nextSeatStanding(playerId: PlayerId): PlayerId {
+    return this.state.players[playerId].eliminated ? this.nextSeat(playerId) : playerId;
   }
 
   /** The next seat clockwise after `playerId` whose player is still in the game. */

@@ -155,6 +155,9 @@ if (game.state.pendingChoice?.kind === "choosePlayer") {
   choice (`PendingChoosePlayerChoice`: `playerId` is who answers, `candidates`
   is who they may name); the answer is `resolvePendingChoice` with `{ kind:
   "choosePlayer", playerId }`.
+- **Conceding.** `{ type: "concede", playerId }` makes that player lose at once, at any moment the game is not over
+  (setup included), eliminating them at three or more seats like any other loser; no query of what a player may do
+  offers it.
 - **Seats and turns.** `getSeats()` is the clockwise order, eliminated players
   included; `getPlayersInSeatOrder(from?)` and `getOpponents(playerId)` list the
   players still in the game; `isEliminated(playerId)` and

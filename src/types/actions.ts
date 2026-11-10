@@ -145,6 +145,18 @@ export type GameAction =
       playerId: PlayerId;
     }
   | {
+      /**
+       * The player forfeits: they lose the game at once (engine-derived, RULES.md MPX-concede). At two seats the
+       * other player wins; at three or more the player is eliminated exactly as if their faction had reached 0
+       * influence (RULES.md MPX-elim) and the rest play on, the game ending when one player is left. Legal for any
+       * player still in the game, at any moment before the game is over: on anyone's turn, while another player
+       * holds priority or an open choice, in a battle, and during setup. It is never offered by any query of
+       * what a player may do; a client sends it only because its user asked to concede.
+       */
+      type: "concede";
+      playerId: PlayerId;
+    }
+  | {
       type: "declareAttack";
       playerId: PlayerId;
       attackerIds: CardInstanceId[];
