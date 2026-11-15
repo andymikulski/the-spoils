@@ -269,6 +269,11 @@ The ruling is the reading the user chose: for "literal" answers, the reading the
 - **Ruling (other, 2026-10-28):** "We should have a little moment when the game starts, maybe a coin flip, and move from there." Applied as reading (A): the engine runs the step. With the setup option `chooseFirstPlayer`, once the starting resources are in play the seeded RNG picks the deciding player and setup waits for their `chooseFirstPlayer` answer (RULES.md §5). A host that already knows the first player still passes `firstPlayerId`.
 - **Rules text:** CR 601.1c: "Randomly determine which player will decide who takes the first turn of the game. That player chooses who goes first."
 
+## RQ-r11-1. How should the engine represent Constructed vs Limited deck construction (75 / 40 minimum, copy limit)?
+
+- **Ruling (other, 2026-11-12):** asked for a deck check that says "valid for constructed, invalid for epic or whatever" that a client can use to forbid play or filter cards. Applied as reading (A), the engine owns the formats: `findDeckConstructionIssues` takes `format: "constructed" | "limited"` (default Constructed) and `play: "casual" | "tournament" | "epicTournament"` (default casual). Constructed: minimum 75, 4 copies (1 for an epic card, EP 2). Limited: minimum 40, no copy limit, no epic cards (EP 3). A faction's printed MINIMUM DECK SIZE replaces the format's (CR 101.1). Tournament play excludes epic cards unless it is an epic tournament (EP 4), and a card printing "cannot be used in tournament play" at either (CR 101.1).
+- **Rules text:** CR 103.1b: "A minimum of 75 cards must be included, not including your faction card." CR 103.2b: "A minimum of 40 cards ..." CR 103.2c: "There is no restriction on the number of copies of a card that can be included." Epic Rules insert (EP 1-4, `source/epic.txt`).
+
 ## RQ-r11-2. Are the influence losses of one resolving card or ability simultaneous for CR 102.2?
 
 - **Ruling (other, 2026-11-07):** "if a tactic hits one player and it causes them to lose, then they lose. if the tactic hits both players and they both die, then that's a draw. in battles, if both players take damage, they can both die at the same time."

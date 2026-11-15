@@ -6,7 +6,7 @@ After an answer arrives: record it in `rulings.md`, change the `ruleOpen(…)` t
 
 Free-for-all multiplayer is in scope (Showdown is still out); its atoms are in `source/multiplayer.txt` and its rulings in `rulings.md`.
 
-## Open (8; the two Flip-Up entries are one question)
+## Open (7; the two Flip-Up entries are one question)
 
 | ID | CR | Question | Engine today | Write-up |
 |---|---|---|---|---|
@@ -15,5 +15,4 @@ Free-for-all multiplayer is in scope (Showdown is still out); its atoms are in `
 | RQ-r05-abilities-1 | 501.1 | Is parenthetical reminder text italic, so not rules text, for checks like "a [V] in its rules text"? | Counts reminder text (looks deliberate) | `questions/r05-abilities.md` |
 | RQ-r07-1 | 314.2 | Does "terminate an effect" cover only unresolved stack items, or also a lasting effect already resolved (+2 strength this turn)? | Only unresolved stack items | `questions/r07-zones-actions.md` |
 | RQ-r08-turn-deploy-2 | 601.1f, 601.1g | Does every player get the opening mulligan, or only factions whose card lists one? | Only factions with `setup.mulligan.count > 0` | `questions/r08-turn-deploy.md` |
-| RQ-r11-1 | 103.1b, 103.2b, 103.2c | How should the engine represent Constructed vs Limited deck construction (75 / 40 minimum, copy limit)? | No formats; 4-copy limit always on; minimum size only if the caller passes it | `questions/r11-general-loops-bidding.md` |
 | RQ-r11-3 | 413.1 | In a bid, if the first bidder passes, does the other player win without bidding? What if both pass? | The other player is still asked and must bid at least 1; both pass: nobody wins, the character returns to the deck | `questions/r11-general-loops-bidding.md` |

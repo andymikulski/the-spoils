@@ -357,6 +357,14 @@
     "src/engine/__tests__/other-reveals.test.ts": {
       "sha256": "187e88e568807dc30a07d91ac2e1424b91c839dfd4f122c0e3fb63ba200825e6",
       "reason": "Spatchcocking's RECUR (\"each opponent ...\") now runs per opponent inside forEachPlayer { players: \"opponents\" }, where the revealing player is the iterated player: the expected substring changes from \"of\":\"opponent\" to \"of\":\"controller\" (two-player behavior identical). Only that one expected substring changes. Approved by the user 2026-11-09."
+    },
+    "src/engine/__tests__/deck-rules.test.ts": {
+      "sha256": "91534f52861a928047212c0390a62dc47680256f3adbc803a94f7c5a62d94a63",
+      "reason": "Deck formats (RQ-r11-1 answered as reading A): the tests asserted there is no general minimum deck size and that every non-staple card is limited to 4. CR 103.1b sets a 75-card Constructed minimum (Constructed is the default format; Limited is 40, CR 103.2b) and the Epic Rules insert limits an epic card to 1 copy in Constructed (EP 2). Updated to those rules, with new tests for the formats, epic cards and notForTournamentPlay. Approved by the user 2026-11-12."
+    },
+    "src/engine/__tests__/rules/r11-general-loops-bidding.p1.test.ts": {
+      "sha256": "54efc2d1aaba45568bee191c8a554452a3366801f48bdaa6f46d50a20108069f",
+      "reason": "RQ-r11-1 answered (reading A, the engine owns the formats): its two ruleOpen tests (CR 103.1b default minimum, CR 103.2c no copy limit in Limited) become rule tests, the CR 103.1b 'no maximum' test no longer asserts getMinimumDeckSize is undefined, and the Epic Rules atoms EP 1-4 get their tests. Approved by the user 2026-11-12."
     }
   }
 }

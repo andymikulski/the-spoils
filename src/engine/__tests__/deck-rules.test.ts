@@ -3,7 +3,11 @@ import assert from "node:assert/strict";
 import { CARD_CATALOG } from "../../data.js";
 import {
   DEFAULT_MAX_COPIES,
+  EPIC_MAX_COPIES,
+  FORMAT_MINIMUM_DECK_SIZE,
   deckFactionFace,
+  getCardExclusion,
+  isEpicCard,
   findDeckConstructionIssues,
   getMaxCopies,
   getMinimumDeckSize,
@@ -35,7 +39,7 @@ const normalCard = (() => {
 const otherNormalCard = CARD_CATALOG.find(c => c.type === "character" && c.id !== normalCard.id && getMaxCopies(c) === 4)!;
 
 /** A decklist of `size` cards: the faction, 2 staples, then filler at 4 copies each (the faction card is part of `size`). */
-function legalDeck(size = 60): CardDefinition[] {
+function legalDeck(size = 76): CardDefinition[] {
   const cards: CardDefinition[] = [FACTION, RAGE, byName("Greed", "1st Edition")];
   const pool = CARD_CATALOG.filter(c => c.type === "character" && getMaxCopies(c) === 4);
   for (let i = 0; cards.length < size; i++) cards.push(pool[Math.floor(i / 4)]!);
@@ -62,14 +66,14 @@ describe("getMaxCopies", () => {
     }
   });
 
-  test("over the whole catalog only staples and the flagged printings are unlimited", () => {
+  test("over the whole catalog only staples and the flagged printings are unlimited, epic printings 1", () => {
     const unlimited = CARD_CATALOG.filter(c => getMaxCopies(c) === null);
     for (const card of unlimited) {
       assert.ok(isStapleResourceDefinition(card) || card.deckLimit === "unlimited", `${card.name} (${card.set}) is unlimited`);
     }
     for (const card of CARD_CATALOG) {
       if (isStapleResourceDefinition(card) || card.deckLimit === "unlimited") continue;
-      assert.equal(getMaxCopies(card), 4, `${card.name} (${card.set})`);
+      assert.equal(getMaxCopies(card), isEpicCard(card) ? EPIC_MAX_COPIES : 4, `${card.name} (${card.set})`);
     }
     const flagged = CARD_CATALOG.filter(c => c.deckLimit === "unlimited").map(c => `${c.name} (${c.set})`).sort();
     assert.deepEqual(flagged, ["Crow With Fists (Ungodly Mess)", "Party Clowns (Seed 2)", "Party Clowns (Seed Saga)"]);
@@ -85,10 +89,12 @@ describe("getMaxCopies", () => {
 });
 
 describe("getMinimumDeckSize", () => {
-  test("no rule (undefined) with no faction or a faction that prints no minimum", () => {
-    assert.equal(getMinimumDeckSize(), undefined);
-    assert.equal(getMinimumDeckSize(FACTION), undefined);
-    assert.equal(getMinimumDeckSize(FACTION.faction), undefined);
+  test("the format's minimum with no faction or a faction that prints none: 75 Constructed, 40 Limited", () => {
+    assert.deepEqual(FORMAT_MINIMUM_DECK_SIZE, { constructed: 75, limited: 40 });
+    assert.equal(getMinimumDeckSize(), 75);
+    assert.equal(getMinimumDeckSize(FACTION), 75);
+    assert.equal(getMinimumDeckSize(FACTION.faction), 75);
+    assert.equal(getMinimumDeckSize(FACTION, "limited"), 40);
   });
 
   test("The Society of Magical Propriety prints 300, and it is the only faction that does", () => {
@@ -97,6 +103,7 @@ describe("getMinimumDeckSize", () => {
     assert.equal(society.faction?.minimumDeckSize, 300);
     assert.equal(getMinimumDeckSize(society), 300);
     assert.equal(getMinimumDeckSize(society.faction), 300);
+    assert.equal(getMinimumDeckSize(society, "limited"), 300, "the printed minimum wins over the format's (CR 101.1)");
     const printers = CARD_CATALOG.filter(c => /MINIMUM DECK SIZE/.test(c.markup ?? "")).map(c => c.id);
     const flagged = CARD_CATALOG.filter(c => c.faction?.minimumDeckSize !== undefined).map(c => c.id);
     assert.deepEqual(flagged, printers, "the field is on exactly the printings whose markup prints the rule");
@@ -110,13 +117,13 @@ describe("findDeckConstructionIssues", () => {
 
   test("empty", () => {
     const issues = findDeckConstructionIssues([]);
-    assert.deepEqual(kinds(issues), ["empty", "factionCount"]);
+    assert.deepEqual(kinds(issues), ["empty", "factionCount", "minimumSize"]);
     assert.match(issues[0]!.message, /empty/i);
   });
 
   test("unknownCard: one issue per distinct id, and they count toward the size", () => {
     const deck = legalDeck(58);
-    const issues = findDeckConstructionIssues(deck, { unknownCardIds: ["nope", "nope", "also-nope"] });
+    const issues = findDeckConstructionIssues(deck, { unknownCardIds: ["nope", "nope", "also-nope"], minimumSize: false });
     assert.deepEqual(kinds(issues), ["unknownCard", "unknownCard"]);
     assert.deepEqual(issues.map(i => i.cardId), ["nope", "also-nope"]);
     assert.ok(issues.every(i => i.message.length > 0));
@@ -170,15 +177,23 @@ describe("findDeckConstructionIssues", () => {
     assert.deepEqual(two.map(i => i.cardId), [otherNormalCard.id, normalCard.id]);
   });
 
-  test("minimumSize: no general rule; only an explicit size applies, and the faction card does not count", () => {
-    assert.deepEqual(findDeckConstructionIssues(legalDeck(5)), [], "a tiny deck is constructible: there is no general minimum");
+  test("minimumSize: 75 in Constructed (the default) and 40 in Limited; the faction card does not count", () => {
+    assert.deepEqual(findDeckConstructionIssues(legalDeck(76)), [], "faction + 75");
+    const short = findDeckConstructionIssues(legalDeck(75));
+    assert.deepEqual(kinds(short), ["minimumSize"], "75 cards including the faction is only 74 in the deck");
+    assert.match(short[0]!.message, /at least 75 cards besides its faction card, found 74/);
+    assert.deepEqual(kinds(findDeckConstructionIssues(legalDeck(75), { format: "constructed" })), ["minimumSize"]);
+    assert.deepEqual(findDeckConstructionIssues(legalDeck(41), { format: "limited" }), [], "faction + 40 in Limited");
+    assert.deepEqual(kinds(findDeckConstructionIssues(legalDeck(40), { format: "limited" })), ["minimumSize"], "39 in Limited");
+  });
+
+  test("minimumSize: an explicit size replaces the format's, and false skips it", () => {
     const deck = legalDeck(60); // faction + 59 others
     assert.deepEqual(findDeckConstructionIssues(deck, { minimumSize: 59 }), [], "59 non-faction cards meet 59");
     const short = findDeckConstructionIssues(deck, { minimumSize: 60 });
-    assert.deepEqual(kinds(short), ["minimumSize"], "60 cards including the faction is only 59 in the deck");
+    assert.deepEqual(kinds(short), ["minimumSize"]);
     assert.match(short[0]!.message, /at least 60 cards besides its faction card, found 59/);
-    assert.deepEqual(findDeckConstructionIssues(deck, { minimumSize: false }), []);
-    assert.deepEqual(findDeckConstructionIssues(legalDeck(61), { minimumSize: 60 }), []);
+    assert.deepEqual(findDeckConstructionIssues(legalDeck(5), { minimumSize: false }), []);
   });
 
   test("minimumSize: a faction's own minimum applies (synthetic override); false skips it", () => {
@@ -188,6 +203,8 @@ describe("findDeckConstructionIssues", () => {
     assert.match(issues[0]!.message, /at least 100 cards besides its faction card, found 99/);
     assert.deepEqual(findDeckConstructionIssues([big, ...legalDeck(101).slice(1)]), []);
     assert.deepEqual(findDeckConstructionIssues([big, ...legalDeck(10).slice(1)], { minimumSize: false }), []);
+    const small = { ...FACTION, faction: { ...FACTION.faction!, minimumDeckSize: 30 } } as CardDefinition;
+    assert.deepEqual(findDeckConstructionIssues([small, ...legalDeck(31).slice(1)]), [], "a printed minimum below the format's wins too (CR 101.1)");
   });
 
   test("minimumSize: The Society of Magical Propriety needs 300 non-faction cards", () => {
@@ -212,19 +229,25 @@ describe("findDeckConstructionIssues", () => {
     assert.deepEqual(findDeckConstructionIssues([heroes, RAGE, byName("Greed", "1st Edition"), ...body], { minimumSize: false }), []);
   });
 
-  test("the order is empty, unknown, factionCount, copyLimit, minimumSize, factionRule", () => {
+  test("the order is empty, unknown, factionCount, notAllowed, copyLimit, minimumSize, factionRule", () => {
     const heroes = byName("Unlikely Heroes");
     const deck = [heroes, heroes, ...times(normalCard, 5)];
     const issues = findDeckConstructionIssues(deck, { unknownCardIds: ["nope"] });
-    assert.deepEqual(kinds(issues), ["unknownCard", "factionCount", "copyLimit"]);
+    assert.deepEqual(kinds(issues), ["unknownCard", "factionCount", "copyLimit", "minimumSize"]);
     const heroesDeck = [heroes, ...times(normalCard, 5)];
     assert.deepEqual(kinds(findDeckConstructionIssues(heroesDeck, { minimumSize: 10 })), ["copyLimit", "minimumSize", "factionRule"]);
+    const knitting = byName("The Knitting Coalition");
+    assert.deepEqual(
+      kinds(findDeckConstructionIssues([knitting, ...times(normalCard, 5)], { play: "tournament", minimumSize: 10 })),
+      ["notAllowed", "copyLimit", "minimumSize", "factionRule"]
+    );
   });
 });
 
 describe("copy limit agrees with the printed-text rule", () => {
   // The copy rule stated independently of the engine: a staple resource, or a card whose
-  // printed text has the "as many copies" sentence, is unlimited; everything else 4.
+  // printed text has the "as many copies" sentence, is unlimited; a card printing the
+  // EPIC or E-SLE rarity mark is limited to 1 (EP 1, EP 2); everything else 4.
   const printed = /you may include as many copies of this card in your deck/i;
   const expectedMax = (card: CardDefinition): number | null =>
     card.type === "resource" &&
@@ -232,7 +255,9 @@ describe("copy limit agrees with the printed-text rule", () => {
       ? null
       : printed.test(card.text)
         ? null
-        : 4;
+        : ["epic", "e-sle"].includes(card.rarity)
+          ? 1
+          : 4;
 
   test("getMaxCopies equals the printed-text rule on every printing", () => {
     for (const card of CARD_CATALOG) {
@@ -259,5 +284,69 @@ describe("deckFactionFace (Counter-Imperial Army)", () => {
   test("only Counter-Imperial Army is startsFlipped in the catalog", () => {
     const flipped = CARD_CATALOG.filter(c => c.faction?.setup.startsFlipped).map(c => c.name);
     assert.deepEqual(flipped, ["Counter-Imperial Army"]);
+  });
+});
+
+describe("epic cards and tournament play in the catalog (docs/rules/epic-rules.md)", () => {
+  const EPIC = [
+    "Counter-Imperial Army",
+    "Imperial Army",
+    "Slightly Less Evil Alliance",
+    "The Evil Alliance",
+    "The Knitting Coalition",
+    "The Society of Magical Propriety",
+    "The Union of Unextraordinary Miners"
+  ];
+  const NOT_FOR_TOURNAMENTS = [
+    "Counter-Imperial Army",
+    "Imperial Army",
+    "The Knitting Coalition",
+    "The Open R&D Faction",
+    "The Society of Magical Propriety",
+    "The Union of Unextraordinary Miners"
+  ];
+
+  test("every rarity is a printed mark from the vocabulary; only the Seed 3 full-art staples print none", () => {
+    const vocabulary = ["common", "uncommon", "rare", "super-rare", "ultra-rare", "uber", "epic", "e-sle", "promo", "fixed", "staple", "token"];
+    for (const card of CARD_CATALOG) {
+      if (card.rarity === "") {
+        assert.ok(card.set === "Seed 3" && isStapleResourceDefinition(card), `${card.name} (${card.set}) prints no rarity`);
+      } else assert.ok(vocabulary.includes(card.rarity), `${card.name} (${card.set}): ${card.rarity}`);
+    }
+  });
+
+  test("the epic cards are exactly the Seed 3 printings marked EPIC or E-SLE", () => {
+    const epic = CARD_CATALOG.filter(isEpicCard);
+    assert.deepEqual(epic.map(c => c.name).sort(), EPIC);
+    assert.ok(epic.every(c => c.set === "Seed 3"));
+  });
+
+  test("notForTournamentPlay is on exactly the printings that print 'cannot be used in tournament play'", () => {
+    const printed = /cannot be used in tournament play/i;
+    // Counter-Imperial Army prints "This card (either side) cannot be used in tournament play",
+    // so the printed Imperial Army face (which does not repeat it) carries the flag too.
+    const otherFace = (card: CardDefinition) => CARD_CATALOG.find(c => c.id === card.faction?.flipsTo);
+    for (const card of CARD_CATALOG) {
+      assert.equal(card.notForTournamentPlay === true, printed.test(card.text), `${card.name} (${card.set}) text`);
+      const onEitherFace = [card, otherFace(card)].some(face => face && printed.test(face.markup ?? ""));
+      assert.equal(card.notForTournamentPlay === true, onEitherFace, `${card.name} (${card.set}) markup`);
+    }
+    assert.deepEqual(CARD_CATALOG.filter(c => c.notForTournamentPlay).map(c => c.name).sort(), NOT_FOR_TOURNAMENTS);
+  });
+
+  test("each special faction's legality under each format and play", () => {
+    const society = byName("The Society of Magical Propriety");
+    const evil = byName("The Evil Alliance");
+    const openRnd = byName("The Open R&D Faction");
+    const table = (card: CardDefinition) => [
+      getCardExclusion(card),
+      getCardExclusion(card, { format: "limited" }),
+      getCardExclusion(card, { play: "tournament" }),
+      getCardExclusion(card, { play: "epicTournament" })
+    ];
+    assert.deepEqual(table(FACTION), [undefined, undefined, undefined, undefined]);
+    assert.deepEqual(table(society), [undefined, "epicInLimited", "notForTournamentPlay", "notForTournamentPlay"]);
+    assert.deepEqual(table(evil), [undefined, "epicInLimited", "epicInTournament", undefined]);
+    assert.deepEqual(table(openRnd), [undefined, undefined, "notForTournamentPlay", "notForTournamentPlay"]);
   });
 });

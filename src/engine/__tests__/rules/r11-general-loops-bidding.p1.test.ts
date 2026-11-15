@@ -1,12 +1,13 @@
 // Batch r11-general-loops-bidding (docs/TESTING.md): CR 101 The Most Important
 // Rule, 102 Object of the Game, 103 Deck Construction, 104 Tournaments,
-// 105 Errata, 413 Bidding, 414 Action Loops.
+// 105 Errata, 413 Bidding, 414 Action Loops; and the printed Epic Rules insert
+// (EP 1-4, data/rule-tests/source/epic.txt).
 // Written from the wording of the Comprehensive Rules, not from the engine.
 
 import { describe } from "node:test";
 import assert from "node:assert/strict";
 import type { CardDefinition, SpoilsEngine } from "../../../engine.js";
-import { findDeckConstructionIssues, getMaxCopies, getMinimumDeckSize } from "../../../engine.js";
+import { findDeckConstructionIssues, getCardExclusion, getMaxCopies, getMinimumDeckSize, isEpicCard } from "../../../engine.js";
 import {
   buildGame,
   character,
@@ -18,7 +19,7 @@ import {
   resourceCard,
   tactic
 } from "../support/fixtures.js";
-import { refused, rule, ruleExempt, ruleMismatch, ruleOpen } from "./_rule.js";
+import { refused, rule, ruleExempt, ruleMismatch } from "./_rule.js";
 
 const ACTIVATED = (effects: unknown[], extra: Record<string, unknown> = {}) =>
   ({ abilities: [{ id: "go", type: "activated", effects, ...extra }] }) as CardDefinition["behavior"];
@@ -368,7 +369,7 @@ describe("CR 103 — deck construction", () => {
 
   rule("CR 103.1b", "there is no maximum deck size", () => {
     assert.deepEqual(kinds(deckOf(400), { minimumSize: 75 }), [], "400 cards");
-    assert.equal(getMinimumDeckSize(FACTION), undefined, "no maximum is printed on a faction either");
+    assert.deepEqual(kinds(deckOf(400)), [], "400 cards against the default Constructed rules");
   });
 
   rule("CR 103.1c", "no more than 4 copies of a card with the same name: 4 is legal, 5 is reported with the card and the count", () => {
@@ -420,36 +421,38 @@ describe("CR 103 — deck construction", () => {
     assert.deepEqual(kinds(deckOf(200), { minimumSize: 40 }), [], "no maximum");
   });
 
-  ruleOpen(
-    "CR 103.2c",
-    "RQ-r11-1",
-    "a Limited deck has no copy limit: 12 copies of an ordinary card are legal",
-    () => {
-      const card = filler();
-      // The engine has no way to say "Limited"; the intended call names a format.
-      const issues = findDeckConstructionIssues([...deckOf(40), ...copiesOf(card, 12)], {
-        factionRules: false,
-        minimumSize: 40,
-        format: "limited"
-      } as never);
-      assert.ok(!issues.some(i => i.kind === "copyLimit"), "no copy limit in Limited");
-    }
-  );
+  rule("CR 103.2c", "a Limited deck has no copy limit: 12 copies of an ordinary card are legal (control: 5 is over in Constructed)", () => {
+    const card = filler();
+    assert.deepEqual(kinds([...deckOf(40), ...copiesOf(card, 12)], { format: "limited" }), [], "12 copies in Limited");
+    assert.equal(getMaxCopies(card, { format: "limited" }), null, "unlimited in Limited");
+    assert.ok(kinds([...deckOf(75), ...copiesOf(card, 5)]).includes("copyLimit"), "control: 5 copies in Constructed");
+  });
 
   ruleExempt(
     "CR 103.2d",
     "Which cards are banned from Constructed or Limited is the official Tournament Rules list; the engine ships no banned list (see CR 103.1d), so there is nothing to verify."
   );
 
-  ruleOpen(
-    "CR 103.1b",
-    "RQ-r11-1",
-    "the engine holds a Constructed deck to 75 cards without being told the minimum",
-    () => {
-      const issues = findDeckConstructionIssues(deckOf(60), { factionRules: false });
-      assert.ok(issues.some(i => i.kind === "minimumSize"), "60 cards is under the Constructed minimum of 75");
-    }
-  );
+  rule("CR 103.1b", "the engine holds a Constructed deck to 75 cards without being told the minimum (Constructed is the default format)", () => {
+    assert.deepEqual(kinds(deckOf(60)), ["minimumSize"], "60 cards is under the Constructed minimum of 75");
+    assert.deepEqual(kinds(deckOf(74), { format: "constructed" }), ["minimumSize"], "74");
+    assert.deepEqual(kinds(deckOf(75)), [], "75");
+    assert.equal(getMinimumDeckSize(FACTION), 75);
+  });
+
+  rule("CR 103.2b", "the engine holds a Limited deck to 40 cards without being told the minimum", () => {
+    assert.deepEqual(kinds(deckOf(39), { format: "limited" }), ["minimumSize"], "39");
+    assert.deepEqual(kinds(deckOf(40), { format: "limited" }), [], "40");
+    assert.equal(getMinimumDeckSize(FACTION, "limited"), 40);
+  });
+
+  rule(["CR 103.1b", "CR 101.1"], "a faction's printed MINIMUM DECK SIZE replaces the format's minimum", () => {
+    const big = factionCard({ id: "faction-big", name: "Big Faction" });
+    big.faction = { ...big.faction!, minimumDeckSize: 300 };
+    assert.equal(getMinimumDeckSize(big), 300);
+    assert.deepEqual(kinds(deckOf(299, big)), ["minimumSize"], "299 is short of the printed 300");
+    assert.deepEqual(kinds(deckOf(300, big)), [], "300");
+  });
 
   ruleExempt(
     ["CR 103.3", "CR 103.3a"],
@@ -466,4 +469,84 @@ describe("CR 104 / 105 — tournaments and errata", () => {
     "CR 105.1",
     "Errata policy: the engine plays whatever card definitions it is given, and keeping those at the latest wording is a data-maintenance task (checked by the card-data audits), not engine behavior."
   );
+});
+
+describe("Epic Rules (printed insert) — EP 1-4", () => {
+  const epic = (name: string, rarity = "epic"): CardDefinition => character({ id: `epic-${name}`, name, rarity });
+  const epicFaction = (name: string, extra: Partial<CardDefinition> = {}) =>
+    factionCard({ id: `epic-faction-${name}`, name, rarity: "epic", ...extra });
+
+  rule("EP 1", "a card is epic when its rarity mark reads EPIC, or E-SLE on the Showdown factions; no other rarity is", () => {
+    assert.equal(isEpicCard(epic("Big Deal")), true, "EPIC");
+    assert.equal(isEpicCard(epic("Showdown", "e-sle")), true, "E-SLE");
+    for (const rarity of ["common", "uncommon", "rare", "super-rare", "ultra-rare", "uber", "promo", "fixed", "staple", "token", ""]) {
+      assert.equal(isEpicCard(character({ id: `r-${rarity}`, name: `R ${rarity}`, rarity })), false, rarity || "no mark");
+    }
+  });
+
+  rule("EP 2", "a Constructed deck holds at most 1 copy of an epic card: 1 is legal, 2 is reported (control: 4 of an ordinary card)", () => {
+    const card = epic("Once Only");
+    assert.equal(getMaxCopies(card), 1);
+    assert.deepEqual(kinds([...deckOf(75), card]), [], "1 copy");
+    const issues = findDeckConstructionIssues([...deckOf(75), card, card], { factionRules: false });
+    assert.deepEqual(issues.map(i => i.kind), ["copyLimit"], "2 copies");
+    assert.equal(issues[0]!.cardId, card.id);
+    assert.equal(issues[0]!.max, 1);
+    assert.deepEqual(kinds([...deckOf(75), ...copiesOf(filler(), 4)]), [], "control: 4 of an ordinary card");
+  });
+
+  rule("EP 2", "the 1-copy limit counts every printing of the epic card's name together", () => {
+    const a = epic("Twice Printed");
+    const b = { ...a, id: "epic-twice-printed-2" };
+    assert.deepEqual(kinds([...deckOf(75), a, b]), ["copyLimit"]);
+  });
+
+  rule("EP 2", "an epic faction can lead a casual Constructed deck", () => {
+    const faction = epicFaction("Fun Faction");
+    assert.equal(getCardExclusion(faction), undefined);
+    assert.deepEqual(kinds(deckOf(75, faction)), []);
+  });
+
+  rule("EP 3", "epic cards may not be used in Limited play: an epic card or epic faction is reported, an ordinary card is not", () => {
+    const card = epic("Too Epic");
+    assert.equal(getCardExclusion(card, { format: "limited" }), "epicInLimited");
+    assert.equal(getMaxCopies(card, { format: "limited" }), 0);
+    const issues = findDeckConstructionIssues([...deckOf(40), card], { factionRules: false, format: "limited" });
+    assert.deepEqual(issues.map(i => i.kind), ["notAllowed"]);
+    assert.equal(issues[0]!.cardId, card.id);
+    assert.equal(issues[0]!.exclusion, "epicInLimited");
+    assert.deepEqual(kinds(deckOf(40, epicFaction("Limited Leader")), { format: "limited" }), ["notAllowed"], "the faction card too");
+    assert.deepEqual(kinds(deckOf(40), { format: "limited" }), [], "control: no epic card");
+  });
+
+  rule("EP 3", "an epic card in a Limited deck is reported once however many copies there are, and not again as a copy-limit issue", () => {
+    const card = epic("Many Epics");
+    assert.deepEqual(kinds([...deckOf(40), ...copiesOf(card, 3)], { format: "limited" }), ["notAllowed"]);
+  });
+
+  rule("EP 4", "epic cards may not be used at a tournament that is not an epic tournament", () => {
+    const card = epic("Banned Fun");
+    assert.equal(getCardExclusion(card, { play: "tournament" }), "epicInTournament");
+    assert.deepEqual(kinds([...deckOf(75), card], { play: "tournament" }), ["notAllowed"]);
+    assert.deepEqual(kinds(deckOf(75, epicFaction("Tournament Leader")), { play: "tournament" }), ["notAllowed"], "the faction card too");
+    assert.deepEqual(kinds(deckOf(75), { play: "tournament" }), [], "control: no epic card");
+  });
+
+  rule(["EP 4", "EP 2"], "at an epic tournament epic cards are allowed, still 1 copy each", () => {
+    const card = epic("Tournament Fun");
+    assert.equal(getCardExclusion(card, { play: "epicTournament" }), undefined);
+    assert.deepEqual(kinds([...deckOf(75), card], { play: "epicTournament" }), []);
+    assert.deepEqual(kinds([...deckOf(75), card, card], { play: "epicTournament" }), ["copyLimit"]);
+  });
+
+  rule(["EP 4", "CR 101.1"], "a card printing 'cannot be used in tournament play' stays out even at an epic tournament: the card beats the rule", () => {
+    const faction = epicFaction("Just For Fun", { notForTournamentPlay: true });
+    assert.equal(getCardExclusion(faction), undefined, "casual: allowed");
+    assert.equal(getCardExclusion(faction, { play: "tournament" }), "notForTournamentPlay");
+    assert.equal(getCardExclusion(faction, { play: "epicTournament" }), "notForTournamentPlay");
+    assert.deepEqual(kinds(deckOf(75, faction), { play: "epicTournament" }), ["notAllowed"]);
+    const plain = factionCard({ id: "promo-faction", name: "Promo Faction", rarity: "promo", notForTournamentPlay: true });
+    assert.deepEqual(kinds(deckOf(75, plain), { play: "tournament" }), ["notAllowed"], "a non-epic card that prints it");
+    assert.deepEqual(kinds(deckOf(75, plain)), [], "control: casual");
+  });
 });

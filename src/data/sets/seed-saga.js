@@ -33339,7 +33339,7 @@ const cards = [
       }
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -33544,7 +33544,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -33709,7 +33709,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -33882,7 +33882,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -34064,7 +34064,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -34265,7 +34265,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -34444,7 +34444,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],
@@ -34660,7 +34660,7 @@ const cards = [
       ]
     },
     "trade": "Universal",
-    "rarity": "",
+    "rarity": "staple",
     "cost": 0,
     "threshold": 0,
     "subtype": [],

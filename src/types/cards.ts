@@ -310,6 +310,12 @@ export interface CardDefinition {
   set: string;
   type: CardType;
   trade: Trade;
+  /**
+   * The printed rarity mark, lower-case with hyphens: common, uncommon, rare,
+   * super-rare, ultra-rare, uber, epic, e-sle, promo, fixed, staple, token;
+   * "" when the card prints none. "epic" and "e-sle" are epic cards
+   * (`isEpicCard`, docs/rules/epic-rules.md EP 1).
+   */
   rarity: string;
   cost: number;
   threshold: string | number;
@@ -364,6 +370,14 @@ export interface CardDefinition {
    * `getMaxCopies` / `findDeckConstructionIssues` read it.
    */
   deckLimit?: "unlimited";
+
+  /**
+   * The card prints "This card cannot be used in tournament play" (the Seed 3
+   * epic factions, The Open R&D Faction). Card text beats the rules (CR 101.1),
+   * so this holds even at an epic tournament. Not game behavior: only the deck
+   * rules (`getCardExclusion`, `findDeckConstructionIssues`) read it.
+   */
+  notForTournamentPlay?: true;
 
   /** Optional structured resource metadata. */
   resource?: ResourceDefinition;

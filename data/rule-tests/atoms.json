@@ -4688,5 +4688,45 @@
    "MPX-knitting"
   ],
   "batch": "mp-ffa"
+ },
+ {
+  "id": "EP 1",
+  "source": "EP",
+  "section": "EP",
+  "sectionTitle": "Epic Rules (printed insert)",
+  "kind": "rule",
+  "text": "Epic cards feature rare, powerful, and generally crazy effects. They are designed to be used for fun only, but there are circumstances when they may be used in tournaments (see below). You can identify epic cards by looking for the word \"EPIC\" at the bottom of the card, next to the set icon. (The Showdown factions print \"E-SLE\" there and are epic too: docs/rules/epic-rules.md.)",
+  "title": "Identifying epic cards",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "EP 2",
+  "source": "EP",
+  "section": "EP",
+  "sectionTitle": "Epic Rules (printed insert)",
+  "kind": "rule",
+  "text": "You may include only 1 copy of each epic card in your Constructed deck.",
+  "title": "One copy in Constructed",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "EP 3",
+  "source": "EP",
+  "section": "EP",
+  "sectionTitle": "Epic Rules (printed insert)",
+  "kind": "rule",
+  "text": "Epic cards are not available during Limited play.",
+  "title": "Not in Limited",
+  "batch": "r11-general-loops-bidding"
+ },
+ {
+  "id": "EP 4",
+  "source": "EP",
+  "section": "EP",
+  "sectionTitle": "Epic Rules (printed insert)",
+  "kind": "rule",
+  "text": "Normally, epic cards cannot be used in tournament play. However, a Tournament Organizer may choose to run an \"epic tournament\" during which players may use these powerful cards. If your local community enjoys playing this way, you are encouraged to ask your Tournament Organizer to set up such an event.",
+  "title": "Epic tournaments",
+  "batch": "r11-general-loops-bidding"
  }
 ]

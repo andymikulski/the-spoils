@@ -11,7 +11,6 @@ import {
   CREATED_ABILITY_MENU,
   findDeckConstructionIssues,
   getMaxCopies,
-  getMinimumDeckSize,
   isStapleResourceDefinition,
   withBuiltInFactionDefaults,
   type CardCatalogEntry,
@@ -128,11 +127,16 @@ export interface DeckOptions {
   featuredSet?: string;
 }
 
-/** A seeded random deck that passes `findDeckConstructionIssues`. */
+/**
+ * A seeded random deck that passes `findDeckConstructionIssues` for casual
+ * Constructed, except the 75-card format minimum: a deck is 40 to 60 cards, or
+ * from the faction's printed MINIMUM DECK SIZE up when it prints one. The
+ * fixed-seed fuzz and replay games are built from these decks.
+ */
 export function randomDeck(rng: Random, options: DeckOptions = {}): DeckSpec {
   const faction = options.faction ?? pick(ELIGIBLE_FACTIONS, rng);
   const featuredSet = options.featuredSet ?? pick(SET_NAMES, rng);
-  const minimum = getMinimumDeckSize(faction);
+  const minimum = faction.faction?.minimumDeckSize;
   const big = minimum !== undefined && minimum > 100;
 
   const icons = new Set(requiredIcons(faction));
@@ -201,7 +205,7 @@ export function randomDeck(rng: Random, options: DeckOptions = {}): DeckSpec {
 
   const cards = [...counts].sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0));
   const deck: DeckSpec = { factionDefinitionId: faction.id, cards };
-  const issues = findDeckConstructionIssues(expandDeck(deck).map(definitionOf).concat([faction]));
+  const issues = findDeckConstructionIssues(expandDeck(deck).map(definitionOf).concat([faction]), { minimumSize: minimum ?? false });
   if (issues.length > 0) {
     throw new Error(`Generated an illegal deck for '${faction.name}': ${issues.map(i => i.message).join(" ")}`);
   }

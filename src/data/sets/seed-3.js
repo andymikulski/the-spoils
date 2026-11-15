@@ -3552,7 +3552,8 @@ const cards = [
       ],
       "credit": "Art: Jeff Himmelman",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "c58d0e3c-4f76-4665-aca4-2ba01a42d863",
@@ -3676,7 +3677,8 @@ const cards = [
       ],
       "credit": "Art: SCRAPS",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "ebef8b79-0dcb-401f-81e9-eafd9235fd7d",
@@ -3800,7 +3802,8 @@ const cards = [
       ],
       "credit": "Art: SCRAPS",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "71038369-24cc-48d9-a58c-e658edc01944",
@@ -3931,7 +3934,8 @@ const cards = [
       ],
       "credit": "Art: Roxxy Goetz",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "2ce14e80-b0c6-4a3a-999b-c240b4fff9d5",
@@ -4069,7 +4073,8 @@ const cards = [
       ],
       "credit": "Art: Aaron B. Miller",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "78571459-b948-4558-823e-e463e5fc5526",
@@ -4210,7 +4215,8 @@ const cards = [
       ],
       "credit": "Art: Aaron B. Miller",
       "source": "printed"
-    }
+    },
+    "notForTournamentPlay": true
   },
   {
     "id": "089a2d63-c9b9-4ad7-8c51-1d0d79a0dfbb",

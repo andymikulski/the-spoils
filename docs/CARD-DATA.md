@@ -132,6 +132,16 @@ guessed.
 - Concept / design credits ("original Open R&D concept by …") are part of the
   `subtitle`, not `art`.
 
+## Rarity
+
+`rarity` is the printed rarity mark next to the set icon, lower-case with
+hyphens: `common`, `uncommon`, `rare`, `super-rare`, `ultra-rare`, `uber`,
+`epic`, `e-sle`, `promo`, `fixed`, `staple`, `token`. It is `""` only where the
+card prints no mark (the five full-art Seed 3 resources). Every printing's mark
+was read from its card image. `epic` and `e-sle` are epic cards, with their own
+deck rules (docs/rules/epic-rules.md, RULES.md §16). The deck rules also read
+`deckLimit` and `notForTournamentPlay` (BEHAVIORS.md "Deck construction").
+
 ## Decade of Deckadence
 
 The 156 Decade of Deckadence printings were added from card art published on
@@ -142,7 +152,8 @@ Caveats specific to this set:
 
 - Subtitles and artist credits the scans left illegible (three subtitles,
   78 art credits) were later filled in from physical copies of the cards.
-- No rarity or collector number is printed on these cards.
+- Every card prints the rarity FIXED (`rarity: "fixed"`). The collector numbers
+  are too small to read at this resolution.
 - Dual-trade resources print two trades; `trade` holds the first.
 
 ## Player words (multiplayer)

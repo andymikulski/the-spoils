@@ -67,12 +67,20 @@ export {
   findDeckConstructionIssues,
   getMaxCopies,
   getMinimumDeckSize,
+  getCardExclusion,
+  isEpicCard,
   deckFactionFace,
   resolveDeckCards,
   DEFAULT_MAX_COPIES,
+  EPIC_MAX_COPIES,
+  FORMAT_MINIMUM_DECK_SIZE,
+  type CardExclusion,
   type DeckConstructionIssue,
   type DeckConstructionIssueKind,
-  type DeckConstructionOptions
+  type DeckConstructionOptions,
+  type DeckFormat,
+  type DeckPlay,
+  type DeckRules
 } from "./engine/deckRules.js";
 export {
   saveGame,

@@ -180,7 +180,7 @@ if (game.state.pendingChoice?.kind === "choosePlayer") {
   sees. Saves round-trip mid-game at any seat count.
 
 RULES.md §15 has the multiplayer rules with citations; Showdown (Villain / Hero)
-and the epic deck rules are not supported.
+is not supported.
 
 ## Driving a game
 

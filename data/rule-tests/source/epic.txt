@@ -1,0 +1,21 @@
+# Epic Rules atoms for the rules suite (docs/TESTING.md, batch r11-general-loops-bidding).
+#
+# Hand-written; parsed with multiplayer.txt by parseHandWritten() in
+# src/engine/__tests__/rules/_atoms.ts (same record format). The wording is the
+# printed Epic Rules insert (docs/rules/epic-rules.md, source/epic_rules.jpg).
+
+== EP 1 | Identifying epic cards
+
+Epic cards feature rare, powerful, and generally crazy effects. They are designed to be used for fun only, but there are circumstances when they may be used in tournaments (see below). You can identify epic cards by looking for the word "EPIC" at the bottom of the card, next to the set icon. (The Showdown factions print "E-SLE" there and are epic too: docs/rules/epic-rules.md.)
+
+== EP 2 | One copy in Constructed
+
+You may include only 1 copy of each epic card in your Constructed deck.
+
+== EP 3 | Not in Limited
+
+Epic cards are not available during Limited play.
+
+== EP 4 | Epic tournaments
+
+Normally, epic cards cannot be used in tournament play. However, a Tournament Organizer may choose to run an "epic tournament" during which players may use these powerful cards. If your local community enjoys playing this way, you are encouraged to ask your Tournament Organizer to set up such an event.

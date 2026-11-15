@@ -252,7 +252,7 @@ describe("The Union of Unextraordinary Miners: X staples and 1 Deception", () =>
 
   test("every X the player may choose starts, for a deck holding only the required Deception and one staple", () => {
     const minimal = [union, staple("Deception"), staple("Rage"), ...characters.slice(0, 5).flatMap(c => [c, c, c, c])];
-    assert.deepEqual(findDeckConstructionIssues(minimal), []);
+    assert.deepEqual(findDeckConstructionIssues(minimal, { minimumSize: false }), []);
     for (let x = 1; x <= 10; x++) {
       for (const interactive of [false, true]) {
         const engine = setupGame(minimal, deckFor(OPPONENT), { x, interactive });

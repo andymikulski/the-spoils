@@ -406,8 +406,8 @@ with no further bookkeeping. Both sides' `CardDefinition`s must be
 registered with the engine for the flip to take effect (loading the full
 catalog, as every real consumer does, guarantees this).
 
-Seed 3's non-tournament "EPIC" / "Showdown" faction cards (The Evil
-Alliance, Imperial Army, ...) additionally reference Showdown format
+Seed 3's "EPIC" / "E-SLE" faction cards (§16; The Evil Alliance, Imperial
+Army, ...) additionally reference Showdown format
 mechanics that are **out of scope** (§15.13) and are left unmodelled: the
 Temptation Pile and the Hero deck. The X = number-of-opponents scaling is
 modelled (`faction.perExtraOpponent`, §15.9).
@@ -2350,6 +2350,32 @@ could be named and take the best case. A named player is kept by lasting records
 
 ### 15.13 Out of scope
 
-Showdown (Villain / Hero, Allegiance, the Hero deck, the Temptation Pile) and the epic deck rules are not
-modelled; both are in `docs/rules/`. MP 5 (house rules for combinations too strong in multiplayer) is non-normative
+Showdown (Villain / Hero, Allegiance, the Hero deck, the Temptation Pile) is not modelled; its rules are in
+`docs/rules/`. The epic deck rules are modelled (§16). MP 5 (house rules for combinations too strong in multiplayer) is non-normative
 and the engine exposes no hook for it (see `docs/house-rules-mods-design.md`).
+
+## 16. Deck construction (CR §103, Epic Rules)
+
+Deck construction is checked before a game, not during one: `findDeckConstructionIssues` and its helpers in
+`src/engine/deckRules.ts` (BEHAVIORS.md "Deck construction"). The engine builds a game from whatever deck it is
+handed. A deck is held to a format and a kind of play (`DeckRules`; default Constructed, casual).
+
+- **(CR §103.1a / §103.2a)** A deck uses exactly one faction card. It is not part of the deck (§3.6) and is not
+  counted toward the minimum size.
+- **(CR §103.1b / §103.2b)** Minimum size: 75 cards in Constructed, 40 in Limited. There is no maximum. A
+  faction's printed MINIMUM DECK SIZE (The Society of Magical Propriety: 300) replaces it (CR §101.1).
+- **(CR §103.1c)** Constructed: no more than 4 copies of a card with the same name, counted across printings
+  (CR §201.1b). Staple resources and cards that say otherwise (Party Clowns, Crow With Fists) are exempt.
+- **(CR §103.2c)** Limited: no copy limit.
+- **(CR §103.1d / §103.2d)** Banned lists live in the official Tournament Rules; the catalog carries none and the
+  engine does not check them.
+- **(Epic Rules EP 1)** A card is epic if its rarity mark reads "EPIC" (`rarity: "epic"`), or "E-SLE" on the two
+  Showdown factions (`rarity: "e-sle"`). In the catalog these are the seven Seed 3 factions (card-verified: the
+  rarity mark of every printing was read from its image, and no other printing prints EPIC).
+- **(EP 2)** A Constructed deck may include only 1 copy of each epic card.
+- **(EP 3)** Epic cards are not available in Limited.
+- **(EP 4)** Epic cards cannot be used in tournament play, except at an "epic tournament".
+- **(CR §101.1, card-verified)** A card that prints "This card cannot be used in tournament play" (the five EPIC
+  factions and The Open R&D Faction; Counter-Imperial Army says "either side", so Imperial Army too) is out of
+  every tournament, epic tournaments included: the card beats EP 4. It is fine in casual play
+  (`CardDefinition.notForTournamentPlay`).

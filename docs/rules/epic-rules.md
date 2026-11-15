@@ -1,7 +1,7 @@
 # Epic Rules
 
-Transcribed verbatim from the printed rules insert card (`source/epic_rules.jpg`). Atom ids (`EP n`) are stable and are cited from `RULES.md` and
-the rules test suite (`data/rule-tests/source/multiplayer.txt`).
+Transcribed verbatim from the printed rules insert card (`source/epic_rules.jpg`). Atom ids (`EP n`) are stable and are cited from `RULES.md` §16 and
+the rules test suite (`data/rule-tests/source/epic.txt`, batch r11-general-loops-bidding).
 
 ## Verbatim text
 
@@ -37,6 +37,13 @@ the rules test suite (`data/rule-tests/source/multiplayer.txt`).
 The only epic printings in the catalog are seven Seed 3 faction cards:
 The Society of Magical Propriety, The Knitting Coalition, The Union of
 Unextraordinary Miners, Imperial Army, Counter-Imperial Army (`epic`), and
-The Evil Alliance, Slightly Less Evil Alliance (`e-sle`). Factions are already
-limited to one per deck, so EP 2 never binds on the current catalog; it is
-still enforced generally.
+The Evil Alliance, Slightly Less Evil Alliance (`e-sle`). This was checked by
+reading the rarity mark of every printing from its card image. Factions are
+already limited to one per deck, so EP 2 never binds on the current catalog;
+it is still enforced generally (`getMaxCopies`).
+
+The five `epic` factions (and the promo The Open R&D Faction) also print
+"This card cannot be used in tournament play" (`notForTournamentPlay`). The
+card beats EP 4 (CR 101.1), so they stay out of epic tournaments too. Of the
+epic printings, only the two Showdown factions are allowed at an epic
+tournament.
