@@ -6411,6 +6411,7 @@ const cards = [
               "type": "chooserSelectsNumber",
               "chooser": "controller",
               "storeAs": "x",
+              "optional": true,
               "min": 0,
               "max": {
                 "type": "count",

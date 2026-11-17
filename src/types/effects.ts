@@ -1252,6 +1252,11 @@ export type Effect =
       storeAs: string;
       min?: NumberExpression;
       max?: NumberExpression;
+      /**
+       * "You MAY choose a number for X ...": the chooser can decline the whole instruction (answer `skip: true`),
+       * which is not the same as choosing 0 - choosing 0 is doing it (CR 410.2a). Micromajig Recycling Station.
+       */
+      optional?: boolean;
       effects: Effect[];
     }
   | {

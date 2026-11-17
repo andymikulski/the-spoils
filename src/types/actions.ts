@@ -282,6 +282,8 @@ export type GameAction =
             players?: PlayerAnswers;
           }
         | { kind: "chooseNumber"; value: number }
+        /** Declines an `optional` number choice ("you may choose a number for X"): nothing is chosen or done. Choosing 0 is a `value`, not this. */
+        | { kind: "chooseNumber"; skip: true }
         /** Answers a `choosePlayer` prompt: one of its `candidates`. */
         | { kind: "choosePlayer"; playerId: PlayerId }
         | { kind: "mayPay"; pay: boolean }

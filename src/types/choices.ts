@@ -371,6 +371,8 @@ export interface PendingChooseNumberChoice {
   storeAs: string;
   min: number;
   max: number;
+  /** A "you may choose a number": the chooser may also decline it (`{ kind: "chooseNumber"; skip: true }`), which runs nothing - distinct from choosing 0. */
+  optional?: boolean;
   effects: Effect[];
   context: ResolutionContext;
   /** The engine's own copy of `context` (`EngineMemory.contexts`); `context` is a snapshot for clients to read. */

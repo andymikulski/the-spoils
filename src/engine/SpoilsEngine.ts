@@ -15863,6 +15863,7 @@ export class SpoilsEngine {
           storeAs: effect.storeAs,
           min: effect.min ? this.evaluateNumber(effect.min, context) : 0,
           max: effect.max ? this.evaluateNumber(effect.max, context) : 99,
+          ...(effect.optional ? { optional: true } : {}),
           effects: effect.effects,
           context
         };
@@ -17089,6 +17090,24 @@ export class SpoilsEngine {
           context,
           chooser.id
         );
+        // "Choose X ..." with X = 0 and nothing to pick at all (Micromajig Recycling Station, no token in play): choosing
+        // 0 is still doing it, so the follow-up effects run with an empty selection, as they do when there ARE
+        // candidates (below). A deck search keeps its own handling (the shuffle after an empty search).
+        if (
+          cstCandidates.length === 0 &&
+          !this.selectorNamesZone(effect.declaration.selector, "deck") &&
+          this.evaluateNumber(effect.declaration.count, context) <= 0 &&
+          !effect.declaration.optional
+        ) {
+          const emptyContext: ResolutionContext = {
+            ...context,
+            selected: { ...context.selected, [effect.declaration.id]: [] }
+          };
+          for (const nested of effect.effects) {
+            this.resolveEffect(nested, emptyContext);
+          }
+          return;
+        }
         if (cstCandidates.length === 0) {
           // CR 312.1/312.2: a deck search that finds nothing is still a search,
           // so the searched deck is shuffled afterwards.
@@ -20697,6 +20716,14 @@ export class SpoilsEngine {
 
       case "chooseNumber": {
         assert(pending.kind === "chooseNumber", "This choice does not match the pending decision.");
+        if ("skip" in choice && choice.skip) {
+          // "You may choose a number ...": declined. Nothing is chosen or run; choosing 0 is a `value`, not this.
+          assert(pending.optional === true, "This number choice can't be skipped.");
+          this.state.pendingChoice = undefined;
+          this.resumeEffectFrames();
+          return;
+        }
+        assert("value" in choice, "Choose a number.");
         assert(
           Number.isInteger(choice.value) &&
             choice.value >= pending.min &&
